@@ -1,0 +1,9 @@
+{
+  "name": "@aluna.js/gateio",
+  "version": "0.0.1",
+  "description": "GateIO implementation for ALUNA.",
+  "contributors": [],
+  "main": "./GateIO.ts",
+  "author": "Izaias Neto<izaias@aluna.social>",
+  "license": "MIT"
+}

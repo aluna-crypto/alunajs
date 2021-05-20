@@ -1,0 +1,14 @@
+{
+  "name": "@aluna.js/valr",
+  "version": "0.0.1",
+  "description": "Valr implementation for ALUNA.",
+  "main": "./Valr.ts",
+  "author": "Sergio Torres<sergio@aluna.social>",
+  "contributors": [
+    "Anderson Arboleya<anderson@aluna.social>"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}
