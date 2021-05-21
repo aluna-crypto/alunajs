@@ -1,8 +1,8 @@
 {
   "name": "aluna.js",
-  "version": "0.1.1",
+  "version": "0.0.1",
   "description": "Aluna exchanges hub.",
-  "main": "./Aluna.ts",
+  "main": "./src/Aluna.ts",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
     "Sergio Torres<sergio@aluna.social>"
