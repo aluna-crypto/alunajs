@@ -1,3 +1,5 @@
+import { AccountEnum } from 'lib/enums/AccountEnum'
+
 import { IAlunaBalance } from '../../../../lib/modules/IAlunaBalance'
 import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
 import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
@@ -18,9 +20,14 @@ export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
   public parse(params: {
     rawBalance: IValrBalanceSchema
   }): IAlunaBalanceSchema {
-    // TODO: implement me
-    const x: any = params
-    return x
+    const { rawBalance } = params
+
+    return {
+      symbolAcronym: rawBalance.currency,
+      account: AccountEnum.EXCHANGE,
+      available: Number(rawBalance.available),
+      total: Number(rawBalance.total),
+    }
   }
 
   public parseMany(params: {
