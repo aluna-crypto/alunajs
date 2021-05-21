@@ -33,8 +33,18 @@ export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
   public parseMany(params: {
     rawBalances: IValrBalanceSchema[]
   }): IAlunaBalanceSchema[] {
-    return params.rawBalances.map((rawBalance: IValrBalanceSchema) =>
-      this.parse({ rawBalance }),
-    )
+    const { rawBalances } = params
+
+    const parsedBalances = rawBalances.reduce((cumulator, current) => {
+      if (parseFloat(current.total) > 0) {
+        const parsedBalance = this.parse({ rawBalance: current })
+
+        cumulator.push(parsedBalance)
+      }
+
+      return cumulator
+    }, [] as IAlunaBalanceSchema[])
+
+    return parsedBalances
   }
 }
