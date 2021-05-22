@@ -39,16 +39,54 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
       secret,
     } = params
 
-    const rawKey = await this.post<IValrKeySchema>({
-      url: '/get-key-permissions',
-      params: {
-        key,
-        secret,
-      },
-    })
+    let permissions = {} as IValrKeySchema
+
+    try {
+
+      await this.get<IValrKeySchema>({
+        url: 'https://api.valr.com/v1/account/balances',
+        path: 'as',
+        credentials: {
+          key,
+          secret,
+        },
+      })
+
+      permissions = {
+        canRead: true,
+        canTrade: !!await this.get<IValrOrderSchema>({
+          url: 'https://api.valr.com/v1/simple/notACurrencyXX00/order',
+          path: '/v1/simple/notACurrencyXX00/order',
+          body: JSON.stringify({
+            payInCurrency: 'notAnActualCurrencyXX00',
+            payAmount: '0',
+            side: 'SELL',
+          }),
+          credentials: {
+            key,
+            secret,
+          },
+        }),
+        canWithraw: false,
+      }
+
+    } catch (error) {
+
+      if (error.message === 'Unauthorized') {
+
+        permissions = {
+          canRead: false,
+          canTrade: false,
+          canWithraw: false,
+        }
+
+      }
+
+    }
+
 
     const parsedPermissions = this.parsePermissions({
-      rawKey,
+      rawKey: permissions,
     })
 
     return parsedPermissions
