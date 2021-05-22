@@ -61,11 +61,29 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
     params: {
       rawKey: IValrKeySchema,
     },
-  ): IAlunaKeySecretSchema {
+  ): IAlunaKeyPermissionSchema {
 
-    // TODO: implement me
-    const x: any = params
-    return x
+    const {
+      rawKey: {
+        canRead, canTrade, canWithraw,
+      },
+    } = params
+
+    return {
+      balance: {
+        read: canRead,
+      },
+      orders: {
+        read: canRead,
+        write: canTrade,
+      },
+      deposits: {
+        read: canRead,
+      },
+      withdraw: {
+        write: canWithraw,
+      },
+    }
 
   }
 
