@@ -9,6 +9,5 @@ export interface IValrMarketSchema {
   lowPrice: string
   created: string
   changeFromPrevious: string
-  baseCurrency: string
-  quoteCurrency: string
 }
+
