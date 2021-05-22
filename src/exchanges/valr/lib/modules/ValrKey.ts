@@ -13,6 +13,9 @@ import {
 import {
   IValrKeySchema,
 } from '../schemas/IValrKeySchema'
+import {
+  IValrOrderSchema,
+} from '../schemas/IValrOrderSchema'
 
 
 
