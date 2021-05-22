@@ -18,8 +18,10 @@ import {
 
 
 export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
+
   public async list (): Promise<IAlunaBalanceSchema[]> {
-    const rawBalances = await this.post<IValrBalanceSchema[]>({
+
+    const rawBalances = await this.get<IValrBalanceSchema[]>({
       url: 'https://api.valr.com/v1/account/balances',
       path: '/v1/account/balances',
     })
@@ -29,11 +31,13 @@ export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
     })
 
     return parsedBalances
+
   }
 
   public parse (params: {
     rawBalance: IValrBalanceSchema
   }): IAlunaBalanceSchema {
+
     const {
       rawBalance,
     } = params
@@ -44,27 +48,35 @@ export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
       available: Number(rawBalance.available),
       total: Number(rawBalance.total),
     }
+
   }
 
   public parseMany (params: {
     rawBalances: IValrBalanceSchema[]
   }): IAlunaBalanceSchema[] {
+
     const {
       rawBalances,
     } = params
 
     const parsedBalances = rawBalances.reduce((cumulator, current) => {
+
       if (parseFloat(current.total) > 0) {
+
         const parsedBalance = this.parse({
           rawBalance: current,
         })
 
         cumulator.push(parsedBalance)
+
       }
 
       return cumulator
+
     }, [] as IAlunaBalanceSchema[])
 
     return parsedBalances
+
   }
+
 }
