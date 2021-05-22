@@ -17,13 +17,14 @@ import {
 
 
 export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
+
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
+
     const rawOrders = await this.post<IValrOrderSchema[]>({
       url: '/list-orders',
-      params: {
-      },
+      params: {},
     })
 
     const parsedOrders = this.parseMany({
@@ -31,6 +32,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
     })
 
     return parsedOrders
+
   }
 
 
@@ -38,6 +40,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
   public async get (
     params: IAlunaOrderGetParams,
   ): Promise<IAlunaOrderSchema> {
+
     const {
       id,
     } = params
@@ -54,6 +57,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
     })
 
     return parsedOrder
+
   }
 
 
@@ -61,6 +65,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
     const {
       rate,
       symbol,
@@ -79,6 +84,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
     })
 
     return parsedOrder
+
   }
 
 
@@ -88,9 +94,11 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       rawOrder: IValrOrderSchema,
     },
   ): IAlunaOrderSchema {
+
     // TODO: implement me
     const x: any = params
     return x
+
   }
 
 
@@ -100,8 +108,11 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       rawOrders: IValrOrderSchema[],
     },
   ): IAlunaOrderSchema[] {
+
     return params.rawOrders.map((rawOrder: IValrOrderSchema) => this.parse({
       rawOrder,
     }))
+
   }
+
 }

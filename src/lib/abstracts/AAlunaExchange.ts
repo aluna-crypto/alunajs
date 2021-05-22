@@ -8,7 +8,9 @@ import {
 
 
 export abstract class AAlunaExchange {
+
   public keySecret: IAlunaKeySecretSchema
+
   public settings?: IAlunaSettingsSchema
 
   constructor (
@@ -17,7 +19,10 @@ export abstract class AAlunaExchange {
       settings?: IAlunaSettingsSchema
     },
   ) {
+
     this.keySecret = params.keySecret
     this.settings = params.settings
+
   }
+
 }

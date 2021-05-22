@@ -14,21 +14,26 @@ import {
 
 
 export class Aluna extends Exchanges {
+
   static readonly exchanges = Exchanges
 
 
 
   static static (params: { exchangeId: string }) {
+
     const {
       exchangeId,
     } = params
 
     switch (exchangeId) {
+
       case this.Valr.ID:
         return this.Valr
       default:
         throw new Error(`Exchange not implemented: ${exchangeId}`)
+
     }
+
   }
 
 
@@ -40,6 +45,7 @@ export class Aluna extends Exchanges {
       settings?: IAlunaSettingsSchema
     },
   ): IAlunaExchange {
+
     const {
       exchangeId,
       keySecret,
@@ -47,6 +53,7 @@ export class Aluna extends Exchanges {
     } = params
 
     switch (exchangeId) {
+
       case this.Valr.ID:
         return new this.Valr({
           keySecret,
@@ -54,6 +61,9 @@ export class Aluna extends Exchanges {
         })
       default:
         throw new Error(`Exchange not implemented: ${exchangeId}`)
+
     }
+
   }
+
 }

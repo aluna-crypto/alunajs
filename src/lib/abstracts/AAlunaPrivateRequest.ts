@@ -5,7 +5,11 @@ import {
 
 
 export abstract class AAlunaPrivateRequest {
+
   constructor (public exchange: IAlunaExchange) {
+
     this.exchange = exchange
+
   }
+
 }

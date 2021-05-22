@@ -30,10 +30,11 @@ interface ISignedHashParams {
 export class ValrPrivateRequest
   extends AAlunaPrivateRequest
   implements IAlunaPrivateRequest {
+
   async get<T> (params: IValrPrivateRequestParams): Promise<T> {
+
     const {
-      url, path, options = {
-      } as IAlunaRequestOptions,
+      url, path, options = {} as IAlunaRequestOptions,
     } = params
 
     const authHeader = this.generateAuthHeader({
@@ -46,18 +47,26 @@ export class ValrPrivateRequest
     })
 
     try {
+
       const res = await axios.get<T>(url, options)
 
       return res.data
+
     } catch (error) {
+
       throw new Error(error)
+
     }
+
   }
 
   async post<T> (params: IValrPrivateRequestParams): Promise<T> {
+
     const {
-      url, path, body, options = {
-      } as IAlunaRequestOptions,
+      url,
+      path,
+      body,
+      options = {} as IAlunaRequestOptions,
     } = params
 
     const authHeader = this.generateAuthHeader({
@@ -71,24 +80,33 @@ export class ValrPrivateRequest
     })
 
     try {
+
       const res = await axios.post<T>(url, body, options)
 
       return res.data
+
     } catch (error) {
+
       throw new Error(error)
+
     }
+
   }
 
   private generateAuthHeader = (params: ISignedHashParams) => {
+
     const timestamp = Date.now()
 
     const {
-      verb, path, body = '',
+      verb,
+      path,
+      body = '',
     } = params
 
     const {
       keySecret: {
-        key, secret,
+        key,
+        secret,
       },
     } = this.exchange
 
@@ -105,5 +123,7 @@ export class ValrPrivateRequest
       'X-VALR-SIGNATURE': signedRequest,
       'X-VALR-TIMESTAMP': timestamp,
     }
+
   }
+
 }

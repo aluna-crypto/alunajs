@@ -5,5 +5,7 @@ import {
 
 
 export class Exchanges {
+
   static Valr = Valr
+
 }

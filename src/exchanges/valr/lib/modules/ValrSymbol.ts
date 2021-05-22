@@ -14,7 +14,9 @@ import {
 
 
 export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
+
   public async list (): Promise<IAlunaSymbolSchema[]> {
+
     const rawSymbols = await this.get<IValrSymbolSchema[]>({
       url: 'https://api.valr.com/v1/public/currencies',
     })
@@ -24,6 +26,7 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
     })
 
     return parsedSymbols
+
   }
 
 
@@ -33,6 +36,7 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
       rawSymbol: IValrSymbolSchema,
     },
   ): IAlunaSymbolSchema {
+
     const {
       rawSymbol,
     } = params
@@ -41,6 +45,7 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
       acronym: rawSymbol.shortName,
       name: rawSymbol.longName,
     }
+
   }
 
 
@@ -50,8 +55,11 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
       rawSymbols: IValrSymbolSchema[],
     },
   ): IAlunaSymbolSchema[] {
+
     return params.rawSymbols.map((rawSymbol: IValrSymbolSchema) => this.parse({
       rawSymbol,
     }))
+
   }
+
 }

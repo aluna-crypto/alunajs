@@ -38,16 +38,21 @@ import {
 
 
 export class Valr extends AAlunaExchange implements IAlunaExchange {
+
   // exchange identifiers
   static readonly ID = 'valr'
+
   static readonly Symbol = new ValrSymbol()
+
   static readonly Market = new ValrMarket()
 
 
 
   // instance (public) methods
   Key: IAlunaKey
+
   Order: IAlunaOrder
+
   Balance: IAlunaBalance
 
 
@@ -59,10 +64,13 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
       settings?: IAlunaSettingsSchema
     },
   ) {
+
     super(params)
 
     this.Balance = new ValrBalance(this)
     this.Order = new ValrOrder(this)
     this.Key = new ValrKey(this)
+
   }
+
 }

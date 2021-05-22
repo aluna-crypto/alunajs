@@ -17,12 +17,15 @@ import {
 
 
 export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
+
   public async validate (
     params: IAlunaKeySecretSchema,
   ): Promise<boolean> {
+
     // TODO: implement me
     const x: any = params
     return x
+
   }
 
 
@@ -30,6 +33,7 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
   public async getPermissions (
     params: IAlunaKeySecretSchema,
   ): Promise<IAlunaKeyPermissionSchema> {
+
     const {
       key,
       secret,
@@ -48,6 +52,7 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
     })
 
     return parsedPermissions
+
   }
 
 
@@ -57,8 +62,11 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
       rawKey: IValrKeySchema,
     },
   ): IAlunaKeySecretSchema {
+
     // TODO: implement me
     const x: any = params
     return x
+
   }
+
 }
