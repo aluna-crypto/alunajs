@@ -5,9 +5,7 @@
   },
   "extends": [
     "airbnb-base",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "plugin:prettier/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -17,12 +15,32 @@
   "plugins": [
     "@typescript-eslint",
     "eslint-plugin-import-helpers",
-    "prettier"
+    "unused-imports"
   ],
   "rules": {
-    "prettier/prettier": "error",
     "camelcase": "off",
-    "import/no-unresolved": "error",
+    "semi": ["error", "never"],
+    "no-shadow": "off",
+    "no-console": "off",
+    "no-useless-constructor": "off",
+    "no-empty-function": "off",
+    "lines-between-class-members": "off",
+    "class-methods-use-this": "off",
+    "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
+    "space-before-function-paren": ["error", "always"],
+    "no-unused-vars": ["error", { "args": "all" }],
+    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": false }],
+    "max-len": ["error", { "code": 80, "tabWidth": 2 }],
+    "one-var-declaration-per-line": ["error", "always"],
+    "object-curly-newline": [
+      "error", {
+        "ObjectExpression": "always",
+        "ObjectPattern": "always",
+        "ImportDeclaration": { "minProperties": 1, "consistent": false, "multiline": true },
+        "ExportDeclaration": "always"
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -32,15 +50,22 @@
           "regex": "^I[A-Z]",
           "match": true
         }
+      },
+      {
+        "selector": "class",
+        "modifiers": ["abstract"],
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "^A[A-Z]",
+          "match": true
+        }
       }
     ],
-    "class-methods-use-this": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "off",
+    "import/no-unresolved": "error",
     "import/prefer-default-export": "off",
-    "no-shadow": "off",
-    "no-console": "off",
-    "no-useless-constructor": "off",
-    "no-empty-function": "off",
-    "lines-between-class-members": "off",
+    "import/newline-after-import": ["error", { "count": 3 }],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -52,7 +77,7 @@
       "warn",
       {
         "newlinesBetween": "always",
-        "groups": ["module", "/^@shared/", ["parent", "sibling", "index"]],
+        "groups": ["module", "/^@/", ["parent", "sibling", "index"]],
         "alphabetize": { "order": "asc", "ignoreCase": true }
       }
     ],
