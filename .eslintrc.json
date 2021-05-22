@@ -27,15 +27,15 @@
     "class-methods-use-this": "off",
     "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
     "space-before-function-paren": ["error", "always"],
-    "no-unused-vars": ["error", { "args": "all" }],
+    "no-unused-vars": "warn",
     "padded-blocks": ["error", "always"],
     "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": false }],
     "max-len": ["error", { "code": 80, "tabWidth": 2 }],
     "one-var-declaration-per-line": ["error", "always"],
     "object-curly-newline": [
       "error", {
-        "ObjectExpression": "always",
-        "ObjectPattern": "always",
+        "ObjectExpression": { "minProperties": 1, "consistent": false, "multiline": true },
+        "ObjectPattern": { "minProperties": 1, "consistent": false, "multiline": true },
         "ImportDeclaration": { "minProperties": 1, "consistent": false, "multiline": true },
         "ExportDeclaration": "always"
       }
