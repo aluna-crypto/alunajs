@@ -8,6 +8,9 @@ import {
   ValrPublicRequest,
 } from '../requests/ValrPublicRequest'
 import {
+  IValrCurrencyPairs,
+} from '../schemas/IValrCurrencyPairs'
+import {
   IValrMarketSchema,
 } from '../schemas/IValrMarketSchema'
 
@@ -26,16 +29,23 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   public async list (): Promise <IAlunaMarketSchema[]> {
 
-    const rawMarkets = await this.post<IValrMarketSchema[]>({
-      url: '/symbols',
-      params: {},
+    const rawMarkets = await this.get<IValrMarketSchema[]>({
+      url: 'https://api.valr.com/v1/public/marketsummary',
     })
 
-    const parsedMarkets = this.parseMany({
+    const rawSymbols = await this.get<IValrCurrencyPairs[]>({
+      url: 'https://api.valr.com/v1/public/pairs',
+    })
+
+    const rawMarketWithCurrPair = this.separeteCurrencyPairs({
       rawMarkets,
+      rawSymbols,
     })
 
-    return parsedMarkets
+
+    return this.parseMany({
+      rawMarkets: rawMarketWithCurrPair,
+    })
 
   }
 
