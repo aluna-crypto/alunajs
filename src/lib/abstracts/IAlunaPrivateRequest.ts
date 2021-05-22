@@ -1,4 +1,8 @@
 import {
+  IAlunaKeySecretSchema,
+} from 'lib/schemas/IAlunaKeySecretSchema'
+
+import {
   IAlunaRequestOptions,
 } from './IAlunaPublicRequest'
 
@@ -6,6 +10,7 @@ import {
 
 export interface IAlunaPrivateRequestParams {
   url: string
+  credentials: IAlunaKeySecretSchema
   body?: any
   options?: IAlunaRequestOptions
 }
