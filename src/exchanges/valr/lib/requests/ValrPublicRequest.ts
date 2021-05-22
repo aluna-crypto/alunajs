@@ -1,19 +1,24 @@
 import axios from 'axios'
 
-import { AAlunaPublicRequest } from '../../../../lib/abstracts/AAlunaPublicRequest'
+import {
+  AAlunaPublicRequest,
+} from '../../../../lib/abstracts/AAlunaPublicRequest'
 import {
   IAlunaPublicRequest,
   IAlunaPublicRequestParams,
 } from '../../../../lib/abstracts/IAlunaPublicRequest'
 
+
+
 export type IValrPublicRequestParams = IAlunaPublicRequestParams
 
 export class ValrPublicRequest
   extends AAlunaPublicRequest
-  implements IAlunaPublicRequest
-{
-  async get<T>(params: IAlunaPublicRequestParams): Promise<T> {
-    const { url, options } = params
+  implements IAlunaPublicRequest {
+  async get<T> (params: IAlunaPublicRequestParams): Promise<T> {
+    const {
+      url, options,
+    } = params
 
     try {
       const res = await axios.get<T>(url, options)
@@ -24,7 +29,7 @@ export class ValrPublicRequest
     }
   }
 
-  async post<T>(params: IValrPublicRequestParams): Promise<T> {
+  async post<T> (params: IValrPublicRequestParams): Promise<T> {
     throw new Error('Method not implemented.')
   }
 }

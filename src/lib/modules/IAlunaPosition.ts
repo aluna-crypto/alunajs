@@ -1,4 +1,6 @@
-import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
+import {
+  IAlunaPositionSchema,
+} from '../schemas/IAlunaPositionSchema'
 
 
 

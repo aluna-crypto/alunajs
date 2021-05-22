@@ -4,27 +4,33 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderPlaceParams,
 } from '../../../../lib/modules/IAlunaOrder'
-import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
-import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
-import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
+import {
+  IAlunaOrderSchema,
+} from '../../../../lib/schemas/IAlunaOrderSchema'
+import {
+  ValrPrivateRequest,
+} from '../requests/ValrPrivateRequest'
+import {
+  IValrOrderSchema,
+} from '../schemas/IValrOrderSchema'
 
 
 
 export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
-
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
-
     const rawOrders = await this.post<IValrOrderSchema[]>({
       url: '/list-orders',
-      params: {},
+      params: {
+      },
     })
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const parsedOrders = this.parseMany({
+      rawOrders,
+    })
 
     return parsedOrders
-
   }
 
 
@@ -32,20 +38,22 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
   public async get (
     params: IAlunaOrderGetParams,
   ): Promise<IAlunaOrderSchema> {
-
     const {
       id,
     } = params
 
     const rawOrder = await this.post<IValrOrderSchema>({
       url: '/get-order',
-      params: { id },
+      params: {
+        id,
+      },
     })
 
-    const parsedOrder = this.parse({ rawOrder })
+    const parsedOrder = this.parse({
+      rawOrder,
+    })
 
     return parsedOrder
-
   }
 
 
@@ -53,7 +61,6 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
-
     const {
       rate,
       symbol,
@@ -67,10 +74,11 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       },
     })
 
-    const parsedOrder = this.parse({ rawOrder: addedOrder })
+    const parsedOrder = this.parse({
+      rawOrder: addedOrder,
+    })
 
     return parsedOrder
-
   }
 
 
@@ -80,11 +88,9 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       rawOrder: IValrOrderSchema,
     },
   ): IAlunaOrderSchema {
-
     // TODO: implement me
     const x: any = params
     return x
-
   }
 
 
@@ -94,9 +100,8 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       rawOrders: IValrOrderSchema[],
     },
   ): IAlunaOrderSchema[] {
-    return params.rawOrders.map((rawOrder: IValrOrderSchema) =>
-      this.parse({ rawOrder })
-    )
+    return params.rawOrders.map((rawOrder: IValrOrderSchema) => this.parse({
+      rawOrder,
+    }))
   }
-
 }

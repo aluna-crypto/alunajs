@@ -1,4 +1,6 @@
-import { Valr } from './Valr'
+import {
+  Valr,
+} from './Valr'
 
 
 
@@ -21,7 +23,7 @@ const valr = new Valr({
   },
   options: {
     // ...
-  }
+  },
 })
 
 valr.Balance.list()

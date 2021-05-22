@@ -1,6 +1,12 @@
-import { AccountEnum } from '../enums/AccountEnum'
-import { PositionStatusEnum } from '../enums/PositionStatusEnum'
-import { SideEnum } from '../enums/SideEnum'
+import {
+  AccountEnum,
+} from '../enums/AccountEnum'
+import {
+  PositionStatusEnum,
+} from '../enums/PositionStatusEnum'
+import {
+  SideEnum,
+} from '../enums/SideEnum'
 
 
 

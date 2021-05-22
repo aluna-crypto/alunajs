@@ -1,7 +1,15 @@
-import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
-import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
-import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
-import { ValrSideEnum } from '../enums/ValrSideEnum'
+import {
+  ValrOrderStatusEnum,
+} from '../enums/ValrOrderStatusEnum'
+import {
+  ValrOrderTimeInForceEnum,
+} from '../enums/ValrOrderTimeInForceEnum'
+import {
+  ValrOrderTypesEnum,
+} from '../enums/ValrOrderTypesEnum'
+import {
+  ValrSideEnum,
+} from '../enums/ValrSideEnum'
 
 
 

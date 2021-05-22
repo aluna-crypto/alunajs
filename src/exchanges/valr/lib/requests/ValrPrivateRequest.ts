@@ -1,13 +1,21 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
-import { AAlunaPrivateRequest } from '../../../../lib/abstracts/AAlunaPrivateRequest'
+import {
+  AAlunaPrivateRequest,
+} from '../../../../lib/abstracts/AAlunaPrivateRequest'
 import {
   IAlunaPrivateRequest,
   IAlunaPrivateRequestParams,
 } from '../../../../lib/abstracts/IAlunaPrivateRequest'
-import { IAlunaRequestOptions } from '../../../../lib/abstracts/IAlunaPublicRequest'
-import { HttpVerbEnum } from '../../../../lib/enums/HtttpVerbEnum'
+import {
+  IAlunaRequestOptions,
+} from '../../../../lib/abstracts/IAlunaPublicRequest'
+import {
+  HttpVerbEnum,
+} from '../../../../lib/enums/HtttpVerbEnum'
+
+
 
 export interface IValrPrivateRequestParams extends IAlunaPrivateRequestParams {
   path: string
@@ -21,10 +29,12 @@ interface ISignedHashParams {
 
 export class ValrPrivateRequest
   extends AAlunaPrivateRequest
-  implements IAlunaPrivateRequest
-{
-  async get<T>(params: IValrPrivateRequestParams): Promise<T> {
-    const { url, path, options = {} as IAlunaRequestOptions } = params
+  implements IAlunaPrivateRequest {
+  async get<T> (params: IValrPrivateRequestParams): Promise<T> {
+    const {
+      url, path, options = {
+      } as IAlunaRequestOptions,
+    } = params
 
     const authHeader = this.generateAuthHeader({
       verb: HttpVerbEnum.GET,
@@ -44,8 +54,11 @@ export class ValrPrivateRequest
     }
   }
 
-  async post<T>(params: IValrPrivateRequestParams): Promise<T> {
-    const { url, path, body, options = {} as IAlunaRequestOptions } = params
+  async post<T> (params: IValrPrivateRequestParams): Promise<T> {
+    const {
+      url, path, body, options = {
+      } as IAlunaRequestOptions,
+    } = params
 
     const authHeader = this.generateAuthHeader({
       verb: HttpVerbEnum.POST,
@@ -69,10 +82,14 @@ export class ValrPrivateRequest
   private generateAuthHeader = (params: ISignedHashParams) => {
     const timestamp = Date.now()
 
-    const { verb, path, body = '' } = params
+    const {
+      verb, path, body = '',
+    } = params
 
     const {
-      keySecret: { key, secret },
+      keySecret: {
+        key, secret,
+      },
     } = this.exchange
 
     const signedRequest = crypto

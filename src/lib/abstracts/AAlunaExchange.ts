@@ -1,10 +1,13 @@
-import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
+import {
+  IAlunaKeySecretSchema,
+} from '../schemas/IAlunaKeySecretSchema'
+import {
+  IAlunaSettingsSchema,
+} from '../schemas/IAlunaSettingsSchema'
 
 
 
 export abstract class AAlunaExchange {
-
   public keySecret: IAlunaKeySecretSchema
   public settings?: IAlunaSettingsSchema
 
@@ -12,10 +15,9 @@ export abstract class AAlunaExchange {
     params: {
       keySecret: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
-    }
+    },
   ) {
     this.keySecret = params.keySecret
     this.settings = params.settings
   }
-
 }

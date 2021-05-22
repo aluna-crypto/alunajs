@@ -1,5 +1,9 @@
-import { IAlunaInstrumentSchema } from './IAlunaInstrumentSchema'
-import { IAlunaTickerSchema } from './IAlunaTickerSchema'
+import {
+  IAlunaInstrumentSchema,
+} from './IAlunaInstrumentSchema'
+import {
+  IAlunaTickerSchema,
+} from './IAlunaTickerSchema'
 
 
 

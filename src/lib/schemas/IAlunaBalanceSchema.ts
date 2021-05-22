@@ -1,4 +1,6 @@
-import { AccountEnum } from '../enums/AccountEnum'
+import {
+  AccountEnum,
+} from '../enums/AccountEnum'
 
 
 

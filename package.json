@@ -9,6 +9,9 @@
   ],
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "lintfix": "eslint --fix --ext .js,.ts ."
+  },
   "dependencies": {
     "axios": "^0.21.1"
   },

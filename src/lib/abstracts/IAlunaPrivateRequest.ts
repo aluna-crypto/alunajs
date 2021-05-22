@@ -1,4 +1,8 @@
-import { IAlunaRequestOptions } from './IAlunaPublicRequest'
+import {
+  IAlunaRequestOptions,
+} from './IAlunaPublicRequest'
+
+
 
 export interface IAlunaPrivateRequestParams {
   url: string
