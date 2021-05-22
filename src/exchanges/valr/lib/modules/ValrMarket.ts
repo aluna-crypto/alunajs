@@ -42,7 +42,6 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
       rawSymbols,
     })
 
-
     return this.parseMany({
       rawMarkets: rawMarketWithCurrPair,
     })
@@ -73,8 +72,6 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
     const quoteVolume = Number(this.availableCurrencyVolume[quoteCurrency]) || 0
 
-
-
     const ticker = {
       high: parseFloat(highPrice),
       low: parseFloat(lowPrice),
@@ -86,7 +83,6 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
       baseVolume: parseFloat(baseVolume),
       quoteVolume,
     }
-
 
     return {
       pairSymbol: `${baseCurrency}/${quoteCurrency}`,
@@ -102,15 +98,19 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   public parseMany (
     params: {
-      rawMarkets: IValrMarketSchema[],
+      rawMarkets: IMarketWithBaseQuoteCurr[],
     },
   ): IAlunaMarketSchema[] {
 
-    return params.rawMarkets.map((rawMarket: IValrMarketSchema) => this.parse({
-      rawMarket,
-    }))
+    return params.rawMarkets.map(
+      (rawMarket: IMarketWithBaseQuoteCurr) => this.parse({
+        rawMarket,
+      }),
+    )
 
   }
+
+
 
   private separeteCurrencyPairs (
     params: {
@@ -124,8 +124,6 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
     } = params
 
     return rawMarkets.reduce((cumulator, current) => {
-
-
 
       const rawSymbol = rawSymbols.find(
         (eachItem) => eachItem.symbol === current.currencyPair,
