@@ -53,13 +53,48 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   public parse (
     params: {
-      rawMarket: IValrMarketSchema,
+      rawMarket: IMarketWithBaseQuoteCurr,
     },
   ): IAlunaMarketSchema {
 
-    // TODO: implement me
-    const x: any = params
-    return x
+    const {
+      rawMarket: {
+        askPrice,
+        baseVolume,
+        bidPrice,
+        changeFromPrevious,
+        highPrice,
+        lastTradedPrice,
+        lowPrice,
+        baseCurrency,
+        quoteCurrency,
+      },
+    } = params
+
+    const quoteVolume = Number(this.availableCurrencyVolume[quoteCurrency]) || 0
+
+
+
+    const ticker = {
+      high: parseFloat(highPrice),
+      low: parseFloat(lowPrice),
+      bid: parseFloat(bidPrice),
+      ask: parseFloat(askPrice),
+      last: parseFloat(lastTradedPrice),
+      date: new Date(new Date().toDateString()),
+      change: parseFloat(changeFromPrevious) / 100,
+      baseVolume: parseFloat(baseVolume),
+      quoteVolume,
+    }
+
+
+    return {
+      pairSymbol: `${baseCurrency}/${quoteCurrency}`,
+      ticker,
+      spotEnabled: false,
+      marginEnabled: false,
+      derivativesEnabled: false,
+    }
 
   }
 
