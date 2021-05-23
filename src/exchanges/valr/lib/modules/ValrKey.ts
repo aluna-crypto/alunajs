@@ -37,51 +37,41 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
     params: IAlunaKeySecretSchema,
   ): Promise<IAlunaKeyPermissionSchema> {
 
-    const {
-      key,
-      secret,
-    } = params
-
-    let permissions = {} as IValrKeySchema
+    const permissions = {
+      canRead: false,
+      canTrade: false,
+      canWithraw: false,
+    }
 
     try {
 
       await this.get<IValrKeySchema>({
         url: 'https://api.valr.com/v1/account/balances',
-        path: 'as',
-        credentials: {
-          key,
-          secret,
-        },
+        path: '/v1/account/balances',
+        credentials: this.exchange.keySecret,
       })
 
-      permissions = {
-        canRead: true,
-        canTrade: !!await this.get<IValrOrderSchema>({
-          url: 'https://api.valr.com/v1/simple/notACurrencyXX00/order',
-          path: '/v1/simple/notACurrencyXX00/order',
-          body: JSON.stringify({
-            payInCurrency: 'notAnActualCurrencyXX00',
-            payAmount: '0',
-            side: 'SELL',
-          }),
-          credentials: {
-            key,
-            secret,
-          },
+      permissions.canRead = true
+
+      await this.get<IValrOrderSchema>({
+        url: 'https://api.valr.com/v1/orders/limit',
+        path: '/v1/orders/limit',
+        body: JSON.stringify({
+          side: 'SELL',
+          quantity: '0',
+          price: '0',
+          pair: 'NotACurrencyXX99',
+          postOnly: false,
+          timeInForce: 'GTC',
         }),
-        canWithraw: false,
-      }
+        credentials: this.exchange.keySecret,
+      })
 
     } catch (error) {
 
-      if (error.message === 'Unauthorized') {
+      if (error.message === 'Unauthorized' && permissions.canRead) {
 
-        permissions = {
-          canRead: false,
-          canTrade: false,
-          canWithraw: false,
-        }
+        permissions.canTrade = true
 
       }
 
