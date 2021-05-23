@@ -8,6 +8,7 @@ import {
 import {
   IAlunaOrder,
   IAlunaOrderListParams,
+  IAlunaOrderPlaceParams,
 } from '../../../../lib/modules/IAlunaOrder'
 import {
   IAlunaOrderSchema,
@@ -56,7 +57,31 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
 
 
-  place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
+  async place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
+
+    const {
+      amount, rate, symbol, side,
+    } = params
+
+    const body = {
+      side: ValrSideAdapter.translateToValr({
+        side,
+      }),
+      quantity: amount,
+      price: rate,
+      pair: symbol,
+      postOnly: false,
+      timeInForce: 'GTC',
+    }
+
+    // Valr does not return an order object. Should use method get?
+
+    await this.post<{ id: string }>({
+      url: 'https://api.valr.com/v1/orders/limit',
+      path: '/v1/orders/limit',
+      body,
+      credentials: this.exchange.keySecret,
+    })
 
     throw new Error('Method not implemented.')
 
@@ -87,8 +112,6 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
     const rate = parseFloat(price)
 
-    const total = amount * rate
-
     const translatedSide = ValrSideAdapter.translateToAluna({
       side,
     })
@@ -104,7 +127,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
     return {
       id: orderId,
       marketId: currencyPair,
-      total,
+      total: amount * rate,
       amount,
       isAmountInContracts: false,
       rate,
