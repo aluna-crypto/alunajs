@@ -1,12 +1,26 @@
 import {
+  AccountEnum,
+} from 'lib/enums/AccountEnum'
+import {
+  utc,
+} from 'moment'
+
+import {
   IAlunaOrder,
-  IAlunaOrderGetParams,
   IAlunaOrderListParams,
-  IAlunaOrderPlaceParams,
 } from '../../../../lib/modules/IAlunaOrder'
 import {
   IAlunaOrderSchema,
 } from '../../../../lib/schemas/IAlunaOrderSchema'
+import {
+  ValrSideAdapter,
+} from '../adapters/ValrSideAdapter'
+import {
+  ValrStatusAdapter,
+} from '../adapters/ValrStatusAdapter'
+import {
+  ValrTypeAdapter,
+} from '../adapters/ValrTypeAdapter'
 import {
   ValrPrivateRequest,
 } from '../requests/ValrPrivateRequest'
@@ -18,13 +32,18 @@ import {
 
 export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
+  // openOrdersOnly?: boolean
+  // start?: number
+  // limit?: number
+
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
 
-    const rawOrders = await this.post<IValrOrderSchema[]>({
-      url: '/list-orders',
-      params: {},
+    const rawOrders = await this.get<IValrOrderSchema[]>({
+      url: 'https://api.valr.com/v1/orders/open',
+      path: '/v1/orders/open',
+      credentials: this.exchange.keySecret,
     })
 
     const parsedOrders = this.parseMany({
@@ -37,53 +56,9 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
 
 
-  public async get (
-    params: IAlunaOrderGetParams,
-  ): Promise<IAlunaOrderSchema> {
+  place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
 
-    const {
-      id,
-    } = params
-
-    const rawOrder = await this.post<IValrOrderSchema>({
-      url: '/get-order',
-      params: {
-        id,
-      },
-    })
-
-    const parsedOrder = this.parse({
-      rawOrder,
-    })
-
-    return parsedOrder
-
-  }
-
-
-
-  public async place (
-    params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
-
-    const {
-      rate,
-      symbol,
-    } = params
-
-    const addedOrder = await this.post<IValrOrderSchema>({
-      url: '/place-order',
-      params: {
-        rate,
-        symbol,
-      },
-    })
-
-    const parsedOrder = this.parse({
-      rawOrder: addedOrder,
-    })
-
-    return parsedOrder
+    throw new Error('Method not implemented.')
 
   }
 
@@ -91,13 +66,54 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
   public parse (
     params: {
-      rawOrder: IValrOrderSchema,
+      rawOrder: IValrOrderSchema
     },
   ): IAlunaOrderSchema {
 
-    // TODO: implement me
-    const x: any = params
-    return x
+    const {
+      rawOrder: {
+        orderId,
+        currencyPair,
+        side,
+        price,
+        status,
+        type,
+        originalQuantity,
+        createdAt,
+      },
+    } = params
+
+    const amount = parseFloat(originalQuantity)
+
+    const rate = parseFloat(price)
+
+    const total = amount * rate
+
+    const translatedSide = ValrSideAdapter.translateToAluna({
+      side,
+    })
+
+    const translatedStatus = ValrStatusAdapter.translateToAluna({
+      status,
+    })
+
+    const translatedOrder = ValrTypeAdapter.translateToAluna({
+      type,
+    })
+
+    return {
+      id: orderId,
+      marketId: currencyPair,
+      total,
+      amount,
+      isAmountInContracts: false,
+      rate,
+      account: AccountEnum.EXCHANGE,
+      side: translatedSide,
+      status: translatedStatus,
+      type: translatedOrder,
+      placedAt: utc(createdAt.replace(/\s/, 'T')).toDate(),
+    }
 
   }
 
@@ -105,7 +121,7 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
 
   public parseMany (
     params: {
-      rawOrders: IValrOrderSchema[],
+      rawOrders: IValrOrderSchema[]
     },
   ): IAlunaOrderSchema[] {
 
