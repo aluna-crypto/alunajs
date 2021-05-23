@@ -16,16 +16,6 @@ import {
  * ISSUE: Valr has many different order responses types
 */
 
-export interface IValrPlaceOrderSchema {
-  side: ValrSideEnum
-  quantity: string
-  price: string
-  pair: string
-  postOnly: boolean
-  customerOrderId: string
-  timeInForce: ValrOrderTimeInForceEnum
-}
-
 
 
 export interface IValrOrderSchema {
