@@ -8,6 +8,9 @@ import {
   IAlunaKeySecretSchema,
 } from '../../../../lib/schemas/IAlunaKeySecretSchema'
 import {
+  ValrErrorEnum,
+} from '../enums/ValrErrorEnum'
+import {
   ValrPrivateRequest,
 } from '../requests/ValrPrivateRequest'
 import {
@@ -69,7 +72,10 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
 
     } catch (error) {
 
-      if (error.message === 'Unauthorized' && permissions.canRead) {
+      if (
+        error.message === ValrErrorEnum.INVALID_REQUEST
+        && permissions.canRead
+      ) {
 
         permissions.canTrade = true
 
