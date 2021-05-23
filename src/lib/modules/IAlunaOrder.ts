@@ -1,4 +1,8 @@
 import {
+  SideEnum,
+} from 'lib/enums/SideEnum'
+
+import {
   IAlunaOrderSchema,
 } from '../schemas/IAlunaOrderSchema'
 
@@ -15,6 +19,7 @@ export interface IAlunaOrderGetParams {
 }
 
 export interface IAlunaOrderPlaceParams {
+  side: SideEnum
   symbol: string
   rate: string | number
   amount: string | number
