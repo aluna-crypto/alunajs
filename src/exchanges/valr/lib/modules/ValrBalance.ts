@@ -23,6 +23,7 @@ export class ValrBalance extends ValrPrivateRequest implements IAlunaBalance {
 
     const rawBalances = await this.get<IValrBalanceSchema[]>({
       url: 'https://api.valr.com/v1/account/balances',
+      credentials: this.exchange.keySecret,
       path: '/v1/account/balances',
     })
 
