@@ -13,7 +13,8 @@
     "lintfix": "eslint --fix --ext .js,.ts ."
   },
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "moment": "^2.29.1"
   },
   "devDependencies": {
     "@types/node": "^15.3.1",
