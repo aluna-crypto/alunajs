@@ -14,6 +14,9 @@ import {
 import {
   HttpVerbEnum,
 } from '../../../../lib/enums/HtttpVerbEnum'
+import {
+  ValrError,
+} from '../errors/ValrError'
 
 
 
@@ -54,7 +57,7 @@ export class ValrPrivateRequest
 
     } catch (error) {
 
-      throw new Error(error)
+      throw this.formatRequestError(error)
 
     }
 
@@ -87,7 +90,7 @@ export class ValrPrivateRequest
 
     } catch (error) {
 
-      throw new Error(error)
+      throw this.formatRequestError(error)
 
     }
 
@@ -123,6 +126,22 @@ export class ValrPrivateRequest
       'X-VALR-SIGNATURE': signedRequest,
       'X-VALR-TIMESTAMP': timestamp,
     }
+
+  }
+
+  private formatRequestError (error: any): ValrError {
+
+    const {
+      response,
+    } = error
+
+    if (response && response.data && response.data.message) {
+
+      return new ValrError(response.data.message, response.status)
+
+    }
+
+    return new ValrError(error.message)
 
   }
 
