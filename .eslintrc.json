@@ -30,13 +30,19 @@
     "no-unused-vars": "warn",
     "padded-blocks": ["error", "always"],
     "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": false }],
-    "max-len": ["error", { "code": 80, "tabWidth": 2 }],
+    "max-len": [
+      "error", { 
+        "code": 80, 
+        "tabWidth": 2,
+        "ignoreStrings": true
+      }
+    ],
     "one-var-declaration-per-line": ["error", "always"],
     "object-curly-newline": [
       "error", {
         "ObjectExpression": { "minProperties": 1, "consistent": false, "multiline": true },
         "ObjectPattern": { "minProperties": 1, "consistent": false, "multiline": true },
-        "ImportDeclaration": { "minProperties": 1, "consistent": false, "multiline": true },
+        "ImportDeclaration": { "minProperties": 2, "consistent": false, "multiline": true },
         "ExportDeclaration": "always"
       }
     ],
@@ -88,10 +94,6 @@
         "groups": ["module", "/^@/", ["parent", "sibling", "index"]],
         "alphabetize": { "order": "asc", "ignoreCase": true }
       }
-    ],
-    "import/no-extraneous-dependencies": [
-      "error",
-      { "devDependencies": ["**/*.spec.js"] }
     ]
   },
   "settings": {
