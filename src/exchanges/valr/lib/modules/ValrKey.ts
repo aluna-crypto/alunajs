@@ -28,9 +28,15 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
     params: IAlunaKeySecretSchema,
   ): Promise<boolean> {
 
-    // TODO: implement me
-    const x: any = params
-    return x
+    const alunaPermissions = await this.getPermissions(
+      params,
+    )
+
+    return Object.values(alunaPermissions).some(
+      (permType) => Object.values(permType).some(
+        (perm) => perm,
+      ),
+    )
 
   }
 
@@ -83,7 +89,6 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
 
     }
 
-
     const parsedPermissions = this.parsePermissions({
       rawKey: permissions,
     })
@@ -96,7 +101,7 @@ export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
 
   public parsePermissions (
     params: {
-      rawKey: IValrKeySchema,
+      rawKey: IValrKeySchema
     },
   ): IAlunaKeyPermissionSchema {
 
