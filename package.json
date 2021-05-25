@@ -1,5 +1,5 @@
 {
-  "name": "aluna",
+  "name": "aluna.js",
   "version": "0.0.1",
   "description": "Aluna exchanges hub.",
   "main": "./src/Aluna.ts",
@@ -8,13 +8,7 @@
     "Sergio Torres<sergio@aluna.social>"
   ],
   "license": "MIT",
-  "private": true,
-  "workspaces": {
-    "packages": [
-      "src/exchanges/*",
-      "src/lib"
-    ]
-  },
+  "private": false,
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
     "test": "mocha -r ts-node/register ./**/test/*.spec.ts"
