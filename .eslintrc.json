@@ -34,7 +34,8 @@
       "error", { 
         "code": 80, 
         "tabWidth": 2,
-        "ignoreStrings": true
+        "ignoreStrings": true,
+        "ignoreComments": true 
       }
     ],
     "one-var-declaration-per-line": ["error", "always"],
