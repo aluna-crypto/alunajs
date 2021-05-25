@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "lib/*": ["./src/lib/*"]
+      "@lib/*": ["./src/lib/*"]
     }
   }
 }
