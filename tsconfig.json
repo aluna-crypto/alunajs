@@ -2,14 +2,16 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "baseUrl": "./src",
     "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "strict": true, 
-    "skipLibCheck": true,   
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": [
-    "src/**/*.ts"
-  ]
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": {
+      "lib/*": ["./src/lib/*"]
+    }
+  }
 }
