@@ -33,9 +33,7 @@
     "max-len": [
       "error", { 
         "code": 80, 
-        "tabWidth": 2,
-        "ignoreStrings": true,
-        "ignoreComments": true 
+        "tabWidth": 2
       }
     ],
     "one-var-declaration-per-line": ["error", "always"],
