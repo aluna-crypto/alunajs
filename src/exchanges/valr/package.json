@@ -1,5 +1,5 @@
 {
-  "name": "@aluna.js/valr",
+  "name": "@aluna/valr",
   "version": "0.0.1",
   "description": "Valr implementation for ALUNA.",
   "main": "./Valr.ts",
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.21.1",
-    "aluna.js": "0.1.1",
+    "@aluna/lib": "*",
     "moment": "^2.29.1"
   }
 }
