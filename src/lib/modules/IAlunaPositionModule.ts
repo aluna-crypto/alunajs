@@ -1,3 +1,5 @@
+import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
+
 import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 
@@ -18,7 +20,7 @@ export interface IAlunaPositionCloseParams {
 
 
 
-export interface IAlunaPositionModule {
+export interface IAlunaPositionModule extends IAlunaModule {
 
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionSchema[]>
   get (params?: IAlunaPositionGetParams): Promise<IAlunaPositionSchema>

@@ -1,9 +1,11 @@
+import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
+
 import { IAlunaKeyPermissionSchema } from '../schemas/IAlunaKeyPermissionSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 
 
 
-export interface IAlunaKeyModule {
+export interface IAlunaKeyModule extends IAlunaModule {
 
   validate (
     params: IAlunaKeySecretSchema,

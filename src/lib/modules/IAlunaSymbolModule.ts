@@ -1,8 +1,10 @@
+import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
+
 import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 
 
 
-export interface IAlunaSymbolModule {
+export interface IAlunaSymbolModule extends IAlunaModule {
 
   list (): Promise<IAlunaSymbolSchema[]>
   get? (params: { id: string | number }): Promise<IAlunaSymbolSchema>
