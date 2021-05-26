@@ -15,7 +15,7 @@ export interface ITranslateEnumFromToParams {
   to: IEnumGeneric // destination enum
 }
 
-export const translateEnumFromTo = (
+export const translateEnum = (
   params: ITranslateEnumFromToParams,
 ) => {
 

@@ -1,19 +1,19 @@
 import { ValrOrderTypesEnum } from '../../exchanges/valr/lib/enums/ValrOrderTypesEnum'
 import { OrderTypesEnum } from '../enums/OrderTypeEnum'
-import { translateEnumFromTo } from './translateEnumFromTo'
+import { translateEnum } from './translateEnumFromTo'
 
 
 
 /*
   App enums
 */
-const alunaToValr = translateEnumFromTo({
+const alunaToValr = translateEnum({
   string: OrderTypesEnum.LIMIT,
   from: OrderTypesEnum,
   to: ValrOrderTypesEnum,
 })
 
-const valrToAluna = translateEnumFromTo({
+const valrToAluna = translateEnum({
   string: ValrOrderTypesEnum.LIMIT,
   from: ValrOrderTypesEnum,
   to: OrderTypesEnum,
@@ -43,13 +43,13 @@ enum enumB {
   KEY_D = 'enumB:D',
 }
 
-const bToA = translateEnumFromTo({
+const bToA = translateEnum({
   string: enumB.KEY_A,
   from: enumB,
   to: enumA,
 })
 
-const aToB = translateEnumFromTo({
+const aToB = translateEnum({
   string: enumA.KEY_A,
   from: enumA,
   to: enumB,
