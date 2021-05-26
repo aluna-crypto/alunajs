@@ -3,7 +3,7 @@ import { IAlunaKey } from '../modules/IAlunaKey'
 import { IAlunaOrder } from '../modules/IAlunaOrder'
 import { IAlunaPosition } from '../modules/IAlunaPosition'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
-// import { IAlunaSettingsSchema } from '../schemas/IAlunaOrderSchema'
+import { IAlunaPrivateRequest } from './IAlunaPrivateRequest'
 
 
 
@@ -15,6 +15,8 @@ export interface IAlunaExchange {
   // ID: string
   // Symbol: IAlunaSymbol
   // Market: IAlunaMarket
+
+  privateRequest: IAlunaPrivateRequest
 
   keySecret: IAlunaKeySecretSchema
   // options?: IAlunaSettingsSchema
