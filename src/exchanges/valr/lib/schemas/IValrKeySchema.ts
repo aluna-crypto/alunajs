@@ -1,5 +1,5 @@
 export interface IValrKeySchema {
-  canRead: boolean
-  canTrade: boolean
-  canWithraw: boolean
+  read: boolean
+  trade: boolean
+  withraw: boolean
 }
