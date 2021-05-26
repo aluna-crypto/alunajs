@@ -4,7 +4,8 @@ import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 
 
 export interface IAlunaRequestOptions {
-  // ...
+  headers?: any
+  httpsAgent?: any
 }
 
 export interface IAlunaRequestParams {
