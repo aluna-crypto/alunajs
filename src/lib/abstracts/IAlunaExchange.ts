@@ -1,30 +1,26 @@
-import { IAlunaBalance } from '../modules/IAlunaBalance'
-import { IAlunaKey } from '../modules/IAlunaKey'
-import { IAlunaOrder } from '../modules/IAlunaOrder'
-import { IAlunaPosition } from '../modules/IAlunaPosition'
+import { IAlunaMarket } from '@lib/modules/IAlunaMarketModule'
+import { IAlunaSymbol } from '@lib/modules/IAlunaSymbolModule'
+import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
+
+import { IAlunaBalance } from '../modules/IAlunaBalanceModule'
+import { IAlunaKey } from '../modules/IAlunaKeyModule'
+import { IAlunaOrder } from '../modules/IAlunaOrderModule'
+import { IAlunaPosition } from '../modules/IAlunaPositionModule'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
-import { IAlunaPrivateRequest } from './IAlunaPrivateRequest'
 
 
 
 export interface IAlunaExchange {
 
-  /*
-    Can't type static items?
-  */
-  // ID: string
-  // Symbol: IAlunaSymbol
-  // Market: IAlunaMarket
-
-  privateRequest: IAlunaPrivateRequest
-
   keySecret: IAlunaKeySecretSchema
-  // options?: IAlunaSettingsSchema
+  settings?: IAlunaSettingsSchema
+
+  Symbol: IAlunaSymbol
+  Market: IAlunaMarket
 
   Key: IAlunaKey
   Order: IAlunaOrder
   Balance: IAlunaBalance
-
   Position?: IAlunaPosition
 
 }

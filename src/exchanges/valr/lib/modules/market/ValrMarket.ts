@@ -1,5 +1,5 @@
 import { AAlunaPublicModule } from '@lib/abstracts/AAlunaPublicModule'
-import { IAlunaMarket } from '@lib/modules/IAlunaMarket'
+import { IAlunaMarket } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
 import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'

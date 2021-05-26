@@ -1,5 +1,5 @@
 import { AAlunaPublicModule } from '@lib/abstracts/AAlunaPublicModule'
-import { IAlunaSymbol } from '@lib/modules/IAlunaSymbol'
+import { IAlunaSymbol } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
 import { IValrSymbolSchema } from '../../schemas/IValrSymbolSchema'

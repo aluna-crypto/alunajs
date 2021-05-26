@@ -7,7 +7,6 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderPlaceParams,
 } from '../../../../lib/modules/IAlunaOrder'
-import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
 import { ValrTypeAdapter } from '../adapters/ValrTypeAdapter'
