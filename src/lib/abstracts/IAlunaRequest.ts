@@ -1,4 +1,5 @@
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 
 
 
@@ -9,8 +10,9 @@ export interface IAlunaRequestOptions {
 export interface IAlunaRequestParams {
   url: string
   body?: any
-  credentials: IAlunaKeySecretSchema
   options?: IAlunaRequestOptions
+  keySecret?: IAlunaKeySecretSchema
+  settings?: IAlunaSettingsSchema
 }
 
 export interface IAlunaRequest {
