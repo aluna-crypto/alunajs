@@ -2,10 +2,11 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
+import { ValrRequests } from '../../requests/ValrRequests'
+import { IValrCurrencyPairs } from '../../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from './parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from './parsers/ValrMarketParser'
-import { ValrMarketList } from './ValrMarketList'
 
 
 
@@ -20,12 +21,17 @@ export class ValrMarket extends AAlunaModule implements IAlunaMarketModule {
 
   async list (): Promise<IAlunaMarketSchema[]> {
 
-    const {
-      rawMarkets,
-      rawSymbolPairs,
-    } = await new ValrMarketList({
-      publicRequest: this.requestHandler,
-    }).list()
+    const request = new ValrRequests()
+
+    const rawMarkets = await request.get<IValrMarketSchema[]>({
+      url: 'https://api.valr.com/v1/public/marketsummary',
+    })
+
+    const rawSymbolPairs = await request.get<IValrCurrencyPairs[]>({
+      url: 'https://api.valr.com/v1/public/pairs',
+    })
+
+
 
     const {
       rawMarketsWithCurrency,
