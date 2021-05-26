@@ -12,12 +12,15 @@ import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 
 export interface IAlunaExchange {
 
+  // basics
   keySecret: IAlunaKeySecretSchema
   settings?: IAlunaSettingsSchema
 
+  // modules (public)
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
 
+  // modules (private/signed)
   Key: IAlunaKeyModule
   Order: IAlunaOrderModule
   Balance: IAlunaBalanceModule

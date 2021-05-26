@@ -1,4 +1,4 @@
-import { IAlunaPrivateRequest } from '@lib/abstracts/IAlunaPrivateRequest'
+import { IAlunaRequest } from '@lib/abstracts/IAlunaRequest'
 
 import { IAlunaExchange } from ''
 import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
@@ -32,7 +32,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
   Balance: IAlunaBalanceModule
 
-  privateRequest: IAlunaPrivateRequest
+  privateRequest: IAlunaRequest
 
 
 

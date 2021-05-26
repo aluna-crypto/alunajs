@@ -1,4 +1,4 @@
-import { AAlunaPublicModule } from '@lib/abstracts/AAlunaPublicModule'
+import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
@@ -8,7 +8,7 @@ import { ValrSymbolList } from './ValrSymbolList'
 
 
 
-export class ValrSymbol extends AAlunaPublicModule implements IAlunaSymbolModule {
+export class ValrSymbol extends AAlunaModule implements IAlunaSymbolModule {
 
   async list (): Promise<IAlunaSymbolSchema[]> {
 

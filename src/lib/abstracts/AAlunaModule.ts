@@ -1,14 +1,20 @@
-import { IAlunaPublicRequest } from './IAlunaPublicRequest'
+import { IAlunaExchange } from './IAlunaExchange'
 
 
 
-export abstract class AAlunaPublicModule {
+export abstract class AAlunaModule {
 
-  protected requestHandler: IAlunaPublicRequest
+  public readonly exchange: IAlunaExchange
 
-  constructor (requestHandler: IAlunaPublicRequest) {
 
-    this.requestHandler = requestHandler
+
+  constructor (
+    params: {
+      exchange: IAlunaExchange
+    }
+  ) {
+
+    this.exchange = params.exchange
 
   }
 

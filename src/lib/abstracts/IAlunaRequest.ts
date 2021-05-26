@@ -1,17 +1,19 @@
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
-import { IAlunaRequestOptions } from './IAlunaPublicRequest'
 
 
+export interface IAlunaRequestOptions {
+  // ...
+}
 
-export interface IAlunaPrivateRequestParams {
+export interface IAlunaRequestParams {
   url: string
-  credentials: IAlunaKeySecretSchema
   body?: any
+  credentials: IAlunaKeySecretSchema
   options?: IAlunaRequestOptions
 }
 
-export interface IAlunaPrivateRequest {
-  post<T>(params: IAlunaPrivateRequestParams): Promise<T>
-  get<T>(params: IAlunaPrivateRequestParams): Promise<T>
+export interface IAlunaRequest {
+  post<T>(params: IAlunaRequestParams): Promise<T>
+  get<T>(params: IAlunaRequestParams): Promise<T>
 }

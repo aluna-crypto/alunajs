@@ -1,12 +1,20 @@
-import { IAlunaExchange } from './IAlunaExchange'
+import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
 
 
-export abstract class AAlunaPrivateRequest {
+export abstract class AAlunaRequest {
 
-  constructor (public exchange: IAlunaExchange) {
+  public readonly keySecret?: IAlunaKeySecretSchema
 
-    this.exchange = exchange
+
+
+  constructor (
+    params?: {
+      keySecret: IAlunaKeySecretSchema
+    }
+  ) {
+
+    this.keySecret = params?.keySecret
 
   }
 

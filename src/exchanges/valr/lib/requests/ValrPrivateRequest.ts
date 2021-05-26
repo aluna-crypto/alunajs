@@ -2,18 +2,18 @@ import axios from 'axios'
 import crypto from 'crypto'
 
 import { AAlunaPrivateRequest } from '@lib/abstracts/AAlunaPrivateRequest'
-import {
-  IAlunaPrivateRequest,
-  IAlunaPrivateRequestParams,
-} from '@lib/abstracts/IAlunaPrivateRequest'
 import { IAlunaRequestOptions } from '@lib/abstracts/IAlunaPublicRequest'
+import {
+  IAlunaRequest,
+  IAlunaRequestParams,
+} from '@lib/abstracts/IAlunaRequest'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 
 import { ValrError } from '../errors/ValrError'
 
 
 
-export interface IValrPrivateRequestParams extends IAlunaPrivateRequestParams {
+export interface IValrPrivateRequestParams extends IAlunaRequestParams {
   path: string
 }
 
@@ -25,7 +25,7 @@ interface ISignedHashParams {
 
 export class ValrPrivateRequest
   extends AAlunaPrivateRequest
-  implements IAlunaPrivateRequest {
+  implements IAlunaRequest {
 
   async get<T> (params: IValrPrivateRequestParams): Promise<T> {
 
