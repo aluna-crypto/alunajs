@@ -3,7 +3,7 @@ import { IAlunaSymbol } from '@lib/modules/IAlunaSymbol'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
 import { IValrSymbolSchema } from '../../schemas/IValrSymbolSchema'
-import { ValrSymbolParse } from './parsers/ValrSymbolParse'
+import { ValrSymbolParser } from './parsers/ValrSymbolParser'
 import { ValrSymbolList } from './ValrSymbolList'
 
 
@@ -22,7 +22,7 @@ export class ValrSymbol extends AAlunaPublicModule implements IAlunaSymbol {
 
   parse (params: { rawSymbol: IValrSymbolSchema }): IAlunaSymbolSchema {
 
-    return ValrSymbolParse.parse({
+    return ValrSymbolParser.parse({
       rawSymbol: params.rawSymbol,
     })
 
@@ -32,7 +32,7 @@ export class ValrSymbol extends AAlunaPublicModule implements IAlunaSymbol {
     rawSymbols: IValrSymbolSchema[]
   }): IAlunaSymbolSchema[] {
 
-    return params.rawSymbols.map((rawSymbol) => ValrSymbolParse.parse({
+    return params.rawSymbols.map((rawSymbol) => ValrSymbolParser.parse({
       rawSymbol,
     }))
 
