@@ -18,7 +18,7 @@ export interface IAlunaPositionCloseParams {
 
 
 
-export interface IAlunaPosition {
+export interface IAlunaPositionModule {
 
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionSchema[]>
   get (params?: IAlunaPositionGetParams): Promise<IAlunaPositionSchema>

@@ -2,7 +2,7 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 
 
-export interface IAlunaBalance {
+export interface IAlunaBalanceModule {
 
   list (): Promise<IAlunaBalanceSchema[]>
   parse (params: { rawBalance: any }): IAlunaBalanceSchema

@@ -1,4 +1,4 @@
-import { IAlunaKey } from '@lib/modules/IAlunaKeyModule'
+import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
@@ -9,7 +9,7 @@ import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 
-export class ValrKey extends ValrPrivateRequest implements IAlunaKey {
+export class ValrKey extends ValrPrivateRequest implements IAlunaKeyModule {
 
   public async validate (
     params: IAlunaKeySecretSchema,

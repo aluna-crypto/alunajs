@@ -2,7 +2,7 @@ import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 
 
 
-export interface IAlunaSymbol {
+export interface IAlunaSymbolModule {
 
   list (): Promise<IAlunaSymbolSchema[]>
   get? (params: { id: string | number }): Promise<IAlunaSymbolSchema>

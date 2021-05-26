@@ -2,9 +2,9 @@ import { IAlunaPrivateRequest } from '@lib/abstracts/IAlunaPrivateRequest'
 
 import { IAlunaExchange } from ''
 import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
-import { IAlunaBalance } from '../../lib/modules/IAlunaBalanceModule'
-import { IAlunaKey } from '../../lib/modules/IAlunaKeyModule'
-import { IAlunaOrder } from '../../lib/modules/IAlunaOrderModule'
+import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
+import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
+import { IAlunaOrderModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { ValrMarket } from './lib/modules/market/ValrMarket'
@@ -26,11 +26,11 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
 
 
-  Key: IAlunaKey
+  Key: IAlunaKeyModule
 
-  Order: IAlunaOrder
+  Order: IAlunaOrderModule
 
-  Balance: IAlunaBalance
+  Balance: IAlunaBalanceModule
 
   privateRequest: IAlunaPrivateRequest
 

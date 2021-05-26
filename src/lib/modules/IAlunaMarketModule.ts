@@ -2,7 +2,7 @@ import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
 
 
 
-export interface IAlunaMarket {
+export interface IAlunaMarketModule {
 
   list (): Promise<IAlunaMarketSchema[]>
   // get? (params: { id: string | number }): Promise<IAlunaMarketSchema>

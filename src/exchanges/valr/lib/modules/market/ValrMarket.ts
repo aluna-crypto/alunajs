@@ -1,5 +1,5 @@
 import { AAlunaPublicModule } from '@lib/abstracts/AAlunaPublicModule'
-import { IAlunaMarket } from '@lib/modules/IAlunaMarketModule'
+import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
 import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
@@ -16,7 +16,7 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 
 
 
-export class ValrMarket extends AAlunaPublicModule implements IAlunaMarket {
+export class ValrMarket extends AAlunaPublicModule implements IAlunaMarketModule {
 
   async list (): Promise<IAlunaMarketSchema[]> {
 
