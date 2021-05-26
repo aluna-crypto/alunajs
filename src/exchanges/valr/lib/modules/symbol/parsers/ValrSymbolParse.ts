@@ -21,14 +21,4 @@ export class ValrSymbolParser {
 
   }
 
-  static parseMany (params: {
-    rawSymbols: IValrSymbolSchema[]
-  }): IAlunaSymbolSchema[] {
-
-    return params.rawSymbols.map((rawSymbol: IValrSymbolSchema) => this.parse({
-      rawSymbol,
-    }))
-
-  }
-
 }
