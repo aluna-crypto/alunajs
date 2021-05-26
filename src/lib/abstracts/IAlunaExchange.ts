@@ -13,7 +13,7 @@ import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 export interface IAlunaExchange {
 
   // basics
-  keySecret: IAlunaKeySecretSchema
+  keySecret?: IAlunaKeySecretSchema
   settings?: IAlunaSettingsSchema
 
   // modules (public)
