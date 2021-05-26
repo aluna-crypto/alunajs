@@ -6,6 +6,6 @@ export interface IAlunaBalanceModule {
 
   list (): Promise<IAlunaBalanceSchema[]>
   parse (params: { rawBalance: any }): IAlunaBalanceSchema
-  parseMany (parms: { rawBalances: any[] }): IAlunaBalanceSchema[]
+  parseMany (params: { rawBalances: any[] }): IAlunaBalanceSchema[]
 
 }
