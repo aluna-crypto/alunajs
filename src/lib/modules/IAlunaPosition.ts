@@ -1,11 +1,9 @@
-import {
-  IAlunaPositionSchema,
-} from '../schemas/IAlunaPositionSchema'
+import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 
 
 export interface IAlunaPositionListParams {
-  // openOnly?: boolean
+  openOnly: boolean
   // start?: nyumber
   // limit?: nyumber
 }

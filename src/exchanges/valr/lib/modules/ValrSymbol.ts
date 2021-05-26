@@ -1,15 +1,7 @@
-import {
-  IAlunaSymbol,
-} from '../../../../lib/modules/IAlunaSymbol'
-import {
-  IAlunaSymbolSchema,
-} from '../../../../lib/schemas/IAlunaSymbolSchema'
-import {
-  ValrPublicRequest,
-} from '../requests/ValrPublicRequest'
-import {
-  IValrSymbolSchema,
-} from '../schemas/IValrSymbolSchema'
+import { IAlunaSymbol } from '../../../../lib/modules/IAlunaSymbol'
+import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
+import { ValrPublicRequest } from '../requests/ValrPublicRequest'
+import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 
 
 
@@ -33,7 +25,7 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
 
   public parse (
     params: {
-      rawSymbol: IValrSymbolSchema,
+      rawSymbol: IValrSymbolSchema
     },
   ): IAlunaSymbolSchema {
 
@@ -52,7 +44,7 @@ export class ValrSymbol extends ValrPublicRequest implements IAlunaSymbol {
 
   public parseMany (
     params: {
-      rawSymbols: IValrSymbolSchema[],
+      rawSymbols: IValrSymbolSchema[]
     },
   ): IAlunaSymbolSchema[] {
 

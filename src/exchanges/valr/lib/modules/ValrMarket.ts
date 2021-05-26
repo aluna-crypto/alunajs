@@ -1,18 +1,8 @@
-import {
-  IAlunaMarket,
-} from '../../../../lib/modules/IAlunaMarket'
-import {
-  IAlunaMarketSchema,
-} from '../../../../lib/schemas/IAlunaMarketSchema'
-import {
-  ValrPublicRequest,
-} from '../requests/ValrPublicRequest'
-import {
-  IValrCurrencyPairs,
-} from '../schemas/IValrCurrencyPairs'
-import {
-  IValrMarketSchema,
-} from '../schemas/IValrMarketSchema'
+import { IAlunaMarket } from '../../../../lib/modules/IAlunaMarket'
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { ValrPublicRequest } from '../requests/ValrPublicRequest'
+import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
+import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
 
 
 
@@ -52,7 +42,7 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   public parse (
     params: {
-      rawMarket: IMarketWithBaseQuoteCurr,
+      rawMarket: IMarketWithBaseQuoteCurr
     },
   ): IAlunaMarketSchema {
 
@@ -98,7 +88,7 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   public parseMany (
     params: {
-      rawMarkets: IMarketWithBaseQuoteCurr[],
+      rawMarkets: IMarketWithBaseQuoteCurr[]
     },
   ): IAlunaMarketSchema[] {
 
@@ -114,7 +104,7 @@ export class ValrMarket extends ValrPublicRequest implements IAlunaMarket {
 
   private separeteCurrencyPairs (
     params: {
-      rawMarkets: IValrMarketSchema[],
+      rawMarkets: IValrMarketSchema[]
       rawSymbols: IValrCurrencyPairs[]
     },
   ): IMarketWithBaseQuoteCurr[] {

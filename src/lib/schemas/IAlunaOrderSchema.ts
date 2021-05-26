@@ -1,15 +1,7 @@
-import {
-  AccountEnum,
-} from '../enums/AccountEnum'
-import {
-  OrderStatusEnum,
-} from '../enums/OrderStatusEnum'
-import {
-  OrderTypesEnum,
-} from '../enums/OrderTypeEnum'
-import {
-  SideEnum,
-} from '../enums/SideEnum'
+import { AccountEnum } from '../enums/AccountEnum'
+import { OrderStatusEnum } from '../enums/OrderStatusEnum'
+import { OrderTypesEnum } from '../enums/OrderTypeEnum'
+import { SideEnum } from '../enums/SideEnum'
 
 
 

@@ -1,9 +1,5 @@
-import {
-  IAlunaKeySecretSchema,
-} from '../schemas/IAlunaKeySecretSchema'
-import {
-  IAlunaSettingsSchema,
-} from '../schemas/IAlunaSettingsSchema'
+import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
 

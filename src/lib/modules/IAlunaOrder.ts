@@ -1,10 +1,6 @@
-import {
-  SideEnum,
-} from 'lib/enums/SideEnum'
+import { SideEnum } from '@lib/enums/SideEnum'
 
-import {
-  IAlunaOrderSchema,
-} from '../schemas/IAlunaOrderSchema'
+import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 
 

@@ -1,6 +1,4 @@
-import {
-  IAlunaSymbolSchema,
-} from '../schemas/IAlunaSymbolSchema'
+import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 
 
 

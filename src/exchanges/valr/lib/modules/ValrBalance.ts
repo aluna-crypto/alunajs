@@ -1,19 +1,9 @@
-import {
-  AccountEnum,
-} from 'lib/enums/AccountEnum'
+import { AccountEnum } from '@lib/enums/AccountEnum'
+import { IAlunaBalance } from '@lib/modules/IAlunaBalance'
+import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
-import {
-  IAlunaBalance,
-} from '../../../../lib/modules/IAlunaBalance'
-import {
-  IAlunaBalanceSchema,
-} from '../../../../lib/schemas/IAlunaBalanceSchema'
-import {
-  ValrPrivateRequest,
-} from '../requests/ValrPrivateRequest'
-import {
-  IValrBalanceSchema,
-} from '../schemas/IValrBalanceSchema'
+import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
+import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
 
 
 

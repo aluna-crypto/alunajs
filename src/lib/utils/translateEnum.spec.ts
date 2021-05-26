@@ -1,6 +1,6 @@
 import { ValrOrderTypesEnum } from '../../exchanges/valr/lib/enums/ValrOrderTypesEnum'
 import { OrderTypesEnum } from '../enums/OrderTypeEnum'
-import { translateEnum } from './translateEnumFromTo'
+import { translateEnum } from './translateEnum'
 
 
 

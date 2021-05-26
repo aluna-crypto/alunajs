@@ -1,12 +1,10 @@
 import axios from 'axios'
 
-import {
-  AAlunaPublicRequest,
-} from '../../../../lib/abstracts/AAlunaPublicRequest'
+import { AAlunaPublicRequest } from '@lib/abstracts/AAlunaPublicRequest'
 import {
   IAlunaPublicRequest,
   IAlunaPublicRequestParams,
-} from '../../../../lib/abstracts/IAlunaPublicRequest'
+} from '@lib/abstracts/IAlunaPublicRequest'
 
 
 

@@ -1,4 +1,3 @@
-
 interface IEnumGeneric {
   [key: string]: string
 }
@@ -26,7 +25,7 @@ export const translateEnum = (
   } = params
 
   // iterates over all keys on source enum
-  for(const relativeKey in from) {
+  for (const relativeKey in from) {
 
     const stringWasFound = (from[relativeKey] === string)
 
@@ -38,20 +37,23 @@ export const translateEnum = (
 
       // if none is found, throws error
       if (!translatedString) {
+
         throw new Error(
-          `Enum (to) doesn't have a key named: ${relativeKey}`
+          `Enum (to) doesn't have a key named: ${relativeKey}`,
         )
+
       }
 
       // otherwise, return it
       return translatedString
+
     }
 
   }
 
   // throws error if source enum doesn't have a matching <string>
   throw new Error(
-    `Enum (from) doesn't have a key for value: ${string}`
+    `Enum (from) doesn't have a key for value: ${string}`,
   )
 
 }

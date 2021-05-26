@@ -1,13 +1,7 @@
-import {
-  OrderStatusEnum,
-} from 'lib/enums/OrderStatusEnum'
+import { OrderStatusEnum } from '@lib/enums/OrderStatusEnum'
 
-import {
-  ValrOrderStatusEnum,
-} from '../enums/ValrOrderStatusEnum'
-import {
-  ValrError,
-} from '../errors/ValrError'
+import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
+import { ValrError } from '../errors/ValrError'
 
 
 

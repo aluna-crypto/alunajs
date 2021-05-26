@@ -1,6 +1,4 @@
-import {
-  Aluna,
-} from './Aluna'
+import { Aluna } from './Aluna'
 
 
 

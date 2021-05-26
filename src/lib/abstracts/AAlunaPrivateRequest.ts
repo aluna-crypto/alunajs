@@ -1,6 +1,4 @@
-import {
-  IAlunaExchange,
-} from './IAlunaExchange'
+import { IAlunaExchange } from './IAlunaExchange'
 
 
 

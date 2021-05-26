@@ -1,22 +1,15 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
-import {
-  AAlunaPrivateRequest,
-} from '../../../../lib/abstracts/AAlunaPrivateRequest'
+import { AAlunaPrivateRequest } from '@lib/abstracts/AAlunaPrivateRequest'
 import {
   IAlunaPrivateRequest,
   IAlunaPrivateRequestParams,
-} from '../../../../lib/abstracts/IAlunaPrivateRequest'
-import {
-  IAlunaRequestOptions,
-} from '../../../../lib/abstracts/IAlunaPublicRequest'
-import {
-  HttpVerbEnum,
-} from '../../../../lib/enums/HtttpVerbEnum'
-import {
-  ValrError,
-} from '../errors/ValrError'
+} from '@lib/abstracts/IAlunaPrivateRequest'
+import { IAlunaRequestOptions } from '@lib/abstracts/IAlunaPublicRequest'
+import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
+
+import { ValrError } from '../errors/ValrError'
 
 
 

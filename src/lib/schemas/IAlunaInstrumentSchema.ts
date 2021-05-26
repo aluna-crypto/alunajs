@@ -1,6 +1,4 @@
-import {
-  InstrumentStateEnum,
-} from '../enums/InstrumentStateEnum'
+import { InstrumentStateEnum } from '../enums/InstrumentStateEnum'
 
 
 

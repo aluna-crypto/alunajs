@@ -1,41 +1,22 @@
-import {
-  AccountEnum,
-} from 'lib/enums/AccountEnum'
-import {
-  utc,
-} from 'moment'
+import { utc } from 'moment'
+
+import { AccountEnum } from '@lib/enums/AccountEnum'
 
 import {
   IAlunaOrder,
   IAlunaOrderListParams,
   IAlunaOrderPlaceParams,
 } from '../../../../lib/modules/IAlunaOrder'
-import {
-  IAlunaOrderSchema,
-} from '../../../../lib/schemas/IAlunaOrderSchema'
-import {
-  ValrSideAdapter,
-} from '../adapters/ValrSideAdapter'
-import {
-  ValrStatusAdapter,
-} from '../adapters/ValrStatusAdapter'
-import {
-  ValrTypeAdapter,
-} from '../adapters/ValrTypeAdapter'
-import {
-  ValrPrivateRequest,
-} from '../requests/ValrPrivateRequest'
-import {
-  IValrOrderSchema,
-} from '../schemas/IValrOrderSchema'
+import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
+import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
+import { ValrTypeAdapter } from '../adapters/ValrTypeAdapter'
+import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
+import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 
 export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
-
-  // openOrdersOnly?: boolean
-  // start?: number
-  // limit?: number
 
   public async list (
     _params?: IAlunaOrderListParams,

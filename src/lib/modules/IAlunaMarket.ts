@@ -1,6 +1,4 @@
-import {
-  IAlunaMarketSchema,
-} from '../schemas/IAlunaMarketSchema'
+import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
 
 
 

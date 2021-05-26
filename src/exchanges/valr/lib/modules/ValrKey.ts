@@ -1,24 +1,13 @@
-import {
-  IAlunaKey,
-} from '../../../../lib/modules/IAlunaKey'
-import {
-  IAlunaKeyPermissionSchema,
-} from '../../../../lib/schemas/IAlunaKeyPermissionSchema'
-import {
-  IAlunaKeySecretSchema,
-} from '../../../../lib/schemas/IAlunaKeySecretSchema'
-import {
-  ValrErrorEnum,
-} from '../enums/ValrErrorEnum'
-import {
-  ValrPrivateRequest,
-} from '../requests/ValrPrivateRequest'
-import {
-  IValrKeySchema,
-} from '../schemas/IValrKeySchema'
-import {
-  IValrOrderSchema,
-} from '../schemas/IValrOrderSchema'
+import { IAlunaKey } from '@lib/modules/IAlunaKey'
+import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
+import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
+
+
+
+import { ValrErrorEnum } from '../enums/ValrErrorEnum'
+import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
+import { IValrKeySchema } from '../schemas/IValrKeySchema'
+import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 

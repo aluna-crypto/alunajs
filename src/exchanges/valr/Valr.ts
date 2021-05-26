@@ -1,39 +1,15 @@
-import {
-  AAlunaExchange,
-} from '../../lib/abstracts/AAlunaExchange'
-import {
-  IAlunaExchange,
-} from '../../lib/abstracts/IAlunaExchange'
-import {
-  IAlunaBalance,
-} from '../../lib/modules/IAlunaBalance'
-import {
-  IAlunaKey,
-} from '../../lib/modules/IAlunaKey'
-import {
-  IAlunaOrder,
-} from '../../lib/modules/IAlunaOrder'
-import {
-  IAlunaKeySecretSchema,
-} from '../../lib/schemas/IAlunaKeySecretSchema'
-import {
-  IAlunaSettingsSchema,
-} from '../../lib/schemas/IAlunaSettingsSchema'
-import {
-  ValrBalance,
-} from './lib/modules/ValrBalance'
-import {
-  ValrKey,
-} from './lib/modules/ValrKey'
-import {
-  ValrMarket,
-} from './lib/modules/ValrMarket'
-import {
-  ValrOrder,
-} from './lib/modules/ValrOrder'
-import {
-  ValrSymbol,
-} from './lib/modules/ValrSymbol'
+import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
+import { IAlunaExchange } from '../../lib/abstracts/IAlunaExchange'
+import { IAlunaBalance } from '../../lib/modules/IAlunaBalance'
+import { IAlunaKey } from '../../lib/modules/IAlunaKey'
+import { IAlunaOrder } from '../../lib/modules/IAlunaOrder'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { ValrBalance } from './lib/modules/ValrBalance'
+import { ValrKey } from './lib/modules/ValrKey'
+import { ValrMarket } from './lib/modules/ValrMarket'
+import { ValrOrder } from './lib/modules/ValrOrder'
+import { ValrSymbol } from './lib/modules/ValrSymbol'
 
 
 
@@ -60,7 +36,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
   // constructor
   constructor (
     params: {
-      keySecret: IAlunaKeySecretSchema,
+      keySecret: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
     },
   ) {
