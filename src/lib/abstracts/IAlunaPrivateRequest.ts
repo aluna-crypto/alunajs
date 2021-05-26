@@ -1,4 +1,4 @@
-import { IAlunaKeySecretSchema } from 'lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
 import { IAlunaRequestOptions } from './IAlunaPublicRequest'
 
