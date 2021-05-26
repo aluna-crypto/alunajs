@@ -1,5 +1,5 @@
 import { AccountEnum } from '@lib/enums/AccountEnum'
-import { IAlunaBalance } from '@lib/modules/IAlunaBalance'
+import { IAlunaBalance } from '@lib/m@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
 import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'

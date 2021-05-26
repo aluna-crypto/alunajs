@@ -3,7 +3,7 @@ import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 
 
 
-export interface IAlunaKey {
+export interface IAlunaKeyModule {
 
   validate (
     params: IAlunaKeySecretSchema,

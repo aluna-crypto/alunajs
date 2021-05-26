@@ -1,13 +1,18 @@
 export abstract class AAlunaError {
 
   public message: string;
-
   public statusCode: number;
 
-  constructor (message: string, statusCode = 400) {
 
-    this.message = message
-    this.statusCode = statusCode
+
+  constructor (
+    params: {
+      message: string
+      statusCode?: number
+    }) {
+
+    this.message = params.message
+    this.statusCode = params.statusCode || 400
 
   }
 
