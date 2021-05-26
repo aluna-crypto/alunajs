@@ -9,14 +9,14 @@ interface IEnumGeneric {
   key to find the value on the destination enum <to> and return it.
 */
 
-export interface ITranslateEnumFromToParams {
+export interface ITranslateEnumParams {
   string: string // string to translate
   from: IEnumGeneric // source enum
   to: IEnumGeneric // destination enum
 }
 
 export const translateEnum = (
-  params: ITranslateEnumFromToParams,
+  params: ITranslateEnumParams,
 ) => {
 
   const {
