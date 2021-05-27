@@ -4,18 +4,24 @@ import crypto from 'crypto'
 import { AAlunaRequest } from '@lib/abstracts/AAlunaRequest'
 import {
   IAlunaRequest,
-  IAlunaRequestParams,
+  IAlunaRequestPublicParams,
+  IAlunaRequestPrivateParams,
 } from '@lib/abstracts/IAlunaRequest'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
-import { ValrError } from '../errors/ValrError'
+import { ValrError } from './ValrError'
 
 
 
-export interface IValrRequestParams extends IAlunaRequestParams {
+export interface IValrPublicRequestParams extends IAlunaRequestPublicParams {
   path?: string
 }
+
+export interface IValrPrivateRequestParams extends IAlunaRequestPrivateParams {
+  path: string
+}
+
 
 interface ISignedHashParams {
   verb: HttpVerbEnum
@@ -28,40 +34,83 @@ interface ISignedHashParams {
 
 export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
-  async post<T> (params: IValrRequestParams): Promise<T> {
+
+
+  async get<T> (params: IValrPublicRequestParams): Promise<T> {
+
+
+    if (params.keySecret && params.path) {
+
+      return this.privateGet<T>({
+        ...params,
+        keySecret: params.keySecret,
+        path: params.path,
+      })
+
+    }
+
+    return this.publicGet<T>(params)
+
+  }
+
+
+
+  async post<T> (params: IValrPublicRequestParams): Promise<T> {
+
+
+    if (params.keySecret && params.path) {
+
+      return this.privatePost<T>({
+        ...params,
+        keySecret: params.keySecret,
+        path: params.path,
+      })
+
+    }
+
+    return this.publicPost<T>(params)
+
+  }
+
+
+
+  async publicGet<T> (params: IValrPublicRequestParams): Promise<T> {
+
+    const {
+      url, options,
+    } = params
+
+    const requestConfig = {
+      headers: options?.headers,
+    }
+
+    try {
+
+      const res = await axios.get(url, requestConfig)
+
+      return res.data
+
+    } catch (error) {
+
+      throw this.formatRequestError(error)
+
+    }
+
+  }
+
+
+
+  async publicPost<T> (params: IValrPublicRequestParams): Promise<T> {
 
     const {
       url,
-      keySecret,
       body,
-      path,
       options,
     } = params
 
     const requestConfig = {
       data: body || undefined,
       headers: options?.headers,
-    }
-
-
-    if (keySecret && path) {
-
-      const signedHash = this.generateAuthHeader({
-        verb: HttpVerbEnum.POST,
-        path,
-        body,
-        keySecret,
-      })
-
-      Object.assign(requestConfig, {
-        headers: requestConfig.headers
-          ? {
-            ...requestConfig.headers,
-            ...signedHash,
-          }
-          : signedHash,
-      })
-
     }
 
     try {
@@ -78,8 +127,9 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
   }
 
-  async get<T> (params: IValrRequestParams): Promise<T> {
 
+
+  async privateGet<T> (params: IValrPrivateRequestParams): Promise<T> {
 
     const {
       url,
@@ -93,28 +143,74 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     }
 
 
-    if (keySecret && path) {
+    const signedHash = this.generateAuthHeader({
+      verb: HttpVerbEnum.GET,
+      path,
+      keySecret,
+    })
 
-      const signedHash = this.generateAuthHeader({
-        verb: HttpVerbEnum.GET,
-        path,
-        keySecret,
-      })
+    Object.assign(requestConfig, {
+      headers: requestConfig.headers
+        ? {
+          ...requestConfig.headers,
+          ...signedHash,
+        }
+        : signedHash,
+    })
 
-      Object.assign(requestConfig, {
-        headers: requestConfig.headers
-          ? {
-            ...requestConfig.headers,
-            ...signedHash,
-          }
-          : signedHash,
-      })
-
-    }
 
     try {
 
       const res = await axios.get(url, requestConfig)
+
+      return res.data
+
+    } catch (error) {
+
+      throw this.formatRequestError(error)
+
+    }
+
+  }
+
+
+
+  async privatePost<T> (params: IValrPrivateRequestParams): Promise<T> {
+
+    const {
+      url,
+      keySecret,
+      body,
+      path,
+      options,
+    } = params
+
+    const requestConfig = {
+      data: body || undefined,
+      headers: options?.headers,
+    }
+
+
+    const signedHash = this.generateAuthHeader({
+      verb: HttpVerbEnum.POST,
+      path,
+      body,
+      keySecret,
+    })
+
+    Object.assign(requestConfig, {
+      headers: requestConfig.headers
+        ? {
+          ...requestConfig.headers,
+          ...signedHash,
+        }
+        : signedHash,
+    })
+
+
+    try {
+
+      const res = await axios.post(url, requestConfig)
 
       return res.data
 
