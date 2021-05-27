@@ -1,13 +1,13 @@
 import { AccountEnum } from '@lib/enums/AccountEnum'
 import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 import {
+  IAlunaExchangeOrderSpecs,
   IAlunaExchangeSpecsSchema,
-  IOrderTypesSpecs,
 } from '@lib/schemas/IAlunaExchangeSpecsSchema'
 
 
 
-const exchangeOrderTypeSpecs: IOrderTypesSpecs = {
+const exchangeOrderSpecs: IAlunaExchangeOrderSpecs = {
   [OrderTypesEnum.LIMIT]: {
     supported: true,
     implemented: true,
@@ -24,7 +24,7 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
     [AccountEnum.EXCHANGE]: {
       supported: true,
       implemented: true,
-      orderTypesSpecs: exchangeOrderTypeSpecs,
+      orders: exchangeOrderSpecs,
     },
     [AccountEnum.MARGIN]: {
       supported: false,

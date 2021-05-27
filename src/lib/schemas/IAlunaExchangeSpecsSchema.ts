@@ -3,7 +3,7 @@ import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
 
 
-export interface IOrderTypesSpecs {
+export interface IAlunaExchangeOrderSpecs {
   [OrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
   [OrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
   [OrderTypesEnum.STOP_MARKET]?: IAlunaExchangeOrderSpecsSchema
@@ -22,7 +22,7 @@ export interface IOrderTypesSpecs {
 export interface IAlunaExchangeAccountSpecsSchema {
   implemented: boolean // implemented by aluna
   supported: boolean // supported by the exchange
-  orderTypesSpecs?: IOrderTypesSpecs // considered not supported if missing
+  orders?: IAlunaExchangeOrderSpecs // considered not supported if missing
 }
 
 export interface IAlunaExchangeOrderOptions {
