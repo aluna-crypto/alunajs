@@ -1,9 +1,7 @@
-import { Valr } from '../exchanges/valr/Valr'
+import { Valr } from 'src/exchanges/valr/Valr'
 
 
 
 export class Exchanges {
-
-  static Valr = Valr
-
+  public static readonly Valr = Valr
 }
