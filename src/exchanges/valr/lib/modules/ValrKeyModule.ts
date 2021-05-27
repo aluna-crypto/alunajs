@@ -30,7 +30,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const permissions = {
       read: false,
       trade: false,
-      withraw: false,
+      withraw: undefined,
     }
 
     try {
