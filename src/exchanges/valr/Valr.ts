@@ -13,12 +13,14 @@ import { ValrKey } from './lib/modules/key/ValrKey'
 import { ValrMarket } from './lib/modules/market/ValrMarket'
 import { ValrOrder } from './lib/modules/order/ValrOrder'
 import { ValrSymbol } from './lib/modules/symbol/ValrSymbol'
+import { ValrSpecs } from './lib/ValrSpecs'
 
 
 
 export class Valr extends AAlunaExchange implements IAlunaExchange {
 
   readonly ID = 'valr'
+  readonly SPECS = ValrSpecs
 
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
