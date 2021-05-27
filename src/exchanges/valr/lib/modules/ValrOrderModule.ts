@@ -1,7 +1,4 @@
-import { utc } from 'moment'
-
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
-import { AccountEnum } from '@lib/enums/AccountEnum'
 import {
   IAlunaOrderListParams,
   IAlunaOrderModule,
@@ -9,11 +6,18 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
-import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
-import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
+import {
+  IValrOrderSchema, IValrOrderStatusSchema,
+} from '../schemas/IValrOrderSchema'
 import { ValrRequest } from '../ValrRequest'
+import { ValrOrderParser } from './parsers/ValrOrderParser'
+
+
+
+interface IValrPlaceOrderResponse {
+  id: string
+}
 
 
 
@@ -54,14 +58,24 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
       timeInForce: 'GTC',
     }
 
+    const request = new ValrRequest()
 
-    await new ValrRequest().post<{ id: string }>({
+
+    const { id } = await request.post<IValrPlaceOrderResponse>({
       url: 'https://api.valr.com/v1/orders/limit',
       body,
       keySecret: this.exchange.keySecret,
     })
 
-    throw new Error('Method not implemented.')
+    const placedOrder = await request.get<IValrOrderStatusSchema>({
+      url: `https://api.valr.com/v1/orders/${symbol}/orderid/${id}`,
+      body,
+      keySecret: this.exchange.keySecret,
+    })
+
+    return this.parse({
+      rawOrder: placedOrder,
+    })
 
   }
 
@@ -69,41 +83,13 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
   public parse (
     params: {
-      rawOrder: IValrOrderSchema,
+      rawOrder: IValrOrderSchema | IValrOrderStatusSchema,
     },
   ): IAlunaOrderSchema {
 
-    const {
-      rawOrder: {
-        orderId,
-        currencyPair,
-        side,
-        price,
-        status,
-        type,
-        originalQuantity,
-        createdAt,
-      },
-    } = params
-
-    const amount = parseFloat(originalQuantity)
-    const rate = parseFloat(price)
-
-    const parsedOrder: IAlunaOrderSchema = {
-      id: orderId,
-      marketId: currencyPair,
-      total: amount * rate,
-      amount,
-      isAmountInContracts: false,
-      rate,
-      account: AccountEnum.EXCHANGE,
-      side: ValrSideAdapter.translateToAluna({ side }),
-      status: ValrStatusAdapter.translateToAluna({ status }),
-      type: ValrOrderTypeAdapter.translateToAluna({ type }),
-      placedAt: utc(createdAt.replace(/\s/, 'T')).toDate(),
-    }
-
-    return parsedOrder
+    return ValrOrderParser.parse({
+      rawOrder: params.rawOrder,
+    })
 
   }
 
