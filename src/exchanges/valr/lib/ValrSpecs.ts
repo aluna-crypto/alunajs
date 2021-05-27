@@ -27,12 +27,12 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
       orderTypes: exchangeOrderTypes,
     },
     [AccountEnum.MARGIN]: {
-      supported: false,
+      supported: false, // unsupported
       implemented: false,
       // orderTypes: {},
     },
     [AccountEnum.DERIVATIVES]: {
-      supported: false,
+      supported: false, // unsupported
       implemented: false,
       // orderTypes: {},
     },
