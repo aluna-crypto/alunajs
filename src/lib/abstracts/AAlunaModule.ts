@@ -10,7 +10,7 @@ export abstract class AAlunaModule {
 
   constructor (
     params: {
-      exchange: IAlunaExchange
+      exchange: IAlunaExchange,
     },
   ) {
 

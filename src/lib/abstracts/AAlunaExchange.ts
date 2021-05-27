@@ -13,8 +13,8 @@ export abstract class AAlunaExchange {
 
   constructor (
     params?: {
-      keySecret?: IAlunaKeySecretSchema
-      settings?: IAlunaSettingsSchema
+      keySecret?: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
     },
   ) {
 

@@ -14,8 +14,8 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
     options: {
       rate: 1,
       amount: 1,
-    }
-  }
+    },
+  },
 }
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
@@ -36,5 +36,5 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
       implemented: false,
       // orderTypes: {},
     },
-  }
+  },
 }

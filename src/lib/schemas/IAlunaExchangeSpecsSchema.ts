@@ -49,15 +49,16 @@ export interface IAlunaExchangeOrderOptionsSchema {
 
 export interface IAlunaExchangeOrderSpecsSchema {
   supported: boolean // supported by the exchange
-  implemented: boolean  // implemented by aluna
+  implemented: boolean // implemented by aluna
   options: IAlunaExchangeOrderOptionsSchema
 }
 
 export interface IAlunaExchangeSpecsSchema {
   acceptFloatAmounts: boolean
   accounts: {
-    [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema
-    [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema
-    [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema
+    [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
+    [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
+    [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
   }
 }
+

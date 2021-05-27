@@ -33,8 +33,8 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
   constructor (
     params?: {
-      keySecret?: IAlunaKeySecretSchema
-      settings?: IAlunaSettingsSchema
+      keySecret?: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
     },
   ) {
 

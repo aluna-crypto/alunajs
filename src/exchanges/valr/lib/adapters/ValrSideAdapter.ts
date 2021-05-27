@@ -9,7 +9,7 @@ export class ValrSideAdapter {
 
   static translateToAluna (
     params: {
-      side: ValrSideEnum
+      side: ValrSideEnum,
     },
   ): SideEnum {
 
@@ -36,7 +36,7 @@ export class ValrSideAdapter {
 
   static translateToValr (
     params: {
-      side: SideEnum
+      side: SideEnum,
     },
   ): ValrSideEnum {
 

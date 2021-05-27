@@ -14,8 +14,8 @@ interface IValrCurrencyPairsParseResponse {
 export class ValrCurrencyPairsParser {
 
   static parse (params: {
-    rawMarkets: IValrMarketSchema[]
-    rawSymbolPairs: IValrCurrencyPairs[]
+    rawMarkets: IValrMarketSchema[],
+    rawSymbolPairs: IValrCurrencyPairs[],
   }): IValrCurrencyPairsParseResponse {
 
     const currencyVolumes = {} as Record<string, string>

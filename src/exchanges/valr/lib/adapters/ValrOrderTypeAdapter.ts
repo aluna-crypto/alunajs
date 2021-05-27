@@ -10,7 +10,7 @@ export class ValrOrderTypeAdapter {
   static translateToAluna (
     params: {
       type: ValrOrderTypesEnum,
-    }
+    },
   ): OrderTypesEnum {
 
     const {

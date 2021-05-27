@@ -10,9 +10,8 @@ import { ValrRequest } from '../ValrRequest'
 
 export
 class ValrBalanceModule
-extends AAlunaModule
-implements IAlunaBalanceModule
-{
+  extends AAlunaModule
+  implements IAlunaBalanceModule {
 
 
   async listRaw (): Promise<IValrBalanceSchema[]> {

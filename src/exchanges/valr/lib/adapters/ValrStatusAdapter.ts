@@ -8,7 +8,7 @@ import { ValrError } from '../ValrError'
 export class ValrStatusAdapter {
 
   static translateToAluna (params: {
-    status: ValrOrderStatusEnum
+    status: ValrOrderStatusEnum,
   }): OrderStatusEnum {
 
     const {
@@ -42,7 +42,7 @@ export class ValrStatusAdapter {
 
   static translateToValr (
     params: {
-      status: OrderStatusEnum
+      status: OrderStatusEnum,
     },
   ): ValrOrderStatusEnum {
 

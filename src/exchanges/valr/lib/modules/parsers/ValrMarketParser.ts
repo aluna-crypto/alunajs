@@ -7,8 +7,8 @@ import { IMarketWithCurrency } from '../ValrMarketModule'
 export class ValrMarketParser {
 
   static parse (params: {
-    rawMarket: IMarketWithCurrency
-    currencyVolumes: Record<string, string>
+    rawMarket: IMarketWithCurrency,
+    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema {
 
     const {

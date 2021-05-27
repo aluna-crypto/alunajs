@@ -8,8 +8,8 @@ export abstract class AAlunaError {
 
   constructor (
     params: {
-      message: string
-      statusCode?: number
+      message: string,
+      statusCode?: number,
     },
   ) {
 
