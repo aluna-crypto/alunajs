@@ -165,7 +165,10 @@ export class ValrRequests implements IAlunaRequest {
 
     }
 
-    return new ValrError(error.message)
+    return new ValrError({
+      message: error.message,
+      statusCode: error.statusCode || 400,
+    })
 
   }
 
