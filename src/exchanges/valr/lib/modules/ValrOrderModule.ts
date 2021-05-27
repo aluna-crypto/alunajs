@@ -47,9 +47,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
     } = params
 
     const body = {
-      side: ValrSideAdapter.translateToValr({
-        side,
-      }),
+      side: ValrSideAdapter.translateToValr({ side }),
       quantity: amount,
       price: rate,
       pair: symbol,
@@ -91,22 +89,9 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
     } = params
 
     const amount = parseFloat(originalQuantity)
-
     const rate = parseFloat(price)
 
-    const translatedSide = ValrSideAdapter.translateToAluna({
-      side,
-    })
-
-    const translatedStatus = ValrStatusAdapter.translateToAluna({
-      status,
-    })
-
-    const translatedOrder = ValrOrderTypeAdapter.translateToAluna({
-      type,
-    })
-
-    return {
+    const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
       marketId: currencyPair,
       total: amount * rate,
@@ -114,11 +99,13 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
       isAmountInContracts: false,
       rate,
       account: AccountEnum.EXCHANGE,
-      side: translatedSide,
-      status: translatedStatus,
-      type: translatedOrder,
+      side: ValrSideAdapter.translateToAluna({ side }),
+      status: ValrStatusAdapter.translateToAluna({ status }),
+      type: ValrOrderTypeAdapter.translateToAluna({ type }),
       placedAt: utc(createdAt.replace(/\s/, 'T')).toDate(),
     }
+
+    return parsedOrder
 
   }
 
