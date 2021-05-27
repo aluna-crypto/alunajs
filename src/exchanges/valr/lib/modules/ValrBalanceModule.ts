@@ -8,8 +8,10 @@ import { ValrRequest } from '../ValrRequest'
 
 
 
-export class ValrBalanceModule extends AAlunaModule
-  implements IAlunaBalanceModule {
+export class ValrBalanceModule
+  extends AAlunaModule
+  implements IAlunaBalanceModule
+{
 
 
   async list (): Promise<IAlunaBalanceSchema[]> {
@@ -29,6 +31,8 @@ export class ValrBalanceModule extends AAlunaModule
 
   }
 
+
+
   parse (params: {
     rawBalance: IValrBalanceSchema,
   }): IAlunaBalanceSchema {
@@ -46,6 +50,8 @@ export class ValrBalanceModule extends AAlunaModule
 
 
   }
+
+
 
   parseMany (params: {
     rawBalances: IValrBalanceSchema[],
