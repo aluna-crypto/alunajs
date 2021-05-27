@@ -3,7 +3,7 @@ import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
 
 
-export interface IAlunaExchangeOrderSpecs {
+export interface IAlunaExchangeOrderTypesSpecsSchema {
   [OrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
   [OrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
   [OrderTypesEnum.STOP_MARKET]?: IAlunaExchangeOrderSpecsSchema
@@ -22,10 +22,10 @@ export interface IAlunaExchangeOrderSpecs {
 export interface IAlunaExchangeAccountSpecsSchema {
   implemented: boolean // implemented by aluna
   supported: boolean // supported by the exchange
-  orders?: IAlunaExchangeOrderSpecs // considered not supported if missing
+  orderTypes?: IAlunaExchangeOrderTypesSpecsSchema // unsupported if missing
 }
 
-export interface IAlunaExchangeOrderOptions {
+export interface IAlunaExchangeOrderOptionsSchema {
 
   rate?: number
   amount?: number
@@ -50,7 +50,7 @@ export interface IAlunaExchangeOrderOptions {
 export interface IAlunaExchangeOrderSpecsSchema {
   supported: boolean // supported by the exchange
   implemented: boolean  // implemented by aluna
-  options: IAlunaExchangeOrderOptions
+  options: IAlunaExchangeOrderOptionsSchema
 }
 
 export interface IAlunaExchangeSpecsSchema {
