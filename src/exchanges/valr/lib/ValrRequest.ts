@@ -1,5 +1,6 @@
 import axios from 'axios'
 import crypto from 'crypto'
+import { URL } from 'url'
 
 import { AAlunaRequest } from '@lib/abstracts/AAlunaRequest'
 import {
@@ -12,15 +13,6 @@ import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 
 import { ValrError } from './ValrError'
 
-
-
-export interface IValrPublicRequestParams extends IAlunaRequestPublicParams {
-  path?: string
-}
-
-export interface IValrPrivateRequestParams extends IAlunaRequestPrivateParams {
-  path: string
-}
 
 
 interface ISignedHashParams {
@@ -36,15 +28,14 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async get<T> (params: IValrPublicRequestParams): Promise<T> {
+  async get<T> (params: IAlunaRequestPublicParams): Promise<T> {
 
 
-    if (params.keySecret && params.path) {
+    if (params.keySecret) {
 
       return this.privateGet<T>({
         ...params,
         keySecret: params.keySecret,
-        path: params.path,
       })
 
     }
@@ -55,15 +46,14 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async post<T> (params: IValrPublicRequestParams): Promise<T> {
+  async post<T> (params: IAlunaRequestPublicParams): Promise<T> {
 
 
-    if (params.keySecret && params.path) {
+    if (params.keySecret) {
 
       return this.privatePost<T>({
         ...params,
         keySecret: params.keySecret,
-        path: params.path,
       })
 
     }
@@ -74,7 +64,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async publicGet<T> (params: IValrPublicRequestParams): Promise<T> {
+  async publicGet<T> (params: IAlunaRequestPublicParams): Promise<T> {
 
     const {
       url, options,
@@ -100,7 +90,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async publicPost<T> (params: IValrPublicRequestParams): Promise<T> {
+  async publicPost<T> (params: IAlunaRequestPublicParams): Promise<T> {
 
     const {
       url,
@@ -129,18 +119,19 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async privateGet<T> (params: IValrPrivateRequestParams): Promise<T> {
+  async privateGet<T> (params: IAlunaRequestPrivateParams): Promise<T> {
 
     const {
       url,
       keySecret,
-      path,
       options,
     } = params
 
     const requestConfig = {
       headers: options?.headers,
     }
+
+    const path = new URL(url).pathname
 
 
     const signedHash = this.generateAuthHeader({
@@ -175,13 +166,13 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
 
 
-  async privatePost<T> (params: IValrPrivateRequestParams): Promise<T> {
+  async privatePost<T> (params: IAlunaRequestPrivateParams): Promise<T> {
 
     const {
       url,
       keySecret,
       body,
-      path,
+
       options,
     } = params
 
@@ -189,6 +180,8 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
       data: body || undefined,
       headers: options?.headers,
     }
+
+    const path = new URL(url).pathname
 
 
     const signedHash = this.generateAuthHeader({
