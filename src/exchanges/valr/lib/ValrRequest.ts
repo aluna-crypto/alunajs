@@ -141,12 +141,10 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     })
 
     Object.assign(requestConfig, {
-      headers: requestConfig.headers
-        ? {
-          ...requestConfig.headers,
-          ...signedHash,
-        }
-        : signedHash,
+      headers: {
+        ...signedHash,
+        ...(requestConfig.headers || {}),
+      },
     })
 
 
@@ -192,12 +190,10 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     })
 
     Object.assign(requestConfig, {
-      headers: requestConfig.headers
-        ? {
-          ...requestConfig.headers,
-          ...signedHash,
-        }
-        : signedHash,
+      headers: {
+        ...signedHash,
+        ...(requestConfig.headers || {}),
+      },
     })
 
 
