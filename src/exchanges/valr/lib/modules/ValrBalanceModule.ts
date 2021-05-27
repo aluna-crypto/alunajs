@@ -8,26 +8,36 @@ import { ValrRequest } from '../ValrRequest'
 
 
 
-export class ValrBalanceModule extends AAlunaModule
-  implements IAlunaBalanceModule {
+export
+class ValrBalanceModule
+extends AAlunaModule
+implements IAlunaBalanceModule
+{
 
 
-  async list (): Promise<IAlunaBalanceSchema[]> {
-
+  async listRaw (): Promise<IValrBalanceSchema[]> {
 
     const rawBalances = await new ValrRequest().get<IValrBalanceSchema[]>({
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
     })
 
-    const parsedBalances = this.parseMany({
-      rawBalances,
-    })
+    return rawBalances
+
+  }
+
+
+
+  async list (): Promise<IAlunaBalanceSchema[]> {
+
+    const rawBalances = await this.listRaw()
+    const parsedBalances = this.parseMany({ rawBalances })
 
     return parsedBalances
 
-
   }
+
+
 
   parse (params: {
     rawBalance: IValrBalanceSchema,
@@ -46,6 +56,8 @@ export class ValrBalanceModule extends AAlunaModule
 
 
   }
+
+
 
   parseMany (params: {
     rawBalances: IValrBalanceSchema[],
