@@ -4,6 +4,7 @@ import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 
 
+
 /**
  * ISSUE: Valr has many different order responses types
 */
@@ -45,7 +46,7 @@ export interface IValrOrderStatusSchema {
 
 
 
-export interface IValrOderHistorySchema {
+export interface IValrOrderHistorySchema {
   orderId: string
   customerOrderId: string
   orderStatusType: ValrOrderTypesEnum
