@@ -25,6 +25,7 @@
     "no-useless-constructor": "off",
     "no-empty-function": "off",
     "class-methods-use-this": "off",
+    "lines-between-class-members": "off",
     "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
     "space-before-function-paren": ["error", "always"],
     "no-unused-vars": "warn",
@@ -39,9 +40,9 @@
     "one-var-declaration-per-line": ["error", "always"],
     "object-curly-newline": [
       "error", {
-        "ObjectExpression": { "minProperties": 1, "consistent": false, "multiline": true },
-        "ObjectPattern": { "minProperties": 1, "consistent": false, "multiline": true },
-        "ImportDeclaration": { "minProperties": 2, "consistent": false, "multiline": true },
+        "ObjectExpression": { "minProperties": 2, "consistent": true, "multiline": true },
+        "ObjectPattern": { "minProperties": 2, "consistent": true, "multiline": true },
+        "ImportDeclaration": { "minProperties": 2, "consistent": true, "multiline": true },
         "ExportDeclaration": "always"
       }
     ],
@@ -69,8 +70,16 @@
     "@typescript-eslint/member-delimiter-style": ["error",
       {
         "multiline": {
-          "delimiter": "none",
+          "delimiter": "comma",
           "requireLast": true
+        },
+        "overrides": {
+          "interface": {
+            "multiline": {
+              "delimiter": "none",
+              "requireLast": false
+            }
+          }
         }
       }
     ],
