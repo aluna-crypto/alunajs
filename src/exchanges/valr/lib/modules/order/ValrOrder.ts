@@ -1,30 +1,33 @@
 import { utc } from 'moment'
 
+import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { AccountEnum } from '@lib/enums/AccountEnum'
-
 import {
-  IAlunaOrder,
   IAlunaOrderListParams,
+  IAlunaOrderModule,
   IAlunaOrderPlaceParams,
-} from '../../../../lib/modules/IAlunaOrder'
-import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
-import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
-import { ValrTypeAdapter } from '../adapters/ValrTypeAdapter'
-import { ValrPrivateRequest } from '../requests/ValrPrivateRequest'
-import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
+} from '@lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
+
+import { ValrSideAdapter } from '../../adapters/ValrSideAdapter'
+import { ValrStatusAdapter } from '../../adapters/ValrStatusAdapter'
+import { ValrTypeAdapter } from '../../adapters/ValrTypeAdapter'
+import { ValrRequests } from '../../requests/ValrRequests'
+import { IValrOrderSchema } from '../../schemas/IValrOrderSchema'
 
 
 
-export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
+export class ValrOrder extends AAlunaModule implements IAlunaOrderModule {
 
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
 
-    const rawOrders = await this.get<IValrOrderSchema[]>({
+
+    const rawOrders = await new ValrRequests().get<IValrOrderSchema[]>({
       url: 'https://api.valr.com/v1/orders/open',
       path: '/v1/orders/open',
-      credentials: this.exchange.keySecret,
+      keySecret: this.exchange.keySecret,
     })
 
     const parsedOrders = this.parseMany({
@@ -54,13 +57,12 @@ export class ValrOrder extends ValrPrivateRequest implements IAlunaOrder {
       timeInForce: 'GTC',
     }
 
-    // Valr does not return an order object. Should use method get?
 
-    await this.post<{ id: string }>({
+    await new ValrRequests().post<{ id: string }>({
       url: 'https://api.valr.com/v1/orders/limit',
       path: '/v1/orders/limit',
       body,
-      credentials: this.exchange.keySecret,
+      keySecret: this.exchange.keySecret,
     })
 
     throw new Error('Method not implemented.')
