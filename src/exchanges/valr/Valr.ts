@@ -30,8 +30,9 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
   Balance: IAlunaBalanceModule
 
 
+
   constructor (
-    params: {
+    params?: {
       keySecret?: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
     },
@@ -39,15 +40,13 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
     super(params)
 
-    this.keySecret = params.keySecret
-    this.settings = params.settings
-
     this.Symbol = new ValrSymbolModule({ exchange: this })
     this.Market = new ValrMarketModule({ exchange: this })
 
     this.Key = new ValrKeyModule({ exchange: this })
     this.Balance = new ValrBalanceModule({ exchange: this })
     this.Order = new ValrOrderModule({ exchange: this })
+
   }
 
 }
