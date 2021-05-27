@@ -203,7 +203,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
     try {
 
-      const res = await axios.post(url, requestConfig)
+      const res = await axios.post(url, body, requestConfig)
 
       return res.data
 
