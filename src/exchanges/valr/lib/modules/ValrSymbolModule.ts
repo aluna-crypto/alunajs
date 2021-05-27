@@ -12,16 +12,21 @@ export class ValrSymbolModule
 
   async list (): Promise<IAlunaSymbolSchema[]> {
 
-    const rawSymbols = await new ValrRequest().get<IValrSymbolSchema[]>({
-      url: 'https://api.valr.com/v1/public/currencies',
-    })
-
-
     return this.parseMany({
-      rawSymbols,
+      rawSymbols: await this.listRaw(),
     })
 
   }
+
+
+  listRaw (): Promise<IValrSymbolSchema[]> {
+
+    return new ValrRequest().get<IValrSymbolSchema[]>({
+      url: 'https://api.valr.com/v1/public/currencies',
+    })
+
+  }
+
 
   parse (params: { rawSymbol: IValrSymbolSchema }): IAlunaSymbolSchema {
 
