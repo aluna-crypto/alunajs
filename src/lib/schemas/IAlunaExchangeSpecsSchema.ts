@@ -3,10 +3,26 @@ import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
 
 
+export interface IOrderTypesSpecs {
+  [OrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.STOP_MARKET]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.STOP_LIMIT]?: IAlunaExchangeOrderSpecsSchema
+
+  [OrderTypesEnum.TRAILING_STOP]?: IAlunaExchangeOrderSpecsSchema
+
+  [OrderTypesEnum.FILL_OF_KILL]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.IMMEDIATE_OR_CANCEL]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.LIMIT_ORDER_BOOK]?: IAlunaExchangeOrderSpecsSchema
+
+  [OrderTypesEnum.TAKE_PROFIT_LIMIT]?: IAlunaExchangeOrderSpecsSchema
+  [OrderTypesEnum.TAKE_PROFIT_MARKET]?: IAlunaExchangeOrderSpecsSchema
+}
+
 export interface IAlunaExchangeAccountSpecsSchema {
-  enabled: boolean
-  supported: boolean
-  orderSpecs: IAlunaExchangeOrderSpecsSchema[]
+  implemented: boolean // implemented by aluna
+  supported: boolean // supported by the exchange
+  orderTypesSpecs?: IOrderTypesSpecs // considered not supported if missing
 }
 
 export interface IAlunaExchangeOrderOptions {
@@ -32,9 +48,8 @@ export interface IAlunaExchangeOrderOptions {
 }
 
 export interface IAlunaExchangeOrderSpecsSchema {
-  enabled: boolean
-  supported: boolean
-  type: OrderTypesEnum
+  supported: boolean // supported by the exchange
+  implemented: boolean  // implemented by aluna
   options: IAlunaExchangeOrderOptions
 }
 
