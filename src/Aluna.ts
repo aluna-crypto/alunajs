@@ -5,7 +5,7 @@ import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
 
-export class Aluna {
+export class Aluna extends Exchanges {
 
   static readonly exchanges = Exchanges
 
