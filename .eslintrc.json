@@ -37,6 +37,8 @@
         "tabWidth": 2
       }
     ],
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
     "one-var-declaration-per-line": ["error", "always"],
     "object-curly-newline": [
       "error", {
