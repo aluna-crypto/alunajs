@@ -10,31 +10,7 @@ console.log(Aluna.exchanges)
 
 
 /*
-  Public (via static shortcuts)
-*/
-console.log(Aluna.Valr.ID)
-
-Aluna.Valr.Symbol.list().then(console.log).catch(console.error)
-Aluna.Valr.Market.list().then(console.log).catch(console.error)
-
-
-
-/*
-  Public (via static resolver)
-*/
-const Valr = Aluna.static({
-  exchangeId: 'valr',
-})
-
-console.log(Valr.ID)
-
-Valr.Symbol.list().then(console.log).catch(console.error)
-Valr.Market.list().then(console.log).catch(console.error)
-
-
-
-/*
-  Instantiating (via resolver)
+  Instantiating (via static resolver)
 */
 export const valr1 = Aluna.new({
   exchangeId: 'valr',
@@ -46,9 +22,7 @@ export const valr1 = Aluna.new({
 
 valr1.Balance.list().then(console.log).catch(console.error)
 valr1.Order.list().then(console.log).catch(console.error)
-valr1.Order.get({
-  id: 123,
-}).then(console.log).catch(console.error)
+// valr1.Order.get({ id: 123 }).then(console.log).catch(console.error)
 
 
 
@@ -64,6 +38,4 @@ export const valr2 = new Aluna.Valr({
 
 valr2.Balance.list().then(console.log).catch(console.error)
 valr2.Order.list().then(console.log).catch(console.error)
-valr2.Order.get({
-  id: 123,
-}).then(console.log).catch(console.error)
+// valr2.Order.get({ id: 123 }).then(console.log).catch(console.error)
