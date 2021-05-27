@@ -8,7 +8,7 @@ import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
 
 
 
-export class ValrBalance extends AAlunaModule implements IAlunaBalanceModule {
+export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
 
   async list (): Promise<IAlunaBalanceSchema[]> {

@@ -17,7 +17,7 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 
 
 
-export class ValrMarket extends AAlunaModule implements IAlunaMarketModule {
+export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule {
 
   async list (): Promise<IAlunaMarketSchema[]> {
 

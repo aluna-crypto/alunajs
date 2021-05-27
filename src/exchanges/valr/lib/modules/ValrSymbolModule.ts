@@ -7,7 +7,7 @@ import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 
 
 
-export class ValrSymbol extends AAlunaModule implements IAlunaSymbolModule {
+export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule {
 
   async list (): Promise<IAlunaSymbolSchema[]> {
 

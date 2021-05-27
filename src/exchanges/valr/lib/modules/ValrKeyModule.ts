@@ -1,7 +1,6 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from
-  '@lib/schemas/IAlunaKeyPermissionSchema'
+import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
 
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import { ValrRequests } from '../requests/ValrRequests'
@@ -10,7 +9,7 @@ import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 
-export class ValrKey extends AAlunaModule implements IAlunaKeyModule {
+export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public async validate (): Promise<boolean> {
 

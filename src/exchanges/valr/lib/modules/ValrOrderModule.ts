@@ -17,7 +17,7 @@ import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 
-export class ValrOrder extends AAlunaModule implements IAlunaOrderModule {
+export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
   public async list (
     _params?: IAlunaOrderListParams,
