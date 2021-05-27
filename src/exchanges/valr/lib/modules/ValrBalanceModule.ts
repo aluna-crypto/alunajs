@@ -18,7 +18,6 @@ export class ValrBalanceModule extends AAlunaModule
     const rawBalances = await new ValrRequest().get<IValrBalanceSchema[]>({
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
-      path: '/v1/account/balances',
     })
 
     const parsedBalances = this.parseMany({

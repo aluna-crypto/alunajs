@@ -26,7 +26,6 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
     const rawOrders = await new ValrRequest().get<IValrOrderSchema[]>({
       url: 'https://api.valr.com/v1/orders/open',
-      path: '/v1/orders/open',
       keySecret: this.exchange.keySecret,
     })
 
@@ -58,7 +57,6 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
     await new ValrRequest().post<{ id: string }>({
       url: 'https://api.valr.com/v1/orders/limit',
-      path: '/v1/orders/limit',
       body,
       keySecret: this.exchange.keySecret,
     })

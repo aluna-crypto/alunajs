@@ -37,7 +37,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       await request.get<IValrKeySchema>({
         url: 'https://api.valr.com/v1/account/balances',
-        path: '/v1/account/balances',
         keySecret: this.exchange.keySecret,
       })
 
@@ -53,7 +52,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       await request.get<IValrOrderSchema>({
         url: 'https://api.valr.com/v1/orders/limit',
-        path: '/v1/orders/limit',
         body: JSON.stringify({
           side: 'SELL',
           quantity: '0',
