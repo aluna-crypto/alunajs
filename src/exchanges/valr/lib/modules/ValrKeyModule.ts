@@ -43,6 +43,14 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       permissions.read = true
 
+      /**
+       * The next request will try to place an order with invalid params. Since
+       * the place order path requires an API with authotization to trade
+       * Valr will first verify the API auth and only then verify the params.
+       * This trick allow us to findout if the API key has permission to
+       * create orders, since Valr does not provide a request for it
+       */
+
       await request.get<IValrOrderSchema>({
         url: 'https://api.valr.com/v1/orders/limit',
         path: '/v1/orders/limit',
