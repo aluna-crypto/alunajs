@@ -29,10 +29,11 @@ export interface IAlunaRequest {
 
   // public methods (doesn't require `keySecret`)
   publicPost<T>(params: IAlunaRequestPublicParams): Promise<T>
-  publicPet<T>(params: IAlunaRequestPublicParams): Promise<T>
+  publicGet<T>(params: IAlunaRequestPublicParams): Promise<T>
 
   // private methods (requires `keySecret`)
   privatePost<T>(params: IAlunaRequestPrivateParams): Promise<T>
   privateGet<T>(params: IAlunaRequestPrivateParams): Promise<T>
 
 }
+
