@@ -42,7 +42,6 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
     this.keySecret = params.keySecret
     this.settings = params.settings
 
-
     this.Symbol = new ValrSymbol({ exchange: this })
     this.Market = new ValrMarket({ exchange: this })
 
