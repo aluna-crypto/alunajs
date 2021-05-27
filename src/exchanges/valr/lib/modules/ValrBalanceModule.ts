@@ -3,18 +3,19 @@ import { AccountEnum } from '@lib/enums/AccountEnum'
 import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
-import { ValrRequests } from '../requests/ValrRequests'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
+import { ValrRequest } from '../ValrRequest'
 
 
 
-export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
+export class ValrBalanceModule extends AAlunaModule
+  implements IAlunaBalanceModule {
 
 
   async list (): Promise<IAlunaBalanceSchema[]> {
 
 
-    const rawBalances = await new ValrRequests().get<IValrBalanceSchema[]>({
+    const rawBalances = await new ValrRequest().get<IValrBalanceSchema[]>({
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
       path: '/v1/account/balances',
@@ -30,7 +31,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
   }
 
   parse (params: {
-    rawBalance: IValrBalanceSchema
+    rawBalance: IValrBalanceSchema,
   }): IAlunaBalanceSchema {
 
     const {
@@ -48,7 +49,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
   }
 
   parseMany (params: {
-    rawBalances: IValrBalanceSchema[]
+    rawBalances: IValrBalanceSchema[],
   }): IAlunaBalanceSchema[] {
 
     const {

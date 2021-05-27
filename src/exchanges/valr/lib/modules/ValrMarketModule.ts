@@ -2,9 +2,9 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
-import { ValrRequests } from '../requests/ValrRequests'
 import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
+import { ValrRequest } from '../ValrRequest'
 import { ValrCurrencyPairsParser } from './parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from './parsers/ValrMarketParser'
 
@@ -17,11 +17,12 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 
 
 
-export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule {
+export class ValrMarketModule
+  extends AAlunaModule implements IAlunaMarketModule {
 
   async list (): Promise<IAlunaMarketSchema[]> {
 
-    const request = new ValrRequests()
+    const request = new ValrRequest()
 
     const rawMarkets = await request.get<IValrMarketSchema[]>({
       url: 'https://api.valr.com/v1/public/marketsummary',
@@ -49,8 +50,8 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
   }
 
   parse (params: {
-    rawMarket: IMarketWithCurrency
-    currencyVolumes: Record<string, string>
+    rawMarket: IMarketWithCurrency,
+    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema {
 
     return ValrMarketParser.parse(params)
@@ -58,8 +59,8 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
   }
 
   parseMany (params: {
-    rawMarkets: IMarketWithCurrency[]
-    currencyVolumes: Record<string, string>
+    rawMarkets: IMarketWithCurrency[],
+    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema[] {
 
     return params.rawMarkets.map((rawMarket) => this.parse({

@@ -1,11 +1,13 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
+import {
+  IAlunaKeyPermissionSchema,
+} from '@lib/schemas/IAlunaKeyPermissionSchema'
 
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
-import { ValrRequests } from '../requests/ValrRequests'
 import { IValrKeySchema } from '../schemas/IValrKeySchema'
 import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
+import { ValrRequest } from '../ValrRequest'
 
 
 
@@ -23,7 +25,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
 
-    const request = new ValrRequests()
+    const request = new ValrRequest()
 
     const permissions = {
       read: false,
@@ -80,7 +82,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (
     params: {
-      rawKey: IValrKeySchema
+      rawKey: IValrKeySchema,
     },
   ): IAlunaKeyPermissionSchema {
 

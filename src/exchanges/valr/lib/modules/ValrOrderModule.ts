@@ -71,7 +71,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
   public parse (
     params: {
-      rawOrder: IValrOrderSchema
+      rawOrder: IValrOrderSchema,
     },
   ): IAlunaOrderSchema {
 
@@ -113,7 +113,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
   public parseMany (
     params: {
-      rawOrders: IValrOrderSchema[]
+      rawOrders: IValrOrderSchema[],
     },
   ): IAlunaOrderSchema[] {
 
