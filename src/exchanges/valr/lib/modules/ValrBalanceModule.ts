@@ -8,9 +8,10 @@ import { ValrRequest } from '../ValrRequest'
 
 
 
-export class ValrBalanceModule
-  extends AAlunaModule
-  implements IAlunaBalanceModule
+export
+class ValrBalanceModule
+extends AAlunaModule
+implements IAlunaBalanceModule
 {
 
 
