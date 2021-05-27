@@ -31,7 +31,7 @@ export interface IValrOrderSchema {
 
 export interface IValrOrderStatusSchema {
   orderId: string
-  orderStatusType: ValrOrderTypesEnum
+  orderStatusType: ValrOrderStatusEnum
   currencyPair: string
   originalPrice: string
   remainingQuantity: string
@@ -40,8 +40,8 @@ export interface IValrOrderStatusSchema {
   orderType: ValrOrderTypesEnum
   failedReason: string
   customerOrderId: string
-  orderUpdatedAt: Date
-  orderCreatedAt: Date
+  orderUpdatedAt: string
+  orderCreatedAt: string
 }
 
 
@@ -49,7 +49,7 @@ export interface IValrOrderStatusSchema {
 export interface IValrOrderHistorySchema {
   orderId: string
   customerOrderId: string
-  orderStatusType: ValrOrderTypesEnum
+  orderStatusType: ValrOrderStatusEnum
   currencyPair: string
   averagePrice: string
   originalPrice: string
@@ -61,7 +61,7 @@ export interface IValrOrderHistorySchema {
   orderSide: ValrSideEnum
   orderType: ValrOrderTypesEnum
   failedReason: string
-  orderUpdatedAt: Date
-  orderCreatedAt: Date
+  orderUpdatedAt: string
+  orderCreatedAt: string
   timeInForce: ValrOrderTimeInForceEnum
 }
