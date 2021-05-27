@@ -12,8 +12,8 @@ import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
-import { ValrRequests } from '../requests/ValrRequests'
 import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
+import { ValrRequest } from '../ValrRequest'
 
 
 
@@ -24,7 +24,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
   ): Promise<IAlunaOrderSchema[]> {
 
 
-    const rawOrders = await new ValrRequests().get<IValrOrderSchema[]>({
+    const rawOrders = await new ValrRequest().get<IValrOrderSchema[]>({
       url: 'https://api.valr.com/v1/orders/open',
       path: '/v1/orders/open',
       keySecret: this.exchange.keySecret,
@@ -58,7 +58,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
     }
 
 
-    await new ValrRequests().post<{ id: string }>({
+    await new ValrRequest().post<{ id: string }>({
       url: 'https://api.valr.com/v1/orders/limit',
       path: '/v1/orders/limit',
       body,
