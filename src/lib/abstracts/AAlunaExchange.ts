@@ -12,14 +12,14 @@ export abstract class AAlunaExchange {
 
 
   constructor (
-    params: {
+    params?: {
       keySecret?: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
     },
   ) {
 
-    this.keySecret = params.keySecret
-    this.settings = params.settings
+    this.keySecret = params?.keySecret
+    this.settings = params?.settings
 
   }
 
