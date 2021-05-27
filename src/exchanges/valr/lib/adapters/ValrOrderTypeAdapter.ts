@@ -5,11 +5,13 @@ import { ValrError } from '../ValrError'
 
 
 
-export class ValrTypeAdapter {
+export class ValrOrderTypeAdapter {
 
-  static translateToAluna (params: {
-    type: ValrOrderTypesEnum
-  }): OrderTypesEnum {
+  static translateToAluna (
+    params: {
+      type: ValrOrderTypesEnum,
+    }
+  ): OrderTypesEnum {
 
     const {
       type,
@@ -42,7 +44,7 @@ export class ValrTypeAdapter {
 
   static translateToValr (
     params: {
-      type: OrderTypesEnum
+      type: OrderTypesEnum,
     },
   ): ValrOrderTypesEnum {
 
