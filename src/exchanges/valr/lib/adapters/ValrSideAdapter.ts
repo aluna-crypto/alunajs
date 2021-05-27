@@ -26,7 +26,9 @@ export class ValrSideAdapter {
         return SideEnum.SHORT
 
       default:
-        throw new ValrError(`Order side not supported: ${side}`)
+        throw new ValrError({
+          message: `Order side not supported: ${side}`,
+        })
 
     }
 
@@ -51,7 +53,9 @@ export class ValrSideAdapter {
         return ValrSideEnum.SELL
 
       default:
-        throw new ValrError(`Order side not supported: ${side}`)
+        throw new ValrError({
+          message: `Order side not supported: ${side}`,
+        })
 
     }
 

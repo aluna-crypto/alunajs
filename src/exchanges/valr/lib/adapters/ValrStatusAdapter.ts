@@ -32,7 +32,9 @@ export class ValrStatusAdapter {
         return OrderStatusEnum.CANCELED
 
       default:
-        throw new ValrError(`Order side not supported: ${status}`)
+        throw new ValrError({
+          message: `Order side not supported: ${status}`,
+        })
 
     }
 
@@ -63,7 +65,9 @@ export class ValrStatusAdapter {
         return ValrOrderStatusEnum.CANCELED
 
       default:
-        throw new ValrError(`Order side not supported: ${status}`)
+        throw new ValrError({
+          message: `Order side not supported: ${status}`,
+        })
 
     }
 

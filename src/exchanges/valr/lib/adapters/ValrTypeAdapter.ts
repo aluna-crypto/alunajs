@@ -32,7 +32,9 @@ export class ValrTypeAdapter {
         return OrderTypesEnum.TAKE_PROFIT_LIMIT
 
       default:
-        throw new ValrError(`Order type not supported: ${type}`)
+        throw new ValrError({
+          message: `Order type not supported: ${type}`,
+        })
 
     }
 
@@ -64,7 +66,9 @@ export class ValrTypeAdapter {
 
 
       default:
-        throw new ValrError(`Order type not supported: ${type}`)
+        throw new ValrError({
+          message: `Order type not supported: ${type}`,
+        })
 
     }
 
