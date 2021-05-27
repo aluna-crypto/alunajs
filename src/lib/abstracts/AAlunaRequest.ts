@@ -6,6 +6,7 @@ import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 export abstract class AAlunaRequest {
 
   public readonly keySecret?: IAlunaKeySecretSchema
+
   public readonly settings?: IAlunaSettingsSchema
 
 
@@ -14,7 +15,7 @@ export abstract class AAlunaRequest {
     params?: {
       keySecret?: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
-    }
+    },
   ) {
 
     this.keySecret = params?.keySecret
