@@ -23,27 +23,35 @@ interface IValrPlaceOrderResponse {
 
 export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
+
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
 
-
-    const rawOrders = await new ValrRequest().get<IValrOrderSchema[]>({
-      url: 'https://api.valr.com/v1/orders/open',
-      keySecret: this.exchange.keySecret,
+    return this.parseMany({
+      rawOrders: await this.listRaw(),
     })
-
-    const parsedOrders = this.parseMany({
-      rawOrders,
-    })
-
-    return parsedOrders
 
   }
 
 
 
-  async place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
+  async listRaw (
+    _params?: IAlunaOrderListParams,
+  ): Promise<IValrOrderSchema[]> {
+
+    return new ValrRequest().get<IValrOrderSchema[]>({
+      url: 'https://api.valr.com/v1/orders/open',
+      keySecret: this.exchange.keySecret,
+    })
+
+  }
+
+
+
+  async place (
+    params: IAlunaOrderPlaceParams,
+  ): Promise<IAlunaOrderSchema> {
 
     const {
       amount, rate, symbol, side,
