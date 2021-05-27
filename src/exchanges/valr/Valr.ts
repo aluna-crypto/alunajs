@@ -1,22 +1,24 @@
+import { AAlunaExchange } from '@lib/abstracts/AAlunaExchange'
 import { IAlunaExchange } from '@lib/abstracts/IAlunaExchange'
+import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
+import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
+import { IAlunaOrderModule } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
+import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 
-import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
-import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
-import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
-import { IAlunaOrderModule } from '../../lib/modules/IAlunaOrderModule'
-import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { ValrBalance } from './lib/modules/balance/ValrBalance'
-import { ValrSpecs } from './lib/ValrSpecs'
+import { ValrKey } from './lib/modules/key/ValrKey'
+import { ValrMarket } from './lib/modules/market/ValrMarket'
+import { ValrOrder } from './lib/modules/order/ValrOrder'
+import { ValrSymbol } from './lib/modules/symbol/ValrSymbol'
 
 
 
 export class Valr extends AAlunaExchange implements IAlunaExchange {
 
   readonly ID = 'valr'
-  readonly SPECS = ValrSpecs
 
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
@@ -26,21 +28,25 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
   Balance: IAlunaBalanceModule
 
 
-
   constructor (
     params: {
-      keySecret: IAlunaKeySecretSchema
+      keySecret?: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
     },
   ) {
 
     super(params)
 
-    this.Balance = new ValrBalance({ exchange: this })
-    // this.Order = new ValrOrder(this)
-    // this.Key = new ValrKey(this)
-    // this.Balance = new ValrOrder2(this.privateRequest)
+    this.keySecret = params.keySecret
+    this.settings = params.settings
 
+
+    this.Symbol = new ValrSymbol({ exchange: this })
+    this.Market = new ValrMarket({ exchange: this })
+
+    this.Key = new ValrKey({ exchange: this })
+    this.Balance = new ValrBalance({ exchange: this })
+    this.Order = new ValrOrder({ exchange: this })
   }
 
 }
