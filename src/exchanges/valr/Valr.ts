@@ -1,38 +1,29 @@
-import { IAlunaRequest } from '@lib/abstracts/IAlunaRequest'
+import { IAlunaExchange } from '@lib/abstracts/IAlunaExchange'
+import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
+import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 
-import { IAlunaExchange } from ''
 import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { ValrMarket } from './lib/modules/market/ValrMarket'
-import { ValrSymbol } from './lib/modules/symbol/ValrSymbol'
-import { ValrBalance } from './lib/modules/ValrBalance'
-import { ValrPublicRequest } from './lib/requests/ValrPublicRequest'
+import { ValrBalance } from './lib/modules/balance/ValrBalance'
+import { ValrSpecs } from './lib/ValrSpecs'
 
 
 
 export class Valr extends AAlunaExchange implements IAlunaExchange {
 
-  static readonly ID = 'valr'
+  readonly ID = 'valr'
+  readonly SPECS = ValrSpecs
 
-  static readonly publicRequest = new ValrPublicRequest()
-
-  static readonly Symbol = new ValrSymbol(Valr.publicRequest)
-
-  static readonly Market = new ValrMarket(Valr.publicRequest)
-
-
+  Symbol: IAlunaSymbolModule
+  Market: IAlunaMarketModule
 
   Key: IAlunaKeyModule
-
   Order: IAlunaOrderModule
-
   Balance: IAlunaBalanceModule
-
-  privateRequest: IAlunaRequest
 
 
 
@@ -45,7 +36,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
     super(params)
 
-    this.Balance = new ValrBalance(this)
+    this.Balance = new ValrBalance({ exchange: this })
     // this.Order = new ValrOrder(this)
     // this.Key = new ValrKey(this)
     // this.Balance = new ValrOrder2(this.privateRequest)
