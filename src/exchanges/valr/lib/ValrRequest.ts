@@ -99,7 +99,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     } = params
 
     const requestConfig = {
-      data: body || undefined,
+      data: body,
       headers: options?.headers,
     }
 
@@ -132,7 +132,6 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     }
 
     const path = new URL(url).pathname
-
 
     const signedHash = this.generateAuthHeader({
       verb: HttpVerbEnum.GET,
@@ -175,7 +174,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
     } = params
 
     const requestConfig = {
-      data: body || undefined,
+      data: body,
       headers: options?.headers,
     }
 
@@ -214,7 +213,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
   private generateAuthHeader = (params: ISignedHashParams) => {
 
     const {
-      keySecret, path, verb, body = '',
+      keySecret, path, verb, body,
     } = params
 
 
@@ -225,7 +224,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
       .update(timestamp.toString())
       .update(verb.toUpperCase())
       .update(`${path}`)
-      .update(body)
+      .update(body ? JSON.stringify(body) : '')
       .digest('hex')
 
     return {
@@ -253,7 +252,7 @@ export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
     return new ValrError({
       message: error.message,
-      statusCode: error.statusCode || 400,
+      statusCode: error.response?.status || 400,
     })
 
   }
