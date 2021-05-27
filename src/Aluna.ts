@@ -5,35 +5,16 @@ import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
 
-export class Aluna extends Exchanges {
+export class Aluna {
 
   static readonly exchanges = Exchanges
-
-
-
-  static static (params: { exchangeId: string }): Exchanges {
-
-    const {
-      exchangeId,
-    } = params
-
-    switch (exchangeId) {
-
-      case this.Valr.ID:
-        return this.Valr
-      default:
-        throw new Error(`Exchange not implemented: ${exchangeId}`)
-
-    }
-
-  }
 
 
 
   static new (
     params: {
       exchangeId: string
-      keySecret: IAlunaKeySecretSchema
+      keySecret?: IAlunaKeySecretSchema
       settings?: IAlunaSettingsSchema
     },
   ): IAlunaExchange {
@@ -44,13 +25,13 @@ export class Aluna extends Exchanges {
       settings,
     } = params
 
+    const subParams = { keySecret, settings}
+
     switch (exchangeId) {
 
-      case this.Valr.ID:
-        return new this.Valr({
-          keySecret,
-          settings,
-        })
+      case new Exchanges.Valr().ID:
+        return new Exchanges.Valr(subParams)
+
       default:
         throw new Error(`Exchange not implemented: ${exchangeId}`)
 
