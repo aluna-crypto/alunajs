@@ -9,9 +9,9 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
+import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
-import { ValrTypeAdapter } from '../adapters/ValrTypeAdapter'
 import { ValrRequests } from '../requests/ValrRequests'
 import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
@@ -102,7 +102,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
       status,
     })
 
-    const translatedOrder = ValrTypeAdapter.translateToAluna({
+    const translatedOrder = ValrOrderTypeAdapter.translateToAluna({
       type,
     })
 
