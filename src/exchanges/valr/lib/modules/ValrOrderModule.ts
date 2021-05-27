@@ -9,11 +9,11 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-import { ValrSideAdapter } from '../../adapters/ValrSideAdapter'
-import { ValrStatusAdapter } from '../../adapters/ValrStatusAdapter'
-import { ValrTypeAdapter } from '../../adapters/ValrTypeAdapter'
-import { ValrRequests } from '../../requests/ValrRequests'
-import { IValrOrderSchema } from '../../schemas/IValrOrderSchema'
+import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
+import { ValrStatusAdapter } from '../adapters/ValrStatusAdapter'
+import { ValrTypeAdapter } from '../adapters/ValrTypeAdapter'
+import { ValrRequests } from '../requests/ValrRequests'
+import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 

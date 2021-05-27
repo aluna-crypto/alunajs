@@ -1,6 +1,6 @@
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
-import { IMarketWithCurrency } from '../ValrMarket'
+import { IMarketWithCurrency } from '../ValrMarketModule'
 
 
 

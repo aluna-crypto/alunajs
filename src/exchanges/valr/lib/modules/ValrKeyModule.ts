@@ -3,10 +3,10 @@ import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from
   '@lib/schemas/IAlunaKeyPermissionSchema'
 
-import { ValrErrorEnum } from '../../enums/ValrErrorEnum'
-import { ValrRequests } from '../../requests/ValrRequests'
-import { IValrKeySchema } from '../../schemas/IValrKeySchema'
-import { IValrOrderSchema } from '../../schemas/IValrOrderSchema'
+import { ValrErrorEnum } from '../enums/ValrErrorEnum'
+import { ValrRequests } from '../requests/ValrRequests'
+import { IValrKeySchema } from '../schemas/IValrKeySchema'
+import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 
 
 

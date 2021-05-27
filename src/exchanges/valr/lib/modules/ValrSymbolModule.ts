@@ -2,8 +2,8 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
-import { ValrRequests } from '../../requests/ValrRequests'
-import { IValrSymbolSchema } from '../../schemas/IValrSymbolSchema'
+import { ValrRequests } from '../requests/ValrRequests'
+import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 
 
 

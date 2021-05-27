@@ -3,8 +3,8 @@ import { AccountEnum } from '@lib/enums/AccountEnum'
 import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
-import { ValrRequests } from '../../requests/ValrRequests'
-import { IValrBalanceSchema } from '../../schemas/IValrBalanceSchema'
+import { ValrRequests } from '../requests/ValrRequests'
+import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
 
 
 

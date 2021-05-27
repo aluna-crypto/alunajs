@@ -1,6 +1,6 @@
-import { IValrCurrencyPairs } from '../../../schemas/IValrCurrencyPairs'
-import { IValrMarketSchema } from '../../../schemas/IValrMarketSchema'
-import { IMarketWithCurrency } from '../ValrMarket'
+import { IValrCurrencyPairs } from '../../schemas/IValrCurrencyPairs'
+import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
+import { IMarketWithCurrency } from '../ValrMarketModule'
 
 
 

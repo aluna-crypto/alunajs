@@ -2,9 +2,9 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
-import { ValrRequests } from '../../requests/ValrRequests'
-import { IValrCurrencyPairs } from '../../schemas/IValrCurrencyPairs'
-import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
+import { ValrRequests } from '../requests/ValrRequests'
+import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
+import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from './parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from './parsers/ValrMarketParser'
 
