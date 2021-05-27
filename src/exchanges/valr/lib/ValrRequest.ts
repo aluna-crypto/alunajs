@@ -1,6 +1,7 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
+import { AAlunaRequest } from '@lib/abstracts/AAlunaRequest'
 import {
   IAlunaRequest,
   IAlunaRequestParams,
@@ -25,7 +26,7 @@ interface ISignedHashParams {
 
 
 
-export class ValrRequests implements IAlunaRequest {
+export class ValrRequest extends AAlunaRequest implements IAlunaRequest {
 
   async post<T> (params: IValrRequestParams): Promise<T> {
 
