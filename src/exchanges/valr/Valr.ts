@@ -3,7 +3,10 @@ import { IAlunaExchange } from '@lib/abstracts/IAlunaExchange'
 import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
-import { IAlunaOrderReadModule } from '@lib/modules/IAlunaOrderModule'
+import {
+  IAlunaOrderWriteModule,
+  IAlunaOrderReadModule,
+} from '@lib/modules/IAlunaOrderModule'
 import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
@@ -11,7 +14,8 @@ import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 import { ValrBalanceModule } from './lib/modules/ValrBalanceModule'
 import { ValrKeyModule } from './lib/modules/ValrKeyModule'
 import { ValrMarketModule } from './lib/modules/ValrMarketModule'
-import { ValrOrderReadModule } from './lib/modules/ValrOrderModule'
+import { ValrOrderReadModule } from './lib/modules/ValrOrderReadModule'
+import { ValrOrderWriteModule } from './lib/modules/ValrOrderWriteModule'
 import { ValrSymbolModule } from './lib/modules/ValrSymbolModule'
 import { ValrSpecs } from './lib/ValrSpecs'
 
@@ -27,6 +31,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
   Key: IAlunaKeyModule
   Order: IAlunaOrderReadModule
+  OrderWrite: IAlunaOrderWriteModule
   Balance: IAlunaBalanceModule
 
 
@@ -46,6 +51,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
     this.Key = new ValrKeyModule({ exchange: this })
     this.Balance = new ValrBalanceModule({ exchange: this })
     this.Order = new ValrOrderReadModule({ exchange: this })
+    this.OrderWrite = new ValrOrderWriteModule({ exchange: this })
 
   }
 
