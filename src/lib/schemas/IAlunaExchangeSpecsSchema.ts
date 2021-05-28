@@ -3,6 +3,13 @@ import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
 
 
+export enum AlunaExchangeFeatureEnum {
+  READ = 'read',
+  WRITE = 'write',
+}
+
+
+
 export interface IAlunaExchangeOrderTypesSpecsSchema {
   [OrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
   [OrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
@@ -55,10 +62,14 @@ export interface IAlunaExchangeOrderSpecsSchema {
 
 export interface IAlunaExchangeSpecsSchema {
   acceptFloatAmounts: boolean
+  features: {
+    balance: AlunaExchangeFeatureEnum
+    order: AlunaExchangeFeatureEnum
+    position?: AlunaExchangeFeatureEnum
+  }
   accounts: {
     [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
   }
 }
-
