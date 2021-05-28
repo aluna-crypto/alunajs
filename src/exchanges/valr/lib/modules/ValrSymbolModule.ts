@@ -3,7 +3,7 @@ import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
-import { ValrRequest } from '../ValrRequest'
+import { ValrHttp } from '../ValrHttp'
 
 
 
@@ -19,16 +19,18 @@ export class ValrSymbolModule
   }
 
 
-  listRaw (): Promise<IValrSymbolSchema[]> {
+  async listRaw (): Promise<IValrSymbolSchema[]> {
 
-    return new ValrRequest().get<IValrSymbolSchema[]>({
+    return ValrHttp.publicRequest<IValrSymbolSchema[]>({
       url: 'https://api.valr.com/v1/public/currencies',
     })
 
   }
 
 
-  parse (params: { rawSymbol: IValrSymbolSchema }): IAlunaSymbolSchema {
+  parse (params:
+    { rawSymbol: IValrSymbolSchema,
+    }): IAlunaSymbolSchema {
 
     const {
       rawSymbol: {
