@@ -5,8 +5,8 @@ import { URL } from 'url'
 import { AAlunaRequest } from '@lib/abstracts/AAlunaRequest'
 import {
   IAlunaRequest,
-  IAlunaRequestPublicParams,
   IAlunaRequestPrivateParams,
+  IAlunaRequestPublicParams,
 } from '@lib/abstracts/IAlunaRequest'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
