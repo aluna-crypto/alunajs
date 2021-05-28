@@ -4,7 +4,7 @@ import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
 import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
-import { ValrRequest } from '../ValrRequest'
+import { ValrHttp } from '../ValrHttp'
 import { ValrCurrencyPairsParser } from './parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from './parsers/ValrMarketParser'
 
@@ -22,14 +22,13 @@ export class ValrMarketModule
 
   async listRaw (): Promise<IMarketWithCurrency[]> {
 
+    const { publicRequest } = ValrHttp
 
-    const request = new ValrRequest()
-
-    const rawMarkets = await request.get<IValrMarketSchema[]>({
+    const rawMarkets = await publicRequest<IValrMarketSchema[]>({
       url: 'https://api.valr.com/v1/public/marketsummary',
     })
 
-    const rawSymbolPairs = await request.get<IValrCurrencyPairs[]>({
+    const rawSymbolPairs = await publicRequest<IValrCurrencyPairs[]>({
       url: 'https://api.valr.com/v1/public/pairs',
     })
 
@@ -45,28 +44,13 @@ export class ValrMarketModule
 
   async list (): Promise<IAlunaMarketSchema[]> {
 
-    const request = new ValrRequest()
-
-    const rawMarkets = await request.get<IValrMarketSchema[]>({
-      url: 'https://api.valr.com/v1/public/marketsummary',
-    })
-
-    const rawSymbolPairs = await request.get<IValrCurrencyPairs[]>({
-      url: 'https://api.valr.com/v1/public/pairs',
-    })
-
-
-
-    const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
-      rawMarkets,
-      rawSymbolPairs,
-    })
-
     return this.parseMany({
-      rawMarkets: rawMarketsWithCurrency,
+      rawMarkets: await this.listRaw(),
     })
 
   }
+
+
 
   parse (params: {
     rawMarket: IMarketWithCurrency,
@@ -75,6 +59,8 @@ export class ValrMarketModule
     return ValrMarketParser.parse(params)
 
   }
+
+
 
   parseMany (params: {
     rawMarkets: IMarketWithCurrency[],
