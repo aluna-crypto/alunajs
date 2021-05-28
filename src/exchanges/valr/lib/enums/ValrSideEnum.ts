@@ -1,4 +1,4 @@
 export enum ValrSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }

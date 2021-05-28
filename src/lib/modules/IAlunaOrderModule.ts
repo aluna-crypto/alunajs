@@ -14,27 +14,35 @@ export interface IAlunaOrderListParams {
 
 export interface IAlunaOrderGetParams {
   id: string | number
+  symbolPair: string
 }
 
 export interface IAlunaOrderPlaceParams {
   side: SideEnum
-  symbol: string
+  symbolPair: string
   rate: string | number
   amount: string | number
   type: OrderTypesEnum
-  // TODO: to be continued...
 }
 
 
 
-export interface IAlunaOrderModule extends IAlunaModule {
+export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
 
+
+
+export interface IAlunaOrderReadModule extends IAlunaModule {
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderSchema[]>
   listRaw (params?: IAlunaOrderListParams): Promise<any[]>
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema>
   getRaw (params: IAlunaOrderGetParams): Promise<any>
-  place? (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
   parse (params: { rawOrder: any }): IAlunaOrderSchema
   parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
+}
 
+
+
+export interface IAlunaOrderWriteModule extends IAlunaModule {
+  place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
+  cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema>
 }
