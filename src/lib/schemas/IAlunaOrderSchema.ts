@@ -8,8 +8,7 @@ import { SideEnum } from '../enums/SideEnum'
 export interface IAlunaOrderSchema {
 
   id: string | number
-
-  marketId: string
+  symbolPair: string
 
   total: number
   amount: number
