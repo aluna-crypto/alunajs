@@ -13,9 +13,9 @@ export class Aluna extends Exchanges {
 
   static new (
     params: {
-      exchangeId: string
-      keySecret?: IAlunaKeySecretSchema
-      settings?: IAlunaSettingsSchema
+      exchangeId: string,
+      keySecret: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
     },
   ): IAlunaExchange {
 
@@ -25,11 +25,14 @@ export class Aluna extends Exchanges {
       settings,
     } = params
 
-    const subParams = { keySecret, settings}
+    const subParams = {
+      keySecret,
+      settings,
+    }
 
     switch (exchangeId) {
 
-      case new Exchanges.Valr().ID:
+      case 'valr':
         return new Exchanges.Valr(subParams)
 
       default:
@@ -40,3 +43,4 @@ export class Aluna extends Exchanges {
   }
 
 }
+
