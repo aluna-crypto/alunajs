@@ -36,7 +36,16 @@ export class ValrOrderParser {
     let type: ValrOrderTypesEnum
     let createdAt: string
 
-    if ((<IValrOrderListSchema> rawOrder).side) {
+    /**
+     * Here we first cast rawOrder to IValrOrderListSchema and then try to
+     * access the property side. Typescript allows this syntax to check if the
+     * object has the desired property. If rawOrder has the side property, it
+     * will be returned, otherwise, it will return undefined. This is needed
+     * because rawOrder can be of 2 possible types
+     */
+    const isIValrOderListSchema = !!(<IValrOrderListSchema> rawOrder).side
+
+    if (isIValrOderListSchema) {
 
       ({
         side,
