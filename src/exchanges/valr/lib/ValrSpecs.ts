@@ -1,6 +1,7 @@
 import { AccountEnum } from '@lib/enums/AccountEnum'
 import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 import {
+  AlunaExchangeReadWriteEnum,
   IAlunaExchangeOrderTypesSpecsSchema,
   IAlunaExchangeSpecsSchema,
 } from '@lib/schemas/IAlunaExchangeSpecsSchema'
@@ -20,6 +21,10 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
   acceptFloatAmounts: true,
+  features: {
+    balance: AlunaExchangeReadWriteEnum.READ,
+    order: AlunaExchangeReadWriteEnum.WRITE,
+  },
   accounts: {
     [AccountEnum.EXCHANGE]: {
       supported: true,
