@@ -30,8 +30,8 @@ export interface IAlunaOrderModule extends IAlunaModule {
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderSchema[]>
   listRaw (params?: IAlunaOrderListParams): Promise<any[]>
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema>
-  getRaw<T> (params: IAlunaOrderGetParams): Promise<T>
-  place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
+  getRaw (params: IAlunaOrderGetParams): Promise<any>
+  place? (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
   parse (params: { rawOrder: any }): IAlunaOrderSchema
   parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
 
