@@ -3,15 +3,11 @@ import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 
-
-
 /**
  * ISSUE: Valr has many different order responses types
 */
 
-
-
-export interface IValrOrderSchema {
+export interface IValrOrderListSchema {
   orderId: string
   side: ValrSideEnum
   remainingQuantity: string
@@ -29,7 +25,7 @@ export interface IValrOrderSchema {
 
 
 
-export interface IValrOrderStatusSchema {
+export interface IValrOrderGetSchema {
   orderId: string
   orderStatusType: ValrOrderStatusEnum
   currencyPair: string
@@ -46,22 +42,22 @@ export interface IValrOrderStatusSchema {
 
 
 
-export interface IValrOrderHistorySchema {
-  orderId: string
-  customerOrderId: string
-  orderStatusType: ValrOrderStatusEnum
-  currencyPair: string
-  averagePrice: string
-  originalPrice: string
-  remainingQuantity: string
-  originalQuantity: string
-  total: string
-  totalFee: string
-  feeCurrency: string
-  orderSide: ValrSideEnum
-  orderType: ValrOrderTypesEnum
-  failedReason: string
-  orderUpdatedAt: string
-  orderCreatedAt: string
-  timeInForce: ValrOrderTimeInForceEnum
-}
+// export interface IValrOrderHistorySchema {
+//   orderId: string
+//   customerOrderId: string
+//   orderStatusType: ValrOrderStatusEnum
+//   currencyPair: string
+//   averagePrice: string
+//   originalPrice: string
+//   remainingQuantity: string
+//   originalQuantity: string
+//   total: string
+//   totalFee: string
+//   feeCurrency: string
+//   orderSide: ValrSideEnum
+//   orderType: ValrOrderTypesEnum
+//   failedReason: string
+//   orderUpdatedAt: string
+//   orderCreatedAt: string
+//   timeInForce: ValrOrderTimeInForceEnum
+// }
