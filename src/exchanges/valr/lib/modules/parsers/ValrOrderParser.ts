@@ -7,6 +7,9 @@ import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../adapters/ValrStatusAdapter'
+import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
+import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
+import { ValrSideEnum } from '../../enums/ValrSideEnum'
 import {
   IValrOrderSchema, IValrOrderStatusSchema,
 } from '../../schemas/IValrOrderSchema'
@@ -27,11 +30,11 @@ export class ValrOrderParser {
       originalQuantity,
     } = rawOrder
 
-    let side
-    let price
-    let status
-    let type
-    let createdAt
+    let side: ValrSideEnum
+    let price: string
+    let status: ValrOrderStatusEnum
+    let type: ValrOrderTypesEnum
+    let createdAt: string
 
     if ((<IValrOrderSchema> rawOrder).side) {
 
