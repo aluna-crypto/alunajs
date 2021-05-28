@@ -3,7 +3,6 @@ import { utc } from 'moment'
 import { AccountEnum } from '@lib/enums/AccountEnum'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-
 import { ValrOrderTypeAdapter } from '../../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../adapters/ValrStatusAdapter'
@@ -11,7 +10,8 @@ import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../../enums/ValrSideEnum'
 import {
-  IValrOrderSchema, IValrOrderStatusSchema,
+  IValrOrderListSchema,
+  IValrOrderGetSchema,
 } from '../../schemas/IValrOrderSchema'
 
 
@@ -19,7 +19,7 @@ import {
 export class ValrOrderParser {
 
   static parse (params: {
-    rawOrder: IValrOrderSchema | IValrOrderStatusSchema,
+    rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
   }): IAlunaOrderSchema {
 
     const { rawOrder } = params
@@ -36,7 +36,7 @@ export class ValrOrderParser {
     let type: ValrOrderTypesEnum
     let createdAt: string
 
-    if ((<IValrOrderSchema> rawOrder).side) {
+    if ((<IValrOrderListSchema> rawOrder).side) {
 
       ({
         side,
@@ -44,7 +44,7 @@ export class ValrOrderParser {
         status,
         type,
         createdAt,
-      } = rawOrder as IValrOrderSchema)
+      } = rawOrder as IValrOrderListSchema)
 
     } else {
 
@@ -54,17 +54,16 @@ export class ValrOrderParser {
         orderType: type,
         orderStatusType: status,
         orderCreatedAt: createdAt,
-      } = rawOrder as IValrOrderStatusSchema)
+      } = rawOrder as IValrOrderGetSchema)
 
     }
-
 
     const amount = parseFloat(originalQuantity)
     const rate = parseFloat(price)
 
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
-      marketId: currencyPair,
+      symbolPair: currencyPair,
       total: amount * rate,
       amount,
       isAmountInContracts: false,
