@@ -1,10 +1,11 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { AccountEnum } from '@lib/enums/AccountEnum'
+import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
-import { ValrRequest } from '../ValrRequest'
+import { ValrHttp } from '../ValrHttp'
 
 
 
@@ -16,7 +17,8 @@ class ValrBalanceModule
 
   async listRaw (): Promise<IValrBalanceSchema[]> {
 
-    const rawBalances = await new ValrRequest().get<IValrBalanceSchema[]>({
+    const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
+      verb: HttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
     })
