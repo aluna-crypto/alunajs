@@ -21,6 +21,7 @@ export class ValrMarketParser {
         lowPrice,
         baseCurrency,
         quoteCurrency,
+        currencyPair,
       },
     } = params
 
@@ -38,7 +39,9 @@ export class ValrMarketParser {
     }
 
     return {
-      pairSymbol: `${baseCurrency}/${quoteCurrency}`,
+      pairSymbol: currencyPair,
+      baseSymbol: baseCurrency,
+      quoteSymbol: quoteCurrency,
       ticker,
       spotEnabled: false,
       marginEnabled: false,
