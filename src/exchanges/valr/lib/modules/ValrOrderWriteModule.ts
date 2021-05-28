@@ -1,7 +1,10 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import {
-  IAlunaOrderCancelParams, IAlunaOrderPlaceParams, IAlunaOrderWriteModule,
+  IAlunaOrderCancelParams,
+  IAlunaOrderGetParams,
+  IAlunaOrderPlaceParams,
+  IAlunaOrderWriteModule,
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
@@ -49,14 +52,32 @@ export class ValrOrderWriteModule
       keySecret: this.exchange.keySecret,
     })
 
-    const rawOrder = await ValrHttp.privateRequest<IValrOrderGetSchema>({
-      verb: HttpVerbEnum.GET,
-      url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
-      keySecret: this.exchange.keySecret,
+    const rawOrder = await this.getRaw({
+      id,
+      symbolPair,
     })
 
     return ValrOrderParser.parse({
       rawOrder,
+    })
+
+  }
+
+
+  getRaw (
+    params: IAlunaOrderGetParams,
+  ): Promise<IValrOrderGetSchema> {
+
+    const {
+      id,
+      symbolPair,
+    } = params
+
+
+    return ValrHttp.privateRequest<IValrOrderGetSchema>({
+      verb: HttpVerbEnum.GET,
+      url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
+      keySecret: this.exchange.keySecret,
     })
 
   }
