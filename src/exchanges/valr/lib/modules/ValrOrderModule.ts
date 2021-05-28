@@ -1,39 +1,30 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
+import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderListParams,
-  IAlunaOrderModule,
-  IAlunaOrderPlaceParams,
+  IAlunaOrderReadModule,
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
 import {
-  IValrOrderSchema, IValrOrderStatusSchema,
+  IValrOrderListSchema, IValrOrderGetSchema,
 } from '../schemas/IValrOrderSchema'
-import { ValrRequest } from '../ValrRequest'
+import { ValrHttp } from '../ValrHttp'
 import { ValrOrderParser } from './parsers/ValrOrderParser'
 
 
 
-interface IValrPlaceOrderResponse {
-  id: string
-}
-
-
-interface IValrOrderGetParams extends IAlunaOrderGetParams {
-  symbol: string
-}
-
-
-
-export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
+export class ValrOrderReadModule
+  extends AAlunaModule implements IAlunaOrderReadModule {
 
   async listRaw (
     _params?: IAlunaOrderListParams,
-  ): Promise<IValrOrderSchema[]> {
+  ): Promise<IValrOrderListSchema[]> {
 
-    return new ValrRequest().get<IValrOrderSchema[]>({
+
+    return ValrHttp.privateRequest<IValrOrderListSchema[]>({
+      verb: HttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/orders/open',
       keySecret: this.exchange.keySecret,
     })
@@ -55,16 +46,18 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
 
   getRaw (
-    params: IValrOrderGetParams,
-  ): Promise<IValrOrderStatusSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IValrOrderGetSchema> {
 
     const {
       id,
-      symbol,
+      symbolPair,
     } = params
 
-    return new ValrRequest().get<IValrOrderStatusSchema>({
-      url: `https://api.valr.com/v1/orders/${symbol}/orderid/${id}`,
+
+    return ValrHttp.privateRequest<IValrOrderGetSchema>({
+      verb: HttpVerbEnum.GET,
+      url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
       keySecret: this.exchange.keySecret,
     })
 
@@ -73,7 +66,7 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
 
   async get (
-    params: IValrOrderGetParams,
+    params: IAlunaOrderGetParams,
   ): Promise<IAlunaOrderSchema> {
 
     const order = await this.getRaw(params)
@@ -86,42 +79,9 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
 
 
-  async place (
-    params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
-
-    const {
-      amount, rate, symbol, side,
-    } = params
-
-    const body = {
-      side: ValrSideAdapter.translateToValr({ side }),
-      quantity: amount,
-      price: rate,
-      pair: symbol,
-      postOnly: false,
-      timeInForce: 'GTC',
-    }
-
-
-    const { id } = await new ValrRequest().post<IValrPlaceOrderResponse>({
-      url: 'https://api.valr.com/v1/orders/limit',
-      body,
-      keySecret: this.exchange.keySecret,
-    })
-
-    return this.get({
-      id,
-      symbol,
-    })
-
-  }
-
-
-
   public parse (
     params: {
-      rawOrder: IValrOrderSchema | IValrOrderStatusSchema,
+      rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
     },
   ): IAlunaOrderSchema {
 
@@ -135,11 +95,13 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
   public parseMany (
     params: {
-      rawOrders: IValrOrderSchema[],
+      rawOrders: IValrOrderListSchema[],
     },
   ): IAlunaOrderSchema[] {
 
-    return params.rawOrders.map((rawOrder: IValrOrderSchema) => this.parse({
+    return params.rawOrders.map((
+      rawOrder: IValrOrderListSchema,
+    ) => this.parse({
       rawOrder,
     }))
 
