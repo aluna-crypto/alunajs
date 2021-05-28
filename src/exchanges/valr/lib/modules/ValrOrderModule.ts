@@ -29,7 +29,6 @@ interface IValrOrderGetParams extends IAlunaOrderGetParams {
 
 export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
-
   public async list (
     _params?: IAlunaOrderListParams,
   ): Promise<IAlunaOrderSchema[]> {
@@ -59,7 +58,8 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
   ): Promise<IAlunaOrderSchema> {
 
     const {
-      id, symbol,
+      id,
+      symbol,
     } = params
 
     const order = await new ValrRequest().get<IValrOrderStatusSchema>({
@@ -69,6 +69,22 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
 
     return this.parse({
       rawOrder: order,
+    })
+
+  }
+
+  getRaw (
+    params: IValrOrderGetParams,
+  ): Promise<IValrOrderStatusSchema> {
+
+    const {
+      id,
+      symbol,
+    } = params
+
+    return new ValrRequest().get<IValrOrderStatusSchema>({
+      url: `https://api.valr.com/v1/orders/${symbol}/orderid/${id}`,
+      keySecret: this.exchange.keySecret,
     })
 
   }
