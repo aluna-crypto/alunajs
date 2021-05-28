@@ -8,7 +8,9 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
+import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
+import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../ValrHttp'
 import { ValrOrderParser } from './parsers/ValrOrderParser'
@@ -34,20 +36,32 @@ export class ValrOrderWriteModule
       rate,
       symbolPair,
       side,
+      type,
     } = params
+
+    const orderType = ValrOrderTypeAdapter.translateToValr({ type })
+
 
     const body = {
       side: ValrSideAdapter.translateToValr({ side }),
-      quantity: amount,
-      price: rate,
       pair: symbolPair,
-      postOnly: false,
-      timeInForce: 'GTC',
+      ...(
+        orderType === ValrOrderTypesEnum.LIMIT
+          ? {
+            quantity: amount,
+            price: rate,
+            postOnly: false,
+            timeInForce: 'GTC',
+          }
+          : {
+            baseAmount: amount,
+          }
+      ),
     }
 
 
     const { id } = await ValrHttp.privateRequest<IValrPlaceOrderResponse>({
-      url: 'https://api.valr.com/v1/orders/limit',
+      url: `https://api.valr.com/v1/orders/${orderType}`,
       body,
       keySecret: this.exchange.keySecret,
     })
