@@ -20,6 +20,29 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 export class ValrMarketModule
   extends AAlunaModule implements IAlunaMarketModule {
 
+  async listRaw (): Promise<IMarketWithCurrency[]> {
+
+
+    const request = new ValrRequest()
+
+    const rawMarkets = await request.get<IValrMarketSchema[]>({
+      url: 'https://api.valr.com/v1/public/marketsummary',
+    })
+
+    const rawSymbolPairs = await request.get<IValrCurrencyPairs[]>({
+      url: 'https://api.valr.com/v1/public/pairs',
+    })
+
+
+    const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
+      rawMarkets,
+      rawSymbolPairs,
+    })
+
+    return rawMarketsWithCurrency
+
+  }
+
   async list (): Promise<IAlunaMarketSchema[]> {
 
     const request = new ValrRequest()
@@ -34,24 +57,19 @@ export class ValrMarketModule
 
 
 
-    const {
-      rawMarketsWithCurrency,
-      currencyVolumes,
-    } = ValrCurrencyPairsParser.parse({
+    const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
       rawMarkets,
       rawSymbolPairs,
     })
 
     return this.parseMany({
       rawMarkets: rawMarketsWithCurrency,
-      currencyVolumes,
     })
 
   }
 
   parse (params: {
     rawMarket: IMarketWithCurrency,
-    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema {
 
     return ValrMarketParser.parse(params)
@@ -60,12 +78,10 @@ export class ValrMarketModule
 
   parseMany (params: {
     rawMarkets: IMarketWithCurrency[],
-    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema[] {
 
     return params.rawMarkets.map((rawMarket) => this.parse({
       rawMarket,
-      currencyVolumes: params.currencyVolumes,
     }))
 
   }
