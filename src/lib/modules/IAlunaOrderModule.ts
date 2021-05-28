@@ -1,4 +1,5 @@
 import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
+import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 import { SideEnum } from '@lib/enums/SideEnum'
 
 import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
@@ -20,6 +21,7 @@ export interface IAlunaOrderPlaceParams {
   symbol: string
   rate: string | number
   amount: string | number
+  type: OrderTypesEnum
   // TODO: to be continued...
 }
 
