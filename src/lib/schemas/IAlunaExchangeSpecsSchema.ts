@@ -1,6 +1,8 @@
 import { AccountEnum } from '@lib/enums/AccountEnum'
 import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
+import { FeaturesModeEnum } from '../enums/FeaturesModeEnum'
+
 
 
 export interface IAlunaExchangeOrderTypesSpecsSchema {
@@ -55,10 +57,14 @@ export interface IAlunaExchangeOrderSpecsSchema {
 
 export interface IAlunaExchangeSpecsSchema {
   acceptFloatAmounts: boolean
+  features: {
+    balance: FeaturesModeEnum
+    order: FeaturesModeEnum
+    position?: FeaturesModeEnum
+  }
   accounts: {
     [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
   }
 }
-
