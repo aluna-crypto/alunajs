@@ -5,6 +5,9 @@ import { IAlunaTickerSchema } from './IAlunaTickerSchema'
 
 export interface IAlunaMarketSchema {
   pairSymbol: string
+  baseSymbol: string
+  quoteSymbol: string
+
   ticker: IAlunaTickerSchema
 
   spotEnabled: boolean
