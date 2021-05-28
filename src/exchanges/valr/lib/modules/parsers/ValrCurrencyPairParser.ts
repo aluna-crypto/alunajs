@@ -4,19 +4,12 @@ import { IMarketWithCurrency } from '../ValrMarketModule'
 
 
 
-interface IValrCurrencyPairsParseResponse {
-  rawMarketsWithCurrency: IMarketWithCurrency[]
-  currencyVolumes: Record<string, string>
-}
-
-
-
 export class ValrCurrencyPairsParser {
 
   static parse (params: {
     rawMarkets: IValrMarketSchema[],
     rawSymbolPairs: IValrCurrencyPairs[],
-  }): IValrCurrencyPairsParseResponse {
+  }): IMarketWithCurrency[] {
 
     const currencyVolumes = {} as Record<string, string>
 
@@ -48,10 +41,7 @@ export class ValrCurrencyPairsParser {
 
       }, [] as IMarketWithCurrency[])
 
-    return {
-      rawMarketsWithCurrency,
-      currencyVolumes,
-    }
+    return rawMarketsWithCurrency
 
   }
 
