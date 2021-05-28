@@ -1,5 +1,4 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
-import { SideEnum } from '@lib/enums/SideEnum'
 import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
@@ -7,6 +6,7 @@ import {
 
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
+import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { IValrKeySchema } from '../schemas/IValrKeySchema'
 import { IValrOrderSchema } from '../schemas/IValrOrderSchema'
 import { ValrRequest } from '../ValrRequest'
@@ -55,7 +55,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       await request.get<IValrOrderSchema>({
         url: 'https://api.valr.com/v1/orders/limit',
         body: JSON.stringify({
-          side: SideEnum.SHORT,
+          side: ValrSideEnum.SELL,
           quantity: '0',
           price: '0',
           pair: 'NotACurrencyXX99',
