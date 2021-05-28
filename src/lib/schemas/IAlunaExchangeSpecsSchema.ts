@@ -1,12 +1,7 @@
 import { AccountEnum } from '@lib/enums/AccountEnum'
 import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
 
-
-
-export enum AlunaExchangeFeatureEnum {
-  READ = 'read',
-  WRITE = 'write',
-}
+import { FeaturesModeEnum } from '../enums/FeaturesModeEnum'
 
 
 
@@ -63,9 +58,9 @@ export interface IAlunaExchangeOrderSpecsSchema {
 export interface IAlunaExchangeSpecsSchema {
   acceptFloatAmounts: boolean
   features: {
-    balance: AlunaExchangeFeatureEnum
-    order: AlunaExchangeFeatureEnum
-    position?: AlunaExchangeFeatureEnum
+    balance: FeaturesModeEnum
+    order: FeaturesModeEnum
+    position?: FeaturesModeEnum
   }
   accounts: {
     [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
