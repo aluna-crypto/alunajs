@@ -8,7 +8,6 @@ export class ValrMarketParser {
 
   static parse (params: {
     rawMarket: IMarketWithCurrency,
-    currencyVolumes: Record<string, string>,
   }): IAlunaMarketSchema {
 
     const {
@@ -23,10 +22,8 @@ export class ValrMarketParser {
         baseCurrency,
         quoteCurrency,
       },
-      currencyVolumes,
     } = params
 
-    const quoteVolume = Number(currencyVolumes[quoteCurrency]) || 0
 
     const ticker = {
       high: parseFloat(highPrice),
@@ -37,7 +34,7 @@ export class ValrMarketParser {
       date: new Date(new Date().toDateString()),
       change: parseFloat(changeFromPrevious) / 100,
       baseVolume: parseFloat(baseVolume),
-      quoteVolume,
+      quoteVolume: 0,
     }
 
     return {
