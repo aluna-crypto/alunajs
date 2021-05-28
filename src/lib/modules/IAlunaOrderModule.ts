@@ -1,8 +1,3 @@
-import {
-  IValrOrderSchema,
-  IValrOrderStatusSchema,
-} from 'src/exchanges/valr/lib/schemas/IValrOrderSchema'
-
 import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
 import { SideEnum } from '@lib/enums/SideEnum'
 
@@ -33,9 +28,9 @@ export interface IAlunaOrderPlaceParams {
 export interface IAlunaOrderModule extends IAlunaModule {
 
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderSchema[]>
-  listRaw (params?: IAlunaOrderListParams): Promise<IValrOrderSchema[]>
+  listRaw (params?: IAlunaOrderListParams): Promise<any[]>
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema>
-  getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderStatusSchema>
+  getRaw<T> (params: IAlunaOrderGetParams): Promise<T>
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
   parse (params: { rawOrder: any }): IAlunaOrderSchema
   parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
