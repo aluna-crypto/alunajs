@@ -58,9 +58,9 @@ export interface IAlunaExchangeOrderSpecsSchema {
 export interface IAlunaExchangeSpecsSchema {
   acceptFloatAmounts: boolean
   features: {
-    balance: FeaturesModeEnum
-    order: FeaturesModeEnum
-    position?: FeaturesModeEnum
+    balance: FeaturesModeEnum,
+    order: FeaturesModeEnum,
+    position?: FeaturesModeEnum,
   }
   accounts: {
     [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,

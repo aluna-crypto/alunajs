@@ -9,6 +9,8 @@ export interface IAlunaHttpOptions {
   httpsAgent?: any
 }
 
+
+
 export interface IAlunaHttpPublicParams {
   url: string
   verb?: HttpVerbEnum
