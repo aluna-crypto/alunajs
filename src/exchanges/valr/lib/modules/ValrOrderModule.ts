@@ -1,5 +1,6 @@
 import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import {
+  IAlunaOrderGetParams,
   IAlunaOrderListParams,
   IAlunaOrderModule,
   IAlunaOrderPlaceParams,
@@ -17,6 +18,11 @@ import { ValrOrderParser } from './parsers/ValrOrderParser'
 
 interface IValrPlaceOrderResponse {
   id: string
+}
+
+
+interface IValrOrderGetParams extends IAlunaOrderGetParams {
+  symbol: string
 }
 
 
@@ -48,6 +54,26 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
   }
 
 
+  async get (
+    params: IValrOrderGetParams,
+  ): Promise<IAlunaOrderSchema> {
+
+    const {
+      id, symbol,
+    } = params
+
+    const order = await new ValrRequest().get<IValrOrderStatusSchema>({
+      url: `https://api.valr.com/v1/orders/${symbol}/orderid/${id}`,
+      keySecret: this.exchange.keySecret,
+    })
+
+    return this.parse({
+      rawOrder: order,
+    })
+
+  }
+
+
 
   async place (
     params: IAlunaOrderPlaceParams,
@@ -66,23 +92,16 @@ export class ValrOrderModule extends AAlunaModule implements IAlunaOrderModule {
       timeInForce: 'GTC',
     }
 
-    const request = new ValrRequest()
 
-
-    const { id } = await request.post<IValrPlaceOrderResponse>({
+    const { id } = await new ValrRequest().post<IValrPlaceOrderResponse>({
       url: 'https://api.valr.com/v1/orders/limit',
       body,
       keySecret: this.exchange.keySecret,
     })
 
-    const placedOrder = await request.get<IValrOrderStatusSchema>({
-      url: `https://api.valr.com/v1/orders/${symbol}/orderid/${id}`,
-      body,
-      keySecret: this.exchange.keySecret,
-    })
-
-    return this.parse({
-      rawOrder: placedOrder,
+    return this.get({
+      id,
+      symbol,
     })
 
   }
