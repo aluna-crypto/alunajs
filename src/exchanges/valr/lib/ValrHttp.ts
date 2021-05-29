@@ -23,7 +23,7 @@ interface ISignedHashParams {
 
 
 
-const formatRequestError = (error: any): ValrError => {
+export const formatRequestError = (error: any): ValrError => {
 
   const {
     response,
@@ -47,7 +47,7 @@ const formatRequestError = (error: any): ValrError => {
 
 
 
-const generateAuthHeader = (params: ISignedHashParams) => {
+export const generateAuthHeader = (params: ISignedHashParams) => {
 
   const {
     keySecret, path, verb, body,
