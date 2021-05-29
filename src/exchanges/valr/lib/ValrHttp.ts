@@ -23,11 +23,11 @@ interface ISignedHashParams {
 
 
 
-export const formatRequestError = (error: any): ValrError => {
+export const formatRequestError = (params: { error: any }): ValrError => {
 
   const {
     response,
-  } = error
+  } = params.error
 
   if (response && response.data && response.data.message) {
 
@@ -39,8 +39,8 @@ export const formatRequestError = (error: any): ValrError => {
   }
 
   return new ValrError({
-    message: error.message,
-    statusCode: error.response?.status || 400,
+    message: params.error.message,
+    statusCode: params.error.response?.status || 400,
   })
 
 }
@@ -97,7 +97,7 @@ export const ValrHttp: IAlunaHttp = {
 
     } catch (error) {
 
-      throw formatRequestError(error)
+      throw formatRequestError({ error })
 
     }
 
@@ -135,7 +135,7 @@ export const ValrHttp: IAlunaHttp = {
 
     } catch (error) {
 
-      throw formatRequestError(error)
+      throw formatRequestError({ error })
 
     }
 
