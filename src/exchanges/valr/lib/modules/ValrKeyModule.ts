@@ -34,6 +34,9 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
+      /**
+       * If this goes ok, it means we can read
+       */
       await ValrHttp.privateRequest<IValrKeySchema>({
         verb: HttpVerbEnum.GET,
         url: 'https://api.valr.com/v1/account/balances',
@@ -43,11 +46,21 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       permissions.read = true
 
       /**
-       * The next request will try to place an order with invalid params. Since
-       * the place order path requires an API with authotization to trade
-       * Valr will first verify the API auth and only then verify the params.
-       * This trick allow us to findout if the API key has permission to
-       * create orders, since Valr does not provide a request for it
+       * The next request will try to place an order with invalid params, to
+       * cause one of two errors:
+       *
+       *  1) If the error is about permissions, it means the api/key doesn't
+       *     have permissions to write (place orders)
+       *
+       *  2) If the error is about the trade operation, it means the request
+       *     went through, passed the key validation step, and failed on
+       *     the trade operation (which fails because we use invalid params
+       *     on purpose). This means we have permissions to write.
+       *
+       * The catch is that Valr will first verify if the API key has permissions
+       * and only then verify the actual order params. This trick allow us to
+       * findout if the API key has permission to create orders, since Valr
+       * does not provide a request for it.
        */
       await ValrHttp.privateRequest<IValrOrderListSchema>({
         url: 'https://api.valr.com/v1/orders/limit',
@@ -62,16 +75,16 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
         keySecret: this.exchange.keySecret,
       })
 
-    } catch (error) {
+    } catch ({ message }) {
 
-      if (
-        error.message === ValrErrorEnum.INVALID_REQUEST
-        && permissions.read
-      ) {
+      /**
+       * Now we validate if the error is related to the trade operation or the
+       * key permissions, and fill the permissions accordingly.
+       */
+      const canRead = permissions.read
+      const isRequestInvalid = (message === ValrErrorEnum.INVALID_REQUEST)
 
-        permissions.trade = true
-
-      }
+      permissions.trade = (canRead && isRequestInvalid)
 
     }
 
