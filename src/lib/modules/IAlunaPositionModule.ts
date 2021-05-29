@@ -23,8 +23,13 @@ export interface IAlunaPositionCloseParams {
 export interface IAlunaPositionModule extends IAlunaModule {
 
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionSchema[]>
+  listRaw (params?: IAlunaPositionListParams): Promise<any[]>
+
   get (params?: IAlunaPositionGetParams): Promise<IAlunaPositionSchema>
+  getRaw (params?: IAlunaPositionGetParams): Promise<any>
+
   close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionSchema>
+
   parse (params: { rawPosition: any }): IAlunaPositionSchema
   parseMany (parms: { rawPositions: any[] }): IAlunaPositionSchema[]
 

@@ -32,18 +32,21 @@ export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
 
 
 export interface IAlunaOrderReadModule extends IAlunaModule {
+
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderSchema[]>
   listRaw (params?: IAlunaOrderListParams): Promise<any[]>
+
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema>
   getRaw (params: IAlunaOrderGetParams): Promise<any>
+
   parse (params: { rawOrder: any }): IAlunaOrderSchema
   parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
+
 }
 
 
 
 export interface IAlunaOrderWriteModule extends IAlunaModule {
-  getRaw (params: IAlunaOrderGetParams): Promise<any>
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
   cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema>
 }

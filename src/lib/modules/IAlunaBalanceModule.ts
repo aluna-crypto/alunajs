@@ -6,8 +6,9 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 export interface IAlunaBalanceModule extends IAlunaModule {
 
-  listRaw (): Promise<any[]>
   list (): Promise<IAlunaBalanceSchema[]>
+  listRaw (): Promise<any[]>
+
   parse (params: { rawBalance: any }): IAlunaBalanceSchema
   parseMany (params: { rawBalances: any[] }): IAlunaBalanceSchema[]
 

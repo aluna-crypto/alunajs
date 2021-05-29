@@ -8,8 +8,6 @@ export interface IAlunaKeyModule extends IAlunaModule {
 
   validate (): Promise<boolean>
   getPermissions (): Promise<IAlunaKeyPermissionSchema>
-  parsePermissions (
-    params: { rawKey: any },
-  ): IAlunaKeyPermissionSchema
+  parsePermissions ( params: { rawKey: any } ): IAlunaKeyPermissionSchema
 
 }
