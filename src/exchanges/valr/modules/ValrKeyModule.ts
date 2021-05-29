@@ -3,12 +3,12 @@ import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
 
-import { ValrErrorEnum } from '../../enums/ValrErrorEnum'
-import { ValrOrderTimeInForceEnum } from '../../enums/ValrOrderTimeInForceEnum'
-import { ValrSideEnum } from '../../enums/ValrSideEnum'
-import { IValrKeySchema } from '../schemas/IValrKeySchema'
-import { IValrOrderListSchema } from '../schemas/IValrOrderSchema'
-import { ValrHttp } from '../ValrHttp'
+import { ValrErrorEnum } from '../enums/ValrErrorEnum'
+import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
+import { ValrSideEnum } from '../enums/ValrSideEnum'
+import { IValrKeySchema } from '../lib/schemas/IValrKeySchema'
+import { IValrOrderListSchema } from '../lib/schemas/IValrOrderSchema'
+import { ValrHttp } from '../lib/ValrHttp'
 
 
 

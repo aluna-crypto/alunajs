@@ -10,9 +10,9 @@ import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
-} from '../schemas/IValrOrderSchema'
-import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { ValrHttp } from '../ValrHttp'
+} from '../lib/schemas/IValrOrderSchema'
+import { ValrOrderParser } from '../lib/schemas/parsers/ValrOrderParser'
+import { ValrHttp } from '../lib/ValrHttp'
 
 
 

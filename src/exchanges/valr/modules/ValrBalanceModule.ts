@@ -4,8 +4,8 @@ import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
-import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
-import { ValrHttp } from '../ValrHttp'
+import { IValrBalanceSchema } from '../lib/schemas/IValrBalanceSchema'
+import { ValrHttp } from '../lib/ValrHttp'
 
 
 

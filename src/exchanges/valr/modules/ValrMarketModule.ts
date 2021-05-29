@@ -2,11 +2,11 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
-import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
-import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
-import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairParser'
-import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
-import { ValrHttp } from '../ValrHttp'
+import { IValrCurrencyPairs } from '../lib/schemas/IValrCurrencyPairs'
+import { IValrMarketSchema } from '../lib/schemas/IValrMarketSchema'
+import { ValrCurrencyPairsParser } from '../lib/schemas/parsers/ValrCurrencyPairParser'
+import { ValrMarketParser } from '../lib/schemas/parsers/ValrMarketParser'
+import { ValrHttp } from '../lib/ValrHttp'
 
 
 

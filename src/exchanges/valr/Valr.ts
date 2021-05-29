@@ -11,11 +11,11 @@ import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 
-import { ValrBalanceModule } from './lib/modules/ValrBalanceModule'
-import { ValrKeyModule } from './lib/modules/ValrKeyModule'
-import { ValrMarketModule } from './lib/modules/ValrMarketModule'
-import { ValrOrderWriteModule } from './lib/modules/ValrOrderWriteModule'
-import { ValrSymbolModule } from './lib/modules/ValrSymbolModule'
+import { ValrBalanceModule } from './modules/ValrBalanceModule'
+import { ValrKeyModule } from './modules/ValrKeyModule'
+import { ValrMarketModule } from './modules/ValrMarketModule'
+import { ValrOrderWriteModule } from './modules/ValrOrderWriteModule'
+import { ValrSymbolModule } from './modules/ValrSymbolModule'
 import { ValrSpecs } from './lib/ValrSpecs'
 
 

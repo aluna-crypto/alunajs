@@ -6,13 +6,13 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
-import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
-import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
-import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
-import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { ValrError } from '../ValrError'
-import { ValrHttp } from '../ValrHttp'
+import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
+import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
+import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
+import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
+import { ValrOrderParser } from '../lib/schemas/parsers/ValrOrderParser'
+import { ValrError } from '../lib/ValrError'
+import { ValrHttp } from '../lib/ValrHttp'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 
 
