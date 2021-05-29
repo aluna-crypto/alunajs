@@ -3,9 +3,13 @@ import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 
+
+
 /**
- * ISSUE: Valr has many different order responses types
+ * NOTE: Valr has many different order responses types
 */
+
+
 
 export interface IValrOrderListSchema {
   orderId: string
