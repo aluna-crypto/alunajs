@@ -3,9 +3,9 @@ import crypto from 'crypto'
 import { URL } from 'url'
 
 import {
-  IAlunaHttpPublicParams,
   IAlunaHttp,
   IAlunaHttpPrivateParams,
+  IAlunaHttpPublicParams,
 } from '@lib/abstracts/IAlunaHttp'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
