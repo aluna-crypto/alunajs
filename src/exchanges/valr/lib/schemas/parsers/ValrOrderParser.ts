@@ -12,7 +12,7 @@ import { ValrSideEnum } from '../../enums/ValrSideEnum'
 import {
   IValrOrderListSchema,
   IValrOrderGetSchema,
-} from '../../schemas/IValrOrderSchema'
+} from '../IValrOrderSchema'
 
 
 
