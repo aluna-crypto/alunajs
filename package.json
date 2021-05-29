@@ -11,7 +11,7 @@
   "private": false,
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
-    "test": "mocha -r ts-node/register ./**/test/*.spec.ts"
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register src/exchanges/valr/Valr.spec.ts"
   },
   "dependencies": {
     "axios": "^0.21.1",
