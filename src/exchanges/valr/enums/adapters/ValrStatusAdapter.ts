@@ -1,7 +1,7 @@
 import { OrderStatusEnum } from '@lib/enums/OrderStatusEnum'
 
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
-import { ValrError } from '../../ValrError'
+import { ValrError } from '../../lib/ValrError'
 
 
 

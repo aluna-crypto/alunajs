@@ -1,7 +1,7 @@
 import { SideEnum } from '@lib/enums/SideEnum'
 
 import { ValrSideEnum } from '../ValrSideEnum'
-import { ValrError } from '../../ValrError'
+import { ValrError } from '../../lib/ValrError'
 
 
 
