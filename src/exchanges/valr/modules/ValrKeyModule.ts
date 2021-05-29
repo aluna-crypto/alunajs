@@ -6,8 +6,8 @@ import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchem
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
-import { IValrKeySchema } from '../lib/schemas/IValrKeySchema'
-import { IValrOrderListSchema } from '../lib/schemas/IValrOrderSchema'
+import { IValrKeySchema } from '../schemas/IValrKeySchema'
+import { IValrOrderListSchema } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../lib/ValrHttp'
 
 
