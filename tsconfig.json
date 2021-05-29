@@ -6,12 +6,18 @@
     "strictPropertyInitialization": false,
     "strict": true, 
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "paths": {
-      "@lib/*": ["./src/lib/*"]
+      "@lib/*": ["lib/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+  ]
 }
