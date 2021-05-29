@@ -51,7 +51,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
       total: Number(rawBalance.total),
     }
 
-
   }
 
 
