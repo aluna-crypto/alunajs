@@ -1,4 +1,3 @@
-import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
@@ -14,6 +13,7 @@ import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
+import { ValrOrderReadModule } from './ValrOrderReadModule'
 
 
 
@@ -23,7 +23,7 @@ interface IValrPlaceOrderResponse {
 
 
 
-export class ValrOrderWriteModule extends AAlunaModule implements IAlunaOrderWriteModule {
+export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
   async place (
     params: IAlunaOrderPlaceParams,
@@ -56,7 +56,6 @@ export class ValrOrderWriteModule extends AAlunaModule implements IAlunaOrderWri
           }
       ),
     }
-
 
     const { id } = await ValrHttp.privateRequest<IValrPlaceOrderResponse>({
       url: `https://api.valr.com/v1/orders/${orderType}`,
