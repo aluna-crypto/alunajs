@@ -6,13 +6,10 @@ export abstract class AAlunaError {
 
 
 
-  constructor (
-    params: {
-      message: string,
-      statusCode?: number,
-    },
-  ) {
-
+  constructor (params: {
+    message: string,
+    statusCode?: number,
+  }) {
     this.message = params.message
     this.statusCode = params.statusCode || 400
 
