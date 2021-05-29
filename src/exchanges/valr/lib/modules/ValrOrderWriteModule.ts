@@ -76,25 +76,6 @@ export class ValrOrderWriteModule extends AAlunaModule implements IAlunaOrderWri
   }
 
 
-  getRaw (
-    params: IAlunaOrderGetParams,
-  ): Promise<IValrOrderGetSchema> {
-
-    const {
-      id,
-      symbolPair,
-    } = params
-
-
-    return ValrHttp.privateRequest<IValrOrderGetSchema>({
-      verb: HttpVerbEnum.GET,
-      url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
-      keySecret: this.exchange.keySecret,
-    })
-
-  }
-
-
 
   async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
 
