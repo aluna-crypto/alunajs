@@ -11,7 +11,7 @@ import {
   IValrOrderListSchema, IValrOrderGetSchema,
 } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../ValrHttp'
-import { ValrOrderParser } from './parsers/ValrOrderParser'
+import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 
 
 
