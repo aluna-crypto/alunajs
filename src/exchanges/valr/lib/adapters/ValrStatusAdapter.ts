@@ -28,7 +28,7 @@ export class ValrStatusAdapter {
         return OrderStatusEnum.FILLED
 
       case ValrOrderStatusEnum.FAILED:
-      case ValrOrderStatusEnum.CANCELED:
+      case ValrOrderStatusEnum.CANCELLED:
         return OrderStatusEnum.CANCELED
 
       default:
@@ -62,7 +62,7 @@ export class ValrStatusAdapter {
         return ValrOrderStatusEnum.FILLED
 
       case OrderStatusEnum.CANCELED:
-        return ValrOrderStatusEnum.CANCELED
+        return ValrOrderStatusEnum.CANCELLED
 
       default:
         throw new ValrError({

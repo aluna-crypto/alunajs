@@ -2,7 +2,7 @@ export enum ValrOrderStatusEnum {
   ACTIVE = 'Active',
   PLACED = 'Placed',
   FILLED = 'Filled',
-  CANCELED = 'Canceled',
+  CANCELLED = 'Cancelled',
   FAILED = 'Failed',
   PARTIALLY_FILLED = 'Partially Filled'
 }
