@@ -12,7 +12,7 @@ import {
   IValrOrderListSchema,
 } from '../schemas/IValrOrderSchema'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrHttp } from '../ValrHttp'
 
 
 

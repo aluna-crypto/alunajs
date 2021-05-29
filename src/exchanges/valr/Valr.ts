@@ -16,7 +16,7 @@ import { ValrKeyModule } from './modules/ValrKeyModule'
 import { ValrMarketModule } from './modules/ValrMarketModule'
 import { ValrOrderWriteModule } from './modules/ValrOrderWriteModule'
 import { ValrSymbolModule } from './modules/ValrSymbolModule'
-import { ValrSpecs } from './lib/ValrSpecs'
+import { ValrSpecs } from './ValrSpecs'
 
 
 

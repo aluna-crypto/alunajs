@@ -8,7 +8,7 @@ import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { IValrKeySchema } from '../schemas/IValrKeySchema'
 import { IValrOrderListSchema } from '../schemas/IValrOrderSchema'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrHttp } from '../ValrHttp'
 
 
 

@@ -5,7 +5,7 @@ import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
 
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrHttp } from '../ValrHttp'
 
 
 

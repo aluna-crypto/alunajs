@@ -11,8 +11,8 @@ import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { ValrError } from '../lib/ValrError'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrError } from '../ValrError'
+import { ValrHttp } from '../ValrHttp'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 
 

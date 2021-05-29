@@ -6,7 +6,7 @@ import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrHttp } from '../ValrHttp'
 
 
 

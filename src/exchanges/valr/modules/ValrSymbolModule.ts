@@ -3,7 +3,7 @@ import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '@lib/schemas/IAlunaSymbolSchema'
 
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
-import { ValrHttp } from '../lib/ValrHttp'
+import { ValrHttp } from '../ValrHttp'
 
 
 
