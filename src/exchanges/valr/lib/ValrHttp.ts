@@ -53,7 +53,6 @@ export const generateAuthHeader = (params: ISignedHashParams) => {
     keySecret, path, verb, body,
   } = params
 
-
   const timestamp = Date.now()
 
   const signedRequest = crypto
@@ -75,6 +74,7 @@ export const generateAuthHeader = (params: ISignedHashParams) => {
 
 
 export const ValrHttp: IAlunaHttp = {
+
   async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
 
     const {
@@ -83,13 +83,11 @@ export const ValrHttp: IAlunaHttp = {
       verb = HttpVerbEnum.GET,
     } = params
 
-
     const requestConfig = {
       url,
       method: verb,
       data: body,
     }
-
 
     try {
 
@@ -104,6 +102,8 @@ export const ValrHttp: IAlunaHttp = {
     }
 
   },
+
+
 
   async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 
@@ -114,14 +114,12 @@ export const ValrHttp: IAlunaHttp = {
       keySecret,
     } = params
 
-
     const signedHash = generateAuthHeader({
       verb,
       path: new URL(url).pathname,
       keySecret,
       body,
     })
-
 
     const requestConfig = {
       url,
@@ -130,11 +128,9 @@ export const ValrHttp: IAlunaHttp = {
       headers: signedHash,
     }
 
-
     try {
 
       const response = await axios.create().request<T>(requestConfig)
-
       return response.data
 
     } catch (error) {
@@ -144,4 +140,5 @@ export const ValrHttp: IAlunaHttp = {
     }
 
   },
+
 }
