@@ -4,9 +4,9 @@ import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
 
 import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
-import { ValrHttp } from '../ValrHttp'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
+import { ValrHttp } from '../ValrHttp'
 
 
 

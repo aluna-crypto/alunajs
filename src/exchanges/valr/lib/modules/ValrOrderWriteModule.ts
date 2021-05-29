@@ -2,7 +2,6 @@ import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
 import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
-  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '@lib/modules/IAlunaOrderModule'
@@ -12,10 +11,9 @@ import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
-import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
+import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
-import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 
 
 
