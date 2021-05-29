@@ -12,7 +12,6 @@ export abstract class AAlunaModule {
     exchange: IAlunaExchange,
   }) {
     this.exchange = params.exchange
-
   }
 
 }

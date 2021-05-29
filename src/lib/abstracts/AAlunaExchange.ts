@@ -6,7 +6,6 @@ import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 export abstract class AAlunaExchange {
 
   public keySecret: IAlunaKeySecretSchema
-
   public settings?: IAlunaSettingsSchema
 
 

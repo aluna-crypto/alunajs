@@ -1,7 +1,6 @@
 export abstract class AAlunaError {
 
   public message: string;
-
   public statusCode: number;
 
 
@@ -12,7 +11,6 @@ export abstract class AAlunaError {
   }) {
     this.message = params.message
     this.statusCode = params.statusCode || 400
-
   }
 
 }
