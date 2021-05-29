@@ -10,8 +10,10 @@ import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
 import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
+import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
+import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrOrderParser } from './parsers/ValrOrderParser'
 
@@ -98,9 +100,34 @@ export class ValrOrderWriteModule
 
 
 
-  cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
+  async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
 
-    throw new Error('Method not implemented.')
+    const body = {
+      orderId: params.id,
+      pair: params.symbolPair,
+    }
+
+    await ValrHttp.privateRequest<void>({
+      verb: HttpVerbEnum.DELETE,
+      url: 'https://api.valr.com/v1/orders/order',
+      keySecret: this.exchange.keySecret,
+      body,
+    })
+
+    const rawOrder = await this.getRaw(params)
+
+    if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
+
+      throw new ValrError({
+        message: 'Something went wrong, order not canceled',
+        statusCode: 500,
+      })
+
+    }
+
+    return ValrOrderParser.parse({
+      rawOrder,
+    })
 
   }
 
