@@ -98,11 +98,9 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
 
 
-  public parsePermissions (
-    params: {
-      rawKey: IValrKeySchema,
-    },
-  ): IAlunaKeyPermissionSchema {
+  public parsePermissions (params: {
+    rawKey: IValrKeySchema,
+  }): IAlunaKeyPermissionSchema {
 
     const {
       rawKey,

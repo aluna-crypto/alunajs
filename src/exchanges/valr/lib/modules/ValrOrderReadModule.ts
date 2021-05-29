@@ -44,9 +44,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  getRaw (
-    params: IAlunaOrderGetParams,
-  ): Promise<IValrOrderGetSchema> {
+  getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderGetSchema> {
 
     const {
       id,
@@ -63,9 +61,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  async get (
-    params: IAlunaOrderGetParams,
-  ): Promise<IAlunaOrderSchema> {
+  async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
 
     const order = await this.getRaw(params)
 
@@ -77,11 +73,9 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  public parse (
-    params: {
-      rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
-    },
-  ): IAlunaOrderSchema {
+  public parse (params: {
+    rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
+  }): IAlunaOrderSchema {
 
     return ValrOrderParser.parse({
       rawOrder: params.rawOrder,
@@ -91,11 +85,9 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  public parseMany (
-    params: {
-      rawOrders: IValrOrderListSchema[],
-    },
-  ): IAlunaOrderSchema[] {
+  public parseMany (params: {
+    rawOrders: IValrOrderListSchema[],
+  }): IAlunaOrderSchema[] {
 
     return params.rawOrders.map((
       rawOrder: IValrOrderListSchema,

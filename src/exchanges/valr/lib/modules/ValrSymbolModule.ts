@@ -27,9 +27,9 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
 
 
 
-  parse (params:
-    { rawSymbol: IValrSymbolSchema,
-    }): IAlunaSymbolSchema {
+  parse (params:{
+    rawSymbol: IValrSymbolSchema,
+  }): IAlunaSymbolSchema {
 
     const {
       rawSymbol: {

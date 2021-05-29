@@ -25,9 +25,7 @@ interface IValrPlaceOrderResponse {
 
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
-  async place (
-    params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  async place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
 
     const {
       amount,
