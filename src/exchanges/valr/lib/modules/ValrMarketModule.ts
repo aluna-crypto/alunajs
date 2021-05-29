@@ -31,7 +31,6 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
       url: 'https://api.valr.com/v1/public/pairs',
     })
 
-
     const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
       rawMarkets,
       rawSymbolPairs,

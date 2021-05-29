@@ -37,7 +37,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const orderType = ValrOrderTypeAdapter.translateToValr({ type })
 
-
     const body = {
       side: ValrSideAdapter.translateToValr({ side }),
       pair: symbolPair,
