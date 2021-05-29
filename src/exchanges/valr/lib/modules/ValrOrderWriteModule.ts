@@ -25,9 +25,7 @@ interface IValrPlaceOrderResponse {
 
 
 
-export class ValrOrderWriteModule
-  extends AAlunaModule
-  implements IAlunaOrderWriteModule {
+export class ValrOrderWriteModule extends AAlunaModule implements IAlunaOrderWriteModule {
 
   async place (
     params: IAlunaOrderPlaceParams,

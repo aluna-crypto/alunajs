@@ -15,8 +15,7 @@ import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 
 
 
-export class ValrOrderReadModule
-  extends AAlunaModule implements IAlunaOrderReadModule {
+export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
   async listRaw (
     _params?: IAlunaOrderListParams,

@@ -9,11 +9,7 @@ import { ValrHttp } from '../ValrHttp'
 
 
 
-export
-class ValrBalanceModule
-  extends AAlunaModule
-  implements IAlunaBalanceModule {
-
+export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
   async listRaw (): Promise<IValrBalanceSchema[]> {
 
