@@ -29,7 +29,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
   Market: IAlunaMarketModule
 
   Key: IAlunaKeyModule
-  Order: IAlunaOrderReadModule
+  OrderRead: IAlunaOrderReadModule
   OrderWrite: IAlunaOrderWriteModule
   Balance: IAlunaBalanceModule
 
@@ -49,7 +49,7 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
     this.Key = new ValrKeyModule({ exchange: this })
     this.Balance = new ValrBalanceModule({ exchange: this })
-    this.Order = new ValrOrderWriteModule({ exchange: this })
+    this.OrderRead = new ValrOrderWriteModule({ exchange: this })
     this.OrderWrite = new ValrOrderWriteModule({ exchange: this })
 
   }
