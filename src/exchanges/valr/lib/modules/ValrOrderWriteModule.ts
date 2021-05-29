@@ -8,8 +8,8 @@ import {
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
 
-import { ValrOrderTypeAdapter } from '../adapters/ValrOrderTypeAdapter'
-import { ValrSideAdapter } from '../adapters/ValrSideAdapter'
+import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
+import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
