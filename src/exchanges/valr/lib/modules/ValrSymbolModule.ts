@@ -17,7 +17,6 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
 
   }
 
-
   async listRaw (): Promise<IValrSymbolSchema[]> {
 
     return ValrHttp.publicRequest<IValrSymbolSchema[]>({
@@ -25,6 +24,7 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
     })
 
   }
+
 
 
   parse (params:
@@ -43,6 +43,8 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
     }
 
   }
+
+
 
   parseMany (params: {
     rawSymbols: IValrSymbolSchema[],

@@ -22,7 +22,6 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     _params?: IAlunaOrderListParams,
   ): Promise<IValrOrderListSchema[]> {
 
-
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: HttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/orders/open',
@@ -53,7 +52,6 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
       id,
       symbolPair,
     } = params
-
 
     return ValrHttp.privateRequest<IValrOrderGetSchema>({
       verb: HttpVerbEnum.GET,
