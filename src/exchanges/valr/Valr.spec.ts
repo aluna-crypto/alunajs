@@ -1,33 +1,90 @@
-// import { Valr } from './Valr'
+import { Valr } from './Valr'
 
 
 
-// console.log(Valr.ID)
+describe('Valr modules', () => {
 
-// Valr.Symbol.list()
-//   .then(console.log)
-//   .catch(console.error)
+  const key = ''
 
-// Valr.Market.list()
-//   .then(console.log)
-//   .catch(console.error)
+  const secret = ''
+
+  const valrInstance = new Valr({
+    keySecret: {
+      key,
+      secret,
+    },
+  })
 
 
 
-// const valr = new Valr({
-//   keySecret: {
-//     key: 'asdf',
-//     secret: 'asdf',
-//   },
-//   options: {
-//     // ...
-//   },
-// })
+  it('should fetch Valr symbols', async () => {
 
-// valr.Balance.list()
-//   .then(console.log)
-//   .catch(console.error)
+    const symbols = await valrInstance.Symbol.list()
 
-// valr.Order.list()
-//   .then(console.log)
-//   .catch(console.error)
+    console.log(symbols)
+
+  })
+
+
+
+  it('should fetch Valr markets', async () => {
+
+    const markets = await valrInstance.Market.list()
+
+    console.log(markets)
+
+  })
+
+
+
+  it('should fetch Valr key permissions', async () => {
+
+    const permissions = await valrInstance.Key.getPermissions()
+
+    console.log(permissions)
+
+  })
+
+
+
+  it('should fetch Valr balance', async () => {
+
+    const balance = await valrInstance.Balance.list()
+
+    console.log(balance)
+
+  })
+
+
+
+  it('should fetch Valr open orders', async () => {
+
+    const orders = await valrInstance.OrderRead.list()
+
+
+    console.log(orders)
+
+  })
+
+  // it('should place and cancel orders for Valr', async () => {
+
+  //   const placedOrder = await valrInstance.OrderWrite.place({
+  //     amount: '',
+  //     rate: '',
+  //     side: '',
+  //     symbolPair: '',
+  //     type: '',
+  //   })
+
+
+  //   console.log(placedOrder)
+
+  //   await valrInstance.OrderWrite.cancel({
+  //     id: placedOrder.id,
+  //     symbolPair: placedOrder.symbolPair,
+  //   })
+
+  // })
+
+})
+
