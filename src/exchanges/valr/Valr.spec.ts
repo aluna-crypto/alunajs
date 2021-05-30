@@ -59,7 +59,7 @@ describe('Valr modules', () => {
 
   it('should fetch Valr open orders', async () => {
 
-    const orders = await valrInstance.OrderRead.list()
+    const orders = await valrInstance.Order.list()
 
 
     console.log(orders)
@@ -68,7 +68,7 @@ describe('Valr modules', () => {
 
   // it('should place and cancel orders for Valr', async () => {
 
-  //   const placedOrder = await valrInstance.OrderWrite.place({
+  //   const placedOrder = await valrInstance.Order.place({
   //     amount: '',
   //     rate: '',
   //     side: '',
@@ -79,7 +79,7 @@ describe('Valr modules', () => {
 
   //   console.log(placedOrder)
 
-  //   await valrInstance.OrderWrite.cancel({
+  //   await valrInstance.Order.cancel({
   //     id: placedOrder.id,
   //     symbolPair: placedOrder.symbolPair,
   //   })
@@ -87,4 +87,3 @@ describe('Valr modules', () => {
   // })
 
 })
-
