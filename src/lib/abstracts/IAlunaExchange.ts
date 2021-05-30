@@ -1,11 +1,10 @@
 import { IAlunaMarketModule } from '@lib/modules/IAlunaMarketModule'
 import {
-  IAlunaOrderWriteModule, IAlunaOrderReadModule,
+  IAlunaOrderReadModule,
+  IAlunaOrderWriteModule,
 } from '@lib/modules/IAlunaOrderModule'
 import { IAlunaSymbolModule } from '@lib/modules/IAlunaSymbolModule'
-import {
-  IAlunaExchangeSpecsSchema,
-} from '@lib/schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaExchangeSpecsSchema } from '@lib/schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
 
 import { IAlunaBalanceModule } from '../modules/IAlunaBalanceModule'
@@ -31,8 +30,7 @@ export interface IAlunaExchange {
 
   // modules (private/signed)
   Key: IAlunaKeyModule
-  OrderRead: IAlunaOrderReadModule
-  OrderWrite: IAlunaOrderWriteModule
+  Order: IAlunaOrderReadModule | IAlunaOrderWriteModule
   Balance: IAlunaBalanceModule
   Position?: IAlunaPositionModule
 
