@@ -1,6 +1,6 @@
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
-import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '@lib/schemas/IAlunaSettingsSchema'
+import { HttpVerbEnum } from '../enums/HtttpVerbEnum'
+import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
 

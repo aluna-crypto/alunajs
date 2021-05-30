@@ -1,7 +1,6 @@
-import { AccountEnum } from '@lib/enums/AccountEnum'
-import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
-
+import { AccountEnum } from '../enums/AccountEnum'
 import { FeaturesModeEnum } from '../enums/FeaturesModeEnum'
+import { OrderTypesEnum } from '../enums/OrderTypeEnum'
 
 
 

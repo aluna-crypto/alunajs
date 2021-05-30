@@ -1,7 +1,6 @@
-import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
-import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
-import { SideEnum } from '@lib/enums/SideEnum'
-
+import { IAlunaModule } from '../abstracts/IAlunaModule'
+import { OrderTypesEnum } from '../enums/OrderTypeEnum'
+import { SideEnum } from '../enums/SideEnum'
 import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 

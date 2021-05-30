@@ -1,4 +1,4 @@
-import { Valr } from 'src/exchanges/valr/Valr'
+import { Valr } from '../exchanges/valr/Valr'
 
 
 

@@ -1,5 +1,4 @@
-import { IAlunaModule } from '@lib/abstracts/IAlunaModule'
-
+import { IAlunaModule } from '../abstracts/IAlunaModule'
 import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 
