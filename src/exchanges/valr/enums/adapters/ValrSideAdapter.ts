@@ -1,5 +1,4 @@
-import { SideEnum } from '@lib/enums/SideEnum'
-
+import { SideEnum } from '../../../../lib/enums/SideEnum'
 import { ValrError } from '../../ValrError'
 import { ValrSideEnum } from '../ValrSideEnum'
 

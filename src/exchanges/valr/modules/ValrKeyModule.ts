@@ -1,8 +1,7 @@
-import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
-import { IAlunaKeyModule } from '@lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '@lib/schemas/IAlunaKeyPermissionSchema'
-
+import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
+import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'

@@ -1,5 +1,4 @@
-import { IAlunaMarketSchema } from '@lib/schemas/IAlunaMarketSchema'
-
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
 
 

@@ -1,10 +1,9 @@
-import { AccountEnum } from '@lib/enums/AccountEnum'
-import { FeaturesModeEnum } from '@lib/enums/FeaturesModeEnum'
-import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
+import { AccountEnum } from '../../lib/enums/AccountEnum'
+import { FeaturesModeEnum } from '../../lib/enums/FeaturesModeEnum'
+import { OrderTypesEnum } from '../../lib/enums/OrderTypeEnum'
 import {
-  IAlunaExchangeOrderTypesSpecsSchema,
-  IAlunaExchangeSpecsSchema,
-} from '@lib/schemas/IAlunaExchangeSpecsSchema'
+  IAlunaExchangeOrderTypesSpecsSchema, IAlunaExchangeSpecsSchema,
+} from '../../lib/schemas/IAlunaExchangeSpecsSchema'
 
 
 

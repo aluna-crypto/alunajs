@@ -1,8 +1,7 @@
 import { utc } from 'moment'
 
-import { AccountEnum } from '@lib/enums/AccountEnum'
-import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
-
+import { AccountEnum } from '../../../../lib/enums/AccountEnum'
+import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'

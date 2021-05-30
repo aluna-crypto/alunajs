@@ -1,8 +1,8 @@
-import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
-import { AccountEnum } from '@lib/enums/AccountEnum'
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
-import { IAlunaBalanceModule } from '@lib/modules/IAlunaBalanceModule'
-import { IAlunaBalanceSchema } from '@lib/schemas/IAlunaBalanceSchema'
+import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
+import { AccountEnum } from '../../../lib/enums/AccountEnum'
+import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
 import { ValrHttp } from '../ValrHttp'
@@ -10,6 +10,7 @@ import { ValrHttp } from '../ValrHttp'
 
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
+  exchange: any
 
   async listRaw (): Promise<IValrBalanceSchema[]> {
 

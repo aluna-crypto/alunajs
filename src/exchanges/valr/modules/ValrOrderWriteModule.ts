@@ -1,11 +1,8 @@
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
+import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
 import {
-  IAlunaOrderCancelParams,
-  IAlunaOrderPlaceParams,
-  IAlunaOrderWriteModule,
-} from '@lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
-
+  IAlunaOrderCancelParams, IAlunaOrderPlaceParams, IAlunaOrderWriteModule,
+} from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'

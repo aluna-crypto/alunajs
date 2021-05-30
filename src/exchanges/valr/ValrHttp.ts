@@ -3,13 +3,10 @@ import crypto from 'crypto'
 import { URL } from 'url'
 
 import {
-  IAlunaHttp,
-  IAlunaHttpPrivateParams,
-  IAlunaHttpPublicParams,
-} from '@lib/abstracts/IAlunaHttp'
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
-import { IAlunaKeySecretSchema } from '@lib/schemas/IAlunaKeySecretSchema'
-
+  IAlunaHttp, IAlunaHttpPrivateParams, IAlunaHttpPublicParams,
+} from '../../lib/abstracts/IAlunaHttp'
+import { HttpVerbEnum } from '../../lib/enums/HtttpVerbEnum'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrError } from './ValrError'
 
 

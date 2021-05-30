@@ -1,5 +1,4 @@
-import { OrderTypesEnum } from '@lib/enums/OrderTypeEnum'
-
+import { OrderTypesEnum } from '../../../../lib/enums/OrderTypeEnum'
 import { ValrError } from '../../ValrError'
 import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 

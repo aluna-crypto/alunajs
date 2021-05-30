@@ -1,12 +1,9 @@
-import { AAlunaModule } from '@lib/abstracts/AAlunaModule'
-import { HttpVerbEnum } from '@lib/enums/HtttpVerbEnum'
+import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
+import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
 import {
-  IAlunaOrderGetParams,
-  IAlunaOrderListParams,
-  IAlunaOrderReadModule,
-} from '@lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '@lib/schemas/IAlunaOrderSchema'
-
+  IAlunaOrderGetParams, IAlunaOrderListParams, IAlunaOrderReadModule,
+} from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
