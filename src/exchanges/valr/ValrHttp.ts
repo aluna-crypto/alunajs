@@ -128,6 +128,7 @@ export const ValrHttp: IAlunaHttp = {
     try {
 
       const response = await axios.create().request<T>(requestConfig)
+
       return response.data
 
     } catch (error) {
