@@ -100,21 +100,19 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
   async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
 
-    const body = {
-      orderId: params.id,
-      pair: params.symbolPair,
-    }
-
     await ValrHttp.privateRequest<void>({
       verb: HttpVerbEnum.DELETE,
       url: 'https://api.valr.com/v1/orders/order',
       keySecret: this.exchange.keySecret,
-      body,
+      body: {
+        orderId: params.id,
+        pair: params.symbolPair,
+      },
     })
 
-    const rawOrder = await this.getRaw(params)
+    const ensuredCancelled = await this.getRaw(params)
 
-    if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
+    if (ensuredCancelled.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       throw new ValrError({
         message: 'Something went wrong, order not canceled',
@@ -124,7 +122,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     }
 
     return ValrOrderParser.parse({
-      rawOrder,
+      rawOrder: ensuredCancelled,
     })
 
   }
