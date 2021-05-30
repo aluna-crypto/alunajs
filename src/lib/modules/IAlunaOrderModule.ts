@@ -46,7 +46,7 @@ export interface IAlunaOrderReadModule extends IAlunaModule {
 
 
 
-export interface IAlunaOrderWriteModule extends IAlunaModule {
+export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
   cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema>
 }
