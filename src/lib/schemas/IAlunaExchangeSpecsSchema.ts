@@ -21,9 +21,9 @@ export interface IAlunaExchangeOrderTypesSpecsSchema {
 }
 
 export interface IAlunaExchangeAccountSpecsSchema {
-  implemented: boolean // implemented by aluna
   supported: boolean // supported by the exchange
-  orderTypes?: IAlunaExchangeOrderTypesSpecsSchema // unsupported if missing
+  implemented?: boolean // implemented by aluna
+  orderTypes?: IAlunaExchangeOrderTypesSpecsSchema
 }
 
 export interface IAlunaExchangeOrderOptionsSchema {
