@@ -36,8 +36,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       type,
     } = params
 
-    const placeOrderType = ValrOrderTypeAdapter.translateToValr({ type })
-
     const {
       implemented,
       orderTypes: supportedOrderTypes,
@@ -51,12 +49,12 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
-    const isTypeSupported = `${placeOrderType}` in supportedOrderTypes
+    const orderType = supportedOrderTypes[type]
 
-    if (!isTypeSupported) {
+    if (!orderType || !orderType.implemented || !orderType.supported) {
 
       throw new ValrError({
-        message: `Order type ${placeOrderType} not supported/implemented for Varl`,
+        message: `Order type ${type} not supported/implemented for Varl`,
       })
 
     }
@@ -66,7 +64,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       pair: symbolPair,
     }
 
-    if (placeOrderType === ValrOrderTypesEnum.LIMIT) {
+    const translatedOrderType = ValrOrderTypeAdapter.translateToValr({ type })
+
+    if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
       Object.assign(body, {
         quantity: amount,
@@ -84,7 +84,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     }
 
     const { id } = await ValrHttp.privateRequest<IValrPlaceOrderResponse>({
-      url: `https://api.valr.com/v1/orders/${placeOrderType}`,
+      url: `https://api.valr.com/v1/orders/${translatedOrderType}`,
       body,
       keySecret: this.exchange.keySecret,
     })
