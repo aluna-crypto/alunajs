@@ -65,5 +65,6 @@ export interface IAlunaExchangeSpecsSchema {
     [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
     [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
+    [AccountEnum.LENDING]: IAlunaExchangeAccountSpecsSchema,
   }
 }
