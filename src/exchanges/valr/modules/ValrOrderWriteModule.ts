@@ -1,4 +1,3 @@
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
 import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
@@ -34,17 +33,20 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       symbolPair,
       side,
       type,
+      account,
     } = params
 
     const {
       implemented,
+      supported,
       orderTypes: supportedOrderTypes,
-    } = ValrSpecs.accounts[AccountEnum.EXCHANGE]
+    } = ValrSpecs.accounts[account]
 
-    if (!implemented || !supportedOrderTypes) {
+
+    if (!supported || !implemented || !supportedOrderTypes) {
 
       throw new ValrError({
-        message: `Account type ${AccountEnum.EXCHANGE} not supported for Varl`,
+        message: `Account type ${account} not supported/implemented for Varl`,
       })
 
     }
