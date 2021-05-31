@@ -2,7 +2,8 @@ import { AccountEnum } from '../../lib/enums/AccountEnum'
 import { FeaturesModeEnum } from '../../lib/enums/FeaturesModeEnum'
 import { OrderTypesEnum } from '../../lib/enums/OrderTypeEnum'
 import {
-  IAlunaExchangeOrderTypesSpecsSchema, IAlunaExchangeSpecsSchema,
+  IAlunaExchangeOrderTypesSpecsSchema,
+  IAlunaExchangeSpecsSchema,
 } from '../../lib/schemas/IAlunaExchangeSpecsSchema'
 
 
@@ -39,14 +40,13 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
       orderTypes: exchangeOrderTypes,
     },
     [AccountEnum.MARGIN]: {
-      supported: false, // unsupported
-      implemented: false,
-      // orderTypes: {},
+      supported: false,
     },
     [AccountEnum.DERIVATIVES]: {
-      supported: false, // unsupported
-      implemented: false,
-      // orderTypes: {},
+      supported: false,
+    },
+    [AccountEnum.LENDING]: {
+      supported: false,
     },
   },
 }
