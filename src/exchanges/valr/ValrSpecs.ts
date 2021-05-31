@@ -16,6 +16,14 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       amount: 1,
     },
   },
+  [OrderTypesEnum.MARKET]: {
+    supported: true,
+    implemented: true,
+    options: {
+      rate: 1,
+      amount: 1,
+    },
+  },
 }
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
