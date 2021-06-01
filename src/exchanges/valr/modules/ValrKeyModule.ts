@@ -38,7 +38,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
        */
       await ValrHttp.privateRequest<IValrKeySchema>({
         verb: HttpVerbEnum.GET,
-        url: 'https://api.valr.com/v1/account/balances',
+        url: 'https://api.valr.com/v1/orders/open',
         keySecret: this.exchange.keySecret,
       })
 
