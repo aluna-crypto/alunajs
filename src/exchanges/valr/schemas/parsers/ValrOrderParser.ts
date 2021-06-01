@@ -1,5 +1,3 @@
-import { utc } from 'moment'
-
 import { AccountEnum } from '../../../../lib/enums/AccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
@@ -66,6 +64,7 @@ export class ValrOrderParser {
 
     }
 
+
     const amount = parseFloat(originalQuantity)
     const rate = parseFloat(price)
 
@@ -80,7 +79,7 @@ export class ValrOrderParser {
       side: ValrSideAdapter.translateToAluna({ side }),
       status: ValrStatusAdapter.translateToAluna({ status }),
       type: ValrOrderTypeAdapter.translateToAluna({ type }),
-      placedAt: utc(createdAt.replace(/\s/, 'T')).toDate(),
+      placedAt: new Date(createdAt),
     }
 
     return parsedOrder
