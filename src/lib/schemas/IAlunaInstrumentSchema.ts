@@ -2,6 +2,7 @@ import { InstrumentStateEnum } from '../enums/InstrumentStateEnum'
 
 
 
+// TODO: trim interface down to what is essential
 export interface IAlunaInstrumentSchema {
   name: string
   state: InstrumentStateEnum
