@@ -29,7 +29,7 @@ export interface IAlunaPositionSchema {
   leverage?: number
   crossMargin?: boolean
 
-  openedAt: Date
+  openedAt?: Date
   closedAt?: Date
 
 }
