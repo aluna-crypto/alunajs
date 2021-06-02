@@ -14,8 +14,7 @@
     "test": "mocha -r ts-node/register src/exchanges/valr/Valr.spec.ts"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "date-fns": "^2.22.1"
+    "axios": "^0.21.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
