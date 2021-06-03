@@ -39,7 +39,7 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
     } = params
 
     return {
-      acronym: shortName,
+      id: shortName,
       name: longName,
     }
 

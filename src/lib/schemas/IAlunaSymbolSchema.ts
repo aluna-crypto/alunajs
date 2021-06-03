@@ -1,5 +1,5 @@
 export interface IAlunaSymbolSchema {
-  acronym: string
+  id: string
   name?: string
   slug?: string
   aliases?: string[]

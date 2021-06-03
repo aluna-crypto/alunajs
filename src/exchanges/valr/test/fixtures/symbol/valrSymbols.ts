@@ -34,15 +34,15 @@ export const VALR_FETCH_SYMBOLS_RESPONSE: IValrSymbolSchema[] = [
 
 export const VALR_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
   {
-    acronym: 'ZAR',
+    id: 'ZAR',
     name: 'Rand',
   },
   {
-    acronym: 'BTC',
+    id: 'BTC',
     name: 'Bitcoin',
   },
   {
-    acronym: 'ETH',
+    id: 'ETH',
     name: 'Ethereum',
   },
 ]
