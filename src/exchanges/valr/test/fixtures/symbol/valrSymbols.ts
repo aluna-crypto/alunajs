@@ -3,7 +3,7 @@ import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
 
 
 
-export const VALR_FETCH_SYMBOLS_RESPONSE: IValrSymbolSchema[] = [
+export const VALR_RAW_SYMBOLS: IValrSymbolSchema[] = [
   {
     symbol: 'R',
     isActive: true,
