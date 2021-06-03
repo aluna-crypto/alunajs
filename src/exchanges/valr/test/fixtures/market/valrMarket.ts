@@ -4,7 +4,7 @@ import { IValrMarketSchema } from '../../../schemas/IValrMarketSchema'
 
 
 
-export const VALR_FETCH_MARKETS_RESPONSE: IValrMarketSchema[] = [
+export const VALR_RAW_MARKETS: IValrMarketSchema[] = [
   {
     currencyPair: 'USDCETH',
     askPrice: '0.00039334',
@@ -45,7 +45,7 @@ export const VALR_FETCH_MARKETS_RESPONSE: IValrMarketSchema[] = [
 
 
 
-export const VALR_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
+export const VALR_RAW_MARKETS_WITH_SYMBOLS: IMarketWithCurrency[] = [
   {
     currencyPair: 'USDCETH',
     askPrice: '0.00039334',
