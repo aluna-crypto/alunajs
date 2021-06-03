@@ -4,9 +4,11 @@ import { IAlunaTickerSchema } from './IAlunaTickerSchema'
 
 
 export interface IAlunaMarketSchema {
+
   pairSymbol: string
-  baseSymbol: string
-  quoteSymbol: string
+
+  baseSymbolId: string
+  quoteSymbolId: string
 
   ticker: IAlunaTickerSchema
 
@@ -17,4 +19,5 @@ export interface IAlunaMarketSchema {
   instrument?: IAlunaInstrumentSchema
   maxLeverage?: number
   leverageEnabled?: boolean
+
 }
