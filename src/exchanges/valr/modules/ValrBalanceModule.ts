@@ -46,7 +46,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     } = params
 
     return {
-      symbolAcronym: rawBalance.currency,
+      symbolId: rawBalance.currency,
       account: AccountEnum.EXCHANGE,
       available: Number(rawBalance.available),
       total: Number(rawBalance.total),
