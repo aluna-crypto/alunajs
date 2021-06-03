@@ -20,7 +20,7 @@ export interface IValrOrderListSchema {
   createdAt: string
   originalQuantity: string
   filledPercentage: string
-  stopPrice: string
+  stopPrice?: string
   updatedAt: string
   status: ValrOrderStatusEnum
   type: ValrOrderTypesEnum
