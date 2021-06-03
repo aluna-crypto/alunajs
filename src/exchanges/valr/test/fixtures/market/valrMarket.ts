@@ -95,8 +95,8 @@ export const VALR_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
 export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     pairSymbol: 'USDCETH',
-    baseSymbol: 'USDC',
-    quoteSymbol: 'ETH',
+    baseSymbolId: 'USDC',
+    quoteSymbolId: 'ETH',
     ticker: {
       high: 0.00043926,
       low: 0.00038734,
@@ -114,8 +114,8 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     pairSymbol: 'BTCZAR',
-    baseSymbol: 'BTC',
-    quoteSymbol: 'ZAR',
+    baseSymbolId: 'BTC',
+    quoteSymbolId: 'ZAR',
     ticker: {
       high: 533499,
       low: 490999,
@@ -133,8 +133,8 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     pairSymbol: 'ETHZAR',
-    baseSymbol: 'ETH',
-    quoteSymbol: 'ZAR',
+    baseSymbolId: 'ETH',
+    quoteSymbolId: 'ZAR',
     ticker: {
       high: 36973,
       low: 32890,

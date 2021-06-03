@@ -39,8 +39,8 @@ export class ValrMarketParser {
 
     return {
       pairSymbol: currencyPair,
-      baseSymbol: baseCurrency,
-      quoteSymbol: quoteCurrency,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
       ticker,
       spotEnabled: false,
       marginEnabled: false,
