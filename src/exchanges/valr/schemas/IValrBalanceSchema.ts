@@ -3,5 +3,5 @@ export interface IValrBalanceSchema {
   available: string
   reserved: string
   total: string
-  updatedAt: string
+  updatedAt?: string
 }
