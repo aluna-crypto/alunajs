@@ -11,7 +11,9 @@ export abstract class AAlunaModule {
   constructor (params: {
     exchange: IAlunaExchange,
   }) {
+
     this.exchange = params.exchange
+
   }
 
 }

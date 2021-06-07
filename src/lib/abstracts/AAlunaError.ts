@@ -9,8 +9,10 @@ export abstract class AAlunaError {
     message: string,
     statusCode?: number,
   }) {
+
     this.message = params.message
     this.statusCode = params.statusCode || 400
+
   }
 
 }
