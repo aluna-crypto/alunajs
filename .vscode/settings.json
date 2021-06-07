@@ -2,5 +2,31 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.validate": ["javascript"]
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.count": 1,
+  "importSorter.importStringConfiguration.trailingComma": "multiLine",
+  "importSorter.importStringConfiguration.hasSemicolon": false,
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.importStringConfiguration.numberOfEmptyLinesAfterAllImports": 3,
+  "importSorter.sortConfiguration.customOrderingRules.defaultNumberOfEmptyLinesAfterGroup": 1,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "words",
+  "importSorter.sortConfiguration.customOrderingRules.rules": [
+      {
+          "type": "importMember",
+          "regex": "^$",
+          "orderLevel": 5,
+          "disableSort": true
+      },
+      {
+          "regex": "^[^.@]",
+          "orderLevel": 10
+      },
+      {
+          "regex": "^[@]",
+          "orderLevel": 15
+      },
+      {
+          "regex": "^[.]",
+          "orderLevel": 20
+      },
+  ],
  }
