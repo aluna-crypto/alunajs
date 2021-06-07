@@ -13,7 +13,7 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 describe('ValrMarketModule', () => {
 
-  const valrMarketModule = ValrMarketModule.prototype
+  const valrMarketModule = ValrMarketModule
 
   const { marketsSeeds } = VALR_SEEDS
 

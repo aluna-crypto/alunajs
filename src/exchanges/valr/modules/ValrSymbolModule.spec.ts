@@ -11,7 +11,7 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 
 describe('ValrSymbolModule', () => {
 
-  const valrSymbolModule = ValrSymbolModule.prototype
+  const valrSymbolModule = ValrSymbolModule
 
   const { symbolsSeeds } = VALR_SEEDS
 
