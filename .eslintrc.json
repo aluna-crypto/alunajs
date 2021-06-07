@@ -116,26 +116,6 @@
       }
     ]
   },
-  "overrides": [
-    {
-      "files": [
-        "src/lib/abstracts/AAlunaError.ts",
-        "src/lib/abstracts/AAlunaExchange.ts",
-        "src/lib/abstracts/AAlunaModule.ts"
-      ],
-      "rules": {
-        "padded-blocks": "off"
-      }
-    },
-    {
-      "files": [
-        "src/**/*.spec.ts"
-      ],
-      "rules": {
-        "no-unused-expressions": "off"
-      }
-    }
-  ],
   "settings": {
     "import/resolver": {
       "typescript": {}
