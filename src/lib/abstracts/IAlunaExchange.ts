@@ -20,10 +20,10 @@ export interface IAlunaExchange {
   settings?: IAlunaSettingsSchema
 
   // modules (private/signed)
-  Key: IAlunaKeyModule
-  Order: IAlunaOrderReadModule | IAlunaOrderWriteModule
-  Balance: IAlunaBalanceModule
-  Position?: IAlunaPositionModule
+  key: IAlunaKeyModule
+  order: IAlunaOrderReadModule | IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
+  position?: IAlunaPositionModule
 
 }
 
