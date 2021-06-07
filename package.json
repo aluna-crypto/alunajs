@@ -11,9 +11,10 @@
   "private": false,
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
-    "test": "jest",
-    "test:watch": "jest --watch coverage=false",
-    "test:coverage": "jest --watch"
+    "test": "jest --coverage=false",
+    "test:coverage": "jest",
+    "test:watch": "jest --watchAll --coverage=false",
+    "test:watch:coverage": "jest --watch"
   },
   "dependencies": {
     "axios": "^0.21.1"
