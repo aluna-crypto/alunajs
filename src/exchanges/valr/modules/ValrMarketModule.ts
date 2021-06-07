@@ -15,9 +15,9 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 
 
 
-export const ValrMarketModule: IAlunaMarketModule = {
+export const ValrMarketModule: IAlunaMarketModule = class {
 
-  async listRaw (): Promise<IMarketWithCurrency[]> {
+  static async listRaw (): Promise<IMarketWithCurrency[]> {
 
     const { publicRequest } = ValrHttp
 
@@ -36,36 +36,32 @@ export const ValrMarketModule: IAlunaMarketModule = {
 
     return rawMarketsWithCurrency
 
-  },
+  }
 
-  async list (): Promise<IAlunaMarketSchema[]> {
+  static async list (): Promise<IAlunaMarketSchema[]> {
 
-    return this.parseMany({
-      rawMarkets: await this.listRaw(),
+    return ValrMarketModule.parseMany({
+      rawMarkets: await ValrMarketModule.listRaw(),
     })
 
-  },
+  }
 
-
-
-  parse (params: {
+  static parse (params: {
     rawMarket: IMarketWithCurrency,
   }): IAlunaMarketSchema {
 
     return ValrMarketParser.parse(params)
 
-  },
+  }
 
-
-
-  parseMany (params: {
+  static parseMany (params: {
     rawMarkets: IMarketWithCurrency[],
   }): IAlunaMarketSchema[] {
 
-    return params.rawMarkets.map((rawMarket) => this.parse({
+    return params.rawMarkets.map((rawMarket) => ValrMarketModule.parse({
       rawMarket,
     }))
 
-  },
+  }
 
 }

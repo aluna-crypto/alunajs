@@ -5,29 +5,29 @@ import { ValrHttp } from '../ValrHttp'
 
 
 
-export const ValrSymbolModule: IAlunaSymbolModule = {
+export const ValrSymbolModule: IAlunaSymbolModule = class {
 
-  async list (): Promise<IAlunaSymbolSchema[]> {
+  static async list (): Promise<IAlunaSymbolSchema[]> {
 
-    return this.parseMany({
-      rawSymbols: await this.listRaw(),
+    return ValrSymbolModule.parseMany({
+      rawSymbols: await ValrSymbolModule.listRaw(),
     })
 
-  },
+  }
 
 
 
-  async listRaw (): Promise<IValrSymbolSchema[]> {
+  static async listRaw (): Promise<IValrSymbolSchema[]> {
 
     return ValrHttp.publicRequest<IValrSymbolSchema[]>({
       url: 'https://api.valr.com/v1/public/currencies',
     })
 
-  },
+  }
 
 
 
-  parse (params:{
+  static parse (params:{
     rawSymbol: IValrSymbolSchema,
   }): IAlunaSymbolSchema {
 
@@ -42,18 +42,18 @@ export const ValrSymbolModule: IAlunaSymbolModule = {
       name: longName,
     }
 
-  },
+  }
 
 
 
-  parseMany (params: {
+  static parseMany (params: {
     rawSymbols: IValrSymbolSchema[],
   }): IAlunaSymbolSchema[] {
 
-    return params.rawSymbols.map((rawSymbol) => this.parse({
+    return params.rawSymbols.map((rawSymbol) => ValrSymbolModule.parse({
       rawSymbol,
     }))
 
-  },
+  }
 
 }
