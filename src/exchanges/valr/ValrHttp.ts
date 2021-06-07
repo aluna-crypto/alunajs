@@ -20,6 +20,12 @@ interface ISignedHashParams {
   body?: any
 }
 
+interface IValrSignedHeaders {
+  'X-VALR-API-KEY': string
+  'X-VALR-SIGNATURE': string
+  'X-VALR-TIMESTAMP': number
+}
+
 
 
 export const formatRequestError = (params: { error: any }): ValrError => {
@@ -46,7 +52,9 @@ export const formatRequestError = (params: { error: any }): ValrError => {
 
 
 
-export const generateAuthHeader = (params: ISignedHashParams) => {
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+):IValrSignedHeaders => {
 
   const {
     keySecret, path, verb, body,
