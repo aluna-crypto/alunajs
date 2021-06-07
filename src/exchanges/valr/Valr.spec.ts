@@ -17,7 +17,7 @@ describe('Valr modules', () => {
 
 
 
-  it('should fetch Valr symbols', async () => {
+  it.skip('should fetch Valr symbols', async () => {
 
     const symbols = await valrInstance.Symbol.list()
 
@@ -27,7 +27,7 @@ describe('Valr modules', () => {
 
 
 
-  it('should fetch Valr markets', async () => {
+  it.skip('should fetch Valr markets', async () => {
 
     const markets = await valrInstance.Market.list()
 
@@ -37,7 +37,7 @@ describe('Valr modules', () => {
 
 
 
-  it('should fetch Valr key permissions', async () => {
+  it.skip('should fetch Valr key permissions', async () => {
 
     const permissions = await valrInstance.Key.getPermissions()
 
@@ -47,7 +47,7 @@ describe('Valr modules', () => {
 
 
 
-  it('should fetch Valr balance', async () => {
+  it.skip('should fetch Valr balance', async () => {
 
     const balance = await valrInstance.Balance.list()
 
@@ -57,7 +57,7 @@ describe('Valr modules', () => {
 
 
 
-  it('should fetch Valr open orders', async () => {
+  it.skip('should fetch Valr open orders', async () => {
 
     const orders = await valrInstance.Order.list()
 
@@ -66,7 +66,7 @@ describe('Valr modules', () => {
 
   })
 
-  // it('should place and cancel orders for Valr', async () => {
+  // it.skip('should place and cancel orders for Valr', async () => {
 
   //   const placedOrder = await valrInstance.Order.place({
   //     amount: '',
