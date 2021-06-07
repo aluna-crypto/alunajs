@@ -1,7 +1,8 @@
 import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
 import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
 import {
-  IAlunaOrderGetParams, IAlunaOrderListParams, IAlunaOrderReadModule,
+  IAlunaOrderGetParams,
+  IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import {
@@ -15,9 +16,8 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  async listRaw (
-    _params?: IAlunaOrderListParams,
-  ): Promise<IValrOrderListSchema[]> {
+  // public async list (params: IAlunaOrderListParams): Promise<...>
+  async listRaw (): Promise<IValrOrderListSchema[]> {
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: HttpVerbEnum.GET,
@@ -29,9 +29,8 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  public async list (
-    _params?: IAlunaOrderListParams,
-  ): Promise<IAlunaOrderSchema[]> {
+  // public async list (params: IAlunaOrderListParams): Promise<...>
+  public async list (): Promise<IAlunaOrderSchema[]> {
 
     return this.parseMany({
       rawOrders: await this.listRaw(),
