@@ -5,8 +5,7 @@
   },
   "extends": [
     "airbnb-base",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:chai-friendly/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -16,8 +15,7 @@
   "plugins": [
     "@typescript-eslint",
     "eslint-plugin-import-helpers",
-    "unused-imports",
-    "chai-friendly"
+    "unused-imports"
   ],
   "rules": {
     "camelcase": "off",
@@ -125,6 +123,14 @@
       ],
       "rules": {
         "padded-blocks": "off"
+      }
+    },
+    {
+      "files": [
+        "src/**/*.spec.ts"
+      ],
+      "rules": {
+        "no-unused-expressions": "off"
       }
     }
   ],
