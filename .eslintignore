@@ -1,2 +1,4 @@
 /*.js
+.history
 node_modules
+coverage
