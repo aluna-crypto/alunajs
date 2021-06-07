@@ -1,7 +1,7 @@
 import {
+  VALR_PARSED_MARKETS,
   VALR_RAW_MARKETS,
   VALR_RAW_MARKETS_WITH_SYMBOLS,
-  VALR_PARSED_MARKETS,
 } from './valrMarket'
 
 

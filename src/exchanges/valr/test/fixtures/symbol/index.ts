@@ -1,6 +1,6 @@
 import {
-  VALR_RAW_SYMBOLS,
   VALR_PARSED_SYMBOLS,
+  VALR_RAW_SYMBOLS,
 } from './valrSymbols'
 
 

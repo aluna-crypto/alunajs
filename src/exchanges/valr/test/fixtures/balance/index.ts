@@ -1,6 +1,6 @@
 import {
-  VALR_RAW_BALANCES,
   VALR_PARSED_BALANCES,
+  VALR_RAW_BALANCES,
 } from './valrBalance'
 
 
