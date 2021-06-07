@@ -19,7 +19,7 @@ describe('Valr modules', () => {
 
   it('should fetch Valr symbols', async () => {
 
-    const symbols = await valrInstance.Symbol.list()
+    const symbols = await Valr.Symbol.list()
 
     console.log(symbols)
 
@@ -29,7 +29,7 @@ describe('Valr modules', () => {
 
   it('should fetch Valr markets', async () => {
 
-    const markets = await valrInstance.Market.list()
+    const markets = await Valr.Market.list()
 
     console.log(markets)
 
