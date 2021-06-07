@@ -10,23 +10,23 @@
   "importSorter.sortConfiguration.customOrderingRules.defaultNumberOfEmptyLinesAfterGroup": 1,
   "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "words",
   "importSorter.sortConfiguration.customOrderingRules.rules": [
-      {
-          "type": "importMember",
-          "regex": "^$",
-          "orderLevel": 5,
-          "disableSort": true
-      },
-      {
-          "regex": "^[^.@]",
-          "orderLevel": 10
-      },
-      {
-          "regex": "^[@]",
-          "orderLevel": 15
-      },
-      {
-          "regex": "^[.]",
-          "orderLevel": 20
-      },
+    {
+      "type": "importMember",
+      "regex": "^$",
+      "orderLevel": 5,
+      "disableSort": true
+    },
+    {
+      "regex": "^[^.@]",
+      "orderLevel": 10
+    },
+    {
+      "regex": "^[@]",
+      "orderLevel": 15
+    },
+    {
+      "regex": "^[.]",
+      "orderLevel": 20
+    },
   ],
  }

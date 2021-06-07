@@ -1,11 +1,11 @@
 /*
-	https://go.microsoft.com/fwlink/?LinkId=827846
+  https://go.microsoft.com/fwlink/?LinkId=827846
 */
 
 {
-	"recommendations": [
-		"dbaeumer.vscode-eslint",
-		"stringham.move-ts",
-		"mike-co.import-sorter",
-	],
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "stringham.move-ts",
+    "mike-co.import-sorter",
+  ],
 }
