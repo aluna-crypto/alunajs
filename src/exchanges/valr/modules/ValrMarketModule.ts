@@ -1,4 +1,3 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
@@ -16,7 +15,7 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
 
 
 
-export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule {
+export const ValrMarketModule: IAlunaMarketModule = {
 
   async listRaw (): Promise<IMarketWithCurrency[]> {
 
@@ -37,7 +36,7 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
 
     return rawMarketsWithCurrency
 
-  }
+  },
 
   async list (): Promise<IAlunaMarketSchema[]> {
 
@@ -45,7 +44,7 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
       rawMarkets: await this.listRaw(),
     })
 
-  }
+  },
 
 
 
@@ -55,7 +54,7 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
 
     return ValrMarketParser.parse(params)
 
-  }
+  },
 
 
 
@@ -67,6 +66,6 @@ export class ValrMarketModule extends AAlunaModule implements IAlunaMarketModule
       rawMarket,
     }))
 
-  }
+  },
 
 }

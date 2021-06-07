@@ -1,4 +1,3 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
@@ -6,7 +5,7 @@ import { ValrHttp } from '../ValrHttp'
 
 
 
-export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule {
+export const ValrSymbolModule: IAlunaSymbolModule = {
 
   async list (): Promise<IAlunaSymbolSchema[]> {
 
@@ -14,7 +13,7 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
       rawSymbols: await this.listRaw(),
     })
 
-  }
+  },
 
 
 
@@ -24,7 +23,7 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
       url: 'https://api.valr.com/v1/public/currencies',
     })
 
-  }
+  },
 
 
 
@@ -43,7 +42,7 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
       name: longName,
     }
 
-  }
+  },
 
 
 
@@ -55,6 +54,6 @@ export class ValrSymbolModule extends AAlunaModule implements IAlunaSymbolModule
       rawSymbol,
     }))
 
-  }
+  },
 
 }
