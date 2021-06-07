@@ -28,9 +28,9 @@ export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implement
 
 
   // local definitions
-  Key: IAlunaKeyModule
-  Order: IAlunaOrderWriteModule
-  Balance: IAlunaBalanceModule
+  key: IAlunaKeyModule
+  order: IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
 
 
 
@@ -43,9 +43,9 @@ export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implement
 
     super(params)
 
-    this.Key = new ValrKeyModule({ exchange: this })
-    this.Balance = new ValrBalanceModule({ exchange: this })
-    this.Order = new ValrOrderWriteModule({ exchange: this })
+    this.key = new ValrKeyModule({ exchange: this })
+    this.balance = new ValrBalanceModule({ exchange: this })
+    this.order = new ValrOrderWriteModule({ exchange: this })
 
   }
 
