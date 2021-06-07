@@ -1,9 +1,8 @@
-import { IAlunaModule } from '../abstracts/IAlunaModule'
 import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
 
 
 
-export interface IAlunaMarketModule extends IAlunaModule {
+export interface IAlunaMarketModule {
 
   list (): Promise<IAlunaMarketSchema[]>
   listRaw (): Promise<any[]>

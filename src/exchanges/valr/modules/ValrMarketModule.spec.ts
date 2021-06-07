@@ -1,6 +1,4 @@
-import {
-  expect,
-} from 'chai'
+import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
@@ -13,7 +11,7 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 describe('ValrMarketModule', () => {
 
-  const valrMarketModule = ValrMarketModule.prototype
+  const valrMarketModule = ValrMarketModule
 
   const { marketsSeeds } = VALR_SEEDS
 

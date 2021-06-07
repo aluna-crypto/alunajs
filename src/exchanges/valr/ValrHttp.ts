@@ -3,7 +3,9 @@ import crypto from 'crypto'
 import { URL } from 'url'
 
 import {
-  IAlunaHttp, IAlunaHttpPrivateParams, IAlunaHttpPublicParams,
+  IAlunaHttp,
+  IAlunaHttpPrivateParams,
+  IAlunaHttpPublicParams,
 } from '../../lib/abstracts/IAlunaHttp'
 import { HttpVerbEnum } from '../../lib/enums/HtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
@@ -70,9 +72,9 @@ export const generateAuthHeader = (params: ISignedHashParams) => {
 
 
 
-export const ValrHttp: IAlunaHttp = {
+export const ValrHttp: IAlunaHttp = class {
 
-  async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
+  static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
 
     const {
       url,
@@ -98,11 +100,11 @@ export const ValrHttp: IAlunaHttp = {
 
     }
 
-  },
+  }
 
 
 
-  async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
+  static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 
     const {
       url,
@@ -137,6 +139,6 @@ export const ValrHttp: IAlunaHttp = {
 
     }
 
-  },
+  }
 
 }

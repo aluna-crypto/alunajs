@@ -1,9 +1,8 @@
-import { IAlunaModule } from '../abstracts/IAlunaModule'
 import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 
 
 
-export interface IAlunaSymbolModule extends IAlunaModule {
+export interface IAlunaSymbolModule {
 
   list (): Promise<IAlunaSymbolSchema[]>
   listRaw (): Promise<any[]>

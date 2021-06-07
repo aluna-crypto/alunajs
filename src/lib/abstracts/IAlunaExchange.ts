@@ -2,7 +2,8 @@ import { IAlunaBalanceModule } from '../modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../modules/IAlunaKeyModule'
 import { IAlunaMarketModule } from '../modules/IAlunaMarketModule'
 import {
-  IAlunaOrderReadModule, IAlunaOrderWriteModule,
+  IAlunaOrderReadModule,
+  IAlunaOrderWriteModule,
 } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
@@ -12,24 +13,45 @@ import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
 
-export interface IAlunaExchange {
+/*
+  Due to TypeScript limitations, we need to use a combination of two
+  interfaces to specify instance and static properties/methods sepparately.
+*/
 
-  // constants
-  ID: string
-  SPECS: IAlunaExchangeSpecsSchema
+
+
+// Instance properties and methods
+export interface IAlunaExchange {
 
   // basics
   keySecret: IAlunaKeySecretSchema
   settings?: IAlunaSettingsSchema
 
-  // modules (public)
+  // private modules
+  key: IAlunaKeyModule
+  order: IAlunaOrderReadModule | IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
+  position?: IAlunaPositionModule
+
+}
+
+
+
+// Static properties and methods
+export interface IAlunaExchangeStatic {
+
+  // static constants
+  ID: string
+  SPECS: IAlunaExchangeSpecsSchema
+
+  // static public modules
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
 
-  // modules (private/signed)
-  Key: IAlunaKeyModule
-  Order: IAlunaOrderReadModule | IAlunaOrderWriteModule
-  Balance: IAlunaBalanceModule
-  Position?: IAlunaPositionModule
+  // constructor must match the one of AAlunaExchange
+  new (params: {
+    keySecret: IAlunaKeySecretSchema,
+    settings?: IAlunaSettingsSchema,
+  }): IAlunaExchange
 
 }

@@ -1,9 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  VALR_SEEDS,
-} from '../test/fixtures'
+import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSymbolModule } from './ValrSymbolModule'
 
@@ -11,7 +9,7 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 
 describe('ValrSymbolModule', () => {
 
-  const valrSymbolModule = ValrSymbolModule.prototype
+  const valrSymbolModule = ValrSymbolModule
 
   const { symbolsSeeds } = VALR_SEEDS
 

@@ -1,10 +1,11 @@
 import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
-import { IAlunaExchange } from '../../lib/abstracts/IAlunaExchange'
+import {
+  IAlunaExchange,
+  IAlunaExchangeStatic,
+} from '../../lib/abstracts/IAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
-import { IAlunaMarketModule } from '../../lib/modules/IAlunaMarketModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
-import { IAlunaSymbolModule } from '../../lib/modules/IAlunaSymbolModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { ValrBalanceModule } from './modules/ValrBalanceModule'
@@ -16,17 +17,20 @@ import { ValrSpecs } from './ValrSpecs'
 
 
 
-export class Valr extends AAlunaExchange implements IAlunaExchange {
+export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implements IAlunaExchange {
 
-  readonly ID = 'valr'
-  readonly SPECS = ValrSpecs
+  // static definitions
+  static readonly ID = 'valr'
+  static readonly SPECS = ValrSpecs
 
-  Symbol: IAlunaSymbolModule
-  Market: IAlunaMarketModule
+  static Symbol = ValrSymbolModule
+  static Market = ValrMarketModule
 
-  Key: IAlunaKeyModule
-  Order: IAlunaOrderWriteModule
-  Balance: IAlunaBalanceModule
+
+  // local definitions
+  key: IAlunaKeyModule
+  order: IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
 
 
 
@@ -39,12 +43,9 @@ export class Valr extends AAlunaExchange implements IAlunaExchange {
 
     super(params)
 
-    this.Symbol = new ValrSymbolModule({ exchange: this })
-    this.Market = new ValrMarketModule({ exchange: this })
-
-    this.Key = new ValrKeyModule({ exchange: this })
-    this.Balance = new ValrBalanceModule({ exchange: this })
-    this.Order = new ValrOrderWriteModule({ exchange: this })
+    this.key = new ValrKeyModule({ exchange: this })
+    this.balance = new ValrBalanceModule({ exchange: this })
+    this.order = new ValrOrderWriteModule({ exchange: this })
 
   }
 

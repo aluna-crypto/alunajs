@@ -33,7 +33,10 @@ export interface IAlunaExchangeOrderOptionsSchema {
   limitRate?: number
   leverage?: number
 
-  // options not implemented
+  /*
+    Options not yet implemented
+  */
+
   // trailingRate?: number
   // triggerRate?: number
   // distance?: number

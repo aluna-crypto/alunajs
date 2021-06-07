@@ -19,7 +19,7 @@ describe('Valr modules', () => {
 
   it.skip('should fetch Valr symbols', async () => {
 
-    const symbols = await valrInstance.Symbol.list()
+    const symbols = await Valr.Symbol.list()
 
     console.log(symbols)
 
@@ -29,7 +29,7 @@ describe('Valr modules', () => {
 
   it.skip('should fetch Valr markets', async () => {
 
-    const markets = await valrInstance.Market.list()
+    const markets = await Valr.Market.list()
 
     console.log(markets)
 
@@ -39,7 +39,7 @@ describe('Valr modules', () => {
 
   it.skip('should fetch Valr key permissions', async () => {
 
-    const permissions = await valrInstance.Key.getPermissions()
+    const permissions = await valrInstance.key.getPermissions()
 
     console.log(permissions)
 
@@ -49,7 +49,7 @@ describe('Valr modules', () => {
 
   it.skip('should fetch Valr balance', async () => {
 
-    const balance = await valrInstance.Balance.list()
+    const balance = await valrInstance.balance.list()
 
     console.log(balance)
 
@@ -59,7 +59,7 @@ describe('Valr modules', () => {
 
   it.skip('should fetch Valr open orders', async () => {
 
-    const orders = await valrInstance.Order.list()
+    const orders = await valrInstance.order.list()
 
 
     console.log(orders)
