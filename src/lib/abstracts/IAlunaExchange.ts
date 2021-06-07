@@ -13,13 +13,21 @@ import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
 
+/*
+  Due to TypeScript limitations, we need to use a combination of two
+  interfaces to specify instance and static properties/methods sepparately.
+*/
+
+
+
+// Instance properties and methods
 export interface IAlunaExchange {
 
   // basics
   keySecret: IAlunaKeySecretSchema
   settings?: IAlunaSettingsSchema
 
-  // modules (private/signed)
+  // private modules
   key: IAlunaKeyModule
   order: IAlunaOrderReadModule | IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
@@ -29,16 +37,18 @@ export interface IAlunaExchange {
 
 
 
+// Static properties and methods
 export interface IAlunaExchangeStatic {
 
-  // constants
+  // static constants
   ID: string
   SPECS: IAlunaExchangeSpecsSchema
 
-  // modules (public)
+  // static public modules
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
 
+  // constructor must match the one of AAlunaExchange
   new (params: {
     keySecret: IAlunaKeySecretSchema,
     settings?: IAlunaSettingsSchema,
