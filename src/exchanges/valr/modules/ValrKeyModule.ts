@@ -8,12 +8,15 @@ import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { IValrKeySchema } from '../schemas/IValrKeySchema'
 import { IValrOrderListSchema } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 
 
 
 export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public async validate (): Promise<boolean> {
+
+    ValrLog.info()
 
     const alunaPermissions = await this.getPermissions()
 
@@ -24,6 +27,8 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
 
   public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
+
+    ValrLog.info()
 
     const permissions = {
       read: false,
@@ -100,6 +105,8 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
   public parsePermissions (params: {
     rawKey: IValrKeySchema,
   }): IAlunaKeyPermissionSchema {
+
+    ValrLog.info()
 
     const {
       rawKey,

@@ -5,12 +5,17 @@ import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 
 
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
+
+
   async listRaw (): Promise<IValrBalanceSchema[]> {
+
+    ValrLog.info()
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
       verb: HttpVerbEnum.GET,
@@ -25,6 +30,8 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
   async list (): Promise<IAlunaBalanceSchema[]> {
+
+    ValrLog.info()
 
     const rawBalances = await this.listRaw()
     const parsedBalances = this.parseMany({ rawBalances })
@@ -42,6 +49,8 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     const {
       rawBalance,
     } = params
+
+    ValrLog.info(JSON.stringify({ currency: rawBalance.currency }))
 
     return {
       symbolId: rawBalance.currency,
@@ -61,6 +70,8 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     const {
       rawBalances,
     } = params
+
+    ValrLog.info(JSON.stringify({ rawBalancesNum: rawBalances.length }))
 
     const parsedBalances = rawBalances.reduce((cumulator, current) => {
 

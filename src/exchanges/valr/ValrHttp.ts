@@ -10,6 +10,7 @@ import {
 import { HttpVerbEnum } from '../../lib/enums/HtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrError } from './ValrError'
+import { ValrLog } from './ValrLog'
 
 
 
@@ -33,6 +34,8 @@ export const formatRequestError = (params: { error: any }): ValrError => {
   const {
     response,
   } = params.error
+
+  ValrLog.info('formatRequestError', { response })
 
   if (response && response.data && response.data.message) {
 
@@ -59,6 +62,11 @@ export const generateAuthHeader = (
   const {
     keySecret, path, verb, body,
   } = params
+
+  ValrLog.info(JSON.stringify({
+    path,
+    verb,
+  }))
 
   const timestamp = Date.now()
 
@@ -89,6 +97,11 @@ export const ValrHttp: IAlunaHttp = class {
       body,
       verb = HttpVerbEnum.GET,
     } = params
+
+    ValrLog.info(JSON.stringify({
+      url,
+      verb,
+    }))
 
     const requestConfig = {
       url,
@@ -121,6 +134,11 @@ export const ValrHttp: IAlunaHttp = class {
       keySecret,
     } = params
 
+    ValrLog.info(JSON.stringify({
+      url,
+      verb,
+    }))
+
     const signedHash = generateAuthHeader({
       verb,
       path: new URL(url).pathname,
@@ -139,9 +157,13 @@ export const ValrHttp: IAlunaHttp = class {
 
       const response = await axios.create().request<T>(requestConfig)
 
+      ValrLog.info({ output: response })
+
       return response.data
 
     } catch (error) {
+
+      ValrLog.error({ error })
 
       throw formatRequestError({ error })
 

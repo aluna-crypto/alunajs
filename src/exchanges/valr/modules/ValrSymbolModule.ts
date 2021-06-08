@@ -2,6 +2,7 @@ import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 
 
 
@@ -19,6 +20,8 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
   static async listRaw (): Promise<IValrSymbolSchema[]> {
 
+    ValrLog.info()
+
     return ValrHttp.publicRequest<IValrSymbolSchema[]>({
       url: 'https://api.valr.com/v1/public/currencies',
     })
@@ -33,9 +36,15 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     const {
       rawSymbol: {
-        longName, shortName,
+        longName,
+        shortName,
       },
     } = params
+
+    ValrLog.info(JSON.stringify({
+      longName,
+      shortName,
+    }))
 
     return {
       id: shortName,
@@ -50,7 +59,15 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
     rawSymbols: IValrSymbolSchema[],
   }): IAlunaSymbolSchema[] {
 
-    return params.rawSymbols.map((rawSymbol) => ValrSymbolModule.parse({
+    const {
+      rawSymbols,
+    } = params
+
+    ValrLog.info(JSON.stringify({
+      rawSymbolsNum: rawSymbols.length,
+    }))
+
+    return rawSymbols.map((rawSymbol) => ValrSymbolModule.parse({
       rawSymbol,
     }))
 
