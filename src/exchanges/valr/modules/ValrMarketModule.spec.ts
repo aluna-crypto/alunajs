@@ -15,12 +15,6 @@ describe('ValrMarketModule', () => {
 
   const { marketsSeeds } = VALR_SEEDS
 
-  beforeEach(() => {
-
-    ImportMock.restore()
-
-  })
-
 
 
   it('should list Valr raw markets just fine', async () => {
