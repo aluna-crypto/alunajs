@@ -10,6 +10,10 @@ import { SideEnum } from '../../../lib/enums/SideEnum'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
+import {
+  IValrOrderGetSchema,
+  IValrOrderListSchema,
+} from '../schemas/IValrOrderSchema'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
@@ -148,7 +152,6 @@ describe('ValrOrderReadModule', () => {
 
   it('should get a parsed Valr order just fine', async () => {
 
-
     const rawOrderMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'getRaw',
@@ -182,10 +185,10 @@ describe('ValrOrderReadModule', () => {
 
 
 
-  it.skip('should parse a Valr raw order just fine', async () => {
+  it('should parse a Valr raw order just fine', () => {
 
-    const rawOrder1 = ordersSeeds.rawStatusOrder
-    const rawOrder2 = ordersSeeds.rawOrders[1]
+    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawStatusOrder
+    const rawOrder2: IValrOrderListSchema = ordersSeeds.rawOrders[1]
 
     const parseMock = ImportMock.mockFunction(
       ValrOrderParser,
@@ -193,18 +196,78 @@ describe('ValrOrderReadModule', () => {
     )
 
     parseMock
-      .onSecondCall().returns(ordersSeeds.parsedOrders[0])
-      .onFirstCall().returns(ordersSeeds.parsedOrders[1])
+      .onFirstCall().returns(ordersSeeds.parsedOrders[0])
+      .onSecondCall().returns(ordersSeeds.parsedOrders[1])
 
 
-    const parsedOrder = valrOrderReadModule.parse({ rawOrder: rawOrder1 })
+    const parsedOrder1 = valrOrderReadModule.parse({ rawOrder: rawOrder1 })
+
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.true
 
-    expect(parsedOrder.status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrder.type).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder.side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrder1).to.have.property('symbolPair')
+    expect(parsedOrder1).to.have.property('total')
+    expect(parsedOrder1).to.have.property('amount')
+    expect(parsedOrder1).to.have.property('isAmountInContracts')
+    expect(parsedOrder1).to.have.property('rate')
+    expect(parsedOrder1).to.have.property('placedAt')
+    expect(parsedOrder1.status).to.be.eq(OrderStatusEnum.OPEN)
+    expect(parsedOrder1.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedOrder1.type).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
+    expect(parsedOrder1.side).to.be.eq(SideEnum.LONG)
+
+
+    const parsedOrder2 = valrOrderReadModule.parse({ rawOrder: rawOrder2 })
+
+
+    expect(parseMock.callCount).to.be.eq(2)
+    expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.true
+
+    expect(parsedOrder2).to.have.property('symbolPair')
+    expect(parsedOrder2).to.have.property('total')
+    expect(parsedOrder2).to.have.property('amount')
+    expect(parsedOrder2).to.have.property('isAmountInContracts')
+    expect(parsedOrder2).to.have.property('rate')
+    expect(parsedOrder2).to.have.property('placedAt')
+    expect(parsedOrder2.status).to.be.eq(OrderStatusEnum.OPEN)
+    expect(parsedOrder2.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedOrder2.type).to.be.eq(OrderTypesEnum.LIMIT)
+    expect(parsedOrder2.side).to.be.eq(SideEnum.LONG)
+
+  })
+
+
+
+  it('should parse many Valr orders just fine', () => {
+
+    const {
+      rawOrders, parsedOrders,
+    } = ordersSeeds
+
+    const parseMock = ImportMock.mockFunction(
+      ValrOrderParser,
+      'parse',
+    )
+
+    parsedOrders.forEach((parsed, index) => {
+
+      parseMock.onCall(index).returns(parsed)
+
+    })
+
+
+    const parsedManyResp = valrOrderReadModule.parseMany({ rawOrders })
+
+
+    expect(rawOrders.length).to.be.eq(4)
+
+    const rawOrdersArgs = rawOrders.map((rawOrder) => ([{ rawOrder }]))
+    expect(parseMock.callCount).to.be.eq(4)
+    expect(parseMock.args).to.deep.eq(rawOrdersArgs)
+    expect(parseMock.returned(parsedOrders[0])).to.be.true
+
+    expect(parsedManyResp.length).to.be.eq(4)
 
   })
 
