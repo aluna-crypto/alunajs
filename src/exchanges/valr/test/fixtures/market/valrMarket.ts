@@ -42,6 +42,23 @@ export const VALR_RAW_MARKETS: IValrMarketSchema[] = [
     created: '2021-05-31T13:53:03.155Z',
     changeFromPrevious: '5.28',
   },
+
+  /**
+   * Market with no corresponding currency pair wil be ignored by
+   * ValrCurrencyPairsParser
+   */
+  {
+    currencyPair: 'XXDDYY',
+    askPrice: '0.33882828',
+    bidPrice: '0.3371514',
+    lastTradedPrice: '0.33453674',
+    previousClosePrice: '0.34520755',
+    baseVolume: '6.91715018',
+    highPrice: '0.351',
+    lowPrice: '0.3327442',
+    created: '2018-11-27T17:00:35.120Z',
+    changeFromPrevious: '-3.09',
+  },
 ]
 
 
