@@ -43,9 +43,6 @@ describe('ValrMarketParser', () => {
       baseVolume,
     } = ticker
 
-    console.log(ticker)
-
-
     expect(pairSymbol).to.be.eq(rawMarket.currencyPair)
     expect(baseSymbolId).to.be.eq(rawMarket.baseCurrency)
     expect(quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)
