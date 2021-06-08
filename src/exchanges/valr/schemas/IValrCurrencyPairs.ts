@@ -3,7 +3,7 @@ export interface IValrCurrencyPairs {
   baseCurrency: string
   quoteCurrency: string
   shortName: string
-  active: string
+  active: boolean
   minBaseAmount: string
   maxBaseAmount: string
   minQuoteAmount: string
