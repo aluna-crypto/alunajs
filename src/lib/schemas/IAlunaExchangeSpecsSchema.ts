@@ -58,6 +58,7 @@ export interface IAlunaExchangeOrderSpecsSchema {
 }
 
 export interface IAlunaExchangeSpecsSchema {
+  id: string
   acceptFloatAmounts: boolean
   features: {
     balance: FeaturesModeEnum,
