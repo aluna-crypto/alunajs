@@ -8,15 +8,13 @@ export class ValrCurrencyPairsParser {
 
   static parse (params: {
     rawMarkets: IValrMarketSchema[],
-    rawSymbolPairs: IValrCurrencyPairs[],
+    rawCurrencyPairs: IValrCurrencyPairs[],
   }): IMarketWithCurrency[] {
-
-    const currencyVolumes = {} as Record<string, string>
 
     const rawMarketsWithCurrency = params.rawMarkets
       .reduce((cumulator, current) => {
 
-        const rawSymbol = params.rawSymbolPairs.find(
+        const rawSymbol = params.rawCurrencyPairs.find(
           (eachItem) => eachItem.symbol === current.currencyPair,
         )
 
@@ -26,8 +24,6 @@ export class ValrCurrencyPairsParser {
             baseCurrency,
             quoteCurrency,
           } = rawSymbol
-
-          currencyVolumes[baseCurrency] = current.baseVolume
 
           cumulator.push({
             ...current,

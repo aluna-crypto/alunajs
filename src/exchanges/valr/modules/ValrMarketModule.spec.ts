@@ -38,7 +38,7 @@ describe('ValrMarketModule', () => {
     const rawMarketsWithSymbols = ImportMock.mockFunction(
       ValrCurrencyPairsParser,
       'parse',
-      marketsSeeds.rawMarketWithSymbols,
+      marketsSeeds.rawMarketWithCurrency,
     )
 
 
@@ -100,7 +100,7 @@ describe('ValrMarketModule', () => {
   it('should parse a Valr market just fine', async () => {
 
     const market: IAlunaMarketSchema = valrMarketModule.parse({
-      rawMarket: marketsSeeds.rawMarketWithSymbols[0],
+      rawMarket: marketsSeeds.rawMarketWithCurrency[0],
     })
 
     const { ticker } = market
@@ -145,7 +145,7 @@ describe('ValrMarketModule', () => {
 
 
     const markets: IAlunaMarketSchema[] = valrMarketModule.parseMany({
-      rawMarkets: marketsSeeds.rawMarketWithSymbols,
+      rawMarkets: marketsSeeds.rawMarketWithCurrency,
     })
 
 

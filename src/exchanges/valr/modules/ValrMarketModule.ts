@@ -25,13 +25,13 @@ export const ValrMarketModule: IAlunaMarketModule = class {
       url: 'https://api.valr.com/v1/public/marketsummary',
     })
 
-    const rawSymbolPairs = await publicRequest<IValrCurrencyPairs[]>({
+    const rawCurrencyPairs = await publicRequest<IValrCurrencyPairs[]>({
       url: 'https://api.valr.com/v1/public/pairs',
     })
 
     const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
       rawMarkets,
-      rawSymbolPairs,
+      rawCurrencyPairs,
     })
 
     return rawMarketsWithCurrency
