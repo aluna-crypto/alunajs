@@ -206,12 +206,14 @@ describe('ValrOrderReadModule', () => {
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.true
 
-    expect(parsedOrder1).to.have.property('symbolPair')
-    expect(parsedOrder1).to.have.property('total')
-    expect(parsedOrder1).to.have.property('amount')
-    expect(parsedOrder1).to.have.property('isAmountInContracts')
-    expect(parsedOrder1).to.have.property('rate')
-    expect(parsedOrder1).to.have.property('placedAt')
+    expect(parsedOrder1.symbolPair).to.be.ok
+    expect(parsedOrder1.total).to.be.ok
+    expect(parsedOrder1.amount).to.be.ok
+    expect(parsedOrder1.rate).to.be.ok
+    expect(parsedOrder1.placedAt).to.be.ok
+
+    expect(parsedOrder1.isAmountInContracts).to.be.false
+
     expect(parsedOrder1.status).to.be.eq(OrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
@@ -224,12 +226,14 @@ describe('ValrOrderReadModule', () => {
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.true
 
-    expect(parsedOrder2).to.have.property('symbolPair')
-    expect(parsedOrder2).to.have.property('total')
-    expect(parsedOrder2).to.have.property('amount')
-    expect(parsedOrder2).to.have.property('isAmountInContracts')
-    expect(parsedOrder2).to.have.property('rate')
-    expect(parsedOrder2).to.have.property('placedAt')
+    expect(parsedOrder2.symbolPair).to.be.ok
+    expect(parsedOrder2.total).to.be.ok
+    expect(parsedOrder2.amount).to.be.ok
+    expect(parsedOrder2.rate).to.be.ok
+    expect(parsedOrder2.placedAt).to.be.ok
+
+    expect(parsedOrder2.isAmountInContracts).to.be.false
+
     expect(parsedOrder2.status).to.be.eq(OrderStatusEnum.OPEN)
     expect(parsedOrder2.account).to.be.eq(AccountEnum.EXCHANGE)
     expect(parsedOrder2.type).to.be.eq(OrderTypesEnum.LIMIT)
