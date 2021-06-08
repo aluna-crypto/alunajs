@@ -10,19 +10,15 @@ import { ValrKeyModule } from './ValrKeyModule'
 
 describe('ValrKeyModule', () => {
 
-
-  beforeEach(() => {
-
-    ImportMock.restore()
-
-  })
+  const valrKeyModule = ValrKeyModule.prototype
 
 
 
   it('should try to validate user API key', async () => {
 
+
     const getPermissionsMock = ImportMock.mockFunction(
-      ValrKeyModule.prototype,
+      valrKeyModule,
       'getPermissions',
     )
 
@@ -33,13 +29,13 @@ describe('ValrKeyModule', () => {
       .returns({ read: true })
 
 
-    const invalidKey = await ValrKeyModule.prototype.validate()
+    const invalidKey = await valrKeyModule.validate()
 
     expect(getPermissionsMock.calledOnce).to.be.true
     expect(invalidKey).to.be.false
 
 
-    const validKey = await ValrKeyModule.prototype.validate()
+    const validKey = await valrKeyModule.validate()
 
 
     expect(getPermissionsMock.calledTwice).to.be.true
@@ -51,7 +47,7 @@ describe('ValrKeyModule', () => {
   it('should try to get permissions from Valr API key', async () => {
 
     ImportMock.mockOther(
-      ValrKeyModule.prototype,
+      valrKeyModule,
       'exchange',
       {
         keySecret: {
@@ -76,7 +72,7 @@ describe('ValrKeyModule', () => {
       .rejects({ message: ValrErrorEnum.UNAUTHORIZED })
 
 
-    const permissions1 = await ValrKeyModule.prototype.getPermissions()
+    const permissions1 = await valrKeyModule.getPermissions()
 
     expect(permissions1.read).to.be.false
     expect(permissions1.trade).to.be.false
@@ -98,7 +94,7 @@ describe('ValrKeyModule', () => {
       .rejects({ message: ValrErrorEnum.UNAUTHORIZED })
 
 
-    const permissions2 = await ValrKeyModule.prototype.getPermissions()
+    const permissions2 = await valrKeyModule.getPermissions()
 
 
     expect(permissions2.read).to.be.true
@@ -120,7 +116,7 @@ describe('ValrKeyModule', () => {
       .rejects({ message: ValrErrorEnum.INVALID_REQUEST })
 
 
-    const permissions3 = await ValrKeyModule.prototype.getPermissions()
+    const permissions3 = await valrKeyModule.getPermissions()
 
 
     expect(permissions3.read).to.be.true
@@ -139,7 +135,7 @@ describe('ValrKeyModule', () => {
       withdraw: undefined,
     }
 
-    const perm1 = ValrKeyModule.prototype.parsePermissions({
+    const perm1 = valrKeyModule.parsePermissions({
       rawKey: key1,
     })
 
@@ -153,7 +149,7 @@ describe('ValrKeyModule', () => {
       withdraw: undefined,
     }
 
-    const perm2 = ValrKeyModule.prototype.parsePermissions({
+    const perm2 = valrKeyModule.parsePermissions({
       rawKey: key2,
     })
 
@@ -167,7 +163,7 @@ describe('ValrKeyModule', () => {
       withdraw: undefined,
     }
 
-    const perm3 = ValrKeyModule.prototype.parsePermissions({
+    const perm3 = valrKeyModule.parsePermissions({
       rawKey: key3,
     })
 

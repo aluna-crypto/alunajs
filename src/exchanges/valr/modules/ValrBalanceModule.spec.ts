@@ -15,9 +15,9 @@ describe('ValrBalanceModule', () => {
 
   const { balanceSeeds } = VALR_SEEDS
 
-  beforeEach(() => {
 
-    ImportMock.restore()
+
+  it('should list all Valr raw balances', async () => {
 
     ImportMock.mockOther(
       valrBalanceModule,
@@ -29,12 +29,6 @@ describe('ValrBalanceModule', () => {
         },
       } as IAlunaExchange,
     )
-
-  })
-
-
-
-  it('should list all Valr raw balances', async () => {
 
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
