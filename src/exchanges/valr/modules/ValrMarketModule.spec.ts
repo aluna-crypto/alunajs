@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
-import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairParser'
+import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrMarketModule } from './ValrMarketModule'

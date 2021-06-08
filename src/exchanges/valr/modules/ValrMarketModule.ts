@@ -2,7 +2,7 @@ import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { IValrCurrencyPairs } from '../schemas/IValrCurrencyPairs'
 import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
-import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairParser'
+import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import { ValrHttp } from '../ValrHttp'
 

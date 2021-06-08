@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { VALR_SEEDS } from '../../test/fixtures'
-import { ValrCurrencyPairsParser } from './ValrCurrencyPairParser'
+import { ValrCurrencyPairsParser } from './ValrCurrencyPairsParser'
 
 
 
