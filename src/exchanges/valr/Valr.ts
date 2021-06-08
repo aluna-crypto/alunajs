@@ -20,7 +20,7 @@ import { ValrSpecs } from './ValrSpecs'
 export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implements IAlunaExchange {
 
   // static definitions
-  static readonly ID = 'valr'
+  static readonly ID = ValrSpecs.id
   static readonly SPECS = ValrSpecs
 
   static Symbol = ValrSymbolModule
