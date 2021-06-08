@@ -10,8 +10,6 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  exchange: any
-
   async listRaw (): Promise<IValrBalanceSchema[]> {
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
