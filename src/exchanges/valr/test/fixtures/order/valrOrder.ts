@@ -14,7 +14,7 @@ import {
 
 
 
-export const VALR_RAW_OPEN_ORDERS: IValrOrderListSchema[] = [
+export const VALR_RAW_LIST_OPEN_ORDERS: IValrOrderListSchema[] = [
   {
     orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
     side: ValrSideEnum.BUY,
@@ -77,7 +77,7 @@ export const VALR_RAW_OPEN_ORDERS: IValrOrderListSchema[] = [
 
 
 
-export const VALR_RAW_STATUS_OPEN_ORDER: IValrOrderGetSchema = {
+export const VALR_RAW_GET_OPEN_ORDER: IValrOrderGetSchema = {
   orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
   orderSide: ValrSideEnum.BUY,
   remainingQuantity: '0.001',
