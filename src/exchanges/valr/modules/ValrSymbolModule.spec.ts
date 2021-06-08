@@ -13,12 +13,6 @@ describe('ValrSymbolModule', () => {
 
   const { symbolsSeeds } = VALR_SEEDS
 
-  beforeEach(() => {
-
-    ImportMock.restore()
-
-  })
-
 
 
   it('should list Valr raw symbols just fine', async () => {
