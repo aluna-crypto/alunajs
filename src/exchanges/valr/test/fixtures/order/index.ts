@@ -1,0 +1,13 @@
+import {
+  VALR_PARSED_OPEN_ORDERS,
+  VALR_RAW_OPEN_ORDERS,
+  VALR_RAW_STATUS_OPEN_ORDER,
+} from './valrOrder'
+
+
+
+export const VALR_ORDERS_SEEDS = {
+  rawOrders: VALR_RAW_OPEN_ORDERS,
+  rawStatusOrder: VALR_RAW_STATUS_OPEN_ORDER,
+  parsedOrders: VALR_PARSED_OPEN_ORDERS,
+}
