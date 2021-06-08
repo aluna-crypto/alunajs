@@ -28,6 +28,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
 }
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
+  id: 'valr',
   acceptFloatAmounts: true,
   features: {
     balance: FeaturesModeEnum.READ,
