@@ -66,7 +66,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       pair: symbolPair,
     }
 
-    const translatedOrderType = ValrOrderTypeAdapter.translateToValr({ type })
+    const translatedOrderType = ValrOrderTypeAdapter.translateToValr({
+      from: type,
+    })
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
