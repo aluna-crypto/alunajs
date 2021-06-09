@@ -8,6 +8,7 @@ import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
+import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrError } from '../ValrError'
@@ -74,7 +75,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         quantity: amount,
         price: rate,
         postOnly: false,
-        timeInForce: 'GTC',
+        timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
       })
 
     } else {
