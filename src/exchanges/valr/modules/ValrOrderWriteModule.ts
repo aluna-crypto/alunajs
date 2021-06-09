@@ -4,6 +4,7 @@ import {
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaExchangeOrderTypesSpecsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
@@ -37,12 +38,25 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       account,
     } = params
 
-    const {
-      implemented,
-      supported,
-      orderTypes: supportedOrderTypes,
-    } = ValrSpecs.accounts[account]
+    let supported: boolean
+    let implemented: boolean | undefined
+    let supportedOrderTypes: IAlunaExchangeOrderTypesSpecsSchema | undefined
 
+    try {
+
+      ({
+        supported,
+        implemented,
+        orderTypes: supportedOrderTypes,
+      } = ValrSpecs.accounts[account])
+
+    } catch (error) {
+
+      throw new ValrError({
+        message: `Account type ${account} does not exists in Valr specs`,
+      })
+
+    }
 
     if (!supported || !implemented || !supportedOrderTypes) {
 
