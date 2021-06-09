@@ -1,4 +1,4 @@
-import { AlunaError } from '../../../../.history/src/lib/abstracts/AAlunaError_20210609201331'
+import { AlunaError } from '../../core/AlunaError'
 
 
 
