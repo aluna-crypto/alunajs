@@ -142,7 +142,7 @@ describe('ValrOrderReadModule', () => {
       url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
     })
 
-    expect(rawOrder.orderType).to.be.eq(ValrOrderTypesEnum.TAKE_PROFIT_LIMIT)
+    expect(rawOrder.orderType).to.be.eq(ValrOrderTypesEnum.STOP_LOSS_LIMIT)
     expect(rawOrder.orderStatusType).to.be.eq(ValrOrderStatusEnum.ACTIVE)
     expect(rawOrder.orderSide).to.be.eq(ValrSideEnum.BUY)
 
