@@ -25,6 +25,24 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       amount: 1,
     },
   },
+  [OrderTypesEnum.STOP_LIMIT]: {
+    supported: true,
+    implemented: true,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  [OrderTypesEnum.TAKE_PROFIT_LIMIT]: {
+    supported: true,
+    implemented: true,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
 }
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
