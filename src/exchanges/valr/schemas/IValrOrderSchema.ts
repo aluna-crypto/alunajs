@@ -39,9 +39,10 @@ export interface IValrOrderGetSchema {
   orderSide: ValrSideEnum
   orderType: ValrOrderTypesEnum
   failedReason: string
-  customerOrderId: string
+  customerOrderId?: string
   orderUpdatedAt: string
   orderCreatedAt: string
+  timeInForce?: ValrOrderTimeInForceEnum
 }
 
 
