@@ -1,4 +1,4 @@
-export abstract class AAlunaError {
+export class AlunaError {
 
   public message: string;
   public statusCode: number;
