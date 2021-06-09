@@ -8,7 +8,7 @@ export type TranslateToMappings<TEnumTo> = {
 
 
 
-export const translateTo = <TEnumFrom, TEnumTo>(params: {
+export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
   mappings: TranslateToMappings<TEnumTo>,
   prefix: string,
 }) => (params2: { from: TEnumFrom }): TEnumTo => {
