@@ -8,12 +8,12 @@ export class ValrOrderTypeAdapter {
 
 
 
-  static readonly ERROR_PREFIX = 'Order type'
+  static readonly ERROR_MESSAGE_PREFIX = 'Order type'
 
 
 
   static translateToAluna = buildAdapter<ValrOrderTypesEnum, OrderTypesEnum>({
-    prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
+    errorMessagePrefix: ValrOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [ValrOrderTypesEnum.LIMIT]: OrderTypesEnum.LIMIT,
       [ValrOrderTypesEnum.LIMIT_POST_ONLY]: OrderTypesEnum.LIMIT,
@@ -27,7 +27,7 @@ export class ValrOrderTypeAdapter {
 
 
   static translateToValr = buildAdapter<OrderTypesEnum, ValrOrderTypesEnum>({
-    prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
+    errorMessagePrefix: ValrOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [OrderTypesEnum.LIMIT]: ValrOrderTypesEnum.LIMIT,
       [OrderTypesEnum.MARKET]: ValrOrderTypesEnum.MARKET,

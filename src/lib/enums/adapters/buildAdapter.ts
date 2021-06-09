@@ -10,12 +10,12 @@ export type TranslateToMappings<TEnumTo> = {
 
 export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
   mappings: TranslateToMappings<TEnumTo>,
-  prefix: string,
+  errorMessagePrefix: string,
 }) => (params2: { from: TEnumFrom }): TEnumTo => {
 
     const {
       mappings,
-      prefix,
+      errorMessagePrefix,
     } = params
 
     const { from } = params2
@@ -29,7 +29,7 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
     }
 
     throw new AlunaError({
-      message: `${prefix} not supported: ${from}`,
+      message: `${errorMessagePrefix} not supported: ${from}`,
     })
 
   }
