@@ -8,7 +8,7 @@ export class ValrOrderTypeAdapter {
 
 
 
-  private static readonly ERROR_PREFIX = 'Order side'
+  static readonly ERROR_PREFIX = 'Order side'
 
 
 
