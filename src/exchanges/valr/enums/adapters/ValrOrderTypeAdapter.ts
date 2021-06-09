@@ -1,4 +1,4 @@
-import { translateTo } from '../../../../lib/enums/adapters/translateTo'
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { OrderTypesEnum } from '../../../../lib/enums/OrderTypeEnum'
 import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 
@@ -12,7 +12,7 @@ export class ValrOrderTypeAdapter {
 
 
 
-  static translateToAluna = translateTo<ValrOrderTypesEnum, OrderTypesEnum>({
+  static translateToAluna = buildAdapter<ValrOrderTypesEnum, OrderTypesEnum>({
     prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
     mappings: {
       [ValrOrderTypesEnum.LIMIT]: OrderTypesEnum.LIMIT,
@@ -26,7 +26,7 @@ export class ValrOrderTypeAdapter {
 
 
 
-  static translateToValr = translateTo<OrderTypesEnum, ValrOrderTypesEnum>({
+  static translateToValr = buildAdapter<OrderTypesEnum, ValrOrderTypesEnum>({
     prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
     mappings: {
       [OrderTypesEnum.LIMIT]: ValrOrderTypesEnum.LIMIT,
