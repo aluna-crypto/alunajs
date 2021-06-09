@@ -32,7 +32,7 @@ export class ValrStatusAdapter {
 
       default:
         throw new ValrError({
-          message: `Order side not supported: ${status}`,
+          message: `Order status not supported: ${status}`,
         })
 
     }
@@ -65,7 +65,7 @@ export class ValrStatusAdapter {
 
       default:
         throw new ValrError({
-          message: `Order side not supported: ${status}`,
+          message: `Order status not supported: ${status}`,
         })
 
     }
