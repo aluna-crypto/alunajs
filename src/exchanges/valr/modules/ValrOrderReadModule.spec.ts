@@ -122,7 +122,7 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      ordersSeeds.rawStatusOrder,
+      ordersSeeds.rawGetOrder[0],
     )
 
 
@@ -187,7 +187,7 @@ describe('ValrOrderReadModule', () => {
 
   it('should parse a Valr raw order just fine', () => {
 
-    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawStatusOrder
+    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawGetOrder[0]
     const rawOrder2: IValrOrderListSchema = ordersSeeds.rawOrders[1]
 
     const parseMock = ImportMock.mockFunction(

@@ -23,7 +23,7 @@ describe('ValrOrderParser', () => {
 
 
     const rawOrder1: IValrOrderListSchema = ordersSeeds.rawOrders[0]
-    const rawOrder2: IValrOrderGetSchema = ordersSeeds.rawStatusOrder
+    const rawOrder2: IValrOrderGetSchema = ordersSeeds.rawGetOrder[0]
 
 
     const parsedOrder1 = ValrOrderParser.parse({

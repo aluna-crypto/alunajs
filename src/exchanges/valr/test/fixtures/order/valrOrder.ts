@@ -77,20 +77,37 @@ export const VALR_RAW_LIST_OPEN_ORDERS: IValrOrderListSchema[] = [
 
 
 
-export const VALR_RAW_GET_OPEN_ORDER: IValrOrderGetSchema = {
-  orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
-  orderSide: ValrSideEnum.BUY,
-  remainingQuantity: '0.001',
-  originalPrice: '12000',
-  currencyPair: 'ETHZAR',
-  originalQuantity: '0.001',
-  orderStatusType: ValrOrderStatusEnum.ACTIVE,
-  orderType: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
-  failedReason: '',
-  customerOrderId: '',
-  orderCreatedAt: '2021-06-08T00:55:12.982Z',
-  orderUpdatedAt: '2021-06-08T00:55:12.984Z',
-}
+export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
+  {
+    orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
+    orderStatusType: ValrOrderStatusEnum.ACTIVE,
+    currencyPair: 'ETHZAR',
+    originalPrice: '12000',
+    remainingQuantity: '0.001',
+    originalQuantity: '0.001',
+    orderSide: ValrSideEnum.BUY,
+    orderType: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
+    failedReason: '',
+    customerOrderId: '',
+    orderCreatedAt: '2021-06-08T00:55:12.982Z',
+    orderUpdatedAt: '2021-06-08T00:55:12.984Z',
+  },
+  {
+    orderId: 'f6d69359-cd93-443c-b584-42b669508424',
+    orderStatusType: ValrOrderStatusEnum.PLACED,
+    currencyPair: 'ETHZAR',
+    originalPrice: '10000',
+    remainingQuantity: '0.001',
+    originalQuantity: '0.001',
+    orderSide: ValrSideEnum.BUY,
+    orderType: ValrOrderTypesEnum.LIMIT,
+    failedReason: '',
+    orderUpdatedAt: '2021-06-09T12:34:58.838Z',
+    orderCreatedAt: '2021-06-09T12:34:58.836Z',
+    timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+  },
+
+]
 
 
 
