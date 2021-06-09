@@ -1,78 +1,41 @@
+import { translateTo } from '../../../../lib/enums/adapters/translateTo'
 import { OrderTypesEnum } from '../../../../lib/enums/OrderTypeEnum'
-import { ValrError } from '../../ValrError'
 import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 
 
 
 export class ValrOrderTypeAdapter {
 
-  static translateToAluna (
-    params: {
-      type: ValrOrderTypesEnum,
+
+
+  private static readonly ERROR_PREFIX = 'Order side'
+
+
+
+  static translateToAluna = translateTo<ValrOrderTypesEnum, OrderTypesEnum>({
+    prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
+    mappings: {
+      [ValrOrderTypesEnum.LIMIT]: OrderTypesEnum.LIMIT,
+      [ValrOrderTypesEnum.LIMIT_POST_ONLY]: OrderTypesEnum.LIMIT,
+      [ValrOrderTypesEnum.STOP_LOSS_LIMIT]: OrderTypesEnum.STOP_LIMIT,
+      [ValrOrderTypesEnum.MARKET]: OrderTypesEnum.MARKET,
+      [ValrOrderTypesEnum.SIMPLE]: OrderTypesEnum.MARKET,
+      [ValrOrderTypesEnum.TAKE_PROFIT_LIMIT]: OrderTypesEnum.TAKE_PROFIT_LIMIT,
     },
-  ): OrderTypesEnum {
+  })
 
-    const {
-      type,
-    } = params
 
-    switch (type) {
 
-      case ValrOrderTypesEnum.LIMIT:
-      case ValrOrderTypesEnum.LIMIT_POST_ONLY:
-        return OrderTypesEnum.LIMIT
-
-      case ValrOrderTypesEnum.STOP_LOSS_LIMIT:
-        return OrderTypesEnum.STOP_LIMIT
-
-      case ValrOrderTypesEnum.MARKET:
-      case ValrOrderTypesEnum.SIMPLE:
-        return OrderTypesEnum.MARKET
-
-      case ValrOrderTypesEnum.TAKE_PROFIT_LIMIT:
-        return OrderTypesEnum.TAKE_PROFIT_LIMIT
-
-      default:
-        throw new ValrError({
-          message: `Order type not supported: ${type}`,
-        })
-
-    }
-
-  }
-
-  static translateToValr (
-    params: {
-      type: OrderTypesEnum,
+  static translateToValr = translateTo<OrderTypesEnum, ValrOrderTypesEnum>({
+    prefix: ValrOrderTypeAdapter.ERROR_PREFIX,
+    mappings: {
+      [OrderTypesEnum.LIMIT]: ValrOrderTypesEnum.LIMIT,
+      [OrderTypesEnum.MARKET]: ValrOrderTypesEnum.MARKET,
+      [OrderTypesEnum.STOP_LIMIT]: ValrOrderTypesEnum.STOP_LOSS_LIMIT,
+      [OrderTypesEnum.TAKE_PROFIT_LIMIT]: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
     },
-  ): ValrOrderTypesEnum {
-
-    const {
-      type,
-    } = params
-
-    switch (type) {
-
-      case OrderTypesEnum.LIMIT:
-        return ValrOrderTypesEnum.LIMIT
-
-      case OrderTypesEnum.MARKET:
-        return ValrOrderTypesEnum.MARKET
-
-      case OrderTypesEnum.STOP_LIMIT:
-        return ValrOrderTypesEnum.STOP_LOSS_LIMIT
-
-      case OrderTypesEnum.TAKE_PROFIT_LIMIT:
-        return ValrOrderTypesEnum.TAKE_PROFIT_LIMIT
+  })
 
 
-      default:
-        throw new ValrError({
-          message: `Order type not supported: ${type}`,
-        })
-
-    }
-
-  }
 
 }
