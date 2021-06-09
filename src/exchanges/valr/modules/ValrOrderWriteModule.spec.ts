@@ -204,7 +204,7 @@ describe('ValrOrderWriteModule', () => {
 
 
 
-  it('should verify if account type is supported', async () => {
+  it('should ensure given account is one of AccountEnum', async () => {
 
     const nonexistentAcc = 'nonexistent'
 
@@ -213,6 +213,7 @@ describe('ValrOrderWriteModule', () => {
       'accounts',
       {},
     )
+
 
     try {
 
@@ -229,6 +230,11 @@ describe('ValrOrderWriteModule', () => {
 
     }
 
+  })
+
+
+
+  it('should ensure given account is supported', async () => {
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -255,6 +261,11 @@ describe('ValrOrderWriteModule', () => {
 
     }
 
+  })
+
+
+
+  it('should ensure given account is implemented', async () => {
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -266,7 +277,6 @@ describe('ValrOrderWriteModule', () => {
         },
       },
     )
-
 
     try {
 
@@ -282,6 +292,12 @@ describe('ValrOrderWriteModule', () => {
       )
 
     }
+
+  })
+
+
+
+  it('should ensure given account have orderTypes property', async () => {
 
     ImportMock.mockOther(
       ValrSpecs,
