@@ -16,8 +16,7 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  // public async list (params: IAlunaOrderListParams): Promise<...>
-  async listRaw (): Promise<IValrOrderListSchema[]> {
+  public async listRaw (): Promise<IValrOrderListSchema[]> {
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
@@ -29,7 +28,6 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  // public async list (params: IAlunaOrderListParams): Promise<...>
   public async list (): Promise<IAlunaOrderSchema[]> {
 
     return this.parseMany({
@@ -40,7 +38,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderGetSchema> {
+  public getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderGetSchema> {
 
     const {
       id,
@@ -57,7 +55,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
 
     const order = await this.getRaw(params)
 
