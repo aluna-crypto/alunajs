@@ -1,11 +1,11 @@
-import { AccountEnum } from '../enums/AccountEnum'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 
 
 
 export interface IAlunaBalanceSchema {
 
   symbolId: string
-  account: AccountEnum
+  account: AlunaAccountEnum
 
   total: number
   available: number
