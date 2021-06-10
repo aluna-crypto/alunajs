@@ -11,7 +11,6 @@ import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
-import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
@@ -140,7 +139,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
-    return ValrOrderParser.parse({
+    return this.parse({
       rawOrder: ensuredCancelled,
     })
 
