@@ -1,75 +1,42 @@
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { OrderStatusEnum } from '../../../../lib/enums/OrderStatusEnum'
-import { ValrError } from '../../ValrError'
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 
 
 export class ValrStatusAdapter {
 
-  static translateToAluna (params: {
-    status: ValrOrderStatusEnum,
-  }): OrderStatusEnum {
 
-    const {
-      status,
-    } = params
 
-    switch (status) {
+  static readonly ERROR_MESSAGE_PREFIX = 'Order status'
 
-      case ValrOrderStatusEnum.ACTIVE:
-      case ValrOrderStatusEnum.PLACED:
-        return OrderStatusEnum.OPEN
 
-      case ValrOrderStatusEnum.PARTIALLY_FILLED:
-        return OrderStatusEnum.PARTIALLY_FILLED
 
-      case ValrOrderStatusEnum.FILLED:
-        return OrderStatusEnum.FILLED
-
-      case ValrOrderStatusEnum.FAILED:
-      case ValrOrderStatusEnum.CANCELLED:
-        return OrderStatusEnum.CANCELED
-
-      default:
-        throw new ValrError({
-          message: `Order status not supported: ${status}`,
-        })
-
-    }
-
-  }
-
-  static translateToValr (
-    params: {
-      status: OrderStatusEnum,
+  static translateToAluna = buildAdapter<ValrOrderStatusEnum, OrderStatusEnum>({
+    errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+    mappings: {
+      [ValrOrderStatusEnum.ACTIVE]: OrderStatusEnum.OPEN,
+      [ValrOrderStatusEnum.PLACED]: OrderStatusEnum.OPEN,
+      [ValrOrderStatusEnum.PARTIALLY_FILLED]: OrderStatusEnum.PARTIALLY_FILLED,
+      [ValrOrderStatusEnum.FILLED]: OrderStatusEnum.FILLED,
+      [ValrOrderStatusEnum.FAILED]: OrderStatusEnum.CANCELED,
+      [ValrOrderStatusEnum.CANCELLED]: OrderStatusEnum.CANCELED,
     },
-  ): ValrOrderStatusEnum {
+  })
 
-    const {
-      status,
-    } = params
 
-    switch (status) {
 
-      case OrderStatusEnum.OPEN:
-        return ValrOrderStatusEnum.PLACED
+  static translateToValr = buildAdapter<OrderStatusEnum, ValrOrderStatusEnum>({
+    errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+    mappings: {
+      [OrderStatusEnum.OPEN]: ValrOrderStatusEnum.PLACED,
+      [OrderStatusEnum.PARTIALLY_FILLED]: ValrOrderStatusEnum.PARTIALLY_FILLED,
+      [OrderStatusEnum.FILLED]: ValrOrderStatusEnum.FILLED,
+      [OrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CANCELLED,
+    },
+  })
 
-      case OrderStatusEnum.PARTIALLY_FILLED:
-        return ValrOrderStatusEnum.PARTIALLY_FILLED
 
-      case OrderStatusEnum.FILLED:
-        return ValrOrderStatusEnum.FILLED
-
-      case OrderStatusEnum.CANCELED:
-        return ValrOrderStatusEnum.CANCELLED
-
-      default:
-        throw new ValrError({
-          message: `Order status not supported: ${status}`,
-        })
-
-    }
-
-  }
 
 }
+

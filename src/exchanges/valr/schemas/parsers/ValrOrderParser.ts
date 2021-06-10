@@ -77,7 +77,7 @@ export class ValrOrderParser {
       rate,
       account: AccountEnum.EXCHANGE,
       side: ValrSideAdapter.translateToAluna({ from: side }),
-      status: ValrStatusAdapter.translateToAluna({ status }),
+      status: ValrStatusAdapter.translateToAluna({ from: status }),
       type: ValrOrderTypeAdapter.translateToAluna({ from: type }),
       placedAt: new Date(createdAt),
     }

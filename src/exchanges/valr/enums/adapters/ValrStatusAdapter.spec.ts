@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { OrderStatusEnum } from '../../../../lib/enums/OrderStatusEnum'
-import { ValrError } from '../../ValrError'
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 import { ValrStatusAdapter } from './ValrStatusAdapter'
 
@@ -16,39 +16,39 @@ describe('ValrStatusAdapter', () => {
   it('should translate Valr order status to Aluna order status', () => {
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.ACTIVE,
+      from: ValrOrderStatusEnum.ACTIVE,
     })).to.be.eq(OrderStatusEnum.OPEN)
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.PLACED,
+      from: ValrOrderStatusEnum.PLACED,
     })).to.be.eq(OrderStatusEnum.OPEN)
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.PARTIALLY_FILLED,
+      from: ValrOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(OrderStatusEnum.PARTIALLY_FILLED)
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.FILLED,
+      from: ValrOrderStatusEnum.FILLED,
     })).to.be.eq(OrderStatusEnum.FILLED)
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.FAILED,
+      from: ValrOrderStatusEnum.FAILED,
     })).to.be.eq(OrderStatusEnum.CANCELED)
 
     expect(ValrStatusAdapter.translateToAluna({
-      status: ValrOrderStatusEnum.CANCELLED,
+      from: ValrOrderStatusEnum.CANCELLED,
     })).to.be.eq(OrderStatusEnum.CANCELED)
 
 
     try {
 
       ValrStatusAdapter.translateToAluna({
-        status: notSupported as ValrOrderStatusEnum,
+        from: notSupported as ValrOrderStatusEnum,
       })
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message)
         .to.be.eq(`Order status not supported: ${notSupported}`)
 
@@ -62,31 +62,31 @@ describe('ValrStatusAdapter', () => {
   it('should translate Aluna order status to Valr order status', () => {
 
     expect(ValrStatusAdapter.translateToValr({
-      status: OrderStatusEnum.OPEN,
+      from: OrderStatusEnum.OPEN,
     })).to.be.eq(ValrOrderStatusEnum.PLACED)
 
     expect(ValrStatusAdapter.translateToValr({
-      status: OrderStatusEnum.PARTIALLY_FILLED,
+      from: OrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(ValrOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(ValrStatusAdapter.translateToValr({
-      status: OrderStatusEnum.FILLED,
+      from: OrderStatusEnum.FILLED,
     })).to.be.eq(ValrOrderStatusEnum.FILLED)
 
     expect(ValrStatusAdapter.translateToValr({
-      status: OrderStatusEnum.CANCELED,
+      from: OrderStatusEnum.CANCELED,
     })).to.be.eq(ValrOrderStatusEnum.CANCELLED)
 
 
     try {
 
       ValrStatusAdapter.translateToValr({
-        status: notSupported as OrderStatusEnum,
+        from: notSupported as OrderStatusEnum,
       })
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message)
         .to.be.eq(`Order status not supported: ${notSupported}`)
 
