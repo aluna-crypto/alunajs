@@ -16,7 +16,7 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IValrOrderListSchema[]> {
+  public listRaw (): Promise<IValrOrderListSchema[]> {
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: AlunaHttpVerbEnum.GET,

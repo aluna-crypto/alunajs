@@ -10,7 +10,7 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  async listRaw (): Promise<IValrBalanceSchema[]> {
+  public async listRaw (): Promise<IValrBalanceSchema[]> {
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
@@ -24,7 +24,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceSchema[]> {
 
     const rawBalances = await this.listRaw()
     const parsedBalances = this.parseMany({ rawBalances })
@@ -35,7 +35,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  parse (params: {
+  public parse (params: {
     rawBalance: IValrBalanceSchema,
   }): IAlunaBalanceSchema {
 
@@ -54,7 +54,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  parseMany (params: {
+  public parseMany (params: {
     rawBalances: IValrBalanceSchema[],
   }): IAlunaBalanceSchema[] {
 

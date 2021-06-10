@@ -26,7 +26,9 @@ interface IValrPlaceOrderResponse {
 
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
-  async place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
+  public async place (
+    params: IAlunaOrderPlaceParams,
+  ): Promise<IAlunaOrderSchema> {
 
     const {
       amount,
@@ -116,7 +118,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
 
 
-  async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
+  public async cancel (
+    params: IAlunaOrderCancelParams,
+  ): Promise<IAlunaOrderSchema> {
 
     await ValrHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
