@@ -1,63 +1,35 @@
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { SideEnum } from '../../../../lib/enums/SideEnum'
-import { ValrError } from '../../ValrError'
 import { ValrSideEnum } from '../ValrSideEnum'
 
 
 
 export class ValrSideAdapter {
 
-  static translateToAluna (
-    params: {
-      side: ValrSideEnum,
+
+
+  static readonly ERROR_MESSAGE_PREFIX = 'Order side'
+
+
+
+  static translateToAluna = buildAdapter<ValrSideEnum, SideEnum>({
+    errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
+    mappings: {
+      [ValrSideEnum.BUY]: SideEnum.LONG,
+      [ValrSideEnum.SELL]: SideEnum.SHORT,
     },
-  ): SideEnum {
+  })
 
-    const {
-      side,
-    } = params
 
-    switch (side) {
 
-      case ValrSideEnum.BUY:
-        return SideEnum.LONG
-
-      case ValrSideEnum.SELL:
-        return SideEnum.SHORT
-
-      default:
-        throw new ValrError({
-          message: `Order side not supported: ${side}`,
-        })
-
-    }
-
-  }
-
-  static translateToValr (
-    params: {
-      side: SideEnum,
+  static translateToValr = buildAdapter<SideEnum, ValrSideEnum>({
+    errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
+    mappings: {
+      [SideEnum.LONG]: ValrSideEnum.BUY,
+      [SideEnum.SHORT]: ValrSideEnum.SELL,
     },
-  ): ValrSideEnum {
+  })
 
-    const {
-      side,
-    } = params
 
-    switch (side) {
-
-      case SideEnum.LONG:
-        return ValrSideEnum.BUY
-
-      case SideEnum.SHORT:
-        return ValrSideEnum.SELL
-
-      default:
-        throw new ValrError({
-          message: `Order side not supported: ${side}`,
-        })
-
-    }
-
-  }
 
 }

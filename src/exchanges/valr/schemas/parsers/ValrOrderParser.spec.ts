@@ -46,7 +46,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.account).to.be.eq(AccountEnum.EXCHANGE)
 
     expect(parsedOrder1.side)
-      .to.be.eq(ValrSideAdapter.translateToAluna({ side: rawSide1 }))
+      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide1 }))
     expect(parsedOrder1.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ status: rawStatus1 }))
     expect(parsedOrder1.type)
@@ -74,7 +74,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.account).to.be.eq(AccountEnum.EXCHANGE)
 
     expect(parsedOrder2.side)
-      .to.be.eq(ValrSideAdapter.translateToAluna({ side: rawSide2 }))
+      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide2 }))
     expect(parsedOrder2.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ status: rawStatus2 }))
     expect(parsedOrder2.type)
