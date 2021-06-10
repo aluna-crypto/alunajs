@@ -1,5 +1,5 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
-import { SideEnum } from '../../../../lib/enums/SideEnum'
+import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { ValrSideEnum } from '../ValrSideEnum'
 
 
@@ -12,21 +12,21 @@ export class ValrSideAdapter {
 
 
 
-  static translateToAluna = buildAdapter<ValrSideEnum, SideEnum>({
+  static translateToAluna = buildAdapter<ValrSideEnum, AlunaSideEnum>({
     errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [ValrSideEnum.BUY]: SideEnum.LONG,
-      [ValrSideEnum.SELL]: SideEnum.SHORT,
+      [ValrSideEnum.BUY]: AlunaSideEnum.LONG,
+      [ValrSideEnum.SELL]: AlunaSideEnum.SHORT,
     },
   })
 
 
 
-  static translateToValr = buildAdapter<SideEnum, ValrSideEnum>({
+  static translateToValr = buildAdapter<AlunaSideEnum, ValrSideEnum>({
     errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [SideEnum.LONG]: ValrSideEnum.BUY,
-      [SideEnum.SHORT]: ValrSideEnum.SELL,
+      [AlunaSideEnum.LONG]: ValrSideEnum.BUY,
+      [AlunaSideEnum.SHORT]: ValrSideEnum.SELL,
     },
   })
 

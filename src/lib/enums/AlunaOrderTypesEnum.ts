@@ -1,4 +1,4 @@
-export enum OrderTypesEnum {
+export enum AlunaOrderTypesEnum {
   LIMIT = 'limit',
   MARKET = 'market',
   STOP_MARKET = 'stop-market',

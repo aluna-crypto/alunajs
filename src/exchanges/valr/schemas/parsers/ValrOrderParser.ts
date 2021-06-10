@@ -1,4 +1,4 @@
-import { AccountEnum } from '../../../../lib/enums/AccountEnum'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
@@ -75,7 +75,7 @@ export class ValrOrderParser {
       amount,
       isAmountInContracts: false,
       rate,
-      account: AccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.EXCHANGE,
       side: ValrSideAdapter.translateToAluna({ from: side }),
       status: ValrStatusAdapter.translateToAluna({ from: status }),
       type: ValrOrderTypeAdapter.translateToAluna({ from: type }),

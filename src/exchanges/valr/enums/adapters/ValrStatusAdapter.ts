@@ -1,5 +1,5 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
-import { OrderStatusEnum } from '../../../../lib/enums/OrderStatusEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 
@@ -12,29 +12,33 @@ export class ValrStatusAdapter {
 
 
 
-  static translateToAluna = buildAdapter<ValrOrderStatusEnum, OrderStatusEnum>({
-    errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
-    mappings: {
-      [ValrOrderStatusEnum.ACTIVE]: OrderStatusEnum.OPEN,
-      [ValrOrderStatusEnum.PLACED]: OrderStatusEnum.OPEN,
-      [ValrOrderStatusEnum.PARTIALLY_FILLED]: OrderStatusEnum.PARTIALLY_FILLED,
-      [ValrOrderStatusEnum.FILLED]: OrderStatusEnum.FILLED,
-      [ValrOrderStatusEnum.FAILED]: OrderStatusEnum.CANCELED,
-      [ValrOrderStatusEnum.CANCELLED]: OrderStatusEnum.CANCELED,
-    },
-  })
+  static translateToAluna =
+    buildAdapter<ValrOrderStatusEnum, AlunaOrderStatusEnum>({
+      errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [ValrOrderStatusEnum.ACTIVE]: AlunaOrderStatusEnum.OPEN,
+        [ValrOrderStatusEnum.PLACED]: AlunaOrderStatusEnum.OPEN,
+        [ValrOrderStatusEnum.PARTIALLY_FILLED]:
+        AlunaOrderStatusEnum.PARTIALLY_FILLED,
+        [ValrOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+        [ValrOrderStatusEnum.FAILED]: AlunaOrderStatusEnum.CANCELED,
+        [ValrOrderStatusEnum.CANCELLED]: AlunaOrderStatusEnum.CANCELED,
+      },
+    })
 
 
 
-  static translateToValr = buildAdapter<OrderStatusEnum, ValrOrderStatusEnum>({
-    errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
-    mappings: {
-      [OrderStatusEnum.OPEN]: ValrOrderStatusEnum.PLACED,
-      [OrderStatusEnum.PARTIALLY_FILLED]: ValrOrderStatusEnum.PARTIALLY_FILLED,
-      [OrderStatusEnum.FILLED]: ValrOrderStatusEnum.FILLED,
-      [OrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CANCELLED,
-    },
-  })
+  static translateToValr =
+    buildAdapter<AlunaOrderStatusEnum, ValrOrderStatusEnum>({
+      errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [AlunaOrderStatusEnum.OPEN]: ValrOrderStatusEnum.PLACED,
+        [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
+        ValrOrderStatusEnum.PARTIALLY_FILLED,
+        [AlunaOrderStatusEnum.FILLED]: ValrOrderStatusEnum.FILLED,
+        [AlunaOrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CANCELLED,
+      },
+    })
 
 
 

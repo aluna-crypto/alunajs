@@ -1,4 +1,4 @@
-export enum FeaturesModeEnum {
+export enum AlunaFeaturesModeEnum {
   READ = 'read',
   WRITE = 'write'
 }

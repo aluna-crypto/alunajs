@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { OrderTypesEnum } from '../../../../lib/enums/OrderTypeEnum'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 import { ValrOrderTypeAdapter } from './ValrOrderTypeAdapter'
 
@@ -17,27 +17,27 @@ describe('ValrOrderTypeAdapter', () => {
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.LIMIT,
-    })).to.be.eq(OrderTypesEnum.LIMIT)
+    })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.LIMIT_POST_ONLY,
-    })).to.be.eq(OrderTypesEnum.LIMIT)
+    })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.MARKET,
-    })).to.be.eq(OrderTypesEnum.MARKET)
+    })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.SIMPLE,
-    })).to.be.eq(OrderTypesEnum.MARKET)
+    })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.STOP_LOSS_LIMIT,
-    })).to.be.eq(OrderTypesEnum.STOP_LIMIT)
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
     expect(ValrOrderTypeAdapter.translateToAluna({
       from: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
-    })).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
+    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
 
     try {
@@ -61,26 +61,26 @@ describe('ValrOrderTypeAdapter', () => {
   it('should properly translate Aluna order types to Valr order types', () => {
 
     expect(ValrOrderTypeAdapter.translateToValr({
-      from: OrderTypesEnum.LIMIT,
+      from: AlunaOrderTypesEnum.LIMIT,
     })).to.be.eq(ValrOrderTypesEnum.LIMIT)
 
     expect(ValrOrderTypeAdapter.translateToValr({
-      from: OrderTypesEnum.MARKET,
+      from: AlunaOrderTypesEnum.MARKET,
     })).to.be.eq(ValrOrderTypesEnum.MARKET)
 
     expect(ValrOrderTypeAdapter.translateToValr({
-      from: OrderTypesEnum.STOP_LIMIT,
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
     })).to.be.eq(ValrOrderTypesEnum.STOP_LOSS_LIMIT)
 
     expect(ValrOrderTypeAdapter.translateToValr({
-      from: OrderTypesEnum.TAKE_PROFIT_LIMIT,
+      from: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     })).to.be.eq(ValrOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
 
     try {
 
       ValrOrderTypeAdapter.translateToValr({
-        from: notSupported as OrderTypesEnum,
+        from: notSupported as AlunaOrderTypesEnum,
       })
 
     } catch (err) {

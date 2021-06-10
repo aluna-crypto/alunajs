@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { AccountEnum } from '../../../../lib/enums/AccountEnum'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
@@ -43,7 +43,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.amount).to.be.eq(rawOriginalQuantity1)
     expect(parsedOrder1.isAmountInContracts).to.be.false
     expect(parsedOrder1.rate).to.be.eq(rawPrice1)
-    expect(parsedOrder1.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder1.side)
       .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide1 }))
@@ -71,7 +71,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
     expect(parsedOrder2.isAmountInContracts).to.be.false
     expect(parsedOrder2.rate).to.be.eq(rawPrice2)
-    expect(parsedOrder2.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder2.side)
       .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide2 }))

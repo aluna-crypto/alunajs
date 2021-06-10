@@ -1,4 +1,4 @@
-import { HttpVerbEnum } from '../enums/HtttpVerbEnum'
+import { AlunaHttpVerbEnum } from '../enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
@@ -13,7 +13,7 @@ export interface IAlunaHttpOptions {
 
 export interface IAlunaHttpPublicParams {
   url: string
-  verb?: HttpVerbEnum
+  verb?: AlunaHttpVerbEnum
   body?: Record<string, any>
   options?: IAlunaHttpOptions
   settings?: IAlunaSettingsSchema

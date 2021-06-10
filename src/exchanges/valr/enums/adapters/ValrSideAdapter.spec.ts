@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { SideEnum } from '../../../../lib/enums/SideEnum'
+import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { ValrSideEnum } from '../ValrSideEnum'
 import { ValrSideAdapter } from './ValrSideAdapter'
 
@@ -17,11 +17,11 @@ describe('ValrSideAdapter', () => {
 
     expect(ValrSideAdapter.translateToAluna({
       from: ValrSideEnum.BUY,
-    })).to.be.eq(SideEnum.LONG)
+    })).to.be.eq(AlunaSideEnum.LONG)
 
     expect(ValrSideAdapter.translateToAluna({
       from: ValrSideEnum.SELL,
-    })).to.be.eq(SideEnum.SHORT)
+    })).to.be.eq(AlunaSideEnum.SHORT)
 
 
     try {
@@ -46,18 +46,18 @@ describe('ValrSideAdapter', () => {
   it('should properly translate Aluna order sides to Valr order sides', () => {
 
     expect(ValrSideAdapter.translateToValr({
-      from: SideEnum.LONG,
+      from: AlunaSideEnum.LONG,
     })).to.be.eq(ValrSideEnum.BUY)
 
     expect(ValrSideAdapter.translateToValr({
-      from: SideEnum.SHORT,
+      from: AlunaSideEnum.SHORT,
     })).to.be.eq(ValrSideEnum.SELL)
 
 
     try {
 
       ValrSideAdapter.translateToValr({
-        from: notSupported as SideEnum,
+        from: notSupported as AlunaSideEnum,
       })
 
     } catch (err) {

@@ -1,5 +1,5 @@
 import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
@@ -20,7 +20,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
   async listRaw (): Promise<IValrOrderListSchema[]> {
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/orders/open',
       keySecret: this.exchange.keySecret,
     })
@@ -48,7 +48,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     } = params
 
     return ValrHttp.privateRequest<IValrOrderGetSchema>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
       keySecret: this.exchange.keySecret,
     })

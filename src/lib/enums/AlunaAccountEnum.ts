@@ -1,4 +1,4 @@
-export enum AccountEnum {
+export enum AlunaAccountEnum {
   EXCHANGE = 'exchange',
   MARGIN = 'margin',
   DERIVATIVES = 'derivatives',

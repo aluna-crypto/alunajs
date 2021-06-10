@@ -1,6 +1,6 @@
 import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
@@ -13,7 +13,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
   async listRaw (): Promise<IValrBalanceSchema[]> {
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
     })
@@ -45,7 +45,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
     return {
       symbolId: rawBalance.currency,
-      account: AccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.EXCHANGE,
       available: Number(rawBalance.available),
       total: Number(rawBalance.total),
     }

@@ -1,4 +1,4 @@
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
   IAlunaOrderPlaceParams,
@@ -120,7 +120,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
   async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
 
     await ValrHttp.privateRequest<void>({
-      verb: HttpVerbEnum.DELETE,
+      verb: AlunaHttpVerbEnum.DELETE,
       url: 'https://api.valr.com/v1/orders/order',
       keySecret: this.exchange.keySecret,
       body: {

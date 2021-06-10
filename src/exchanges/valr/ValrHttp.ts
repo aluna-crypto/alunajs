@@ -7,14 +7,14 @@ import {
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
 } from '../../lib/abstracts/IAlunaHttp'
-import { HttpVerbEnum } from '../../lib/enums/HtttpVerbEnum'
+import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrError } from './ValrError'
 
 
 
 interface ISignedHashParams {
-  verb: HttpVerbEnum
+  verb: AlunaHttpVerbEnum
   path: string
   keySecret: IAlunaKeySecretSchema
   body?: any
@@ -87,7 +87,7 @@ export const ValrHttp: IAlunaHttp = class {
     const {
       url,
       body,
-      verb = HttpVerbEnum.GET,
+      verb = AlunaHttpVerbEnum.GET,
     } = params
 
     const requestConfig = {
@@ -117,7 +117,7 @@ export const ValrHttp: IAlunaHttp = class {
     const {
       url,
       body,
-      verb = HttpVerbEnum.POST,
+      verb = AlunaHttpVerbEnum.POST,
       keySecret,
     } = params
 

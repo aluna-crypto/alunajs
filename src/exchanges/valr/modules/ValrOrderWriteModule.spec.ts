@@ -2,9 +2,9 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/abstracts/IAlunaExchange'
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
-import { OrderTypesEnum } from '../../../lib/enums/OrderTypeEnum'
-import { SideEnum } from '../../../lib/enums/SideEnum'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
@@ -54,9 +54,9 @@ describe('ValrOrderWriteModule', () => {
       amount: '0.001',
       rate: '10000',
       symbolPair: 'ETHZAR',
-      side: SideEnum.LONG,
-      type: OrderTypesEnum.LIMIT,
-      account: AccountEnum.EXCHANGE,
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.LIMIT,
+      account: AlunaAccountEnum.EXCHANGE,
     }
 
     const requestBody = {
@@ -93,7 +93,7 @@ describe('ValrOrderWriteModule', () => {
     // place short limit order
     const placeResponse2 = await valrOrderWriteModule.place({
       ...placeOrderParams,
-      side: SideEnum.SHORT,
+      side: AlunaSideEnum.SHORT,
     })
 
 
@@ -143,9 +143,9 @@ describe('ValrOrderWriteModule', () => {
       amount: '0.001',
       rate: '0',
       symbolPair: 'ETHZAR',
-      side: SideEnum.LONG,
-      type: OrderTypesEnum.MARKET,
-      account: AccountEnum.EXCHANGE,
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
     }
 
     const requestBody = {
@@ -178,7 +178,7 @@ describe('ValrOrderWriteModule', () => {
     // place short market order
     const placeResponse2 = await valrOrderWriteModule.place({
       ...placeOrderParams,
-      side: SideEnum.SHORT,
+      side: AlunaSideEnum.SHORT,
     })
 
 
@@ -204,7 +204,7 @@ describe('ValrOrderWriteModule', () => {
 
 
 
-  it('should ensure given account is one of AccountEnum', async () => {
+  it('should ensure given account is one of AlunaAccountEnum', async () => {
 
     const nonexistentAcc = 'nonexistent'
 
@@ -240,7 +240,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs,
       'accounts',
       {
-        [AccountEnum.EXCHANGE]: {
+        [AlunaAccountEnum.EXCHANGE]: {
           supported: false,
         },
       },
@@ -249,7 +249,7 @@ describe('ValrOrderWriteModule', () => {
     try {
 
       await valrOrderWriteModule.place({
-        account: AccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.EXCHANGE,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
@@ -271,7 +271,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs,
       'accounts',
       {
-        [AccountEnum.EXCHANGE]: {
+        [AlunaAccountEnum.EXCHANGE]: {
           supported: true,
           implemented: false,
         },
@@ -281,7 +281,7 @@ describe('ValrOrderWriteModule', () => {
     try {
 
       await valrOrderWriteModule.place({
-        account: AccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.EXCHANGE,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
@@ -303,7 +303,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs,
       'accounts',
       {
-        [AccountEnum.EXCHANGE]: {
+        [AlunaAccountEnum.EXCHANGE]: {
           supported: true,
           implemented: true,
           // missing orderTypes property
@@ -314,7 +314,7 @@ describe('ValrOrderWriteModule', () => {
     try {
 
       await valrOrderWriteModule.place({
-        account: AccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.EXCHANGE,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
