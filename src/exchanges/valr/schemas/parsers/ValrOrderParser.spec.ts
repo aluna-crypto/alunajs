@@ -50,7 +50,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ status: rawStatus1 }))
     expect(parsedOrder1.type)
-      .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ type: rawType1 }))
+      .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType1 }))
     expect(parsedOrder1.placedAt.getTime())
       .to.be.eq(new Date(rawOrder1.createdAt).getTime())
 
@@ -78,7 +78,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ status: rawStatus2 }))
     expect(parsedOrder2.type)
-      .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ type: rawType2 }))
+      .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType2 }))
     expect(parsedOrder2.placedAt.getTime())
       .to.be.eq(new Date(rawOrder2.orderCreatedAt).getTime())
 
