@@ -1,4 +1,4 @@
-import { IAlunaModule } from '../abstracts/IAlunaModule'
+import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../enums/AlunaSideEnum'

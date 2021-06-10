@@ -1,4 +1,4 @@
-import { IAlunaModule } from '../abstracts/IAlunaModule'
+import { IAlunaModule } from '../core/IAlunaModule'
 import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 

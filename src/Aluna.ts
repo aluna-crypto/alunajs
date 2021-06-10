@@ -1,4 +1,4 @@
-import { IAlunaExchange } from './lib/abstracts/IAlunaExchange'
+import { IAlunaExchange } from './lib/core/IAlunaExchange'
 import { Exchanges } from './lib/Exchanges'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
@@ -43,4 +43,3 @@ export class Aluna extends Exchanges {
   }
 
 }
-

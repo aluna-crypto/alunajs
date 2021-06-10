@@ -1,4 +1,4 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
+import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'

@@ -6,7 +6,7 @@ import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-} from '../../lib/abstracts/IAlunaHttp'
+} from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrError } from './ValrError'

@@ -1,8 +1,8 @@
-import { AAlunaExchange } from '../../lib/abstracts/AAlunaExchange'
+import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import {
   IAlunaExchange,
   IAlunaExchangeStatic,
-} from '../../lib/abstracts/IAlunaExchange'
+} from '../../lib/core/IAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
