@@ -54,6 +54,7 @@ export interface IAlunaExchangeOrderOptionsSchema {
 export interface IAlunaExchangeOrderSpecsSchema {
   supported: boolean // supported by the exchange
   implemented: boolean // implemented by aluna
+  mode: AlunaFeaturesModeEnum
   options: IAlunaExchangeOrderOptionsSchema
 }
 
