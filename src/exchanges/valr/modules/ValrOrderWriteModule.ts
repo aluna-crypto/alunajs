@@ -1,3 +1,4 @@
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
@@ -11,7 +12,6 @@ import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
-import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
@@ -53,7 +53,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     } catch (error) {
 
-      throw new ValrError({
+      throw new AlunaError({
         message: `Account type ${account} does not exists in Valr specs`,
       })
 
@@ -61,7 +61,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (!supported || !implemented || !supportedOrderTypes) {
 
-      throw new ValrError({
+      throw new AlunaError({
         message: `Account type ${account} not supported/implemented for Varl`,
       })
 
@@ -71,7 +71,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (!orderType || !orderType.implemented || !orderType.supported) {
 
-      throw new ValrError({
+      throw new AlunaError({
         message: `Order type ${type} not supported/implemented for Varl`,
       })
 
@@ -136,7 +136,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (ensuredCancelled.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
-      throw new ValrError({
+      throw new AlunaError({
         message: 'Something went wrong, order not canceled',
         statusCode: 500,
       })

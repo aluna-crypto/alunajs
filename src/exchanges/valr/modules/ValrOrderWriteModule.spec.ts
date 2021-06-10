@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -14,7 +15,6 @@ import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
-import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
 import { ValrOrderWriteModule } from './ValrOrderWriteModule'
@@ -229,7 +229,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         `Account type ${nonexistentAcc} does not exists in Valr specs`,
       )
@@ -261,7 +261,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Account type exchange not supported/implemented for Varl',
       )
@@ -293,7 +293,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Account type exchange not supported/implemented for Varl',
       )
@@ -326,7 +326,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Account type exchange not supported/implemented for Varl',
       )
@@ -360,7 +360,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Order type limit not supported/implemented for Varl',
       )
@@ -394,7 +394,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Order type limit not supported/implemented for Varl',
       )
@@ -428,7 +428,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof ValrError).to.be.true
+      expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Order type limit not supported/implemented for Varl',
       )
@@ -485,7 +485,7 @@ describe('ValrOrderWriteModule', () => {
       expect(getRawMock.callCount).to.be.eq(1)
       expect(getRawMock.calledWith(cancelParams)).to.be.true
 
-      expect(error instanceof ValrError).to.be.true
+      expect(error instanceof AlunaError).to.be.true
       expect(error.message).to.be.eq('Something went wrong, order not canceled')
       expect(error.statusCode).to.be.eq(500)
 

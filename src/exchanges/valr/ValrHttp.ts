@@ -2,6 +2,7 @@ import axios from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -9,7 +10,6 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { ValrError } from './ValrError'
 
 
 
@@ -28,7 +28,7 @@ interface IValrSignedHeaders {
 
 
 
-export const formatRequestError = (params: { error: any }): ValrError => {
+export const formatRequestError = (params: { error: any }): AlunaError => {
 
   const {
     response,
@@ -36,14 +36,14 @@ export const formatRequestError = (params: { error: any }): ValrError => {
 
   if (response && response.data && response.data.message) {
 
-    return new ValrError({
+    return new AlunaError({
       message: response.data.message,
       statusCode: response.status,
     })
 
   }
 
-  return new ValrError({
+  return new AlunaError({
     message: params.error.message,
     statusCode: params.error.response?.status || 400,
   })
