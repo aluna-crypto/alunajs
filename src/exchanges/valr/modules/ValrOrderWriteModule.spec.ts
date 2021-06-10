@@ -3,12 +3,17 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/abstracts/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
+import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
@@ -243,6 +248,7 @@ describe('ValrOrderWriteModule', () => {
       {
         [AlunaAccountEnum.EXCHANGE]: {
           supported: false,
+          implemented: true,
         },
       },
     )
@@ -298,7 +304,7 @@ describe('ValrOrderWriteModule', () => {
 
 
 
-  it('should ensure given account have orderTypes property', async () => {
+  it('should ensure given account has orderTypes property', async () => {
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -428,6 +434,122 @@ describe('ValrOrderWriteModule', () => {
       )
 
     }
+
+  })
+
+
+
+  it('should ensure an order was canceled', async () => {
+
+    ImportMock.mockOther(
+      valrOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    const requestMock = ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+    )
+
+    const getRawMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'getRaw',
+      {
+        orderStatusType: 'any-status-but-canceled' as ValrOrderStatusEnum,
+      } as IValrOrderGetSchema,
+    )
+
+    const cancelParams = {
+      id: 'order-id',
+      symbolPair: 'symbol-pair',
+    }
+
+    try {
+
+      await valrOrderWriteModule.cancel(cancelParams)
+
+    } catch (error) {
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        verb: AlunaHttpVerbEnum.DELETE,
+        url: 'https://api.valr.com/v1/orders/order',
+        keySecret,
+        body: {
+          orderId: cancelParams.id,
+          pair: cancelParams.symbolPair,
+        },
+      })).to.be.true
+
+      expect(getRawMock.callCount).to.be.eq(1)
+      expect(getRawMock.calledWith(cancelParams)).to.be.true
+
+      expect(error instanceof ValrError).to.be.true
+      expect(error.message).to.be.eq('Something went wrong, order not canceled')
+      expect(error.statusCode).to.be.eq(500)
+
+    }
+
+  })
+
+
+
+  it('should cancel an open order just fine', async () => {
+
+    ImportMock.mockOther(
+      valrOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+    )
+
+    const getRawMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'getRaw',
+      {
+        orderStatusType: ValrOrderStatusEnum.CANCELLED,
+      } as IValrOrderGetSchema,
+    )
+
+    const parseMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'parse',
+      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+    )
+
+    const cancelParams = {
+      id: 'order-id',
+      symbolPair: 'symbol-pair',
+    }
+
+    let canceledOrder
+    let error
+
+    try {
+
+      canceledOrder = await valrOrderWriteModule.cancel(cancelParams)
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(error).to.be.undefined
+
+    expect(parseMock.callCount).to.be.eq(1)
+    expect(parseMock.calledWith({
+      rawOrder: getRawMock.returnValues[0],
+    })).to.be.true
+
+    expect(canceledOrder).to.be.ok
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
 
