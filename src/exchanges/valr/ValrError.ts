@@ -1,6 +1,5 @@
-import { AAlunaError } from '../../lib/abstracts/AAlunaError'
-import { IAlunaError } from '../../lib/abstracts/IAlunaError'
+import { AlunaError } from '../../lib/core/AlunaError'
 
 
 
-export class ValrError extends AAlunaError implements IAlunaError {}
+export class ValrError extends AlunaError {}
