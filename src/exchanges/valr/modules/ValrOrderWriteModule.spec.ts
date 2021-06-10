@@ -6,6 +6,7 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { ValrError } from '../ValrError'
@@ -322,6 +323,108 @@ describe('ValrOrderWriteModule', () => {
       expect(err instanceof ValrError).to.be.true
       expect(err.message).to.be.eq(
         'Account type exchange not supported/implemented for Varl',
+      )
+
+    }
+
+  })
+
+
+
+  it('should ensure account orderTypes has given order type', async () => {
+
+    ImportMock.mockOther(
+      ValrSpecs.accounts.exchange,
+      'orderTypes',
+      {
+        ['fake-type' as AlunaOrderTypesEnum]: {
+          supported: true,
+          implemented: true,
+          options: {} as IAlunaExchangeOrderOptionsSchema,
+        },
+      },
+    )
+
+    try {
+
+      await valrOrderWriteModule.place({
+        account: AlunaAccountEnum.EXCHANGE,
+        type: AlunaOrderTypesEnum.LIMIT,
+      } as IAlunaOrderPlaceParams)
+
+    } catch (err) {
+
+      expect(err instanceof ValrError).to.be.true
+      expect(err.message).to.be.eq(
+        'Order type limit not supported/implemented for Varl',
+      )
+
+    }
+
+  })
+
+
+
+  it('should ensure given order type is supported', async () => {
+
+    ImportMock.mockOther(
+      ValrSpecs.accounts.exchange,
+      'orderTypes',
+      {
+        limit: {
+          supported: false,
+          implemented: true,
+          options: {} as IAlunaExchangeOrderOptionsSchema,
+        },
+      },
+    )
+
+    try {
+
+      await valrOrderWriteModule.place({
+        account: AlunaAccountEnum.EXCHANGE,
+        type: AlunaOrderTypesEnum.LIMIT,
+      } as IAlunaOrderPlaceParams)
+
+    } catch (err) {
+
+      expect(err instanceof ValrError).to.be.true
+      expect(err.message).to.be.eq(
+        'Order type limit not supported/implemented for Varl',
+      )
+
+    }
+
+  })
+
+
+
+  it('should ensure given order type is implemented', async () => {
+
+    ImportMock.mockOther(
+      ValrSpecs.accounts.exchange,
+      'orderTypes',
+      {
+        limit: {
+          supported: false,
+          implemented: true,
+          options: {} as IAlunaExchangeOrderOptionsSchema,
+        },
+      },
+    )
+
+    try {
+
+      await valrOrderWriteModule.place({
+        account: AlunaAccountEnum.EXCHANGE,
+        type: AlunaOrderTypesEnum.LIMIT,
+      } as IAlunaOrderPlaceParams)
+
+    } catch (err) {
+
+      expect(err instanceof ValrError).to.be.true
+      expect(err.message).to.be.eq(
+        'Order type limit not supported/implemented for Varl',
       )
 
     }
