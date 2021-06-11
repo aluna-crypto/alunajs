@@ -1,7 +1,7 @@
-import { AccountEnum } from '../../../../../lib/enums/AccountEnum'
-import { OrderStatusEnum } from '../../../../../lib/enums/OrderStatusEnum'
-import { OrderTypesEnum } from '../../../../../lib/enums/OrderTypeEnum'
-import { SideEnum } from '../../../../../lib/enums/SideEnum'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOrderTimeInForceEnum'
@@ -77,20 +77,51 @@ export const VALR_RAW_LIST_OPEN_ORDERS: IValrOrderListSchema[] = [
 
 
 
-export const VALR_RAW_GET_OPEN_ORDER: IValrOrderGetSchema = {
-  orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
-  orderSide: ValrSideEnum.BUY,
-  remainingQuantity: '0.001',
-  originalPrice: '12000',
-  currencyPair: 'ETHZAR',
-  originalQuantity: '0.001',
-  orderStatusType: ValrOrderStatusEnum.ACTIVE,
-  orderType: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
-  failedReason: '',
-  customerOrderId: '',
-  orderCreatedAt: '2021-06-08T00:55:12.982Z',
-  orderUpdatedAt: '2021-06-08T00:55:12.984Z',
-}
+export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
+  {
+    orderId: '446140fa-e4c5-489c-8e43-b431e080ad35',
+    orderSide: ValrSideEnum.BUY,
+    orderStatusType: ValrOrderStatusEnum.ACTIVE,
+    currencyPair: 'ETHZAR',
+    originalPrice: '38000',
+    remainingQuantity: '0.001',
+    originalQuantity: '0.001',
+    orderType: ValrOrderTypesEnum.STOP_LOSS_LIMIT,
+    failedReason: '',
+    orderUpdatedAt: '2021-06-09T13:13:29.536Z',
+    orderCreatedAt: '2021-06-09T13:13:29.535Z',
+    stopPrice: '40000',
+    timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+  },
+  {
+    orderId: 'f6d69359-cd93-443c-b584-42b669508424',
+    orderStatusType: ValrOrderStatusEnum.PLACED,
+    currencyPair: 'ETHZAR',
+    originalPrice: '10000',
+    remainingQuantity: '0.001',
+    originalQuantity: '0.001',
+    orderSide: ValrSideEnum.BUY,
+    orderType: ValrOrderTypesEnum.LIMIT,
+    failedReason: '',
+    orderUpdatedAt: '2021-06-09T12:34:58.838Z',
+    orderCreatedAt: '2021-06-09T12:34:58.836Z',
+    timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+  },
+  {
+    orderId: '7f016746-6792-4c19-8306-1f7878caadb6',
+    orderStatusType: ValrOrderStatusEnum.FILLED,
+    currencyPair: 'ETHZAR',
+    originalPrice: '0',
+    remainingQuantity: '0',
+    originalQuantity: '0.001',
+    orderSide: ValrSideEnum.SELL,
+    orderType: ValrOrderTypesEnum.MARKET,
+    failedReason: '',
+    orderUpdatedAt: '2021-06-09T13:09:31.999Z',
+    orderCreatedAt: '2021-06-09T13:09:31.996Z',
+    timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+  },
+]
 
 
 
@@ -102,10 +133,10 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     isAmountInContracts: false,
     rate: 12000,
-    account: AccountEnum.EXCHANGE,
-    side: SideEnum.LONG,
-    status: OrderStatusEnum.OPEN,
-    type: OrderTypesEnum.TAKE_PROFIT_LIMIT,
+    account: AlunaAccountEnum.EXCHANGE,
+    side: AlunaSideEnum.LONG,
+    status: AlunaOrderStatusEnum.OPEN,
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     placedAt: new Date('2021-06-08T00:55:12.982Z'),
   },
   {
@@ -115,10 +146,10 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     isAmountInContracts: false,
     rate: 10000,
-    account: AccountEnum.EXCHANGE,
-    side: SideEnum.LONG,
-    status: OrderStatusEnum.OPEN,
-    type: OrderTypesEnum.LIMIT,
+    account: AlunaAccountEnum.EXCHANGE,
+    side: AlunaSideEnum.LONG,
+    status: AlunaOrderStatusEnum.OPEN,
+    type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:47:50.350Z'),
   },
   {
@@ -128,10 +159,10 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     isAmountInContracts: false,
     rate: 80000,
-    account: AccountEnum.EXCHANGE,
-    side: SideEnum.SHORT,
-    status: OrderStatusEnum.OPEN,
-    type: OrderTypesEnum.LIMIT,
+    account: AlunaAccountEnum.EXCHANGE,
+    side: AlunaSideEnum.SHORT,
+    status: AlunaOrderStatusEnum.OPEN,
+    type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:49:08.173Z'),
   },
   {
@@ -141,10 +172,10 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     isAmountInContracts: false,
     rate: 50000,
-    account: AccountEnum.EXCHANGE,
-    side: SideEnum.SHORT,
-    status: OrderStatusEnum.OPEN,
-    type: OrderTypesEnum.STOP_LIMIT,
+    account: AlunaAccountEnum.EXCHANGE,
+    side: AlunaSideEnum.SHORT,
+    status: AlunaOrderStatusEnum.OPEN,
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
     placedAt: new Date('2021-06-08T01:51:43.960Z'),
   },
 ]

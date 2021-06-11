@@ -1,5 +1,5 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
@@ -16,11 +16,10 @@ import { ValrHttp } from '../ValrHttp'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  // public async list (params: IAlunaOrderListParams): Promise<...>
-  async listRaw (): Promise<IValrOrderListSchema[]> {
+  public listRaw (): Promise<IValrOrderListSchema[]> {
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/orders/open',
       keySecret: this.exchange.keySecret,
     })
@@ -29,7 +28,6 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  // public async list (params: IAlunaOrderListParams): Promise<...>
   public async list (): Promise<IAlunaOrderSchema[]> {
 
     return this.parseMany({
@@ -40,7 +38,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderGetSchema> {
+  public getRaw (params: IAlunaOrderGetParams): Promise<IValrOrderGetSchema> {
 
     const {
       id,
@@ -48,7 +46,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     } = params
 
     return ValrHttp.privateRequest<IValrOrderGetSchema>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
       keySecret: this.exchange.keySecret,
     })
@@ -57,7 +55,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
 
 
-  async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
 
     const order = await this.getRaw(params)
 

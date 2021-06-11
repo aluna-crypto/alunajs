@@ -1,7 +1,7 @@
-import { AccountEnum } from '../enums/AccountEnum'
-import { OrderStatusEnum } from '../enums/OrderStatusEnum'
-import { OrderTypesEnum } from '../enums/OrderTypeEnum'
-import { SideEnum } from '../enums/SideEnum'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 
 
 
@@ -18,10 +18,10 @@ export interface IAlunaOrderSchema {
   stopRate?: number
   limitRate?: number
 
-  account: AccountEnum
-  side: SideEnum
-  status: OrderStatusEnum
-  type: OrderTypesEnum
+  account: AlunaAccountEnum
+  side: AlunaSideEnum
+  status: AlunaOrderStatusEnum
+  type: AlunaOrderTypesEnum
 
   placedAt: Date
   filledAt?: Date

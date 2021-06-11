@@ -1,21 +1,21 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-} from '../../lib/abstracts/IAlunaHttp'
-import { HttpVerbEnum } from '../../lib/enums/HtttpVerbEnum'
+} from '../../lib/core/IAlunaHttp'
+import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { ValrError } from './ValrError'
 import { ValrLog } from './ValrLog'
 
 
 
 interface ISignedHashParams {
-  verb: HttpVerbEnum
+  verb: AlunaHttpVerbEnum
   path: string
   keySecret: IAlunaKeySecretSchema
   body?: any
@@ -29,26 +29,25 @@ interface IValrSignedHeaders {
 
 
 
-export const formatRequestError = (params: { error: any }): ValrError => {
+export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  const {
-    response,
-  } = params.error
+  const errorMsg = 'Error while trying to execute Axios request'
 
-  ValrLog.info('formatRequestError', { response })
+  if ((param as AxiosError).isAxiosError) {
 
-  if (response && response.data && response.data.message) {
+    const {
+      response,
+    } = param as AxiosError
 
-    return new ValrError({
-      message: response.data.message,
-      statusCode: response.status,
+    return new AlunaError({
+      message: response?.data?.message || errorMsg,
+      statusCode: response?.status,
     })
 
   }
 
-  return new ValrError({
-    message: params.error.message,
-    statusCode: params.error.response?.status || 400,
+  return new AlunaError({
+    message: param.message || errorMsg,
   })
 
 }
@@ -95,7 +94,7 @@ export const ValrHttp: IAlunaHttp = class {
     const {
       url,
       body,
-      verb = HttpVerbEnum.GET,
+      verb = AlunaHttpVerbEnum.GET,
     } = params
 
     ValrLog.info(JSON.stringify({
@@ -117,7 +116,7 @@ export const ValrHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw formatRequestError({ error })
+      throw handleRequestError(error)
 
     }
 
@@ -130,7 +129,7 @@ export const ValrHttp: IAlunaHttp = class {
     const {
       url,
       body,
-      verb = HttpVerbEnum.POST,
+      verb = AlunaHttpVerbEnum.POST,
       keySecret,
     } = params
 
@@ -163,9 +162,7 @@ export const ValrHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      ValrLog.error({ error })
-
-      throw formatRequestError({ error })
+      throw handleRequestError(error)
 
     }
 

@@ -1,6 +1,6 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
@@ -11,14 +11,12 @@ import { ValrLog } from '../ValrLog'
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-
-
-  async listRaw (): Promise<IValrBalanceSchema[]> {
+  public async listRaw (): Promise<IValrBalanceSchema[]> {
 
     ValrLog.info()
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
     })
@@ -29,7 +27,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceSchema[]> {
 
     ValrLog.info()
 
@@ -42,7 +40,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  parse (params: {
+  public parse (params: {
     rawBalance: IValrBalanceSchema,
   }): IAlunaBalanceSchema {
 
@@ -54,7 +52,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
     return {
       symbolId: rawBalance.currency,
-      account: AccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.EXCHANGE,
       available: Number(rawBalance.available),
       total: Number(rawBalance.total),
     }
@@ -63,7 +61,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
 
 
-  parseMany (params: {
+  public parseMany (params: {
     rawBalances: IValrBalanceSchema[],
   }): IAlunaBalanceSchema[] {
 

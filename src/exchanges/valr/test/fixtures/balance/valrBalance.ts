@@ -1,4 +1,4 @@
-import { AccountEnum } from '../../../../../lib/enums/AccountEnum'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
@@ -48,25 +48,25 @@ export const VALR_RAW_BALANCES: IValrBalanceSchema[] = [
 export const VALR_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
     symbolId: 'ETH',
-    account: AccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.04928793877,
     total: 0.04928793877,
   },
   {
     symbolId: 'ZAR',
-    account: AccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.EXCHANGE,
     available: 74.24437545,
     total: 74.24437545,
   },
   {
     symbolId: 'BTC',
-    account: AccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.000012197825,
     total: 0.000012197825,
   },
   {
     symbolId: 'XRP',
-    account: AccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.533568,
     total: 0.533568,
   },

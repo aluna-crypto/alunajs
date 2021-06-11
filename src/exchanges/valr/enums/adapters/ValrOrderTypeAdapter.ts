@@ -1,78 +1,45 @@
-import { OrderTypesEnum } from '../../../../lib/enums/OrderTypeEnum'
-import { ValrError } from '../../ValrError'
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 
 
 
 export class ValrOrderTypeAdapter {
 
-  static translateToAluna (
-    params: {
-      type: ValrOrderTypesEnum,
-    },
-  ): OrderTypesEnum {
-
-    const {
-      type,
-    } = params
-
-    switch (type) {
-
-      case ValrOrderTypesEnum.LIMIT:
-      case ValrOrderTypesEnum.LIMIT_POST_ONLY:
-        return OrderTypesEnum.LIMIT
-
-      case ValrOrderTypesEnum.STOP_LOSS_LIMIT:
-        return OrderTypesEnum.STOP_LIMIT
-
-      case ValrOrderTypesEnum.MARKET:
-      case ValrOrderTypesEnum.SIMPLE:
-        return OrderTypesEnum.MARKET
-
-      case ValrOrderTypesEnum.TAKE_PROFIT_LIMIT:
-        return OrderTypesEnum.TAKE_PROFIT_LIMIT
-
-      default:
-        throw new ValrError({
-          message: `Order type not supported: ${type}`,
-        })
-
-    }
-
-  }
-
-  static translateToValr (
-    params: {
-      type: OrderTypesEnum,
-    },
-  ): ValrOrderTypesEnum {
-
-    const {
-      type,
-    } = params
-
-    switch (type) {
-
-      case OrderTypesEnum.LIMIT:
-        return ValrOrderTypesEnum.LIMIT
-
-      case OrderTypesEnum.MARKET:
-        return ValrOrderTypesEnum.MARKET
-
-      case OrderTypesEnum.STOP_LIMIT:
-        return ValrOrderTypesEnum.STOP_LOSS_LIMIT
-
-      case OrderTypesEnum.TAKE_PROFIT_LIMIT:
-        return ValrOrderTypesEnum.TAKE_PROFIT_LIMIT
 
 
-      default:
-        throw new ValrError({
-          message: `Order type not supported: ${type}`,
-        })
+  static readonly ERROR_MESSAGE_PREFIX = 'Order type'
 
-    }
 
-  }
+
+  static translateToAluna =
+    buildAdapter<ValrOrderTypesEnum, AlunaOrderTypesEnum>({
+      errorMessagePrefix: ValrOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [ValrOrderTypesEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
+        [ValrOrderTypesEnum.LIMIT_POST_ONLY]: AlunaOrderTypesEnum.LIMIT,
+        [ValrOrderTypesEnum.STOP_LOSS_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
+        [ValrOrderTypesEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
+        [ValrOrderTypesEnum.SIMPLE]: AlunaOrderTypesEnum.MARKET,
+        [ValrOrderTypesEnum.TAKE_PROFIT_LIMIT]:
+          AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+      },
+    })
+
+
+
+  static translateToValr =
+    buildAdapter<AlunaOrderTypesEnum, ValrOrderTypesEnum>({
+      errorMessagePrefix: ValrOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [AlunaOrderTypesEnum.LIMIT]: ValrOrderTypesEnum.LIMIT,
+        [AlunaOrderTypesEnum.MARKET]: ValrOrderTypesEnum.MARKET,
+        [AlunaOrderTypesEnum.STOP_LIMIT]: ValrOrderTypesEnum.STOP_LOSS_LIMIT,
+        [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]:
+          ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
+      },
+    })
+
+
 
 }

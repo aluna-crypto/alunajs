@@ -8,7 +8,7 @@ import { ValrLog } from '../ValrLog'
 
 export const ValrSymbolModule: IAlunaSymbolModule = class {
 
-  static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolSchema[]> {
 
     return ValrSymbolModule.parseMany({
       rawSymbols: await ValrSymbolModule.listRaw(),
@@ -18,7 +18,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
 
 
-  static async listRaw (): Promise<IValrSymbolSchema[]> {
+  public static listRaw (): Promise<IValrSymbolSchema[]> {
 
     ValrLog.info()
 
@@ -30,7 +30,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
 
 
-  static parse (params:{
+  public static parse (params:{
     rawSymbol: IValrSymbolSchema,
   }): IAlunaSymbolSchema {
 
@@ -55,7 +55,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
 
 
-  static parseMany (params: {
+  public static parseMany (params: {
     rawSymbols: IValrSymbolSchema[],
   }): IAlunaSymbolSchema[] {
 

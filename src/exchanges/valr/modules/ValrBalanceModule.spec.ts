@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/abstracts/IAlunaExchange'
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrBalanceModule } from './ValrBalanceModule'
@@ -108,7 +108,7 @@ describe('ValrBalanceModule', () => {
     expect(parsedBalance1).to.not.be.undefined
 
     expect(parsedBalance1.symbolId).to.be.eq('BTC')
-    expect(parsedBalance1.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(0.044511644725)
     expect(parsedBalance1.total).to.be.eq(0.054511644725)
 
@@ -118,7 +118,7 @@ describe('ValrBalanceModule', () => {
     })
 
     expect(parsedBalance2.symbolId).to.be.eq('ETH')
-    expect(parsedBalance2.account).to.be.eq(AccountEnum.EXCHANGE)
+    expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance2.available).to.be.eq(0.01626594758)
     expect(parsedBalance2.total).to.be.eq(0.50626594758)
 

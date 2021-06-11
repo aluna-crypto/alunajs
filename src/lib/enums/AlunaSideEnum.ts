@@ -1,4 +1,4 @@
-export enum SideEnum {
+export enum AlunaSideEnum {
   LONG = 'long',
   SHORT = 'short',
 }

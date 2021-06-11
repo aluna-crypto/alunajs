@@ -1,6 +1,6 @@
-import { AccountEnum } from '../../lib/enums/AccountEnum'
-import { FeaturesModeEnum } from '../../lib/enums/FeaturesModeEnum'
-import { OrderTypesEnum } from '../../lib/enums/OrderTypeEnum'
+import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
+import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
+import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaExchangeOrderTypesSpecsSchema,
   IAlunaExchangeSpecsSchema,
@@ -9,43 +9,66 @@ import {
 
 
 const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
-  [OrderTypesEnum.LIMIT]: {
+  [AlunaOrderTypesEnum.LIMIT]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
     },
   },
-  [OrderTypesEnum.MARKET]: {
+  [AlunaOrderTypesEnum.MARKET]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
+    },
+  },
+  [AlunaOrderTypesEnum.STOP_LIMIT]: {
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]: {
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
     },
   },
 }
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
+  id: 'valr',
   acceptFloatAmounts: true,
   features: {
-    balance: FeaturesModeEnum.READ,
-    order: FeaturesModeEnum.WRITE,
+    balance: AlunaFeaturesModeEnum.READ,
+    order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: {
-    [AccountEnum.EXCHANGE]: {
+    [AlunaAccountEnum.EXCHANGE]: {
       supported: true,
       implemented: true,
       orderTypes: exchangeOrderTypes,
     },
-    [AccountEnum.MARGIN]: {
+    [AlunaAccountEnum.MARGIN]: {
       supported: false,
     },
-    [AccountEnum.DERIVATIVES]: {
+    [AlunaAccountEnum.DERIVATIVES]: {
       supported: false,
     },
-    [AccountEnum.LENDING]: {
+    [AlunaAccountEnum.LENDING]: {
       supported: false,
     },
   },

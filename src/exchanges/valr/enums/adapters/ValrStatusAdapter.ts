@@ -1,75 +1,46 @@
-import { OrderStatusEnum } from '../../../../lib/enums/OrderStatusEnum'
-import { ValrError } from '../../ValrError'
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 
 
 export class ValrStatusAdapter {
 
-  static translateToAluna (params: {
-    status: ValrOrderStatusEnum,
-  }): OrderStatusEnum {
 
-    const {
-      status,
-    } = params
 
-    switch (status) {
+  static readonly ERROR_MESSAGE_PREFIX = 'Order status'
 
-      case ValrOrderStatusEnum.ACTIVE:
-      case ValrOrderStatusEnum.PLACED:
-        return OrderStatusEnum.OPEN
 
-      case ValrOrderStatusEnum.PARTIALLY_FILLED:
-        return OrderStatusEnum.PARTIALLY_FILLED
 
-      case ValrOrderStatusEnum.FILLED:
-        return OrderStatusEnum.FILLED
+  static translateToAluna =
+    buildAdapter<ValrOrderStatusEnum, AlunaOrderStatusEnum>({
+      errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [ValrOrderStatusEnum.ACTIVE]: AlunaOrderStatusEnum.OPEN,
+        [ValrOrderStatusEnum.PLACED]: AlunaOrderStatusEnum.OPEN,
+        [ValrOrderStatusEnum.PARTIALLY_FILLED]:
+        AlunaOrderStatusEnum.PARTIALLY_FILLED,
+        [ValrOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+        [ValrOrderStatusEnum.FAILED]: AlunaOrderStatusEnum.CANCELED,
+        [ValrOrderStatusEnum.CANCELLED]: AlunaOrderStatusEnum.CANCELED,
+      },
+    })
 
-      case ValrOrderStatusEnum.FAILED:
-      case ValrOrderStatusEnum.CANCELLED:
-        return OrderStatusEnum.CANCELED
 
-      default:
-        throw new ValrError({
-          message: `Order side not supported: ${status}`,
-        })
 
-    }
+  static translateToValr =
+    buildAdapter<AlunaOrderStatusEnum, ValrOrderStatusEnum>({
+      errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [AlunaOrderStatusEnum.OPEN]: ValrOrderStatusEnum.PLACED,
+        [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
+        ValrOrderStatusEnum.PARTIALLY_FILLED,
+        [AlunaOrderStatusEnum.FILLED]: ValrOrderStatusEnum.FILLED,
+        [AlunaOrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CANCELLED,
+      },
+    })
 
-  }
 
-  static translateToValr (
-    params: {
-      status: OrderStatusEnum,
-    },
-  ): ValrOrderStatusEnum {
-
-    const {
-      status,
-    } = params
-
-    switch (status) {
-
-      case OrderStatusEnum.OPEN:
-        return ValrOrderStatusEnum.PLACED
-
-      case OrderStatusEnum.PARTIALLY_FILLED:
-        return ValrOrderStatusEnum.PARTIALLY_FILLED
-
-      case OrderStatusEnum.FILLED:
-        return ValrOrderStatusEnum.FILLED
-
-      case OrderStatusEnum.CANCELED:
-        return ValrOrderStatusEnum.CANCELLED
-
-      default:
-        throw new ValrError({
-          message: `Order side not supported: ${status}`,
-        })
-
-    }
-
-  }
 
 }
+

@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/abstracts/IAlunaExchange'
-import { AccountEnum } from '../../../lib/enums/AccountEnum'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
-import { OrderStatusEnum } from '../../../lib/enums/OrderStatusEnum'
-import { OrderTypesEnum } from '../../../lib/enums/OrderTypeEnum'
-import { SideEnum } from '../../../lib/enums/SideEnum'
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
@@ -84,21 +84,21 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrders.length).to.be.eq(4)
 
-    expect(parsedOrders[0].account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrders[0].status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrders[0].side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrders[0].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrders[0].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrders[0].side).to.be.eq(AlunaSideEnum.LONG)
 
-    expect(parsedOrders[1].account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrders[1].status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrders[1].side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrders[1].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrders[1].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrders[1].side).to.be.eq(AlunaSideEnum.LONG)
 
-    expect(parsedOrders[2].account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrders[2].status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrders[2].side).to.be.eq(SideEnum.SHORT)
+    expect(parsedOrders[2].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrders[2].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrders[2].side).to.be.eq(AlunaSideEnum.SHORT)
 
-    expect(parsedOrders[3].account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrders[3].status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrders[3].side).to.be.eq(SideEnum.SHORT)
+    expect(parsedOrders[3].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrders[3].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrders[3].side).to.be.eq(AlunaSideEnum.SHORT)
 
   })
 
@@ -122,7 +122,7 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      ordersSeeds.rawStatusOrder,
+      ordersSeeds.rawGetOrder[0],
     )
 
 
@@ -138,11 +138,11 @@ describe('ValrOrderReadModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.includes({
-      verb: HttpVerbEnum.GET,
+      verb: AlunaHttpVerbEnum.GET,
       url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
     })
 
-    expect(rawOrder.orderType).to.be.eq(ValrOrderTypesEnum.TAKE_PROFIT_LIMIT)
+    expect(rawOrder.orderType).to.be.eq(ValrOrderTypesEnum.STOP_LOSS_LIMIT)
     expect(rawOrder.orderStatusType).to.be.eq(ValrOrderStatusEnum.ACTIVE)
     expect(rawOrder.orderSide).to.be.eq(ValrSideEnum.BUY)
 
@@ -177,9 +177,9 @@ describe('ValrOrderReadModule', () => {
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: 'rawOrder' })).to.be.true
 
-    expect(parsedOrder.status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrder.type).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder.side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
+    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
 
   })
 
@@ -187,7 +187,7 @@ describe('ValrOrderReadModule', () => {
 
   it('should parse a Valr raw order just fine', () => {
 
-    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawStatusOrder
+    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawGetOrder[0]
     const rawOrder2: IValrOrderListSchema = ordersSeeds.rawOrders[1]
 
     const parseMock = ImportMock.mockFunction(
@@ -214,10 +214,10 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrder1.isAmountInContracts).to.be.false
 
-    expect(parsedOrder1.status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrder1.account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrder1.type).to.be.eq(OrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder1.side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
+    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
 
 
     const parsedOrder2 = valrOrderReadModule.parse({ rawOrder: rawOrder2 })
@@ -234,10 +234,10 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrder2.isAmountInContracts).to.be.false
 
-    expect(parsedOrder2.status).to.be.eq(OrderStatusEnum.OPEN)
-    expect(parsedOrder2.account).to.be.eq(AccountEnum.EXCHANGE)
-    expect(parsedOrder2.type).to.be.eq(OrderTypesEnum.LIMIT)
-    expect(parsedOrder2.side).to.be.eq(SideEnum.LONG)
+    expect(parsedOrder2.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedOrder2.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
+    expect(parsedOrder2.side).to.be.eq(AlunaSideEnum.LONG)
 
   })
 

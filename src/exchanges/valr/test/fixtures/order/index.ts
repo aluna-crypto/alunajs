@@ -1,6 +1,6 @@
 import {
   VALR_PARSED_OPEN_ORDERS,
-  VALR_RAW_GET_OPEN_ORDER,
+  VALR_RAW_GET_ORDERS,
   VALR_RAW_LIST_OPEN_ORDERS,
 } from './valrOrder'
 
@@ -8,6 +8,6 @@ import {
 
 export const VALR_ORDERS_SEEDS = {
   rawOrders: VALR_RAW_LIST_OPEN_ORDERS,
-  rawStatusOrder: VALR_RAW_GET_OPEN_ORDER,
+  rawGetOrder: VALR_RAW_GET_ORDERS,
   parsedOrders: VALR_PARSED_OPEN_ORDERS,
 }

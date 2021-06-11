@@ -20,7 +20,8 @@ export interface IValrOrderListSchema {
   createdAt: string
   originalQuantity: string
   filledPercentage: string
-  stopPrice?: string
+  stopPrice?: string // only available for STOP-LOSS_LIMIT and TAKE-PROFIT-LIMIT
+  customerOrderId?: string // only available if it was informed at place order
   updatedAt: string
   status: ValrOrderStatusEnum
   type: ValrOrderTypesEnum
@@ -39,9 +40,11 @@ export interface IValrOrderGetSchema {
   orderSide: ValrSideEnum
   orderType: ValrOrderTypesEnum
   failedReason: string
-  customerOrderId: string
+  stopPrice?: string // only available for STOP-LOSS_LIMIT and TAKE-PROFIT-LIMIT
+  customerOrderId?: string // only available if it was informed at place order
   orderUpdatedAt: string
   orderCreatedAt: string
+  timeInForce: ValrOrderTimeInForceEnum
 }
 
 

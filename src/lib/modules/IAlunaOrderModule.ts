@@ -1,7 +1,7 @@
-import { IAlunaModule } from '../abstracts/IAlunaModule'
-import { AccountEnum } from '../enums/AccountEnum'
-import { OrderTypesEnum } from '../enums/OrderTypeEnum'
-import { SideEnum } from '../enums/SideEnum'
+import { IAlunaModule } from '../core/IAlunaModule'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 
@@ -18,9 +18,9 @@ export interface IAlunaOrderGetParams {
 }
 
 export interface IAlunaOrderPlaceParams {
-  account: AccountEnum
-  type: OrderTypesEnum
-  side: SideEnum
+  account: AlunaAccountEnum
+  type: AlunaOrderTypesEnum
+  side: AlunaSideEnum
   symbolPair: string
   rate: string | number
   amount: string | number

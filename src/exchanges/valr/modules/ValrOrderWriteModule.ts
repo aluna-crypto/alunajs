@@ -1,16 +1,18 @@
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaExchangeOrderTypesSpecsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
+import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
-import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { ValrError } from '../ValrError'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 import { ValrSpecs } from '../ValrSpecs'
@@ -26,7 +28,9 @@ interface IValrPlaceOrderResponse {
 
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
-  async place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema> {
+  public async place (
+    params: IAlunaOrderPlaceParams,
+  ): Promise<IAlunaOrderSchema> {
 
     ValrLog.info(JSON.stringify(params))
 
@@ -39,17 +43,30 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       account,
     } = params
 
-    const {
-      implemented,
-      supported,
-      orderTypes: supportedOrderTypes,
-    } = ValrSpecs.accounts[account]
+    let supported: boolean
+    let implemented: boolean | undefined
+    let supportedOrderTypes: IAlunaExchangeOrderTypesSpecsSchema | undefined
 
+    try {
+
+      ({
+        supported,
+        implemented,
+        orderTypes: supportedOrderTypes,
+      } = ValrSpecs.accounts[account])
+
+    } catch (error) {
+
+      throw new AlunaError({
+        message: `Account type '${account}' is not in Valr specs`,
+      })
+
+    }
 
     if (!supported || !implemented || !supportedOrderTypes) {
 
-      throw new ValrError({
-        message: `Account type ${account} not supported/implemented for Varl`,
+      throw new AlunaError({
+        message: `Account type '${account}' not supported/implemented for Varl`,
       })
 
     }
@@ -58,18 +75,28 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (!orderType || !orderType.implemented || !orderType.supported) {
 
-      throw new ValrError({
-        message: `Order type ${type} not supported/implemented for Varl`,
+      throw new AlunaError({
+        message: `Order type '${type}' not supported/implemented for Varl`,
+      })
+
+    }
+
+    if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
+
+      throw new AlunaError({
+        message: `Order type '${type}' is in read mode`,
       })
 
     }
 
     const body = {
-      side: ValrSideAdapter.translateToValr({ side }),
+      side: ValrSideAdapter.translateToValr({ from: side }),
       pair: symbolPair,
     }
 
-    const translatedOrderType = ValrOrderTypeAdapter.translateToValr({ type })
+    const translatedOrderType = ValrOrderTypeAdapter.translateToValr({
+      from: type,
+    })
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
@@ -77,7 +104,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         quantity: amount,
         price: rate,
         postOnly: false,
-        timeInForce: 'GTC',
+        timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
       })
 
     } else {
@@ -103,12 +130,14 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
 
 
-  async cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema> {
+  public async cancel (
+    params: IAlunaOrderCancelParams,
+  ): Promise<IAlunaOrderSchema> {
 
     ValrLog.info(JSON.stringify(params))
 
     await ValrHttp.privateRequest<void>({
-      verb: HttpVerbEnum.DELETE,
+      verb: AlunaHttpVerbEnum.DELETE,
       url: 'https://api.valr.com/v1/orders/order',
       keySecret: this.exchange.keySecret,
       body: {
@@ -121,14 +150,14 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (ensuredCancelled.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
-      throw new ValrError({
+      throw new AlunaError({
         message: 'Something went wrong, order not canceled',
         statusCode: 500,
       })
 
     }
 
-    return ValrOrderParser.parse({
+    return this.parse({
       rawOrder: ensuredCancelled,
     })
 

@@ -1,23 +1,23 @@
-import { AccountEnum } from '../enums/AccountEnum'
-import { FeaturesModeEnum } from '../enums/FeaturesModeEnum'
-import { OrderTypesEnum } from '../enums/OrderTypeEnum'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaFeaturesModeEnum } from '../enums/AlunaFeaturesModeEnum'
+import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 
 
 
 export interface IAlunaExchangeOrderTypesSpecsSchema {
-  [OrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.STOP_MARKET]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.STOP_LIMIT]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.LIMIT]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.MARKET]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.STOP_MARKET]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.STOP_LIMIT]?: IAlunaExchangeOrderSpecsSchema
 
-  [OrderTypesEnum.TRAILING_STOP]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.TRAILING_STOP]?: IAlunaExchangeOrderSpecsSchema
 
-  [OrderTypesEnum.FILL_OF_KILL]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.IMMEDIATE_OR_CANCEL]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.LIMIT_ORDER_BOOK]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.FILL_OF_KILL]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]?: IAlunaExchangeOrderSpecsSchema
 
-  [OrderTypesEnum.TAKE_PROFIT_LIMIT]?: IAlunaExchangeOrderSpecsSchema
-  [OrderTypesEnum.TAKE_PROFIT_MARKET]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]?: IAlunaExchangeOrderSpecsSchema
+  [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]?: IAlunaExchangeOrderSpecsSchema
 }
 
 export interface IAlunaExchangeAccountSpecsSchema {
@@ -54,20 +54,22 @@ export interface IAlunaExchangeOrderOptionsSchema {
 export interface IAlunaExchangeOrderSpecsSchema {
   supported: boolean // supported by the exchange
   implemented: boolean // implemented by aluna
+  mode: AlunaFeaturesModeEnum
   options: IAlunaExchangeOrderOptionsSchema
 }
 
 export interface IAlunaExchangeSpecsSchema {
+  id: string
   acceptFloatAmounts: boolean
   features: {
-    balance: FeaturesModeEnum,
-    order: FeaturesModeEnum,
-    position?: FeaturesModeEnum,
+    balance: AlunaFeaturesModeEnum,
+    order: AlunaFeaturesModeEnum,
+    position?: AlunaFeaturesModeEnum,
   }
   accounts: {
-    [AccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
-    [AccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
-    [AccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
-    [AccountEnum.LENDING]: IAlunaExchangeAccountSpecsSchema,
+    [AlunaAccountEnum.EXCHANGE]: IAlunaExchangeAccountSpecsSchema,
+    [AlunaAccountEnum.MARGIN]: IAlunaExchangeAccountSpecsSchema,
+    [AlunaAccountEnum.DERIVATIVES]: IAlunaExchangeAccountSpecsSchema,
+    [AlunaAccountEnum.LENDING]: IAlunaExchangeAccountSpecsSchema,
   }
 }

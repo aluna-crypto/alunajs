@@ -1,5 +1,5 @@
-import { AAlunaModule } from '../../../lib/abstracts/AAlunaModule'
-import { HttpVerbEnum } from '../../../lib/enums/HtttpVerbEnum'
+import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
@@ -42,7 +42,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
        * If this goes ok, it means we can read
        */
       await ValrHttp.privateRequest<IValrKeySchema>({
-        verb: HttpVerbEnum.GET,
+        verb: AlunaHttpVerbEnum.GET,
         url: 'https://api.valr.com/v1/orders/open',
         keySecret: this.exchange.keySecret,
       })

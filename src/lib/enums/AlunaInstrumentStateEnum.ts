@@ -1,4 +1,4 @@
-export enum PositionStatusEnum {
+export enum AlunaInstrumentStateEnum {
   OPEN = 'open',
   CLOSED = 'closed',
 }

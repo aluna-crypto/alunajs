@@ -1,4 +1,4 @@
-export enum HttpVerbEnum {
+export enum AlunaHttpVerbEnum {
   GET = 'get',
   POST = 'post',
   PUT = 'put',

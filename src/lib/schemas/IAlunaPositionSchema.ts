@@ -1,6 +1,6 @@
-import { AccountEnum } from '../enums/AccountEnum'
-import { PositionStatusEnum } from '../enums/PositionStatusEnum'
-import { SideEnum } from '../enums/SideEnum'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaPositionStatusEnum } from '../enums/AlunaPositionStatusEnum'
+import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 
 
 
@@ -19,9 +19,9 @@ export interface IAlunaPositionSchema {
   closePrice?: number
   liquidationPrice: number
 
-  account: AccountEnum
-  side: SideEnum
-  status: PositionStatusEnum
+  account: AlunaAccountEnum
+  side: AlunaSideEnum
+  status: AlunaPositionStatusEnum
 
   pnl: number
   pnlPercentage: number
