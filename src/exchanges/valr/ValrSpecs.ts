@@ -12,6 +12,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
   [AlunaOrderTypesEnum.LIMIT]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -20,6 +21,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
   [AlunaOrderTypesEnum.MARKET]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -28,6 +30,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
   [AlunaOrderTypesEnum.STOP_LIMIT]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
     options: {
       rate: 1,
       amount: 1,
@@ -37,6 +40,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
   [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]: {
     supported: true,
     implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
     options: {
       rate: 1,
       amount: 1,
