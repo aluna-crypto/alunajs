@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
@@ -380,6 +381,7 @@ describe('ValrOrderWriteModule', () => {
         limit: {
           supported: false,
           implemented: true,
+          mode: AlunaFeaturesModeEnum.READ,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
       },
@@ -414,6 +416,7 @@ describe('ValrOrderWriteModule', () => {
         limit: {
           supported: false,
           implemented: true,
+          mode: AlunaFeaturesModeEnum.READ,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
       },
@@ -431,6 +434,41 @@ describe('ValrOrderWriteModule', () => {
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
         'Order type limit not supported/implemented for Varl',
+      )
+
+    }
+
+  })
+
+
+
+  it('should ensure given order type has write mode', async () => {
+
+    ImportMock.mockOther(
+      ValrSpecs.accounts.exchange,
+      'orderTypes',
+      {
+        limit: {
+          supported: true,
+          implemented: true,
+          mode: AlunaFeaturesModeEnum.READ,
+          options: {} as IAlunaExchangeOrderOptionsSchema,
+        },
+      },
+    )
+
+    try {
+
+      await valrOrderWriteModule.place({
+        account: AlunaAccountEnum.EXCHANGE,
+        type: AlunaOrderTypesEnum.LIMIT,
+      } as IAlunaOrderPlaceParams)
+
+    } catch (err) {
+
+      expect(err instanceof AlunaError).to.be.true
+      expect(err.message).to.be.eq(
+        'Order type limit is defined only as read mode in Varl specs',
       )
 
     }

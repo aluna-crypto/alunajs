@@ -1,4 +1,5 @@
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
@@ -73,6 +74,14 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
       throw new AlunaError({
         message: `Order type ${type} not supported/implemented for Varl`,
+      })
+
+    }
+
+    if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
+
+      throw new AlunaError({
+        message: `Order type ${type} is defined only as read mode in Varl specs`,
       })
 
     }
