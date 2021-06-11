@@ -62,10 +62,6 @@ export const generateAuthHeader = (
     keySecret, path, verb, body,
   } = params
 
-  ValrLog.info(JSON.stringify({
-    path,
-    verb,
-  }))
 
   const timestamp = Date.now()
 
