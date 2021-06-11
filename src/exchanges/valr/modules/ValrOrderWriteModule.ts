@@ -55,7 +55,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     } catch (error) {
 
       throw new AlunaError({
-        message: `Account type ${account} does not exists in Valr specs`,
+        message: `Account type '${account}' is not in Valr specs`,
       })
 
     }
@@ -63,7 +63,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (!supported || !implemented || !supportedOrderTypes) {
 
       throw new AlunaError({
-        message: `Account type ${account} not supported/implemented for Varl`,
+        message: `Account type '${account}' not supported/implemented for Varl`,
       })
 
     }
@@ -73,7 +73,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (!orderType || !orderType.implemented || !orderType.supported) {
 
       throw new AlunaError({
-        message: `Order type ${type} not supported/implemented for Varl`,
+        message: `Order type '${type}' not supported/implemented for Varl`,
       })
 
     }
@@ -81,7 +81,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
 
       throw new AlunaError({
-        message: `Order type ${type} is defined only as read mode in Varl specs`,
+        message: `Order type '${type}' is in read mode`,
       })
 
     }

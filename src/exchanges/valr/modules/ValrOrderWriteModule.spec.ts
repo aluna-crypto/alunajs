@@ -213,26 +213,25 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure given account is one of AlunaAccountEnum', async () => {
 
-    const nonexistentAcc = 'nonexistent'
-
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
       {},
     )
 
+    const account = 'nonexistent'
 
     try {
 
       await valrOrderWriteModule.place({
-        account: nonexistentAcc,
+        account,
       } as unknown as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        `Account type ${nonexistentAcc} does not exists in Valr specs`,
+        `Account type '${account}' is not in Valr specs`,
       )
 
     }
@@ -254,17 +253,19 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const account = AlunaAccountEnum.EXCHANGE
+
     try {
 
       await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
+        account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Account type exchange not supported/implemented for Varl',
+        `Account type '${account}' not supported/implemented for Varl`,
       )
 
     }
@@ -286,17 +287,19 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const account = AlunaAccountEnum.EXCHANGE
+
     try {
 
       await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
+        account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Account type exchange not supported/implemented for Varl',
+        `Account type '${account}' not supported/implemented for Varl`,
       )
 
     }
@@ -319,17 +322,19 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const account = AlunaAccountEnum.EXCHANGE
+
     try {
 
       await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
+        account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Account type exchange not supported/implemented for Varl',
+        `Account type '${account}' not supported/implemented for Varl`,
       )
 
     }
@@ -344,26 +349,29 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs.accounts.exchange,
       'orderTypes',
       {
-        ['fake-type' as AlunaOrderTypesEnum]: {
+        [AlunaOrderTypesEnum.LIMIT]: {
           supported: true,
           implemented: true,
+          mode: AlunaFeaturesModeEnum.WRITE,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
       },
     )
 
+    const type = 'unsupported-type'
+
     try {
 
       await valrOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
-        type: AlunaOrderTypesEnum.LIMIT,
+        type: type as AlunaOrderTypesEnum,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Order type limit not supported/implemented for Varl',
+        `Order type '${type}' not supported/implemented for Varl`,
       )
 
     }
@@ -378,7 +386,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs.accounts.exchange,
       'orderTypes',
       {
-        limit: {
+        [AlunaOrderTypesEnum.LIMIT]: {
           supported: false,
           implemented: true,
           mode: AlunaFeaturesModeEnum.READ,
@@ -387,18 +395,20 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const type = AlunaOrderTypesEnum.LIMIT
+
     try {
 
       await valrOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
-        type: AlunaOrderTypesEnum.LIMIT,
+        type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Order type limit not supported/implemented for Varl',
+        `Order type '${type}' not supported/implemented for Varl`,
       )
 
     }
@@ -413,7 +423,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs.accounts.exchange,
       'orderTypes',
       {
-        limit: {
+        [AlunaOrderTypesEnum.LIMIT]: {
           supported: false,
           implemented: true,
           mode: AlunaFeaturesModeEnum.READ,
@@ -422,18 +432,20 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const type = AlunaOrderTypesEnum.LIMIT
+
     try {
 
       await valrOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
-        type: AlunaOrderTypesEnum.LIMIT,
+        type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Order type limit not supported/implemented for Varl',
+        `Order type '${type}' not supported/implemented for Varl`,
       )
 
     }
@@ -448,7 +460,7 @@ describe('ValrOrderWriteModule', () => {
       ValrSpecs.accounts.exchange,
       'orderTypes',
       {
-        limit: {
+        [AlunaOrderTypesEnum.LIMIT]: {
           supported: true,
           implemented: true,
           mode: AlunaFeaturesModeEnum.READ,
@@ -457,18 +469,20 @@ describe('ValrOrderWriteModule', () => {
       },
     )
 
+    const type = AlunaOrderTypesEnum.LIMIT
+
     try {
 
       await valrOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
-        type: AlunaOrderTypesEnum.LIMIT,
+        type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.true
       expect(err.message).to.be.eq(
-        'Order type limit is defined only as read mode in Varl specs',
+        `Order type '${type}' is in read mode`,
       )
 
     }
