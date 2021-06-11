@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
@@ -28,24 +28,25 @@ interface IValrSignedHeaders {
 
 
 
-export const formatRequestError = (params: { error: any }): AlunaError => {
+export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  const {
-    response,
-  } = params.error
+  const errorMsg = 'Error while trying to execute Axios request'
 
-  if (response && response.data && response.data.message) {
+  if ((param as AxiosError).isAxiosError) {
+
+    const {
+      response,
+    } = param as AxiosError
 
     return new AlunaError({
-      message: response.data.message,
-      statusCode: response.status,
+      message: response?.data?.message || errorMsg,
+      statusCode: response?.status,
     })
 
   }
 
   return new AlunaError({
-    message: params.error.message,
-    statusCode: params.error.response?.status || 400,
+    message: param.message || errorMsg,
   })
 
 }
@@ -104,7 +105,7 @@ export const ValrHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw formatRequestError({ error })
+      throw handleRequestError(error)
 
     }
 
@@ -143,7 +144,7 @@ export const ValrHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw formatRequestError({ error })
+      throw handleRequestError(error)
 
     }
 
