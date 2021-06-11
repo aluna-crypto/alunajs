@@ -1,5 +1,6 @@
 import { IAlunaExchange } from './lib/core/IAlunaExchange'
 import { Exchanges } from './lib/Exchanges'
+import { Log } from './lib/Log'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
@@ -24,6 +25,11 @@ export class Aluna extends Exchanges {
       keySecret,
       settings,
     } = params
+
+    Log.info(JSON.stringify({
+      exchangeId,
+      settings,
+    }, null, 0))
 
     const subParams = {
       keySecret,

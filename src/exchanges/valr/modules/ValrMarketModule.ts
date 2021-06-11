@@ -5,6 +5,7 @@ import { IValrMarketSchema } from '../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 
 
 
@@ -40,6 +41,8 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketSchema[]> {
 
+    ValrLog.info()
+
     return ValrMarketModule.parseMany({
       rawMarkets: await ValrMarketModule.listRaw(),
     })
@@ -50,6 +53,8 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     rawMarket: IMarketWithCurrency,
   }): IAlunaMarketSchema {
 
+    ValrLog.info()
+
     return ValrMarketParser.parse(params)
 
   }
@@ -57,6 +62,8 @@ export const ValrMarketModule: IAlunaMarketModule = class {
   public static parseMany (params: {
     rawMarkets: IMarketWithCurrency[],
   }): IAlunaMarketSchema[] {
+
+    ValrLog.info()
 
     return params.rawMarkets.map((rawMarket) => ValrMarketModule.parse({
       rawMarket,

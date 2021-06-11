@@ -14,6 +14,7 @@ import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 import { ValrSpecs } from '../ValrSpecs'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 
@@ -30,6 +31,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
+    ValrLog.info(JSON.stringify(params))
 
     const {
       amount,
@@ -130,6 +133,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
   public async cancel (
     params: IAlunaOrderCancelParams,
   ): Promise<IAlunaOrderSchema> {
+
+    ValrLog.info(JSON.stringify(params))
 
     await ValrHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
