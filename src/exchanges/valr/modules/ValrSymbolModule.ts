@@ -20,7 +20,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
   public static listRaw (): Promise<IValrSymbolSchema[]> {
 
-    ValrLog.info()
+    ValrLog.info('fetching Valr symbols')
 
     return ValrHttp.publicRequest<IValrSymbolSchema[]>({
       url: 'https://api.valr.com/v1/public/currencies',
@@ -41,11 +41,6 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
       },
     } = params
 
-    ValrLog.info(JSON.stringify({
-      longName,
-      shortName,
-    }))
-
     return {
       id: shortName,
       name: longName,
@@ -63,13 +58,13 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
       rawSymbols,
     } = params
 
-    ValrLog.info(JSON.stringify({
-      rawSymbolsNum: rawSymbols.length,
-    }))
-
-    return rawSymbols.map((rawSymbol) => ValrSymbolModule.parse({
+    const parsedSymbols = rawSymbols.map((rawSymbol) => ValrSymbolModule.parse({
       rawSymbol,
     }))
+
+    ValrLog.info(`parsed ${parsedSymbols.length} symbols for Valr`)
+
+    return parsedSymbols
 
   }
 

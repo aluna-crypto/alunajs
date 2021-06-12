@@ -22,9 +22,13 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
     const { publicRequest } = ValrHttp
 
+    ValrLog.info('fetching Valr markets')
+
     const rawMarkets = await publicRequest<IValrMarketSchema[]>({
       url: 'https://api.valr.com/v1/public/marketsummary',
     })
+
+    ValrLog.info('fetching Valr currency pairs')
 
     const rawCurrencyPairs = await publicRequest<IValrCurrencyPairs[]>({
       url: 'https://api.valr.com/v1/public/pairs',
@@ -41,8 +45,6 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketSchema[]> {
 
-    ValrLog.info()
-
     return ValrMarketModule.parseMany({
       rawMarkets: await ValrMarketModule.listRaw(),
     })
@@ -53,8 +55,6 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     rawMarket: IMarketWithCurrency,
   }): IAlunaMarketSchema {
 
-    ValrLog.info()
-
     return ValrMarketParser.parse(params)
 
   }
@@ -63,11 +63,15 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     rawMarkets: IMarketWithCurrency[],
   }): IAlunaMarketSchema[] {
 
-    ValrLog.info()
+    const parsedMarkets = params.rawMarkets.map(
+      (rawMarket) => ValrMarketModule.parse({
+        rawMarket,
+      }),
+    )
 
-    return params.rawMarkets.map((rawMarket) => ValrMarketModule.parse({
-      rawMarket,
-    }))
+    ValrLog.info(`parsed ${parsedMarkets.length} markets for Valr`)
+
+    return parsedMarkets
 
   }
 

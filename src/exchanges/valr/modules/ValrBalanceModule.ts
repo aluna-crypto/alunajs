@@ -13,7 +13,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
   public async listRaw (): Promise<IValrBalanceSchema[]> {
 
-    ValrLog.info()
+    ValrLog.info('fetching Valr balances')
 
     const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
@@ -29,10 +29,11 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
   public async list (): Promise<IAlunaBalanceSchema[]> {
 
-    ValrLog.info()
-
     const rawBalances = await this.listRaw()
+
     const parsedBalances = this.parseMany({ rawBalances })
+
+    ValrLog.info(`parsed ${parsedBalances.length} balances for Valr`)
 
     return parsedBalances
 
@@ -47,8 +48,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     const {
       rawBalance,
     } = params
-
-    ValrLog.info(JSON.stringify({ currency: rawBalance.currency }))
 
     return {
       symbolId: rawBalance.currency,
@@ -68,8 +67,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     const {
       rawBalances,
     } = params
-
-    ValrLog.info(JSON.stringify({ rawBalancesNum: rawBalances.length }))
 
     const parsedBalances = rawBalances.reduce((cumulator, current) => {
 

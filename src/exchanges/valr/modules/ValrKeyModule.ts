@@ -16,11 +16,15 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public async validate (): Promise<boolean> {
 
-    ValrLog.info()
+    ValrLog.info('trying to validate Valr key')
 
-    const alunaPermissions = await this.getPermissions()
+    const { read } = await this.getPermissions()
 
-    return alunaPermissions.read
+    const isValid = read
+
+    ValrLog.info(`Valr key is ${isValid ? '' : 'not '}valid`)
+
+    return isValid
 
   }
 
@@ -28,7 +32,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
 
-    ValrLog.info()
+    ValrLog.info('fetching Valr key permissions')
 
     const permissions = {
       read: false,
@@ -86,9 +90,16 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
        * key permissions, and fill the permissions accordingly.
        */
       const canRead = permissions.read
+
       const isRequestInvalid = (message === ValrErrorEnum.INVALID_REQUEST)
 
       permissions.trade = (canRead && isRequestInvalid)
+
+      ValrLog.info(`Valr key has ${canRead ? '' : 'no '}permission to read`)
+
+      ValrLog.info(
+        `Valr key has ${permissions.trade ? '' : 'no '}permission to trade`,
+      )
 
     }
 
@@ -105,8 +116,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
   public parsePermissions (params: {
     rawKey: IValrKeySchema,
   }): IAlunaKeyPermissionSchema {
-
-    ValrLog.info()
 
     const {
       rawKey,

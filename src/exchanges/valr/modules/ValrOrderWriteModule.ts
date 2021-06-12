@@ -32,8 +32,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
 
-    ValrLog.info(JSON.stringify(params))
-
     const {
       amount,
       rate,
@@ -115,6 +113,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
+    ValrLog.info('placing new order for valr')
+
     const { id } = await ValrHttp.privateRequest<IValrPlaceOrderResponse>({
       url: `https://api.valr.com/v1/orders/${translatedOrderType}`,
       body,
@@ -134,7 +134,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     params: IAlunaOrderCancelParams,
   ): Promise<IAlunaOrderSchema> {
 
-    ValrLog.info(JSON.stringify(params))
+    ValrLog.info('canceling order for Valr')
 
     await ValrHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,

@@ -11,12 +11,15 @@ import {
 } from '../schemas/IValrOrderSchema'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrHttp } from '../ValrHttp'
+import { ValrLog } from '../ValrLog'
 
 
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
   public listRaw (): Promise<IValrOrderListSchema[]> {
+
+    ValrLog.info('fetching Valr open orders')
 
     return ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
@@ -44,6 +47,8 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
       id,
       symbolPair,
     } = params
+
+    ValrLog.info('fetching Valr order status')
 
     return ValrHttp.privateRequest<IValrOrderGetSchema>({
       verb: AlunaHttpVerbEnum.GET,
@@ -83,11 +88,15 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     rawOrders: IValrOrderListSchema[],
   }): IAlunaOrderSchema[] {
 
-    return params.rawOrders.map((
+    const parsedOrders = params.rawOrders.map((
       rawOrder: IValrOrderListSchema,
     ) => this.parse({
       rawOrder,
     }))
+
+    ValrLog.info(`parsed ${parsedOrders.length} orders for Valr`)
+
+    return parsedOrders
 
   }
 
