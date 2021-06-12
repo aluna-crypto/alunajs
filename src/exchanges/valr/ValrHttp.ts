@@ -10,7 +10,6 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { ValrLog } from './ValrLog'
 
 
 
@@ -93,11 +92,6 @@ export const ValrHttp: IAlunaHttp = class {
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
-    ValrLog.info(JSON.stringify({
-      url,
-      verb,
-    }))
-
     const requestConfig = {
       url,
       method: verb,
@@ -129,11 +123,6 @@ export const ValrHttp: IAlunaHttp = class {
       keySecret,
     } = params
 
-    ValrLog.info(JSON.stringify({
-      url,
-      verb,
-    }))
-
     const signedHash = generateAuthHeader({
       verb,
       path: new URL(url).pathname,
@@ -151,8 +140,6 @@ export const ValrHttp: IAlunaHttp = class {
     try {
 
       const response = await axios.create().request<T>(requestConfig)
-
-      ValrLog.info({ output: response })
 
       return response.data
 
