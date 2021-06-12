@@ -1,3 +1,4 @@
+import { AlunaError } from './lib/core/AlunaError'
 import { IAlunaExchange } from './lib/core/IAlunaExchange'
 import { Exchanges } from './lib/Exchanges'
 import { Log } from './lib/Log'
@@ -42,7 +43,9 @@ export class Aluna extends Exchanges {
         return new Exchanges.Valr(subParams)
 
       default:
-        throw new Error(`Exchange not implemented: ${exchangeId}`)
+        throw new AlunaError({
+          message: `Exchange not implemented: ${exchangeId}`,
+        })
 
     }
 
