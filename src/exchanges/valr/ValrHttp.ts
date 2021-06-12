@@ -10,6 +10,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { ValrLog } from './ValrLog'
 
 
 
@@ -30,6 +31,8 @@ interface IValrSignedHeaders {
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
+  let error: AlunaError
+
   const errorMsg = 'Error while trying to execute Axios request'
 
   if ((param as AxiosError).isAxiosError) {
@@ -38,16 +41,24 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       response,
     } = param as AxiosError
 
-    return new AlunaError({
+    error = new AlunaError({
       message: response?.data?.message || errorMsg,
       statusCode: response?.status,
     })
 
+    ValrLog.error(error)
+
+    return error
+
   }
 
-  return new AlunaError({
+  error = new AlunaError({
     message: param.message || errorMsg,
   })
+
+  ValrLog.error(error)
+
+  return error
 
 }
 
