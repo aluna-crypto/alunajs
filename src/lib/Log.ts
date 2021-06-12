@@ -5,7 +5,7 @@ import { Logger } from 'tslog'
 export const Log = new Logger({
   name: 'aluna',
   maskValuesOfKeys: ['key', 'secret'],
-  minLevel: 'warn',
+  minLevel: 'silly',
 
   // displayDateTime: true,
   // displayLoggerName: true,
