@@ -3,6 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
+import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrMarketModule } from './ValrMarketModule'
@@ -35,7 +36,7 @@ describe('ValrMarketModule', () => {
       .onSecondCall().returns(rawSymbolsPairs)
 
 
-    const rawMarketsWithSymbols = ImportMock.mockFunction(
+    const currencyPairsParseMock = ImportMock.mockFunction(
       ValrCurrencyPairsParser,
       'parse',
       marketsSeeds.rawMarketWithCurrency,
@@ -49,9 +50,14 @@ describe('ValrMarketModule', () => {
     expect(requestMock.args[0]).to.deep.eq([{ url: marketsURL }])
     expect(requestMock.args[1]).to.deep.eq([{ url: symbolPairsURL }])
 
-    expect(rawMarketsWithSymbols.calledOnce).to.be.true
+    expect(currencyPairsParseMock.calledOnce).to.be.true
+    expect(currencyPairsParseMock.calledWith({
+      rawMarkets,
+      rawCurrencyPairs: rawSymbolsPairs,
+    })).to.be.true
 
     expect(response.length).to.eq(3)
+    expect(response).to.deep.eq(currencyPairsParseMock.returnValues[0])
     expect(response[0].currencyPair).to.eq('USDCETH')
     expect(response[1].currencyPair).to.eq('BTCZAR')
     expect(response[2].currencyPair).to.eq('ETHZAR')
@@ -78,8 +84,12 @@ describe('ValrMarketModule', () => {
     expect(listRawMock.callCount).to.eq(1)
 
     expect(parseManyMock.callCount).to.eq(1)
+    expect(parseManyMock.calledWith({
+      rawMarkets: listRawMock.returnValues[0],
+    }))
 
     expect(parsedMarkets.length).to.eq(3)
+    expect(parsedMarkets).to.deep.eq(parseManyMock.returnValues[0])
 
     expect(parsedMarkets[0].pairSymbol).to.eq('USDCETH')
     expect(parsedMarkets[0].baseSymbolId).to.eq('USDC')
@@ -99,13 +109,21 @@ describe('ValrMarketModule', () => {
 
   it('should parse a Valr market just fine', async () => {
 
+    const marketParserMock = ImportMock.mockFunction(
+      ValrMarketParser,
+      'parse',
+      marketsSeeds.parsedMarkets[0],
+    )
+
     const market: IAlunaMarketSchema = valrMarketModule.parse({
       rawMarket: marketsSeeds.rawMarketWithCurrency[0],
     })
 
+    expect(marketParserMock.callCount).to.be.eq(1)
+
     const { ticker } = market
 
-
+    expect(market).to.deep.eq(marketParserMock.returnValues[0])
     expect(market.pairSymbol).to.be.eq('USDCETH')
     expect(market.baseSymbolId).to.be.eq('USDC')
     expect(market.quoteSymbolId).to.be.eq('ETH')
