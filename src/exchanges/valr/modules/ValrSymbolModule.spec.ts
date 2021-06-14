@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSymbolModule } from './ValrSymbolModule'
@@ -9,10 +10,7 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 
 describe('ValrSymbolModule', () => {
 
-  const valrSymbolModule = ValrSymbolModule
-
   const { symbolsSeeds } = VALR_SEEDS
-
 
 
   it('should list Valr raw symbols just fine', async () => {
@@ -23,11 +21,12 @@ describe('ValrSymbolModule', () => {
       symbolsSeeds.rawSymbols,
     )
 
-    const rawSymbols = await valrSymbolModule.listRaw()
+    const rawSymbols = await ValrSymbolModule.listRaw()
 
     expect(requestMock.calledOnce).to.be.ok
 
     expect(rawSymbols.length).to.eq(3)
+    expect(rawSymbols).to.deep.eq(requestMock.returnValues[0])
 
     expect(rawSymbols[0].symbol).to.be.eq('R')
     expect(rawSymbols[0].shortName).to.be.eq('ZAR')
@@ -48,26 +47,29 @@ describe('ValrSymbolModule', () => {
   it('should list Valr parsed symbols just fine', async () => {
 
     const listRawMock = ImportMock.mockFunction(
-      valrSymbolModule,
+      ValrSymbolModule,
       'listRaw',
       'raw-symbols',
     )
 
     const parseManyMock = ImportMock.mockFunction(
-      valrSymbolModule,
+      ValrSymbolModule,
       'parseMany',
       symbolsSeeds.parsedSymbols,
     )
 
 
-    const rawSymbols = await valrSymbolModule.list()
+    const rawSymbols = await ValrSymbolModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
     expect(parseManyMock.callCount).to.eq(1)
-    expect(parseManyMock.args[0]).to.deep.eq([{ rawSymbols: 'raw-symbols' }])
+    expect(parseManyMock.calledWith({
+      rawSymbols: listRawMock.returnValues[0],
+    })).to.be.true
 
     expect(rawSymbols.length).to.eq(3)
+    expect(rawSymbols).to.deep.eq(parseManyMock.returnValues[0])
 
     expect(rawSymbols[0].id).to.be.eq('ZAR')
     expect(rawSymbols[0].name).to.be.eq('Rand')
@@ -84,13 +86,21 @@ describe('ValrSymbolModule', () => {
 
   it('should parse a Valr symbol just fine', async () => {
 
-    const parsedSymbol = valrSymbolModule.parse({
+    const parsedSymbol1 = ValrSymbolModule.parse({
+      rawSymbol: symbolsSeeds.rawSymbols[1],
+    })
+
+    expect(parsedSymbol1).to.be.ok
+    expect(parsedSymbol1.id).to.be.eq('BTC')
+    expect(parsedSymbol1.name).to.be.eq('Bitcoin')
+
+    const parsedSymbol2 = ValrSymbolModule.parse({
       rawSymbol: symbolsSeeds.rawSymbols[2],
     })
 
-    expect(parsedSymbol).to.be.ok
-    expect(parsedSymbol.id).to.be.eq('ETH')
-    expect(parsedSymbol.name).to.be.eq('Ethereum')
+    expect(parsedSymbol2).to.be.ok
+    expect(parsedSymbol2.id).to.be.eq('ETH')
+    expect(parsedSymbol2.name).to.be.eq('Ethereum')
 
   })
 
@@ -98,10 +108,22 @@ describe('ValrSymbolModule', () => {
 
   it('should parse many Valr symbols just fine', async () => {
 
-    const parsedSymbols = valrSymbolModule.parseMany({
-      rawSymbols: symbolsSeeds.rawSymbols,
-    })
+    const parseMock = ImportMock.mockFunction(
+      ValrSymbolModule,
+      'parse',
+    )
 
+    parseMock
+      .onFirstCall()
+      .returns(symbolsSeeds.parsedSymbols[0])
+      .onSecondCall()
+      .returns(symbolsSeeds.parsedSymbols[1])
+      .onThirdCall()
+      .returns(symbolsSeeds.parsedSymbols[2])
+
+    const parsedSymbols = ValrSymbolModule.parseMany({
+      rawSymbols: new Array(3).fill(() => ({}) as IValrSymbolSchema),
+    })
 
     expect(parsedSymbols[0].id).to.be.eq('ZAR')
     expect(parsedSymbols[0].name).to.be.eq('Rand')
