@@ -46,15 +46,13 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       statusCode: response?.status,
     })
 
-    ValrLog.error(error)
+  } else {
 
-    return error
+    error = new AlunaError({
+      message: param.message || errorMsg,
+    })
 
   }
-
-  error = new AlunaError({
-    message: param.message || errorMsg,
-  })
 
   ValrLog.error(error)
 
