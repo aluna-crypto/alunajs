@@ -3,6 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { VALR_SEEDS } from '../test/fixtures'
 import { ValrHttp } from '../ValrHttp'
 import { ValrBalanceModule } from './ValrBalanceModule'
@@ -19,7 +20,7 @@ describe('ValrBalanceModule', () => {
 
   it('should list all Valr raw balances', async () => {
 
-    ImportMock.mockOther(
+    const exchangeMock = ImportMock.mockOther(
       valrBalanceModule,
       'exchange',
       {
@@ -40,8 +41,14 @@ describe('ValrBalanceModule', () => {
     const rawBalances = await valrBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      verb: AlunaHttpVerbEnum.GET,
+      url: 'https://api.valr.com/v1/account/balances',
+      keySecret: exchangeMock.getValue().keySecret,
+    }))
 
     expect(rawBalances.length).to.eq(5)
+    expect(rawBalances).to.deep.eq(requestMock.returnValues[0])
 
     expect(rawBalances[0].currency).to.be.eq('BTC')
     expect(rawBalances[0].total).to.be.eq('0.054511644725')
@@ -82,10 +89,10 @@ describe('ValrBalanceModule', () => {
 
     expect(listRawMock.callCount).to.be.eq(1)
 
-    const listRawReturn = listRawMock.returnValues[0]
-
     expect(parseManyMock.callCount).to.be.eq(1)
-    expect(parseManyMock.calledWith({ rawBalances: listRawReturn })).to.be.true
+    expect(parseManyMock.calledWith({
+      rawBalances: listRawMock.returnValues[0],
+    })).to.be.true
 
     expect(balances).to.deep.eq(parseManyMock.returnValues[0])
 
@@ -104,8 +111,6 @@ describe('ValrBalanceModule', () => {
     const parsedBalance1 = valrBalanceModule.parse({
       rawBalance: balanceSeeds.rawBalances[0],
     })
-
-    expect(parsedBalance1).to.not.be.undefined
 
     expect(parsedBalance1.symbolId).to.be.eq('BTC')
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -126,7 +131,7 @@ describe('ValrBalanceModule', () => {
 
 
 
-  it('should parse multiple Valr raw balances', async () => {
+  it('should parse many Valr raw balances', async () => {
 
     const parseMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
