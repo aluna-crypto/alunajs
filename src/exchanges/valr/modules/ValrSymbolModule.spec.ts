@@ -23,7 +23,7 @@ describe('ValrSymbolModule', () => {
 
     const rawSymbols = await ValrSymbolModule.listRaw()
 
-    expect(requestMock.calledOnce).to.be.ok
+    expect(requestMock.callCount).to.be.eq(1)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(requestMock.returnValues[0])

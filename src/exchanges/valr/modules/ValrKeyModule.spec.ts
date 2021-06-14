@@ -31,14 +31,14 @@ describe('ValrKeyModule', () => {
 
     const invalidKey = await valrKeyModule.validate()
 
-    expect(getPermissionsMock.calledOnce).to.be.true
+    expect(getPermissionsMock.callCount).to.be.eq(1)
     expect(invalidKey).to.be.false
 
 
     const validKey = await valrKeyModule.validate()
 
 
-    expect(getPermissionsMock.calledTwice).to.be.true
+    expect(getPermissionsMock.callCount).to.be.eq(2)
     expect(validKey).to.be.true
 
   })

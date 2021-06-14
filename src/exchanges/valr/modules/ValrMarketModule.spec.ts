@@ -46,11 +46,11 @@ describe('ValrMarketModule', () => {
     const response = await valrMarketModule.listRaw()
 
 
-    expect(requestMock.calledTwice).to.be.true
+    expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.args[0]).to.deep.eq([{ url: marketsURL }])
     expect(requestMock.args[1]).to.deep.eq([{ url: symbolPairsURL }])
 
-    expect(currencyPairsParseMock.calledOnce).to.be.true
+    expect(currencyPairsParseMock.callCount).to.be.eq(1)
     expect(currencyPairsParseMock.calledWith({
       rawMarkets,
       rawCurrencyPairs: rawSymbolsPairs,

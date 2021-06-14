@@ -39,7 +39,7 @@ describe('ValrBalanceModule', () => {
 
     const rawBalances = await valrBalanceModule.listRaw()
 
-    expect(requestMock.calledOnce).to.be.true
+    expect(requestMock.callCount).to.be.eq(1)
 
     expect(rawBalances.length).to.eq(5)
 
@@ -80,11 +80,11 @@ describe('ValrBalanceModule', () => {
     const balances = await valrBalanceModule.list()
 
 
-    expect(listRawMock.calledOnce).to.be.true
+    expect(listRawMock.callCount).to.be.eq(1)
 
     const listRawReturn = listRawMock.returnValues[0]
 
-    expect(parseManyMock.calledOnce).to.be.true
+    expect(parseManyMock.callCount).to.be.eq(1)
     expect(parseManyMock.calledWith({ rawBalances: listRawReturn })).to.be.true
 
     expect(balances).to.deep.eq(parseManyMock.returnValues[0])
