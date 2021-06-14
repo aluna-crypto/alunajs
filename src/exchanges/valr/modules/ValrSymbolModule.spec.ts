@@ -66,7 +66,7 @@ describe('ValrSymbolModule', () => {
     expect(parseManyMock.callCount).to.eq(1)
     expect(parseManyMock.calledWith({
       rawSymbols: listRawMock.returnValues[0],
-    })).to.be.true
+    })).to.be.ok
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(parseManyMock.returnValues[0])

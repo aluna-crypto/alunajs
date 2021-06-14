@@ -27,7 +27,7 @@ describe('AAlunaExchange', () => {
       settings,
     })
 
-    expect(exchange1 instanceof AAlunaExchange).to.be.true
+    expect(exchange1 instanceof AAlunaExchange).to.be.ok
     expect(exchange1.keySecret.key).to.be.eq(keySecret.key)
     expect(exchange1.keySecret.secret).to.be.eq(keySecret.secret)
     expect(exchange1.settings).to.be.ok
@@ -39,7 +39,7 @@ describe('AAlunaExchange', () => {
       settings: {},
     })
 
-    expect(exchange2 instanceof AAlunaExchange).to.be.true
+    expect(exchange2 instanceof AAlunaExchange).to.be.ok
     expect(exchange2.keySecret).to.be.ok
     expect(exchange2.settings).to.be.ok
     expect(exchange2.settings?.referralCode).to.be.undefined
@@ -49,7 +49,7 @@ describe('AAlunaExchange', () => {
       keySecret,
     })
 
-    expect(exchange3 instanceof AAlunaExchange).to.be.true
+    expect(exchange3 instanceof AAlunaExchange).to.be.ok
     expect(exchange3.keySecret).to.be.ok
     expect(exchange3.settings).to.be.undefined
 

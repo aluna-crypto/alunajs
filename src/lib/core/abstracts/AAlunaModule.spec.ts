@@ -20,7 +20,7 @@ describe('AAlunaModule', () => {
       exchange,
     })
 
-    expect(module instanceof AAlunaModule).to.be.true
+    expect(module instanceof AAlunaModule).to.be.ok
     expect(module.exchange).to.be.ok
 
   })

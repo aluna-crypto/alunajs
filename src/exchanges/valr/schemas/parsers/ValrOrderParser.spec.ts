@@ -41,7 +41,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.symbolPair).to.be.eq(rawOrder1.currencyPair)
     expect(parsedOrder1.total).to.be.eq(rawOriginalQuantity1 * rawPrice1)
     expect(parsedOrder1.amount).to.be.eq(rawOriginalQuantity1)
-    expect(parsedOrder1.isAmountInContracts).to.be.false
+    expect(parsedOrder1.isAmountInContracts).not.to.be.ok
     expect(parsedOrder1.rate).to.be.eq(rawPrice1)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
@@ -69,7 +69,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.symbolPair).to.be.eq(rawOrder2.currencyPair)
     expect(parsedOrder2.total).to.be.eq(rawOriginalQuantity2 * rawPrice2)
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
-    expect(parsedOrder2.isAmountInContracts).to.be.false
+    expect(parsedOrder2.isAmountInContracts).not.to.be.ok
     expect(parsedOrder2.rate).to.be.eq(rawPrice2)
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 

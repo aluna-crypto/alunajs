@@ -32,14 +32,14 @@ describe('ValrKeyModule', () => {
     const invalidKey = await valrKeyModule.validate()
 
     expect(getPermissionsMock.callCount).to.be.eq(1)
-    expect(invalidKey).to.be.false
+    expect(invalidKey).not.to.be.ok
 
 
     const validKey = await valrKeyModule.validate()
 
 
     expect(getPermissionsMock.callCount).to.be.eq(2)
-    expect(validKey).to.be.true
+    expect(validKey).to.be.ok
 
   })
 
@@ -74,8 +74,8 @@ describe('ValrKeyModule', () => {
 
     const permissions1 = await valrKeyModule.getPermissions()
 
-    expect(permissions1.read).to.be.false
-    expect(permissions1.trade).to.be.false
+    expect(permissions1.read).not.to.be.ok
+    expect(permissions1.trade).not.to.be.ok
     expect(permissions1.withdraw).to.be.undefined
 
 
@@ -97,8 +97,8 @@ describe('ValrKeyModule', () => {
     const permissions2 = await valrKeyModule.getPermissions()
 
 
-    expect(permissions2.read).to.be.true
-    expect(permissions2.trade).to.be.false
+    expect(permissions2.read).to.be.ok
+    expect(permissions2.trade).not.to.be.ok
     expect(permissions2.withdraw).to.be.undefined
 
 
@@ -119,8 +119,8 @@ describe('ValrKeyModule', () => {
     const permissions3 = await valrKeyModule.getPermissions()
 
 
-    expect(permissions3.read).to.be.true
-    expect(permissions3.trade).to.be.true
+    expect(permissions3.read).to.be.ok
+    expect(permissions3.trade).to.be.ok
     expect(permissions3.withdraw).to.be.undefined
 
   })

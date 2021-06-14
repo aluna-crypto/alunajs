@@ -48,7 +48,7 @@ describe('ValrStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message)
         .to.be.eq(`Order status not supported: ${notSupported}`)
 
@@ -86,7 +86,7 @@ describe('ValrStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message)
         .to.be.eq(`Order status not supported: ${notSupported}`)
 

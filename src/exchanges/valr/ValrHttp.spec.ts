@@ -167,7 +167,7 @@ describe('ValrHttp', () => {
       path: new URL(dummyUrl).pathname,
       body: dummyBody,
       keySecret: {},
-    })).to.be.true
+    })).to.be.ok
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -271,7 +271,7 @@ describe('ValrHttp', () => {
 
     const error1 = ValrHttp.handleRequestError(axiosError1 as AxiosError)
 
-    expect(error1 instanceof AlunaError).to.be.true
+    expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
     expect(error1.statusCode).to.be.eq(400)
 
@@ -286,7 +286,7 @@ describe('ValrHttp', () => {
 
     const error2 = ValrHttp.handleRequestError(axiosError2 as AxiosError)
 
-    expect(error2 instanceof AlunaError).to.be.true
+    expect(error2 instanceof AlunaError).to.be.ok
     expect(
       error2.message,
     ).to.be.eq('Error while trying to execute Axios request')
@@ -299,7 +299,7 @@ describe('ValrHttp', () => {
 
     const error3 = ValrHttp.handleRequestError(axiosError3 as AxiosError)
 
-    expect(error3 instanceof AlunaError).to.be.true
+    expect(error3 instanceof AlunaError).to.be.ok
     expect(
       error3.message,
     ).to.be.eq('Error while trying to execute Axios request')
@@ -312,7 +312,7 @@ describe('ValrHttp', () => {
 
     const error4 = ValrHttp.handleRequestError(error as Error)
 
-    expect(error4 instanceof AlunaError).to.be.true
+    expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
     expect(error4.statusCode).to.be.eq(400)
 
@@ -321,7 +321,7 @@ describe('ValrHttp', () => {
 
     const error5 = ValrHttp.handleRequestError(unknown as any)
 
-    expect(error5 instanceof AlunaError).to.be.true
+    expect(error5 instanceof AlunaError).to.be.ok
     expect(
       error5.message,
     ).to.be.eq('Error while trying to execute Axios request')
@@ -374,19 +374,19 @@ describe('ValrHttp', () => {
     expect(dateMock.callCount).to.be.eq(1)
 
     expect(createHmacSpy.callCount).to.be.eq(1)
-    expect(createHmacSpy.calledWith('sha512', keySecret.secret)).to.be.true
+    expect(createHmacSpy.calledWith('sha512', keySecret.secret)).to.be.ok
 
     expect(updateSpy.callCount).to.be.eq(4)
-    expect(updateSpy.calledWith(currentDate)).to.be.true
-    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.true
-    expect(updateSpy.calledWith(path)).to.be.true
-    expect(updateSpy.calledWith(stringifyBody)).to.be.true
+    expect(updateSpy.calledWith(currentDate)).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(stringifyBody)).to.be.ok
 
     expect(stringfyMock.callCount).to.be.eq(1)
-    expect(stringfyMock.calledWith(body)).to.be.true
+    expect(stringfyMock.calledWith(body)).to.be.ok
 
     expect(digestSpy.callCount).to.be.eq(1)
-    expect(digestSpy.calledWith('hex')).to.be.true
+    expect(digestSpy.calledWith('hex')).to.be.ok
 
     expect(signedHash['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
     expect(signedHash['X-VALR-SIGNATURE']).to.deep.eq(digestSpy.returnValues[0])
@@ -406,7 +406,7 @@ describe('ValrHttp', () => {
 
     // when no body is passed must not call stringfy on empty string
     expect(stringfyMock.callCount).to.be.eq(1)
-    expect(stringfyMock.calledWith('')).to.not.be.true
+    expect(stringfyMock.calledWith('')).not.to.be.ok
 
     expect(updateSpy.callCount).to.be.eq(8)
 

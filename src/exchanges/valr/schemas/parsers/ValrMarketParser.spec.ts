@@ -56,12 +56,12 @@ describe('ValrMarketParser', () => {
     expect(baseVolume).to.be.eq(parseFloat(rawMarket.baseVolume))
     expect(date).to.be.ok
 
-    expect(spotEnabled).to.not.be.ok
-    expect(marginEnabled).to.not.be.ok
-    expect(derivativesEnabled).to.not.be.ok
-    expect(instrument).to.not.be.ok
-    expect(leverageEnabled).to.not.be.ok
-    expect(maxLeverage).to.not.be.ok
+    expect(spotEnabled).not.to.be.ok
+    expect(marginEnabled).not.to.be.ok
+    expect(derivativesEnabled).not.to.be.ok
+    expect(instrument).not.to.be.ok
+    expect(leverageEnabled).not.to.be.ok
+    expect(maxLeverage).not.to.be.ok
 
   })
 

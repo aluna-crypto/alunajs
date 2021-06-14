@@ -85,14 +85,14 @@ describe('ValrOrderWriteModule', () => {
       url: 'https://api.valr.com/v1/orders/limit',
       body: requestBody,
       keySecret,
-    })).to.be.true
+    })).to.be.ok
 
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.calledWith({
       id: placedOrderId,
       symbolPair: placeOrderParams.symbolPair,
-    })).to.be.true
+    })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
 
@@ -112,13 +112,13 @@ describe('ValrOrderWriteModule', () => {
         side: ValrSideEnum.SELL,
       },
       keySecret,
-    })).to.be.true
+    })).to.be.ok
 
     expect(getMock.callCount).to.be.eq(2)
     expect(getMock.calledWith({
       id: placedOrderId,
       symbolPair: placeOrderParams.symbolPair,
-    })).to.be.true
+    })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(getMock.returnValues[1])
 
@@ -171,13 +171,13 @@ describe('ValrOrderWriteModule', () => {
       url: 'https://api.valr.com/v1/orders/market',
       body: requestBody,
       keySecret,
-    })).to.be.true
+    })).to.be.ok
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.calledWith({
       id: placedOrderId,
       symbolPair: placeOrderParams.symbolPair,
-    })).to.be.true
+    })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
 
@@ -197,13 +197,13 @@ describe('ValrOrderWriteModule', () => {
         side: ValrSideEnum.SELL,
       },
       keySecret,
-    })).to.be.true
+    })).to.be.ok
 
     expect(getMock.callCount).to.be.eq(2)
     expect(getMock.calledWith({
       id: placedOrderId,
       symbolPair: placeOrderParams.symbolPair,
-    })).to.be.true
+    })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(getMock.returnValues[1])
 
@@ -229,7 +229,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Account type '${account}' is not in Valr specs`,
       )
@@ -263,7 +263,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Account type '${account}' not supported/implemented for Varl`,
       )
@@ -297,7 +297,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Account type '${account}' not supported/implemented for Varl`,
       )
@@ -332,7 +332,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Account type '${account}' not supported/implemented for Varl`,
       )
@@ -369,7 +369,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Order type '${type}' not supported/implemented for Varl`,
       )
@@ -406,7 +406,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Order type '${type}' not supported/implemented for Varl`,
       )
@@ -443,7 +443,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Order type '${type}' not supported/implemented for Varl`,
       )
@@ -480,7 +480,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
         `Order type '${type}' is in read mode`,
       )
@@ -532,12 +532,12 @@ describe('ValrOrderWriteModule', () => {
           orderId: cancelParams.id,
           pair: cancelParams.symbolPair,
         },
-      })).to.be.true
+      })).to.be.ok
 
       expect(getRawMock.callCount).to.be.eq(1)
-      expect(getRawMock.calledWith(cancelParams)).to.be.true
+      expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
-      expect(error instanceof AlunaError).to.be.true
+      expect(error instanceof AlunaError).to.be.ok
       expect(error.message).to.be.eq('Something went wrong, order not canceled')
       expect(error.statusCode).to.be.eq(500)
 
@@ -597,7 +597,7 @@ describe('ValrOrderWriteModule', () => {
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
       rawOrder: getRawMock.returnValues[0],
-    })).to.be.true
+    })).to.be.ok
 
     expect(canceledOrder).to.be.ok
     expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])

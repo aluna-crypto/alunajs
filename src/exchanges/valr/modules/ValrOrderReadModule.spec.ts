@@ -172,10 +172,10 @@ describe('ValrOrderReadModule', () => {
     const parsedOrder = await valrOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
-    expect(rawOrderMock.calledWith(params)).to.be.true
+    expect(rawOrderMock.calledWith(params)).to.be.ok
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder: 'rawOrder' })).to.be.true
+    expect(parseMock.calledWith({ rawOrder: 'rawOrder' })).to.be.ok
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
@@ -204,7 +204,7 @@ describe('ValrOrderReadModule', () => {
 
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.true
+    expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.ok
 
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.total).to.be.ok
@@ -212,7 +212,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.rate).to.be.ok
     expect(parsedOrder1.placedAt).to.be.ok
 
-    expect(parsedOrder1.isAmountInContracts).to.be.false
+    expect(parsedOrder1.isAmountInContracts).not.to.be.ok
 
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -224,7 +224,7 @@ describe('ValrOrderReadModule', () => {
 
 
     expect(parseMock.callCount).to.be.eq(2)
-    expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.true
+    expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.ok
 
     expect(parsedOrder2.symbolPair).to.be.ok
     expect(parsedOrder2.total).to.be.ok
@@ -232,7 +232,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder2.rate).to.be.ok
     expect(parsedOrder2.placedAt).to.be.ok
 
-    expect(parsedOrder2.isAmountInContracts).to.be.false
+    expect(parsedOrder2.isAmountInContracts).not.to.be.ok
 
     expect(parsedOrder2.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -269,7 +269,7 @@ describe('ValrOrderReadModule', () => {
     const rawOrdersArgs = rawOrders.map((rawOrder) => ([{ rawOrder }]))
     expect(parseMock.callCount).to.be.eq(4)
     expect(parseMock.args).to.deep.eq(rawOrdersArgs)
-    expect(parseMock.returned(parsedOrders[0])).to.be.true
+    expect(parseMock.returned(parsedOrders[0])).to.be.ok
 
     expect(parsedManyResp.length).to.be.eq(4)
 

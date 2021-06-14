@@ -48,7 +48,7 @@ describe('ValrOrderTypeAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
@@ -85,7 +85,7 @@ describe('ValrOrderTypeAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.true
+      expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
 
     }

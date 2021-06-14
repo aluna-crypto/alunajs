@@ -54,7 +54,7 @@ describe('ValrMarketModule', () => {
     expect(currencyPairsParseMock.calledWith({
       rawMarkets,
       rawCurrencyPairs: rawSymbolsPairs,
-    })).to.be.true
+    })).to.be.ok
 
     expect(response.length).to.eq(3)
     expect(response).to.deep.eq(currencyPairsParseMock.returnValues[0])
@@ -138,9 +138,9 @@ describe('ValrMarketModule', () => {
     expect(ticker.baseVolume).to.be.eq(0)
     expect(ticker.quoteVolume).to.be.eq(0)
 
-    expect(market.spotEnabled).to.be.false
-    expect(market.marginEnabled).to.be.false
-    expect(market.derivativesEnabled).to.be.false
+    expect(market.spotEnabled).not.to.be.ok
+    expect(market.marginEnabled).not.to.be.ok
+    expect(market.derivativesEnabled).not.to.be.ok
 
   })
 
