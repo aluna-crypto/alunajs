@@ -45,7 +45,7 @@ describe('ValrBalanceModule', () => {
       verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: exchangeMock.getValue().keySecret,
-    }))
+    })).to.be.true
 
     expect(rawBalances.length).to.eq(5)
     expect(rawBalances).to.deep.eq(requestMock.returnValues[0])
