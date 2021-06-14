@@ -53,37 +53,43 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         orderTypes: supportedOrderTypes,
       } = ValrSpecs.accounts[account])
 
+      if (!supported || !implemented || !supportedOrderTypes) {
+
+        throw new AlunaError({
+          message: `Account type '${account}' not supported/implemented for Varl`,
+        })
+
+      }
+
+      const orderType = supportedOrderTypes[type]
+
+      if (!orderType || !orderType.implemented || !orderType.supported) {
+
+        throw new AlunaError({
+          message: `Order type '${type}' not supported/implemented for Varl`,
+        })
+
+      }
+
+      if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
+
+        throw new AlunaError({
+          message: `Order type '${type}' is in read mode`,
+        })
+
+      }
+
     } catch (error) {
 
-      throw new AlunaError({
-        message: `Account type '${account}' is not in Valr specs`,
-      })
+      const err = error instanceof AlunaError
+        ? error
+        : new AlunaError({
+          message: `Account type '${account}' is not in Valr specs`,
+        })
 
-    }
+      ValrLog.error(err)
 
-    if (!supported || !implemented || !supportedOrderTypes) {
-
-      throw new AlunaError({
-        message: `Account type '${account}' not supported/implemented for Varl`,
-      })
-
-    }
-
-    const orderType = supportedOrderTypes[type]
-
-    if (!orderType || !orderType.implemented || !orderType.supported) {
-
-      throw new AlunaError({
-        message: `Order type '${type}' not supported/implemented for Varl`,
-      })
-
-    }
-
-    if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
-
-      throw new AlunaError({
-        message: `Order type '${type}' is in read mode`,
-      })
+      throw err
 
     }
 
@@ -150,10 +156,14 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (ensuredCancelled.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
-      throw new AlunaError({
+      const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
         statusCode: 500,
       })
+
+      ValrLog.error(error)
+
+      throw error
 
     }
 

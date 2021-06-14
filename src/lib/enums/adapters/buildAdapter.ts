@@ -1,3 +1,4 @@
+import { ValrLog } from '../../../exchanges/valr/ValrLog'
 import { AlunaError } from '../../core/AlunaError'
 
 
@@ -28,8 +29,12 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
 
     }
 
-    throw new AlunaError({
+    const error = new AlunaError({
       message: `${errorMessagePrefix} not supported: ${from}`,
     })
+
+    ValrLog.error(error)
+
+    throw error
 
   }

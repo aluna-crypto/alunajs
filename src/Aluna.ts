@@ -42,10 +42,17 @@ export class Aluna extends Exchanges {
       case 'valr':
         return new Exchanges.Valr(subParams)
 
-      default:
-        throw new AlunaError({
+      default: {
+
+        const error = new AlunaError({
           message: `Exchange not implemented: ${exchangeId}`,
         })
+
+        Log.error(error)
+
+        throw error
+
+      }
 
     }
 
