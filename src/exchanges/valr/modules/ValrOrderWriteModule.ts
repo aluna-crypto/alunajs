@@ -87,15 +87,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     } catch (error) {
 
-      const err = error instanceof AlunaError
-        ? error
-        : new AlunaError({
-          message: `Account type '${account}' is not in Valr specs`,
-        })
+      ValrLog.error(error)
 
-      ValrLog.error(err)
-
-      throw err
+      throw error
 
     }
 

@@ -230,7 +230,7 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(
-        `Account type '${account}' is not in Valr specs`,
+        `Account type '${account}' not found`,
       )
 
     }
@@ -347,17 +347,22 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure account orderTypes has given order type', async () => {
 
+    const accountIndex = ValrSpecs.accounts.findIndex(
+      (e) => e.type === AlunaAccountEnum.EXCHANGE,
+    )
+
     ImportMock.mockOther(
-      ValrSpecs.accounts.exchange,
+      ValrSpecs.accounts[accountIndex],
       'orderTypes',
-      {
-        [AlunaOrderTypesEnum.LIMIT]: {
-          supported: true,
+      [
+        {
+          type: AlunaOrderTypesEnum.LIMIT,
+          supported: false,
           implemented: true,
           mode: AlunaFeaturesModeEnum.WRITE,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
-      },
+      ],
     )
 
     const type = 'unsupported-type'
@@ -384,17 +389,22 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure given order type is supported', async () => {
 
+    const accountIndex = ValrSpecs.accounts.findIndex(
+      (e) => e.type === AlunaAccountEnum.EXCHANGE,
+    )
+
     ImportMock.mockOther(
-      ValrSpecs.accounts.exchange,
+      ValrSpecs.accounts[accountIndex],
       'orderTypes',
-      {
-        [AlunaOrderTypesEnum.LIMIT]: {
+      [
+        {
+          type: AlunaOrderTypesEnum.LIMIT,
           supported: false,
           implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
+          mode: AlunaFeaturesModeEnum.WRITE,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
-      },
+      ],
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
@@ -421,17 +431,22 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure given order type is implemented', async () => {
 
+    const accountIndex = ValrSpecs.accounts.findIndex(
+      (e) => e.type === AlunaAccountEnum.EXCHANGE,
+    )
+
     ImportMock.mockOther(
-      ValrSpecs.accounts.exchange,
+      ValrSpecs.accounts[accountIndex],
       'orderTypes',
-      {
-        [AlunaOrderTypesEnum.LIMIT]: {
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
+      [
+        {
+          type: AlunaOrderTypesEnum.LIMIT,
+          supported: true,
+          implemented: false,
+          mode: AlunaFeaturesModeEnum.WRITE,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
-      },
+      ],
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
@@ -458,17 +473,22 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure given order type has write mode', async () => {
 
+    const accountIndex = ValrSpecs.accounts.findIndex(
+      (e) => e.type === AlunaAccountEnum.EXCHANGE,
+    )
+
     ImportMock.mockOther(
-      ValrSpecs.accounts.exchange,
+      ValrSpecs.accounts[accountIndex],
       'orderTypes',
-      {
-        [AlunaOrderTypesEnum.LIMIT]: {
+      [
+        {
+          type: AlunaOrderTypesEnum.LIMIT,
           supported: true,
           implemented: true,
           mode: AlunaFeaturesModeEnum.READ,
           options: {} as IAlunaExchangeOrderOptionsSchema,
         },
-      },
+      ],
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
