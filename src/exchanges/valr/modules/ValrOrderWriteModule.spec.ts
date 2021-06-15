@@ -216,7 +216,7 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
-      {},
+      [],
     )
 
     const account = 'nonexistent'
@@ -245,12 +245,13 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
-      {
-        [AlunaAccountEnum.EXCHANGE]: {
+      [
+        {
+          type: AlunaAccountEnum.EXCHANGE,
           supported: false,
           implemented: true,
         },
-      },
+      ],
     )
 
     const account = AlunaAccountEnum.EXCHANGE
@@ -279,12 +280,13 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
-      {
-        [AlunaAccountEnum.EXCHANGE]: {
+      [
+        {
+          type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: false,
         },
-      },
+      ],
     )
 
     const account = AlunaAccountEnum.EXCHANGE
@@ -313,13 +315,14 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
-      {
-        [AlunaAccountEnum.EXCHANGE]: {
+      [
+        {
+          type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: true,
           // missing orderTypes property
         },
-      },
+      ],
     )
 
     const account = AlunaAccountEnum.EXCHANGE
