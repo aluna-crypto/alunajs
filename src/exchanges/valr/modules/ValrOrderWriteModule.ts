@@ -6,7 +6,6 @@ import {
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderTypesSpecsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
@@ -41,27 +40,34 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       account,
     } = params
 
-    let supported: boolean
-    let implemented: boolean | undefined
-    let supportedOrderTypes: IAlunaExchangeOrderTypesSpecsSchema | undefined
-
     try {
 
-      ({
-        supported,
-        implemented,
-        orderTypes: supportedOrderTypes,
-      } = ValrSpecs.accounts[account])
+      const accountSpecs = ValrSpecs.accounts.find((a) => a.type === account)
 
-      if (!supported || !implemented || !supportedOrderTypes) {
+      if (!accountSpecs) {
 
         throw new AlunaError({
-          message: `Account type '${account}' not supported/implemented for Varl`,
+          message: `Account type '${account}' not found`,
         })
 
       }
 
-      const orderType = supportedOrderTypes[type]
+      const {
+        supported,
+        implemented,
+        orderTypes: supportedOrderTypes,
+      } = accountSpecs
+
+      if (!supported || !implemented || !supportedOrderTypes) {
+
+        throw new AlunaError({
+          message:
+            `Account type '${account}' not supported/implemented for Varl`,
+        })
+
+      }
+
+      const orderType = supportedOrderTypes.find((o) => o.type === type)
 
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
