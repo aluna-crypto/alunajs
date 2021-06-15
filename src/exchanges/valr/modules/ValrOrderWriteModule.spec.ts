@@ -188,7 +188,6 @@ describe('ValrOrderWriteModule', () => {
       side: AlunaSideEnum.SHORT,
     })
 
-
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.calledWith({
       url: 'https://api.valr.com/v1/orders/market',
