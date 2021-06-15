@@ -16,7 +16,7 @@ export abstract class AAlunaExchange {
   }) {
 
     this.keySecret = params.keySecret
-    this.settings = params?.settings
+    this.settings = params.settings
 
   }
 
