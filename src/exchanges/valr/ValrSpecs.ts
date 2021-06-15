@@ -2,14 +2,15 @@ import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import {
-  IAlunaExchangeOrderTypesSpecsSchema,
+  IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSpecsSchema,
 } from '../../lib/schemas/IAlunaExchangeSpecsSchema'
 
 
 
-const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
-  [AlunaOrderTypesEnum.LIMIT]: {
+const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
+  {
+    type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.WRITE,
@@ -18,7 +19,8 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       amount: 1,
     },
   },
-  [AlunaOrderTypesEnum.MARKET]: {
+  {
+    type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.WRITE,
@@ -27,7 +29,8 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       amount: 1,
     },
   },
-  [AlunaOrderTypesEnum.STOP_LIMIT]: {
+  {
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.READ,
@@ -37,7 +40,8 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       limitRate: 1,
     },
   },
-  [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]: {
+  {
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.READ,
@@ -47,7 +51,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderTypesSpecsSchema = {
       limitRate: 1,
     },
   },
-}
+]
 
 export const ValrSpecs: IAlunaExchangeSpecsSchema = {
   id: 'valr',
@@ -56,20 +60,24 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
-  accounts: {
-    [AlunaAccountEnum.EXCHANGE]: {
+  accounts: [
+    {
+      type: AlunaAccountEnum.EXCHANGE,
       supported: true,
       implemented: true,
       orderTypes: exchangeOrderTypes,
     },
-    [AlunaAccountEnum.MARGIN]: {
+    {
+      type: AlunaAccountEnum.MARGIN,
       supported: false,
     },
-    [AlunaAccountEnum.DERIVATIVES]: {
+    {
+      type: AlunaAccountEnum.DERIVATIVES,
       supported: false,
     },
-    [AlunaAccountEnum.LENDING]: {
+    {
+      type: AlunaAccountEnum.LENDING,
       supported: false,
     },
-  },
+  ],
 }
