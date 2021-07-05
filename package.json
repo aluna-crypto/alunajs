@@ -9,6 +9,9 @@
   ],
   "license": "MIT",
   "private": false,
+  "engines": {
+    "node": "14.17.2"
+  },
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
     "test": "jest --coverage=false",
