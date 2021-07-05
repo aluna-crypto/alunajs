@@ -1,89 +1,54 @@
+import { expect } from 'chai'
+
 import { Valr } from './Valr'
 
 
 
-describe('Valr modules', () => {
-
-  const key = ''
-
-  const secret = ''
-
-  const valrInstance = new Valr({
-    keySecret: {
-      key,
-      secret,
-    },
-  })
+describe('Valr', () => {
 
 
+  it('should have all static properties and methods', async () => {
 
-  it.skip('should fetch Valr symbols', async () => {
-
-    const symbols = await Valr.Symbol.list()
-
-    console.log(symbols)
+    expect(Valr.ID).to.eq('valr')
+    expect(Valr.SPECS).to.be.ok
+    expect(Valr.Symbol).to.be.ok
+    expect(Valr.Market).to.be.ok
 
   })
 
 
 
-  it.skip('should fetch Valr markets', async () => {
+  it('should have all instance properties and methods', async () => {
 
-    const markets = await Valr.Market.list()
+    const key = 'asdf'
+    const secret = 'qwer'
+    const referralCode = 'xyz'
 
-    console.log(markets)
+    const valr = new Valr({
+      keySecret: {
+        key,
+        secret,
+      },
+      settings: {
+        referralCode,
+      },
+    })
 
-  })
+    expect(valr.keySecret.key).to.eq(key)
+    expect(valr.keySecret.secret).to.eq(secret)
 
+    expect(valr.settings).to.be.ok
+    expect(valr.settings?.referralCode).to.eq(referralCode)
 
+    expect(valr.key).to.be.ok
+    expect(valr.balance).to.be.ok
+    expect(valr.order).to.be.ok
 
-  it.skip('should fetch Valr key permissions', async () => {
-
-    const permissions = await valrInstance.key.getPermissions()
-
-    console.log(permissions)
-
-  })
-
-
-
-  it.skip('should fetch Valr balance', async () => {
-
-    const balance = await valrInstance.balance.list()
-
-    console.log(balance)
-
-  })
-
-
-
-  it.skip('should fetch Valr open orders', async () => {
-
-    const orders = await valrInstance.order.list()
-
-
-    console.log(orders)
+    // valr doesn't have margin trading
+    expect(valr.position).not.to.be.ok
 
   })
 
-  // it.skip('should place and cancel orders for Valr', async () => {
 
-  //   const placedOrder = await valrInstance.Order.place({
-  //     amount: '',
-  //     rate: '',
-  //     side: '',
-  //     symbolPair: '',
-  //     type: '',
-  //   })
-
-
-  //   console.log(placedOrder)
-
-  //   await valrInstance.Order.cancel({
-  //     id: placedOrder.id,
-  //     symbolPair: placedOrder.symbolPair,
-  //   })
-
-  // })
 
 })
