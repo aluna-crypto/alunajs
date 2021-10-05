@@ -1,8 +1,13 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
+import {
+  IValrKeySchema,
+  ValrApiKeyPermissions,
+} from '../schemas/IValrKeySchema'
 import { ValrHttp } from '../ValrHttp'
 import { ValrKeyModule } from './ValrKeyModule'
 
@@ -13,9 +18,7 @@ describe('ValrKeyModule', () => {
   const valrKeyModule = ValrKeyModule.prototype
 
 
-
-  it('should try to validate user API key', async () => {
-
+  it('should validate user Valr API key just fine', async () => {
 
     const getPermissionsMock = ImportMock.mockFunction(
       valrKeyModule,
@@ -44,7 +47,8 @@ describe('ValrKeyModule', () => {
   })
 
 
-  it('should try to get permissions from Valr API key', async () => {
+
+  it('should get permissions from Valr API key just fine', async () => {
 
     ImportMock.mockOther(
       valrKeyModule,
@@ -57,118 +61,182 @@ describe('ValrKeyModule', () => {
       } as IAlunaExchange,
     )
 
+    const requestResponse: IValrKeySchema = {
+      label: 'Api for aluna',
+      permissions: [],
+      addedAt: '2021-09-11T18:28:37.791401Z',
+    }
+
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
+      requestResponse,
     )
-
-    requestMock
-      .onCall(0)
-      /**
-       * Rejecting at the first call means it fails fetching open orders.
-       * This means that the API key cannot read. API key no permission to read
-       * or Invalid.
-       */
-      .rejects({ message: ValrErrorEnum.UNAUTHORIZED })
-
 
     const permissions1 = await valrKeyModule.getPermissions()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
-    expect(permissions1.withdraw).to.be.undefined
+    expect(permissions1.withdraw).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(1)
 
 
-    requestMock
-      .onCall(1)
-      /**
-       * Resolves when trying to fetch open orders, it means the API key has
-       * permission to read.
-       */
-      .resolves()
-      .onCall(2)
-      /**
-       * Then rejects with UNAUTHORIZED message when trying to place an order.
-       * It means the API key has no permission to trade.
-       */
-      .rejects({ message: ValrErrorEnum.UNAUTHORIZED })
-
+    requestResponse.permissions = [ValrApiKeyPermissions.VIEW_ACCESS]
 
     const permissions2 = await valrKeyModule.getPermissions()
 
 
     expect(permissions2.read).to.be.ok
     expect(permissions2.trade).not.to.be.ok
-    expect(permissions2.withdraw).to.be.undefined
+    expect(permissions2.withdraw).not.to.be.ok
 
+    expect(requestMock.callCount).to.be.eq(2)
 
-
-    requestMock
-      .onCall(3)
-      .resolves()
-      .onCall(4)
-      /**
-       * Rejecting with INVALID_REQUEST when trying to place an order means
-       * that Valr server already ensured the API key has permission to place
-       * orders/trade. It throws with an invalid request message because the
-       * place order params are invalid
-       */
-      .rejects({ message: ValrErrorEnum.INVALID_REQUEST })
-
+    requestResponse.permissions = [
+      ValrApiKeyPermissions.VIEW_ACCESS,
+      ValrApiKeyPermissions.TRADE,
+    ]
 
     const permissions3 = await valrKeyModule.getPermissions()
 
+    requestResponse.permissions = [
+      ValrApiKeyPermissions.VIEW_ACCESS,
+      ValrApiKeyPermissions.TRADE,
+      ValrApiKeyPermissions.WITHDRAW,
+    ]
 
     expect(permissions3.read).to.be.ok
     expect(permissions3.trade).to.be.ok
-    expect(permissions3.withdraw).to.be.undefined
+    expect(permissions3.withdraw).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(3)
 
   })
 
 
 
-  it('should ensure permissions are parsed just fine', async () => {
+  it('should properly inform when api key or secret are wrong', async () => {
 
-    const key1 = {
-      read: false,
-      trade: false,
-      withdraw: undefined,
+    ImportMock.mockOther(
+      valrKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+      Promise.reject(new AlunaError({
+        message: ValrErrorEnum.INVALID_KEY,
+        statusCode: 401,
+      })),
+    )
+
+    let error
+    let result
+
+    try {
+
+      result = await valrKeyModule.getPermissions()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
+
+  })
+
+
+
+  it('should not allow API key with withdraw permission', async () => {
+
+    ImportMock.mockOther(
+      valrKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    const requestResponse: IValrKeySchema = {
+      label: 'Api for aluna',
+      permissions: [ValrApiKeyPermissions.WITHDRAW],
+      addedAt: '2021-09-11T18:28:37.791401Z',
+    }
+
+    ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+      requestResponse,
+    )
+
+    let error
+    let result
+
+    try {
+
+      result = await valrKeyModule.getPermissions()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message)
+      .to.be.eq('API key should not have withdraw permission.')
+
+  })
+
+
+
+  it('should parse Valr permissions just fine', async () => {
+
+    const key: IValrKeySchema = {
+      label: 'Development',
+      permissions: [
+        ValrApiKeyPermissions.VIEW_ACCESS,
+      ],
+      addedAt: '2021-09-11T18:28:37.791401Z',
     }
 
     const perm1 = valrKeyModule.parsePermissions({
-      rawKey: key1,
+      rawKey: key,
     })
 
+    expect(perm1.read).to.be.ok
+    expect(perm1.trade).not.to.be.ok
+    expect(perm1.withdraw).not.to.be.ok
 
-    expect(key1).to.deep.eq(perm1)
 
-
-    const key2 = {
-      read: true,
-      trade: false,
-      withdraw: undefined,
-    }
+    key.permissions = [ValrApiKeyPermissions.TRADE]
 
     const perm2 = valrKeyModule.parsePermissions({
-      rawKey: key2,
+      rawKey: key,
     })
 
 
-    expect(key2).to.deep.eq(perm2)
-
-
-    const key3 = {
-      read: true,
-      trade: true,
-      withdraw: undefined,
-    }
-
-    const perm3 = valrKeyModule.parsePermissions({
-      rawKey: key3,
-    })
-
-
-    expect(key3).to.deep.eq(perm3)
+    expect(perm2.read).not.to.be.ok
+    expect(perm2.trade).to.be.ok
+    expect(perm2.withdraw).not.to.be.ok
 
   })
 

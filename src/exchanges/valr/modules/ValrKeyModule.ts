@@ -1,12 +1,12 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
-import { ValrErrorEnum } from '../enums/ValrErrorEnum'
-import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
-import { ValrSideEnum } from '../enums/ValrSideEnum'
-import { IValrKeySchema } from '../schemas/IValrKeySchema'
-import { IValrOrderListSchema } from '../schemas/IValrOrderSchema'
+import {
+  IValrKeySchema,
+  ValrApiKeyPermissions,
+} from '../schemas/IValrKeySchema'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 
@@ -22,7 +22,19 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const isValid = read
 
-    ValrLog.info(`Valr key is ${isValid ? '' : 'not '}valid`)
+    let logMessage: string
+
+    if (isValid) {
+
+      logMessage = 'Valr API key is valid'
+
+    } else {
+
+      logMessage = 'Valr API key is invalid'
+
+    }
+
+    ValrLog.info(logMessage)
 
     return isValid
 
@@ -34,72 +46,25 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     ValrLog.info('fetching Valr key permissions')
 
-    const permissions = {
-      read: false,
-      trade: false,
-      withraw: undefined,
-    }
+    let permissions: IValrKeySchema
 
     try {
 
-      /**
-       * If this goes ok, it means we can read
-       */
-      await ValrHttp.privateRequest<IValrKeySchema>({
+      const {
+        keySecret,
+      } = this.exchange
+
+      permissions = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
-        url: 'https://api.valr.com/v1/orders/open',
-        keySecret: this.exchange.keySecret,
+        url: 'https://api.valr.com/v1/account/api-keys/current',
+        keySecret,
       })
 
-      permissions.read = true
+    } catch (error) {
 
-      /**
-       * The next request will try to place an order with invalid params, to
-       * cause one of two errors:
-       *
-       *  1) If the error is about permissions, it means the api/key doesn't
-       *     have permissions to write (place orders)
-       *
-       *  2) If the error is about the trade operation, it means the request
-       *     went through, passed the key validation step, and failed on
-       *     the trade operation (which fails because we use invalid params
-       *     on purpose). This means we have permissions to write.
-       *
-       * The catch is that Valr will first verify if the API key has permissions
-       * and only then verify the actual order params. This trick allow us to
-       * findout if the API key has permission to create orders, since Valr
-       * does not provide a request for it.
-       */
-      await ValrHttp.privateRequest<IValrOrderListSchema>({
-        url: 'https://api.valr.com/v1/orders/limit',
-        body: {
-          side: ValrSideEnum.SELL,
-          quantity: '0',
-          price: '0',
-          pair: 'NotACurrencyXX99',
-          postOnly: false,
-          timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
-        },
-        keySecret: this.exchange.keySecret,
-      })
+      ValrLog.error(error.message)
 
-    } catch ({ message }) {
-
-      /**
-       * Now we validate if the error is related to the trade operation or the
-       * key permissions, and fill the permissions accordingly.
-       */
-      const canRead = permissions.read
-
-      const isRequestInvalid = (message === ValrErrorEnum.INVALID_REQUEST)
-
-      permissions.trade = (canRead && isRequestInvalid)
-
-      ValrLog.info(`Valr key has ${canRead ? '' : 'no '}permission to read`)
-
-      ValrLog.info(
-        `Valr key has ${permissions.trade ? '' : 'no '}permission to trade`,
-      )
+      throw error
 
     }
 
@@ -121,7 +86,28 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
-    return rawKey
+    const { permissions } = rawKey
+
+    const read = permissions.includes(ValrApiKeyPermissions.VIEW_ACCESS)
+    const trade = permissions.includes(ValrApiKeyPermissions.TRADE)
+    const withdraw = permissions.includes(ValrApiKeyPermissions.WITHDRAW)
+
+    if (withdraw) {
+
+      throw new AlunaError({
+        message: 'API key should not have withdraw permission.',
+        statusCode: 401,
+      })
+
+    }
+
+    const alunaPermissions: IAlunaKeyPermissionSchema = {
+      read,
+      trade,
+      withdraw: false,
+    }
+
+    return alunaPermissions
 
   }
 
