@@ -160,6 +160,54 @@ describe('ValrKeyModule', () => {
 
 
 
+  it('should not allow API key with withdraw permission', async () => {
+
+    ImportMock.mockOther(
+      valrKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    const requestResponse: IValrKeySchema = {
+      label: 'Api for aluna',
+      permissions: [ValrApiKeyPermissions.WITHDRAW],
+      addedAt: '2021-09-11T18:28:37.791401Z',
+    }
+
+    ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+      requestResponse,
+    )
+
+    let error
+    let result
+
+    try {
+
+      result = await valrKeyModule.getPermissions()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message)
+      .to.be.eq('API key should not have withdraw permission.')
+
+  })
+
+
+
   it('should parse Valr permissions just fine', async () => {
 
     const key: IValrKeySchema = {
@@ -189,21 +237,6 @@ describe('ValrKeyModule', () => {
     expect(perm2.read).not.to.be.ok
     expect(perm2.trade).to.be.ok
     expect(perm2.withdraw).not.to.be.ok
-
-
-    key.permissions = [
-      ValrApiKeyPermissions.VIEW_ACCESS,
-      ValrApiKeyPermissions.WITHDRAW,
-    ]
-
-    const perm3 = valrKeyModule.parsePermissions({
-      rawKey: key,
-    })
-
-
-    expect(perm3.read).to.be.ok
-    expect(perm3.trade).not.to.be.ok
-    expect(perm3.withdraw).to.be.ok
 
   })
 

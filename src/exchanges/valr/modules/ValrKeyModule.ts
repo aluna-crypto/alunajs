@@ -1,4 +1,5 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
@@ -91,10 +92,19 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const trade = permissions.includes(ValrApiKeyPermissions.TRADE)
     const withdraw = permissions.includes(ValrApiKeyPermissions.WITHDRAW)
 
+    if (withdraw) {
+
+      throw new AlunaError({
+        message: 'API key should not have withdraw permission.',
+        statusCode: 401,
+      })
+
+    }
+
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read,
       trade,
-      withdraw,
+      withdraw: false,
     }
 
     return alunaPermissions
