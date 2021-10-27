@@ -7,6 +7,11 @@ module.exports = {
   collectCoverageFrom: [
     "<rootDir>/src/**/*.ts",
   ],
+  coveragePathIgnorePatterns: [
+    'GateIO',
+    'AlunaInstrumentStateEnum',
+    'AlunaPositionStatusEnum',
+  ],
   coverageThreshold: {
     global: {
       branches: 100,
