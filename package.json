@@ -10,7 +10,7 @@
   "license": "MIT",
   "private": false,
   "engines": {
-    "node": "14.17.2"
+    "node": "^14.18"
   },
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
