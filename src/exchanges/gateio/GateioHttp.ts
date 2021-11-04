@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios'
+import axios, { AxiosError } from 'axios'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { GateioLog } from './GateioLog'
 
 
 
@@ -22,11 +23,30 @@ interface ISignedHashParams {
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  // TODO implement me
+  let error: AlunaError
 
   const errorMsg = 'Error while trying to execute Axios request'
 
-  throw new Error('not implemented')
+  if ((param as AxiosError).isAxiosError) {
+
+    const { response } = param as AxiosError
+
+    error = new AlunaError({
+      message: response?.data?.message || errorMsg,
+      statusCode: response?.status,
+    })
+
+  } else {
+
+    error = new AlunaError({
+      message: param.message || errorMsg,
+    })
+
+  }
+
+  GateioLog.error(error)
+
+  return error
 
 }
 
@@ -36,29 +56,29 @@ export const GateioHttp: IAlunaHttp = class {
 
   static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
 
-    // TODO implement me
-
     const {
       url,
       body,
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
-    throw new Error('not implemented')
+    const requestConfig = {
+      url,
+      method: verb,
+      data: body,
+    }
 
-    // TODO implement me
+    try {
 
-    // try {
+      const response = await axios.create().request<T>(requestConfig)
 
-    //   const response = await axios.create().request<T>(requestConfig)
+      return response.data
 
-    //   return response.data
+    } catch (error) {
 
-    // } catch (error) {
+      throw handleRequestError(error)
 
-    //   throw handleRequestError(error)
-
-    // }
+    }
 
   }
 
