@@ -10,10 +10,9 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolSchema[]> {
 
-    // TODO implement me
-
-    throw new Error('not implemented')
-
+    return GateioSymbolModule.parseMany({
+      rawSymbols: await GateioSymbolModule.listRaw(),
+    })
 
   }
 
@@ -35,9 +34,15 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
     rawSymbol: IGateioSymbolSchema,
   }): IAlunaSymbolSchema {
 
-    // TODO implement me
+    const {
+      rawSymbol: {
+        currency,
+      },
+    } = params
 
-    throw new Error('not implemented')
+    return {
+      id: currency,
+    }
 
   }
 
@@ -47,9 +52,19 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
     rawSymbols: IGateioSymbolSchema[],
   }): IAlunaSymbolSchema[] {
 
-    // TODO implement me
+    const {
+      rawSymbols,
+    } = params
 
-    throw new Error('not implemented')
+
+    const parsedSymbols = rawSymbols
+      .map((rawSymbol) => GateioSymbolModule.parse({
+        rawSymbol,
+      }))
+
+    GateioLog.info(`parsed ${parsedSymbols.length} symbols for Gate.io`)
+
+    return parsedSymbols
 
   }
 
