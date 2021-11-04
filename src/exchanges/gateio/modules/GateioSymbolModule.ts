@@ -1,5 +1,6 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { IGateioSymbolSchema } from '../schemas/IGateioSymbolSchema'
 
@@ -20,11 +21,11 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
   public static listRaw (): Promise<IGateioSymbolSchema[]> {
 
-    // TODO implement me
-
     GateioLog.info('fetching Gateio symbols')
 
-    throw new Error('not implemented')
+    return GateioHttp.publicRequest<IGateioSymbolSchema[]>({
+      url: 'https://api.gateio.ws/api/v4/spot/currencies',
+    })
 
   }
 
