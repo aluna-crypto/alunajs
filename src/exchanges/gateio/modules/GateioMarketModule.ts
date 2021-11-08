@@ -3,7 +3,10 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { IGateioCurrencyPairs } from '../schemas/IGateioCurrencyPair'
-import { IGateioMarketSchema } from '../schemas/IGateioMarketSchema'
+import {
+  IGateioMarketSchema,
+  IGateioTickerSchema,
+} from '../schemas/IGateioMarketSchema'
 
 
 
@@ -13,24 +16,34 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     const { publicRequest } = GateioHttp
 
-    GateioLog.info('fetching Gateio markets')
-
-    const rawMarkets = await publicRequest<IGateioMarketSchema[]>({
-      url: 'https://api.gateio.ws/api/v4/spot/currency_pairs',
-    })
-
     GateioLog.info('fetching Gateio currency pairs')
 
     const rawCurrencyPairs = await publicRequest<IGateioCurrencyPairs[]>({
-      url: 'https://api.Gateio.com/v1/public/pairs',
+      url: 'https://api.gateio.ws/api/v4/spot/currency_pairs',
     })
 
-    const rawMarketsWithCurrency = GateioCurrencyPairsParser.parse({
-      rawMarkets,
-      rawCurrencyPairs,
+    GateioLog.info('fetching Gateio tickers')
+
+    const rawTickers = await publicRequest<IGateioTickerSchema[]>({
+      url: 'https://api.gateio.ws/api/v4/spot/tickers',
     })
 
-    return rawMarketsWithCurrency
+    const marketsWithTickers = rawCurrencyPairs.map((currencyPair) => {
+
+      const ticker = rawTickers.filter((ticker) => ticker
+        .currency_pair === currencyPair.id)[0]
+
+      const response: IGateioMarketSchema = {
+        ...currencyPair,
+        ticker,
+      }
+
+      return response
+
+    })
+
+
+    return marketsWithTickers
 
   }
 
@@ -46,7 +59,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
     rawMarket: IGateioMarketSchema,
   }): IAlunaMarketSchema {
 
-    // TODO implement me
+    // TODO: Implement me
 
     throw new Error('not implemented')
 
