@@ -7,6 +7,7 @@ import {
   IGateioMarketSchema,
   IGateioTickerSchema,
 } from '../schemas/IGateioMarketSchema'
+import { GateioMarketParser } from '../schemas/parsers/GateioMarketParser'
 
 
 
@@ -59,9 +60,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
     rawMarket: IGateioMarketSchema,
   }): IAlunaMarketSchema {
 
-    // TODO: Implement me
-
-    throw new Error('not implemented')
+    return GateioMarketParser.parse(params)
 
   }
 
@@ -69,9 +68,6 @@ export const GateioMarketModule: IAlunaMarketModule = class {
     rawMarkets: IGateioMarketSchema[],
   }): IAlunaMarketSchema[] {
 
-    // TODO implement me
-
-    throw new Error('not implemented')
 
     const parsedMarkets = params.rawMarkets.map(
       (rawMarket) => GateioMarketModule.parse({
