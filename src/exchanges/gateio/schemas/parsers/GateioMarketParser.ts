@@ -6,11 +6,11 @@ import { IGateioMarketSchema } from '../IGateioMarketSchema'
 export class GateioMarketParser {
 
   static parse (params: {
-    rawMarketPairs: IGateioMarketSchema,
+    rawMarket: IGateioMarketSchema,
   }): IAlunaMarketSchema {
 
     const {
-      rawMarketPairs: {
+      rawMarket: {
         id,
         base,
         quote,
