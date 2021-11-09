@@ -5,13 +5,13 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import * as GateIOHttp from './GateIOHttp'
+import * as gateIOHttp from './GateIOHttp'
 
 
 
 describe('GateIOHttp', () => {
 
-  const { GateIOHttp: GateIOHttp } = GateIOHttp
+  const { GateIOHttp } = gateIOHttp
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
