@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { GateIOHttp } from '../GateIOHttp'
-import { GateIOMarketParser } from '../schemas/parsers/GateIOMarketParser'
 import { GATEIO_SEEDS } from '../test/fixtures'
 import { GateIOMarketModule } from './GateIOMarketModule'
 
@@ -19,11 +18,12 @@ describe('GateIOMarketModule', () => {
   it('should list GateIO raw markets just fine', async () => {
 
 
-    const { rawMarkets } = marketsSeeds
-    const rawSymbolsPairs = 'rawSymbolsPairs'
+    const {
+      rawMarkets, rawTickers,
+    } = marketsSeeds
 
-    const marketsURL = 'https://api.GateIO.ws/api/v4/spot/'
-    const symbolPairsURL = 'https://api.GateIO.ws/api/v4/spot/'
+    const currencyPairsURL = 'https://api.gateio.ws/api/v4/spot/currency_pairs'
+    const tickersURL = 'https://api.gateio.ws/api/v4/spot/tickers'
 
     const requestMock = ImportMock.mockFunction(
       GateIOHttp,
@@ -32,42 +32,62 @@ describe('GateIOMarketModule', () => {
 
     requestMock
       .onFirstCall().returns(rawMarkets)
-      .onSecondCall().returns(rawSymbolsPairs)
-
-    const currencyPairsParseMock = ImportMock.mockFunction(
-      GateIOMarketParser,
-      'parse',
-      marketsSeeds.rawMarkets,
-    )
-
+      .onSecondCall().returns(rawTickers)
 
     const response = await gateIOMarketModule.listRaw()
 
 
     expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.args[0]).to.deep.eq([{ url: marketsURL }])
-    expect(requestMock.args[1]).to.deep.eq([{ url: symbolPairsURL }])
+    expect(requestMock.args[0]).to.deep.eq([{ url: currencyPairsURL }])
+    expect(requestMock.args[1]).to.deep.eq([{ url: tickersURL }])
 
-    expect(currencyPairsParseMock.callCount).to.be.eq(1)
-    expect(currencyPairsParseMock.calledWith({
-      rawMarkets,
-      rawCurrencyPairs: rawSymbolsPairs,
-    })).to.be.ok
 
     expect(response.length).to.eq(3)
-    expect(response).to.deep.eq(currencyPairsParseMock.returnValues[0])
-    expect(response[0].currencyPair).to.eq('IHTETH')
-    expect(response[1].currencyPair).to.eq('AMEETH')
-    expect(response[2].currencyPair).to.eq('ALEPHUSDT')
 
+    expect(response[0].id).to.eq('IHT_ETH')
+    expect(response[1].id).to.eq('AME_ETH')
+    expect(response[2].id).to.eq('ALEPH_USDT')
 
   })
 
 
 
-  it.skip('should list GateIO parsed markets just fine', async () => {
+  it('should list GateIO parsed markets just fine', async () => {
 
-    // TODO implement me
+    const listRawMock = ImportMock.mockFunction(
+      gateIOMarketModule,
+      'listRaw',
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      gateIOMarketModule,
+      'parseMany',
+      marketsSeeds.parsedMarkets,
+    )
+
+    const parsedMarkets = await gateIOMarketModule.list()
+
+    expect(listRawMock.callCount).to.eq(1)
+
+    expect(parseManyMock.callCount).to.eq(1)
+    expect(parseManyMock.calledWith({
+      rawMarkets: listRawMock.returnValues[0],
+    }))
+
+    expect(parsedMarkets.length).to.eq(3)
+    expect(parsedMarkets).to.deep.eq(parseManyMock.returnValues[0])
+
+    expect(parsedMarkets[0].pairSymbol).to.eq('IHTETH')
+    expect(parsedMarkets[0].baseSymbolId).to.eq('IHT')
+    expect(parsedMarkets[0].quoteSymbolId).to.eq('ETH')
+
+    expect(parsedMarkets[1].pairSymbol).to.eq('AMEETH')
+    expect(parsedMarkets[1].baseSymbolId).to.eq('AME')
+    expect(parsedMarkets[1].quoteSymbolId).to.eq('ETH')
+
+    expect(parsedMarkets[2].pairSymbol).to.eq('ALEPHUSDT')
+    expect(parsedMarkets[2].baseSymbolId).to.eq('ALEPH')
+    expect(parsedMarkets[2].quoteSymbolId).to.eq('USDT')
 
   })
 
