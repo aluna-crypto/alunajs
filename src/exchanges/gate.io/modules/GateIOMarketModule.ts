@@ -20,13 +20,13 @@ export const GateIOMarketModule: IAlunaMarketModule = class {
     GateIOLog.info('fetching GateIO currency pairs')
 
     const rawCurrencyPairs = await publicRequest<IGateIOCurrencyPairs[]>({
-      url: 'https://api.GateIO.ws/api/v4/spot/currency_pairs',
+      url: 'https://api.gateio.ws/api/v4/spot/currency_pairs',
     })
 
     GateIOLog.info('fetching GateIO tickers')
 
     const rawTickers = await publicRequest<IGateIOTickerSchema[]>({
-      url: 'https://api.GateIO.ws/api/v4/spot/tickers',
+      url: 'https://api.gateio.ws/api/v4/spot/tickers',
     })
 
     const marketsWithTickers = rawCurrencyPairs.map((currencyPair) => {
