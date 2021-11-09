@@ -50,9 +50,9 @@ export const GateIOMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketSchema[]> {
 
-    // TODO implement me
-
-    throw new Error('not implemented')
+    return GateIOMarketModule.parseMany({
+      rawMarkets: await GateIOMarketModule.listRaw(),
+    })
 
   }
 
