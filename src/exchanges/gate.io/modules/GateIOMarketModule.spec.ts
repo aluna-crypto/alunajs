@@ -11,7 +11,7 @@ import { GateIOMarketModule } from './GateIOMarketModule'
 describe('GateIOMarketModule', () => {
 
 
-  const GateIOMarketModule = GateIOMarketModule
+  const gateIOMarketModule = GateIOMarketModule
 
   const { marketsSeeds } = GateIO_SEEDS
 
@@ -41,7 +41,7 @@ describe('GateIOMarketModule', () => {
     )
 
 
-    const response = await GateIOMarketModule.listRaw()
+    const response = await gateIOMarketModule.listRaw()
 
 
     expect(requestMock.callCount).to.be.eq(2)
