@@ -1,7 +1,7 @@
 import {
   GateIO_PARSED_SYMBOLS,
   GateIO_RAW_SYMBOLS,
-} from './GateIOSymbols'
+} from './gateIOSymbols'
 
 
 

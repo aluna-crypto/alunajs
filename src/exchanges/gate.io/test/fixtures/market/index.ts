@@ -1,7 +1,7 @@
 import {
   GateIO_PARSED_MARKETS,
   GateIO_RAW_MARKETS,
-} from './GateIOMarket'
+} from './gateIOMarket'
 
 
 
