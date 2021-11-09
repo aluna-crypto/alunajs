@@ -23,7 +23,7 @@ describe('GateioHttp', () => {
 
 
 
-  it.skip('should defaults the http verb to get on public requests', async () => {
+  it('should defaults the http verb to get on public requests', async () => {
 
     const requestSpy = Sinon.spy(async () => dummyData)
 
@@ -55,9 +55,37 @@ describe('GateioHttp', () => {
 
 
 
-  it.skip('should execute public request just fine', async () => {
+  it('should execute public request just fine', async () => {
 
-    // TODO implement me
+    const requestSpy = Sinon.spy(() => dummyData)
+
+
+    const axiosMock = ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
+
+    const responseData = await gateioHttp.publicRequest({
+      verb: AlunaHttpVerbEnum.GET,
+      url: dummyUrl,
+      body: dummyBody,
+    })
+
+
+    expect(axiosMock.callCount).to.be.eq(1)
+
+    expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: dummyUrl,
+      method: AlunaHttpVerbEnum.GET,
+      data: dummyBody,
+    }])
+
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+
 
   })
 
@@ -99,7 +127,7 @@ describe('GateioHttp', () => {
   it.skip('should execute private request just fine', async () => {
 
     // TODO implement me
-    
+
   })
 
 })
