@@ -1,0 +1,118 @@
+import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
+
+import { GateIOHttp } from '../GateIOHttp'
+import { IGateIOSymbolSchema } from '../schemas/IGateIOSymbolSchema'
+import { GateIO_SEEDS } from '../test/fixtures/index'
+import { GateIOSymbolModule } from './GateIOSymbolModule'
+
+
+
+describe('GateIOSymbolModule', () => {
+
+  const { symbolsSeeds } = GateIO_SEEDS
+
+  it('should list GateIO raw symbols just fine', async () => {
+
+    const requestMock = ImportMock.mockFunction(
+      GateIOHttp,
+      'publicRequest',
+      symbolsSeeds.rawSymbols,
+    )
+
+    const rawSymbols = await GateIOSymbolModule.listRaw()
+
+    expect(requestMock.callCount).to.eq(1)
+
+    expect(rawSymbols.length).to.eq(3)
+    expect(rawSymbols).to.deep.eq(requestMock.returnValues[0])
+
+    expect(rawSymbols[0].currency).to.be.eq('ETH')
+    expect(rawSymbols[1].currency).to.be.eq('BTC')
+    expect(rawSymbols[2].currency).to.be.eq('ADA')
+
+  })
+
+
+
+  it('should list GateIO parsed symbols just fine', async () => {
+
+    const listRawMock = ImportMock.mockFunction(
+      GateIOSymbolModule,
+      'listRaw',
+      'raw-symbols',
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      GateIOSymbolModule,
+      'parseMany',
+      symbolsSeeds.parsedSymbols,
+    )
+
+    const rawSymbols = await GateIOSymbolModule.list()
+
+    expect(listRawMock.callCount).to.eq(1)
+
+    expect(parseManyMock.callCount).to.eq(1)
+    expect(parseManyMock.calledWith({
+      rawSymbols: listRawMock.returnValues[0],
+    })).to.be.ok
+
+    expect(rawSymbols.length).to.eq(3)
+    expect(rawSymbols).to.deep.eq(parseManyMock.returnValues[0])
+
+    expect(rawSymbols[0].id).to.be.eq('ETH')
+    expect(rawSymbols[1].id).to.be.eq('BTC')
+    expect(rawSymbols[2].id).to.be.eq('ADA')
+
+  })
+
+
+
+  it('should parse a GateIO symbol just fine', async () => {
+
+    const parsedSymbol1 = GateIOSymbolModule.parse({
+      rawSymbol: symbolsSeeds.rawSymbols[1],
+    })
+
+    expect(parsedSymbol1).to.be.ok
+    expect(parsedSymbol1.id).to.be.eq('BTC')
+
+    const parsedSymbol2 = GateIOSymbolModule.parse({
+      rawSymbol: symbolsSeeds.rawSymbols[2],
+    })
+
+    expect(parsedSymbol2).to.be.ok
+    expect(parsedSymbol2.id).to.be.eq('ADA')
+
+
+  })
+
+
+
+  it('should parse many GateIO symbols just fine', async () => {
+
+    const parseMock = ImportMock.mockFunction(
+      GateIOSymbolModule,
+      'parse',
+    )
+
+    parseMock
+      .onFirstCall()
+      .returns(symbolsSeeds.parsedSymbols[0])
+      .onSecondCall()
+      .returns(symbolsSeeds.parsedSymbols[1])
+      .onThirdCall()
+      .returns(symbolsSeeds.parsedSymbols[2])
+
+    const parsedSymbols = GateIOSymbolModule.parseMany({
+      rawSymbols: new Array(3).fill(() => ({}) as IGateIOSymbolSchema),
+    })
+
+    expect(parsedSymbols[0].id).to.be.eq('ETH')
+    expect(parsedSymbols[1].id).to.be.eq('BTC')
+    expect(parsedSymbols[2].id).to.be.eq('ADA')
+
+  })
+
+})
