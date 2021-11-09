@@ -1,11 +1,11 @@
 import {
-  GateIO_PARSED_MARKETS,
-  GateIO_RAW_MARKETS,
+  GATEIO_PARSED_MARKETS,
+  GATEIO_RAW_MARKETS,
 } from './gateIOMarket'
 
 
 
-export const GateIO_MARKET_SEEDS = {
-  rawMarkets: GateIO_RAW_MARKETS,
-  parsedMarkets: GateIO_PARSED_MARKETS,
+export const GATEIO_MARKET_SEEDS = {
+  rawMarkets: GATEIO_RAW_MARKETS,
+  parsedMarkets: GATEIO_PARSED_MARKETS,
 }

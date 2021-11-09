@@ -6,7 +6,7 @@ import {
 
 
 
-export const GateIO_RAW_TICKER: IGateIOTickerSchema[] = [
+export const GATEIO_RAW_TICKER: IGateIOTickerSchema[] = [
   {
     currency_pair: 'IHT_ETH',
     last: '1',
@@ -54,7 +54,7 @@ export const GateIO_RAW_TICKER: IGateIOTickerSchema[] = [
   },
 ]
 
-export const GateIO_RAW_MARKETS: IGateIOMarketSchema[] = [
+export const GATEIO_RAW_MARKETS: IGateIOMarketSchema[] = [
   {
     id: 'IHT_ETH',
     base: 'IHT',
@@ -67,7 +67,7 @@ export const GateIO_RAW_MARKETS: IGateIOMarketSchema[] = [
     trade_status: 'tradable',
     sell_start: 0,
     buy_start: 0,
-    ticker: GateIO_RAW_TICKER[0],
+    ticker: GATEIO_RAW_TICKER[0],
   },
   {
     id: 'AME_ETH',
@@ -81,7 +81,7 @@ export const GateIO_RAW_MARKETS: IGateIOMarketSchema[] = [
     trade_status: 'tradable',
     sell_start: 0,
     buy_start: 0,
-    ticker: GateIO_RAW_TICKER[1],
+    ticker: GATEIO_RAW_TICKER[1],
   },
   {
     id: 'ALEPH_USDT',
@@ -95,12 +95,12 @@ export const GateIO_RAW_MARKETS: IGateIOMarketSchema[] = [
     trade_status: 'tradable',
     sell_start: 0,
     buy_start: 0,
-    ticker: GateIO_RAW_TICKER[2],
+    ticker: GATEIO_RAW_TICKER[2],
   },
 ]
 
 
-export const GateIO_PARSED_MARKETS: IAlunaMarketSchema[] = [
+export const GATEIO_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     pairSymbol: 'IHTETH',
     baseSymbolId: 'IHT',

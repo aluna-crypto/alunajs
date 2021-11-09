@@ -3,7 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { GateIOHttp } from '../GateIOHttp'
 import { GateIOMarketParser } from '../schemas/parsers/GateIOMarketParser'
-import { GateIO_SEEDS } from '../test/fixtures/index'
+import { GATEIO_SEEDS } from '../test/fixtures'
 import { GateIOMarketModule } from './GateIOMarketModule'
 
 
@@ -13,7 +13,7 @@ describe('GateIOMarketModule', () => {
 
   const gateIOMarketModule = GateIOMarketModule
 
-  const { marketsSeeds } = GateIO_SEEDS
+  const { marketsSeeds } = GATEIO_SEEDS
 
 
   it('should list GateIO raw markets just fine', async () => {

@@ -3,7 +3,7 @@ import { IGateIOSymbolSchema } from '../../../schemas/IGateIOSymbolSchema'
 
 
 
-export const GateIO_RAW_SYMBOLS: IGateIOSymbolSchema[] = [
+export const GATEIO_RAW_SYMBOLS: IGateIOSymbolSchema[] = [
   {
     currency: 'ETH',
     delisted: false,
@@ -32,7 +32,7 @@ export const GateIO_RAW_SYMBOLS: IGateIOSymbolSchema[] = [
 
 
 
-export const GateIO_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
+export const GATEIO_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
   {
     id: 'ETH',
   },
