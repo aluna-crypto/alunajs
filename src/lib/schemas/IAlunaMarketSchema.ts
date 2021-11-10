@@ -5,6 +5,8 @@ import { IAlunaTickerSchema } from './IAlunaTickerSchema'
 
 export interface IAlunaMarketSchema {
 
+  exchangeId: string
+
   pairSymbol: string
 
   baseSymbolId: string
