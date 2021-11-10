@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { VALR_SEEDS } from '../../test/fixtures'
+import { Valr } from '../../Valr'
 import { ValrMarketParser } from './ValrMarketParser'
 
 
@@ -20,6 +21,7 @@ describe('ValrMarketParser', () => {
     })
 
     const {
+      exchangeId,
       ticker,
       pairSymbol,
       baseSymbolId,
@@ -43,6 +45,7 @@ describe('ValrMarketParser', () => {
       baseVolume,
     } = ticker
 
+    expect(exchangeId).to.be.eq(Valr.ID)
     expect(pairSymbol).to.be.eq(rawMarket.currencyPair)
     expect(baseSymbolId).to.be.eq(rawMarket.baseCurrency)
     expect(quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)

@@ -5,6 +5,7 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import { VALR_SEEDS } from '../test/fixtures'
+import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrMarketModule } from './ValrMarketModule'
 
@@ -91,14 +92,17 @@ describe('ValrMarketModule', () => {
     expect(parsedMarkets.length).to.eq(3)
     expect(parsedMarkets).to.deep.eq(parseManyMock.returnValues[0])
 
+    expect(parsedMarkets[0].exchangeId).to.eq(Valr.ID)
     expect(parsedMarkets[0].pairSymbol).to.eq('USDCETH')
     expect(parsedMarkets[0].baseSymbolId).to.eq('USDC')
     expect(parsedMarkets[0].quoteSymbolId).to.eq('ETH')
 
+    expect(parsedMarkets[1].exchangeId).to.eq(Valr.ID)
     expect(parsedMarkets[1].pairSymbol).to.eq('BTCZAR')
     expect(parsedMarkets[1].baseSymbolId).to.eq('BTC')
     expect(parsedMarkets[1].quoteSymbolId).to.eq('ZAR')
 
+    expect(parsedMarkets[2].exchangeId).to.eq(Valr.ID)
     expect(parsedMarkets[2].pairSymbol).to.eq('ETHZAR')
     expect(parsedMarkets[2].baseSymbolId).to.eq('ETH')
     expect(parsedMarkets[2].quoteSymbolId).to.eq('ZAR')
@@ -124,6 +128,8 @@ describe('ValrMarketModule', () => {
     const { ticker } = market
 
     expect(market).to.deep.eq(marketParserMock.returnValues[0])
+
+    expect(market.exchangeId).to.be.eq(Valr.ID)
     expect(market.pairSymbol).to.be.eq('USDCETH')
     expect(market.baseSymbolId).to.be.eq('USDC')
     expect(market.quoteSymbolId).to.be.eq('ETH')
@@ -166,10 +172,15 @@ describe('ValrMarketModule', () => {
       rawMarkets: marketsSeeds.rawMarketWithCurrency,
     })
 
-
+    expect(markets[0].exchangeId).to.be.eq(Valr.ID)
     expect(markets[0].pairSymbol).to.be.eq('USDCETH')
+
+    expect(markets[1].exchangeId).to.be.eq(Valr.ID)
     expect(markets[1].pairSymbol).to.be.eq('BTCZAR')
+
+    expect(markets[2].exchangeId).to.be.eq(Valr.ID)
     expect(markets[2].pairSymbol).to.be.eq('ETHZAR')
+
 
   })
 

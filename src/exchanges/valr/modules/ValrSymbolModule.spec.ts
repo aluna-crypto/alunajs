@@ -3,6 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import { VALR_SEEDS } from '../test/fixtures'
+import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSymbolModule } from './ValrSymbolModule'
 
@@ -11,6 +12,7 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 describe('ValrSymbolModule', () => {
 
   const { symbolsSeeds } = VALR_SEEDS
+
 
 
   it('should list Valr raw symbols just fine', async () => {
@@ -71,12 +73,15 @@ describe('ValrSymbolModule', () => {
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(parseManyMock.returnValues[0])
 
+    expect(rawSymbols[0].exchangeId).to.be.eq(Valr.ID)
     expect(rawSymbols[0].id).to.be.eq('ZAR')
     expect(rawSymbols[0].name).to.be.eq('Rand')
 
+    expect(rawSymbols[1].exchangeId).to.be.eq(Valr.ID)
     expect(rawSymbols[1].id).to.be.eq('BTC')
     expect(rawSymbols[1].name).to.be.eq('Bitcoin')
 
+    expect(rawSymbols[2].exchangeId).to.be.eq(Valr.ID)
     expect(rawSymbols[2].id).to.be.eq('ETH')
     expect(rawSymbols[2].name).to.be.eq('Ethereum')
 
@@ -91,6 +96,7 @@ describe('ValrSymbolModule', () => {
     })
 
     expect(parsedSymbol1).to.be.ok
+    expect(parsedSymbol1.exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbol1.id).to.be.eq('BTC')
     expect(parsedSymbol1.name).to.be.eq('Bitcoin')
 
@@ -99,6 +105,7 @@ describe('ValrSymbolModule', () => {
     })
 
     expect(parsedSymbol2).to.be.ok
+    expect(parsedSymbol2.exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbol2.id).to.be.eq('ETH')
     expect(parsedSymbol2.name).to.be.eq('Ethereum')
 
@@ -125,12 +132,15 @@ describe('ValrSymbolModule', () => {
       rawSymbols: new Array(3).fill(() => ({}) as IValrSymbolSchema),
     })
 
+    expect(parsedSymbols[0].exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbols[0].id).to.be.eq('ZAR')
     expect(parsedSymbols[0].name).to.be.eq('Rand')
 
+    expect(parsedSymbols[1].exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbols[1].id).to.be.eq('BTC')
     expect(parsedSymbols[1].name).to.be.eq('Bitcoin')
 
+    expect(parsedSymbols[2].exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbols[2].id).to.be.eq('ETH')
     expect(parsedSymbols[2].name).to.be.eq('Ethereum')
 
