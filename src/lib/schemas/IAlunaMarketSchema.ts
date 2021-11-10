@@ -20,6 +20,6 @@ export interface IAlunaMarketSchema {
 
   instrument?: IAlunaInstrumentSchema
   maxLeverage?: number
-  leverageEnabled?: boolean
+  leverageEnabled: boolean
 
 }
