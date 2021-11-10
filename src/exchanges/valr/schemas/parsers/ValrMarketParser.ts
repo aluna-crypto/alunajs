@@ -1,5 +1,6 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
+import { Valr } from '../../Valr'
 
 
 
@@ -38,6 +39,7 @@ export class ValrMarketParser {
     }
 
     return {
+      exchangeId: Valr.ID,
       pairSymbol: currencyPair,
       baseSymbolId: baseCurrency,
       quoteSymbolId: quoteCurrency,

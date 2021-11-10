@@ -1,6 +1,7 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
+import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 
@@ -44,6 +45,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
     return {
       id: shortName,
       name: longName,
+      exchangeId: Valr.ID,
     }
 
   }
