@@ -47,6 +47,7 @@ export class ValrMarketParser {
       spotEnabled: false,
       marginEnabled: false,
       derivativesEnabled: false,
+      leverageEnabled: false,
     }
 
   }
