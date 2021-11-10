@@ -4,7 +4,7 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "declaration": true,
-    "declarationDir": "./lib",
+    "declarationDir": "./dist",
     "strictPropertyInitialization": false,
     "strict": true,
     "skipLibCheck": false,
@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "useUnknownInCatchVariables": false,
-    "outDir": "./lib"
+    "outDir": "./dist"
   },
   "include": [
     "src/**/*.ts"

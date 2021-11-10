@@ -2,7 +2,7 @@
   "name": "aluna.js",
   "version": "0.0.1",
   "description": "Aluna exchanges hub.",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
     "Sergio Torres<sergio@aluna.social>"
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
-    "build": "rimraf lib && tsc",
+    "build": "rimraf dist && tsc",
     "test": "jest --coverage=false",
     "test:coverage": "jest",
     "test:watch": "jest --watchAll --coverage=false",

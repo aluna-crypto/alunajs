@@ -2,4 +2,4 @@
 .history
 node_modules
 coverage
-lib
+dist
