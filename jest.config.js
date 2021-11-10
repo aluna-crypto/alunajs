@@ -8,7 +8,6 @@ module.exports = {
     "<rootDir>/src/**/*.ts",
   ],
   coveragePathIgnorePatterns: [
-    'GateIO',
     'AlunaInstrumentStateEnum',
     'AlunaPositionStatusEnum',
   ],
