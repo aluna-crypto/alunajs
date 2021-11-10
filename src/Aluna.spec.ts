@@ -2,7 +2,10 @@ import { expect } from 'chai'
 
 import { Aluna } from './Aluna'
 import { Valr } from './exchanges/valr/Valr'
-import { IAlunaExchange } from './lib/core/IAlunaExchange'
+import {
+  IAlunaExchange,
+  IAlunaExchangeStatic,
+} from './lib/core/IAlunaExchange'
 
 
 
@@ -55,6 +58,56 @@ describe('Aluna', () => {
           secret: 'secret',
         },
       })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(god).not.to.be.ok
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('Exchange not implemented: god')
+
+  })
+
+  it('should properly resolve exchange static class', async () => {
+
+    const exchangeId = Valr.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(error).not.to.be.ok
+
+    if (!Exchange) {
+
+      return expect(Exchange).to.be.ok
+
+    }
+
+    expect(Exchange.ID).to.eq(exchangeId)
+
+  })
+
+  it('should warn about exchange not implemented (static)', async () => {
+
+    let god: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      god = Aluna.static({ exchangeId: 'god' })
 
     } catch (err) {
 
