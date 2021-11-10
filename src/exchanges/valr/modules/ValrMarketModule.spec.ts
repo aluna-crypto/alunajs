@@ -4,7 +4,10 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
-import { VALR_SEEDS } from '../test/fixtures'
+import {
+  VALR_PARSED_MARKETS,
+  VALR_RAW_MARKETS_WITH_CURRENCY,
+} from '../test/fixtures/market/valrMarket'
 import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrMarketModule } from './ValrMarketModule'
@@ -14,8 +17,6 @@ import { ValrMarketModule } from './ValrMarketModule'
 describe('ValrMarketModule', () => {
 
   const valrMarketModule = ValrMarketModule
-
-  const { marketsSeeds } = VALR_SEEDS
 
 
 
@@ -40,7 +41,7 @@ describe('ValrMarketModule', () => {
     const currencyPairsParseMock = ImportMock.mockFunction(
       ValrCurrencyPairsParser,
       'parse',
-      marketsSeeds.rawMarketWithCurrency,
+      VALR_RAW_MARKETS_WITH_CURRENCY,
     )
 
 
@@ -77,7 +78,7 @@ describe('ValrMarketModule', () => {
     const parseManyMock = ImportMock.mockFunction(
       valrMarketModule,
       'parseMany',
-      marketsSeeds.parsedMarkets,
+      VALR_PARSED_MARKETS,
     )
 
     const parsedMarkets = await valrMarketModule.list()
@@ -116,11 +117,11 @@ describe('ValrMarketModule', () => {
     const marketParserMock = ImportMock.mockFunction(
       ValrMarketParser,
       'parse',
-      marketsSeeds.parsedMarkets[0],
+      VALR_PARSED_MARKETS[0],
     )
 
     const market: IAlunaMarketSchema = valrMarketModule.parse({
-      rawMarket: marketsSeeds.rawMarketWithCurrency[0],
+      rawMarket: VALR_RAW_MARKETS_WITH_CURRENCY[0],
     })
 
     expect(marketParserMock.callCount).to.be.eq(1)
@@ -161,15 +162,15 @@ describe('ValrMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(marketsSeeds.parsedMarkets[0])
+      .returns(VALR_PARSED_MARKETS[0])
       .onSecondCall()
-      .returns(marketsSeeds.parsedMarkets[1])
+      .returns(VALR_PARSED_MARKETS[1])
       .onThirdCall()
-      .returns(marketsSeeds.parsedMarkets[2])
+      .returns(VALR_PARSED_MARKETS[2])
 
 
     const markets: IAlunaMarketSchema[] = valrMarketModule.parseMany({
-      rawMarkets: marketsSeeds.rawMarketWithCurrency,
+      rawMarkets: VALR_RAW_MARKETS_WITH_CURRENCY,
     })
 
     expect(markets[0].exchangeId).to.be.eq(Valr.ID)

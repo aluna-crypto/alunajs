@@ -4,7 +4,10 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
-import { VALR_SEEDS } from '../../test/fixtures'
+import {
+  VALR_RAW_GET_ORDERS,
+  VALR_RAW_LIST_OPEN_ORDERS,
+} from '../../test/fixtures/order/valrOrder'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
@@ -15,15 +18,11 @@ import { ValrOrderParser } from './ValrOrderParser'
 
 describe('ValrOrderParser', () => {
 
-  const { ordersSeeds } = VALR_SEEDS
-
-
-
   it('should parse Valr orders just fine', async () => {
 
 
-    const rawOrder1: IValrOrderListSchema = ordersSeeds.rawOrders[0]
-    const rawOrder2: IValrOrderGetSchema = ordersSeeds.rawGetOrder[0]
+    const rawOrder1: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[0]
+    const rawOrder2: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
 
 
     const parsedOrder1 = ValrOrderParser.parse({

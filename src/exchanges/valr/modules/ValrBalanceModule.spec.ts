@@ -4,7 +4,10 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { VALR_SEEDS } from '../test/fixtures'
+import {
+  VALR_PARSED_BALANCES,
+  VALR_RAW_BALANCES,
+} from '../test/fixtures/balance/valrBalance'
 import { ValrHttp } from '../ValrHttp'
 import { ValrBalanceModule } from './ValrBalanceModule'
 
@@ -13,8 +16,6 @@ import { ValrBalanceModule } from './ValrBalanceModule'
 describe('ValrBalanceModule', () => {
 
   const valrBalanceModule = ValrBalanceModule.prototype
-
-  const { balanceSeeds } = VALR_SEEDS
 
 
 
@@ -34,7 +35,7 @@ describe('ValrBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      balanceSeeds.rawBalances,
+      VALR_RAW_BALANCES,
     )
 
 
@@ -81,7 +82,7 @@ describe('ValrBalanceModule', () => {
     const parseManyMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'parseMany',
-      balanceSeeds.parsedBalances,
+      VALR_PARSED_BALANCES,
     )
 
     const balances = await valrBalanceModule.list()
@@ -109,7 +110,7 @@ describe('ValrBalanceModule', () => {
   it('should parse a single Valr raw balance', () => {
 
     const parsedBalance1 = valrBalanceModule.parse({
-      rawBalance: balanceSeeds.rawBalances[0],
+      rawBalance: VALR_RAW_BALANCES[0],
     })
 
     expect(parsedBalance1.symbolId).to.be.eq('BTC')
@@ -119,7 +120,7 @@ describe('ValrBalanceModule', () => {
 
 
     const parsedBalance2 = valrBalanceModule.parse({
-      rawBalance: balanceSeeds.rawBalances[1],
+      rawBalance: VALR_RAW_BALANCES[1],
     })
 
     expect(parsedBalance2.symbolId).to.be.eq('ETH')
@@ -140,22 +141,22 @@ describe('ValrBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(balanceSeeds.parsedBalances[0])
+      .returns(VALR_PARSED_BALANCES[0])
       .onSecondCall()
-      .returns(balanceSeeds.parsedBalances[1])
+      .returns(VALR_PARSED_BALANCES[1])
       .onThirdCall()
-      .returns(balanceSeeds.parsedBalances[2])
+      .returns(VALR_PARSED_BALANCES[2])
 
 
     const parsedBalances = valrBalanceModule.parseMany({
-      rawBalances: balanceSeeds.rawBalances,
+      rawBalances: VALR_RAW_BALANCES,
     })
 
     /**
      * Seed has 5 raw balances but 2 of them have total property equal to 0.
      * ParseMany should not call parse when total is equal/less than 0
      */
-    expect(balanceSeeds.rawBalances.length).to.be.eq(5)
+    expect(VALR_RAW_BALANCES.length).to.be.eq(5)
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)
 

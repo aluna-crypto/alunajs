@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { VALR_SEEDS } from '../../test/fixtures'
+import { VALR_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/market/valrMarket'
 import { Valr } from '../../Valr'
 import { ValrMarketParser } from './ValrMarketParser'
 
@@ -8,13 +8,10 @@ import { ValrMarketParser } from './ValrMarketParser'
 
 describe('ValrMarketParser', () => {
 
-  const { marketsSeeds } = VALR_SEEDS
-
-
 
   it('should parse Valr market just fine', async () => {
 
-    const rawMarket = marketsSeeds.rawMarketWithCurrency[0]
+    const rawMarket = VALR_RAW_MARKETS_WITH_CURRENCY[0]
 
     const parsedMarket = ValrMarketParser.parse({
       rawMarket,

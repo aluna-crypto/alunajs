@@ -2,7 +2,10 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
-import { VALR_SEEDS } from '../test/fixtures'
+import {
+  VALR_PARSED_SYMBOLS,
+  VALR_RAW_SYMBOLS,
+} from '../test/fixtures/symbol/valrSymbols'
 import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSymbolModule } from './ValrSymbolModule'
@@ -11,8 +14,6 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 
 describe('ValrSymbolModule', () => {
 
-  const { symbolsSeeds } = VALR_SEEDS
-
 
 
   it('should list Valr raw symbols just fine', async () => {
@@ -20,7 +21,7 @@ describe('ValrSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'publicRequest',
-      symbolsSeeds.rawSymbols,
+      VALR_RAW_SYMBOLS,
     )
 
     const rawSymbols = await ValrSymbolModule.listRaw()
@@ -57,7 +58,7 @@ describe('ValrSymbolModule', () => {
     const parseManyMock = ImportMock.mockFunction(
       ValrSymbolModule,
       'parseMany',
-      symbolsSeeds.parsedSymbols,
+      VALR_PARSED_SYMBOLS,
     )
 
 
@@ -92,7 +93,7 @@ describe('ValrSymbolModule', () => {
   it('should parse a Valr symbol just fine', async () => {
 
     const parsedSymbol1 = ValrSymbolModule.parse({
-      rawSymbol: symbolsSeeds.rawSymbols[1],
+      rawSymbol: VALR_RAW_SYMBOLS[1],
     })
 
     expect(parsedSymbol1).to.be.ok
@@ -101,7 +102,7 @@ describe('ValrSymbolModule', () => {
     expect(parsedSymbol1.name).to.be.eq('Bitcoin')
 
     const parsedSymbol2 = ValrSymbolModule.parse({
-      rawSymbol: symbolsSeeds.rawSymbols[2],
+      rawSymbol: VALR_RAW_SYMBOLS[2],
     })
 
     expect(parsedSymbol2).to.be.ok
@@ -122,11 +123,11 @@ describe('ValrSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(symbolsSeeds.parsedSymbols[0])
+      .returns(VALR_PARSED_SYMBOLS[0])
       .onSecondCall()
-      .returns(symbolsSeeds.parsedSymbols[1])
+      .returns(VALR_PARSED_SYMBOLS[1])
       .onThirdCall()
-      .returns(symbolsSeeds.parsedSymbols[2])
+      .returns(VALR_PARSED_SYMBOLS[2])
 
     const parsedSymbols = ValrSymbolModule.parseMany({
       rawSymbols: new Array(3).fill(() => ({}) as IValrSymbolSchema),

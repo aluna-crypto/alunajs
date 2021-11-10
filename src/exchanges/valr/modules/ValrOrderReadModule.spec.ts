@@ -15,7 +15,11 @@ import {
   IValrOrderListSchema,
 } from '../schemas/IValrOrderSchema'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
-import { VALR_SEEDS } from '../test/fixtures'
+import {
+  VALR_PARSED_OPEN_ORDERS,
+  VALR_RAW_GET_ORDERS,
+  VALR_RAW_LIST_OPEN_ORDERS,
+} from '../test/fixtures/order/valrOrder'
 import { ValrHttp } from '../ValrHttp'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 
@@ -24,8 +28,6 @@ import { ValrOrderReadModule } from './ValrOrderReadModule'
 describe('ValrOrderReadModule', () => {
 
   const valrOrderReadModule = ValrOrderReadModule.prototype
-
-  const { ordersSeeds } = VALR_SEEDS
 
 
 
@@ -45,7 +47,7 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      ordersSeeds.rawOrders,
+      VALR_RAW_LIST_OPEN_ORDERS,
     )
 
     const rawBalances = await valrOrderReadModule.listRaw()
@@ -73,7 +75,7 @@ describe('ValrOrderReadModule', () => {
     const parseManyMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'parseMany',
-      ordersSeeds.parsedOrders,
+      VALR_PARSED_OPEN_ORDERS,
     )
 
     const parsedOrders = await valrOrderReadModule.list()
@@ -122,7 +124,7 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      ordersSeeds.rawGetOrder[0],
+      VALR_RAW_GET_ORDERS[0],
     )
 
 
@@ -161,7 +163,7 @@ describe('ValrOrderReadModule', () => {
     const parseMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'parse',
-      ordersSeeds.parsedOrders[0],
+      VALR_PARSED_OPEN_ORDERS[0],
     )
 
     const params = {
@@ -187,8 +189,8 @@ describe('ValrOrderReadModule', () => {
 
   it('should parse a Valr raw order just fine', () => {
 
-    const rawOrder1: IValrOrderGetSchema = ordersSeeds.rawGetOrder[0]
-    const rawOrder2: IValrOrderListSchema = ordersSeeds.rawOrders[1]
+    const rawOrder1: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
+    const rawOrder2: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[1]
 
     const parseMock = ImportMock.mockFunction(
       ValrOrderParser,
@@ -196,8 +198,8 @@ describe('ValrOrderReadModule', () => {
     )
 
     parseMock
-      .onFirstCall().returns(ordersSeeds.parsedOrders[0])
-      .onSecondCall().returns(ordersSeeds.parsedOrders[1])
+      .onFirstCall().returns(VALR_PARSED_OPEN_ORDERS[0])
+      .onSecondCall().returns(VALR_PARSED_OPEN_ORDERS[1])
 
 
     const parsedOrder1 = valrOrderReadModule.parse({ rawOrder: rawOrder1 })
@@ -245,9 +247,8 @@ describe('ValrOrderReadModule', () => {
 
   it('should parse many Valr orders just fine', () => {
 
-    const {
-      rawOrders, parsedOrders,
-    } = ordersSeeds
+    const rawOrders = VALR_RAW_LIST_OPEN_ORDERS
+    const parsedOrders = VALR_PARSED_OPEN_ORDERS
 
     const parseMock = ImportMock.mockFunction(
       ValrOrderParser,
