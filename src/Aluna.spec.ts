@@ -41,7 +41,7 @@ describe('Aluna', () => {
 
   })
 
-  it('should warn about exchange not implemented', async () => {
+  it('should warn about exchange not implemented (instance)', async () => {
 
     let god: IAlunaExchange | undefined
     let error
