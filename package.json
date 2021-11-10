@@ -15,8 +15,8 @@
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
     "clean": "rimraf dist",
-    "build": "yarn clean && tsc",
-    "build:watch": "yarn clean && tsc --watch",
+    "dist": "yarn clean && tsc -p ./tsconfig.dist.json",
+    "dist:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
     "test": "jest --coverage=false",
     "test:coverage": "jest",
     "test:watch": "jest --watchAll --coverage=false",
