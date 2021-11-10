@@ -17,10 +17,15 @@
     "clean": "rimraf dist",
     "build": "yarn clean && tsc -p ./tsconfig.dist.json",
     "build:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
-    "test": "jest --coverage=false",
-    "test:coverage": "jest",
-    "test:watch": "jest --watchAll --coverage=false",
-    "test:watch:coverage": "jest --watch"
+    "test:jest": "jest --coverage=false",
+    "test:jest:watch": "jest --watchAll --coverage=false",
+    "test:jest:cover": "jest",
+    "test:jest:cover:watch": "jest --watch",
+    "test:mocha": "mocha",
+    "test:mocha:watch": "mocha --watch",
+    "test:mocha:cover": "nyc mocha --bail",
+    "test:mocha:cover:watch": "nyc mocha --watch",
+    "test:mocha:ci": "nyc mocha --bail --forbid-only"
   },
   "dependencies": {
     "axios": "^0.21.1",
