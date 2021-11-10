@@ -40,7 +40,7 @@ export class GateIOMarketParser {
     }
 
     return {
-      pairSymbol: id,
+      pairSymbol: `${base}${quote}`,
       baseSymbolId: base,
       quoteSymbolId: quote,
       ticker,
