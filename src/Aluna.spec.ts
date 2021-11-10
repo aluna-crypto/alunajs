@@ -90,13 +90,8 @@ describe('Aluna', () => {
 
     expect(error).not.to.be.ok
 
-    if (!Exchange) {
-
-      return expect(Exchange).to.be.ok
-
-    }
-
-    expect(Exchange.ID).to.eq(exchangeId)
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
 
   })
 
