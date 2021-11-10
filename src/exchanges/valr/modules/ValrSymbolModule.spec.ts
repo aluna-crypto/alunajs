@@ -5,7 +5,7 @@ import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import {
   VALR_PARSED_SYMBOLS,
   VALR_RAW_SYMBOLS,
-} from '../test/fixtures/symbol/valrSymbols'
+} from '../test/fixtures/valrSymbols'
 import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSymbolModule } from './ValrSymbolModule'

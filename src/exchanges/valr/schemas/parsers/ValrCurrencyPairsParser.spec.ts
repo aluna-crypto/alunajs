@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import {
   VALR_RAW_CURRENCY_PAIRS,
   VALR_RAW_MARKETS,
-} from '../../test/fixtures/market/valrMarket'
+} from '../../test/fixtures/valrMarket'
 import { ValrCurrencyPairsParser } from './ValrCurrencyPairsParser'
 
 

@@ -7,7 +7,7 @@ import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import {
   VALR_PARSED_MARKETS,
   VALR_RAW_MARKETS_WITH_CURRENCY,
-} from '../test/fixtures/market/valrMarket'
+} from '../test/fixtures/valrMarket'
 import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrMarketModule } from './ValrMarketModule'

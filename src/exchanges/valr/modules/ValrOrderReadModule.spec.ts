@@ -19,7 +19,7 @@ import {
   VALR_PARSED_OPEN_ORDERS,
   VALR_RAW_GET_ORDERS,
   VALR_RAW_LIST_OPEN_ORDERS,
-} from '../test/fixtures/order/valrOrder'
+} from '../test/fixtures/valrOrder'
 import { ValrHttp } from '../ValrHttp'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 

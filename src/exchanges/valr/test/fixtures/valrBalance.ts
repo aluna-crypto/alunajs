@@ -1,6 +1,6 @@
-import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
-import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
+import { IValrBalanceSchema } from '../../schemas/IValrBalanceSchema'
 
 
 

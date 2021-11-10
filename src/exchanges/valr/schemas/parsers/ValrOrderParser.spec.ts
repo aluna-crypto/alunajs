@@ -7,7 +7,7 @@ import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
 import {
   VALR_RAW_GET_ORDERS,
   VALR_RAW_LIST_OPEN_ORDERS,
-} from '../../test/fixtures/order/valrOrder'
+} from '../../test/fixtures/valrOrder'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,

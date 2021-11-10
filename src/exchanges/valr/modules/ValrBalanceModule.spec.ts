@@ -7,7 +7,7 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   VALR_PARSED_BALANCES,
   VALR_RAW_BALANCES,
-} from '../test/fixtures/balance/valrBalance'
+} from '../test/fixtures/valrBalance'
 import { ValrHttp } from '../ValrHttp'
 import { ValrBalanceModule } from './ValrBalanceModule'
 

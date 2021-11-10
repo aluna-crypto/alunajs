@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { VALR_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/market/valrMarket'
+import { VALR_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/valrMarket'
 import { Valr } from '../../Valr'
 import { ValrMarketParser } from './ValrMarketParser'
 

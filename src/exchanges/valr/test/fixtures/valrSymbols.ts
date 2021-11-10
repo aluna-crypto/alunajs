@@ -1,6 +1,6 @@
-import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
-import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
-import { Valr } from '../../../Valr'
+import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
+import { IValrSymbolSchema } from '../../schemas/IValrSymbolSchema'
+import { Valr } from '../../Valr'
 
 
 
