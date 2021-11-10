@@ -1,5 +1,13 @@
+# local/dev stuff
 .DS_Store
 .history
 node_modules
+
+# coverage stuff
+coverage-mocha
+coverage-nyc
+coverage
+
+# dist directory
 coverage
 dist
