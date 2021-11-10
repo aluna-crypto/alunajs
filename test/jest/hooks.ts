@@ -1,6 +1,6 @@
 import { ImportMock } from 'ts-mock-imports'
 
-import { Log } from '../src/lib/Log'
+import { Log } from '../../src/lib/Log'
 
 
 
@@ -13,4 +13,3 @@ beforeEach(() => {
   ImportMock.restore()
 
 })
-
