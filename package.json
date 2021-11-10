@@ -14,7 +14,9 @@
   },
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts .",
-    "build": "rimraf dist && tsc",
+    "clean": "rimraf dist",
+    "build": "yarn clean && tsc",
+    "build:watch": "yarn clean && tsc --watch",
     "test": "jest --coverage=false",
     "test:coverage": "jest",
     "test:watch": "jest --watchAll --coverage=false",
