@@ -3,6 +3,8 @@
     "target": "es2017",
     "module": "commonjs",
     "esModuleInterop": true,
+    "declaration": true,
+    "declarationDir": "./lib",
     "strictPropertyInitialization": false,
     "strict": true, 
     "skipLibCheck": true,
@@ -10,7 +12,8 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "useUnknownInCatchVariables": false, 
+    "useUnknownInCatchVariables": false,
+    "outDir": "./lib"
   },
   "include": [
     "src/**/*.ts"
