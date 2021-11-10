@@ -1,7 +1,9 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { GateIOHttp } from '../GateIOHttp'
+import { GateIOMarketParser } from '../schemas/parsers/GateIOMarketParser'
 import { GATEIO_SEEDS } from '../test/fixtures'
 import { GateIOMarketModule } from './GateIOMarketModule'
 
@@ -93,17 +95,71 @@ describe('GateIOMarketModule', () => {
 
 
 
-  it.skip('should parse a GateIO market just fine', async () => {
+  it('should parse a GateIO market just fine', async () => {
 
-    // TODO implement me
+    const marketParserMock = ImportMock.mockFunction(
+      GateIOMarketParser,
+      'parse',
+      marketsSeeds.parsedMarkets[0],
+    )
+
+    const market: IAlunaMarketSchema = gateIOMarketModule.parse({
+      rawMarket: marketsSeeds.rawMarkets[0],
+    })
+
+
+    expect(marketParserMock.callCount).to.be.eq(1)
+
+    const rawTicker = marketsSeeds.rawTickers[0]
+    const { ticker } = market
+
+    expect(market).to.deep.eq(marketParserMock.returnValues[0])
+    expect(market.pairSymbol).to.be.eq('IHTETH')
+    expect(market.baseSymbolId).to.be.eq('IHT')
+    expect(market.quoteSymbolId).to.be.eq('ETH')
+
+
+
+    expect(ticker).to.be.ok
+    expect(ticker.high).to.be.eq(parseFloat(rawTicker.high_24h))
+    expect(ticker.low).to.be.eq(parseFloat(rawTicker.low_24h))
+    expect(ticker.bid).to.be.eq(parseFloat(rawTicker.highest_bid))
+    expect(ticker.ask).to.be.eq(parseFloat(rawTicker.lowest_ask))
+    expect(ticker.last).to.be.eq(parseFloat(rawTicker.last))
+    expect(ticker.change).to.be.eq(parseFloat(rawTicker.change_percentage))
+    expect(ticker.baseVolume).to.be.eq(parseFloat(rawTicker.base_volume))
+    expect(ticker.quoteVolume).to.be.eq(parseFloat(rawTicker.quote_volume))
+
+    expect(market.spotEnabled).not.to.be.ok
+    expect(market.marginEnabled).not.to.be.ok
+    expect(market.derivativesEnabled).not.to.be.ok
 
   })
 
 
 
-  it.skip('should parse many GateIO markets just fine', async () => {
+  it('should parse many GateIO markets just fine', async () => {
 
-    // TODO implement me
+    const { rawMarkets } = marketsSeeds
+
+    const markets: IAlunaMarketSchema[] = gateIOMarketModule.parseMany({
+      rawMarkets,
+    })
+
+    expect(markets[0].pairSymbol)
+      .to
+      .be
+      .eq(`${rawMarkets[0].base}${rawMarkets[0].quote}`)
+
+    expect(markets[1].pairSymbol)
+      .to
+      .be
+      .eq(`${rawMarkets[1].base}${rawMarkets[1].quote}`)
+
+    expect(markets[2].pairSymbol)
+      .to
+      .be
+      .eq(`${rawMarkets[2].base}${rawMarkets[2].quote}`)
 
   })
 
