@@ -1,5 +1,8 @@
 import { AlunaError } from './lib/core/AlunaError'
-import { IAlunaExchange } from './lib/core/IAlunaExchange'
+import {
+  IAlunaExchange,
+  IAlunaExchangeStatic,
+} from './lib/core/IAlunaExchange'
 import { Exchanges } from './lib/Exchanges'
 import { Log } from './lib/Log'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
@@ -39,8 +42,40 @@ export class Aluna extends Exchanges {
 
     switch (exchangeId) {
 
-      case 'valr':
-        return new Exchanges.Valr(subParams)
+      case this.Valr.ID:
+        return new this.Valr(subParams)
+
+      default: {
+
+        const error = new AlunaError({
+          message: `Exchange not implemented: ${exchangeId}`,
+        })
+
+        Log.error(error)
+
+        throw error
+
+      }
+
+    }
+
+  }
+
+
+  static static (
+    params: {
+      exchangeId: string,
+    },
+  ): IAlunaExchangeStatic {
+
+    const {
+      exchangeId,
+    } = params
+
+    switch (exchangeId) {
+
+      case this.Valr.ID:
+        return this.Valr
 
       default: {
 
