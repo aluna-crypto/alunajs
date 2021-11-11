@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import crypto from 'crypto'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
@@ -17,6 +18,12 @@ interface ISignedHashParams {
   path: string
   keySecret: IAlunaKeySecretSchema
   body?: any
+}
+
+interface IGateIOSignedHeaders {
+  KEY: string
+  SIGN: string
+  Timestamp: number
 }
 
 
@@ -47,6 +54,41 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
   GateIOLog.error(error)
 
   return error
+
+}
+
+
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+):IGateIOSignedHeaders => {
+
+  const {
+    keySecret, path, verb, body,
+  } = params
+
+  const fullPath = `/api/v4${path}`
+
+  const timestamp = Date.now()
+
+
+  const bodyHash = crypto
+    .createHmac('sha512', body ? JSON.stringify(body) : '')
+    .digest('hex')
+
+
+  const signatureString = `${verb}\n${fullPath}\n${bodyHash}\n${timestamp}`
+
+  const signedRequest = crypto
+    .createHmac('sha512', keySecret.secret)
+    .update(signatureString)
+    .digest('hex')
+
+
+  return {
+    KEY: keySecret.key,
+    SIGN: signedRequest,
+    Timestamp: timestamp,
+  }
 
 }
 
