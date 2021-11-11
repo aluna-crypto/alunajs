@@ -20,6 +20,8 @@ interface ISignedHashParams {
   body?: any
 }
 
+
+
 interface IGateIOSignedHeaders {
   KEY: string
   SIGN: string
