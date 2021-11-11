@@ -1,21 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "strictPropertyInitialization": false,
-    "strict": true, 
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
+    "declaration": true,
+    "declarationDir": "./dist",
     "emitDecoratorMetadata": true,
-    "useUnknownInCatchVariables": false, 
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "outDir": "./dist",
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "target": "es2017",
+    "useUnknownInCatchVariables": false,
   },
   "include": [
     "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
+    "src/**/*.spec.ts",
+    "test/**/*"
   ]
 }
