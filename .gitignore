@@ -9,5 +9,4 @@ coverage-nyc
 coverage
 
 # dist directory
-coverage
 dist
