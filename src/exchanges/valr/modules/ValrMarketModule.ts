@@ -45,9 +45,13 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketSchema[]> {
 
-    return ValrMarketModule.parseMany({
-      rawMarkets: await ValrMarketModule.listRaw(),
+    const rawMarkets = await ValrMarketModule.listRaw()
+
+    const parsedMarkets = ValrMarketModule.parseMany({
+      rawMarkets,
     })
+
+    return parsedMarkets
 
   }
 
@@ -55,7 +59,13 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     rawMarket: IMarketWithCurrency,
   }): IAlunaMarketSchema {
 
-    return ValrMarketParser.parse(params)
+    const { rawMarket } = params
+
+    const parsedMarket = ValrMarketParser.parse({
+      rawMarket,
+    })
+
+    return parsedMarket
 
   }
 
@@ -63,11 +73,17 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     rawMarkets: IMarketWithCurrency[],
   }): IAlunaMarketSchema[] {
 
-    const parsedMarkets = params.rawMarkets.map(
-      (rawMarket) => ValrMarketModule.parse({
+    const { rawMarkets } = params
+
+    const parsedMarkets = rawMarkets.map((rawMarket) => {
+
+      const parsedMarket = ValrMarketParser.parse({
         rawMarket,
-      }),
-    )
+      })
+
+      return parsedMarket
+
+    })
 
     ValrLog.info(`parsed ${parsedMarkets.length} markets for Valr`)
 
