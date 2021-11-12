@@ -18,6 +18,7 @@ interface ISignedHashParams {
   path: string
   keySecret: IAlunaKeySecretSchema
   body?: any
+  queryString?: string
 }
 
 
@@ -25,7 +26,7 @@ interface ISignedHashParams {
 interface IGateIOSignedHeaders {
   KEY: string
   SIGN: string
-  Timestamp: number
+  Timestamp: string
 }
 
 
@@ -65,30 +66,39 @@ export const generateAuthHeader = (
 ):IGateIOSignedHeaders => {
 
   const {
-    keySecret, path, verb, body,
+    keySecret,
+    path,
+    verb,
+    body,
+    queryString = '',
   } = params
 
-  const fullPath = `/api/v4${path}`
 
-  const timestamp = Date.now()
+  const timestamp: string = (new Date().getTime() / 1000).toString()
 
 
   const bodyHash = crypto
-    .createHmac('sha512', body ? JSON.stringify(body) : '')
+    .createHash('sha512')
+    .update(body ? JSON.stringify(body) : '')
     .digest('hex')
 
 
-  const signatureString = `${verb}\n${fullPath}\n${bodyHash}\n${timestamp}`
+  const signatureString = [
+    verb,
+    path,
+    queryString,
+    bodyHash,
+    timestamp,
+  ].join('\n')
 
-  const signedRequest = crypto
+  const signature = crypto
     .createHmac('sha512', keySecret.secret)
     .update(signatureString)
     .digest('hex')
 
-
   return {
     KEY: keySecret.key,
-    SIGN: signedRequest,
+    SIGN: signature,
     Timestamp: timestamp,
   }
 
@@ -130,36 +140,41 @@ export const GateIOHttp: IAlunaHttp = class {
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 
-    // TODO implement me
-
     const {
       url,
       body,
       verb = AlunaHttpVerbEnum.POST,
       keySecret,
+      queryString = '',
     } = params
+
+    const signedHash = generateAuthHeader({
+      verb,
+      path: new URL(url).pathname,
+      keySecret,
+      body,
+      queryString,
+    })
 
     const requestConfig = {
       url,
       method: verb,
       data: body,
+      headers: signedHash,
     }
 
-    throw new Error('not implemented')
+    try {
 
-    // TODO implement me
 
-    // try {
+      const response = await axios.create().request<T>(requestConfig)
 
-    //   const response = await axios.create().request<T>(requestConfig)
+      return response.data
 
-    //   return response.data
+    } catch (error) {
 
-    // } catch (error) {
+      throw handleRequestError(error)
 
-    //   throw handleRequestError(error)
-
-    // }
+    }
 
   }
 
