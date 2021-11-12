@@ -45,15 +45,19 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     rawBalance: IValrBalanceSchema,
   }): IAlunaBalanceSchema {
 
+    const { rawBalance } = params
+
     const {
-      rawBalance,
-    } = params
+      currency,
+      available,
+      total,
+    } = rawBalance
 
     return {
-      symbolId: rawBalance.currency,
+      symbolId: currency,
       account: AlunaAccountEnum.EXCHANGE,
-      available: Number(rawBalance.available),
-      total: Number(rawBalance.total),
+      available: Number(available),
+      total: Number(total),
     }
 
   }
@@ -64,23 +68,19 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     rawBalances: IValrBalanceSchema[],
   }): IAlunaBalanceSchema[] {
 
-    const {
-      rawBalances,
-    } = params
+    const { rawBalances } = params
 
-    const parsedBalances = rawBalances.reduce((cumulator, current) => {
+    const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
 
-      if (parseFloat(current.total) > 0) {
+      if (parseFloat(rawBalance.total) > 0) {
 
-        const parsedBalance = this.parse({
-          rawBalance: current,
-        })
+        const parsedBalance = this.parse({ rawBalance })
 
-        cumulator.push(parsedBalance)
+        accumulator.push(parsedBalance)
 
       }
 
-      return cumulator
+      return accumulator
 
     }, [] as IAlunaBalanceSchema[])
 
