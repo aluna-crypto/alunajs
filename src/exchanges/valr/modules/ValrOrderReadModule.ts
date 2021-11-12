@@ -37,9 +37,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const rawOrders = await this.listRaw()
 
-    const parsedOrders = this.parseMany({
-      rawOrders,
-    })
+    const parsedOrders = this.parseMany({ rawOrders })
 
     return parsedOrders
 
@@ -74,9 +72,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const rawOrder = await this.getRaw(params)
 
-    const parsedOrder = this.parse({
-      rawOrder,
-    })
+    const parsedOrder = this.parse({ rawOrder })
 
     return parsedOrder
 
@@ -90,9 +86,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const { rawOrder } = params
 
-    const parsedOrder = ValrOrderParser.parse({
-      rawOrder,
-    })
+    const parsedOrder = ValrOrderParser.parse({ rawOrder })
 
     return parsedOrder
 
@@ -108,9 +102,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const parsedOrders = rawOrders.map((rawOrder: IValrOrderListSchema) => {
 
-      const parsedOrder = this.parse({
-        rawOrder,
-      })
+      const parsedOrder = this.parse({ rawOrder })
 
       return parsedOrder
 
