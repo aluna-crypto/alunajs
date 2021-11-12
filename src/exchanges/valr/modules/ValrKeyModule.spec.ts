@@ -27,9 +27,9 @@ describe('ValrKeyModule', () => {
 
     getPermissionsMock
       .onFirstCall()
-      .returns({ read: false })
+      .returns(Promise.resolve({ read: false }))
       .onSecondCall()
-      .returns({ read: true })
+      .returns(Promise.resolve({ read: true }))
 
 
     const invalidKey = await valrKeyModule.validate()
@@ -93,6 +93,7 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(2)
 
+
     requestResponse.permissions = [
       ValrApiKeyPermissions.VIEW_ACCESS,
       ValrApiKeyPermissions.TRADE,
@@ -100,17 +101,80 @@ describe('ValrKeyModule', () => {
 
     const permissions3 = await valrKeyModule.getPermissions()
 
-    requestResponse.permissions = [
-      ValrApiKeyPermissions.VIEW_ACCESS,
-      ValrApiKeyPermissions.TRADE,
-      ValrApiKeyPermissions.WITHDRAW,
-    ]
-
     expect(permissions3.read).to.be.ok
     expect(permissions3.trade).to.be.ok
     expect(permissions3.withdraw).not.to.be.ok
 
     expect(requestMock.callCount).to.be.eq(3)
+
+
+    requestResponse.permissions = [
+      ValrApiKeyPermissions.VIEW_ACCESS,
+      ValrApiKeyPermissions.TRADE,
+      'NEW_ADDED_PERSSION' as ValrApiKeyPermissions,
+    ]
+
+
+    const permissions4 = await valrKeyModule.getPermissions()
+
+    expect(permissions4.read).to.be.ok
+    expect(permissions4.trade).to.be.ok
+    expect(permissions4.withdraw).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(4)
+
+  })
+
+
+
+  it('should not allow API KEYS with withdraw permission', async () => {
+
+    let error
+    let result
+
+    ImportMock.mockOther(
+      valrKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    const requestResponse: IValrKeySchema = {
+      label: 'Api for aluna',
+      permissions: [
+        ValrApiKeyPermissions.VIEW_ACCESS,
+        ValrApiKeyPermissions.TRADE,
+        ValrApiKeyPermissions.WITHDRAW,
+      ],
+      addedAt: '2021-09-11T18:28:37.791401Z',
+    }
+
+    const requestMock = ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+      requestResponse,
+    )
+
+    try {
+
+      result = await valrKeyModule.getPermissions()
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    const msg = 'API key should not have withdraw permission.'
+
+    expect(result).not.to.be.ok
+    expect(error.message).to.be.eq(msg)
+
+    expect(requestMock.callCount).to.be.eq(1)
 
   })
 
@@ -200,9 +264,10 @@ describe('ValrKeyModule', () => {
 
     expect(result).not.to.be.ok
 
+    const msg = 'API key should not have withdraw permission.'
+
     expect(error).to.be.ok
-    expect(error.message)
-      .to.be.eq('API key should not have withdraw permission.')
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -232,7 +297,6 @@ describe('ValrKeyModule', () => {
     const perm2 = valrKeyModule.parsePermissions({
       rawKey: key,
     })
-
 
     expect(perm2.read).not.to.be.ok
     expect(perm2.trade).to.be.ok
