@@ -18,7 +18,6 @@ describe('ValrBalanceModule', () => {
   const valrBalanceModule = ValrBalanceModule.prototype
 
 
-
   it('should list all Valr raw balances', async () => {
 
     const exchangeMock = ImportMock.mockOther(
@@ -49,23 +48,25 @@ describe('ValrBalanceModule', () => {
     })).to.be.ok
 
     expect(rawBalances.length).to.eq(5)
-    expect(rawBalances).to.deep.eq(requestMock.returnValues[0])
+    expect(rawBalances).to.deep.eq(VALR_RAW_BALANCES)
 
-    expect(rawBalances[0].currency).to.be.eq('BTC')
-    expect(rawBalances[0].total).to.be.eq('0.054511644725')
+    rawBalances.forEach((balance, index) => {
 
-    expect(rawBalances[1].currency).to.be.eq('ETH')
-    expect(rawBalances[1].total).to.be.eq('0.50626594758')
+      const {
+        available,
+        currency,
+        reserved,
+        total,
+        updatedAt,
+      } = VALR_RAW_BALANCES[index]
 
-    expect(rawBalances[2].currency).to.be.eq('LTC')
-    expect(rawBalances[2].total).to.be.eq('1.57270565')
+      expect(balance.currency).to.be.eq(currency)
+      expect(balance.available).to.be.eq(available)
+      expect(balance.reserved).to.be.eq(reserved)
+      expect(balance.total).to.be.eq(total)
+      expect(balance.updatedAt).to.be.eq(updatedAt)
 
-    expect(rawBalances[3].currency).to.be.eq('CRO')
-    expect(rawBalances[3].total).to.be.eq('0')
-
-    expect(rawBalances[4].currency).to.be.eq('USDT')
-    expect(rawBalances[4].total).to.be.eq('0')
-
+    })
 
   })
 
@@ -73,10 +74,12 @@ describe('ValrBalanceModule', () => {
 
   it('should list all Valr parsed balances', async () => {
 
+    const rawListMock = ['arr-of-raw-balances']
+
     const listRawMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'listRaw',
-      ['arr-of-raw-balances'],
+      rawListMock,
     )
 
     const parseManyMock = ImportMock.mockFunction(
@@ -92,16 +95,27 @@ describe('ValrBalanceModule', () => {
 
     expect(parseManyMock.callCount).to.be.eq(1)
     expect(parseManyMock.calledWith({
-      rawBalances: listRawMock.returnValues[0],
+      rawBalances: rawListMock,
     })).to.be.ok
 
-    expect(balances).to.deep.eq(parseManyMock.returnValues[0])
-
     expect(balances.length).to.be.eq(4)
-    expect(balances[0].symbolId).to.be.eq('ETH')
-    expect(balances[1].symbolId).to.be.eq('ZAR')
-    expect(balances[2].symbolId).to.be.eq('BTC')
-    expect(balances[3].symbolId).to.be.eq('XRP')
+    expect(balances).to.deep.eq(VALR_PARSED_BALANCES)
+
+    balances.forEach((balance, index) => {
+
+      const {
+        account,
+        available,
+        symbolId,
+        total,
+      } = VALR_PARSED_BALANCES[index]
+
+      expect(balance.account).to.be.eq(account)
+      expect(balance.available).to.be.eq(available)
+      expect(balance.symbolId).to.be.eq(symbolId)
+      expect(balance.total).to.be.eq(total)
+
+    })
 
   })
 
@@ -113,20 +127,28 @@ describe('ValrBalanceModule', () => {
       rawBalance: VALR_RAW_BALANCES[0],
     })
 
-    expect(parsedBalance1.symbolId).to.be.eq('BTC')
+    const { currency } = VALR_RAW_BALANCES[0]
+    const available = parseFloat(VALR_RAW_BALANCES[0].available)
+    const total = parseFloat(VALR_RAW_BALANCES[0].total)
+
+    expect(parsedBalance1.symbolId).to.be.eq(currency)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance1.available).to.be.eq(0.044511644725)
-    expect(parsedBalance1.total).to.be.eq(0.054511644725)
+    expect(parsedBalance1.available).to.be.eq(available)
+    expect(parsedBalance1.total).to.be.eq(total)
 
 
     const parsedBalance2 = valrBalanceModule.parse({
       rawBalance: VALR_RAW_BALANCES[1],
     })
 
-    expect(parsedBalance2.symbolId).to.be.eq('ETH')
+    const currency2 = VALR_RAW_BALANCES[1].currency
+    const available2 = parseFloat(VALR_RAW_BALANCES[1].available)
+    const total2 = parseFloat(VALR_RAW_BALANCES[1].total)
+
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.available).to.be.eq(0.01626594758)
-    expect(parsedBalance2.total).to.be.eq(0.50626594758)
+    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.available).to.be.eq(available2)
+    expect(parsedBalance2.total).to.be.eq(total2)
 
   })
 
@@ -153,18 +175,29 @@ describe('ValrBalanceModule', () => {
     })
 
     /**
-     * Seed has 5 raw balances but 2 of them have total property equal to 0.
+     * Seed has 5 raw balances but 2 of them have 'total' property equal to 0.
      * ParseMany should not call parse when total is equal/less than 0
      */
     expect(VALR_RAW_BALANCES.length).to.be.eq(5)
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)
 
-    expect(parsedBalances[0].symbolId).to.be.eq('ETH')
-    expect(parsedBalances[1].symbolId).to.be.eq('ZAR')
-    expect(parsedBalances[2].symbolId).to.be.eq('BTC')
+    parsedBalances.forEach((balance, index) => {
+
+      const {
+        account,
+        available,
+        symbolId,
+        total,
+      } = VALR_PARSED_BALANCES[index]
+
+      expect(balance.account).to.be.eq(account)
+      expect(balance.available).to.be.eq(available)
+      expect(balance.total).to.be.eq(total)
+      expect(balance.symbolId).to.be.eq(symbolId)
+
+    })
 
   })
-
 
 })
