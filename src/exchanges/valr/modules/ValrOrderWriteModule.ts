@@ -150,8 +150,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     } = params
 
     const body = {
-      id,
-      symbolPair,
+      orderId: id,
+      pair: symbolPair,
     }
 
     await ValrHttp.privateRequest<void>({
