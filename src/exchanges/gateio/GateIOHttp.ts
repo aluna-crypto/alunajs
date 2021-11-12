@@ -69,22 +69,20 @@ export const generateAuthHeader = (
     keySecret,
     path,
     verb,
-    body,
+    body = '',
     queryString = '',
   } = params
 
 
   const timestamp: string = (new Date().getTime() / 1000).toString()
 
-
   const bodyHash = crypto
     .createHash('sha512')
-    .update(body ? JSON.stringify(body) : '')
+    .update(body)
     .digest('hex')
 
-
   const signatureString = [
-    verb,
+    verb.toUpperCase(),
     path,
     queryString,
     bodyHash,
@@ -155,6 +153,7 @@ export const GateIOHttp: IAlunaHttp = class {
       body,
       queryString,
     })
+
 
     const requestConfig = {
       url,
