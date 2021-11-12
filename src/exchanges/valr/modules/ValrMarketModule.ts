@@ -47,9 +47,7 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
     const rawMarkets = await ValrMarketModule.listRaw()
 
-    const parsedMarkets = ValrMarketModule.parseMany({
-      rawMarkets,
-    })
+    const parsedMarkets = ValrMarketModule.parseMany({ rawMarkets })
 
     return parsedMarkets
 
@@ -61,9 +59,7 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
     const { rawMarket } = params
 
-    const parsedMarket = ValrMarketParser.parse({
-      rawMarket,
-    })
+    const parsedMarket = ValrMarketParser.parse({ rawMarket })
 
     return parsedMarket
 
@@ -77,9 +73,7 @@ export const ValrMarketModule: IAlunaMarketModule = class {
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = ValrMarketParser.parse({
-        rawMarket,
-      })
+      const parsedMarket = ValrMarketParser.parse({ rawMarket })
 
       return parsedMarket
 
