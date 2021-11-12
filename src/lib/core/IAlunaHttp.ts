@@ -13,6 +13,7 @@ export interface IAlunaHttpOptions {
 
 export interface IAlunaHttpPublicParams {
   url: string
+  queryString?: string
   verb?: AlunaHttpVerbEnum
   body?: Record<string, any>
   options?: IAlunaHttpOptions
@@ -28,4 +29,3 @@ export interface IAlunaHttp {
   publicRequest<T>(params: IAlunaHttpPublicParams): Promise<T>
   privateRequest<T>(params: IAlunaHttpPrivateParams): Promise<T>
 }
-
