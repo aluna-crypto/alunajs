@@ -165,7 +165,6 @@ export const GateIOHttp: IAlunaHttp = class {
 
     try {
 
-
       const response = await axios.create().request<T>(requestConfig)
 
       return response.data
