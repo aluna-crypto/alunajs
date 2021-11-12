@@ -16,8 +16,6 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 describe('ValrMarketModule', () => {
 
-  const valrMarketModule = ValrMarketModule
-
 
   it('should list Valr raw markets just fine', async () => {
 
@@ -44,7 +42,7 @@ describe('ValrMarketModule', () => {
     )
 
 
-    const response = await valrMarketModule.listRaw()
+    const response = await ValrMarketModule.listRaw()
 
 
     expect(requestMock.callCount).to.be.eq(2)
@@ -101,18 +99,18 @@ describe('ValrMarketModule', () => {
     const rawListMock = 'rawListMock'
 
     const listRawMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'listRaw',
       rawListMock,
     )
 
     const parseManyMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'parseMany',
       VALR_PARSED_MARKETS,
     )
 
-    const parsedMarkets = await valrMarketModule.list()
+    const parsedMarkets = await ValrMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -155,7 +153,7 @@ describe('ValrMarketModule', () => {
 
     const parsedMarketWithSymbolsMock = VALR_RAW_MARKETS_WITH_CURRENCY[0]
 
-    const market: IAlunaMarketSchema = valrMarketModule.parse({
+    const market: IAlunaMarketSchema = ValrMarketModule.parse({
       rawMarket: parsedMarketWithSymbolsMock,
     })
 
@@ -210,7 +208,7 @@ describe('ValrMarketModule', () => {
   it('should parse many Valr markets just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'parse',
     )
 
@@ -223,7 +221,7 @@ describe('ValrMarketModule', () => {
       .returns(VALR_PARSED_MARKETS[2])
 
 
-    const markets: IAlunaMarketSchema[] = valrMarketModule.parseMany({
+    const markets: IAlunaMarketSchema[] = ValrMarketModule.parseMany({
       rawMarkets: VALR_RAW_MARKETS_WITH_CURRENCY,
     })
 
