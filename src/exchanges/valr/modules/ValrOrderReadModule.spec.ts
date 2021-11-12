@@ -30,7 +30,6 @@ describe('ValrOrderReadModule', () => {
   const valrOrderReadModule = ValrOrderReadModule.prototype
 
 
-
   it('should list all Valr raw open orders just fine', async () => {
 
     ImportMock.mockOther(
@@ -55,10 +54,42 @@ describe('ValrOrderReadModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
 
     expect(rawBalances.length).to.be.eq(4)
-    expect(rawBalances[0].currencyPair).to.be.eq('ETHZAR')
-    expect(rawBalances[1].currencyPair).to.be.eq('BTCZAR')
-    expect(rawBalances[2].currencyPair).to.be.eq('ETHZAR')
-    expect(rawBalances[3].currencyPair).to.be.eq('ETHZAR')
+
+    rawBalances.forEach((balance, index) => {
+
+      const {
+        orderId,
+        createdAt,
+        currencyPair,
+        filledPercentage,
+        originalQuantity,
+        price,
+        remainingQuantity,
+        side,
+        status,
+        timeInForce,
+        type,
+        updatedAt,
+        customerOrderId,
+        stopPrice,
+      } = VALR_RAW_LIST_OPEN_ORDERS[index]
+
+      expect(balance.orderId).to.be.eq(orderId)
+      expect(balance.createdAt).to.be.eq(createdAt)
+      expect(balance.currencyPair).to.be.eq(currencyPair)
+      expect(balance.filledPercentage).to.be.eq(filledPercentage)
+      expect(balance.originalQuantity).to.be.eq(originalQuantity)
+      expect(balance.price).to.be.eq(price)
+      expect(balance.remainingQuantity).to.be.eq(remainingQuantity)
+      expect(balance.side).to.be.eq(side)
+      expect(balance.status).to.be.eq(status)
+      expect(balance.timeInForce).to.be.eq(timeInForce)
+      expect(balance.type).to.be.eq(type)
+      expect(balance.updatedAt).to.be.eq(updatedAt)
+      expect(balance.customerOrderId).to.be.eq(customerOrderId)
+      expect(balance.stopPrice).to.be.eq(stopPrice)
+
+    })
 
   })
 
@@ -86,21 +117,43 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrders.length).to.be.eq(4)
 
-    expect(parsedOrders[0].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedOrders[0].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
-    expect(parsedOrders[0].side).to.be.eq(AlunaSideEnum.LONG)
+    parsedOrders.forEach((order, index) => {
 
-    expect(parsedOrders[1].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedOrders[1].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
-    expect(parsedOrders[1].side).to.be.eq(AlunaSideEnum.LONG)
+      const {
+        account,
+        amount,
+        id,
+        isAmountInContracts,
+        placedAt,
+        side,
+        status,
+        symbolPair,
+        total,
+        type,
+        canceledAt,
+        filledAt,
+        limitRate,
+        rate,
+        stopRate,
+      } = VALR_PARSED_OPEN_ORDERS[index]
 
-    expect(parsedOrders[2].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedOrders[2].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
-    expect(parsedOrders[2].side).to.be.eq(AlunaSideEnum.SHORT)
+      expect(order.id).to.be.eq(id)
+      expect(order.account).to.be.eq(account)
+      expect(order.amount).to.be.eq(amount)
+      expect(order.isAmountInContracts).to.be.eq(isAmountInContracts)
+      expect(order.placedAt).to.be.eq(placedAt)
+      expect(order.side).to.be.eq(side)
+      expect(order.status).to.be.eq(status)
+      expect(order.symbolPair).to.be.eq(symbolPair)
+      expect(order.total).to.be.eq(total)
+      expect(order.type).to.be.eq(type)
+      expect(order.canceledAt).to.be.eq(canceledAt)
+      expect(order.filledAt).to.be.eq(filledAt)
+      expect(order.limitRate).to.be.eq(limitRate)
+      expect(order.rate).to.be.eq(rate)
+      expect(order.stopRate).to.be.eq(stopRate)
 
-    expect(parsedOrders[3].account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedOrders[3].status).to.be.eq(AlunaOrderStatusEnum.OPEN)
-    expect(parsedOrders[3].side).to.be.eq(AlunaSideEnum.SHORT)
+    })
 
   })
 
@@ -127,10 +180,8 @@ describe('ValrOrderReadModule', () => {
       VALR_RAW_GET_ORDERS[0],
     )
 
-
     const symbolPair = 'symbol'
     const id = 'id'
-
 
     const rawOrder = await valrOrderReadModule.getRaw({
       id,
@@ -261,21 +312,20 @@ describe('ValrOrderReadModule', () => {
 
     })
 
-
     const parsedManyResp = valrOrderReadModule.parseMany({ rawOrders })
 
-
-    expect(rawOrders.length).to.be.eq(4)
-
-    const rawOrdersArgs = rawOrders.map((rawOrder) => ([{ rawOrder }]))
-    expect(parseMock.callCount).to.be.eq(4)
-    expect(parseMock.args).to.deep.eq(rawOrdersArgs)
-    expect(parseMock.returned(parsedOrders[0])).to.be.ok
-
     expect(parsedManyResp.length).to.be.eq(4)
+    expect(parseMock.callCount).to.be.eq(4)
+
+    parsedManyResp.forEach((parsed, index) => {
+
+      expect(parsed).to.deep.eq(parsedOrders[index])
+      expect(parseMock.calledWith({
+        rawOrders: parsed,
+      }))
+
+    })
 
   })
-
-
 
 })
