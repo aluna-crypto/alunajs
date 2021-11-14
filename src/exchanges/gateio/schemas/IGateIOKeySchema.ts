@@ -8,6 +8,7 @@ export interface IGateIOKeySchema {
 export enum GateIOApiKeyPermissions {
   READ_ONLY = 'Read-only',
   READ_WRITE = 'Read-write',
+  NONE = 'None',
 }
 
 
