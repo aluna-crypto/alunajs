@@ -3,4 +3,5 @@ export enum AlunaAccountEnum {
   MARGIN = 'margin',
   DERIVATIVES = 'derivatives',
   LENDING = 'lending',
+  DELIVERY = 'delivery',
 }
