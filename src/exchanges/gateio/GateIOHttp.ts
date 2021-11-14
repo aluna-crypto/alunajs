@@ -1,4 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+} from 'axios'
 import crypto from 'crypto'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -69,7 +72,7 @@ export const generateAuthHeader = (
     keySecret,
     path,
     verb,
-    body = '',
+    body,
     queryString = '',
   } = params
 
@@ -78,7 +81,7 @@ export const generateAuthHeader = (
 
   const bodyHash = crypto
     .createHash('sha512')
-    .update(body)
+    .update(body ? JSON.stringify(body) : '')
     .digest('hex')
 
   const signatureString = [
@@ -94,11 +97,15 @@ export const generateAuthHeader = (
     .update(signatureString)
     .digest('hex')
 
-  return {
+  const headers = {
     KEY: keySecret.key,
     SIGN: signature,
     Timestamp: timestamp,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
   }
+
+  return headers
 
 }
 
@@ -118,6 +125,10 @@ export const GateIOHttp: IAlunaHttp = class {
       url,
       method: verb,
       data: body,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
     }
 
     try {
@@ -146,7 +157,7 @@ export const GateIOHttp: IAlunaHttp = class {
       queryString = '',
     } = params
 
-    const signedHash = generateAuthHeader({
+    const headers = generateAuthHeader({
       verb,
       path: new URL(url).pathname,
       keySecret,
@@ -155,11 +166,11 @@ export const GateIOHttp: IAlunaHttp = class {
     })
 
 
-    const requestConfig = {
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
-      data: body,
-      headers: signedHash,
+      data: JSON.stringify(body),
+      headers,
     }
 
     try {
