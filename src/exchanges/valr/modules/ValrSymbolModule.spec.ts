@@ -14,7 +14,6 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 describe('ValrSymbolModule', () => {
 
 
-
   it('should list Valr raw symbols just fine', async () => {
 
     const requestMock = ImportMock.mockFunction(

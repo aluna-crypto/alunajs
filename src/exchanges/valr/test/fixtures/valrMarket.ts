@@ -1,7 +1,9 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
-import { IValrCurrencyPairs } from '../../schemas/IValrCurrencyPairs'
-import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
+import {
+  IValrCurrencyPairs,
+  IValrMarketSchema,
+} from '../../schemas/IValrMarketSchema'
 
 
 
