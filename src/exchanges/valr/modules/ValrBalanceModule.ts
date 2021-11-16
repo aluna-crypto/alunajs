@@ -58,6 +58,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
       total: Number(total),
+      meta: rawBalance,
     }
 
   }
