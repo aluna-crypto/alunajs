@@ -50,6 +50,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
       id: shortName,
       name: longName,
       exchangeId: Valr.ID,
+      meta: rawSymbol,
     }
 
   }
