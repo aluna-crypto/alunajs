@@ -10,20 +10,20 @@ export class ValrMarketParser {
     rawMarket: IMarketWithCurrency,
   }): IAlunaMarketSchema {
 
+    const { rawMarket } = params
+
     const {
-      rawMarket: {
-        askPrice,
-        baseVolume,
-        bidPrice,
-        changeFromPrevious,
-        highPrice,
-        lastTradedPrice,
-        lowPrice,
-        baseCurrency,
-        quoteCurrency,
-        currencyPair,
-      },
-    } = params
+      askPrice,
+      baseVolume,
+      bidPrice,
+      changeFromPrevious,
+      highPrice,
+      lastTradedPrice,
+      lowPrice,
+      baseCurrency,
+      quoteCurrency,
+      currencyPair,
+    } = rawMarket
 
 
     const ticker = {
@@ -48,6 +48,7 @@ export class ValrMarketParser {
       marginEnabled: false,
       derivativesEnabled: false,
       leverageEnabled: false,
+      meta: rawMarket,
     }
 
   }
