@@ -32,4 +32,6 @@ export interface IAlunaPositionSchema {
   openedAt?: Date
   closedAt?: Date
 
+  meta: any
+
 }
