@@ -86,6 +86,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       read: false,
       trade: false,
       withdraw: false,
+      meta: rawKey,
     }
 
     permissions.forEach((permission) => {
