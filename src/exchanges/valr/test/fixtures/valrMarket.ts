@@ -209,6 +209,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
   {
     exchangeId: 'valr',
@@ -230,6 +231,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
   {
     exchangeId: 'valr',
@@ -251,5 +253,6 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
 ]
