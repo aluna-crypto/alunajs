@@ -80,6 +80,7 @@ export class ValrOrderParser {
       status: ValrStatusAdapter.translateToAluna({ from: status }),
       type: ValrOrderTypeAdapter.translateToAluna({ from: type }),
       placedAt: new Date(createdAt),
+      meta: rawOrder,
     }
 
     return parsedOrder
