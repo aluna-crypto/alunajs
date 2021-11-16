@@ -13,31 +13,45 @@ export class ValrCurrencyPairsParser {
     rawCurrencyPairs: IValrCurrencyPairs[],
   }): IMarketWithCurrency[] {
 
-    const rawMarketsWithCurrency = params.rawMarkets
-      .reduce((cumulator, current) => {
+    const {
+      rawMarkets,
+      rawCurrencyPairs,
+    } = params
 
-        const rawSymbol = params.rawCurrencyPairs.find(
-          (eachItem) => eachItem.symbol === current.currencyPair,
-        )
+    const pairSymbolsDictionary: { [key:string]: IValrCurrencyPairs } = {}
 
-        if (rawSymbol) {
+    rawCurrencyPairs.forEach((pair) => {
 
-          const {
-            baseCurrency,
-            quoteCurrency,
-          } = rawSymbol
+      const { symbol } = pair
 
-          cumulator.push({
-            ...current,
-            baseCurrency,
-            quoteCurrency,
-          })
+      pairSymbolsDictionary[symbol] = pair
 
-        }
+    })
 
-        return cumulator
+    const rawMarketsWithCurrency = rawMarkets.reduce((cumulator, current) => {
 
-      }, [] as IMarketWithCurrency[])
+      const { currencyPair } = current
+
+      const rawSymbol = pairSymbolsDictionary[currencyPair]
+
+      if (rawSymbol) {
+
+        const {
+          baseCurrency,
+          quoteCurrency,
+        } = rawSymbol
+
+        cumulator.push({
+          ...current,
+          baseCurrency,
+          quoteCurrency,
+        })
+
+      }
+
+      return cumulator
+
+    }, [] as IMarketWithCurrency[])
 
     return rawMarketsWithCurrency
 
