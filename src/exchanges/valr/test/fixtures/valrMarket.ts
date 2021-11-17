@@ -1,7 +1,9 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
-import { IValrCurrencyPairs } from '../../schemas/IValrCurrencyPairs'
-import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
+import {
+  IValrCurrencyPairs,
+  IValrMarketSchema,
+} from '../../schemas/IValrMarketSchema'
 
 
 
@@ -207,6 +209,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
   {
     exchangeId: 'valr',
@@ -228,6 +231,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
   {
     exchangeId: 'valr',
@@ -249,5 +253,6 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
+    meta: {},
   },
 ]

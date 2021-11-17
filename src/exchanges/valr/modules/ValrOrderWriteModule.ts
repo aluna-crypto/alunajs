@@ -77,7 +77,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
       }
 
-      if (orderType.mode !== AlunaFeaturesModeEnum.WRITE) {
+      if (orderType.mode === AlunaFeaturesModeEnum.READ) {
 
         throw new AlunaError({
           message: `Order type '${type}' is in read mode`,
@@ -127,10 +127,12 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       keySecret: this.exchange.keySecret,
     })
 
-    return this.get({
+    const order = await this.get({
       id,
       symbolPair,
     })
+
+    return order
 
   }
 
@@ -142,19 +144,26 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     ValrLog.info('canceling order for Valr')
 
+    const {
+      id,
+      symbolPair,
+    } = params
+
+    const body = {
+      orderId: id,
+      pair: symbolPair,
+    }
+
     await ValrHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: 'https://api.valr.com/v1/orders/order',
       keySecret: this.exchange.keySecret,
-      body: {
-        orderId: params.id,
-        pair: params.symbolPair,
-      },
+      body,
     })
 
-    const ensuredCancelled = await this.getRaw(params)
+    const rawOrder = await this.getRaw(params)
 
-    if (ensuredCancelled.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
+    if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
@@ -167,9 +176,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
-    return this.parse({
-      rawOrder: ensuredCancelled,
-    })
+    const parsedOrder = this.parse({ rawOrder })
+
+    return parsedOrder
 
   }
 

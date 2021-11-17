@@ -25,6 +25,7 @@
     "semi": ["error", "never"],
     "no-shadow": "off",
     "no-console": "off",
+    "arrow-body-style": "off",
     "no-useless-constructor": "off",
     "no-empty-function": "off",
     "class-methods-use-this": "off",

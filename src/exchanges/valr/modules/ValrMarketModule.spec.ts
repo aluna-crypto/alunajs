@@ -16,9 +16,6 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 describe('ValrMarketModule', () => {
 
-  const valrMarketModule = ValrMarketModule
-
-
 
   it('should list Valr raw markets just fine', async () => {
 
@@ -34,8 +31,8 @@ describe('ValrMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(rawMarkets)
-      .onSecondCall().returns(rawSymbolsPairs)
+      .onFirstCall().returns(Promise.resolve(rawMarkets))
+      .onSecondCall().returns(Promise.resolve(rawSymbolsPairs))
 
 
     const currencyPairsParseMock = ImportMock.mockFunction(
@@ -45,12 +42,12 @@ describe('ValrMarketModule', () => {
     )
 
 
-    const response = await valrMarketModule.listRaw()
+    const response = await ValrMarketModule.listRaw()
 
 
     expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.args[0]).to.deep.eq([{ url: marketsURL }])
-    expect(requestMock.args[1]).to.deep.eq([{ url: symbolPairsURL }])
+    expect(requestMock.calledWith({ url: marketsURL })).to.be.ok
+    expect(requestMock.calledWith({ url: symbolPairsURL })).to.be.ok
 
     expect(currencyPairsParseMock.callCount).to.be.eq(1)
     expect(currencyPairsParseMock.calledWith({
@@ -59,10 +56,39 @@ describe('ValrMarketModule', () => {
     })).to.be.ok
 
     expect(response.length).to.eq(3)
-    expect(response).to.deep.eq(currencyPairsParseMock.returnValues[0])
-    expect(response[0].currencyPair).to.eq('USDCETH')
-    expect(response[1].currencyPair).to.eq('BTCZAR')
-    expect(response[2].currencyPair).to.eq('ETHZAR')
+    expect(response).to.deep.eq(VALR_RAW_MARKETS_WITH_CURRENCY)
+
+    response.forEach((res, index) => {
+
+      const {
+        currencyPair,
+        askPrice,
+        bidPrice,
+        lastTradedPrice,
+        previousClosePrice,
+        baseVolume,
+        highPrice,
+        lowPrice,
+        created,
+        changeFromPrevious,
+        baseCurrency,
+        quoteCurrency,
+      } = VALR_RAW_MARKETS_WITH_CURRENCY[index]
+
+      expect(res.currencyPair).to.be.eq(currencyPair)
+      expect(res.askPrice).to.be.eq(askPrice)
+      expect(res.bidPrice).to.be.eq(bidPrice)
+      expect(res.lastTradedPrice).to.be.eq(lastTradedPrice)
+      expect(res.previousClosePrice).to.be.eq(previousClosePrice)
+      expect(res.baseVolume).to.be.eq(baseVolume)
+      expect(res.highPrice).to.be.eq(highPrice)
+      expect(res.lowPrice).to.be.eq(lowPrice)
+      expect(res.created).to.be.eq(created)
+      expect(res.changeFromPrevious).to.be.eq(changeFromPrevious)
+      expect(res.baseCurrency).to.be.eq(baseCurrency)
+      expect(res.quoteCurrency).to.be.eq(quoteCurrency)
+
+    })
 
   })
 
@@ -70,43 +96,46 @@ describe('ValrMarketModule', () => {
 
   it('should list Valr parsed markets just fine', async () => {
 
+    const rawListMock = 'rawListMock'
+
     const listRawMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'listRaw',
+      rawListMock,
     )
 
     const parseManyMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'parseMany',
       VALR_PARSED_MARKETS,
     )
 
-    const parsedMarkets = await valrMarketModule.list()
+    const parsedMarkets = await ValrMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
     expect(parseManyMock.callCount).to.eq(1)
     expect(parseManyMock.calledWith({
-      rawMarkets: listRawMock.returnValues[0],
+      rawMarkets: rawListMock,
     }))
 
     expect(parsedMarkets.length).to.eq(3)
-    expect(parsedMarkets).to.deep.eq(parseManyMock.returnValues[0])
+    expect(parsedMarkets).to.deep.eq(VALR_PARSED_MARKETS)
 
-    expect(parsedMarkets[0].exchangeId).to.eq(Valr.ID)
-    expect(parsedMarkets[0].pairSymbol).to.eq('USDCETH')
-    expect(parsedMarkets[0].baseSymbolId).to.eq('USDC')
-    expect(parsedMarkets[0].quoteSymbolId).to.eq('ETH')
+    parsedMarkets.forEach((parsed, index) => {
 
-    expect(parsedMarkets[1].exchangeId).to.eq(Valr.ID)
-    expect(parsedMarkets[1].pairSymbol).to.eq('BTCZAR')
-    expect(parsedMarkets[1].baseSymbolId).to.eq('BTC')
-    expect(parsedMarkets[1].quoteSymbolId).to.eq('ZAR')
+      const {
+        pairSymbol,
+        baseSymbolId,
+        quoteSymbolId,
+      } = VALR_PARSED_MARKETS[index]
 
-    expect(parsedMarkets[2].exchangeId).to.eq(Valr.ID)
-    expect(parsedMarkets[2].pairSymbol).to.eq('ETHZAR')
-    expect(parsedMarkets[2].baseSymbolId).to.eq('ETH')
-    expect(parsedMarkets[2].quoteSymbolId).to.eq('ZAR')
+      expect(parsed.exchangeId).to.eq(Valr.ID)
+      expect(parsed.pairSymbol).to.be.eq(pairSymbol)
+      expect(parsed.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsed.quoteSymbolId).to.be.eq(quoteSymbolId)
+
+    })
 
   })
 
@@ -114,35 +143,58 @@ describe('ValrMarketModule', () => {
 
   it('should parse a Valr market just fine', async () => {
 
+    const parsedMarketMock = VALR_PARSED_MARKETS[0]
+
     const marketParserMock = ImportMock.mockFunction(
       ValrMarketParser,
       'parse',
-      VALR_PARSED_MARKETS[0],
+      parsedMarketMock,
     )
 
-    const market: IAlunaMarketSchema = valrMarketModule.parse({
-      rawMarket: VALR_RAW_MARKETS_WITH_CURRENCY[0],
+    const parsedMarketWithSymbolsMock = VALR_RAW_MARKETS_WITH_CURRENCY[0]
+
+    const market: IAlunaMarketSchema = ValrMarketModule.parse({
+      rawMarket: parsedMarketWithSymbolsMock,
     })
 
     expect(marketParserMock.callCount).to.be.eq(1)
 
     const { ticker } = market
 
-    expect(market).to.deep.eq(marketParserMock.returnValues[0])
+    expect(market).to.deep.eq(parsedMarketMock)
 
     expect(market.exchangeId).to.be.eq(Valr.ID)
-    expect(market.pairSymbol).to.be.eq('USDCETH')
-    expect(market.baseSymbolId).to.be.eq('USDC')
-    expect(market.quoteSymbolId).to.be.eq('ETH')
+    expect(market.pairSymbol).to.be.eq(parsedMarketMock.pairSymbol)
+    expect(market.baseSymbolId).to.be.eq(parsedMarketMock.baseSymbolId)
+    expect(market.quoteSymbolId).to.be.eq(parsedMarketMock.quoteSymbolId)
+
+
+    const {
+      highPrice,
+      lowPrice,
+      bidPrice,
+      askPrice,
+      lastTradedPrice,
+      changeFromPrevious,
+      baseVolume,
+    } = parsedMarketWithSymbolsMock
+
+    const high = parseFloat(highPrice)
+    const low = parseFloat(lowPrice)
+    const bid = parseFloat(bidPrice)
+    const ask = parseFloat(askPrice)
+    const lastTradePrice = parseFloat(lastTradedPrice)
+    const change = parseFloat(changeFromPrevious) / 100
+    const volume = parseFloat(baseVolume)
 
     expect(ticker).to.be.ok
-    expect(ticker.high).to.be.eq(0.00043926)
-    expect(ticker.low).to.be.eq(0.00038734)
-    expect(ticker.bid).to.be.eq(0.00039291)
-    expect(ticker.ask).to.be.eq(0.00039334)
-    expect(ticker.last).to.be.eq(0.00039266)
-    expect(ticker.change).to.be.eq(-0.0616)
-    expect(ticker.baseVolume).to.be.eq(0)
+    expect(ticker.high).to.be.eq(high)
+    expect(ticker.low).to.be.eq(low)
+    expect(ticker.bid).to.be.eq(bid)
+    expect(ticker.ask).to.be.eq(ask)
+    expect(ticker.last).to.be.eq(lastTradePrice)
+    expect(ticker.change).to.be.eq(change)
+    expect(ticker.baseVolume).to.be.eq(volume)
     expect(ticker.quoteVolume).to.be.eq(0)
 
     expect(market.spotEnabled).not.to.be.ok
@@ -156,7 +208,7 @@ describe('ValrMarketModule', () => {
   it('should parse many Valr markets just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
-      valrMarketModule,
+      ValrMarketModule,
       'parse',
     )
 
@@ -169,19 +221,24 @@ describe('ValrMarketModule', () => {
       .returns(VALR_PARSED_MARKETS[2])
 
 
-    const markets: IAlunaMarketSchema[] = valrMarketModule.parseMany({
+    const markets: IAlunaMarketSchema[] = ValrMarketModule.parseMany({
       rawMarkets: VALR_RAW_MARKETS_WITH_CURRENCY,
     })
 
-    expect(markets[0].exchangeId).to.be.eq(Valr.ID)
-    expect(markets[0].pairSymbol).to.be.eq('USDCETH')
+    markets.forEach((market, index) => {
 
-    expect(markets[1].exchangeId).to.be.eq(Valr.ID)
-    expect(markets[1].pairSymbol).to.be.eq('BTCZAR')
+      const {
+        baseSymbolId,
+        quoteSymbolId,
+        pairSymbol,
+      } = VALR_PARSED_MARKETS[index]
 
-    expect(markets[2].exchangeId).to.be.eq(Valr.ID)
-    expect(markets[2].pairSymbol).to.be.eq('ETHZAR')
+      expect(market.exchangeId).to.be.eq(Valr.ID)
+      expect(market.pairSymbol).to.be.eq(pairSymbol)
+      expect(market.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(market.quoteSymbolId).to.be.eq(quoteSymbolId)
 
+    })
 
   })
 

@@ -27,4 +27,6 @@ export interface IAlunaOrderSchema {
   filledAt?: Date
   canceledAt?: Date
 
+  meta: any
+
 }

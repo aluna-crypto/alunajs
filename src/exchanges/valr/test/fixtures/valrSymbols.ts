@@ -38,15 +38,18 @@ export const VALR_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
     exchangeId: Valr.ID,
     id: 'ZAR',
     name: 'Rand',
+    meta: {},
   },
   {
     exchangeId: Valr.ID,
     id: 'BTC',
     name: 'Bitcoin',
+    meta: {},
   },
   {
     exchangeId: Valr.ID,
     id: 'ETH',
     name: 'Ethereum',
+    meta: {},
   },
 ]

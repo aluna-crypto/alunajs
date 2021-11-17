@@ -6,4 +6,7 @@ export interface IAlunaSymbolSchema {
   name?: string
   slug?: string
   aliases?: string[]
+
+  meta: any
+
 }

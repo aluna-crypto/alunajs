@@ -138,6 +138,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     placedAt: new Date('2021-06-08T00:55:12.982Z'),
+    meta: {},
   },
   {
     id: 'eb47c14b-94f0-4358-a732-6f9bd70f12d6',
@@ -151,6 +152,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:47:50.350Z'),
+    meta: {},
   },
   {
     id: '9481397e-ca83-4e66-af30-c9afeba35106',
@@ -164,6 +166,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:49:08.173Z'),
+    meta: {},
   },
   {
     id: 'efcb70c1-23a4-47e9-978b-0d3a9add616e',
@@ -177,6 +180,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     placedAt: new Date('2021-06-08T01:51:43.960Z'),
+    meta: {},
   },
 ]
 

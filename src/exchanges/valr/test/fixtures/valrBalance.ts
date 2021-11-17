@@ -51,24 +51,28 @@ export const VALR_PARSED_BALANCES: IAlunaBalanceSchema[] = [
     account: AlunaAccountEnum.EXCHANGE,
     available: 0.04928793877,
     total: 0.04928793877,
+    meta: {},
   },
   {
     symbolId: 'ZAR',
     account: AlunaAccountEnum.EXCHANGE,
     available: 74.24437545,
     total: 74.24437545,
+    meta: {},
   },
   {
     symbolId: 'BTC',
     account: AlunaAccountEnum.EXCHANGE,
     available: 0.000012197825,
     total: 0.000012197825,
+    meta: {},
   },
   {
     symbolId: 'XRP',
     account: AlunaAccountEnum.EXCHANGE,
     available: 0.533568,
     total: 0.533568,
+    meta: {},
   },
 ]
 

@@ -10,4 +10,6 @@ export interface IAlunaBalanceSchema {
   total: number
   available: number
 
+  meta: any
+
 }

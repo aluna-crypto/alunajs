@@ -22,15 +22,15 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const isValid = read
 
-    let logMessage: string
+    let logMessage = 'Valr API key is'
 
     if (isValid) {
 
-      logMessage = 'Valr API key is valid'
+      logMessage = logMessage.concat(' valid')
 
     } else {
 
-      logMessage = 'Valr API key is invalid'
+      logMessage = logMessage.concat(' invalid')
 
     }
 
@@ -46,15 +46,13 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     ValrLog.info('fetching Valr key permissions')
 
-    let permissions: IValrKeySchema
+    let rawKey: IValrKeySchema
 
     try {
 
-      const {
-        keySecret,
-      } = this.exchange
+      const { keySecret } = this.exchange
 
-      permissions = await ValrHttp.privateRequest<IValrKeySchema>({
+      rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: 'https://api.valr.com/v1/account/api-keys/current',
         keySecret,
@@ -68,9 +66,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const parsedPermissions = this.parsePermissions({
-      rawKey: permissions,
-    })
+    const parsedPermissions = this.parsePermissions({ rawKey })
 
     return parsedPermissions
 
@@ -82,29 +78,49 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     rawKey: IValrKeySchema,
   }): IAlunaKeyPermissionSchema {
 
-    const {
-      rawKey,
-    } = params
+    const { rawKey } = params
 
     const { permissions } = rawKey
 
-    const read = permissions.includes(ValrApiKeyPermissions.VIEW_ACCESS)
-    const trade = permissions.includes(ValrApiKeyPermissions.TRADE)
-    const withdraw = permissions.includes(ValrApiKeyPermissions.WITHDRAW)
+    const alunaPermissions: IAlunaKeyPermissionSchema = {
+      read: false,
+      trade: false,
+      withdraw: false,
+      meta: rawKey,
+    }
 
-    if (withdraw) {
+    permissions.forEach((permission) => {
+
+      switch (permission) {
+
+        case ValrApiKeyPermissions.VIEW_ACCESS:
+          alunaPermissions.read = true
+          break
+
+        case ValrApiKeyPermissions.TRADE:
+          alunaPermissions.trade = true
+          break
+
+        case ValrApiKeyPermissions.WITHDRAW:
+          alunaPermissions.withdraw = true
+          break
+
+        default:
+
+          ValrLog.info(`Unknown permission '${permission}' found on Valr`
+            .concat('permissions API response'))
+
+      }
+
+    })
+
+    if (alunaPermissions.withdraw) {
 
       throw new AlunaError({
         message: 'API key should not have withdraw permission.',
         statusCode: 401,
       })
 
-    }
-
-    const alunaPermissions: IAlunaKeyPermissionSchema = {
-      read,
-      trade,
-      withdraw: false,
     }
 
     return alunaPermissions

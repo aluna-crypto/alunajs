@@ -22,4 +22,6 @@ export interface IAlunaMarketSchema {
   maxLeverage?: number
   leverageEnabled: boolean
 
+  meta: any
+
 }
