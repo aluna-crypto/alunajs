@@ -147,19 +147,13 @@ describe('GateIOMarketModule', () => {
     })
 
     expect(markets[0].pairSymbol)
-      .to
-      .be
-      .eq(`${rawMarkets[0].base}${rawMarkets[0].quote}`)
+      .to.be.eq(`${rawMarkets[0].base}${rawMarkets[0].quote}`)
 
     expect(markets[1].pairSymbol)
-      .to
-      .be
-      .eq(`${rawMarkets[1].base}${rawMarkets[1].quote}`)
+      .to.be.eq(`${rawMarkets[1].base}${rawMarkets[1].quote}`)
 
     expect(markets[2].pairSymbol)
-      .to
-      .be
-      .eq(`${rawMarkets[2].base}${rawMarkets[2].quote}`)
+      .to.be.eq(`${rawMarkets[2].base}${rawMarkets[2].quote}`)
 
   })
 
