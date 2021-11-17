@@ -11,7 +11,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolSchema[]> {
 
-    const rawSymbols = await this.listRaw()
+    const rawSymbols = await ValrSymbolModule.listRaw()
 
     const parsedSymbols = ValrSymbolModule.parseMany({ rawSymbols })
 
