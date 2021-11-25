@@ -1,35 +1,40 @@
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { IMarketWithCurrency } from '../../valr/modules/ValrMarketModule'
+import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import {
+  IBinanceMarketSchema,
+  IBinanceMarketWithCurrency,
+} from '../schemas/IBinanceMarketSchema'
+import { BinanceMarketParser } from '../schemas/parses/BinanceMarketParser'
+import { BinanceSymbolModule } from './BinanceSymbolModule'
 
 
 
 export const BinanceMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<any[]> { // @TODO -> Update any
+  public static async listRaw (): Promise<IBinanceMarketWithCurrency[]> {
 
     const { publicRequest } = BinanceHttp
 
     BinanceLog.info('fetching Binance markets')
 
-    // const rawMarkets = await publicRequest<any[]>({ // @TODO -> Update any
-    //   url: 'https://api.binance.com/v1/public/marketsummary',
-    // })
+    const rawMarkets = await publicRequest<IBinanceMarketSchema[]>({
+      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr',
+    })
 
-    BinanceLog.info('fetching Binance currency pairs')
+    BinanceLog.info('fetching Binance symbols')
 
-    // const rawCurrencyPairs = await publicRequest<any[]>({ // @TODO -> Update any
-    //   url: 'https://api.binance.com/v1/public/pairs',
-    // })
+    const rawSymbols = await BinanceSymbolModule.listRaw();
 
-    // const rawMarketsWithCurrency = BinanceCurrencyPairsParser.parse({
-    //   rawMarkets,
-    //   rawCurrencyPairs,
-    // })
+    const rawMarketsWithCurrency = BinanceMarketParser.parse({
+      rawMarkets,
+      rawSymbols,
+    })
 
-    return Promise.resolve([]) // @TODO -> Update any
+    return rawMarketsWithCurrency
 
   }
 
