@@ -1,8 +1,15 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
-import { Binance } from '../Binance'
-// import { BinanceHttp } from '../BinanceHttp'
+import {
+  Binance,
+  PROD_BINANCE_URL,
+} from '../Binance'
+import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import {
+  IBinanceSymbolInfoSchema,
+  IBinanceSymbolSchema,
+} from '../schemas/IBinanceSymbolSchema'
 
 
 
@@ -18,15 +25,15 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
   }
 
-  public static listRaw (): Promise<any[]> { // @TODO -> update any
+  public static listRaw (): Promise<IBinanceSymbolInfoSchema[]> {
 
     BinanceLog.info('fetching Binance symbols')
 
-    // const rawSymbols = BinanceHttp.publicRequest<any[]>({ // @TODO -> update any
-    //   url: DEV_BINANCE_URL + '/v1/public/currencies',
-    // })
+    const rawSymbols = BinanceHttp.publicRequest<IBinanceSymbolSchema>({
+      url: PROD_BINANCE_URL + '/api/v3/exchangeInfo',
+    }).then(res => res.symbols);
 
-    return Promise.resolve([]) // @TODO -> update
+    return rawSymbols
 
   }
 
