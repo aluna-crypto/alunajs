@@ -22,8 +22,17 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     BinanceLog.info('fetching Binance markets')
 
     const rawMarkets = await publicRequest<IBinanceMarketSchema[]>({
-      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr',
+      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=ETHBTC',
     })
+    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets)
+    const rawMarkets1 = await publicRequest<IBinanceMarketSchema[]>({
+      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=LTCBTC',
+    })
+    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets1)
+    const rawMarkets2 = await publicRequest<IBinanceMarketSchema[]>({
+      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=BNBBTC',
+    })
+    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets2)
 
     BinanceLog.info('fetching Binance symbols')
 
