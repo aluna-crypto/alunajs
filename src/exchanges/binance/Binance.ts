@@ -1,6 +1,9 @@
 import {
+  IAlunaBalanceModule,
   IAlunaExchange,
   IAlunaExchangeStatic,
+  IAlunaKeyModule,
+  IAlunaOrderWriteModule,
 } from '../../index'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import { ValrMarketModule } from '../valr/modules/ValrMarketModule'
@@ -21,7 +24,7 @@ export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implem
     static Market = ValrMarketModule // @TODO -> need to update
   
     // local definitions
-    key: any // @TODO -> need to update
-    order: any // @TODO -> need to update
-    balance: any // @TODO -> need to update
+    key: IAlunaKeyModule
+    order: IAlunaOrderWriteModule
+    balance: IAlunaBalanceModule
 }

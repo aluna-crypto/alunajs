@@ -18,11 +18,6 @@ export const BinanceSpecs: IAlunaExchangeSpecsSchema = {
       implemented: false,
     },
     {
-      type: AlunaAccountEnum.SPOT,
-      supported: true,
-      implemented: true,
-    },
-    {
       type: AlunaAccountEnum.MARGIN,
       supported: true,
       implemented: false,
