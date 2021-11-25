@@ -40,19 +40,17 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
 
   public static parse (params:{
-    rawSymbol: any, // @TODO -> update any
+    rawSymbol: IBinanceSymbolInfoSchema,
   }): IAlunaSymbolSchema {
 
     const { rawSymbol } = params
 
     const {
-      longName,
-      shortName,
+      baseAsset,
     } = rawSymbol
 
     return {
-      id: shortName,
-      name: longName,
+      id: baseAsset,
       exchangeId: Binance.ID,
       meta: rawSymbol,
     }
@@ -62,7 +60,7 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
 
   public static parseMany (params: {
-    rawSymbols: any[], // @TODO -> update any
+    rawSymbols: IBinanceSymbolInfoSchema[],
   }): IAlunaSymbolSchema[] {
 
     const { rawSymbols } = params
