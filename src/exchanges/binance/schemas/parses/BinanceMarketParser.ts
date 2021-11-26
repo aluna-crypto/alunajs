@@ -1,59 +1,58 @@
-import {
-  IBinanceMarketSchema,
-  IBinanceMarketWithCurrency,
-} from '../IBinanceMarketSchema'
-import { IBinanceSymbolInfoSchema } from '../IBinanceSymbolSchema'
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { Binance } from '../../Binance'
+import { IBinanceMarketWithCurrency } from '../IBinanceMarketSchema'
 
 
 
 export class BinanceMarketParser {
 
   static parse (params: {
-    rawMarkets: IBinanceMarketSchema[],
-    rawSymbols: IBinanceSymbolInfoSchema[],
-  }): IBinanceMarketWithCurrency[] {
+    rawMarket: IBinanceMarketWithCurrency,
+  }): IAlunaMarketSchema {
+
+    const { rawMarket } = params
 
     const {
-      rawMarkets,
-      rawSymbols,
-    } = params
+      askPrice,
+      volume,
+      bidPrice,
+      highPrice,
+      lastPrice,
+      lowPrice,
+      baseCurrency,
+      quoteCurrency,
+      priceChange,
+      quoteVolume,
+      symbol,
+      marginEnabled,
+      spotEnabled
+    } = rawMarket
 
-    const pairSymbolsDictionary: { [key:string]: IBinanceSymbolInfoSchema } = {}
 
-    rawSymbols.forEach((pair) => {
+    const ticker = {
+      high: parseFloat(highPrice),
+      low: parseFloat(lowPrice),
+      bid: parseFloat(bidPrice),
+      ask: parseFloat(askPrice),
+      last: parseFloat(lastPrice),
+      date: new Date(),
+      change: parseFloat(priceChange) / 100,
+      baseVolume: parseFloat(volume),
+      quoteVolume: parseFloat(quoteVolume),
+    }
 
-      const { symbol } = pair
-
-      pairSymbolsDictionary[symbol] = pair
-
-    })
-
-    const rawMarketsWithCurrency = rawMarkets.reduce((cumulator, current) => {
-
-      const { symbol } = current
-
-      const rawSymbol = pairSymbolsDictionary[symbol]
-
-      if (rawSymbol) {
-
-        const {
-          baseAsset,
-          quoteAsset
-        } = rawSymbol
-
-        cumulator.push({
-          ...current,
-          baseCurrency: baseAsset,
-          quoteCurrency: quoteAsset
-        })
-
-      }
-
-      return cumulator
-
-    }, [] as IBinanceMarketWithCurrency[])
-
-    return rawMarketsWithCurrency
+    return {
+      exchangeId: Binance.ID,
+      pairSymbol: symbol,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
+      ticker,
+      spotEnabled,
+      marginEnabled,
+      derivativesEnabled: false,
+      leverageEnabled: false,
+      meta: rawMarket,
+    }
 
   }
 

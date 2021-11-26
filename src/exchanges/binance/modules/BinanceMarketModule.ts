@@ -8,7 +8,7 @@ import {
   IBinanceMarketSchema,
   IBinanceMarketWithCurrency,
 } from '../schemas/IBinanceMarketSchema'
-import { BinanceMarketParser } from '../schemas/parses/BinanceMarketParser'
+import { BinanceCurrencyMarketParser } from '../schemas/parses/BinanceCurrencyMarketParser'
 import { BinanceSymbolModule } from './BinanceSymbolModule'
 
 
@@ -24,21 +24,12 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     const rawMarkets = await publicRequest<IBinanceMarketSchema[]>({
       url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=ETHBTC',
     })
-    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets)
-    const rawMarkets1 = await publicRequest<IBinanceMarketSchema[]>({
-      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=LTCBTC',
-    })
-    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets1)
-    const rawMarkets2 = await publicRequest<IBinanceMarketSchema[]>({
-      url: PROD_BINANCE_URL + '/api/v3/ticker/24hr?symbol=BNBBTC',
-    })
-    console.log("🚀 ~ file: BinanceMarketModule.ts ~ line 27 ~ listRaw ~ rawMarkets", rawMarkets2)
 
     BinanceLog.info('fetching Binance symbols')
 
     const rawSymbols = await BinanceSymbolModule.listRaw();
 
-    const rawMarketsWithCurrency = BinanceMarketParser.parse({
+    const rawMarketsWithCurrency = BinanceCurrencyMarketParser.parse({
       rawMarkets,
       rawSymbols,
     })
@@ -63,7 +54,7 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
     const { rawMarket } = params
 
-    // const parsedMarket = BinanceMarketParser.parse({ rawMarket })
+    // const parsedMarket = BinanceCurrencyMarketParser.parse({ rawMarket })
 
     return null // @TODO -> Update
 
@@ -77,7 +68,7 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      // const parsedMarket = BinanceMarketParser.parse({ rawMarket })
+      // const parsedMarket = BinanceCurrencyMarketParser.parse({ rawMarket })
 
       // return parsedMarket
 

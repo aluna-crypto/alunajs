@@ -101,7 +101,9 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     closeTime: 1637851400070,
     firstId: 169728213,
     lastId: 169947033,
-    count: 218821
+    count: 218821,
+    marginEnabled: true,
+    spotEnabled: true
   },
   {
     symbol: 'LTCBTC',
@@ -126,7 +128,9 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     closeTime: 1637851399402,
     firstId: 73873065,
     lastId: 73926145,
-    count: 53081
+    count: 53081,
+    marginEnabled: true,
+    spotEnabled: true
   },
   {
     symbol: 'ETHBTC',
@@ -151,6 +155,8 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     closeTime: 1637851399045,
     firstId: 310810805,
     lastId: 311063379,
-    count: 252575
+    count: 252575,
+    marginEnabled: true,
+    spotEnabled: true
   },
 ]

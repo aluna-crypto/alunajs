@@ -25,4 +25,6 @@ export interface IBinanceMarketSchema {
 export interface IBinanceMarketWithCurrency extends IBinanceMarketSchema {
   baseCurrency: string
   quoteCurrency: string
+  spotEnabled: boolean
+  marginEnabled: boolean
 }

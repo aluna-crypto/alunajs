@@ -2,18 +2,18 @@ import { expect } from 'chai'
 
 import { BINANCE_RAW_MARKET } from '../../test/fixtures/binanceMarket'
 import { BINANCE_RAW_SYMBOLS } from '../../test/fixtures/binanceSymbols'
-import { BinanceMarketParser } from './BinanceMarketParser'
+import { BinanceCurrencyMarketParser } from './BinanceCurrencyMarketParser'
 
 
 
-describe('BinanceMarketParser', () => {
+describe('BinanceCurrencyMarketParser', () => {
 
   it('should parse Binance currency pairs just fine', () => {
 
     const rawMarkets = BINANCE_RAW_MARKET
     const rawSymbols = BINANCE_RAW_SYMBOLS.symbols;
 
-    const marketWithCurr = BinanceMarketParser.parse({
+    const marketWithCurr = BinanceCurrencyMarketParser.parse({
       rawMarkets,
       rawSymbols,
     })
