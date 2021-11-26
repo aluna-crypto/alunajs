@@ -8,7 +8,7 @@ import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import {
   IBinanceSymbolInfoSchema,
-  IBinanceSymbolSchema,
+  IBinanceSymbolResponseSchema,
 } from '../schemas/IBinanceSymbolSchema'
 
 
@@ -25,15 +25,15 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
   }
 
-  public static listRaw (): Promise<IBinanceSymbolInfoSchema[]> {
+  public static async listRaw (): Promise<IBinanceSymbolInfoSchema[]> {
 
     BinanceLog.info('fetching Binance symbols')
 
-    const rawSymbols = BinanceHttp.publicRequest<IBinanceSymbolSchema>({
+    const rawSymbols = await BinanceHttp.publicRequest<IBinanceSymbolResponseSchema>({
       url: PROD_BINANCE_URL + '/api/v3/exchangeInfo',
-    }).then(res => res.symbols);
+    })
 
-    return rawSymbols
+    return rawSymbols.symbols
 
   }
 

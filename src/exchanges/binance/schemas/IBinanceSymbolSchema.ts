@@ -1,3 +1,21 @@
+export interface IBinanceFilters {
+  filterType: string
+  minPrice?: string
+  maxPrice?: string
+  tickSize?: string
+  minQty?: string
+  maxQty?: string
+  stepSize?: string
+  limit?: number
+  minNotional?: string
+  applyToMarket?: boolean
+  avgPriceMins?: number
+  multiplierUp?: string
+  multiplierDown?: string
+  maxNumOrders?: number
+  maxNumAlgoOrders?: number
+}
+
 export interface IBinanceSymbolInfoSchema {
   symbol: string
   status: string
@@ -14,38 +32,26 @@ export interface IBinanceSymbolInfoSchema {
   quoteOrderQtyMarketAllowed: boolean
   isSpotTradingAllowed: boolean
   isMarginTradingAllowed: boolean
-  filters: {
-    filterType: string
-    minPrice?: string
-    maxPrice?: string
-    tickSize?: string
-    minQty?: string
-    maxQty?: string
-    stepSize?: string
-    limit?: number
-    minNotional?: string
-    applyToMarket?: boolean
-    avgPriceMins?: number
-    multiplierUp?: string
-    multiplierDown?: string
-    maxNumOrders?: number
-    maxNumAlgoOrders?: number
-  }[]
+  filters: IBinanceFilters[]
   permissions: string[]
 }
 
-export interface IBinanceSymbolSchema {
+export interface IBinanceRateLimits {
+  rateLimitType: string
+  interval: string
+  intervalNum: number
+  limit: number
+}
+
+export interface IBinanceExchangeFilters {
+  filterType: string
+  maxNumOrders: number
+}
+
+export interface IBinanceSymbolResponseSchema {
   timezone: string
   serverTime: number
-  rateLimits: {
-    rateLimitType: string
-    interval: string
-    intervalNum: number
-    limit: number
-  }[]
-  exchangeFilters: {
-    filterType: string
-    maxNumOrders: number
-  }[]
+  rateLimits: IBinanceRateLimits[]
+  exchangeFilters: IBinanceExchangeFilters[]
   symbols: IBinanceSymbolInfoSchema[]
 }

@@ -1,8 +1,8 @@
-import { IBinanceSymbolSchema } from '../../schemas/IBinanceSymbolSchema'
+import { IBinanceSymbolResponseSchema } from '../../schemas/IBinanceSymbolSchema'
 
 
 
-export const BINANCE_RAW_SYMBOLS: IBinanceSymbolSchema = {
+export const BINANCE_RAW_SYMBOLS: IBinanceSymbolResponseSchema = {
   timezone: "UTC",
   serverTime: 1637841089806,
   rateLimits: [
