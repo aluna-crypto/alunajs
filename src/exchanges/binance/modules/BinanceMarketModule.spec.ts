@@ -160,10 +160,10 @@ describe('BinanceMarketModule', () => {
       parsedMarketMock,
     )
 
-    const parsedMarketWithSymbolsMock = BINANCE_RAW_MARKET_WITH_CURRENCY[0]
+    const rawMarketWithCurrency = BINANCE_RAW_MARKET_WITH_CURRENCY[0]
 
     const market: IAlunaMarketSchema = BinanceMarketModule.parse({
-      rawMarket: parsedMarketWithSymbolsMock,
+      rawMarket: rawMarketWithCurrency,
     })
 
     expect(marketParserMock.callCount).to.be.eq(1)
@@ -187,7 +187,7 @@ describe('BinanceMarketModule', () => {
       priceChange,
       volume: baseVolume,
       quoteVolume
-    } = parsedMarketWithSymbolsMock
+    } = rawMarketWithCurrency
 
     const high = parseFloat(highPrice)
     const low = parseFloat(lowPrice)

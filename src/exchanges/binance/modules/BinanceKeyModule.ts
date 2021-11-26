@@ -6,6 +6,10 @@ import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermiss
 import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import {
+  BinanceApiKeyPermissions,
+  IBinanceKeyAccountSchema,
+} from '../schemas/IBinanceKeySchema'
 
 
 
@@ -43,13 +47,13 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     BinanceLog.info('fetching Binance key permissions')
 
-    let rawKey: any // @TODO -> Update any
+    let rawKey: IBinanceKeyAccountSchema
 
     try {
 
       const { keySecret } = this.exchange
 
-      rawKey = await BinanceHttp.privateRequest<any>({ // @TODO -> Update any
+      rawKey = await BinanceHttp.privateRequest<IBinanceKeyAccountSchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: PROD_BINANCE_URL + '/api/v3/account',
         keySecret,
@@ -72,7 +76,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
 
   public parsePermissions (params: {
-    rawKey: any, // @TODO -> Update any
+    rawKey: IBinanceKeyAccountSchema,
   }): IAlunaKeyPermissionSchema {
 
     const { rawKey } = params
@@ -86,21 +90,14 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
       meta: rawKey,
     }
 
-    permissions.forEach((permission: string) => { // @TODO -> update string type
+    permissions.forEach((permission: string) => {
 
       switch (permission) {
 
-        // case BinanceApiKeyPermissions.VIEW_ACCESS:
-        //   alunaPermissions.read = true
-        //   break
-
-        // case BinanceApiKeyPermissions.TRADE:
-        //   alunaPermissions.trade = true
-        //   break
-
-        // case BinanceApiKeyPermissions.WITHDRAW:
-        //   alunaPermissions.withdraw = true
-        //   break
+        case BinanceApiKeyPermissions.SPOT:
+          alunaPermissions.read = true
+          alunaPermissions.trade = rawKey.canTrade
+          break
 
         default:
 

@@ -2,7 +2,7 @@ import {
   IBinanceMarketSchema,
   IBinanceMarketWithCurrency,
 } from '../IBinanceMarketSchema'
-import { IBinanceSymbolInfoSchema } from '../IBinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../IBinanceSymbolSchema'
 
 
 
@@ -10,7 +10,7 @@ export class BinanceCurrencyMarketParser {
 
   static parse (params: {
     rawMarkets: IBinanceMarketSchema[],
-    rawSymbols: IBinanceSymbolInfoSchema[],
+    rawSymbols: IBinanceSymbolSchema[],
   }): IBinanceMarketWithCurrency[] {
 
     const {
@@ -18,7 +18,7 @@ export class BinanceCurrencyMarketParser {
       rawSymbols,
     } = params
 
-    const pairSymbolsDictionary: { [key:string]: IBinanceSymbolInfoSchema } = {}
+    const pairSymbolsDictionary: { [key:string]: IBinanceSymbolSchema } = {}
 
     rawSymbols.forEach((pair) => {
 

@@ -16,7 +16,7 @@ export interface IBinanceFilters {
   maxNumAlgoOrders?: number
 }
 
-export interface IBinanceSymbolInfoSchema {
+export interface IBinanceSymbolSchema {
   symbol: string
   status: string
   baseAsset: string
@@ -53,5 +53,5 @@ export interface IBinanceSymbolResponseSchema {
   serverTime: number
   rateLimits: IBinanceRateLimits[]
   exchangeFilters: IBinanceExchangeFilters[]
-  symbols: IBinanceSymbolInfoSchema[]
+  symbols: IBinanceSymbolSchema[]
 }
