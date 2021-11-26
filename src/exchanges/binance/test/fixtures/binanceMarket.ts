@@ -1,3 +1,4 @@
+import { IAlunaMarketSchema } from '../../../../index'
 import {
   IBinanceMarketSchema,
   IBinanceMarketWithCurrency,
@@ -27,7 +28,7 @@ export const BINANCE_RAW_MARKET: IBinanceMarketSchema[] = [
     closeTime: 1637851400070,
     firstId: 169728213,
     lastId: 169947033,
-    count: 218821
+    count: 218821,
   },
   {
     symbol: 'LTCBTC',
@@ -50,7 +51,7 @@ export const BINANCE_RAW_MARKET: IBinanceMarketSchema[] = [
     closeTime: 1637851399402,
     firstId: 73873065,
     lastId: 73926145,
-    count: 53081
+    count: 53081,
   },
   {
     symbol: 'ETHBTC',
@@ -73,7 +74,7 @@ export const BINANCE_RAW_MARKET: IBinanceMarketSchema[] = [
     closeTime: 1637851399045,
     firstId: 310810805,
     lastId: 311063379,
-    count: 252575
+    count: 252575,
   },
 ]
 
@@ -103,7 +104,7 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     lastId: 169947033,
     count: 218821,
     marginEnabled: true,
-    spotEnabled: true
+    spotEnabled: true,
   },
   {
     symbol: 'LTCBTC',
@@ -130,7 +131,7 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     lastId: 73926145,
     count: 53081,
     marginEnabled: true,
-    spotEnabled: true
+    spotEnabled: true,
   },
   {
     symbol: 'ETHBTC',
@@ -157,6 +158,153 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     lastId: 311063379,
     count: 252575,
     marginEnabled: true,
-    spotEnabled: true
+    spotEnabled: true,
   },
+]
+
+export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
+  {
+    exchangeId: 'binance',
+    pairSymbol: 'BNBBTC',
+    baseSymbolId: 'BNB',
+    quoteSymbolId: 'BTC',
+    ticker: {
+      high: 0.011056,
+      low: 0.010206,
+      bid: 0.010871,
+      ask: 0.010872,
+      last: 0.01087,
+      date: new Date(),
+      change: 0.000005240000000000001,
+      baseVolume: 229124.037,
+      quoteVolume: 2434.71517174
+    },
+    spotEnabled: true,
+    marginEnabled: true,
+    derivativesEnabled: false,
+    leverageEnabled: false,
+    meta: {
+      symbol: 'BNBBTC',
+      baseCurrency: 'BNB',
+      quoteCurrency: 'BTC',
+      priceChange: '0.00052400',
+      priceChangePercent: '5.065',
+      weightedAvgPrice: '0.01062619',
+      prevClosePrice: '0.01034700',
+      lastPrice: '0.01087000',
+      lastQty: '8.88600000',
+      bidPrice: '0.01087100',
+      bidQty: '26.37500000',
+      askPrice: '0.01087200',
+      askQty: '0.05500000',
+      openPrice: '0.01034600',
+      highPrice: '0.01105600',
+      lowPrice: '0.01020600',
+      volume: '229124.03700000',
+      quoteVolume: '2434.71517174',
+      openTime: 1637765000070,
+      closeTime: 1637851400070,
+      firstId: 169728213,
+      lastId: 169947033,
+      count: 218821,
+      marginEnabled: true,
+      spotEnabled: true
+    }
+  },
+  {
+    exchangeId: 'binance',
+    pairSymbol: 'LTCBTC',
+    baseSymbolId: 'LTC',
+    quoteSymbolId: 'BTC',
+    ticker: {
+      high: 0.003916,
+      low: 0.003644,
+      bid: 0.00388,
+      ask: 0.003882,
+      last: 0.003882,
+      date: new Date(),
+      change: 0.00000185,
+      baseVolume: 165250.471,
+      quoteVolume: 625.37403347
+    },
+    spotEnabled: true,
+    marginEnabled: true,
+    derivativesEnabled: false,
+    leverageEnabled: false,
+    meta: {
+      symbol: 'LTCBTC',
+      baseCurrency: 'LTC',
+      quoteCurrency: 'BTC',
+      priceChange: '0.00018500',
+      priceChangePercent: '5.004',
+      weightedAvgPrice: '0.00378440',
+      prevClosePrice: '0.00369900',
+      lastPrice: '0.00388200',
+      lastQty: '2.22300000',
+      bidPrice: '0.00388000',
+      bidQty: '20.83400000',
+      askPrice: '0.00388200',
+      askQty: '15.56800000',
+      openPrice: '0.00369700',
+      highPrice: '0.00391600',
+      lowPrice: '0.00364400',
+      volume: '165250.47100000',
+      quoteVolume: '625.37403347',
+      openTime: 1637764999402,
+      closeTime: 1637851399402,
+      firstId: 73873065,
+      lastId: 73926145,
+      count: 53081,
+      marginEnabled: true,
+      spotEnabled: true
+    }
+  },
+  {
+    exchangeId: 'binance',
+    pairSymbol: 'ETHBTC',
+    baseSymbolId: 'ETH',
+    quoteSymbolId: 'BTH',
+    ticker: {
+      high: 0.076351,
+      low: 0.074021,
+      bid: 0.076315,
+      ask: 0.076316,
+      last: 0.076316,
+      date: new Date(),
+      change: 0.00001501,
+      baseVolume: 86419.2644,
+      quoteVolume: 6477.12839052
+    },
+    spotEnabled: true,
+    marginEnabled: true,
+    derivativesEnabled: false,
+    leverageEnabled: false,
+    meta: {
+      symbol: 'ETHBTC',
+      baseCurrency: 'ETH',
+      quoteCurrency: 'BTH',
+      priceChange: '0.00150100',
+      priceChangePercent: '2.006',
+      weightedAvgPrice: '0.07495005',
+      prevClosePrice: '0.07482700',
+      lastPrice: '0.07631600',
+      lastQty: '0.07590000',
+      bidPrice: '0.07631500',
+      bidQty: '2.67320000',
+      askPrice: '0.07631600',
+      askQty: '19.16540000',
+      openPrice: '0.07481500',
+      highPrice: '0.07635100',
+      lowPrice: '0.07402100',
+      volume: '86419.26440000',
+      quoteVolume: '6477.12839052',
+      openTime: 1637764999045,
+      closeTime: 1637851399045,
+      firstId: 310810805,
+      lastId: 311063379,
+      count: 252575,
+      marginEnabled: true,
+      spotEnabled: true
+    }
+  }
 ]
