@@ -363,7 +363,6 @@ describe('BinanceHttp', () => {
       key: 'dummy-key',
       secret: 'dummy-secret',
     } as IAlunaKeySecretSchema
-    const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
     const body = dummyBody
 

@@ -39,7 +39,8 @@ describe('BinanceMarketModule', () => {
       'listRaw',
     )
 
-    binanceSymbolModuleMock.onFirstCall().returns(Promise.resolve(rawSymbolsPairs))
+    binanceSymbolModuleMock
+      .onFirstCall().returns(Promise.resolve(rawSymbolsPairs))
 
     requestMock
       .onFirstCall().returns(Promise.resolve(rawMarkets))

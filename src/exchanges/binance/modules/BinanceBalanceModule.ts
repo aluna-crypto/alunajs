@@ -11,7 +11,8 @@ import { IBinanceKeyAccountSchema } from '../schemas/IBinanceKeySchema'
 
 
 
-export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
+export class BinanceBalanceModule 
+  extends AAlunaModule implements IAlunaBalanceModule {
 
   public async listRaw (): Promise<IBinanceBalanceSchema[]> {
 
@@ -19,11 +20,12 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { keySecret } = this.exchange
 
-    const rawAccountInfo = await BinanceHttp.privateRequest<IBinanceKeyAccountSchema>({
-      verb: AlunaHttpVerbEnum.GET,
-      url: PROD_BINANCE_URL + '/api/v3/account',
-      keySecret,
-    })
+    const rawAccountInfo = 
+      await BinanceHttp.privateRequest<IBinanceKeyAccountSchema>({
+        verb: AlunaHttpVerbEnum.GET,
+        url: PROD_BINANCE_URL + '/api/v3/account',
+        keySecret,
+      })
 
     return rawAccountInfo.balances
 
