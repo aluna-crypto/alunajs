@@ -9,6 +9,7 @@ import {
 } from '../../index'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import { BinanceSpecs } from './BinanceSpecs'
+import { BinanceBalanceModule } from './modules/BinanceBalanceModule'
 import { BinanceKeyModule } from './modules/BinanceKeyModule'
 import { BinanceMarketModule } from './modules/BinanceMarketModule'
 import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
@@ -38,5 +39,6 @@ export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implem
       super(params)
 
       this.key = new BinanceKeyModule({ exchange: this })
+      this.balance = new BinanceBalanceModule({ exchange: this })
     }
 }
