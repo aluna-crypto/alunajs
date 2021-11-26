@@ -20,7 +20,7 @@ export class BinanceBalanceModule
 
     const { keySecret } = this.exchange
 
-    const rawAccountInfo = 
+    const rawAccountInfo =
       await BinanceHttp.privateRequest<IBinanceKeyAccountSchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: PROD_BINANCE_URL + '/api/v3/account',
