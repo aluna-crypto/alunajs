@@ -3,6 +3,7 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
+import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 
@@ -50,7 +51,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       rawKey = await BinanceHttp.privateRequest<any>({ // @TODO -> Update any
         verb: AlunaHttpVerbEnum.GET,
-        url: 'https://api.binance.com/v1/account/api-keys/current',
+        url: PROD_BINANCE_URL + '/api/v3/account',
         keySecret,
       })
 

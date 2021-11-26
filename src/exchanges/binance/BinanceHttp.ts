@@ -21,11 +21,12 @@ interface ISignedHashParams {
 
 
 interface IBinanceSecureHeaders {
-  "X-MBX-APIKEY": string
+  "X-MBX-APIKEY": string,
 }
 
 interface IBinanceSignedSignature {
   signature: string
+  dataQueryString: string
 }
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
@@ -64,21 +65,19 @@ export const generateAuthSignature = (
 ): IBinanceSignedSignature => {
 
   const {
-    keySecret, verb, body,
+    keySecret, body,
   } = params
 
-
-  const timestamp = Date.now()
+  const dataQueryString = 'recvWindow=20000&timestamp=' + Date.now()
 
   const signedRequest = crypto
     .createHmac('sha256', keySecret.secret)
-    .update(timestamp.toString())
-    .update(verb.toUpperCase())
-    .update(body ? JSON.stringify(body) : '')
+    .update(dataQueryString)
     .digest('hex')
 
   return {
-    signature: signedRequest
+    signature: signedRequest,
+    dataQueryString
   };
 
 }
@@ -131,17 +130,15 @@ export const BinanceHttp: IAlunaHttp = class {
       body,
     })
 
+    const fullUrl = url + '?' + signedHash.dataQueryString + '&signature=' + signedHash.signature;
+
     const headers: IBinanceSecureHeaders = {
       "X-MBX-APIKEY": keySecret.key
     }
 
     const requestConfig = {
-      url,
+      url: fullUrl,
       method: verb,
-      data: {
-        ...body,
-        ...signedHash
-      },
       headers,
     }
 
