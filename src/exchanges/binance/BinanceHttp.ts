@@ -73,6 +73,7 @@ export const generateAuthSignature = (
   const signedRequest = crypto
     .createHmac('sha256', keySecret.secret)
     .update(dataQueryString)
+    .update(body ? JSON.stringify(body) : '')
     .digest('hex')
 
   return {

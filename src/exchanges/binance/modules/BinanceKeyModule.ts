@@ -98,6 +98,12 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
           alunaPermissions.read = true
           alunaPermissions.trade = rawKey.canTrade
           break
+        
+        case BinanceApiKeyPermissions.WITHDRAW:
+          alunaPermissions.read = true
+          alunaPermissions.trade = true
+          alunaPermissions.withdraw = true
+          break
 
         default:
 

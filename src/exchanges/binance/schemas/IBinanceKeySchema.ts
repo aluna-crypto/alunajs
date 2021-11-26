@@ -19,4 +19,5 @@ export interface IBinanceKeyAccountSchema {
 
 export enum BinanceApiKeyPermissions {
   SPOT = 'SPOT',
+  WITHDRAW = 'WITHDRAW'
 }

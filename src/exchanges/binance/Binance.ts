@@ -3,11 +3,14 @@ import {
   IAlunaExchange,
   IAlunaExchangeStatic,
   IAlunaKeyModule,
+  IAlunaKeySecretSchema,
   IAlunaOrderWriteModule,
+  IAlunaSettingsSchema,
 } from '../../index'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
-import { ValrMarketModule } from '../valr/modules/ValrMarketModule'
 import { BinanceSpecs } from './BinanceSpecs'
+import { BinanceKeyModule } from './modules/BinanceKeyModule'
+import { BinanceMarketModule } from './modules/BinanceMarketModule'
 import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
 
 
@@ -21,10 +24,19 @@ export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implem
     static readonly SPECS = BinanceSpecs
   
     static Symbol = BinanceSymbolModule
-    static Market = ValrMarketModule // @TODO -> need to update
+    static Market = BinanceMarketModule
   
     // local definitions
     key: IAlunaKeyModule
     order: IAlunaOrderWriteModule
     balance: IAlunaBalanceModule
+
+    constructor(params: {
+      keySecret: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
+    }) {
+      super(params)
+
+      this.key = new BinanceKeyModule({ exchange: this })
+    }
 }

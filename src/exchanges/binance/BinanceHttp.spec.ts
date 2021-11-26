@@ -338,8 +338,10 @@ describe('BinanceHttp', () => {
     const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
     const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
-
+    
     const currentDate = 'current-date'
+
+    const queryString = 'recvWindow=20000&timestamp=' + currentDate
 
     const timestampMock = { toString: () => currentDate }
 
@@ -376,9 +378,8 @@ describe('BinanceHttp', () => {
     expect(createHmacSpy.callCount).to.be.eq(1)
     expect(createHmacSpy.calledWith('sha256', keySecret.secret)).to.be.ok
 
-    expect(updateSpy.callCount).to.be.eq(3)
-    expect(updateSpy.calledWith(currentDate)).to.be.ok
-    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.callCount).to.be.eq(2)
+    expect(updateSpy.calledWith(queryString)).to.be.ok
     expect(updateSpy.calledWith(stringifyBody)).to.be.ok
 
     expect(stringfyMock.callCount).to.be.eq(1)
@@ -403,7 +404,7 @@ describe('BinanceHttp', () => {
     expect(stringfyMock.callCount).to.be.eq(1)
     expect(stringfyMock.calledWith('')).not.to.be.ok
 
-    expect(updateSpy.callCount).to.be.eq(6)
+    expect(updateSpy.callCount).to.be.eq(4)
 
     expect(digestSpy.callCount).to.be.eq(2)
 
