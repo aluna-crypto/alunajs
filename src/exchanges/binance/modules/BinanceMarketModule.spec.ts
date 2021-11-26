@@ -27,7 +27,6 @@ describe('BinanceMarketModule', () => {
     const rawSymbolsPairs = 'rawSymbolsPairs'
 
     const marketsURL = PROD_BINANCE_URL + '/api/v3/ticker/24hr'
-    const symbolPairsURL = 'https://api.binance.com/v1/public/pairs'
 
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
