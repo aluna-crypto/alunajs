@@ -3,9 +3,11 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { IBinanceBalanceSchema } from '../schemas/IBinanceBalanceSchema'
+import { IBinanceKeyAccountSchema } from '../schemas/IBinanceKeySchema'
 
 
 
@@ -15,13 +17,15 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     BinanceLog.info('fetching Binance balances')
 
-    const rawBalances = await BinanceHttp.privateRequest<IBinanceBalanceSchema[]>({
+    const { keySecret } = this.exchange
+
+    const rawAccountInfo = await BinanceHttp.privateRequest<IBinanceKeyAccountSchema>({
       verb: AlunaHttpVerbEnum.GET,
-      url: 'https://api.binance.com/v1/account/balances',
-      keySecret: this.exchange.keySecret,
+      url: PROD_BINANCE_URL + '/api/v3/account',
+      keySecret,
     })
 
-    return rawBalances
+    return rawAccountInfo.balances
 
   }
 
@@ -50,13 +54,14 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
     const {
       asset,
       free,
+      locked
     } = rawBalance
 
     return {
       symbolId: asset,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(free),
-      total: Number(free),
+      total: Number(free) + Number(locked),
       meta: rawBalance,
     }
 
