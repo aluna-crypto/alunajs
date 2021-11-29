@@ -7,6 +7,7 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { BinanceSpecs } from '../BinanceSpecs'
@@ -153,12 +154,12 @@ export class BinanceOrderWriteModule
 
     const body = {
       orderId: id,
-      pair: symbolPair,
+      symbol: symbolPair,
     }
 
     await BinanceHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: 'https://api.Binance.com/v1/orders/order',
+      url: PROD_BINANCE_URL + '/api/v3/order',
       keySecret: this.exchange.keySecret,
       body,
     })
