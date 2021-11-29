@@ -79,11 +79,13 @@ export const generateAuthSignature = (
     .update(query ? query : '')
     .digest('hex')
 
-  query ? dataQueryString += query : ''
+  const dataQueryStringWithQuery =
+    query ? dataQueryString + query 
+      : dataQueryString
 
   return {
     signature: signedRequest,
-    dataQueryString
+    dataQueryString: dataQueryStringWithQuery
   };
 
 }

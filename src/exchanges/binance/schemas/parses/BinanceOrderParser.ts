@@ -1,8 +1,8 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
-import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
-import { BinanceOrderTypeEnum } from '../../enums/BinanceOrderTypeEnum'
-import { BinanceSideEnum } from '../../enums/BinanceSideEnum'
+import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
+import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
+import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
 
 
@@ -19,23 +19,14 @@ export class BinanceOrderParser {
       orderId,
       time,
       origQty,
-      symbol
-    } = rawOrder
-
-    let side: BinanceSideEnum
-    let price: string
-    let status: BinanceOrderStatusEnum
-    let type: BinanceOrderTypeEnum
-    let createdAt: string
-
-    ({
+      symbol,
       side,
       price,
       type,
       status,
-    } = rawOrder)
-    
-    createdAt = new Date(time * 1000).toString()
+    } = rawOrder
+
+    const createdAt = new Date(time * 1000).toString()
 
 
     const amount = parseFloat(origQty)
@@ -49,9 +40,9 @@ export class BinanceOrderParser {
       isAmountInContracts: false,
       rate,
       account: AlunaAccountEnum.EXCHANGE,
-      side: side as any, // @TODO -> Update to include Adapter
-      status: status as any, // @TODO -> Update to include Adapter
-      type: type as any, // @TODO -> Update to include Adapter
+      side: BinanceSideAdapter.translateToAluna({ from: side }),
+      status: BinanceStatusAdapter.translateToAluna({ from: status }),
+      type: BinanceOrderTypeAdapter.translateToAluna({ from: type }),
       placedAt: new Date(createdAt),
       meta: rawOrder,
     }
