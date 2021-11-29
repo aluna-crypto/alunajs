@@ -28,6 +28,17 @@ interface IBinanceSecureHeaders {
 interface IBinanceSignedSignature {
   signature: string
   dataQueryString: string
+  body: string
+}
+
+const formatBodyToBinance = (body: Record<string, any>) => {
+  let formattedBody = ''
+
+  Object.keys(body).map(function(key) {
+    formattedBody += '&' + key + '=' + body[key]
+  })
+
+  return formattedBody
 }
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
@@ -66,17 +77,20 @@ export const generateAuthSignature = (
 ): IBinanceSignedSignature => {
 
   const {
-    keySecret, body,
+    keySecret, 
+    body,
     query
   } = params
 
   let dataQueryString = 'recvWindow=20000&timestamp=' + Date.now()
 
+  const formattedBody = body ? formatBodyToBinance(body) : ''
+
   const signedRequest = crypto
     .createHmac('sha256', keySecret.secret)
     .update(dataQueryString)
-    .update(body ? JSON.stringify(body) : '')
     .update(query ? query : '')
+    .update(formattedBody)
     .digest('hex')
 
   const dataQueryStringWithQuery =
@@ -85,7 +99,8 @@ export const generateAuthSignature = (
 
   return {
     signature: signedRequest,
-    dataQueryString: dataQueryStringWithQuery
+    dataQueryString: dataQueryStringWithQuery,
+    body: formattedBody
   };
 
 }
@@ -140,7 +155,13 @@ export const BinanceHttp: IAlunaHttp = class {
       query
     })
 
-    const fullUrl = url + '?' + signedHash.dataQueryString + '&signature=' + signedHash.signature;
+    const signedHashFormatted =
+      signedHash.dataQueryString
+      + signedHash.body
+      + '&signature='
+      + signedHash.signature
+
+    const fullUrl = url + "?" + signedHashFormatted;
 
     const headers: IBinanceSecureHeaders = {
       "X-MBX-APIKEY": keySecret.key

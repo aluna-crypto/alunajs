@@ -630,7 +630,7 @@ describe('BinanceOrderWriteModule', () => {
       canceledOrder = await binanceOrderWriteModule.cancel(cancelParams)
 
     } catch (err) {
-      console.log('fuedase', err);
+
       error = err
 
     }

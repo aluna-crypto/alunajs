@@ -255,7 +255,7 @@ describe('BinanceOrderReadModule', () => {
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: rawOrder })).to.be.ok
-      console.log(parsedOrder1)
+
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.total).to.be.ok
     expect(parsedOrder1.amount).to.be.ok

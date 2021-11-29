@@ -61,7 +61,7 @@ export class BinanceOrderWriteModule
       } = accountSpecs
 
       if (!supported || !implemented || !supportedOrderTypes) {
-        console.log("CAIU AQUI", accountSpecs);
+
         throw new AlunaError({
           message:
             `Account type '${account}' not supported/implemented for Binance`,
@@ -72,7 +72,7 @@ export class BinanceOrderWriteModule
       const orderType = supportedOrderTypes.find((o) => o.type === type)
 
       if (!orderType || !orderType.implemented || !orderType.supported) {
-        console.log("CAIU AQUI 2", accountSpecs);
+
         throw new AlunaError({
           message: `Order type '${type}' not supported/implemented for Binance`,
         })
