@@ -37,8 +37,11 @@ export class BinanceOrderTypeAdapter {
         [AlunaOrderTypesEnum.LIMIT]: BinanceOrderTypeEnum.LIMIT,
         [AlunaOrderTypesEnum.MARKET]: BinanceOrderTypeEnum.MARKET,
         [AlunaOrderTypesEnum.STOP_LIMIT]: BinanceOrderTypeEnum.STOP_LOSS_LIMIT,
+        [AlunaOrderTypesEnum.STOP_MARKET]: BinanceOrderTypeEnum.STOP_LOSS,
         [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]:
           BinanceOrderTypeEnum.TAKE_PROFIT_LIMIT,
+        [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]:
+          BinanceOrderTypeEnum.TAKE_PROFIT,
       },
     })
 
