@@ -21,7 +21,7 @@ import { BinanceOrderReadModule } from './BinanceOrderReadModule'
 
 
 interface IBinancePlaceOrderResponse {
-  id: string
+  orderId: string
 }
 
 
@@ -95,43 +95,37 @@ export class BinanceOrderWriteModule
 
     }
 
-    const body = {
-      side: BinanceSideAdapter.translateToBinance({ from: side }),
-      pair: symbolPair,
-    }
-
     const translatedOrderType = BinanceOrderTypeAdapter.translateToBinance({
       from: type,
     })
 
+    const body = {
+      side: BinanceSideAdapter.translateToBinance({ from: side }),
+      symbol: symbolPair,
+      type: translatedOrderType,
+      quantity: amount,
+    }
+
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
       Object.assign(body, {
-        quantity: amount,
         price: rate,
-        postOnly: false,
         timeInForce: BinanceOrderTimeInForceEnum.GTC,
-      })
-
-    } else {
-
-      Object.assign(body, {
-        baseAmount: amount,
       })
 
     }
 
     BinanceLog.info('placing new order for Binance')
 
-    const { id } = await BinanceHttp
+    const { orderId } = await BinanceHttp
       .privateRequest<IBinancePlaceOrderResponse>({
-        url: `https://api.Binance.com/v1/orders/${translatedOrderType}`,
+        url: PROD_BINANCE_URL + '/api/v3/order',
         body,
         keySecret: this.exchange.keySecret,
     })
 
     const order = await this.get({
-      id,
+      id: orderId,
       symbolPair,
     })
 
