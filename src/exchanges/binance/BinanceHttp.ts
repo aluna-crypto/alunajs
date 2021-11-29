@@ -17,6 +17,7 @@ interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   keySecret: IAlunaKeySecretSchema
   body?: any
+  query?: string
 }
 
 
@@ -66,15 +67,19 @@ export const generateAuthSignature = (
 
   const {
     keySecret, body,
+    query
   } = params
 
-  const dataQueryString = 'recvWindow=20000&timestamp=' + Date.now()
+  let dataQueryString = 'recvWindow=20000&timestamp=' + Date.now()
 
   const signedRequest = crypto
     .createHmac('sha256', keySecret.secret)
     .update(dataQueryString)
     .update(body ? JSON.stringify(body) : '')
+    .update(query ? query : '')
     .digest('hex')
+
+  query ? dataQueryString += query : ''
 
   return {
     signature: signedRequest,
@@ -123,12 +128,14 @@ export const BinanceHttp: IAlunaHttp = class {
       body,
       verb = AlunaHttpVerbEnum.POST,
       keySecret,
+      query
     } = params
 
     const signedHash = generateAuthSignature({
       verb,
       keySecret,
       body,
+      query
     })
 
     const fullUrl = url + '?' + signedHash.dataQueryString + '&signature=' + signedHash.signature;

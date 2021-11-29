@@ -58,6 +58,7 @@ export class BinanceOrderReadModule
       verb: AlunaHttpVerbEnum.GET,
       url: PROD_BINANCE_URL + `/api/v3/order`,
       keySecret: this.exchange.keySecret,
+      query: `&orderId=${id}&symbol=${symbolPair}`
     })
 
     return rawOrder

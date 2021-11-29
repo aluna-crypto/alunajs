@@ -17,6 +17,7 @@ export interface IAlunaHttpPublicParams {
   body?: Record<string, any>
   options?: IAlunaHttpOptions
   settings?: IAlunaSettingsSchema
+  query?: string
 }
 
 export interface IAlunaHttpPrivateParams extends IAlunaHttpPublicParams {
