@@ -13,7 +13,8 @@ describe('BinanceStatusAdapter', () => {
 
 
 
-  it('should translate Binance order status to Aluna order status', () => {
+  it('should translate Binance order status to Aluna order status',
+    () => {
 
     expect(BinanceStatusAdapter.translateToAluna({
       from: BinanceOrderStatusEnum.NEW,

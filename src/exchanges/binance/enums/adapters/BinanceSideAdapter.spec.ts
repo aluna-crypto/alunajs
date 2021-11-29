@@ -13,7 +13,8 @@ describe('BinanceSideAdapter', () => {
 
 
 
-  it('should properly translate Binance order sides to Aluna order sides', () => {
+  it('should properly translate Binance order sides to Aluna order sides',
+    () => {
 
     expect(BinanceSideAdapter.translateToAluna({
       from: BinanceSideEnum.BUY,
@@ -43,7 +44,8 @@ describe('BinanceSideAdapter', () => {
 
 
 
-  it('should properly translate Aluna order sides to Binance order sides', () => {
+  it('should properly translate Aluna order sides to Binance order sides',
+    () => {
 
     expect(BinanceSideAdapter.translateToBinance({
       from: AlunaSideEnum.LONG,

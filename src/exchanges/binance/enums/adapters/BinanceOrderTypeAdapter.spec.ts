@@ -13,7 +13,8 @@ describe('BinanceOrderTypeAdapter', () => {
 
 
 
-  it('should properly translate Binance order types to Aluna order types', () => {
+  it('should properly translate Binance order types to Aluna order types',
+    () => {
 
     expect(BinanceOrderTypeAdapter.translateToAluna({
       from: BinanceOrderTypeEnum.LIMIT,
@@ -62,7 +63,8 @@ describe('BinanceOrderTypeAdapter', () => {
 
 
 
-  it('should properly translate Aluna order types to Binance order types', () => {
+  it('should properly translate Aluna order types to Binance order types',
+    () => {
 
     expect(BinanceOrderTypeAdapter.translateToBinance({
       from: AlunaOrderTypesEnum.LIMIT,

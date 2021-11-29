@@ -21,8 +21,6 @@ describe('BinanceHttp', () => {
 
   const dummySignedHeaders = { "X-MBX-APIKEY": undefined }
 
-  const dummySignedBody = { dummy: 'dummy-body' }
-
   const dummyData = { data: 'dummy-data' }
 
 
@@ -95,7 +93,8 @@ describe('BinanceHttp', () => {
 
 
   // @TODO -> Update test
-  // it('should defaults the http verb to post on private requests', async () => {
+  // it('should defaults the http verb to post on private requests', 
+    // async () => {
 
   //   const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
 
