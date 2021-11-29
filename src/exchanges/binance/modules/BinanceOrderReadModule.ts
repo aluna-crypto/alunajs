@@ -5,21 +5,23 @@ import {
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
 
 
 
 export class BinanceOrderReadModule 
   extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<any[]> { // @TODO -> Update any
+  public async listRaw (): Promise<IBinanceOrderSchema[]> {
 
     BinanceLog.info('fetching Binance open orders')
 
-    const rawOrders = await BinanceHttp.privateRequest<any[]>({
-      verb: AlunaHttpVerbEnum.GET, // @TODO -> Update any
-      url: 'https://api.binance.com/v1/orders/open',
+    const rawOrders = await BinanceHttp.privateRequest<IBinanceOrderSchema[]>({
+      verb: AlunaHttpVerbEnum.GET,
+      url:  PROD_BINANCE_URL + '/api/v3/openOrders',
       keySecret: this.exchange.keySecret,
     })
 
@@ -43,7 +45,7 @@ export class BinanceOrderReadModule
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<any> { // @TODO -> Update any
+  ): Promise<IBinanceOrderSchema> {
 
     const {
       id,
@@ -52,9 +54,9 @@ export class BinanceOrderReadModule
 
     BinanceLog.info('fetching Binance order status')
 
-    const rawOrder = await BinanceHttp.privateRequest<any>({
-      verb: AlunaHttpVerbEnum.GET, // @TODO -> Update any
-      url: `https://api.binance.com/v1/orders/${symbolPair}/orderid/${id}`,
+    const rawOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
+      verb: AlunaHttpVerbEnum.GET,
+      url: PROD_BINANCE_URL + `/api/v3/order`,
       keySecret: this.exchange.keySecret,
     })
 
@@ -77,7 +79,7 @@ export class BinanceOrderReadModule
 
 
   public parse (params: {
-    rawOrder: any, // @TODO -> Update any
+    rawOrder: IBinanceOrderSchema,
   }): any { // @TODO -> Update any
 
     const { rawOrder } = params
@@ -91,13 +93,13 @@ export class BinanceOrderReadModule
 
 
   public parseMany (params: {
-    rawOrders: any[], // @TODO -> Update any
+    rawOrders: IBinanceOrderSchema[],
   }): IAlunaOrderSchema[] {
 
     const { rawOrders } = params
 
-    const parsedOrders = rawOrders.map((rawOrder: any) => {
-    // @TODO -> Update any
+    const parsedOrders = rawOrders.map((rawOrder: IBinanceOrderSchema) => {
+
       const parsedOrder = this.parse({ rawOrder })
 
       return parsedOrder
