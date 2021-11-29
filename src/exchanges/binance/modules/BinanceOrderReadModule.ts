@@ -9,6 +9,7 @@ import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
+import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
 
 
 
@@ -81,13 +82,13 @@ export class BinanceOrderReadModule
 
   public parse (params: {
     rawOrder: IBinanceOrderSchema,
-  }): any { // @TODO -> Update any
+  }): IAlunaOrderSchema {    
 
     const { rawOrder } = params
 
-    // const parsedOrder = BinanceOrderParser.parse({ rawOrder })
+    const parsedOrder = BinanceOrderParser.parse({ rawOrder })
 
-    // return parsedOrder
+    return parsedOrder
 
   }
 

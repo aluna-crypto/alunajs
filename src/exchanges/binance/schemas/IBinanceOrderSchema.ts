@@ -1,3 +1,9 @@
+import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
+import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
+import { BinanceSideEnum } from '../enums/BinanceSideEnum'
+
+
+
 export interface IBinanceOrderSchema {
   symbol: string
   orderId: number
@@ -7,10 +13,10 @@ export interface IBinanceOrderSchema {
   origQty: string
   executedQty: string
   cummulativeQuoteQty: string
-  status: string
+  status: BinanceOrderStatusEnum
   timeInForce: string
-  type: string
-  side: string
+  type: BinanceOrderTypeEnum
+  side: BinanceSideEnum
   stopPrice: string
   icebergQty: string
   time: number
