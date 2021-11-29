@@ -54,7 +54,8 @@ describe('BinanceOrderTypeAdapter', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
+      expect(err.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
 
@@ -100,7 +101,8 @@ describe('BinanceOrderTypeAdapter', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
+      expect(err.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
 
