@@ -39,7 +39,29 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
     type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.READ,

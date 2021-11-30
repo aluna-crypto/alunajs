@@ -78,8 +78,9 @@ export class BinanceBalanceModule
     const { rawBalances } = params
 
     const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
+      const total = parseFloat(rawBalance.free) + parseFloat(rawBalance.locked);
 
-      if (parseFloat(rawBalance.free) > 0) {
+      if (total > 0) {
 
         const parsedBalance = this.parse({ rawBalance })
 
