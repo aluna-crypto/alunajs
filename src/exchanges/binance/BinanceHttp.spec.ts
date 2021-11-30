@@ -454,8 +454,6 @@ describe('BinanceHttp', () => {
       timestampMock,
     )
 
-    const stringifyBody = 'stringify-body'
-
     const stringfyMock = ImportMock.mockFunction(
       BinanceHttp,
       'formatBodyToBinance',

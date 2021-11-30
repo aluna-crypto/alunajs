@@ -31,7 +31,7 @@ interface IBinanceSignedSignature {
   body: string
 }
 
-export const formatBodyToBinance = (body: Record<string, any>) => {
+export const formatBodyToBinance = (body: Record<string, any>): string => {
 
   let formattedBody = ''
 
