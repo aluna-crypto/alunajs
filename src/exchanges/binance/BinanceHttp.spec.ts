@@ -428,7 +428,7 @@ describe('BinanceHttp', () => {
     expect(
       signedHash2['signature'],
     ).to.deep.eq(digestSpy.returnValues[1])
-    
+    Sinon.restore()
   })
 
 

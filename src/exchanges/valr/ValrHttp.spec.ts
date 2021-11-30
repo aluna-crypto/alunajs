@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { expect } from 'chai'
+import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -328,97 +329,99 @@ describe('ValrHttp', () => {
 
   })
 
-  // @TODO -> Update test
-  // it('should generate signed auth header just fine', async () => {
 
-  //   const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+  
+  it('should generate signed auth header just fine', async () => {
 
-  //   const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
 
-  //   const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
-  //   const currentDate = 'current-date'
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
 
-  //   const timestampMock = { toString: () => currentDate }
+    const currentDate = 'current-date'
 
-  //   const dateMock = ImportMock.mockFunction(
-  //     Date,
-  //     'now',
-  //     timestampMock,
-  //   )
+    const timestampMock = { toString: () => currentDate }
 
-  //   const stringifyBody = 'stringify-body'
+    const dateMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      timestampMock,
+    )
 
-  //   const stringfyMock = ImportMock.mockFunction(
-  //     JSON,
-  //     'stringify',
-  //     stringifyBody,
-  //   )
+    const stringifyBody = 'stringify-body'
 
-  //   const keySecret = {
-  //     key: 'dummy-key',
-  //     secret: 'dummy-secret',
-  //   } as IAlunaKeySecretSchema
-  //   const path = 'path'
-  //   const verb = 'verb' as AlunaHttpVerbEnum
-  //   const body = dummyBody
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+      stringifyBody,
+    )
 
-  //   const signedHash = ValrHttp.generateAuthHeader({
-  //     keySecret,
-  //     path,
-  //     verb,
-  //     body,
-  //   })
+    const keySecret = {
+      key: 'dummy-key',
+      secret: 'dummy-secret',
+    } as IAlunaKeySecretSchema
+    const path = 'path'
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const body = dummyBody
 
-  //   expect(dateMock.callCount).to.be.eq(1)
+    const signedHash = ValrHttp.generateAuthHeader({
+      keySecret,
+      path,
+      verb,
+      body,
+    })
 
-  //   expect(createHmacSpy.callCount).to.be.eq(1)
-  //   expect(createHmacSpy.calledWith('sha512', keySecret.secret)).to.be.ok
+    expect(dateMock.callCount).to.be.eq(1)
 
-  //   expect(updateSpy.callCount).to.be.eq(4)
-  //   expect(updateSpy.calledWith(currentDate)).to.be.ok
-  //   expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
-  //   expect(updateSpy.calledWith(path)).to.be.ok
-  //   expect(updateSpy.calledWith(stringifyBody)).to.be.ok
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha512', keySecret.secret)).to.be.ok
 
-  //   expect(stringfyMock.callCount).to.be.eq(1)
-  //   expect(stringfyMock.calledWith(body)).to.be.ok
+    expect(updateSpy.callCount).to.be.eq(4)
+    expect(updateSpy.calledWith(currentDate)).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(stringifyBody)).to.be.ok
 
-  //   expect(digestSpy.callCount).to.be.eq(1)
-  //   expect(digestSpy.calledWith('hex')).to.be.ok
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith(body)).to.be.ok
 
-  //   expect(signedHash['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
-  //   expect(signedHash['X-VALR-SIGNATURE'])
-    // .to.deep.eq(digestSpy.returnValues[0])
-  //   expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
+    expect(signedHash['X-VALR-SIGNATURE'])
+    .to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
 
-  //   const signedHash2 = ValrHttp.generateAuthHeader({
-  //     keySecret,
-  //     path,
-  //     verb,
-  //     // without a body
-  //   })
+    const signedHash2 = ValrHttp.generateAuthHeader({
+      keySecret,
+      path,
+      verb,
+      // without a body
+    })
 
-  //   expect(dateMock.callCount).to.be.eq(2)
+    expect(dateMock.callCount).to.be.eq(2)
 
-  //   expect(createHmacSpy.callCount).to.be.eq(2)
+    expect(createHmacSpy.callCount).to.be.eq(2)
 
-  //   // when no body is passed must not call stringfy on empty string
-  //   expect(stringfyMock.callCount).to.be.eq(1)
-  //   expect(stringfyMock.calledWith('')).not.to.be.ok
+    // when no body is passed must not call stringfy on empty string
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith('')).not.to.be.ok
 
-  //   expect(updateSpy.callCount).to.be.eq(8)
+    expect(updateSpy.callCount).to.be.eq(8)
 
-  //   expect(digestSpy.callCount).to.be.eq(2)
+    expect(digestSpy.callCount).to.be.eq(2)
 
-  //   expect(signedHash2['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
-  //   expect(
-  //     signedHash2['X-VALR-SIGNATURE'],
-  //   ).to.deep.eq(digestSpy.returnValues[1])
-  //   expect(signedHash2['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
+    expect(signedHash2['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
+    expect(
+      signedHash2['X-VALR-SIGNATURE'],
+    ).to.deep.eq(digestSpy.returnValues[1])
+    expect(signedHash2['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
+    Sinon.restore()
 
-  // })
+  })
 
 
 

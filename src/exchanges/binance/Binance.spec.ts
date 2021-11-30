@@ -33,7 +33,7 @@ describe('Binance', () => {
         referralCode,
       },
     })
-    console.log(binance)
+
     expect(binance.keySecret.key).to.eq(key)
     expect(binance.keySecret.secret).to.eq(secret)
 

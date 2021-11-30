@@ -100,9 +100,33 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly resolve exchange static class', async () => {
+  it('should properly resolve exchange Valr static class', async () => {
 
     const exchangeId = Valr.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(error).not.to.be.ok
+
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
+  it('should properly resolve exchange Binance static class', async () => {
+
+    const exchangeId = Binance.ID
 
     let Exchange: IAlunaExchangeStatic | undefined
     let error
