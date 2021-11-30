@@ -31,7 +31,7 @@ interface IBinanceSignedSignature {
   body: string
 }
 
-const formatBodyToBinance = (body: Record<string, any>) => {
+export const formatBodyToBinance = (body: Record<string, any>) => {
   let formattedBody = ''
 
   Object.keys(body).map(function(key) {
@@ -176,6 +176,7 @@ export const BinanceHttp: IAlunaHttp = class {
       method: verb,
       headers,
     }
+    console.log("🚀 ~ file: BinanceHttp.ts ~ line 179 ~ requestConfig", requestConfig)
 
     try {
 

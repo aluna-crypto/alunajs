@@ -21,9 +21,18 @@ describe('BinanceHttp', () => {
 
   const dummySignedHeaders = { "X-MBX-APIKEY": undefined }
 
+  const dummySignedBody = {
+    signature: 'dummy',
+    dataQueryString: 'dummy=dummy',
+    body: '&dummy=dummy'
+  }
+
+  const formattedQuery = dummySignedBody.dataQueryString
+    + dummySignedBody.body
+    + '&signature='
+    + dummySignedBody.signature
+
   const dummyData = { data: 'dummy-data' }
-
-
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -92,96 +101,104 @@ describe('BinanceHttp', () => {
 
 
 
-  // @TODO -> Update test
-  // it('should defaults the http verb to post on private requests', 
-    // async () => {
+  it('should format a body to binance format', async () => {
 
-  //   const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+    const formattedBody = BinanceHttp.formatBodyToBinance(dummyBody);
 
-  //   const generateAuthHeaderMock = ImportMock.mockFunction(
-  //     BinanceHttp,
-  //     'generateAuthSignature',
-  //     dummySignedBody,
-  //   )
+    expect(formattedBody).to.be.eq('&dummy=dummy-body')
 
-  //   const axiosCreate = ImportMock.mockFunction(
-  //     axios,
-  //     'create',
-  //     {
-  //       request: requestSpy,
-  //     },
-  //   )
-
-  //   await binanceHttp.privateRequest({
-  //     // http verb not informed
-  //     keySecret: {} as IAlunaKeySecretSchema,
-  //     url: 'http://dummy.com',
-  //   })
-
-  //   expect(axiosCreate.callCount).to.be.eq(1)
-
-  //   expect(generateAuthHeaderMock.callCount).to.be.eq(1)
-
-  //   expect(requestSpy.callCount).to.be.eq(1)
-
-  //   expect(requestSpy.args[0]).to.deep.eq([{
-  //     url: 'http://dummy.com',
-  //     method: AlunaHttpVerbEnum.POST,
-  //     data: dummyBody,
-  //     headers: dummySignedHeaders,
-  //   }])
-
-  // })
+  });
 
 
 
-  // @TODO -> Update test
-  // it('should execute private request just fine', async () => { 
+  it('should defaults the http verb to post on private requests', 
+    async () => {
 
-  //   const requestSpy = Sinon.spy(() => dummyData)
+    const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
 
-  //   const generateAuthHeaderMock = ImportMock.mockFunction(
-  //     BinanceHttp,
-  //     'generateAuthSignature',
-  //     dummySignedBody,
-  //   )
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BinanceHttp,
+      'generateAuthSignature',
+      dummySignedBody,
+    )
 
-  //   const axiosMock = ImportMock.mockFunction(
-  //     axios,
-  //     'create',
-  //     {
-  //       request: requestSpy,
-  //     },
-  //   )
+    const axiosCreate = ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
 
-  //   const responseData = await binanceHttp.privateRequest({
-  //     verb: AlunaHttpVerbEnum.POST,
-  //     url: dummyUrl,
-  //     body: dummyBody,
-  //     keySecret: {} as IAlunaKeySecretSchema,
-  //   })
+    await binanceHttp.privateRequest({
+      // http verb not informed
+      keySecret: {} as IAlunaKeySecretSchema,
+      url: 'http://dummy.com',
+    })
+
+    expect(axiosCreate.callCount).to.be.eq(1)
+
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+
+    expect(requestSpy.callCount).to.be.eq(1)
 
 
-  //   expect(axiosMock.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: 'http://dummy.com?' + formattedQuery,
+      method: AlunaHttpVerbEnum.POST,
+      headers: dummySignedHeaders,
+    }])
 
-  //   expect(generateAuthHeaderMock.callCount).to.be.eq(1)
-  //   expect(generateAuthHeaderMock.calledWith({
-  //     verb: AlunaHttpVerbEnum.POST,
-  //     body: dummyBody,
-  //     keySecret: {},
-  //   })).to.be.ok
+  })
 
-  //   expect(requestSpy.callCount).to.be.eq(1)
-  //   expect(requestSpy.args[0]).to.deep.eq([{
-  //     url: dummyUrl,
-  //     method: AlunaHttpVerbEnum.POST,
-  //     data: dummyBody,
-  //     headers: dummySignedHeaders,
-  //   }])
 
-  //   expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
 
-  // })
+  it('should execute private request just fine', async () => { 
+
+    const requestSpy = Sinon.spy(() => dummyData)
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BinanceHttp,
+      'generateAuthSignature',
+      dummySignedBody,
+    )
+
+    const axiosMock = ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
+
+    const responseData = await binanceHttp.privateRequest({
+      verb: AlunaHttpVerbEnum.POST,
+      url: dummyUrl,
+      body: dummyBody,
+      keySecret: {} as IAlunaKeySecretSchema,
+    })
+
+
+    expect(axiosMock.callCount).to.be.eq(1)
+
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+    expect(generateAuthHeaderMock.calledWith({
+      verb: AlunaHttpVerbEnum.POST,
+      body: dummyBody,
+      keySecret: {},
+      query: undefined
+    })).to.be.ok
+
+    expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: dummyUrl + '?' + formattedQuery,
+      method: AlunaHttpVerbEnum.POST,
+      headers: dummySignedHeaders,
+    }])
+
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+
+  })
 
 
 
@@ -355,8 +372,8 @@ describe('BinanceHttp', () => {
     const stringifyBody = 'stringify-body'
 
     const stringfyMock = ImportMock.mockFunction(
-      JSON,
-      'stringify',
+      BinanceHttp,
+      'formatBodyToBinance',
       stringifyBody,
     )
 
