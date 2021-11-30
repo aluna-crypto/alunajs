@@ -35,7 +35,11 @@ const formatBodyToBinance = (body: Record<string, any>) => {
   let formattedBody = ''
 
   Object.keys(body).map(function(key) {
-    formattedBody += '&' + key + '=' + body[key]
+
+    formattedBody += `&${key}=${body[key]}`
+
+    return key
+
   })
 
   return formattedBody
