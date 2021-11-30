@@ -12,6 +12,7 @@ import { BinanceSpecs } from './BinanceSpecs'
 import { BinanceBalanceModule } from './modules/BinanceBalanceModule'
 import { BinanceKeyModule } from './modules/BinanceKeyModule'
 import { BinanceMarketModule } from './modules/BinanceMarketModule'
+import { BinanceOrderWriteModule } from './modules/BinanceOrderWriteModule'
 import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
 
 
@@ -41,5 +42,7 @@ export const Binance: IAlunaExchangeStatic =
 
       this.key = new BinanceKeyModule({ exchange: this })
       this.balance = new BinanceBalanceModule({ exchange: this })
+      this.order = new BinanceOrderWriteModule({ exchange: this })
+
     }
 }

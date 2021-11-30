@@ -45,6 +45,9 @@ export class Aluna extends Exchanges {
       case this.Valr.ID:
         return new this.Valr(subParams)
 
+      case this.Binance.ID:
+        return new this.Binance(subParams)
+
       default: {
 
         const error = new AlunaError({
@@ -76,6 +79,9 @@ export class Aluna extends Exchanges {
 
       case this.Valr.ID:
         return this.Valr
+
+      case this.Binance.ID:
+        return this.Binance
 
       default: {
 

@@ -176,7 +176,6 @@ export const BinanceHttp: IAlunaHttp = class {
       method: verb,
       headers,
     }
-    console.log("🚀 ~ file: BinanceHttp.ts ~ line 179 ~ requestConfig", requestConfig)
 
     try {
 
