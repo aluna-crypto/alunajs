@@ -1,5 +1,4 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
@@ -99,31 +98,18 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
         case BinanceApiKeyPermissions.SPOT:
           alunaPermissions.read = true
           alunaPermissions.trade = rawKey.canTrade
-          break
-        
-        case BinanceApiKeyPermissions.WITHDRAW:
-          alunaPermissions.read = true
-          alunaPermissions.trade = true
-          alunaPermissions.withdraw = true
+          alunaPermissions.withdraw = rawKey.canWithdraw
           break
 
         default:
 
           BinanceLog.info(`Unknown permission '${permission}' found on Binance`
             .concat('permissions API response'))
+          break
 
       }
 
     })
-
-    if (alunaPermissions.withdraw) {
-
-      throw new AlunaError({
-        message: 'API key should not have withdraw permission.',
-        statusCode: 401,
-      })
-
-    }
 
     return alunaPermissions
 

@@ -359,7 +359,7 @@ describe('BinanceHttp', () => {
     
     const currentDate = 'current-date'
 
-    const queryString = 'recvWindow=20000&timestamp=' + currentDate
+    const queryString = 'recvWindow=60000&timestamp=' + currentDate
 
     const timestampMock = { toString: () => currentDate }
 

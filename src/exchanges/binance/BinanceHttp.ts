@@ -86,7 +86,7 @@ export const generateAuthSignature = (
     query
   } = params
 
-  let dataQueryString = 'recvWindow=20000&timestamp=' + Date.now()
+  let dataQueryString = 'recvWindow=60000&timestamp=' + Date.now()
 
   const formattedBody = body ? formatBodyToBinance(body) : ''
 

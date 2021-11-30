@@ -48,7 +48,7 @@ describe('BinanceBalanceModule', () => {
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok
 
-    expect(rawBalances.length).to.eq(3)
+    expect(rawBalances.length).to.eq(4)
     expect(rawBalances).to.deep.eq(BINANCE_RAW_BALANCES)
 
     rawBalances.forEach((balance, index) => {
@@ -95,7 +95,7 @@ describe('BinanceBalanceModule', () => {
       rawBalances: rawListMock,
     })).to.be.ok
 
-    expect(balances.length).to.be.eq(3)
+    expect(balances.length).to.be.eq(4)
     expect(balances).to.deep.eq(BINANCE_PARSED_BALANCES)
 
     balances.forEach((balance, index) => {
@@ -175,7 +175,7 @@ describe('BinanceBalanceModule', () => {
       rawBalances: BINANCE_RAW_BALANCES,
     })
 
-    expect(BINANCE_RAW_BALANCES.length).to.be.eq(3)
+    expect(BINANCE_RAW_BALANCES.length).to.be.eq(4)
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)
 

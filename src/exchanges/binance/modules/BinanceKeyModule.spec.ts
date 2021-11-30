@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { BinanceHttp } from '../BinanceHttp'
+import { BinanceLog } from '../BinanceLog'
 import { BinanceErrorEnum } from '../enums/BinanceErrorEnum'
 import {
   BinanceApiKeyPermissions,
@@ -99,60 +100,6 @@ describe('BinanceKeyModule', () => {
 
 
 
-  it('should not allow API KEYS with withdraw permission', async () => {
-
-    let error
-    let result
-
-    ImportMock.mockOther(
-      binanceKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    const mockRest: any = {} // mock requestResponse
-
-    const requestResponse: IBinanceKeyAccountSchema = {
-      permissions: [
-        BinanceApiKeyPermissions.SPOT,
-        BinanceApiKeyPermissions.WITHDRAW,
-      ],
-      canTrade: true,
-      ...mockRest
-    }
-
-    const requestMock = ImportMock.mockFunction(
-      BinanceHttp,
-      'privateRequest',
-      requestResponse,
-    )
-
-    try {
-
-      result = await binanceKeyModule.getPermissions()
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = 'API key should not have withdraw permission.'
-
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-    expect(requestMock.callCount).to.be.eq(1)
-
-  })
-
-
-
   it('should properly inform when api key or secret are wrong', async () => {
 
     ImportMock.mockOther(
@@ -197,55 +144,6 @@ describe('BinanceKeyModule', () => {
 
 
 
-  it('should not allow API key with withdraw permission', async () => {
-
-    ImportMock.mockOther(
-      binanceKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    const mockRest: any = {} // mock requestResponse
-    const requestResponse: IBinanceKeyAccountSchema = {
-      permissions: [BinanceApiKeyPermissions.WITHDRAW],
-      ...mockRest
-    }
-
-    ImportMock.mockFunction(
-      BinanceHttp,
-      'privateRequest',
-      requestResponse,
-    )
-
-    let error
-    let result
-
-    try {
-
-      result = await binanceKeyModule.getPermissions()
-
-    } catch (e) {
-
-      error = e
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = 'API key should not have withdraw permission.'
-
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
   it('should parse Binance permissions just fine', async () => {
 
     const mockRest: any = {} // mock requestResponse
@@ -265,6 +163,35 @@ describe('BinanceKeyModule', () => {
     expect(perm1.read).to.be.ok
     expect(perm1.trade).to.be.ok
     expect(perm1.withdraw).not.to.be.ok
+
+  })
+
+
+
+  it('should fall on default case for parse', async () => {
+
+    const mockRest: any = {} // mock requestResponse
+
+    const logInfoMock = ImportMock.mockFunction(BinanceLog, 'info', {
+      concat: () => ''
+    });
+
+    const key: IBinanceKeyAccountSchema = {
+      permissions: [
+        'non-existent'
+      ],
+      canTrade: true,
+      ...mockRest
+    }
+
+    const perm1 = binanceKeyModule.parsePermissions({
+      rawKey: key,
+    })
+
+    expect(logInfoMock.callCount).to.be.eq(1)
+    expect(perm1.read).not.to.be.ok
+    expect(perm1.trade).not.to.be.ok
+    expect(perm1.withdraw).not.not.to.be.ok
 
   })
 
