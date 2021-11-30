@@ -81,7 +81,7 @@ describe('BinanceSymbolModule', () => {
 
     expect(rawSymbols[1].exchangeId).to.be.eq(Binance.ID)
     expect(rawSymbols[1].id).to.be.eq(BINANCE_PARSED_SYMBOLS[1].id)
-    
+
     expect(rawSymbols[2].exchangeId).to.be.eq(Binance.ID)
     expect(rawSymbols[2].id).to.be.eq(BINANCE_PARSED_SYMBOLS[2].id)
 

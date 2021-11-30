@@ -14,10 +14,10 @@ describe('BinanceOrderParser', () => {
 
   it('should parse Binance order just fine', async () => {
 
-    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER;
+    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
     const parsedOrder = BinanceOrderParser.parse({
-      rawOrder: rawOrder,
+      rawOrder,
     })
 
     const rawOriginalQuantity = parseFloat(rawOrder.origQty)

@@ -1,6 +1,5 @@
-
 export enum BinanceOrderTimeInForceEnum {
-  GTC = 'GTC',	
+  GTC = 'GTC',
   IOC = 'IOC',
   FOK = 'FOK'
 }

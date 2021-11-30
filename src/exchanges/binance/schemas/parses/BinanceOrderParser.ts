@@ -48,6 +48,7 @@ export class BinanceOrderParser {
     }
 
     return parsedOrder
+
   }
 
 }

@@ -119,10 +119,10 @@ export class BinanceOrderWriteModule
 
     const { orderId } = await BinanceHttp
       .privateRequest<IBinancePlaceOrderResponse>({
-        url: PROD_BINANCE_URL + '/api/v3/order',
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
         body,
         keySecret: this.exchange.keySecret,
-    })
+      })
 
     const order = await this.get({
       id: orderId,
@@ -153,7 +153,7 @@ export class BinanceOrderWriteModule
 
     await BinanceHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       keySecret: this.exchange.keySecret,
       body,
     })

@@ -74,7 +74,7 @@ describe('BinanceOrderReadModule', () => {
         origQuoteOrderQty,
         symbol,
         time,
-        updateTime
+        updateTime,
       } = binanceRawOrders[index]
 
       expect(balance.orderId).to.be.eq(orderId)
@@ -153,7 +153,7 @@ describe('BinanceOrderReadModule', () => {
       expect(order.total).to.be.eq(total)
       expect(order.type).to.be.eq(type)
       expect(order.rate).to.be.eq(rate)
-      
+
     })
 
   })
@@ -193,7 +193,7 @@ describe('BinanceOrderReadModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.includes({
       verb: AlunaHttpVerbEnum.GET,
-      url: PROD_BINANCE_URL + `/api/v3/order`,
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
     })
 
     expect(rawOrder.type).to.be.eq(BinanceOrderTypeEnum.LIMIT)
@@ -251,10 +251,10 @@ describe('BinanceOrderReadModule', () => {
     parseMock
       .onFirstCall().returns(BINANCE_PARSED_ORDER)
 
-    const parsedOrder1 = binanceOrderReadModule.parse({ rawOrder: rawOrder })
+    const parsedOrder1 = binanceOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder: rawOrder })).to.be.ok
+    expect(parseMock.calledWith({ rawOrder })).to.be.ok
 
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.total).to.be.ok
@@ -268,6 +268,7 @@ describe('BinanceOrderReadModule', () => {
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
     expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
+
   })
 
 

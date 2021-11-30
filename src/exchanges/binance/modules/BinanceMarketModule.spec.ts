@@ -26,13 +26,13 @@ describe('BinanceMarketModule', () => {
     const rawMarkets = 'rawMarkets'
     const rawSymbolsPairs = 'rawSymbolsPairs'
 
-    const marketsURL = PROD_BINANCE_URL + '/api/v3/ticker/24hr'
+    const marketsURL = `${PROD_BINANCE_URL}/api/v3/ticker/24hr`
 
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'publicRequest',
     )
-    
+
     const binanceSymbolModuleMock = ImportMock.mockFunction(
       BinanceSymbolModule,
       'listRaw',
@@ -186,7 +186,7 @@ describe('BinanceMarketModule', () => {
       lastPrice,
       priceChange,
       volume: baseVolume,
-      quoteVolume
+      quoteVolume,
     } = rawMarketWithCurrency
 
     const high = parseFloat(highPrice)

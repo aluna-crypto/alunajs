@@ -7,7 +7,7 @@ import { BinanceSideEnum } from '../enums/BinanceSideEnum'
 export interface IBinanceOrderSchema {
   symbol: string
   orderId: number
-  orderListId: number //Unless OCO, the value will always be -1
+  orderListId: number // Unless OCO, the value will always be -1
   clientOrderId: string
   price: string
   origQty: string

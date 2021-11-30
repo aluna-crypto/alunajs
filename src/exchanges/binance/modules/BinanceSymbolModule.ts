@@ -29,11 +29,10 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     BinanceLog.info('fetching Binance symbols')
 
-    const rawSymbols =
-      await BinanceHttp
-        .publicRequest<IBinanceSymbolResponseSchema>({
-          url: PROD_BINANCE_URL + '/api/v3/exchangeInfo',
-        })
+    const rawSymbols = await BinanceHttp
+      .publicRequest<IBinanceSymbolResponseSchema>({
+        url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
+      })
 
     return rawSymbols.symbols
 

@@ -40,7 +40,7 @@ export class BinanceCurrencyMarketParser {
           baseAsset,
           quoteAsset,
           isSpotTradingAllowed,
-          isMarginTradingAllowed
+          isMarginTradingAllowed,
         } = rawSymbol
 
         cumulator.push({
@@ -48,7 +48,7 @@ export class BinanceCurrencyMarketParser {
           baseCurrency: baseAsset,
           quoteCurrency: quoteAsset,
           marginEnabled: isMarginTradingAllowed,
-          spotEnabled: isSpotTradingAllowed
+          spotEnabled: isSpotTradingAllowed,
         })
 
       }

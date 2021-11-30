@@ -19,18 +19,18 @@ describe('BinanceHttp', () => {
 
   const dummyBody = { dummy: 'dummy-body' }
 
-  const dummySignedHeaders = { "X-MBX-APIKEY": undefined }
+  const dummySignedHeaders = { 'X-MBX-APIKEY': undefined }
 
   const dummySignedBody = {
     signature: 'dummy',
     dataQueryString: 'dummy=dummy',
-    body: '&dummy=dummy'
+    body: '&dummy=dummy',
   }
 
-  const formattedQuery = dummySignedBody.dataQueryString
+  const formattedQuery = `${dummySignedBody.dataQueryString
     + dummySignedBody.body
-    + '&signature='
-    + dummySignedBody.signature
+  }&signature=${
+    dummySignedBody.signature}`
 
   const dummyData = { data: 'dummy-data' }
 
@@ -103,57 +103,57 @@ describe('BinanceHttp', () => {
 
   it('should format a body to binance format', async () => {
 
-    const formattedBody = BinanceHttp.formatBodyToBinance(dummyBody);
+    const formattedBody = BinanceHttp.formatBodyToBinance(dummyBody)
 
     expect(formattedBody).to.be.eq('&dummy=dummy-body')
-
-  });
-
-
-
-  it('should defaults the http verb to post on private requests', 
-    async () => {
-
-    const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      BinanceHttp,
-      'generateAuthSignature',
-      dummySignedBody,
-    )
-
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    await binanceHttp.privateRequest({
-      // http verb not informed
-      keySecret: {} as IAlunaKeySecretSchema,
-      url: 'http://dummy.com',
-    })
-
-    expect(axiosCreate.callCount).to.be.eq(1)
-
-    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
-
-    expect(requestSpy.callCount).to.be.eq(1)
-
-
-    expect(requestSpy.args[0]).to.deep.eq([{
-      url: 'http://dummy.com?' + formattedQuery,
-      method: AlunaHttpVerbEnum.POST,
-      headers: dummySignedHeaders,
-    }])
 
   })
 
 
 
-  it('should execute private request just fine', async () => { 
+  it('should defaults the http verb to post on private requests',
+    async () => {
+
+      const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+
+      const generateAuthHeaderMock = ImportMock.mockFunction(
+        BinanceHttp,
+        'generateAuthSignature',
+        dummySignedBody,
+      )
+
+      const axiosCreate = ImportMock.mockFunction(
+        axios,
+        'create',
+        {
+          request: requestSpy,
+        },
+      )
+
+      await binanceHttp.privateRequest({
+      // http verb not informed
+        keySecret: {} as IAlunaKeySecretSchema,
+        url: 'http://dummy.com',
+      })
+
+      expect(axiosCreate.callCount).to.be.eq(1)
+
+      expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+
+      expect(requestSpy.callCount).to.be.eq(1)
+
+
+      expect(requestSpy.args[0]).to.deep.eq([{
+        url: `http://dummy.com?${formattedQuery}`,
+        method: AlunaHttpVerbEnum.POST,
+        headers: dummySignedHeaders,
+      }])
+
+    })
+
+
+
+  it('should execute private request just fine', async () => {
 
     const requestSpy = Sinon.spy(() => dummyData)
 
@@ -186,12 +186,12 @@ describe('BinanceHttp', () => {
       verb: AlunaHttpVerbEnum.POST,
       body: dummyBody,
       keySecret: {},
-      query: undefined
+      query: undefined,
     })).to.be.ok
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
-      url: dummyUrl + '?' + formattedQuery,
+      url: `${dummyUrl}?${formattedQuery}`,
       method: AlunaHttpVerbEnum.POST,
       headers: dummySignedHeaders,
     }])
@@ -356,10 +356,10 @@ describe('BinanceHttp', () => {
     const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
     const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
-    
+
     const currentDate = 'current-date'
 
-    const queryString = 'recvWindow=60000&timestamp=' + currentDate
+    const queryString = `recvWindow=60000&timestamp=${currentDate}`
 
     const timestampMock = { toString: () => currentDate }
 
@@ -399,7 +399,7 @@ describe('BinanceHttp', () => {
     expect(updateSpy.calledWith(queryString)).to.be.ok
     expect(updateSpy.calledWith(stringifyBody)).to.be.ok
     expect(updateSpy.calledWith('')).to.be.ok
-    
+
     expect(stringfyMock.callCount).to.be.eq(1)
     expect(stringfyMock.calledWith(body)).to.be.ok
     expect(stringfyMock.calledWith('')).not.to.be.ok
@@ -407,7 +407,7 @@ describe('BinanceHttp', () => {
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('hex')).to.be.ok
 
-    expect(signedHash['signature']).to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash.signature).to.deep.eq(digestSpy.returnValues[0])
 
     const signedHash2 = BinanceHttp.generateAuthSignature({
       keySecret,
@@ -428,9 +428,10 @@ describe('BinanceHttp', () => {
     expect(digestSpy.callCount).to.be.eq(2)
 
     expect(
-      signedHash2['signature'],
+      signedHash2.signature,
     ).to.deep.eq(digestSpy.returnValues[1])
     Sinon.restore()
+
   })
 
   it('should generate signed auth header just fine with query', async () => {
@@ -440,10 +441,10 @@ describe('BinanceHttp', () => {
     const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
     const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
-    
+
     const currentDate = 'current-date'
 
-    const queryString = 'recvWindow=60000&timestamp=' + currentDate
+    const queryString = `recvWindow=60000&timestamp=${currentDate}`
 
     const timestampMock = { toString: () => currentDate }
 
@@ -474,7 +475,7 @@ describe('BinanceHttp', () => {
       keySecret,
       verb,
       body,
-      query: dummyQuery
+      query: dummyQuery,
     })
 
     expect(dateMock.callCount).to.be.eq(1)
@@ -486,13 +487,13 @@ describe('BinanceHttp', () => {
     expect(updateSpy.calledWith(queryString)).to.be.ok
     expect(updateSpy.calledWith('')).to.be.ok
     expect(updateSpy.calledWith(dummyQuery)).to.be.ok
-    
+
     expect(stringfyMock.calledWith('')).not.to.be.ok
 
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('hex')).to.be.ok
 
-    expect(signedHash['signature']).to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash.signature).to.deep.eq(digestSpy.returnValues[0])
 
     const signedHash2 = BinanceHttp.generateAuthSignature({
       keySecret,
@@ -513,9 +514,10 @@ describe('BinanceHttp', () => {
     expect(digestSpy.callCount).to.be.eq(2)
 
     expect(
-      signedHash2['signature'],
+      signedHash2.signature,
     ).to.deep.eq(digestSpy.returnValues[1])
     Sinon.restore()
+
   })
 
 

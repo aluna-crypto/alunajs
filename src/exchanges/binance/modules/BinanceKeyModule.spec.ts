@@ -67,7 +67,7 @@ describe('BinanceKeyModule', () => {
     const requestResponse: IBinanceKeyAccountSchema = {
       permissions: [],
       canTrade: true,
-      ...mockRest
+      ...mockRest,
     }
 
     const requestMock = ImportMock.mockFunction(
@@ -150,10 +150,10 @@ describe('BinanceKeyModule', () => {
 
     const key: IBinanceKeyAccountSchema = {
       permissions: [
-        BinanceApiKeyPermissions.SPOT
+        BinanceApiKeyPermissions.SPOT,
       ],
       canTrade: true,
-      ...mockRest
+      ...mockRest,
     }
 
     const perm1 = binanceKeyModule.parsePermissions({
@@ -173,15 +173,15 @@ describe('BinanceKeyModule', () => {
     const mockRest: any = {} // mock requestResponse
 
     const logInfoMock = ImportMock.mockFunction(BinanceLog, 'info', {
-      concat: () => ''
-    });
+      concat: () => '',
+    })
 
     const key: IBinanceKeyAccountSchema = {
       permissions: [
-        'non-existent'
+        'non-existent',
       ],
       canTrade: true,
-      ...mockRest
+      ...mockRest,
     }
 
     const perm1 = binanceKeyModule.parsePermissions({

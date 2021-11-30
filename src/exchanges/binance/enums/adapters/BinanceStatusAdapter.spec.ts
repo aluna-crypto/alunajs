@@ -16,47 +16,47 @@ describe('BinanceStatusAdapter', () => {
   it('should translate Binance order status to Aluna order status',
     () => {
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.NEW,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.NEW,
+      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.PARTIALLY_FILLED,
-    })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.PARTIALLY_FILLED,
+      })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.FILLED,
-    })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.FILLED,
+      })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.REJECTED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.REJECTED,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.CANCELED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.CANCELED,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-    expect(BinanceStatusAdapter.translateToAluna({
-      from: BinanceOrderStatusEnum.EXPIRED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
-
-
-    try {
-
-      BinanceStatusAdapter.translateToAluna({
-        from: notSupported as BinanceOrderStatusEnum,
-      })
-
-    } catch (err) {
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
-
-    }
+      expect(BinanceStatusAdapter.translateToAluna({
+        from: BinanceOrderStatusEnum.EXPIRED,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
 
-  })
+      try {
+
+        BinanceStatusAdapter.translateToAluna({
+          from: notSupported as BinanceOrderStatusEnum,
+        })
+
+      } catch (err) {
+
+        expect(err instanceof AlunaError).to.be.ok
+        expect(err.message)
+          .to.be.eq(`Order status not supported: ${notSupported}`)
+
+      }
+
+
+    })
 
 
 

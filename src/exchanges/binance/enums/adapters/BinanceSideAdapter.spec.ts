@@ -16,60 +16,60 @@ describe('BinanceSideAdapter', () => {
   it('should properly translate Binance order sides to Aluna order sides',
     () => {
 
-    expect(BinanceSideAdapter.translateToAluna({
-      from: BinanceSideEnum.BUY,
-    })).to.be.eq(AlunaSideEnum.LONG)
+      expect(BinanceSideAdapter.translateToAluna({
+        from: BinanceSideEnum.BUY,
+      })).to.be.eq(AlunaSideEnum.LONG)
 
-    expect(BinanceSideAdapter.translateToAluna({
-      from: BinanceSideEnum.SELL,
-    })).to.be.eq(AlunaSideEnum.SHORT)
-
-
-    try {
-
-      BinanceSideAdapter.translateToAluna({
-        from: notSupported as BinanceSideEnum,
-      })
-
-    } catch (err) {
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
-
-    }
+      expect(BinanceSideAdapter.translateToAluna({
+        from: BinanceSideEnum.SELL,
+      })).to.be.eq(AlunaSideEnum.SHORT)
 
 
-  })
+      try {
+
+        BinanceSideAdapter.translateToAluna({
+          from: notSupported as BinanceSideEnum,
+        })
+
+      } catch (err) {
+
+        expect(err instanceof AlunaError).to.be.ok
+        expect(err.message)
+          .to.be.eq(`Order side not supported: ${notSupported}`)
+
+      }
+
+
+    })
 
 
 
   it('should properly translate Aluna order sides to Binance order sides',
     () => {
 
-    expect(BinanceSideAdapter.translateToBinance({
-      from: AlunaSideEnum.LONG,
-    })).to.be.eq(BinanceSideEnum.BUY)
+      expect(BinanceSideAdapter.translateToBinance({
+        from: AlunaSideEnum.LONG,
+      })).to.be.eq(BinanceSideEnum.BUY)
 
-    expect(BinanceSideAdapter.translateToBinance({
-      from: AlunaSideEnum.SHORT,
-    })).to.be.eq(BinanceSideEnum.SELL)
+      expect(BinanceSideAdapter.translateToBinance({
+        from: AlunaSideEnum.SHORT,
+      })).to.be.eq(BinanceSideEnum.SELL)
 
 
-    try {
+      try {
 
-      BinanceSideAdapter.translateToBinance({
-        from: notSupported as AlunaSideEnum,
-      })
+        BinanceSideAdapter.translateToBinance({
+          from: notSupported as AlunaSideEnum,
+        })
 
-    } catch (err) {
+      } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+        expect(err instanceof AlunaError).to.be.ok
+        expect(err.message)
+          .to.be.eq(`Order side not supported: ${notSupported}`)
 
-    }
+      }
 
-  })
+    })
 
 })

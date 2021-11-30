@@ -13,7 +13,7 @@ import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
 
 
 
-export class BinanceOrderReadModule 
+export class BinanceOrderReadModule
   extends AAlunaModule implements IAlunaOrderReadModule {
 
   public async listRaw (): Promise<IBinanceOrderSchema[]> {
@@ -22,7 +22,7 @@ export class BinanceOrderReadModule
 
     const rawOrders = await BinanceHttp.privateRequest<IBinanceOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
-      url:  PROD_BINANCE_URL + '/api/v3/openOrders',
+      url: `${PROD_BINANCE_URL}/api/v3/openOrders`,
       keySecret: this.exchange.keySecret,
     })
 
@@ -57,9 +57,9 @@ export class BinanceOrderReadModule
 
     const rawOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
-      url: PROD_BINANCE_URL + `/api/v3/order`,
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       keySecret: this.exchange.keySecret,
-      query: `&orderId=${id}&symbol=${symbolPair}`
+      query: `&orderId=${id}&symbol=${symbolPair}`,
     })
 
     return rawOrder
@@ -82,7 +82,7 @@ export class BinanceOrderReadModule
 
   public parse (params: {
     rawOrder: IBinanceOrderSchema,
-  }): IAlunaOrderSchema {    
+  }): IAlunaOrderSchema {
 
     const { rawOrder } = params
 

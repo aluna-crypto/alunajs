@@ -32,7 +32,7 @@ export class BinanceStatusAdapter {
     buildAdapter<AlunaOrderStatusEnum, BinanceOrderStatusEnum>({
       errorMessagePrefix: BinanceStatusAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
-        [AlunaOrderStatusEnum.OPEN]: BinanceOrderStatusEnum.NEW,        
+        [AlunaOrderStatusEnum.OPEN]: BinanceOrderStatusEnum.NEW,
         [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
         BinanceOrderStatusEnum.PARTIALLY_FILLED,
         [AlunaOrderStatusEnum.FILLED]: BinanceOrderStatusEnum.FILLED,

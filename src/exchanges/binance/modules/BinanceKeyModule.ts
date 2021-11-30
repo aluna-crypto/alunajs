@@ -52,13 +52,12 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       const { keySecret } = this.exchange
 
-      rawKey = 
-        await BinanceHttp
-          .privateRequest<IBinanceKeyAccountSchema>({
-            verb: AlunaHttpVerbEnum.GET,
-            url: PROD_BINANCE_URL + '/api/v3/account',
-            keySecret,
-          })
+      rawKey = await BinanceHttp
+        .privateRequest<IBinanceKeyAccountSchema>({
+          verb: AlunaHttpVerbEnum.GET,
+          url: `${PROD_BINANCE_URL}/api/v3/account`,
+          keySecret,
+        })
 
     } catch (error) {
 

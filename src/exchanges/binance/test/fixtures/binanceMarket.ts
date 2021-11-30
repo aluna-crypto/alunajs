@@ -184,10 +184,10 @@ export const BINANCE_RAW_MARKETS_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     count: 252575,
     marginEnabled: true,
     spotEnabled: true,
-  }
+  },
 ]
 
-export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
+export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] = [
   {
     exchangeId: 'binance',
     pairSymbol: 'BNBBTC',
@@ -202,7 +202,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       date: new Date(),
       change: 0.000005240000000000001,
       baseVolume: 229124.037,
-      quoteVolume: 2434.71517174
+      quoteVolume: 2434.71517174,
     },
     spotEnabled: true,
     marginEnabled: true,
@@ -233,8 +233,8 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       lastId: 169947033,
       count: 218821,
       marginEnabled: true,
-      spotEnabled: true
-    }
+      spotEnabled: true,
+    },
   },
   {
     exchangeId: 'binance',
@@ -250,7 +250,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       date: new Date(),
       change: 0.00000185,
       baseVolume: 165250.471,
-      quoteVolume: 625.37403347
+      quoteVolume: 625.37403347,
     },
     spotEnabled: true,
     marginEnabled: true,
@@ -281,8 +281,8 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       lastId: 73926145,
       count: 53081,
       marginEnabled: true,
-      spotEnabled: true
-    }
+      spotEnabled: true,
+    },
   },
   {
     exchangeId: 'binance',
@@ -298,7 +298,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       date: new Date(),
       change: 0.00001501,
       baseVolume: 86419.2644,
-      quoteVolume: 6477.12839052
+      quoteVolume: 6477.12839052,
     },
     spotEnabled: true,
     marginEnabled: true,
@@ -329,7 +329,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[
       lastId: 311063379,
       count: 252575,
       marginEnabled: true,
-      spotEnabled: true
-    }
-  }
+      spotEnabled: true,
+    },
+  },
 ]

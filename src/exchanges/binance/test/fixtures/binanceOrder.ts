@@ -6,27 +6,27 @@ import { IBinanceOrderSchema } from '../../schemas/IBinanceOrderSchema'
 
 
 export const BINANCE_RAW_ORDER: IBinanceOrderSchema = {
-  symbol: "LTCBTC",
+  symbol: 'LTCBTC',
   orderId: 1,
   orderListId: -1,
-  clientOrderId: "myOrder1",
-  price: "0.1",
-  origQty: "1.0",
-  executedQty: "0.0",
-  cummulativeQuoteQty: "0.0",
+  clientOrderId: 'myOrder1',
+  price: '0.1',
+  origQty: '1.0',
+  executedQty: '0.0',
+  cummulativeQuoteQty: '0.0',
   status: BinanceOrderStatusEnum.NEW,
-  timeInForce: "GTC",
+  timeInForce: 'GTC',
   type: BinanceOrderTypeEnum.LIMIT,
   side: BinanceSideEnum.BUY,
-  stopPrice: "0.0",
-  icebergQty: "0.0",
+  stopPrice: '0.0',
+  icebergQty: '0.0',
   time: 1499827319559,
   updateTime: 1499827319559,
   isWorking: true,
-  origQuoteOrderQty: "0.000000",
+  origQuoteOrderQty: '0.000000',
 }
 
-export const BINANCE_PARSED_ORDER =  {
+export const BINANCE_PARSED_ORDER = {
   id: 1,
   symbolPair: 'LTCBTC',
   total: 0.1,
@@ -38,5 +38,5 @@ export const BINANCE_PARSED_ORDER =  {
   status: 'open',
   type: 'limit',
   placedAt: '+049497-08-20T11:52:39.000Z',
-  meta: {}
+  meta: {},
 }

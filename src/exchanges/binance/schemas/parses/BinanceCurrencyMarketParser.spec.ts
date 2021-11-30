@@ -14,7 +14,7 @@ describe('BinanceCurrencyMarketParser', () => {
   it('should parse Binance currency pairs just fine', () => {
 
     const rawMarkets = [...BINANCE_RAW_MARKETS, BINANCE_RAW_MARKET]
-    const rawSymbols = BINANCE_RAW_SYMBOLS.symbols;
+    const rawSymbols = BINANCE_RAW_SYMBOLS.symbols
 
     const marketWithCurr = BinanceCurrencyMarketParser.parse({
       rawMarkets,

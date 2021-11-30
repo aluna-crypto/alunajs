@@ -25,7 +25,7 @@ export class BinanceMarketParser {
       quoteVolume,
       symbol,
       marginEnabled,
-      spotEnabled
+      spotEnabled,
     } = rawMarket
 
 

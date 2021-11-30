@@ -22,7 +22,7 @@ interface ISignedHashParams {
 
 
 interface IBinanceSecureHeaders {
-  "X-MBX-APIKEY": string,
+  'X-MBX-APIKEY': string
 }
 
 interface IBinanceSignedSignature {
@@ -32,9 +32,10 @@ interface IBinanceSignedSignature {
 }
 
 export const formatBodyToBinance = (body: Record<string, any>) => {
+
   let formattedBody = ''
 
-  Object.keys(body).map(function(key) {
+  Object.keys(body).map((key) => {
 
     formattedBody += `&${key}=${body[key]}`
 
@@ -43,6 +44,7 @@ export const formatBodyToBinance = (body: Record<string, any>) => {
   })
 
   return formattedBody
+
 }
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
@@ -81,31 +83,30 @@ export const generateAuthSignature = (
 ): IBinanceSignedSignature => {
 
   const {
-    keySecret, 
+    keySecret,
     body,
-    query
+    query,
   } = params
 
-  let dataQueryString = 'recvWindow=60000&timestamp=' + Date.now()
+  const dataQueryString = `recvWindow=60000&timestamp=${Date.now()}`
 
   const formattedBody = body ? formatBodyToBinance(body) : ''
 
   const signedRequest = crypto
     .createHmac('sha256', keySecret.secret)
     .update(dataQueryString)
-    .update(query ? query : '')
+    .update(query || '')
     .update(formattedBody)
     .digest('hex')
 
-  const dataQueryStringWithQuery =
-    query ? dataQueryString + query 
-      : dataQueryString
+  const dataQueryStringWithQuery = query ? dataQueryString + query
+    : dataQueryString
 
   return {
     signature: signedRequest,
     dataQueryString: dataQueryStringWithQuery,
-    body: formattedBody
-  };
+    body: formattedBody,
+  }
 
 }
 
@@ -149,26 +150,25 @@ export const BinanceHttp: IAlunaHttp = class {
       body,
       verb = AlunaHttpVerbEnum.POST,
       keySecret,
-      query
+      query,
     } = params
 
     const signedHash = generateAuthSignature({
       verb,
       keySecret,
       body,
-      query
+      query,
     })
 
-    const signedHashFormatted =
-      signedHash.dataQueryString
+    const signedHashFormatted = `${signedHash.dataQueryString
       + signedHash.body
-      + '&signature='
-      + signedHash.signature
+    }&signature=${
+      signedHash.signature}`
 
-    const fullUrl = url + "?" + signedHashFormatted;
+    const fullUrl = `${url}?${signedHashFormatted}`
 
     const headers: IBinanceSecureHeaders = {
-      "X-MBX-APIKEY": keySecret.key
+      'X-MBX-APIKEY': keySecret.key,
     }
 
     const requestConfig = {

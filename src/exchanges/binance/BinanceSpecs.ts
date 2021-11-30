@@ -85,7 +85,7 @@ export const BinanceSpecs: IAlunaExchangeSpecsSchema = {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,
       implemented: true,
-      orderTypes: exchangeOrderTypes
+      orderTypes: exchangeOrderTypes,
     },
     {
       type: AlunaAccountEnum.MARGIN,
