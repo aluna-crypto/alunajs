@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { Binance } from '../../Binance'
-import { BINANCE_RAW_MARKET_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
+import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
 import { BinanceMarketParser } from './BinanceMarketParser'
 
 
@@ -11,7 +11,7 @@ describe('BinanceMarketParser', () => {
 
   it('should parse Binance market just fine', async () => {
 
-    const rawMarket = BINANCE_RAW_MARKET_WITH_CURRENCY[0]
+    const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY[0]
 
     const parsedMarket = BinanceMarketParser.parse({
       rawMarket,

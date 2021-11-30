@@ -11,7 +11,7 @@ import { BinanceCurrencyMarketParser } from '../schemas/parses/BinanceCurrencyMa
 import { BinanceMarketParser } from '../schemas/parses/BinanceMarketParser'
 import {
   BINANCE_PARSED_MARKET,
-  BINANCE_RAW_MARKET_WITH_CURRENCY,
+  BINANCE_RAW_MARKETS_WITH_CURRENCY,
 } from '../test/fixtures/binanceMarket'
 import { BinanceMarketModule } from './BinanceMarketModule'
 import { BinanceSymbolModule } from './BinanceSymbolModule'
@@ -48,7 +48,7 @@ describe('BinanceMarketModule', () => {
     const currecyMarketParserMock = ImportMock.mockFunction(
       BinanceCurrencyMarketParser,
       'parse',
-      BINANCE_RAW_MARKET_WITH_CURRENCY,
+      BINANCE_RAW_MARKETS_WITH_CURRENCY,
     )
 
 
@@ -67,7 +67,7 @@ describe('BinanceMarketModule', () => {
     })).to.be.ok
 
     expect(response.length).to.eq(3)
-    expect(response).to.deep.eq(BINANCE_RAW_MARKET_WITH_CURRENCY)
+    expect(response).to.deep.eq(BINANCE_RAW_MARKETS_WITH_CURRENCY)
 
     response.forEach((res, index) => {
 
@@ -83,7 +83,7 @@ describe('BinanceMarketModule', () => {
         priceChange,
         baseCurrency,
         quoteCurrency,
-      } = BINANCE_RAW_MARKET_WITH_CURRENCY[index]
+      } = BINANCE_RAW_MARKETS_WITH_CURRENCY[index]
 
       expect(res.symbol).to.be.eq(symbol)
       expect(res.askPrice).to.be.eq(askPrice)
@@ -160,7 +160,7 @@ describe('BinanceMarketModule', () => {
       parsedMarketMock,
     )
 
-    const rawMarketWithCurrency = BINANCE_RAW_MARKET_WITH_CURRENCY[0]
+    const rawMarketWithCurrency = BINANCE_RAW_MARKETS_WITH_CURRENCY[0]
 
     const market: IAlunaMarketSchema = BinanceMarketModule.parse({
       rawMarket: rawMarketWithCurrency,
@@ -232,7 +232,7 @@ describe('BinanceMarketModule', () => {
 
 
     const markets: IAlunaMarketSchema[] = BinanceMarketModule.parseMany({
-      rawMarkets: BINANCE_RAW_MARKET_WITH_CURRENCY,
+      rawMarkets: BINANCE_RAW_MARKETS_WITH_CURRENCY,
     })
 
     markets.forEach((market, index) => {

@@ -349,7 +349,7 @@ describe('BinanceHttp', () => {
   })
 
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine with body', async () => {
 
     const createHmacSpy = Sinon.spy(crypto, 'createHmac')
 
@@ -398,9 +398,96 @@ describe('BinanceHttp', () => {
     expect(updateSpy.callCount).to.be.eq(3)
     expect(updateSpy.calledWith(queryString)).to.be.ok
     expect(updateSpy.calledWith(stringifyBody)).to.be.ok
-
+    expect(updateSpy.calledWith('')).to.be.ok
+    
     expect(stringfyMock.callCount).to.be.eq(1)
     expect(stringfyMock.calledWith(body)).to.be.ok
+    expect(stringfyMock.calledWith('')).not.to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['signature']).to.deep.eq(digestSpy.returnValues[0])
+
+    const signedHash2 = BinanceHttp.generateAuthSignature({
+      keySecret,
+      verb,
+      // without a body
+    })
+
+    expect(dateMock.callCount).to.be.eq(2)
+
+    expect(createHmacSpy.callCount).to.be.eq(2)
+
+    // when no body is passed must not call stringfy on empty string
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith('')).not.to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(6)
+
+    expect(digestSpy.callCount).to.be.eq(2)
+
+    expect(
+      signedHash2['signature'],
+    ).to.deep.eq(digestSpy.returnValues[1])
+    Sinon.restore()
+  })
+
+  it('should generate signed auth header just fine with query', async () => {
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    
+    const currentDate = 'current-date'
+
+    const queryString = 'recvWindow=60000&timestamp=' + currentDate
+
+    const timestampMock = { toString: () => currentDate }
+
+    const dateMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      timestampMock,
+    )
+
+    const stringifyBody = 'stringify-body'
+
+    const stringfyMock = ImportMock.mockFunction(
+      BinanceHttp,
+      'formatBodyToBinance',
+      '',
+    )
+
+    const keySecret = {
+      key: 'dummy-key',
+      secret: 'dummy-secret',
+    } as IAlunaKeySecretSchema
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const body = dummyBody
+
+    const dummyQuery = 'dummy-query'
+
+    const signedHash = BinanceHttp.generateAuthSignature({
+      keySecret,
+      verb,
+      body,
+      query: dummyQuery
+    })
+
+    expect(dateMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', keySecret.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(3)
+    expect(updateSpy.calledWith(queryString)).to.be.ok
+    expect(updateSpy.calledWith('')).to.be.ok
+    expect(updateSpy.calledWith(dummyQuery)).to.be.ok
+    
+    expect(stringfyMock.calledWith('')).not.to.be.ok
 
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('hex')).to.be.ok

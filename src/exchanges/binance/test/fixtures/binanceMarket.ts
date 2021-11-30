@@ -6,7 +6,7 @@ import {
 
 
 
-export const BINANCE_RAW_MARKET: IBinanceMarketSchema[] = [
+export const BINANCE_RAW_MARKETS: IBinanceMarketSchema[] = [
   {
     symbol: 'BNBBTC',
     priceChange: '0.00052400',
@@ -78,7 +78,32 @@ export const BINANCE_RAW_MARKET: IBinanceMarketSchema[] = [
   },
 ]
 
-export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
+
+export const BINANCE_RAW_MARKET: IBinanceMarketSchema = {
+  symbol: 'ENGETH',
+  priceChange: '0.00000000',
+  priceChangePercent: '0.000',
+  weightedAvgPrice: '0.00000000',
+  prevClosePrice: '0.00186480',
+  lastPrice: '0.00000000',
+  lastQty: '0.00000000',
+  bidPrice: '0.00000000',
+  bidQty: '0.00000000',
+  askPrice: '0.00000000',
+  askQty: '0.00000000',
+  openPrice: '0.00000000',
+  highPrice: '0.00000000',
+  lowPrice: '0.00000000',
+  volume: '0.00000000',
+  quoteVolume: '0.00000000',
+  openTime: 1638091712347,
+  closeTime: 1638178112347,
+  firstId: -1,
+  lastId: -1,
+  count: 0,
+}
+
+export const BINANCE_RAW_MARKETS_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
   {
     symbol: 'BNBBTC',
     baseCurrency: 'BNB',
@@ -159,7 +184,7 @@ export const BINANCE_RAW_MARKET_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
     count: 252575,
     marginEnabled: true,
     spotEnabled: true,
-  },
+  }
 ]
 
 export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] =[

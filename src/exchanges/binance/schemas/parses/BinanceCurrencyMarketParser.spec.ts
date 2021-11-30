@@ -1,6 +1,9 @@
 import { expect } from 'chai'
 
-import { BINANCE_RAW_MARKET } from '../../test/fixtures/binanceMarket'
+import {
+  BINANCE_RAW_MARKET,
+  BINANCE_RAW_MARKETS,
+} from '../../test/fixtures/binanceMarket'
 import { BINANCE_RAW_SYMBOLS } from '../../test/fixtures/binanceSymbols'
 import { BinanceCurrencyMarketParser } from './BinanceCurrencyMarketParser'
 
@@ -10,13 +13,15 @@ describe('BinanceCurrencyMarketParser', () => {
 
   it('should parse Binance currency pairs just fine', () => {
 
-    const rawMarkets = BINANCE_RAW_MARKET
+    const rawMarkets = [...BINANCE_RAW_MARKETS, BINANCE_RAW_MARKET]
     const rawSymbols = BINANCE_RAW_SYMBOLS.symbols;
 
     const marketWithCurr = BinanceCurrencyMarketParser.parse({
       rawMarkets,
       rawSymbols,
     })
+
+    expect(rawMarkets.length).to.be.eq(4)
 
     expect(rawSymbols.length).to.be.eq(3)
 
