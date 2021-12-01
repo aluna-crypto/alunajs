@@ -84,7 +84,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       body: requestBody,
       keySecret,
     })).to.be.ok
@@ -115,7 +115,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.calledWith({
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       body: requestBody2,
       keySecret,
     })).to.be.ok
@@ -175,7 +175,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       body: requestBody,
       keySecret,
     })).to.be.ok
@@ -197,7 +197,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.calledWith({
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       body: {
         ...requestBody,
         side: BinanceSideEnum.SELL,
@@ -568,7 +568,7 @@ describe('BinanceOrderWriteModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: PROD_BINANCE_URL + '/api/v3/order',
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
       keySecret,
       body: {
         orderId: cancelParams.id,

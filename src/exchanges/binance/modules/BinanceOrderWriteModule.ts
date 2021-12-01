@@ -26,8 +26,7 @@ interface IBinancePlaceOrderResponse {
 
 
 
-export class BinanceOrderWriteModule
-  extends BinanceOrderReadModule implements IAlunaOrderWriteModule {
+export class BinanceOrderWriteModule extends BinanceOrderReadModule implements IAlunaOrderWriteModule {
 
   public async place (
     params: IAlunaOrderPlaceParams,

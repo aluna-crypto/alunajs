@@ -27,10 +27,11 @@ describe('BinanceHttp', () => {
     body: '&dummy=dummy',
   }
 
-  const formattedQuery = `${dummySignedBody.dataQueryString
-    + dummySignedBody.body
-  }&signature=${
-    dummySignedBody.signature}`
+  const formattedQuery = new URLSearchParams(
+    `${dummySignedBody.dataQueryString}${dummySignedBody.body}`,
+  )
+
+  formattedQuery.append('signature', dummySignedBody.signature)
 
   const dummyData = { data: 'dummy-data' }
 
@@ -144,7 +145,7 @@ describe('BinanceHttp', () => {
 
 
       expect(requestSpy.args[0]).to.deep.eq([{
-        url: `http://dummy.com?${formattedQuery}`,
+        url: `http://dummy.com?${formattedQuery.toString()}`,
         method: AlunaHttpVerbEnum.POST,
         headers: dummySignedHeaders,
       }])
@@ -191,7 +192,7 @@ describe('BinanceHttp', () => {
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
-      url: `${dummyUrl}?${formattedQuery}`,
+      url: `${dummyUrl}?${formattedQuery.toString()}`,
       method: AlunaHttpVerbEnum.POST,
       headers: dummySignedHeaders,
     }])

@@ -13,8 +13,7 @@ import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
 
 
 
-export class BinanceOrderReadModule
-  extends AAlunaModule implements IAlunaOrderReadModule {
+export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
   public async listRaw (): Promise<IBinanceOrderSchema[]> {
 

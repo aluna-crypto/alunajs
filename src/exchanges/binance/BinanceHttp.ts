@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
+import { URLSearchParams } from 'url'
 
 import { IAlunaKeySecretSchema } from '../..'
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -160,12 +161,13 @@ export const BinanceHttp: IAlunaHttp = class {
       query,
     })
 
-    const signedHashFormatted = `${signedHash.dataQueryString
-      + signedHash.body
-    }&signature=${
-      signedHash.signature}`
+    const urlParams = new URLSearchParams(
+      `${signedHash.dataQueryString}${signedHash.body}`,
+    )
 
-    const fullUrl = `${url}?${signedHashFormatted}`
+    urlParams.append('signature', signedHash.signature)
+
+    const fullUrl = `${url}?${urlParams.toString()}`
 
     const headers: IBinanceSecureHeaders = {
       'X-MBX-APIKEY': keySecret.key,

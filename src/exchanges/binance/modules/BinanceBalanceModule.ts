@@ -11,8 +11,7 @@ import { IBinanceKeyAccountSchema } from '../schemas/IBinanceKeySchema'
 
 
 
-export class BinanceBalanceModule
-  extends AAlunaModule implements IAlunaBalanceModule {
+export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
   public async listRaw (): Promise<IBinanceBalanceSchema[]> {
 

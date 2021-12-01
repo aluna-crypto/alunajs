@@ -17,7 +17,7 @@ import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
 
 
 
-export const PROD_BINANCE_URL = 'https://api.binance.com' // @TODO -> Update url
+export const PROD_BINANCE_URL = 'https://api.binance.com'
 export const DEV_BINANCE_URL = 'https://testnet.binance.vision'
 
 export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implements IAlunaExchange {

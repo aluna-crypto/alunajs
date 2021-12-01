@@ -35,7 +35,7 @@ describe('BinanceBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { balances: BINANCE_RAW_BALANCES},
+      { balances: BINANCE_RAW_BALANCES },
     )
 
 
@@ -44,7 +44,7 @@ describe('BinanceBalanceModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
       verb: AlunaHttpVerbEnum.GET,
-      url: PROD_BINANCE_URL + '/api/v3/account',
+      url: `${PROD_BINANCE_URL}/api/v3/account`,
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok
 
@@ -56,7 +56,7 @@ describe('BinanceBalanceModule', () => {
       const {
         asset,
         free,
-        locked
+        locked,
       } = BINANCE_RAW_BALANCES[index]
 
       expect(balance.asset).to.be.eq(asset)
@@ -126,9 +126,8 @@ describe('BinanceBalanceModule', () => {
 
     const { asset } = BINANCE_RAW_BALANCES[0]
     const available = parseFloat(BINANCE_RAW_BALANCES[0].free)
-    const total = 
-      parseFloat(BINANCE_RAW_BALANCES[0].free) +
-      parseFloat(BINANCE_RAW_BALANCES[0].locked)
+    const total = parseFloat(BINANCE_RAW_BALANCES[0].free)
+      + parseFloat(BINANCE_RAW_BALANCES[0].locked)
 
     expect(parsedBalance1.symbolId).to.be.eq(asset)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -142,9 +141,8 @@ describe('BinanceBalanceModule', () => {
 
     const currency2 = BINANCE_RAW_BALANCES[1].asset
     const available2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
-    const total2 = 
-      parseFloat(BINANCE_RAW_BALANCES[1].free) + 
-      parseFloat(BINANCE_RAW_BALANCES[1].locked)
+    const total2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
+      + parseFloat(BINANCE_RAW_BALANCES[1].locked)
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance2.symbolId).to.be.eq(currency2)
