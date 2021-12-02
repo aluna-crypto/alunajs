@@ -56,10 +56,11 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       const {
         supported,
         implemented,
-        orderTypes: supportedOrderTypes,
+        orderTypes,
       } = accountSpecs
 
-      if (!supported || !implemented || !supportedOrderTypes) {
+      // TODO: Order types should be required (review all occurrencies)
+      if (!supported || !implemented) {
 
         throw new AlunaError({
           message:
@@ -68,7 +69,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
       }
 
-      const orderType = supportedOrderTypes.find((o) => o.type === type)
+      const orderType = orderTypes.find((o) => o.type === type)
 
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
@@ -107,6 +108,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
+      // QUESTION: Is Time-in-force really required?
       Object.assign(body, {
         price: rate,
         timeInForce: BinanceOrderTimeInForceEnum.GTC,
@@ -157,6 +159,8 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       body,
     })
 
+    // TODO: Prefer validating if the order was canceled based on the request
+    // response
     const rawOrder = await this.getRaw(params)
 
     if (rawOrder.status !== BinanceOrderStatusEnum.CANCELED) {

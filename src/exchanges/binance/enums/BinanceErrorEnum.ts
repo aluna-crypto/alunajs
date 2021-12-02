@@ -1,3 +1,5 @@
+// TODO: Double check all error messages for Binance, they are most likely not
+// identical to the Valr errors
 export enum BinanceErrorEnum {
   UNAUTHORIZED = 'Unauthorized',
   INVALID_KEY = 'API key or secret is invalid',

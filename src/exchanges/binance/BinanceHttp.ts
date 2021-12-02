@@ -22,9 +22,12 @@ interface ISignedHashParams {
 }
 
 
+
 interface IBinanceSecureHeaders {
   'X-MBX-APIKEY': string
 }
+
+
 
 interface IBinanceSignedSignature {
   signature: string
@@ -32,10 +35,13 @@ interface IBinanceSignedSignature {
   body: string
 }
 
+
+
 export const formatBodyToBinance = (body: Record<string, any>): string => {
 
   let formattedBody = ''
 
+  // QUESTION: Why not use 'URLSearchParams'?
   Object.keys(body).map((key) => {
 
     formattedBody += `&${key}=${body[key]}`
@@ -47,6 +53,8 @@ export const formatBodyToBinance = (body: Record<string, any>): string => {
   return formattedBody
 
 }
+
+
 
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
@@ -79,6 +87,8 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
 }
 
+
+
 export const generateAuthSignature = (
   params: ISignedHashParams,
 ): IBinanceSignedSignature => {
@@ -100,7 +110,9 @@ export const generateAuthSignature = (
     .update(formattedBody)
     .digest('hex')
 
-  const dataQueryStringWithQuery = query ? dataQueryString + query
+  // NOTE: Prefer using multiline conditions for increased readability
+  const dataQueryStringWithQuery = query
+    ? dataQueryString + query
     : dataQueryString
 
   return {

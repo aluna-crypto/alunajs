@@ -55,7 +55,7 @@ export class BinanceCurrencyMarketParser {
 
       return cumulator
 
-    }, [] as IBinanceMarketWithCurrency[])
+    }, [] as IBinanceMarketWithCurrency[]) // TODO: Use generic types
 
     return rawMarketsWithCurrency
 

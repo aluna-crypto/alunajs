@@ -91,15 +91,18 @@ export const BinanceSpecs: IAlunaExchangeSpecsSchema = {
       type: AlunaAccountEnum.MARGIN,
       supported: true,
       implemented: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: false,
+      orderTypes: [],
     },
   ],
 }

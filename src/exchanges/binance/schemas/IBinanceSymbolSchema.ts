@@ -48,6 +48,7 @@ export interface IBinanceExchangeFilters {
   maxNumOrders: number
 }
 
+// QUESTION: Should we called it 'IBinanceInfoSchema' instead?
 export interface IBinanceSymbolResponseSchema {
   timezone: string
   serverTime: number

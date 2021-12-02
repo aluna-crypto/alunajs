@@ -18,7 +18,7 @@ export class BinanceStatusAdapter {
       mappings: {
         [BinanceOrderStatusEnum.NEW]: AlunaOrderStatusEnum.OPEN,
         [BinanceOrderStatusEnum.PARTIALLY_FILLED]:
-        AlunaOrderStatusEnum.PARTIALLY_FILLED,
+          AlunaOrderStatusEnum.PARTIALLY_FILLED,
         [BinanceOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
         [BinanceOrderStatusEnum.REJECTED]: AlunaOrderStatusEnum.CANCELED,
         [BinanceOrderStatusEnum.CANCELED]: AlunaOrderStatusEnum.CANCELED,
@@ -34,7 +34,7 @@ export class BinanceStatusAdapter {
       mappings: {
         [AlunaOrderStatusEnum.OPEN]: BinanceOrderStatusEnum.NEW,
         [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
-        BinanceOrderStatusEnum.PARTIALLY_FILLED,
+          BinanceOrderStatusEnum.PARTIALLY_FILLED,
         [AlunaOrderStatusEnum.FILLED]: BinanceOrderStatusEnum.FILLED,
         [AlunaOrderStatusEnum.CANCELED]: BinanceOrderStatusEnum.CANCELED,
       },

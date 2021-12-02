@@ -38,6 +38,8 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
   }
 
+
+
   public static async list (): Promise<IAlunaMarketSchema[]> {
 
     const rawMarkets = await BinanceMarketModule.listRaw()
@@ -47,6 +49,8 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     return parsedMarkets
 
   }
+
+
 
   public static parse (params: {
     rawMarket: IBinanceMarketWithCurrency,
@@ -59,6 +63,8 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     return parsedMarket
 
   }
+
+
 
   public static parseMany (params: {
     rawMarkets: IBinanceMarketWithCurrency[],

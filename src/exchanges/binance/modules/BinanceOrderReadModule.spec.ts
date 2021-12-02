@@ -48,13 +48,14 @@ describe('BinanceOrderReadModule', () => {
       binanceRawOrders,
     )
 
-    const rawBalances = await binanceOrderReadModule.listRaw()
+    // TODO: Pay attention when copy-pasting 😄
+    const rawOrders = await binanceOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    expect(rawBalances.length).to.be.eq(1)
+    expect(rawOrders.length).to.be.eq(1)
 
-    rawBalances.forEach((balance, index) => {
+    rawOrders.forEach((order, index) => {
 
       const {
         orderId,
@@ -77,24 +78,24 @@ describe('BinanceOrderReadModule', () => {
         updateTime,
       } = binanceRawOrders[index]
 
-      expect(balance.orderId).to.be.eq(orderId)
-      expect(balance.clientOrderId).to.be.eq(clientOrderId)
-      expect(balance.cummulativeQuoteQty).to.be.eq(cummulativeQuoteQty)
-      expect(balance.origQuoteOrderQty).to.be.eq(origQuoteOrderQty)
-      expect(balance.symbol).to.be.eq(symbol)
-      expect(balance.time).to.be.eq(time)
-      expect(balance.updateTime).to.be.eq(updateTime)
-      expect(balance.executedQty).to.be.eq(executedQty)
-      expect(balance.icebergQty).to.be.eq(icebergQty)
-      expect(balance.price).to.be.eq(price)
-      expect(balance.isWorking).to.be.eq(isWorking)
-      expect(balance.side).to.be.eq(side)
-      expect(balance.status).to.be.eq(status)
-      expect(balance.timeInForce).to.be.eq(timeInForce)
-      expect(balance.type).to.be.eq(type)
-      expect(balance.orderListId).to.be.eq(orderListId)
-      expect(balance.origQty).to.be.eq(origQty)
-      expect(balance.stopPrice).to.be.eq(stopPrice)
+      expect(order.orderId).to.be.eq(orderId)
+      expect(order.clientOrderId).to.be.eq(clientOrderId)
+      expect(order.cummulativeQuoteQty).to.be.eq(cummulativeQuoteQty)
+      expect(order.origQuoteOrderQty).to.be.eq(origQuoteOrderQty)
+      expect(order.symbol).to.be.eq(symbol)
+      expect(order.time).to.be.eq(time)
+      expect(order.updateTime).to.be.eq(updateTime)
+      expect(order.executedQty).to.be.eq(executedQty)
+      expect(order.icebergQty).to.be.eq(icebergQty)
+      expect(order.price).to.be.eq(price)
+      expect(order.isWorking).to.be.eq(isWorking)
+      expect(order.side).to.be.eq(side)
+      expect(order.status).to.be.eq(status)
+      expect(order.timeInForce).to.be.eq(timeInForce)
+      expect(order.type).to.be.eq(type)
+      expect(order.orderListId).to.be.eq(orderListId)
+      expect(order.origQty).to.be.eq(origQty)
+      expect(order.stopPrice).to.be.eq(stopPrice)
 
     })
 
@@ -160,7 +161,7 @@ describe('BinanceOrderReadModule', () => {
 
 
 
-  it('should get a raw Binance order status just fine', async () => {
+  it('should get a raw Binance order just fine', async () => {
 
     const keySecret = {
       key: '',

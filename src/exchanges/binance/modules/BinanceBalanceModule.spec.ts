@@ -16,6 +16,7 @@ import { BinanceBalanceModule } from './BinanceBalanceModule'
 
 describe('BinanceBalanceModule', () => {
 
+  // TODO: Review usage of 'ImportMock.mockClass'
   const binanceBalanceModule = BinanceBalanceModule.prototype
 
 
@@ -91,6 +92,7 @@ describe('BinanceBalanceModule', () => {
     expect(listRawMock.callCount).to.be.eq(1)
 
     expect(parseManyMock.callCount).to.be.eq(1)
+    // QUESTION: Should we use 'calledWithExactly' instead?
     expect(parseManyMock.calledWith({
       rawBalances: rawListMock,
     })).to.be.ok
@@ -124,10 +126,15 @@ describe('BinanceBalanceModule', () => {
       rawBalance: BINANCE_RAW_BALANCES[0],
     })
 
-    const { asset } = BINANCE_RAW_BALANCES[0]
-    const available = parseFloat(BINANCE_RAW_BALANCES[0].free)
-    const total = parseFloat(BINANCE_RAW_BALANCES[0].free)
-      + parseFloat(BINANCE_RAW_BALANCES[0].locked)
+    const {
+      asset,
+      free,
+      locked,
+    } = BINANCE_RAW_BALANCES[0]
+
+    // TODO: Try keeping good readability (avoid verbosity)
+    const available = parseFloat(free)
+    const total = parseFloat(free) + parseFloat(locked)
 
     expect(parsedBalance1.symbolId).to.be.eq(asset)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -173,6 +180,7 @@ describe('BinanceBalanceModule', () => {
       rawBalances: BINANCE_RAW_BALANCES,
     })
 
+    // QUESTION: Whats the point of validating the fixture length?
     expect(BINANCE_RAW_BALANCES.length).to.be.eq(4)
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)

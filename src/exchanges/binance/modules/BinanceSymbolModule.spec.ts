@@ -27,26 +27,17 @@ describe('BinanceSymbolModule', () => {
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(BINANCE_RAW_SYMBOLS.symbols)
 
-    expect(rawSymbols[0].symbol)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[0].symbol)
-    expect(rawSymbols[0].baseAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[0].baseAsset)
-    expect(rawSymbols[0].quoteAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[0].quoteAsset)
+    // TODO: Use for loops for repetitive validations (fix all occurrencies)
+    for (let index = 0; index < 3; index += 1) {
 
-    expect(rawSymbols[1].symbol)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[1].symbol)
-    expect(rawSymbols[1].baseAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[1].baseAsset)
-    expect(rawSymbols[1].quoteAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[1].quoteAsset)
+      expect(rawSymbols[index].symbol)
+        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].symbol)
+      expect(rawSymbols[index].baseAsset)
+        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].baseAsset)
+      expect(rawSymbols[index].quoteAsset)
+        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].quoteAsset)
 
-    expect(rawSymbols[2].symbol)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[2].symbol)
-    expect(rawSymbols[2].baseAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[2].baseAsset)
-    expect(rawSymbols[2].quoteAsset)
-      .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[2].quoteAsset)
+    }
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -56,12 +47,11 @@ describe('BinanceSymbolModule', () => {
 
   it('should list Binance parsed symbols just fine', async () => {
 
-    const mockedRawSymbols = 'raw-symbols'
-
+    // TODO: Prefer using valid fixtures (fix all occurrencies)
     const listRawMock = ImportMock.mockFunction(
       BinanceSymbolModule,
       'listRaw',
-      Promise.resolve(mockedRawSymbols),
+      Promise.resolve(BINANCE_RAW_SYMBOLS),
     )
 
     const parseManyMock = ImportMock.mockFunction(
@@ -89,7 +79,7 @@ describe('BinanceSymbolModule', () => {
 
     expect(parseManyMock.callCount).to.eq(1)
     expect(parseManyMock.calledWith({
-      rawSymbols: mockedRawSymbols,
+      rawSymbols: BINANCE_RAW_SYMBOLS,
     })).to.be.ok
 
   })

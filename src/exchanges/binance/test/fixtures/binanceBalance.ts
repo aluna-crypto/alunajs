@@ -1,3 +1,4 @@
+// TODO: Add strict type defs to all fixtures
 export const BINANCE_RAW_BALANCES = [
   {
     asset: 'BTC',

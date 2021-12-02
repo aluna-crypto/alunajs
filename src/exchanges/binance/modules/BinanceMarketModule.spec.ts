@@ -69,6 +69,7 @@ describe('BinanceMarketModule', () => {
     expect(response.length).to.eq(3)
     expect(response).to.deep.eq(BINANCE_RAW_MARKETS_WITH_CURRENCY)
 
+    // QUESTION: Double check necessity of this for each (fix all occurrencies)
     response.forEach((res, index) => {
 
       const {
@@ -205,6 +206,7 @@ describe('BinanceMarketModule', () => {
     expect(ticker.last).to.be.eq(lastTradePrice)
     expect(ticker.change).to.be.eq(change)
     expect(ticker.baseVolume).to.be.eq(volume)
+    // QUESTION: Why cast with number instead of 'parseFloat' (like above)?
     expect(ticker.quoteVolume).to.be.eq(Number(quoteVolume))
 
     expect(market.spotEnabled).to.be.ok

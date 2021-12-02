@@ -9,7 +9,10 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
-import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
+import {
+  IAlunaOrderCancelParams,
+  IAlunaOrderPlaceParams,
+} from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PROD_BINANCE_URL } from '../Binance'
@@ -59,7 +62,8 @@ describe('BinanceOrderWriteModule', () => {
       Promise.resolve(placedOrder),
     )
 
-    const placeOrderParams = {
+    // TODO: Always use strict types defs (fix all occurrencies)
+    const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: '0.001',
       rate: '10000',
       symbolPair: 'ETHZAR',
@@ -68,6 +72,7 @@ describe('BinanceOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
+    // QUESTION: Should we define interfaces for describing request bodies?
     const requestBody = {
       side: BinanceSideEnum.BUY,
       symbol: placeOrderParams.symbolPair,
@@ -102,14 +107,14 @@ describe('BinanceOrderWriteModule', () => {
     // place short limit order
     const placeResponse2 = await binanceOrderWriteModule.place({
       ...placeOrderParams,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.MARKET, // QUESTION: Should it be limit?
       side: AlunaSideEnum.SHORT,
     })
 
     const requestBody2 = {
       side: BinanceSideEnum.SELL,
       symbol: placeOrderParams.symbolPair,
-      type: BinanceOrderTypeEnum.MARKET,
+      type: BinanceOrderTypeEnum.MARKET, // QUESTION: Should it be limit?
       quantity: placeOrderParams.amount,
     }
 
@@ -256,6 +261,7 @@ describe('BinanceOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: false,
           implemented: true,
+          orderTypes: [],
         },
       ],
     )
@@ -270,8 +276,7 @@ describe('BinanceOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg =
-        `Account type '${account}' not supported/implemented for Binance`
+      const msg = `Account type '${account}' not supported/implemented for Binance`
 
       expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(msg)
@@ -292,6 +297,7 @@ describe('BinanceOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: false,
+          orderTypes: [],
         },
       ],
     )
@@ -306,45 +312,7 @@ describe('BinanceOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg =
-        `Account type '${account}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
-
-    }
-
-  })
-
-
-
-  it('should ensure given account has orderTypes property', async () => {
-
-    ImportMock.mockOther(
-      BinanceSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: true,
-          // missing orderTypes property
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await binanceOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      const msg =
-        `Account type '${account}' not supported/implemented for Binance`
+      const msg = `Account type '${account}' not supported/implemented for Binance`
 
       expect(err instanceof AlunaError).to.be.ok
       expect(err.message).to.be.eq(msg)
@@ -365,6 +333,7 @@ describe('BinanceOrderWriteModule', () => {
       BinanceSpecs.accounts[accountIndex],
       'orderTypes',
       [
+        // QUESTION: Should we use the pre-defined order spec instead?
         {
           type: AlunaOrderTypesEnum.LIMIT,
           supported: false,
@@ -538,17 +507,19 @@ describe('BinanceOrderWriteModule', () => {
     )
 
     const objMock = {} as any // Mock getRawMock obj
- 
+
+    // TODO: Review necessity of mocking 'getRaw' method
     const getRawMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'getRaw',
       {
         type: 'any-status-but-canceled' as BinanceOrderStatusEnum,
-        ...objMock
+        ...objMock,
       } as IBinanceOrderSchema,
     )
 
-    const cancelParams = {
+    // TODO: Always use strict types defs (fix all occurrencies)
+    const cancelParams: IAlunaOrderCancelParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -607,7 +578,7 @@ describe('BinanceOrderWriteModule', () => {
       'getRaw',
       {
         status: BinanceOrderStatusEnum.CANCELED,
-        ...objMock
+        ...objMock,
       } as IBinanceOrderSchema,
     )
 

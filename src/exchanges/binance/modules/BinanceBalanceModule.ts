@@ -76,21 +76,30 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { rawBalances } = params
 
-    const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
+    // TODO: Prefer using generic types instead of casting values
+    const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
+      (accumulator, rawBalance) => {
 
-      const total = parseFloat(rawBalance.free) + parseFloat(rawBalance.locked)
+        const {
+          free,
+          locked,
+        } = rawBalance
 
-      if (total > 0) {
+        const total = parseFloat(free) + parseFloat(locked)
 
-        const parsedBalance = this.parse({ rawBalance })
+        if (total > 0) {
 
-        accumulator.push(parsedBalance)
+          const parsedBalance = this.parse({ rawBalance })
 
-      }
+          accumulator.push(parsedBalance)
 
-      return accumulator
+        }
 
-    }, [] as IAlunaBalanceSchema[])
+        return accumulator
+
+      },
+      [],
+    )
 
     return parsedBalances
 

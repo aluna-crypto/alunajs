@@ -22,7 +22,7 @@ export interface IAlunaOrderPlaceParams {
   type: AlunaOrderTypesEnum
   side: AlunaSideEnum
   symbolPair: string
-  rate: string | number
+  rate: string | number | undefined // TODO: validate tests that skips rate
   amount: string | number
 }
 

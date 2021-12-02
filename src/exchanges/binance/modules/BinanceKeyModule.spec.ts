@@ -118,7 +118,7 @@ describe('BinanceKeyModule', () => {
       'privateRequest',
       Promise.reject(new AlunaError({
         message: BinanceErrorEnum.INVALID_KEY,
-        statusCode: 401,
+        statusCode: 401, // QUESTION: Was the 'statusCode' checked?
       })),
     )
 

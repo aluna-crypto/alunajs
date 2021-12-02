@@ -26,9 +26,8 @@ export class BinanceOrderParser {
       status,
     } = rawOrder
 
+    // TODO: Should use UTC date instead (moment? - Fix all occurrencies)
     const createdAt = new Date(time * 1000).toString()
-
-
     const amount = parseFloat(origQty)
     const rate = parseFloat(price)
 
