@@ -70,14 +70,17 @@ export const ValrSpecs: IAlunaExchangeSpecsSchema = {
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: false,
+      orderTypes: [],
     },
   ],
 }

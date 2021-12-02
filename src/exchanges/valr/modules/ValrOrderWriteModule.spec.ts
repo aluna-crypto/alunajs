@@ -252,6 +252,7 @@ describe('ValrOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: false,
           implemented: true,
+          orderTypes: [],
         },
       ],
     )
@@ -287,42 +288,7 @@ describe('ValrOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: false,
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      const msg = `Account type '${account}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
-
-    }
-
-  })
-
-
-
-  it('should ensure given account has orderTypes property', async () => {
-
-    ImportMock.mockOther(
-      ValrSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: true,
-          // missing orderTypes property
+          orderTypes: [],
         },
       ],
     )
