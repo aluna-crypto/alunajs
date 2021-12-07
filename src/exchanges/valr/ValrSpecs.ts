@@ -55,6 +55,13 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 
 export const ValrSpecs: IAlunaExchangeSchema = {
   id: 'valr',
+  name: 'Valr',
+  signupUrl: 'https://www.valr.com/signup',
+  connectApiUrl: 'https://www.valr.com/api-keys/create',
+  rateLimitingPerMinute: {
+    perApi: 180,
+    perIp: 360,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
