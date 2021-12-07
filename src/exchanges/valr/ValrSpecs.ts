@@ -59,7 +59,7 @@ export const ValrSpecs: IAlunaExchangeSchema = {
   signupUrl: 'https://www.valr.com/signup',
   connectApiUrl: 'https://www.valr.com/api-keys/create',
   rateLimitingPerMinute: {
-    perApi: 180,
+    perApiKey: 180,
     perIp: 360,
   },
   modes: {
