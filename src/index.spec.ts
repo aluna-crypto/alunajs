@@ -92,7 +92,7 @@ describe('index', () => {
 
     // schemas
     const alunaBalanceSchema: IAlunaBalanceSchema | null = null
-    const alunaExchangeSpecsSchema: IAlunaExchangeSchema | null = null
+    const alunaExchangeSchema: IAlunaExchangeSchema | null = null
     const alunaInstrumentSchema: IAlunaInstrumentSchema | null = null
     const alunaKeyPermissionSchema: IAlunaKeyPermissionSchema | null = null
     const alunaKeySecretSchema: IAlunaKeySecretSchema | null = null
@@ -104,7 +104,7 @@ describe('index', () => {
     const alunaTickerSchema: IAlunaTickerSchema | null = null
 
     expect(alunaBalanceSchema).not.to.be.ok
-    expect(alunaExchangeSpecsSchema).not.to.be.ok
+    expect(alunaExchangeSchema).not.to.be.ok
     expect(alunaInstrumentSchema).not.to.be.ok
     expect(alunaKeyPermissionSchema).not.to.be.ok
     expect(alunaKeySecretSchema).not.to.be.ok
