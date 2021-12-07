@@ -7,7 +7,7 @@ import {
 } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
-import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 

@@ -4,7 +4,7 @@ import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
-} from '../../lib/schemas/IAlunaExchangeSpecsSchema'
+} from '../../lib/schemas/IAlunaExchangeSchema'
 
 
 

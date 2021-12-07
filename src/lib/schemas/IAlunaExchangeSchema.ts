@@ -6,8 +6,15 @@ import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 
 export interface IAlunaExchangeSchema {
   id: string
-  acceptFloatAmounts: boolean
-  features: {
+  name: string
+  signupUrl: string
+  connectApiUrl: string
+  affiliateCode?: string
+  rateLimitingPerMinute: {
+    perApi: number,
+    perIp: number,
+  }
+  modes: {
     balance: AlunaFeaturesModeEnum,
     order: AlunaFeaturesModeEnum,
     position?: AlunaFeaturesModeEnum,
