@@ -14,7 +14,7 @@ import {
   IAlunaBalanceModule,
   IAlunaBalanceSchema,
   IAlunaExchange,
-  IAlunaExchangeSpecsSchema,
+  IAlunaExchangeSchema,
   IAlunaHttp,
   IAlunaInstrumentSchema,
   IAlunaKeyModule,
@@ -92,7 +92,7 @@ describe('index', () => {
 
     // schemas
     const alunaBalanceSchema: IAlunaBalanceSchema | null = null
-    const alunaExchangeSpecsSchema: IAlunaExchangeSpecsSchema | null = null
+    const alunaExchangeSpecsSchema: IAlunaExchangeSchema | null = null
     const alunaInstrumentSchema: IAlunaInstrumentSchema | null = null
     const alunaKeyPermissionSchema: IAlunaKeyPermissionSchema | null = null
     const alunaKeySecretSchema: IAlunaKeySecretSchema | null = null

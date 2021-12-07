@@ -7,7 +7,7 @@ import {
 } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
-import { IAlunaExchangeSpecsSchema } from '../schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSpecsSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
@@ -42,7 +42,7 @@ export interface IAlunaExchangeStatic {
 
   // static constants
   ID: string
-  SPECS: IAlunaExchangeSpecsSchema
+  SPECS: IAlunaExchangeSchema
 
   // static public modules
   Symbol: IAlunaSymbolModule

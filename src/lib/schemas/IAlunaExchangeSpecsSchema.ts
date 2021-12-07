@@ -4,7 +4,7 @@ import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 
 
 
-export interface IAlunaExchangeSpecsSchema {
+export interface IAlunaExchangeSchema {
   id: string
   acceptFloatAmounts: boolean
   features: {

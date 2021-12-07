@@ -3,7 +3,7 @@ import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
-  IAlunaExchangeSpecsSchema,
+  IAlunaExchangeSchema,
 } from '../../lib/schemas/IAlunaExchangeSpecsSchema'
 
 
@@ -53,7 +53,7 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   },
 ]
 
-export const ValrSpecs: IAlunaExchangeSpecsSchema = {
+export const ValrSpecs: IAlunaExchangeSchema = {
   id: 'valr',
   acceptFloatAmounts: true,
   features: {
