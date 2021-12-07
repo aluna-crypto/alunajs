@@ -33,7 +33,7 @@ export * from './lib/modules/IAlunaSymbolModule'
 
 // schemas
 export * from './lib/schemas/IAlunaBalanceSchema'
-export * from './lib/schemas/IAlunaExchangeSpecsSchema'
+export * from './lib/schemas/IAlunaExchangeSchema'
 export * from './lib/schemas/IAlunaInstrumentSchema'
 export * from './lib/schemas/IAlunaKeyPermissionSchema'
 export * from './lib/schemas/IAlunaKeySecretSchema'
