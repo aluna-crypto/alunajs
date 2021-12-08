@@ -1,12 +1,15 @@
 import { IAlunaModule } from '../core/IAlunaModule'
-import { IAlunaKeyPermissionSchema } from '../schemas/IAlunaKeyPermissionSchema'
+import {
+  IAlunaKeyPermissionSchema,
+  IAlunaKeySchema,
+} from '../schemas/IAlunaKeySchema'
 
 
 
 export interface IAlunaKeyModule extends IAlunaModule {
 
-  validate (): Promise<boolean>
-  getPermissions (): Promise<IAlunaKeyPermissionSchema>
+  fetchDetails (params: { rawKey: any }): Promise<IAlunaKeySchema>
+  parseDetails (params: { rawKey: any }): IAlunaKeySchema
   parsePermissions (params: { rawKey: any }): IAlunaKeyPermissionSchema
 
 }
