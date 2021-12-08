@@ -1,8 +1,8 @@
+import { IAlunaKeySchema } from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
+import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,
@@ -14,37 +14,13 @@ import { ValrLog } from '../ValrLog'
 
 export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
-  public async validate (): Promise<boolean> {
-
-    ValrLog.info('trying to validate Valr key')
-
-    const { read } = await this.getPermissions()
-
-    const isValid = read
-
-    let logMessage = 'Valr API key is'
-
-    if (isValid) {
-
-      logMessage = logMessage.concat(' valid')
-
-    } else {
-
-      logMessage = logMessage.concat(' invalid')
-
-    }
-
-    ValrLog.info(logMessage)
-
-    return isValid
-
-  }
+  public details: IAlunaKeySchema
 
 
 
-  public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
+  public async fetchDetails (): Promise<IAlunaKeySchema> {
 
-    ValrLog.info('fetching Valr key permissions')
+    ValrLog.info('fetching Valr key details')
 
     let rawKey: IValrKeySchema
 
@@ -66,9 +42,31 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const parsedPermissions = this.parsePermissions({ rawKey })
+    const details = this.parseDetails({ rawKey })
 
-    return parsedPermissions
+    return details
+
+  }
+
+
+
+  public parseDetails (params: {
+    rawKey: IValrKeySchema,
+  }): IAlunaKeySchema {
+
+    ValrLog.info('parsing Valr key details')
+
+    const {
+      rawKey,
+    } = params
+
+    this.details = {
+      meta: rawKey,
+      accountId: undefined, //  valr doesn't give this
+      permissions: this.parsePermissions({ rawKey }),
+    }
+
+    return this.details
 
   }
 
@@ -78,6 +76,8 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     rawKey: IValrKeySchema,
   }): IAlunaKeyPermissionSchema {
 
+    ValrLog.info('parsing Valr key permissions')
+
     const { rawKey } = params
 
     const { permissions } = rawKey
@@ -86,7 +86,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       read: false,
       trade: false,
       withdraw: false,
-      meta: rawKey,
     }
 
     permissions.forEach((permission) => {
@@ -113,15 +112,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       }
 
     })
-
-    if (alunaPermissions.withdraw) {
-
-      throw new AlunaError({
-        message: 'API key should not have withdraw permission.',
-        statusCode: 401,
-      })
-
-    }
 
     return alunaPermissions
 
