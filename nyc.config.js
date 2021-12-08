@@ -10,6 +10,7 @@ module.exports = {
   'report-dir': `${__dirname}/coverage-mocha`,
   'temp-dir': `${__dirname}/coverage-nyc`,
   'skip-full': false,
+  reporter: ['text', 'html'],
   branches: 100,
   lines: 100,
   functions: 100,
