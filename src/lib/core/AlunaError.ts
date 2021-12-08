@@ -1,16 +1,25 @@
 export class AlunaError {
 
-  public message: string;
-  public statusCode: number;
+  public data: {
+    ok: false,
+    error?: string,
+    [key: string]: any,
+  }
+
+  public statusCode: number
 
 
 
   constructor (params: {
-    message: string,
+    data: any,
     statusCode?: number,
   }) {
 
-    this.message = params.message
+    this.data = {
+      ...params.data,
+      ok: false,
+    }
+
     this.statusCode = params.statusCode || 400
 
   }
