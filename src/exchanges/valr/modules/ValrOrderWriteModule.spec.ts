@@ -234,7 +234,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Account type '${account}' not found`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -269,7 +271,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Account type '${account}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -304,7 +308,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Account type '${account}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -340,7 +346,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Account type '${account}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -382,7 +390,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Order type '${type}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -424,7 +434,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Order type '${type}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -466,7 +478,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = `Order type '${type}' not supported/implemented for Varl`
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(msg)
 
     }
 
@@ -506,7 +520,9 @@ describe('ValrOrderWriteModule', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type '${type}' is in read mode`)
+
+      const { data: { error } } = err as AlunaError
+      expect(error).to.be.eq(`Order type '${type}' is in read mode`)
 
     }
 
@@ -516,7 +532,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure an order was canceled', async () => {
 
-    let error
+    let error: AlunaError | undefined
     let result
 
     ImportMock.mockOther(
@@ -549,7 +565,7 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
@@ -570,8 +586,8 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq('Something went wrong, order not canceled')
-    expect(error.statusCode).to.be.eq(500)
+    expect(error?.data.error)
+      .to.be.eq('Something went wrong, order not canceled')
 
   })
 

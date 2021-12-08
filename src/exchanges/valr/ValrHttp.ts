@@ -42,14 +42,14 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
     } = param as AxiosError
 
     error = new AlunaError({
-      message: response?.data?.message || errorMsg,
+      data: { error: response?.data?.message || errorMsg },
       statusCode: response?.status,
     })
 
   } else {
 
     error = new AlunaError({
-      message: param.message || errorMsg,
+      data: { error: param.message || errorMsg },
     })
 
   }

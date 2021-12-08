@@ -47,7 +47,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!accountSpecs) {
 
         throw new AlunaError({
-          message: `Account type '${account}' not found`,
+          data: {
+            error: `Account type '${account}' not found`,
+          },
         })
 
       }
@@ -61,8 +63,10 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!supported || !implemented || !supportedOrderTypes) {
 
         throw new AlunaError({
-          message:
-            `Account type '${account}' not supported/implemented for Varl`,
+          data: {
+            error:
+              `Account type '${account}' not supported/implemented for Varl`,
+          },
         })
 
       }
@@ -72,7 +76,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
         throw new AlunaError({
-          message: `Order type '${type}' not supported/implemented for Varl`,
+          data: {
+            error: `Order type '${type}' not supported/implemented for Varl`,
+          },
         })
 
       }
@@ -80,7 +86,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (orderType.mode === AlunaFeaturesModeEnum.READ) {
 
         throw new AlunaError({
-          message: `Order type '${type}' is in read mode`,
+          data: {
+            error: `Order type '${type}' is in read mode`,
+          },
         })
 
       }
@@ -166,8 +174,10 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
-        message: 'Something went wrong, order not canceled',
-        statusCode: 500,
+        data: {
+          statusCode: 500,
+          error: 'Something went wrong, order not canceled',
+        },
       })
 
       ValrLog.error(error)

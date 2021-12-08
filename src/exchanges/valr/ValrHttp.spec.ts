@@ -220,7 +220,9 @@ describe('ValrHttp', () => {
 
     } catch (err) {
 
-      expect(err.message).to.be.eq(errorMsg)
+      const error = err as AlunaError
+
+      expect(error.data.error).to.be.eq(errorMsg)
 
       const calledArg = formatRequestErrorSpy.args[0][0]
 
@@ -241,7 +243,9 @@ describe('ValrHttp', () => {
 
     } catch (err) {
 
-      expect(err.message).to.be.eq(errorMsg)
+      const error = err as AlunaError
+
+      expect(error.data.error).to.be.eq(errorMsg)
 
       const calledArg = formatRequestErrorSpy.args[1][0]
 
@@ -272,7 +276,7 @@ describe('ValrHttp', () => {
     const error1 = ValrHttp.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.message).to.be.eq(dummyError)
+    expect(error1.data.error).to.be.eq(dummyError)
     expect(error1.statusCode).to.be.eq(400)
 
 
@@ -288,7 +292,7 @@ describe('ValrHttp', () => {
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
-      error2.message,
+      error2.data.error,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error2.statusCode).to.be.eq(400)
 
@@ -301,7 +305,7 @@ describe('ValrHttp', () => {
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
-      error3.message,
+      error3.data.error,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error3.statusCode).to.be.eq(400)
 
@@ -313,7 +317,7 @@ describe('ValrHttp', () => {
     const error4 = ValrHttp.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.message).to.be.eq(dummyError)
+    expect(error4.data.error).to.be.eq(dummyError)
     expect(error4.statusCode).to.be.eq(400)
 
 
@@ -323,7 +327,7 @@ describe('ValrHttp', () => {
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
-      error5.message,
+      error5.data.error,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error5.statusCode).to.be.eq(400)
 

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { Aluna } from './Aluna'
 import { Valr } from './exchanges/valr/Valr'
+import { AlunaError } from './lib/core/AlunaError'
 import {
   IAlunaExchange,
   IAlunaExchangeStatic,
@@ -47,7 +48,7 @@ describe('Aluna', () => {
   it('should warn about exchange not implemented (instance)', async () => {
 
     let god: IAlunaExchange | undefined
-    let error
+    let error: AlunaError | undefined
 
     try {
 
@@ -61,13 +62,14 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error.message).to.be.eq('Exchange not implemented: god')
+
+    expect(error?.data.error).to.be.eq('Exchange not implemented: god')
 
   })
 
@@ -84,7 +86,7 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
@@ -106,13 +108,13 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error.message).to.be.eq('Exchange not implemented: god')
+    expect(error?.data.error).to.be.eq('Exchange not implemented: god')
 
   })
 

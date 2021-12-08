@@ -134,12 +134,14 @@ describe('ValrKeyModule', () => {
       ValrHttp,
       'privateRequest',
       Promise.reject(new AlunaError({
-        message: ValrErrorEnum.INVALID_KEY,
         statusCode: 401,
+        data: {
+          error: ValrErrorEnum.INVALID_KEY,
+        },
       })),
     )
 
-    let error
+    let error: AlunaError | undefined
     let result
 
     try {
@@ -148,14 +150,14 @@ describe('ValrKeyModule', () => {
 
     } catch (e) {
 
-      error = e
+      error = e as AlunaError
 
     }
 
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
-    expect(error.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
+    expect(error?.data.error).to.be.eq(ValrErrorEnum.INVALID_KEY)
 
   })
 
