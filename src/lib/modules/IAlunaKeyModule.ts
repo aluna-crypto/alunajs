@@ -8,7 +8,7 @@ import {
 
 export interface IAlunaKeyModule extends IAlunaModule {
 
-  fetchDetails (params: { rawKey: any }): Promise<IAlunaKeySchema>
+  fetchDetails (): Promise<IAlunaKeySchema>
   parseDetails (params: { rawKey: any }): IAlunaKeySchema
   parsePermissions (params: { rawKey: any }): IAlunaKeyPermissionSchema
 
