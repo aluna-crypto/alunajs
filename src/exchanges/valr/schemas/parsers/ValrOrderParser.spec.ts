@@ -36,8 +36,13 @@ describe('ValrOrderParser', () => {
     const rawType1 = rawOrder1.type
     const rawStatus1 = rawOrder1.status
 
+    let expectedBaseSymbolId = rawOrder1.currencyPair.slice(0, 3)
+    let expectedQuoteSymbolId = rawOrder1.currencyPair.slice(3)
+
     expect(parsedOrder1.id).to.be.eq(rawOrder1.orderId)
     expect(parsedOrder1.symbolPair).to.be.eq(rawOrder1.currencyPair)
+    expect(parsedOrder1.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+    expect(parsedOrder1.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder1.total).to.be.eq(rawOriginalQuantity1 * rawPrice1)
     expect(parsedOrder1.amount).to.be.eq(rawOriginalQuantity1)
     expect(parsedOrder1.isAmountInContracts).not.to.be.ok
@@ -64,8 +69,13 @@ describe('ValrOrderParser', () => {
     const rawType2 = rawOrder2.orderType
     const rawStatus2 = rawOrder2.orderStatusType
 
+    expectedBaseSymbolId = rawOrder2.currencyPair.slice(0, 3)
+    expectedQuoteSymbolId = rawOrder2.currencyPair.slice(3)
+
     expect(parsedOrder2.id).to.be.eq(rawOrder2.orderId)
     expect(parsedOrder2.symbolPair).to.be.eq(rawOrder2.currencyPair)
+    expect(parsedOrder1.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+    expect(parsedOrder1.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder2.total).to.be.eq(rawOriginalQuantity2 * rawPrice2)
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
     expect(parsedOrder2.isAmountInContracts).not.to.be.ok
