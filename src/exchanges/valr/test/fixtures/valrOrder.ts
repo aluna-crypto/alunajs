@@ -129,6 +129,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
   {
     id: 'e5e92066-b230-4389-b9d2-f56d826f1066',
     symbolPair: 'ETHZAR',
+    exchangeId: 'valr',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'ZAR',
     total: 12,
@@ -145,6 +146,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
   {
     id: 'eb47c14b-94f0-4358-a732-6f9bd70f12d6',
     symbolPair: 'BTCZAR',
+    exchangeId: 'valr',
     baseSymbolId: 'BTC',
     quoteSymbolId: 'ZAR',
     total: 10,
@@ -161,6 +163,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
   {
     id: '9481397e-ca83-4e66-af30-c9afeba35106',
     symbolPair: 'ETHZAR',
+    exchangeId: 'valr',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'ZAR',
     total: 80,
@@ -177,6 +180,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
   {
     id: 'efcb70c1-23a4-47e9-978b-0d3a9add616e',
     symbolPair: 'ETHZAR',
+    exchangeId: 'valr',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'ZAR',
     total: 50,

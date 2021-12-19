@@ -6,6 +6,7 @@ import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
 import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../../enums/ValrSideEnum'
+import { Valr } from '../../Valr'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
@@ -75,6 +76,7 @@ export class ValrOrderParser {
 
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
+      exchangeId: Valr.ID,
       symbolPair: currencyPair,
       baseSymbolId,
       quoteSymbolId,
