@@ -33,7 +33,11 @@ describe('ValrOrderWriteModule', () => {
 
   const placedOrderId = 'placed-order-id'
 
-  const placedOrder = 'placed-order'
+  const successfulPlacedOrder: Partial<IAlunaOrderSchema> = {
+    meta: {
+      orderStatusType: ValrOrderStatusEnum.PLACED,
+    },
+  }
 
 
 
@@ -54,7 +58,7 @@ describe('ValrOrderWriteModule', () => {
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      Promise.resolve(placedOrder),
+      Promise.resolve(successfulPlacedOrder),
     )
 
     const placeOrderParams = {
@@ -94,7 +98,7 @@ describe('ValrOrderWriteModule', () => {
       symbolPair: placeOrderParams.symbolPair,
     })).to.be.ok
 
-    expect(placeResponse1).to.deep.eq(placedOrder)
+    expect(placeResponse1).to.deep.eq(successfulPlacedOrder)
 
 
     // place short limit order
@@ -123,7 +127,7 @@ describe('ValrOrderWriteModule', () => {
       symbolPair: placeOrderParams.symbolPair,
     })).to.be.ok
 
-    expect(placeResponse2).to.deep.eq(placedOrder)
+    expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
 
   })
 
@@ -146,7 +150,7 @@ describe('ValrOrderWriteModule', () => {
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      placedOrder,
+      successfulPlacedOrder,
     )
 
     const placeOrderParams = {
@@ -207,7 +211,7 @@ describe('ValrOrderWriteModule', () => {
       symbolPair: placeOrderParams.symbolPair,
     })).to.be.ok
 
-    expect(placeResponse2).to.deep.eq(placedOrder)
+    expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
 
   })
 
