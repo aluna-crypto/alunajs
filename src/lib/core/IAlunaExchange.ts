@@ -1,10 +1,7 @@
 import { IAlunaBalanceModule } from '../modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../modules/IAlunaKeyModule'
 import { IAlunaMarketModule } from '../modules/IAlunaMarketModule'
-import {
-  IAlunaOrderReadModule,
-  IAlunaOrderWriteModule,
-} from '../modules/IAlunaOrderModule'
+import { IAlunaOrderWriteModule } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
 import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
@@ -29,8 +26,8 @@ export interface IAlunaExchange {
 
   // private modules
   key: IAlunaKeyModule
-  order: IAlunaOrderReadModule | IAlunaOrderWriteModule
-  balance: IAlunaBalanceModule
+  order: IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule // TODO: considering combining order read+write
   position?: IAlunaPositionModule
 
 }
