@@ -12,6 +12,7 @@ import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
+import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 import { ValrSpecs } from '../ValrSpecs'
@@ -139,6 +140,19 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       id,
       symbolPair,
     })
+
+    const meta: IValrOrderGetSchema = (order.meta as IValrOrderGetSchema)
+
+    if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
+
+      throw new AlunaError({
+        data: {
+          statusCode: 200,
+          error: meta.failedReason,
+        },
+      })
+
+    }
 
     return order
 
