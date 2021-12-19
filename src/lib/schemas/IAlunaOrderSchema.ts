@@ -9,6 +9,8 @@ export interface IAlunaOrderSchema {
 
   id: string | number
   symbolPair: string
+
+  exchangeId: string
   baseSymbolId: string
   quoteSymbolId: string
 
