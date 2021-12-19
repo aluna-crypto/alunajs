@@ -40,7 +40,7 @@ export class ValrMarketParser {
 
     return {
       exchangeId: Valr.ID,
-      pairSymbol: currencyPair,
+      symbolPair: currencyPair,
       baseSymbolId: baseCurrency,
       quoteSymbolId: quoteCurrency,
       ticker,

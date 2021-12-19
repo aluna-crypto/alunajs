@@ -125,13 +125,13 @@ describe('ValrMarketModule', () => {
     parsedMarkets.forEach((parsed, index) => {
 
       const {
-        pairSymbol,
+        symbolPair,
         baseSymbolId,
         quoteSymbolId,
       } = VALR_PARSED_MARKETS[index]
 
       expect(parsed.exchangeId).to.eq(Valr.ID)
-      expect(parsed.pairSymbol).to.be.eq(pairSymbol)
+      expect(parsed.symbolPair).to.be.eq(symbolPair)
       expect(parsed.baseSymbolId).to.be.eq(baseSymbolId)
       expect(parsed.quoteSymbolId).to.be.eq(quoteSymbolId)
 
@@ -164,7 +164,7 @@ describe('ValrMarketModule', () => {
     expect(market).to.deep.eq(parsedMarketMock)
 
     expect(market.exchangeId).to.be.eq(Valr.ID)
-    expect(market.pairSymbol).to.be.eq(parsedMarketMock.pairSymbol)
+    expect(market.symbolPair).to.be.eq(parsedMarketMock.symbolPair)
     expect(market.baseSymbolId).to.be.eq(parsedMarketMock.baseSymbolId)
     expect(market.quoteSymbolId).to.be.eq(parsedMarketMock.quoteSymbolId)
 
@@ -230,11 +230,11 @@ describe('ValrMarketModule', () => {
       const {
         baseSymbolId,
         quoteSymbolId,
-        pairSymbol,
+        symbolPair,
       } = VALR_PARSED_MARKETS[index]
 
       expect(market.exchangeId).to.be.eq(Valr.ID)
-      expect(market.pairSymbol).to.be.eq(pairSymbol)
+      expect(market.symbolPair).to.be.eq(symbolPair)
       expect(market.baseSymbolId).to.be.eq(baseSymbolId)
       expect(market.quoteSymbolId).to.be.eq(quoteSymbolId)
 

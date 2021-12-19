@@ -18,13 +18,13 @@ export class ValrCurrencyPairsParser {
       rawCurrencyPairs,
     } = params
 
-    const pairSymbolsDictionary: { [key:string]: IValrCurrencyPairs } = {}
+    const symbolPairsDictionary: { [key:string]: IValrCurrencyPairs } = {}
 
     rawCurrencyPairs.forEach((pair) => {
 
       const { symbol } = pair
 
-      pairSymbolsDictionary[symbol] = pair
+      symbolPairsDictionary[symbol] = pair
 
     })
 
@@ -32,7 +32,7 @@ export class ValrCurrencyPairsParser {
 
       const { currencyPair } = current
 
-      const rawSymbol = pairSymbolsDictionary[currencyPair]
+      const rawSymbol = symbolPairsDictionary[currencyPair]
 
       if (rawSymbol) {
 

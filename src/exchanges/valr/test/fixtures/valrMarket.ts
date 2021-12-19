@@ -191,7 +191,7 @@ export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
 export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'valr',
-    pairSymbol: 'USDCETH',
+    symbolPair: 'USDCETH',
     baseSymbolId: 'USDC',
     quoteSymbolId: 'ETH',
     ticker: {
@@ -213,7 +213,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'valr',
-    pairSymbol: 'BTCZAR',
+    symbolPair: 'BTCZAR',
     baseSymbolId: 'BTC',
     quoteSymbolId: 'ZAR',
     ticker: {
@@ -235,7 +235,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'valr',
-    pairSymbol: 'ETHZAR',
+    symbolPair: 'ETHZAR',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'ZAR',
     ticker: {
