@@ -270,6 +270,8 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
+    expect(error?.statusCode).to.eq(200)
+    expect(error?.data.ok).to.eq(false)
     expect(error?.data.error).to.eq(failedPlacedOrder.meta.failedReason)
 
   })
@@ -649,6 +651,7 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
+    expect(error?.statusCode).to.eq(500)
     expect(error?.data.error)
       .to.be.eq('Something went wrong, order not canceled')
 
