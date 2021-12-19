@@ -69,6 +69,8 @@ export class ValrOrderParser {
     const amount = parseFloat(originalQuantity)
     const rate = parseFloat(price)
 
+    const exchangeId = Valr.ID
+
     const [baseSymbolId, quoteSymbolId] = [
       currencyPair.slice(0, 3),
       currencyPair.slice(3),
@@ -76,8 +78,8 @@ export class ValrOrderParser {
 
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
-      exchangeId: Valr.ID,
       symbolPair: currencyPair,
+      exchangeId,
       baseSymbolId,
       quoteSymbolId,
       total: amount * rate,
