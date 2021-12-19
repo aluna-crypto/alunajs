@@ -146,8 +146,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
 
       throw new AlunaError({
+        statusCode: 200,
         data: {
-          statusCode: 200,
           error: meta.failedReason,
         },
       })
@@ -188,8 +188,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
+        statusCode: 500,
         data: {
-          statusCode: 500,
           error: 'Something went wrong, order not canceled',
         },
       })
