@@ -241,7 +241,7 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      failedPlacedOrder,
+      failedPlacedOrder, // return failed response here
     )
 
     const placeOrderParams = {
@@ -253,7 +253,7 @@ describe('ValrOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    // place long market order
+    // try to place order
     let placeResponse: IAlunaOrderSchema | undefined
     let error: AlunaError | undefined
 
