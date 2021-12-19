@@ -39,6 +39,13 @@ describe('ValrOrderWriteModule', () => {
     },
   }
 
+  const failedPlacedOrder: Partial<IAlunaOrderSchema> = {
+    meta: {
+      orderStatusType: ValrOrderStatusEnum.FAILED,
+      failedReason: 'Order placement failed because oif this and that.',
+    },
+  }
+
 
 
   it('should place a new Valr limit order just fine', async () => {
@@ -212,6 +219,65 @@ describe('ValrOrderWriteModule', () => {
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
+
+  })
+
+
+
+  it('should throw if order placement fails somehow', async () => {
+
+    ImportMock.mockOther(
+      valrOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    const requestMock = ImportMock.mockFunction(
+      ValrHttp,
+      'privateRequest',
+      { id: placedOrderId },
+    )
+
+    const getMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'get',
+      failedPlacedOrder,
+    )
+
+    const placeOrderParams = {
+      amount: '0.001',
+      rate: '0',
+      symbolPair: 'ETHZAR',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const requestBody = {
+      side: ValrSideEnum.BUY,
+      pair: placeOrderParams.symbolPair,
+      baseAmount: placeOrderParams.amount,
+    }
+
+
+    // place long market order
+    let placeResponse: IAlunaOrderSchema | undefined
+    let error: AlunaError | undefined
+
+    try {
+
+      placeResponse = await valrOrderWriteModule.place(placeOrderParams)
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(placeResponse).not.to.exist
+
+    expect(error).to.exist
+    expect(error?.data.error).to.eq(failedPlacedOrder.meta.failedReason)
 
   })
 
