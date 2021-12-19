@@ -232,13 +232,13 @@ describe('ValrOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
-    const requestMock = ImportMock.mockFunction(
+    ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
       { id: placedOrderId },
     )
 
-    const getMock = ImportMock.mockFunction(
+    ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
       failedPlacedOrder,
@@ -252,13 +252,6 @@ describe('ValrOrderWriteModule', () => {
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }
-
-    const requestBody = {
-      side: ValrSideEnum.BUY,
-      pair: placeOrderParams.symbolPair,
-      baseAmount: placeOrderParams.amount,
-    }
-
 
     // place long market order
     let placeResponse: IAlunaOrderSchema | undefined
