@@ -11,8 +11,6 @@ export interface IValrMarketSchema {
   changeFromPrevious: string
 }
 
-
-
 export interface IValrCurrencyPairs {
   symbol: string
   baseCurrency: string

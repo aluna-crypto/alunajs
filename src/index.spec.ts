@@ -48,7 +48,6 @@ describe('index', () => {
     // main
     expect(Aluna).to.be.ok
 
-
     // core
     expect(AlunaError).to.be.ok
 
@@ -60,7 +59,6 @@ describe('index', () => {
     expect(alunaHttp).not.to.be.ok
     expect(alunaModule).not.to.be.ok
 
-
     // enums
     expect(AlunaAccountEnum).to.be.ok
     expect(AlunaFeaturesModeEnum).to.be.ok
@@ -70,7 +68,6 @@ describe('index', () => {
     expect(AlunaOrderTypesEnum).to.be.ok
     expect(AlunaPositionStatusEnum).to.be.ok
     expect(AlunaSideEnum).to.be.ok
-
 
     // modules
     const alunaBalanceModule: IAlunaBalanceModule | null = null
@@ -88,7 +85,6 @@ describe('index', () => {
     expect(alunaOrderWriteModule).not.to.be.ok
     expect(alunaPositionModule).not.to.be.ok
     expect(alunaSymbolModule).not.to.be.ok
-
 
     // schemas
     const alunaBalanceSchema: IAlunaBalanceSchema | null = null
@@ -116,7 +112,5 @@ describe('index', () => {
     expect(alunaTickerSchema).not.to.be.ok
 
   })
-
-
 
 })

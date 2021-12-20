@@ -17,8 +17,6 @@ export interface IAlunaPositionCloseParams {
   id: string | number
 }
 
-
-
 export interface IAlunaPositionModule extends IAlunaModule {
 
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionSchema[]>

@@ -11,8 +11,6 @@ describe('ValrStatusAdapter', () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should translate Valr order status to Aluna order status', () => {
 
     expect(ValrStatusAdapter.translateToAluna({
@@ -39,7 +37,6 @@ describe('ValrStatusAdapter', () => {
       from: ValrOrderStatusEnum.CANCELLED,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-
     try {
 
       ValrStatusAdapter.translateToAluna({
@@ -55,10 +52,7 @@ describe('ValrStatusAdapter', () => {
 
     }
 
-
   })
-
-
 
   it('should translate Aluna order status to Valr order status', () => {
 
@@ -77,7 +71,6 @@ describe('ValrStatusAdapter', () => {
     expect(ValrStatusAdapter.translateToValr({
       from: AlunaOrderStatusEnum.CANCELED,
     })).to.be.eq(ValrOrderStatusEnum.CANCELLED)
-
 
     try {
 

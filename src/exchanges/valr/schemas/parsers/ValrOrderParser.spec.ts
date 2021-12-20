@@ -20,15 +20,12 @@ describe('ValrOrderParser', () => {
 
   it('should parse Valr orders just fine', async () => {
 
-
     const rawOrder1: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[0]
     const rawOrder2: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
-
 
     const parsedOrder1 = ValrOrderParser.parse({
       rawOrder: rawOrder1,
     })
-
 
     const rawOriginalQuantity1 = parseFloat(rawOrder1.originalQuantity)
     const rawPrice1 = parseFloat(rawOrder1.price)
@@ -57,7 +54,6 @@ describe('ValrOrderParser', () => {
       .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType1 }))
     expect(parsedOrder1.placedAt.getTime())
       .to.be.eq(new Date(rawOrder1.createdAt).getTime())
-
 
     const parsedOrder2 = ValrOrderParser.parse({
       rawOrder: rawOrder2,

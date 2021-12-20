@@ -11,8 +11,6 @@ describe('ValrSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Valr order sides to Aluna order sides', () => {
 
     expect(ValrSideAdapter.translateToAluna({
@@ -22,7 +20,6 @@ describe('ValrSideAdapter', () => {
     expect(ValrSideAdapter.translateToAluna({
       from: ValrSideEnum.SELL,
     })).to.be.eq(AlunaSideEnum.SHORT)
-
 
     try {
 
@@ -39,10 +36,7 @@ describe('ValrSideAdapter', () => {
 
     }
 
-
   })
-
-
 
   it('should properly translate Aluna order sides to Valr order sides', () => {
 
@@ -53,7 +47,6 @@ describe('ValrSideAdapter', () => {
     expect(ValrSideAdapter.translateToValr({
       from: AlunaSideEnum.SHORT,
     })).to.be.eq(ValrSideEnum.SELL)
-
 
     try {
 

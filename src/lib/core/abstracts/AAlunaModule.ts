@@ -6,8 +6,6 @@ export abstract class AAlunaModule {
 
   public readonly exchange: IAlunaExchange
 
-
-
   constructor (params: {
     exchange: IAlunaExchange,
   }) {

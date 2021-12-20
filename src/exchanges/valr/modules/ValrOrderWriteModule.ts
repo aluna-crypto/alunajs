@@ -24,8 +24,6 @@ interface IValrPlaceOrderResponse {
   id: string
 }
 
-
-
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
   public async place (
@@ -157,8 +155,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     return order
 
   }
-
-
 
   public async cancel (
     params: IAlunaOrderCancelParams,

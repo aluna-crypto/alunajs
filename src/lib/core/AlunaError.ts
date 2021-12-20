@@ -8,8 +8,6 @@ export class AlunaError {
 
   public statusCode: number
 
-
-
   constructor (params: {
     data: any,
     statusCode?: number,

@@ -8,8 +8,6 @@ export abstract class AAlunaExchange {
   public keySecret: IAlunaKeySecretSchema
   public settings?: IAlunaSettingsSchema
 
-
-
   constructor (params: {
     keySecret: IAlunaKeySecretSchema,
     settings?: IAlunaSettingsSchema,

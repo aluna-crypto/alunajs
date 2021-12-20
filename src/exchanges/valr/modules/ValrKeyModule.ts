@@ -16,8 +16,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public details: IAlunaKeySchema
 
-
-
   public async fetchDetails (): Promise<IAlunaKeySchema> {
 
     ValrLog.info('fetching Valr key details')
@@ -48,8 +46,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   }
 
-
-
   public parseDetails (params: {
     rawKey: IValrKeySchema,
   }): IAlunaKeySchema {
@@ -69,8 +65,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     return this.details
 
   }
-
-
 
   public parsePermissions (params: {
     rawKey: IValrKeySchema,

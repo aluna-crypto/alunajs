@@ -17,8 +17,6 @@ describe('ValrKeyModule', () => {
 
   const valrKeyModule = ValrKeyModule.prototype
 
-
-
   it('should get permissions from Valr API key just fine', async () => {
 
     ImportMock.mockOther(
@@ -53,19 +51,16 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-
     // second
     requestResponse.permissions = [ValrApiKeyPermissions.VIEW_ACCESS]
 
     const { permissions: permissions2 } = await valrKeyModule.fetchDetails()
-
 
     expect(permissions2.read).to.be.ok
     expect(permissions2.trade).not.to.be.ok
     expect(permissions2.withdraw).not.to.be.ok
 
     expect(requestMock.callCount).to.be.eq(2)
-
 
     // third
     requestResponse.permissions = [
@@ -81,7 +76,6 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(3)
 
-
     // forth
     requestResponse.permissions = [
       ValrApiKeyPermissions.VIEW_ACCESS,
@@ -96,7 +90,6 @@ describe('ValrKeyModule', () => {
     expect(permissions4.withdraw).not.to.be.ok
 
     expect(requestMock.callCount).to.be.eq(4)
-
 
     // fifth
     requestResponse.permissions = [
@@ -114,8 +107,6 @@ describe('ValrKeyModule', () => {
     expect(requestMock.callCount).to.be.eq(5)
 
   })
-
-
 
   it('should properly inform when api key or secret are wrong', async () => {
 
@@ -161,8 +152,6 @@ describe('ValrKeyModule', () => {
 
   })
 
-
-
   it('should parse Valr permissions just fine', async () => {
 
     const key: IValrKeySchema = {
@@ -180,7 +169,6 @@ describe('ValrKeyModule', () => {
     expect(perm1.read).to.be.ok
     expect(perm1.trade).not.to.be.ok
     expect(perm1.withdraw).not.to.be.ok
-
 
     key.permissions = [ValrApiKeyPermissions.TRADE]
 

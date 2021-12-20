@@ -26,11 +26,7 @@ export interface IAlunaOrderPlaceParams {
   amount: string | number
 }
 
-
-
 export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
-
-
 
 export interface IAlunaOrderReadModule extends IAlunaModule {
 
@@ -44,8 +40,6 @@ export interface IAlunaOrderReadModule extends IAlunaModule {
   parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
 
 }
-
-
 
 export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>

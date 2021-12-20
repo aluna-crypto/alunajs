@@ -27,8 +27,6 @@ interface IValrSignedHeaders {
   'X-VALR-TIMESTAMP': number
 }
 
-
-
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
   let error: AlunaError
@@ -60,8 +58,6 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
 }
 
-
-
 export const generateAuthHeader = (
   params: ISignedHashParams,
 ):IValrSignedHeaders => {
@@ -69,7 +65,6 @@ export const generateAuthHeader = (
   const {
     keySecret, path, verb, body,
   } = params
-
 
   const timestamp = Date.now()
 
@@ -88,8 +83,6 @@ export const generateAuthHeader = (
   }
 
 }
-
-
 
 export const ValrHttp: IAlunaHttp = class {
 
@@ -120,8 +113,6 @@ export const ValrHttp: IAlunaHttp = class {
     }
 
   }
-
-
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 

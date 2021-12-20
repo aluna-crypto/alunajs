@@ -8,14 +8,10 @@ import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
-
-
 /*
   Due to TypeScript limitations, we need to use a combination of two
   interfaces to specify instance and static properties/methods sepparately.
 */
-
-
 
 // Instance properties and methods
 export interface IAlunaExchange {
@@ -31,8 +27,6 @@ export interface IAlunaExchange {
   position?: IAlunaPositionModule
 
 }
-
-
 
 // Static properties and methods
 export interface IAlunaExchangeStatic {

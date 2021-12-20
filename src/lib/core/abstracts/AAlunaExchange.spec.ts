@@ -6,8 +6,6 @@ import { AAlunaExchange } from './AAlunaExchange'
 
 describe('AAlunaExchange', () => {
 
-
-
   it('should ensure classes will inherit properties just fine', async () => {
 
     const keySecret = {
@@ -21,7 +19,6 @@ describe('AAlunaExchange', () => {
 
     const SomeExchange = class extends AAlunaExchange {}
 
-
     const exchange1 = new SomeExchange({
       keySecret,
       settings,
@@ -33,7 +30,6 @@ describe('AAlunaExchange', () => {
     expect(exchange1.settings).to.be.ok
     expect(exchange1.settings?.referralCode).to.be.ok
 
-
     const exchange2 = new SomeExchange({
       keySecret,
       settings: {},
@@ -43,7 +39,6 @@ describe('AAlunaExchange', () => {
     expect(exchange2.keySecret).to.be.ok
     expect(exchange2.settings).to.be.ok
     expect(exchange2.settings?.referralCode).to.be.undefined
-
 
     const exchange3 = new SomeExchange({
       keySecret,

@@ -16,8 +16,6 @@ export interface IMarketWithCurrency extends IValrMarketSchema {
   quoteCurrency: string
 }
 
-
-
 export const ValrMarketModule: IAlunaMarketModule = class {
 
   public static async listRaw (): Promise<IMarketWithCurrency[]> {

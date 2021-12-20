@@ -63,8 +63,6 @@ export const VALR_RAW_MARKETS: IValrMarketSchema[] = [
   },
 ]
 
-
-
 export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
   {
     symbol: 'BTCZAR',
@@ -139,8 +137,6 @@ export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
   },
 ]
 
-
-
 export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
   {
     currencyPair: 'USDCETH',
@@ -185,8 +181,6 @@ export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
     quoteCurrency: 'ZAR',
   },
 ]
-
-
 
 export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {

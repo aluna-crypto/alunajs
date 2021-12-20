@@ -6,7 +6,6 @@ import { Valr } from './Valr'
 
 describe('Valr', () => {
 
-
   it('should have all static properties and methods', async () => {
 
     expect(Valr.ID).to.eq('valr')
@@ -15,8 +14,6 @@ describe('Valr', () => {
     expect(Valr.Market).to.be.ok
 
   })
-
-
 
   it('should have all instance properties and methods', async () => {
 
@@ -48,7 +45,5 @@ describe('Valr', () => {
     expect(valr.position).not.to.be.ok
 
   })
-
-
 
 })

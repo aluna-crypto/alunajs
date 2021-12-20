@@ -75,8 +75,6 @@ export const VALR_RAW_LIST_OPEN_ORDERS: IValrOrderListSchema[] = [
   },
 ]
 
-
-
 export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
   {
     orderId: '446140fa-e4c5-489c-8e43-b431e080ad35',
@@ -122,8 +120,6 @@ export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
     timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
   },
 ]
-
-
 
 export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
   {

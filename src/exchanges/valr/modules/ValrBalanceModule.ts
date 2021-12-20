@@ -25,8 +25,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
   }
 
-
-
   public async list (): Promise<IAlunaBalanceSchema[]> {
 
     const rawBalances = await this.listRaw()
@@ -38,8 +36,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     return parsedBalances
 
   }
-
-
 
   public parse (params: {
     rawBalance: IValrBalanceSchema,
@@ -62,8 +58,6 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
     }
 
   }
-
-
 
   public parseMany (params: {
     rawBalances: IValrBalanceSchema[],

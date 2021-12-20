@@ -7,8 +7,6 @@ export type TranslateToMappings<TEnumTo> = {
   [key: string]: TEnumTo,
 }
 
-
-
 export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
   mappings: TranslateToMappings<TEnumTo>,
   errorMessagePrefix: string,

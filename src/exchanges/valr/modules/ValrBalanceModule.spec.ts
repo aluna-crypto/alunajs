@@ -17,7 +17,6 @@ describe('ValrBalanceModule', () => {
 
   const valrBalanceModule = ValrBalanceModule.prototype
 
-
   it('should list all Valr raw balances', async () => {
 
     const exchangeMock = ImportMock.mockOther(
@@ -36,7 +35,6 @@ describe('ValrBalanceModule', () => {
       'privateRequest',
       VALR_RAW_BALANCES,
     )
-
 
     const rawBalances = await valrBalanceModule.listRaw()
 
@@ -70,8 +68,6 @@ describe('ValrBalanceModule', () => {
 
   })
 
-
-
   it('should list all Valr parsed balances', async () => {
 
     const rawListMock = ['arr-of-raw-balances']
@@ -89,7 +85,6 @@ describe('ValrBalanceModule', () => {
     )
 
     const balances = await valrBalanceModule.list()
-
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -119,8 +114,6 @@ describe('ValrBalanceModule', () => {
 
   })
 
-
-
   it('should parse a single Valr raw balance', () => {
 
     const parsedBalance1 = valrBalanceModule.parse({
@@ -135,7 +128,6 @@ describe('ValrBalanceModule', () => {
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
-
 
     const parsedBalance2 = valrBalanceModule.parse({
       rawBalance: VALR_RAW_BALANCES[1],
@@ -152,8 +144,6 @@ describe('ValrBalanceModule', () => {
 
   })
 
-
-
   it('should parse many Valr raw balances', async () => {
 
     const parseMock = ImportMock.mockFunction(
@@ -168,7 +158,6 @@ describe('ValrBalanceModule', () => {
       .returns(VALR_PARSED_BALANCES[1])
       .onThirdCall()
       .returns(VALR_PARSED_BALANCES[2])
-
 
     const parsedBalances = valrBalanceModule.parseMany({
       rawBalances: VALR_RAW_BALANCES,

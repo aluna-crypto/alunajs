@@ -29,7 +29,6 @@ describe('ValrOrderReadModule', () => {
 
   const valrOrderReadModule = ValrOrderReadModule.prototype
 
-
   it('should list all Valr raw open orders just fine', async () => {
 
     ImportMock.mockOther(
@@ -93,8 +92,6 @@ describe('ValrOrderReadModule', () => {
 
   })
 
-
-
   it('should list all Valr parsed open orders just fine', async () => {
 
     const listRawMock = ImportMock.mockFunction(
@@ -157,8 +154,6 @@ describe('ValrOrderReadModule', () => {
 
   })
 
-
-
   it('should get a raw Valr order status just fine', async () => {
 
     const keySecret = {
@@ -188,7 +183,6 @@ describe('ValrOrderReadModule', () => {
       symbolPair,
     })
 
-
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.includes({
       verb: AlunaHttpVerbEnum.GET,
@@ -200,8 +194,6 @@ describe('ValrOrderReadModule', () => {
     expect(rawOrder.orderSide).to.be.eq(ValrSideEnum.BUY)
 
   })
-
-
 
   it('should get a parsed Valr order just fine', async () => {
 
@@ -236,8 +228,6 @@ describe('ValrOrderReadModule', () => {
 
   })
 
-
-
   it('should parse a Valr raw order just fine', () => {
 
     const rawOrder1: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
@@ -252,9 +242,7 @@ describe('ValrOrderReadModule', () => {
       .onFirstCall().returns(VALR_PARSED_OPEN_ORDERS[0])
       .onSecondCall().returns(VALR_PARSED_OPEN_ORDERS[1])
 
-
     const parsedOrder1 = valrOrderReadModule.parse({ rawOrder: rawOrder1 })
-
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.ok
@@ -272,9 +260,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
     expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
 
-
     const parsedOrder2 = valrOrderReadModule.parse({ rawOrder: rawOrder2 })
-
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.ok
@@ -293,8 +279,6 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder2.side).to.be.eq(AlunaSideEnum.LONG)
 
   })
-
-
 
   it('should parse many Valr orders just fine', () => {
 

@@ -46,8 +46,6 @@ describe('ValrOrderWriteModule', () => {
     },
   }
 
-
-
   it('should place a new Valr limit order just fine', async () => {
 
     ImportMock.mockOther(
@@ -86,10 +84,8 @@ describe('ValrOrderWriteModule', () => {
       timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
     }
 
-
     // place long limit order
     const placeResponse1 = await valrOrderWriteModule.place(placeOrderParams)
-
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -98,7 +94,6 @@ describe('ValrOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.calledWith({
       id: placedOrderId,
@@ -106,7 +101,6 @@ describe('ValrOrderWriteModule', () => {
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(successfulPlacedOrder)
-
 
     // place short limit order
     const placeResponse2 = await valrOrderWriteModule.place({
@@ -137,8 +131,6 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
 
   })
-
-
 
   it('should place a new Valr market order just fine', async () => {
 
@@ -175,10 +167,8 @@ describe('ValrOrderWriteModule', () => {
       baseAmount: placeOrderParams.amount,
     }
 
-
     // place long market order
     const placeResponse1 = await valrOrderWriteModule.place(placeOrderParams)
-
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -194,7 +184,6 @@ describe('ValrOrderWriteModule', () => {
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
-
 
     // place short market order
     const placeResponse2 = await valrOrderWriteModule.place({
@@ -221,8 +210,6 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
 
   })
-
-
 
   it('should throw if order placement fails somehow', async () => {
 
@@ -276,8 +263,6 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
-
-
   it('should ensure given account is one of AlunaAccountEnum', async () => {
 
     ImportMock.mockOther(
@@ -306,8 +291,6 @@ describe('ValrOrderWriteModule', () => {
     }
 
   })
-
-
 
   it('should ensure given account is supported', async () => {
 
@@ -344,8 +327,6 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
-
-
   it('should ensure given account is implemented', async () => {
 
     ImportMock.mockOther(
@@ -380,8 +361,6 @@ describe('ValrOrderWriteModule', () => {
     }
 
   })
-
-
 
   it('should ensure given account has orderTypes property', async () => {
 
@@ -418,8 +397,6 @@ describe('ValrOrderWriteModule', () => {
     }
 
   })
-
-
 
   it('should ensure account orderTypes has given order type', async () => {
 
@@ -463,8 +440,6 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
-
-
   it('should ensure given order type is supported', async () => {
 
     const accountIndex = ValrSpecs.accounts.findIndex(
@@ -506,8 +481,6 @@ describe('ValrOrderWriteModule', () => {
     }
 
   })
-
-
 
   it('should ensure given order type is implemented', async () => {
 
@@ -551,8 +524,6 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
-
-
   it('should ensure given order type has write mode', async () => {
 
     const accountIndex = ValrSpecs.accounts.findIndex(
@@ -592,8 +563,6 @@ describe('ValrOrderWriteModule', () => {
     }
 
   })
-
-
 
   it('should ensure an order was canceled', async () => {
 
@@ -656,8 +625,6 @@ describe('ValrOrderWriteModule', () => {
       .to.be.eq('Something went wrong, order not canceled')
 
   })
-
-
 
   it('should cancel an open order just fine', async () => {
 

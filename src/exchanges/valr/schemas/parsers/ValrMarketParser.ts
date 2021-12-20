@@ -25,7 +25,6 @@ export class ValrMarketParser {
       currencyPair,
     } = rawMarket
 
-
     const ticker = {
       high: parseFloat(highPrice),
       low: parseFloat(lowPrice),

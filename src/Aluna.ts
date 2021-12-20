@@ -14,8 +14,6 @@ export class Aluna extends Exchanges {
 
   static readonly exchanges = Exchanges
 
-
-
   static new (
     params: {
       exchangeId: string,
@@ -62,7 +60,6 @@ export class Aluna extends Exchanges {
     }
 
   }
-
 
   static static (
     params: {

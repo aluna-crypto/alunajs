@@ -7,8 +7,6 @@ export interface IAlunaKeySchema {
 
 }
 
-
-
 export interface IAlunaKeyPermissionSchema {
 
   read: boolean

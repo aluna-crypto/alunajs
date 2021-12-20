@@ -65,7 +65,6 @@ export class ValrOrderParser {
 
     }
 
-
     const amount = parseFloat(originalQuantity)
     const rate = parseFloat(price)
 

@@ -11,8 +11,6 @@ describe('ValrOrderTypeAdapter', () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Valr order types to Aluna order types', () => {
 
     expect(ValrOrderTypeAdapter.translateToAluna({
@@ -39,7 +37,6 @@ describe('ValrOrderTypeAdapter', () => {
       from: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
-
     try {
 
       ValrOrderTypeAdapter.translateToAluna({
@@ -55,10 +52,7 @@ describe('ValrOrderTypeAdapter', () => {
 
     }
 
-
   })
-
-
 
   it('should properly translate Aluna order types to Valr order types', () => {
 
@@ -77,7 +71,6 @@ describe('ValrOrderTypeAdapter', () => {
     expect(ValrOrderTypeAdapter.translateToValr({
       from: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     })).to.be.eq(ValrOrderTypesEnum.TAKE_PROFIT_LIMIT)
-
 
     try {
 

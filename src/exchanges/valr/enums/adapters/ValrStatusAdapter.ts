@@ -6,11 +6,7 @@ import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 export class ValrStatusAdapter {
 
-
-
   static readonly ERROR_MESSAGE_PREFIX = 'Order status'
-
-
 
   static translateToAluna =
     buildAdapter<ValrOrderStatusEnum, AlunaOrderStatusEnum>({
@@ -26,8 +22,6 @@ export class ValrStatusAdapter {
       },
     })
 
-
-
   static translateToValr =
     buildAdapter<AlunaOrderStatusEnum, ValrOrderStatusEnum>({
       errorMessagePrefix: ValrStatusAdapter.ERROR_MESSAGE_PREFIX,
@@ -40,7 +34,4 @@ export class ValrStatusAdapter {
       },
     })
 
-
-
 }
-

@@ -23,8 +23,6 @@ describe('ValrHttp', () => {
 
   const dummyData = { data: 'dummy-data' }
 
-
-
   it('should defaults the http verb to get on public requests', async () => {
 
     const requestSpy = Sinon.spy(async () => dummyData)
@@ -55,12 +53,9 @@ describe('ValrHttp', () => {
 
   })
 
-
-
   it('should execute public request just fine', async () => {
 
     const requestSpy = Sinon.spy(() => dummyData)
-
 
     const axiosMock = ImportMock.mockFunction(
       axios,
@@ -76,7 +71,6 @@ describe('ValrHttp', () => {
       body: dummyBody,
     })
 
-
     expect(axiosMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
@@ -89,8 +83,6 @@ describe('ValrHttp', () => {
     expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
 
   })
-
-
 
   it('should defaults the http verb to post on private requests', async () => {
 
@@ -131,8 +123,6 @@ describe('ValrHttp', () => {
 
   })
 
-
-
   it('should execute private request just fine', async () => {
 
     const requestSpy = Sinon.spy(() => dummyData)
@@ -158,7 +148,6 @@ describe('ValrHttp', () => {
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-
     expect(axiosMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
@@ -180,8 +169,6 @@ describe('ValrHttp', () => {
     expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
 
   })
-
-
 
   it('should ensure formatRequestError is call on resquest error', async () => {
 
@@ -232,7 +219,6 @@ describe('ValrHttp', () => {
 
     }
 
-
     try {
 
       await valrHttp.privateRequest({
@@ -257,8 +243,6 @@ describe('ValrHttp', () => {
 
   })
 
-
-
   it('should ensure request error is being handle', async () => {
 
     const dummyError = 'dummy-error'
@@ -279,7 +263,6 @@ describe('ValrHttp', () => {
     expect(error1.data.error).to.be.eq(dummyError)
     expect(error1.statusCode).to.be.eq(400)
 
-
     const axiosError2 = {
       isAxiosError: true,
       response: {
@@ -296,7 +279,6 @@ describe('ValrHttp', () => {
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error2.statusCode).to.be.eq(400)
 
-
     const axiosError3 = {
       isAxiosError: true,
     }
@@ -309,7 +291,6 @@ describe('ValrHttp', () => {
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error3.statusCode).to.be.eq(400)
 
-
     const error = {
       message: dummyError,
     }
@@ -319,7 +300,6 @@ describe('ValrHttp', () => {
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.data.error).to.be.eq(dummyError)
     expect(error4.statusCode).to.be.eq(400)
-
 
     const unknown = {}
 
@@ -332,7 +312,6 @@ describe('ValrHttp', () => {
     expect(error5.statusCode).to.be.eq(400)
 
   })
-
 
   it('should generate signed auth header just fine', async () => {
 
@@ -364,6 +343,7 @@ describe('ValrHttp', () => {
       key: 'dummy-key',
       secret: 'dummy-secret',
     } as IAlunaKeySecretSchema
+
     const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
     const body = dummyBody
@@ -396,7 +376,6 @@ describe('ValrHttp', () => {
     expect(signedHash['X-VALR-SIGNATURE']).to.deep.eq(digestSpy.returnValues[0])
     expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
-
     const signedHash2 = ValrHttp.generateAuthHeader({
       keySecret,
       path,
@@ -423,7 +402,5 @@ describe('ValrHttp', () => {
     expect(signedHash2['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
   })
-
-
 
 })

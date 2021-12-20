@@ -8,7 +8,6 @@ import { ValrMarketParser } from './ValrMarketParser'
 
 describe('ValrMarketParser', () => {
 
-
   it('should parse Valr market just fine', async () => {
 
     const rawMarket = VALR_RAW_MARKETS_WITH_CURRENCY[0]
