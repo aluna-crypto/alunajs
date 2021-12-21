@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -15,12 +16,14 @@ import {
   IValrOrderListSchema,
 } from '../schemas/IValrOrderSchema'
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
+import { VALR_RAW_CURRENCY_PAIRS } from '../test/fixtures/valrMarket'
 import {
   VALR_PARSED_OPEN_ORDERS,
   VALR_RAW_GET_ORDERS,
   VALR_RAW_LIST_OPEN_ORDERS,
 } from '../test/fixtures/valrOrder'
 import { ValrHttp } from '../ValrHttp'
+import { ValrMarketModule } from './ValrMarketModule'
 import { ValrOrderReadModule } from './ValrOrderReadModule'
 
 
@@ -52,7 +55,7 @@ describe('ValrOrderReadModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    expect(rawBalances.length).to.be.eq(4)
+    expect(rawBalances.length).to.be.eq(5)
 
     rawBalances.forEach((balance, index) => {
 
@@ -233,6 +236,12 @@ describe('ValrOrderReadModule', () => {
     const rawOrder1: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
     const rawOrder2: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[1]
 
+    const fetchCurrencyPairsMock = ImportMock.mockFunction(
+      ValrMarketModule,
+      'fetchCurrencyPairs',
+      Promise.resolve(VALR_RAW_CURRENCY_PAIRS),
+    )
+
     const parseMock = ImportMock.mockFunction(
       ValrOrderParser,
       'parse',
@@ -244,10 +253,16 @@ describe('ValrOrderReadModule', () => {
 
     const parsedOrder1 = await valrOrderReadModule.parse({
       rawOrder: rawOrder1,
+      currencyPair: VALR_RAW_CURRENCY_PAIRS[1],
     })
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.ok
+    expect(parseMock.calledWithExactly({
+      rawOrder: rawOrder1,
+      currencyPair: VALR_RAW_CURRENCY_PAIRS[1],
+    })).to.be.ok
+
+    expect(fetchCurrencyPairsMock.callCount).to.be.eq(0)
 
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.total).to.be.ok
@@ -267,7 +282,8 @@ describe('ValrOrderReadModule', () => {
     })
 
     expect(parseMock.callCount).to.be.eq(2)
-    expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.ok
+
+    expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
 
     expect(parsedOrder2.symbolPair).to.be.ok
     expect(parsedOrder2.total).to.be.ok
@@ -294,16 +310,22 @@ describe('ValrOrderReadModule', () => {
       'parse',
     )
 
+    const fetchCurrencyPairsMock = ImportMock.mockFunction(
+      ValrMarketModule,
+      'fetchCurrencyPairs',
+      Promise.resolve(VALR_RAW_CURRENCY_PAIRS),
+    )
+
     parsedOrders.forEach((parsed, index) => {
 
-      parseMock.onCall(index).returns(parsed)
+      parseMock.onCall(index).returns(Promise.resolve(parsed))
 
     })
 
     const parsedManyResp = await valrOrderReadModule.parseMany({ rawOrders })
 
-    expect(parsedManyResp.length).to.be.eq(4)
-    expect(parseMock.callCount).to.be.eq(4)
+    expect(parsedManyResp.length).to.be.eq(5)
+    expect(parseMock.callCount).to.be.eq(5)
 
     parsedManyResp.forEach((parsed, index) => {
 
@@ -313,6 +335,44 @@ describe('ValrOrderReadModule', () => {
       }))
 
     })
+
+    expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
+
+  })
+
+  it('should throw error if pair symbol is not found', async () => {
+
+    const fetchCurrencyPairsMock = ImportMock.mockFunction(
+      ValrMarketModule,
+      'fetchCurrencyPairs',
+      Promise.resolve([]),
+    )
+
+    let result
+    let error
+
+    const rawOrder = VALR_RAW_GET_ORDERS[0]
+
+    try {
+
+      result = await valrOrderReadModule.parse({
+        rawOrder,
+      })
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const msg = `No symbol pair found for ${rawOrder.currencyPair}`
+
+    expect(error).to.be.ok
+    expect(error?.data.error).to.be.eq(msg)
+
+    expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
 
   })
 
