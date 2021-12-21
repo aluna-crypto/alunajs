@@ -116,6 +116,17 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
+      if (!rate) {
+
+        throw new AlunaError({
+          statusCode: 200,
+          data: {
+            error: 'Rate param is required for placing new limit orders',
+          },
+        })
+
+      }
+
       Object.assign(body, {
         quantity: amount,
         price: rate,
