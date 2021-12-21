@@ -7,6 +7,7 @@ import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../../enums/ValrSideEnum'
 import { Valr } from '../../Valr'
+import { IValrCurrencyPairs } from '../IValrMarketSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
@@ -18,15 +19,24 @@ export class ValrOrderParser {
 
   static parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
+    currencyPair: IValrCurrencyPairs,
   }): IAlunaOrderSchema {
 
-    const { rawOrder } = params
+    const {
+      rawOrder,
+      currencyPair,
+    } = params
 
     const {
       orderId,
-      currencyPair,
       originalQuantity,
     } = rawOrder
+
+    const {
+      symbol,
+      baseCurrency,
+      quoteCurrency,
+    } = currencyPair
 
     let side: ValrSideEnum
     let price: string
@@ -70,17 +80,12 @@ export class ValrOrderParser {
 
     const exchangeId = Valr.ID
 
-    const [baseSymbolId, quoteSymbolId] = [
-      currencyPair.slice(0, 3),
-      currencyPair.slice(3),
-    ]
-
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
-      symbolPair: currencyPair,
+      symbolPair: symbol,
       exchangeId,
-      baseSymbolId,
-      quoteSymbolId,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
       total: amount * rate,
       amount,
       isAmountInContracts: false,
