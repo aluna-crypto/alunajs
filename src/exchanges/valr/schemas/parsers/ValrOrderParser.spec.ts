@@ -4,6 +4,7 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
+import { VALR_RAW_CURRENCY_PAIRS } from '../../test/fixtures/valrMarket'
 import {
   VALR_RAW_GET_ORDERS,
   VALR_RAW_LIST_OPEN_ORDERS,
@@ -18,13 +19,15 @@ import { ValrOrderParser } from './ValrOrderParser'
 
 describe('ValrOrderParser', () => {
 
-  it('should parse Valr orders just fine', async () => {
+  it('should parse Valr orders just fine', () => {
 
     const rawOrder1: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[0]
     const rawOrder2: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
+    const rawOrder3: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[4]
 
     const parsedOrder1 = ValrOrderParser.parse({
       rawOrder: rawOrder1,
+      currencyPair: VALR_RAW_CURRENCY_PAIRS[1],
     })
 
     const rawOriginalQuantity1 = parseFloat(rawOrder1.originalQuantity)
@@ -57,6 +60,7 @@ describe('ValrOrderParser', () => {
 
     const parsedOrder2 = ValrOrderParser.parse({
       rawOrder: rawOrder2,
+      currencyPair: VALR_RAW_CURRENCY_PAIRS[1],
     })
 
     const rawOriginalQuantity2 = parseFloat(rawOrder2.originalQuantity)
@@ -70,8 +74,8 @@ describe('ValrOrderParser', () => {
 
     expect(parsedOrder2.id).to.be.eq(rawOrder2.orderId)
     expect(parsedOrder2.symbolPair).to.be.eq(rawOrder2.currencyPair)
-    expect(parsedOrder1.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-    expect(parsedOrder1.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+    expect(parsedOrder2.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+    expect(parsedOrder2.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder2.total).to.be.eq(rawOriginalQuantity2 * rawPrice2)
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
     expect(parsedOrder2.isAmountInContracts).not.to.be.ok
@@ -86,6 +90,39 @@ describe('ValrOrderParser', () => {
       .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType2 }))
     expect(parsedOrder2.placedAt.getTime())
       .to.be.eq(new Date(rawOrder2.orderCreatedAt).getTime())
+
+    const parsedOrder3 = ValrOrderParser.parse({
+      rawOrder: rawOrder3,
+      currencyPair: VALR_RAW_CURRENCY_PAIRS[3],
+    })
+
+    const rawOriginalQuantity3 = parseFloat(rawOrder3.originalQuantity)
+    const rawPrice3 = parseFloat(rawOrder3.price)
+    const rawSide3 = rawOrder3.side
+    const rawType3 = rawOrder3.type
+    const rawStatus3 = rawOrder3.status
+
+    expectedBaseSymbolId = 'USDC'
+    expectedQuoteSymbolId = 'ZAR'
+
+    expect(parsedOrder3.id).to.be.eq(rawOrder3.orderId)
+    expect(parsedOrder3.symbolPair).to.be.eq(rawOrder3.currencyPair)
+    expect(parsedOrder3.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+    expect(parsedOrder3.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+    expect(parsedOrder3.total).to.be.eq(rawOriginalQuantity3 * rawPrice3)
+    expect(parsedOrder3.amount).to.be.eq(rawOriginalQuantity3)
+    expect(parsedOrder3.isAmountInContracts).not.to.be.ok
+    expect(parsedOrder3.rate).to.be.eq(rawPrice3)
+    expect(parsedOrder3.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+
+    expect(parsedOrder3.side)
+      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide3 }))
+    expect(parsedOrder3.status)
+      .to.be.eq(ValrStatusAdapter.translateToAluna({ from: rawStatus3 }))
+    expect(parsedOrder3.type)
+      .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType3 }))
+    expect(parsedOrder3.placedAt.getTime())
+      .to.be.eq(new Date(rawOrder3.createdAt).getTime())
 
   })
 
