@@ -93,7 +93,7 @@ export const ValrMarketModule: IValrMarketModule = class {
   public static async fetchCurrencyPairs (): Promise<IValrCurrencyPairs[]> {
 
     const currencyPairs = await ValrHttp.publicRequest<IValrCurrencyPairs[]>({
-      url: 'https://api.valr.com/v1/public/marketsummary',
+      url: 'https://api.valr.com/v1/public/pairs',
     })
 
     return currencyPairs
