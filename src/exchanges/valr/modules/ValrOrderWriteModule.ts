@@ -25,10 +25,6 @@ interface IValrPlaceOrderResponse {
   id: string
 }
 
-export interface IValrEditOrderParams extends IAlunaOrderEditParams {
-  id: string
-}
-
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
   public async place (
@@ -172,7 +168,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
   }
 
-  async edit (params: IValrEditOrderParams): Promise<IAlunaOrderSchema> {
+  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
 
     ValrLog.info('editing order for Valr')
 

@@ -9,7 +9,10 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
-import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
+import {
+  IAlunaOrderEditParams,
+  IAlunaOrderPlaceParams,
+} from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
@@ -19,10 +22,7 @@ import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { VALR_PARSED_OPEN_ORDERS } from '../test/fixtures/valrOrder'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
-import {
-  IValrEditOrderParams,
-  ValrOrderWriteModule,
-} from './ValrOrderWriteModule'
+import { ValrOrderWriteModule } from './ValrOrderWriteModule'
 
 
 
@@ -609,7 +609,7 @@ describe('ValrOrderWriteModule', () => {
       Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
     )
 
-    const editOrderParams: IValrEditOrderParams = {
+    const editOrderParams: IAlunaOrderEditParams = {
       id: 'originalOrderId',
       amount: '0.001',
       rate: '0',
@@ -685,7 +685,7 @@ describe('ValrOrderWriteModule', () => {
       Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
     )
 
-    const editOrderParams: IValrEditOrderParams = {
+    const editOrderParams: IAlunaOrderEditParams = {
       id: 'originalOrderId',
       amount: '0.001',
       rate: '0',

@@ -27,7 +27,7 @@ export interface IAlunaOrderPlaceParams {
 }
 
 export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
-  id?: string
+  id: string
 }
 
 export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
