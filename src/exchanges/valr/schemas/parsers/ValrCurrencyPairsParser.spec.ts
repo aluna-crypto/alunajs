@@ -24,7 +24,7 @@ describe('ValrCurrencyPairsParser', () => {
     * Currency pairs with no corresponding markets must be ignored by the
     * parser
     */
-    expect(rawCurrencyPairs.length).to.be.eq(5)
+    expect(rawCurrencyPairs.length).to.be.eq(6)
 
     expect(marketWithCurr.length).to.be.eq(3)
 
