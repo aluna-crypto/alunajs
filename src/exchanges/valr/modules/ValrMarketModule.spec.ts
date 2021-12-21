@@ -6,6 +6,8 @@ import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsPar
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
 import {
   VALR_PARSED_MARKETS,
+  VALR_RAW_CURRENCY_PAIRS,
+  VALR_RAW_MARKETS,
   VALR_RAW_MARKETS_WITH_CURRENCY,
 } from '../test/fixtures/valrMarket'
 import { Valr } from '../Valr'
@@ -19,19 +21,19 @@ describe('ValrMarketModule', () => {
   it('should list Valr raw markets just fine', async () => {
 
     const rawMarkets = 'rawMarkets'
-    const rawSymbolsPairs = 'rawSymbolsPairs'
+    const rawCurrencyPairs = 'rawCurrencyPairs'
 
-    const marketsURL = 'https://api.valr.com/v1/public/marketsummary'
-    const symbolPairsURL = 'https://api.valr.com/v1/public/pairs'
-
-    const requestMock = ImportMock.mockFunction(
-      ValrHttp,
-      'publicRequest',
+    const fetchMarketsMock = ImportMock.mockFunction(
+      ValrMarketModule,
+      'fetchMarkets',
+      Promise.resolve(rawMarkets),
     )
 
-    requestMock
-      .onFirstCall().returns(Promise.resolve(rawMarkets))
-      .onSecondCall().returns(Promise.resolve(rawSymbolsPairs))
+    const fetchCurrencyPairsMock = ImportMock.mockFunction(
+      ValrMarketModule,
+      'fetchCurrencyPairs',
+      Promise.resolve(rawCurrencyPairs),
+    )
 
     const currencyPairsParseMock = ImportMock.mockFunction(
       ValrCurrencyPairsParser,
@@ -41,14 +43,13 @@ describe('ValrMarketModule', () => {
 
     const response = await ValrMarketModule.listRaw()
 
-    expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.calledWith({ url: marketsURL })).to.be.ok
-    expect(requestMock.calledWith({ url: symbolPairsURL })).to.be.ok
+    expect(fetchMarketsMock.callCount).to.be.eq(1)
+    expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
 
     expect(currencyPairsParseMock.callCount).to.be.eq(1)
     expect(currencyPairsParseMock.calledWith({
       rawMarkets,
-      rawCurrencyPairs: rawSymbolsPairs,
+      rawCurrencyPairs,
     })).to.be.ok
 
     expect(response.length).to.eq(3)
@@ -85,6 +86,44 @@ describe('ValrMarketModule', () => {
       expect(res.quoteCurrency).to.be.eq(quoteCurrency)
 
     })
+
+  })
+
+  it('should fetch Valr markets just fine', async () => {
+
+    const requestMock = ImportMock.mockFunction(
+      ValrHttp,
+      'publicRequest',
+      VALR_RAW_MARKETS,
+    )
+
+    const rawMarkets = await ValrMarketModule.fetchMarkets()
+
+    expect(rawMarkets).to.deep.eq(VALR_RAW_MARKETS)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.valr.com/v1/public/marketsummary',
+    }))
+
+  })
+
+  it('should fetch Valr currency pairs just fine', async () => {
+
+    const requestMock = ImportMock.mockFunction(
+      ValrHttp,
+      'publicRequest',
+      VALR_RAW_CURRENCY_PAIRS,
+    )
+
+    const rawCurrencyPairs = await ValrMarketModule.fetchCurrencyPairs()
+
+    expect(rawCurrencyPairs).to.deep.eq(VALR_RAW_CURRENCY_PAIRS)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.valr.com/v1/public/pairs',
+    }))
 
   })
 
