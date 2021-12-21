@@ -35,6 +35,15 @@ describe('ValrOrderWriteModule', () => {
     secret: '',
   }
 
+  const placeOrderParams = {
+    amount: '0.001',
+    rate: '10000',
+    symbolPair: 'ETHZAR',
+    side: AlunaSideEnum.LONG,
+    type: AlunaOrderTypesEnum.LIMIT,
+    account: AlunaAccountEnum.EXCHANGE,
+  }
+
   const placedOrderId = 'placed-order-id'
 
   const successfulPlacedOrder: Partial<IAlunaOrderSchema> = {
@@ -50,13 +59,19 @@ describe('ValrOrderWriteModule', () => {
     },
   }
 
-  it('should place a new Valr limit order just fine', async () => {
+  const mockDeps = () => {
 
     ImportMock.mockOther(
       valrOrderWriteModule,
       'exchange',
       { keySecret } as IAlunaExchange,
     )
+
+  }
+
+  it('should place a new Valr limit order just fine', async () => {
+
+    mockDeps()
 
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
@@ -69,15 +84,6 @@ describe('ValrOrderWriteModule', () => {
       'get',
       Promise.resolve(successfulPlacedOrder),
     )
-
-    const placeOrderParams = {
-      amount: '0.001',
-      rate: '10000',
-      symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
-      type: AlunaOrderTypesEnum.LIMIT,
-      account: AlunaAccountEnum.EXCHANGE,
-    }
 
     const requestBody = {
       side: ValrSideEnum.BUY,
@@ -138,11 +144,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should place a new Valr market order just fine', async () => {
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
@@ -156,23 +158,21 @@ describe('ValrOrderWriteModule', () => {
       successfulPlacedOrder,
     )
 
-    const placeOrderParams = {
-      amount: '0.001',
-      rate: '0',
-      symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+    const marketOrderPlaceParams: IAlunaOrderPlaceParams = {
+      ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
     }
 
     const requestBody = {
       side: ValrSideEnum.BUY,
-      pair: placeOrderParams.symbolPair,
-      baseAmount: placeOrderParams.amount,
+      pair: marketOrderPlaceParams.symbolPair,
+      baseAmount: marketOrderPlaceParams.amount,
     }
 
     // place long market order
-    const placeResponse1 = await valrOrderWriteModule.place(placeOrderParams)
+    const placeResponse1 = await valrOrderWriteModule.place(
+      marketOrderPlaceParams,
+    )
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -184,14 +184,14 @@ describe('ValrOrderWriteModule', () => {
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.calledWith({
       id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+      symbolPair: marketOrderPlaceParams.symbolPair,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
 
     // place short market order
     const placeResponse2 = await valrOrderWriteModule.place({
-      ...placeOrderParams,
+      ...marketOrderPlaceParams,
       side: AlunaSideEnum.SHORT,
     })
 
@@ -208,7 +208,7 @@ describe('ValrOrderWriteModule', () => {
     expect(getMock.callCount).to.be.eq(2)
     expect(getMock.calledWith({
       id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+      symbolPair: marketOrderPlaceParams.symbolPair,
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(successfulPlacedOrder)
@@ -217,11 +217,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should throw if order placement fails somehow', async () => {
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     ImportMock.mockFunction(
       ValrHttp,
@@ -235,22 +231,16 @@ describe('ValrOrderWriteModule', () => {
       failedPlacedOrder, // return failed response here
     )
 
-    const placeOrderParams = {
-      amount: '0.001',
-      rate: '0',
-      symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
-      type: AlunaOrderTypesEnum.MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
-    }
-
     // try to place order
     let placeResponse: IAlunaOrderSchema | undefined
     let error: AlunaError | undefined
 
     try {
 
-      placeResponse = await valrOrderWriteModule.place(placeOrderParams)
+      placeResponse = await valrOrderWriteModule.place({
+        ...placeOrderParams,
+        type: AlunaOrderTypesEnum.MARKET,
+      })
 
     } catch (err) {
 
@@ -570,11 +560,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should edit order just fine', async () => {
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     const mockedOrderStatus = { orderStatusType: ValrOrderStatusEnum.ACTIVE }
 
@@ -596,7 +582,7 @@ describe('ValrOrderWriteModule', () => {
       Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
     )
 
-    const placeOrderParams: IValrEditOrderParams = {
+    const editOrderParams: IValrEditOrderParams = {
       id: 'originalOrderId',
       amount: '0.001',
       rate: '0',
@@ -606,7 +592,7 @@ describe('ValrOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await valrOrderWriteModule.edit(placeOrderParams)
+    const newOrder = await valrOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(VALR_PARSED_OPEN_ORDERS[0])
 
@@ -617,7 +603,7 @@ describe('ValrOrderWriteModule', () => {
 
     mockedOrderStatus.orderStatusType = ValrOrderStatusEnum.PARTIALLY_FILLED
 
-    await valrOrderWriteModule.edit(placeOrderParams)
+    await valrOrderWriteModule.edit(editOrderParams)
 
     expect(getRawMock.callCount).to.be.eq(2)
     expect(cancelMock.callCount).to.be.eq(2)
@@ -626,7 +612,7 @@ describe('ValrOrderWriteModule', () => {
 
     mockedOrderStatus.orderStatusType = ValrOrderStatusEnum.PLACED
 
-    await valrOrderWriteModule.edit(placeOrderParams)
+    await valrOrderWriteModule.edit(editOrderParams)
 
     expect(getRawMock.callCount).to.be.eq(3)
     expect(cancelMock.callCount).to.be.eq(3)
@@ -636,11 +622,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should throw if its not possible to edit the order', async () => {
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     const valrOrderStatusValues = Object.values(ValrOrderStatusEnum)
 
@@ -676,7 +658,7 @@ describe('ValrOrderWriteModule', () => {
       Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
     )
 
-    const placeOrderParams: IValrEditOrderParams = {
+    const editOrderParams: IValrEditOrderParams = {
       id: 'originalOrderId',
       amount: '0.001',
       rate: '0',
@@ -691,7 +673,7 @@ describe('ValrOrderWriteModule', () => {
 
     try {
 
-      result = await valrOrderWriteModule.edit(placeOrderParams)
+      result = await valrOrderWriteModule.edit(editOrderParams)
 
     } catch (err) {
 
@@ -716,11 +698,7 @@ describe('ValrOrderWriteModule', () => {
     let error: AlunaError | undefined
     let result
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
@@ -775,11 +753,7 @@ describe('ValrOrderWriteModule', () => {
 
   it('should cancel an open order just fine', async () => {
 
-    ImportMock.mockOther(
-      valrOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    mockDeps()
 
     ImportMock.mockFunction(
       ValrHttp,
