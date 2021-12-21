@@ -16,9 +16,13 @@ import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
+import { VALR_PARSED_OPEN_ORDERS } from '../test/fixtures/valrOrder'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
-import { ValrOrderWriteModule } from './ValrOrderWriteModule'
+import {
+  IValrEditOrderParams,
+  ValrOrderWriteModule,
+} from './ValrOrderWriteModule'
 
 
 
@@ -561,6 +565,149 @@ describe('ValrOrderWriteModule', () => {
       expect(error).to.be.eq(`Order type '${type}' is in read mode`)
 
     }
+
+  })
+
+  it('should edit order just fine', async () => {
+
+    ImportMock.mockOther(
+      valrOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    const mockedOrderStatus = { orderStatusType: ValrOrderStatusEnum.ACTIVE }
+
+    const getRawMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'getRaw',
+      Promise.resolve(mockedOrderStatus),
+    )
+
+    const cancelMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'cancel',
+      Promise.resolve(true),
+    )
+
+    const placeMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'place',
+      Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
+    )
+
+    const placeOrderParams: IValrEditOrderParams = {
+      id: 'originalOrderId',
+      amount: '0.001',
+      rate: '0',
+      symbolPair: 'ETHZAR',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const newOrder = await valrOrderWriteModule.edit(placeOrderParams)
+
+    expect(newOrder).to.deep.eq(VALR_PARSED_OPEN_ORDERS[0])
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(cancelMock.callCount).to.be.eq(1)
+    expect(placeMock.callCount).to.be.eq(1)
+
+
+    mockedOrderStatus.orderStatusType = ValrOrderStatusEnum.PARTIALLY_FILLED
+
+    await valrOrderWriteModule.edit(placeOrderParams)
+
+    expect(getRawMock.callCount).to.be.eq(2)
+    expect(cancelMock.callCount).to.be.eq(2)
+    expect(placeMock.callCount).to.be.eq(2)
+
+
+    mockedOrderStatus.orderStatusType = ValrOrderStatusEnum.PLACED
+
+    await valrOrderWriteModule.edit(placeOrderParams)
+
+    expect(getRawMock.callCount).to.be.eq(3)
+    expect(cancelMock.callCount).to.be.eq(3)
+    expect(placeMock.callCount).to.be.eq(3)
+
+  })
+
+  it('should throw if its not possible to edit the order', async () => {
+
+    ImportMock.mockOther(
+      valrOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    const valrOrderStatusValues = Object.values(ValrOrderStatusEnum)
+
+    const notActiveValues = valrOrderStatusValues.filter((status) => {
+
+      return status !== ValrOrderStatusEnum.PLACED
+        && status !== ValrOrderStatusEnum.ACTIVE
+        && status !== ValrOrderStatusEnum.PARTIALLY_FILLED
+
+    })
+
+    const randomIndex = Math.floor(Math.random() * notActiveValues.length)
+
+    const randomStatus = notActiveValues[randomIndex]
+
+    const mockedOrderStatus = { orderStatusType: randomStatus }
+
+    const getRawMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'getRaw',
+      Promise.resolve(mockedOrderStatus),
+    )
+
+    const cancelMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'cancel',
+      Promise.resolve(true),
+    )
+
+    const placeMock = ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'place',
+      Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
+    )
+
+    const placeOrderParams: IValrEditOrderParams = {
+      id: 'originalOrderId',
+      amount: '0.001',
+      rate: '0',
+      symbolPair: 'ETHZAR',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    let error
+    let result
+
+    try {
+
+      result = await valrOrderWriteModule.edit(placeOrderParams)
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const msg = 'Order is not open/active anymore'
+
+    expect(error?.data.error).to.be.eq(msg)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(cancelMock.callCount).to.be.eq(0)
+    expect(placeMock.callCount).to.be.eq(0)
 
   })
 
