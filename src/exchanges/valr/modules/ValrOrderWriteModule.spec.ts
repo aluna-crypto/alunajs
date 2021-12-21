@@ -35,7 +35,7 @@ describe('ValrOrderWriteModule', () => {
     secret: '',
   }
 
-  const placeOrderParams = {
+  const placeOrderParams: IAlunaOrderPlaceParams = {
     amount: '0.001',
     rate: '10000',
     symbolPair: 'ETHZAR',
@@ -67,17 +67,21 @@ describe('ValrOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
-  }
-
-  it('should place a new Valr limit order just fine', async () => {
-
-    mockDeps()
-
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
       { id: placedOrderId },
     )
+
+    return {
+      requestMock,
+    }
+
+  }
+
+  it('should place a new Valr limit order just fine', async () => {
+
+    const { requestMock } = mockDeps()
 
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
@@ -142,15 +146,44 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
+  it('should ensure rate param is present when placing limit orders',
+    async () => {
+
+      mockDeps()
+
+      const missingRateOrderParams = {
+        ...placeOrderParams,
+      }
+
+      delete missingRateOrderParams.rate
+
+      let result
+      let error
+
+      try {
+
+        result = await valrOrderWriteModule.place(missingRateOrderParams)
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(result).not.to.exist
+
+      const msg = 'Rate param is required for placing new limit orders'
+
+      expect(error).to.exist
+      expect(error?.statusCode).to.eq(200)
+      expect(error?.data.ok).to.eq(false)
+      expect(error?.data.error).to.eq(msg)
+
+    })
+
   it('should place a new Valr market order just fine', async () => {
 
-    mockDeps()
-
-    const requestMock = ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-      { id: placedOrderId },
-    )
+    const { requestMock } = mockDeps()
 
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
@@ -218,12 +251,6 @@ describe('ValrOrderWriteModule', () => {
   it('should throw if order placement fails somehow', async () => {
 
     mockDeps()
-
-    ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-      { id: placedOrderId },
-    )
 
     ImportMock.mockFunction(
       valrOrderWriteModule,
@@ -698,12 +725,7 @@ describe('ValrOrderWriteModule', () => {
     let error: AlunaError | undefined
     let result
 
-    mockDeps()
-
-    const requestMock = ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-    )
+    const { requestMock } = mockDeps()
 
     const getRawMock = ImportMock.mockFunction(
       valrOrderWriteModule,
@@ -754,11 +776,6 @@ describe('ValrOrderWriteModule', () => {
   it('should cancel an open order just fine', async () => {
 
     mockDeps()
-
-    ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-    )
 
     const getRawMock = ImportMock.mockFunction(
       valrOrderWriteModule,
