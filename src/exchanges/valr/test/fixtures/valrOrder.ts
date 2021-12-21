@@ -73,6 +73,20 @@ export const VALR_RAW_LIST_OPEN_ORDERS: IValrOrderListSchema[] = [
     type: ValrOrderTypesEnum.STOP_LOSS_LIMIT,
     timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
   },
+  {
+    orderId: '671a7b2d-fb27-47e0-802b-9b76894f5d18',
+    side: ValrSideEnum.SELL,
+    remainingQuantity: '40',
+    price: '35',
+    currencyPair: 'USDCZAR',
+    createdAt: '2021-12-21T16:24:23.946Z',
+    originalQuantity: '40',
+    filledPercentage: '0.00',
+    updatedAt: '2021-12-21T16:24:23.948Z',
+    status: ValrOrderStatusEnum.PLACED,
+    type: ValrOrderTypesEnum.LIMIT,
+    timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+  },
 ]
 
 export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
