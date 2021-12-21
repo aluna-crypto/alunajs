@@ -3,6 +3,7 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderCancelParams,
+  IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
@@ -21,6 +22,10 @@ import { ValrOrderReadModule } from './ValrOrderReadModule'
 
 
 interface IValrPlaceOrderResponse {
+  id: string
+}
+
+export interface IValrEditOrderParams extends IAlunaOrderEditParams {
   id: string
 }
 
@@ -153,6 +158,74 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     }
 
     return order
+
+  }
+
+  async edit (params: IValrEditOrderParams): Promise<IAlunaOrderSchema> {
+
+    ValrLog.info('editing order for Valr')
+
+    const {
+      id,
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    } = params
+
+    const rawOrder = await this.getRaw({
+      id,
+      symbolPair,
+    })
+
+    const { orderStatusType } = rawOrder
+
+    let isOrderOpen: boolean
+
+    switch (orderStatusType) {
+
+      case ValrOrderStatusEnum.ACTIVE:
+      case ValrOrderStatusEnum.PLACED:
+      case ValrOrderStatusEnum.PARTIALLY_FILLED:
+
+        isOrderOpen = true
+
+        break
+
+      default:
+
+        isOrderOpen = false
+
+    }
+
+    if (!isOrderOpen) {
+
+      throw new AlunaError({
+        statusCode: 200,
+        data: {
+          error: 'Order is not open/active anymore',
+        },
+      })
+
+    }
+
+    await this.cancel({
+      id,
+      symbolPair,
+    })
+
+    const newOrder = await this.place({
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    })
+
+    return newOrder
 
   }
 
