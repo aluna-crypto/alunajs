@@ -1,10 +1,12 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { IValrCurrencyPairs } from '../schemas/IValrMarketSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
@@ -12,6 +14,7 @@ import {
 import { ValrOrderParser } from '../schemas/parsers/ValrOrderParser'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
+import { ValrMarketModule } from './ValrMarketModule'
 
 
 
@@ -35,7 +38,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const rawOrders = await this.listRaw()
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const parsedOrders = await this.parseMany({ rawOrders })
 
     return parsedOrders
 
@@ -66,7 +69,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const rawOrder = await this.getRaw(params)
 
-    const parsedOrder = this.parse({ rawOrder })
+    const parsedOrder = await this.parse({ rawOrder })
 
     return parsedOrder
 
@@ -74,11 +77,43 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
   public async parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
+    currencyPair?: IValrCurrencyPairs,
   }): Promise<IAlunaOrderSchema> {
 
-    const { rawOrder } = params
+    const {
+      rawOrder,
+      currencyPair,
+    } = params
 
-    const parsedOrder = ValrOrderParser.parse({ rawOrder })
+    const {
+      currencyPair: orderCurrencyPair,
+    } = rawOrder
+
+    let pair = currencyPair
+
+    if (!pair) {
+
+      const pairs = await ValrMarketModule.fetchCurrencyPairs()
+
+      pair = pairs.find((p) => p.symbol === orderCurrencyPair)
+
+      if (!pair) {
+
+        throw new AlunaError({
+          statusCode: 200,
+          data: {
+            error: `No symbol pair found for ${orderCurrencyPair}`,
+          },
+        })
+
+      }
+
+    }
+
+    const parsedOrder = ValrOrderParser.parse({
+      rawOrder,
+      currencyPair: pair,
+    })
 
     return parsedOrder
 
@@ -90,10 +125,25 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const { rawOrders } = params
 
+    const currencyPairs = await ValrMarketModule.fetchCurrencyPairs()
+
+    const currencyPairsDictionary: { [symbol: string]: IValrCurrencyPairs } = {}
+
+    currencyPairs.forEach((pair) => {
+
+      currencyPairsDictionary[pair.symbol] = pair
+
+    })
+
     const parsedOrdersPromises = rawOrders.map(
       async (rawOrder: IValrOrderListSchema) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const currencyPair = currencyPairsDictionary[rawOrder.currencyPair]
+
+        const parsedOrder = await this.parse({
+          rawOrder,
+          currencyPair,
+        })
 
         return parsedOrder
 
