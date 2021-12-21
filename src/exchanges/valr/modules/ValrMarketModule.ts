@@ -1,6 +1,7 @@
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import {
+  IMarketWithCurrencies,
   IValrCurrencyPairs,
   IValrMarketSchema,
 } from '../schemas/IValrMarketSchema'
@@ -11,28 +12,22 @@ import { ValrLog } from '../ValrLog'
 
 
 
-export interface IMarketWithCurrency extends IValrMarketSchema {
-  baseCurrency: string
-  quoteCurrency: string
+interface IValrMarketModule extends IAlunaMarketModule {
+  fetchMarkets (): Promise<IValrMarketSchema[]>
+  fetchCurrencyPairs (): Promise<IValrCurrencyPairs[]>
 }
 
-export const ValrMarketModule: IAlunaMarketModule = class {
+export const ValrMarketModule: IValrMarketModule = class {
 
-  public static async listRaw (): Promise<IMarketWithCurrency[]> {
-
-    const { publicRequest } = ValrHttp
+  public static async listRaw (): Promise<IMarketWithCurrencies[]> {
 
     ValrLog.info('fetching Valr markets')
 
-    const rawMarkets = await publicRequest<IValrMarketSchema[]>({
-      url: 'https://api.valr.com/v1/public/marketsummary',
-    })
+    const rawMarkets = await this.fetchMarkets()
 
     ValrLog.info('fetching Valr currency pairs')
 
-    const rawCurrencyPairs = await publicRequest<IValrCurrencyPairs[]>({
-      url: 'https://api.valr.com/v1/public/pairs',
-    })
+    const rawCurrencyPairs = await this.fetchCurrencyPairs()
 
     const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
       rawMarkets,
@@ -54,7 +49,7 @@ export const ValrMarketModule: IAlunaMarketModule = class {
   }
 
   public static parse (params: {
-    rawMarket: IMarketWithCurrency,
+    rawMarket: IMarketWithCurrencies,
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params
@@ -66,7 +61,7 @@ export const ValrMarketModule: IAlunaMarketModule = class {
   }
 
   public static parseMany (params: {
-    rawMarkets: IMarketWithCurrency[],
+    rawMarkets: IMarketWithCurrencies[],
   }): IAlunaMarketSchema[] {
 
     const { rawMarkets } = params
@@ -82,6 +77,26 @@ export const ValrMarketModule: IAlunaMarketModule = class {
     ValrLog.info(`parsed ${parsedMarkets.length} markets for Valr`)
 
     return parsedMarkets
+
+  }
+
+  public static async fetchMarkets (): Promise<IValrMarketSchema[]> {
+
+    const markets = await ValrHttp.publicRequest<IValrMarketSchema[]>({
+      url: 'https://api.valr.com/v1/public/marketsummary',
+    })
+
+    return markets
+
+  }
+
+  public static async fetchCurrencyPairs (): Promise<IValrCurrencyPairs[]> {
+
+    const currencyPairs = await ValrHttp.publicRequest<IValrCurrencyPairs[]>({
+      url: 'https://api.valr.com/v1/public/marketsummary',
+    })
+
+    return currencyPairs
 
   }
 
