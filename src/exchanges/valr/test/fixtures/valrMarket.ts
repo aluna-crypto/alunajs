@@ -103,6 +103,19 @@ export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
     tickSize: '0.00000001',
     baseDecimalPlaces: '8',
   },
+  {
+    symbol: 'USDCZAR',
+    baseCurrency: 'USDC',
+    quoteCurrency: 'ZAR',
+    shortName: 'USDC/ZAR',
+    active: true,
+    minBaseAmount: '3',
+    maxBaseAmount: '11510',
+    minQuoteAmount: '0.0079',
+    maxQuoteAmount: '30',
+    tickSize: '0.00000001',
+    baseDecimalPlaces: '8',
+  },
 
   /**
    * The next 2 currency pairs have not market related to it. They will be
