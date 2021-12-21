@@ -228,7 +228,7 @@ describe('ValrOrderReadModule', () => {
 
   })
 
-  it('should parse a Valr raw order just fine', () => {
+  it('should parse a Valr raw order just fine', async () => {
 
     const rawOrder1: IValrOrderGetSchema = VALR_RAW_GET_ORDERS[0]
     const rawOrder2: IValrOrderListSchema = VALR_RAW_LIST_OPEN_ORDERS[1]
@@ -242,7 +242,9 @@ describe('ValrOrderReadModule', () => {
       .onFirstCall().returns(VALR_PARSED_OPEN_ORDERS[0])
       .onSecondCall().returns(VALR_PARSED_OPEN_ORDERS[1])
 
-    const parsedOrder1 = valrOrderReadModule.parse({ rawOrder: rawOrder1 })
+    const parsedOrder1 = await valrOrderReadModule.parse({
+      rawOrder: rawOrder1,
+    })
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder: rawOrder1 })).to.be.ok
@@ -260,7 +262,9 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
     expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
 
-    const parsedOrder2 = valrOrderReadModule.parse({ rawOrder: rawOrder2 })
+    const parsedOrder2 = await valrOrderReadModule.parse({
+      rawOrder: rawOrder2,
+    })
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({ rawOrder: rawOrder2 })).to.be.ok
@@ -280,7 +284,7 @@ describe('ValrOrderReadModule', () => {
 
   })
 
-  it('should parse many Valr orders just fine', () => {
+  it('should parse many Valr orders just fine', async () => {
 
     const rawOrders = VALR_RAW_LIST_OPEN_ORDERS
     const parsedOrders = VALR_PARSED_OPEN_ORDERS
@@ -296,7 +300,7 @@ describe('ValrOrderReadModule', () => {
 
     })
 
-    const parsedManyResp = valrOrderReadModule.parseMany({ rawOrders })
+    const parsedManyResp = await valrOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(4)
     expect(parseMock.callCount).to.be.eq(4)

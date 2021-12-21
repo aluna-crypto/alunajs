@@ -72,9 +72,9 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
   }
 
-  public parse (params: {
+  public async parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
-  }): IAlunaOrderSchema {
+  }): Promise<IAlunaOrderSchema> {
 
     const { rawOrder } = params
 
@@ -84,19 +84,23 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
   }
 
-  public parseMany (params: {
+  public async parseMany (params: {
     rawOrders: IValrOrderListSchema[],
-  }): IAlunaOrderSchema[] {
+  }): Promise<IAlunaOrderSchema[]> {
 
     const { rawOrders } = params
 
-    const parsedOrders = rawOrders.map((rawOrder: IValrOrderListSchema) => {
+    const parsedOrdersPromises = rawOrders.map(
+      async (rawOrder: IValrOrderListSchema) => {
 
-      const parsedOrder = this.parse({ rawOrder })
+        const parsedOrder = await this.parse({ rawOrder })
 
-      return parsedOrder
+        return parsedOrder
 
-    })
+      },
+    )
+
+    const parsedOrders = await Promise.all(parsedOrdersPromises)
 
     ValrLog.info(`parsed ${parsedOrders.length} orders for Valr`)
 
