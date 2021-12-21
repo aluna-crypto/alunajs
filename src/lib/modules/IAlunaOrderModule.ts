@@ -22,7 +22,7 @@ export interface IAlunaOrderPlaceParams {
   type: AlunaOrderTypesEnum
   side: AlunaSideEnum
   symbolPair: string
-  rate: string | number
+  rate?: string | number
   amount: string | number
 }
 
