@@ -1,13 +1,13 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
-import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
 import { Valr } from '../../Valr'
+import { IMarketWithCurrencies } from '../IValrMarketSchema'
 
 
 
 export class ValrMarketParser {
 
   static parse (params: {
-    rawMarket: IMarketWithCurrency,
+    rawMarket: IMarketWithCurrencies,
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params

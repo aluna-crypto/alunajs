@@ -1,5 +1,5 @@
-import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
 import {
+  IMarketWithCurrencies,
   IValrCurrencyPairs,
   IValrMarketSchema,
 } from '../IValrMarketSchema'
@@ -11,7 +11,7 @@ export class ValrCurrencyPairsParser {
   static parse (params: {
     rawMarkets: IValrMarketSchema[],
     rawCurrencyPairs: IValrCurrencyPairs[],
-  }): IMarketWithCurrency[] {
+  }): IMarketWithCurrencies[] {
 
     const {
       rawMarkets,
@@ -51,7 +51,7 @@ export class ValrCurrencyPairsParser {
 
       return cumulator
 
-    }, [] as IMarketWithCurrency[])
+    }, [] as IMarketWithCurrencies[])
 
     return rawMarketsWithCurrency
 

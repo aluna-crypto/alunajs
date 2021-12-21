@@ -24,3 +24,8 @@ export interface IValrCurrencyPairs {
   tickSize: string
   baseDecimalPlaces: string
 }
+
+export interface IMarketWithCurrencies extends IValrMarketSchema {
+  baseCurrency: string
+  quoteCurrency: string
+}
