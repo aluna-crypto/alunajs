@@ -8,6 +8,8 @@ import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
+
+
 /*
   Due to TypeScript limitations, we need to use a combination of two
   interfaces to specify instance and static properties/methods sepparately.
@@ -22,8 +24,8 @@ export interface IAlunaExchange {
 
   // private modules
   key: IAlunaKeyModule
-  order: IAlunaOrderWriteModule
-  balance: IAlunaBalanceModule // TODO: considering combining order read+write
+  order: IAlunaOrderWriteModule // TODO: considering combining order read+write
+  balance: IAlunaBalanceModule
   position?: IAlunaPositionModule
 
 }
