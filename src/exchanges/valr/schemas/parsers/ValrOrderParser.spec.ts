@@ -35,6 +35,7 @@ describe('ValrOrderParser', () => {
     const rawSide1 = rawOrder1.side
     const rawType1 = rawOrder1.type
     const rawStatus1 = rawOrder1.status
+    const rawStopPrice1 = rawOrder1.stopPrice
 
     let expectedBaseSymbolId = rawOrder1.currencyPair.slice(0, 3)
     let expectedQuoteSymbolId = rawOrder1.currencyPair.slice(3)
@@ -46,7 +47,9 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.total).to.be.eq(rawOriginalQuantity1 * rawPrice1)
     expect(parsedOrder1.amount).to.be.eq(rawOriginalQuantity1)
     expect(parsedOrder1.isAmountInContracts).not.to.be.ok
-    expect(parsedOrder1.rate).to.be.eq(rawPrice1)
+    expect(parsedOrder1.rate).not.to.be.ok
+    expect(parsedOrder1.limitRate).to.be.eq(rawPrice1)
+    expect(parsedOrder1.stopRate).to.be.eq(Number(rawStopPrice1))
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder1.side)
@@ -71,6 +74,7 @@ describe('ValrOrderParser', () => {
     const rawSide2 = rawOrder2.orderSide
     const rawType2 = rawOrder2.orderType
     const rawStatus2 = rawOrder2.orderStatusType
+    const rawStopPrice2 = rawOrder2.stopPrice
 
     expectedBaseSymbolId = rawOrder2.currencyPair.slice(0, 3)
     expectedQuoteSymbolId = rawOrder2.currencyPair.slice(3)
@@ -82,7 +86,9 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.total).to.be.eq(rawOriginalQuantity2 * rawPrice2)
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
     expect(parsedOrder2.isAmountInContracts).not.to.be.ok
-    expect(parsedOrder2.rate).to.be.eq(rawPrice2)
+    expect(parsedOrder2.rate).not.to.be.ok
+    expect(parsedOrder2.limitRate).to.be.eq(rawPrice2)
+    expect(parsedOrder2.stopRate).to.be.eq(Number(rawStopPrice2))
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder2.side)
@@ -116,6 +122,8 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder3.amount).to.be.eq(rawOriginalQuantity3)
     expect(parsedOrder3.isAmountInContracts).not.to.be.ok
     expect(parsedOrder3.rate).to.be.eq(rawPrice3)
+    expect(parsedOrder3.limitRate).not.to.be.ok
+    expect(parsedOrder3.stopRate).not.to.be.ok
     expect(parsedOrder3.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder3.side)
