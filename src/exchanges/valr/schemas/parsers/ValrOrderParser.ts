@@ -1,3 +1,4 @@
+import { AlunaOrderStatusEnum } from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
@@ -43,6 +44,7 @@ export class ValrOrderParser {
     let status: ValrOrderStatusEnum
     let type: ValrOrderTypesEnum
     let createdAt: string
+    let updatedAt: string
 
     /**
      * Here we first cast rawOrder to IValrOrderListSchema and then try to
@@ -61,6 +63,7 @@ export class ValrOrderParser {
         status,
         type,
         createdAt,
+        updatedAt,
       } = rawOrder as IValrOrderListSchema)
 
     } else {
@@ -71,6 +74,7 @@ export class ValrOrderParser {
         orderType: type,
         orderStatusType: status,
         orderCreatedAt: createdAt,
+        orderUpdatedAt: updatedAt,
       } = rawOrder as IValrOrderGetSchema)
 
     }
@@ -79,6 +83,21 @@ export class ValrOrderParser {
     const rate = parseFloat(price)
 
     const exchangeId = Valr.ID
+
+    const alnOrderStatus = ValrStatusAdapter.translateToAluna({ from: status })
+
+    let filledAt: Date | undefined
+    let canceledAt: Date | undefined
+
+    if (alnOrderStatus === AlunaOrderStatusEnum.FILLED) {
+
+      filledAt = new Date(updatedAt)
+
+    } else if (alnOrderStatus === AlunaOrderStatusEnum.CANCELED) {
+
+      canceledAt = new Date(updatedAt)
+
+    }
 
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
@@ -92,9 +111,11 @@ export class ValrOrderParser {
       rate,
       account: AlunaAccountEnum.EXCHANGE,
       side: ValrSideAdapter.translateToAluna({ from: side }),
-      status: ValrStatusAdapter.translateToAluna({ from: status }),
+      status: alnOrderStatus,
       type: ValrOrderTypeAdapter.translateToAluna({ from: type }),
       placedAt: new Date(createdAt),
+      filledAt,
+      canceledAt,
       meta: rawOrder,
     }
 
