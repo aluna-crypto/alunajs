@@ -22,6 +22,10 @@ describe('ValrStatusAdapter', () => {
     })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(ValrStatusAdapter.translateToAluna({
+      from: ValrOrderStatusEnum.REQUESTED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+    expect(ValrStatusAdapter.translateToAluna({
       from: ValrOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
@@ -31,6 +35,10 @@ describe('ValrStatusAdapter', () => {
 
     expect(ValrStatusAdapter.translateToAluna({
       from: ValrOrderStatusEnum.FAILED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(ValrStatusAdapter.translateToAluna({
+      from: ValrOrderStatusEnum.EXPIRED,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     expect(ValrStatusAdapter.translateToAluna({
