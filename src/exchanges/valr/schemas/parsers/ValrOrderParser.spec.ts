@@ -57,6 +57,9 @@ describe('ValrOrderParser', () => {
       .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType1 }))
     expect(parsedOrder1.placedAt.getTime())
       .to.be.eq(new Date(rawOrder1.createdAt).getTime())
+    expect(parsedOrder1.filledAt).to.be.ok
+    expect(parsedOrder1.filledAt?.getTime())
+      .to.be.eq(new Date(rawOrder1.updatedAt).getTime())
 
     const parsedOrder2 = ValrOrderParser.parse({
       rawOrder: rawOrder2,
@@ -123,6 +126,9 @@ describe('ValrOrderParser', () => {
       .to.be.eq(ValrOrderTypeAdapter.translateToAluna({ from: rawType3 }))
     expect(parsedOrder3.placedAt.getTime())
       .to.be.eq(new Date(rawOrder3.createdAt).getTime())
+    expect(parsedOrder3.canceledAt).to.be.ok
+    expect(parsedOrder3.canceledAt?.getTime())
+      .to.be.eq(new Date(rawOrder3.updatedAt).getTime())
 
   })
 
