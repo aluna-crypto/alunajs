@@ -25,8 +25,8 @@ export interface IAlunaExchange {
   // private modules
   key: IAlunaKeyModule
 
-  // TODO: considering combining order read+write
-  // TODO: considering making optional for web3 integrations (balance only)
+  // TODO: consider combining order read+write
+  // TODO: consider making optional for web3 integrations (balance only)
   order: IAlunaOrderWriteModule
 
   balance: IAlunaBalanceModule
