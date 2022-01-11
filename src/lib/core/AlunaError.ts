@@ -11,7 +11,7 @@ export class AlunaError {
 
   constructor (params: {
     httpStatusCode?: number,
-    errorCode?: string,
+    errorCode: string,
     errorMsg: string,
     metadata?: any,
   }) {
