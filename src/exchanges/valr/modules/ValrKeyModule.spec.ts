@@ -3,6 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaKeyErrorCodes } from '../../../lib/enums/errors/AlunaKeyErrorCodesEnum'
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import {
   IValrKeySchema,
@@ -127,6 +128,7 @@ describe('ValrKeyModule', () => {
       Promise.reject(new AlunaError({
         httpStatusCode: 401,
         errorMsg: ValrErrorEnum.INVALID_KEY,
+        errorCode: AlunaKeyErrorCodes.INVALID_KEY,
       })),
     )
 

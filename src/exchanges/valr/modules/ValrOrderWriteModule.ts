@@ -1,6 +1,9 @@
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaAccountsErrorCodesEnum } from '../../../lib/enums/errors/AlunaAccountsErrorCodesEnum'
+import { AlunaGenericErrorCodesEnum } from '../../../lib/enums/errors/AlunaGenericErrorCodesEnum'
+import { AlunaOrderErrorCodesEnum } from '../../../lib/enums/errors/AlunaOrderErrorCodesEnum'
 import {
   IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
@@ -48,6 +51,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           errorMsg: `Account type '${account}' not found`,
+          errorCode: AlunaAccountsErrorCodesEnum.ACCOUNT_TYPE_NOT_FOUND,
         })
 
       }
@@ -62,6 +66,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           errorMsg: `Account type '${account}' not supported/implemented for Varl`,
+          errorCode: AlunaAccountsErrorCodesEnum.ACCOUNT_TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -72,6 +77,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           errorMsg: `Order type '${type}' not supported/implemented for Varl`,
+          errorCode: AlunaOrderErrorCodesEnum.ORDER_TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -80,6 +86,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           errorMsg: `Order type '${type}' is in read mode`,
+          errorCode: AlunaOrderErrorCodesEnum.ORDER_TYPE_IS_READ_ONLY,
         })
 
       }
@@ -108,6 +115,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         throw new AlunaError({
           httpStatusCode: 200,
           errorMsg: 'Rate param is required for placing new limit orders',
+          errorCode: AlunaGenericErrorCodesEnum.PARAM_ERROR,
         })
 
       }
@@ -147,6 +155,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       throw new AlunaError({
         httpStatusCode: 200,
         errorMsg: meta.failedReason,
+        errorCode: AlunaOrderErrorCodesEnum.ORDER_PLACE_FAILED,
       })
 
     }
@@ -199,6 +208,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       throw new AlunaError({
         httpStatusCode: 200,
         errorMsg: 'Order is not open/active anymore',
+        errorCode: AlunaOrderErrorCodesEnum.ORDER_IS_NOT_OPEN,
       })
 
     }
@@ -251,6 +261,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       const error = new AlunaError({
         httpStatusCode: 500,
         errorMsg: 'Something went wrong, order not canceled',
+        errorCode: AlunaOrderErrorCodesEnum.ORDER_CANCEL_FAILED,
       })
 
       ValrLog.error(error)
