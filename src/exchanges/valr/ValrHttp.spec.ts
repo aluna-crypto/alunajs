@@ -209,7 +209,7 @@ describe('ValrHttp', () => {
 
       const error = err as AlunaError
 
-      expect(error.data.error).to.be.eq(errorMsg)
+      expect(error.errorMsg).to.be.eq(errorMsg)
 
       const calledArg = formatRequestErrorSpy.args[0][0]
 
@@ -231,7 +231,7 @@ describe('ValrHttp', () => {
 
       const error = err as AlunaError
 
-      expect(error.data.error).to.be.eq(errorMsg)
+      expect(error.errorMsg).to.be.eq(errorMsg)
 
       const calledArg = formatRequestErrorSpy.args[1][0]
 
@@ -260,8 +260,8 @@ describe('ValrHttp', () => {
     const error1 = ValrHttp.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.data.error).to.be.eq(dummyError)
-    expect(error1.statusCode).to.be.eq(400)
+    expect(error1.errorMsg).to.be.eq(dummyError)
+    expect(error1.httpStatusCode).to.be.eq(400)
 
     const axiosError2 = {
       isAxiosError: true,
@@ -275,9 +275,9 @@ describe('ValrHttp', () => {
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
-      error2.data.error,
+      error2.errorMsg,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.statusCode).to.be.eq(400)
+    expect(error2.httpStatusCode).to.be.eq(400)
 
     const axiosError3 = {
       isAxiosError: true,
@@ -287,9 +287,9 @@ describe('ValrHttp', () => {
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
-      error3.data.error,
+      error3.errorMsg,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.statusCode).to.be.eq(400)
+    expect(error3.httpStatusCode).to.be.eq(400)
 
     const error = {
       message: dummyError,
@@ -298,8 +298,8 @@ describe('ValrHttp', () => {
     const error4 = ValrHttp.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.data.error).to.be.eq(dummyError)
-    expect(error4.statusCode).to.be.eq(400)
+    expect(error4.errorMsg).to.be.eq(dummyError)
+    expect(error4.httpStatusCode).to.be.eq(400)
 
     const unknown = {}
 
@@ -307,9 +307,9 @@ describe('ValrHttp', () => {
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
-      error5.data.error,
+      error5.errorMsg,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.statusCode).to.be.eq(400)
+    expect(error5.httpStatusCode).to.be.eq(400)
 
   })
 

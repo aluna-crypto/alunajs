@@ -69,7 +69,7 @@ describe('Aluna', () => {
     expect(god).not.to.be.ok
     expect(error).to.be.ok
 
-    expect(error?.data.error).to.be.eq('Exchange not implemented: god')
+    expect(error?.errorMsg).to.be.eq('Exchange not implemented: god')
 
   })
 
@@ -114,7 +114,7 @@ describe('Aluna', () => {
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error?.data.error).to.be.eq('Exchange not implemented: god')
+    expect(error?.errorMsg).to.be.eq('Exchange not implemented: god')
 
   })
 

@@ -47,8 +47,8 @@ describe('ValrOrderTypeAdapter', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(`Order type not supported: ${notSupported}`)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
 
@@ -83,7 +83,7 @@ describe('ValrOrderTypeAdapter', () => {
       const error: AlunaError = err
 
       expect(error instanceof AlunaError).to.be.ok
-      expect(error.data.error)
+      expect(error.errorMsg)
         .to.be.eq(`Order type not supported: ${notSupported}`)
 
     }

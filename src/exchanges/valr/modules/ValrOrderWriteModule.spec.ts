@@ -175,9 +175,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = 'Rate param is required for placing new limit orders'
 
       expect(error).to.exist
-      expect(error?.statusCode).to.eq(200)
-      expect(error?.data.ok).to.eq(false)
-      expect(error?.data.error).to.eq(msg)
+      expect(error?.httpStatusCode).to.eq(200)
+      expect(error?.ok).to.eq(false)
+      expect(error?.errorMsg).to.eq(msg)
 
     })
 
@@ -278,9 +278,9 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
-    expect(error?.statusCode).to.eq(200)
-    expect(error?.data.ok).to.eq(false)
-    expect(error?.data.error).to.eq(failedPlacedOrder.meta.failedReason)
+    expect(error?.httpStatusCode).to.eq(200)
+    expect(error?.ok).to.eq(false)
+    expect(error?.errorMsg).to.eq(failedPlacedOrder.meta.failedReason)
 
   })
 
@@ -306,8 +306,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -341,8 +341,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -376,8 +376,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -412,8 +412,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -454,8 +454,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -496,8 +496,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -538,8 +538,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(msg)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(msg)
 
     }
 
@@ -578,8 +578,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(`Order type '${type}' is in read mode`)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(`Order type '${type}' is in read mode`)
 
     }
 
@@ -712,7 +712,7 @@ describe('ValrOrderWriteModule', () => {
 
     const msg = 'Order is not open/active anymore'
 
-    expect(error?.data.error).to.be.eq(msg)
+    expect(error?.errorMsg).to.be.eq(msg)
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(cancelMock.callCount).to.be.eq(0)
@@ -767,8 +767,8 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
-    expect(error?.statusCode).to.eq(500)
-    expect(error?.data.error)
+    expect(error?.httpStatusCode).to.eq(500)
+    expect(error?.errorMsg)
       .to.be.eq('Something went wrong, order not canceled')
 
   })

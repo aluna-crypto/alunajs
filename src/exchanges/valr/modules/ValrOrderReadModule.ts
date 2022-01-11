@@ -100,10 +100,8 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
       if (!pair) {
 
         throw new AlunaError({
-          statusCode: 200,
-          data: {
-            error: `No symbol pair found for ${orderCurrencyPair}`,
-          },
+          httpStatusCode: 200,
+          errorMsg: `No symbol pair found for ${orderCurrencyPair}`,
         })
 
       }

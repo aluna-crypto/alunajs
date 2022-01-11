@@ -46,9 +46,7 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          data: {
-            error: `Exchange not implemented: ${exchangeId}`,
-          },
+          errorMsg: `Exchange not implemented: ${exchangeId}`,
         })
 
         Log.error(error)
@@ -79,9 +77,7 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          data: {
-            error: `Exchange not implemented: ${exchangeId}`,
-          },
+          errorMsg: `Exchange not implemented: ${exchangeId}`,
         })
 
         Log.error(error)

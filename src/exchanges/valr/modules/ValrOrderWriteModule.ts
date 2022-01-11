@@ -47,9 +47,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!accountSpecs) {
 
         throw new AlunaError({
-          data: {
-            error: `Account type '${account}' not found`,
-          },
+          errorMsg: `Account type '${account}' not found`,
         })
 
       }
@@ -63,10 +61,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!supported || !implemented || !supportedOrderTypes) {
 
         throw new AlunaError({
-          data: {
-            error:
-              `Account type '${account}' not supported/implemented for Varl`,
-          },
+          errorMsg: `Account type '${account}' not supported/implemented for Varl`,
         })
 
       }
@@ -76,9 +71,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
         throw new AlunaError({
-          data: {
-            error: `Order type '${type}' not supported/implemented for Varl`,
-          },
+          errorMsg: `Order type '${type}' not supported/implemented for Varl`,
         })
 
       }
@@ -86,9 +79,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (orderType.mode === AlunaFeaturesModeEnum.READ) {
 
         throw new AlunaError({
-          data: {
-            error: `Order type '${type}' is in read mode`,
-          },
+          errorMsg: `Order type '${type}' is in read mode`,
         })
 
       }
@@ -115,10 +106,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!rate) {
 
         throw new AlunaError({
-          statusCode: 200,
-          data: {
-            error: 'Rate param is required for placing new limit orders',
-          },
+          httpStatusCode: 200,
+          errorMsg: 'Rate param is required for placing new limit orders',
         })
 
       }
@@ -156,10 +145,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
 
       throw new AlunaError({
-        statusCode: 200,
-        data: {
-          error: meta.failedReason,
-        },
+        httpStatusCode: 200,
+        errorMsg: meta.failedReason,
       })
 
     }
@@ -210,10 +197,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (!isOrderOpen) {
 
       throw new AlunaError({
-        statusCode: 200,
-        data: {
-          error: 'Order is not open/active anymore',
-        },
+        httpStatusCode: 200,
+        errorMsg: 'Order is not open/active anymore',
       })
 
     }
@@ -264,10 +249,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
-        statusCode: 500,
-        data: {
-          error: 'Something went wrong, order not canceled',
-        },
+        httpStatusCode: 500,
+        errorMsg: 'Something went wrong, order not canceled',
       })
 
       ValrLog.error(error)

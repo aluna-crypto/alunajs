@@ -55,8 +55,8 @@ describe('ValrStatusAdapter', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(`Order status not supported: ${notSupported}`)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(`Order status not supported: ${notSupported}`)
 
     }
 
@@ -90,8 +90,8 @@ describe('ValrStatusAdapter', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { data: { error } } = err as AlunaError
-      expect(error).to.be.eq(`Order status not supported: ${notSupported}`)
+      const { errorMsg } = err as AlunaError
+      expect(errorMsg).to.be.eq(`Order status not supported: ${notSupported}`)
 
     }
 
