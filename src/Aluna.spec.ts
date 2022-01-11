@@ -45,7 +45,7 @@ describe('Aluna', () => {
 
   })
 
-  it('should warn about exchange not implemented (instance)', async () => {
+  it('should warn about exchange not supported (instance)', async () => {
 
     let god: IAlunaExchange | undefined
     let error: AlunaError | undefined
@@ -69,7 +69,7 @@ describe('Aluna', () => {
     expect(god).not.to.be.ok
     expect(error).to.be.ok
 
-    expect(error?.errorMsg).to.be.eq('Exchange not implemented: god')
+    expect(error?.errorMsg).to.be.eq('Exchange not supported: god')
 
   })
 
@@ -97,7 +97,7 @@ describe('Aluna', () => {
 
   })
 
-  it('should warn about exchange not implemented (static)', async () => {
+  it('should warn about exchange not supported (static)', async () => {
 
     let god: IAlunaExchangeStatic | undefined
     let error
@@ -114,7 +114,7 @@ describe('Aluna', () => {
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error?.errorMsg).to.be.eq('Exchange not implemented: god')
+    expect(error?.errorMsg).to.be.eq('Exchange not supported: god')
 
   })
 
