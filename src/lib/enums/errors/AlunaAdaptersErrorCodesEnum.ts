@@ -1,3 +1,3 @@
-export enum AlunaAdaptersErrorCodesEnum {
-  ADAPTER_NOT_SUPPORTED = 'adapter-not-supported'
+export const AlunaAdaptersErrorCodes = {
+  ADAPTER_NOT_SUPPORTED: 'adapter-not-supported',
 }

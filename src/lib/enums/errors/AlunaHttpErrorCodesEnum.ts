@@ -1,3 +1,3 @@
-export enum AlunaHttpErrorCodesEnum {
-  REQUEST_ERROR = 'request-error',
+export const AlunaHttpErrorCodes = {
+  REQUEST_ERROR: 'request-error',
 }
