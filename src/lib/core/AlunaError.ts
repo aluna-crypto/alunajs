@@ -4,7 +4,9 @@ export class AlunaError {
   public message: string
 
   public metadata?: any
-  public httpStatusCode?: number
+  public httpStatusCode: number
+
+
 
   constructor (params: {
     code: string,
