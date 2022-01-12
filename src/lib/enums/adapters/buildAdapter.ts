@@ -29,8 +29,8 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
     }
 
     const error = new AlunaError({
-      errorMsg: `${errorMessagePrefix} not supported: ${from}`,
-      errorCode: AlunaAdaptersErrorCodes.ADAPTER_NOT_SUPPORTED,
+      message: `${errorMessagePrefix} not supported: ${from}`,
+      code: AlunaAdaptersErrorCodes.ADAPTER_NOT_SUPPORTED,
     })
 
     ValrLog.error(error)

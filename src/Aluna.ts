@@ -47,8 +47,8 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          errorMsg: `Exchange not supported: ${exchangeId}`,
-          errorCode: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
+          message: `Exchange not supported: ${exchangeId}`,
+          code: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
         })
 
         Log.error(error)
@@ -79,8 +79,8 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          errorMsg: `Exchange not supported: ${exchangeId}`,
-          errorCode: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
+          message: `Exchange not supported: ${exchangeId}`,
+          code: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
         })
 
         Log.error(error)
