@@ -128,7 +128,7 @@ describe('ValrKeyModule', () => {
       Promise.reject(new AlunaError({
         httpStatusCode: 401,
         message: ValrErrorEnum.INVALID_KEY,
-        code: AlunaKeyErrorCodes.INVALID_KEY,
+        code: AlunaKeyErrorCodes.INVALID,
       })),
     )
 
@@ -148,7 +148,7 @@ describe('ValrKeyModule', () => {
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
-    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID_KEY)
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
     expect(error?.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
 
   })

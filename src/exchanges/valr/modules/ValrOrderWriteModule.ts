@@ -52,7 +52,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Account type '${account}' not found`,
-          code: AlunaAdaptersErrorCodes.ADAPTER_NOT_FOUND,
+          code: AlunaAdaptersErrorCodes.NOT_FOUND,
         })
 
       }
@@ -67,7 +67,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Account type '${account}' not supported/implemented for Varl`,
-          code: AlunaAccountsErrorCodes.ACCOUNT_TYPE_NOT_SUPPORTED,
+          code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -78,7 +78,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Order type '${type}' not supported/implemented for Varl`,
-          code: AlunaOrderErrorCodes.ORDER_TYPE_NOT_SUPPORTED,
+          code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -87,7 +87,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Order type '${type}' is in read mode`,
-          code: AlunaOrderErrorCodes.ORDER_TYPE_IS_READ_ONLY,
+          code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY,
         })
 
       }
@@ -156,7 +156,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       throw new AlunaError({
         httpStatusCode: 200,
         message: meta.failedReason,
-        code: AlunaOrderErrorCodes.ORDER_PLACE_FAILED,
+        code: AlunaOrderErrorCodes.PLACE_FAILED,
       })
 
     }
@@ -209,7 +209,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       throw new AlunaError({
         httpStatusCode: 200,
         message: 'Order is not open/active anymore',
-        code: AlunaOrderErrorCodes.ORDER_IS_NOT_OPEN,
+        code: AlunaOrderErrorCodes.IS_NOT_OPEN,
       })
 
     }
@@ -262,7 +262,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       const error = new AlunaError({
         httpStatusCode: 500,
         message: 'Something went wrong, order not canceled',
-        code: AlunaOrderErrorCodes.ORDER_CANCEL_FAILED,
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
       })
 
       ValrLog.error(error)

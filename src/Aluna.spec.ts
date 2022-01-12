@@ -70,7 +70,7 @@ describe('Aluna', () => {
     expect(god).not.to.be.ok
     expect(error).to.be.ok
 
-    expect(error?.code).to.be.eq(AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED)
+    expect(error?.code).to.be.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
     expect(error?.message).to.be.eq('Exchange not supported: god')
 
   })
@@ -117,7 +117,7 @@ describe('Aluna', () => {
     expect(god).not.to.be.ok
     expect(error).to.be.ok
 
-    expect(error?.code).to.eq(AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED)
+    expect(error?.code).to.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
     expect(error?.message).to.be.eq('Exchange not supported: god')
 
   })

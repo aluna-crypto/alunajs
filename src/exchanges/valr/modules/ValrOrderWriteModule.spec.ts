@@ -282,7 +282,7 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
-    expect(error?.code).to.eq(AlunaOrderErrorCodes.ORDER_PLACE_FAILED)
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.PLACE_FAILED)
     expect(error?.message).to.eq(failedPlacedOrder.meta.failedReason)
     expect(error?.httpStatusCode).to.eq(200)
 
@@ -716,7 +716,7 @@ describe('ValrOrderWriteModule', () => {
 
     const msg = 'Order is not open/active anymore'
 
-    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.ORDER_IS_NOT_OPEN)
+    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.IS_NOT_OPEN)
     expect(error?.message).to.be.eq(msg)
 
     expect(getRawMock.callCount).to.be.eq(1)
@@ -772,7 +772,7 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
-    expect(error?.code).to.eq(AlunaOrderErrorCodes.ORDER_CANCEL_FAILED)
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
     expect(error?.message)
       .to.be.eq('Something went wrong, order not canceled')
     expect(error?.httpStatusCode).to.eq(500)
