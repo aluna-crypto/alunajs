@@ -148,6 +148,7 @@ describe('ValrKeyModule', () => {
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID_KEY)
     expect(error?.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
 
   })

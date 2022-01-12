@@ -1,6 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import {
+  AlunaGenericErrorCodes,
+  AlunaOrderErrorCodes,
+} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -175,6 +179,7 @@ describe('ValrOrderWriteModule', () => {
       const msg = 'Rate param is required for placing new limit orders'
 
       expect(error).to.exist
+      expect(error?.code).to.eq(AlunaGenericErrorCodes.PARAM_ERROR)
       expect(error?.message).to.eq(msg)
       expect(error?.httpStatusCode).to.eq(200)
 
@@ -277,8 +282,9 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
-    expect(error?.httpStatusCode).to.eq(200)
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.ORDER_PLACE_FAILED)
     expect(error?.message).to.eq(failedPlacedOrder.meta.failedReason)
+    expect(error?.httpStatusCode).to.eq(200)
 
   })
 
@@ -710,6 +716,7 @@ describe('ValrOrderWriteModule', () => {
 
     const msg = 'Order is not open/active anymore'
 
+    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.ORDER_IS_NOT_OPEN)
     expect(error?.message).to.be.eq(msg)
 
     expect(getRawMock.callCount).to.be.eq(1)
@@ -765,9 +772,10 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
-    expect(error?.httpStatusCode).to.eq(500)
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.ORDER_CANCEL_FAILED)
     expect(error?.message)
       .to.be.eq('Something went wrong, order not canceled')
+    expect(error?.httpStatusCode).to.eq(500)
 
   })
 

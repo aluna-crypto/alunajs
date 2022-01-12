@@ -1,7 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { AlunaError } from '../../..'
+import {
+  AlunaError,
+  AlunaGenericErrorCodes,
+} from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -370,6 +373,7 @@ describe('ValrOrderReadModule', () => {
     const msg = `No symbol pair found for ${rawOrder.currencyPair}`
 
     expect(error).to.be.ok
+    expect(error?.code).to.be.eq(AlunaGenericErrorCodes.PARSER_ERROR)
     expect(error?.message).to.be.eq(msg)
 
     expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
