@@ -2,7 +2,7 @@ export class AlunaError {
 
   public ok: false
   public errorMsg: string
-  public errorCode?: string
+  public errorCode: string
   public metadata?: any
 
   public httpStatusCode: number
