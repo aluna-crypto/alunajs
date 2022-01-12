@@ -1,6 +1,6 @@
 import { ValrLog } from '../../../exchanges/valr/ValrLog'
 import { AlunaError } from '../../core/AlunaError'
-import { AlunaAdaptersErrorCodesEnum } from '../errors/AlunaAdaptersErrorCodesEnum'
+import { AlunaAdaptersErrorCodes } from '../errors/AlunaAdaptersErrorCodesEnum'
 
 
 
@@ -30,7 +30,7 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
 
     const error = new AlunaError({
       errorMsg: `${errorMessagePrefix} not supported: ${from}`,
-      errorCode: AlunaAdaptersErrorCodesEnum.ADAPTER_NOT_SUPPORTED,
+      errorCode: AlunaAdaptersErrorCodes.ADAPTER_NOT_SUPPORTED,
     })
 
     ValrLog.error(error)

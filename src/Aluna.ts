@@ -3,7 +3,7 @@ import {
   IAlunaExchange,
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
-import { AlunaExchangeErrorCodesEnum } from './lib/enums/errors/AlunaExchangeErrorCodesEnum'
+import { AlunaExchangeErrorCodes } from './lib/enums/errors/AlunaExchangeErrorCodesEnum'
 import { Exchanges } from './lib/Exchanges'
 import { Log } from './lib/Log'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
@@ -48,7 +48,7 @@ export class Aluna extends Exchanges {
 
         const error = new AlunaError({
           errorMsg: `Exchange not supported: ${exchangeId}`,
-          errorCode: AlunaExchangeErrorCodesEnum.EXCHANGE_NOT_SUPPORTED,
+          errorCode: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
         })
 
         Log.error(error)
@@ -80,7 +80,7 @@ export class Aluna extends Exchanges {
 
         const error = new AlunaError({
           errorMsg: `Exchange not supported: ${exchangeId}`,
-          errorCode: AlunaExchangeErrorCodesEnum.EXCHANGE_NOT_SUPPORTED,
+          errorCode: AlunaExchangeErrorCodes.EXCHANGE_NOT_SUPPORTED,
         })
 
         Log.error(error)

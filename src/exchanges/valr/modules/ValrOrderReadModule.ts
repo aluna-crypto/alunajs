@@ -1,7 +1,7 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodesEnum } from '../../../lib/enums/errors/AlunaGenericErrorCodesEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/enums/errors/AlunaGenericErrorCodesEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
@@ -103,7 +103,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
         throw new AlunaError({
           httpStatusCode: 200,
           errorMsg: `No symbol pair found for ${orderCurrencyPair}`,
-          errorCode: AlunaGenericErrorCodesEnum.PARSER_ERROR,
+          errorCode: AlunaGenericErrorCodes.PARSER_ERROR,
         })
 
       }

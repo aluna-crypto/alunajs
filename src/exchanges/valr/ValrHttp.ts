@@ -9,7 +9,7 @@ import {
   IAlunaHttpPublicParams,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodesEnum } from '../../lib/enums/errors/AlunaHttpErrorCodesEnum'
+import { AlunaHttpErrorCodes } from '../../lib/enums/errors/AlunaHttpErrorCodesEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrLog } from './ValrLog'
 
@@ -42,7 +42,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
     error = new AlunaError({
       errorMsg: response?.data?.message || errorMsg,
-      errorCode: AlunaHttpErrorCodesEnum.REQUEST_ERROR,
+      errorCode: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
     })
 
@@ -50,7 +50,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
     error = new AlunaError({
       errorMsg: param.message || errorMsg,
-      errorCode: AlunaHttpErrorCodesEnum.REQUEST_ERROR,
+      errorCode: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
   }
