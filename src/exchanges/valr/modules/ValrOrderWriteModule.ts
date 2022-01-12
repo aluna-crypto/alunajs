@@ -267,6 +267,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
       ValrLog.error(error)
 
+      // TODO: Throw AlunaError instead
       throw error
 
     }

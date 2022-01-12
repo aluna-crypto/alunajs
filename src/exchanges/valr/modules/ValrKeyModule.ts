@@ -36,6 +36,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       ValrLog.error(error.message)
 
+      // TODO: Throw AlunaError instead
       throw error
 
     }
