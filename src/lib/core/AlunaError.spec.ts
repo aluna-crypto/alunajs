@@ -10,24 +10,26 @@ describe('AlunaError', () => {
 
   it('should create error just fine', () => {
 
-    const httpStatusCode = 200
-    const errorMsg = 'message'
-    const errorCode = 'code'
+    const message = 'message'
+    const code = 'code'
+
     const metadata = { some: 'thing' }
+    const httpStatusCode = 200
 
     const error = new AlunaError({
-      httpStatusCode,
-      errorMsg,
-      errorCode,
+      code,
+      message,
       metadata,
+      httpStatusCode,
     })
 
     expect(error).to.be.ok
 
-    expect(error.httpStatusCode).to.eq(httpStatusCode)
-    expect(error.errorMsg).to.eq(errorMsg)
-    expect(error.errorCode).to.eq(errorCode)
+    expect(error.code).to.eq(code)
+    expect(error.message).to.eq(message)
+
     expect(error.metadata).to.eq(metadata)
+    expect(error.httpStatusCode).to.eq(httpStatusCode)
 
   })
 
@@ -38,9 +40,9 @@ describe('AlunaError', () => {
     const defaultHttpStatusCode = 400
 
     const error = new AlunaError({
+      code: 'code',
+      message: 'message',
       // httpStatusCode, // no status code here
-      errorMsg: 'message',
-      errorCode: 'code',
     })
 
     expect(error).to.be.ok
@@ -53,9 +55,9 @@ describe('AlunaError', () => {
   it('should create error without metadata', () => {
 
     const error = new AlunaError({
+      code: 'code',
+      message: 'message',
       httpStatusCode: 200,
-      errorMsg: 'message',
-      errorCode: 'code',
     })
 
     expect(error).to.be.ok
