@@ -19,7 +19,12 @@ export class AlunaError {
     this.ok = false
     this.errorMsg = params.errorMsg
     this.errorCode = params.errorCode
-    this.metadata = params.metadata
+
+    if (params.metadata) {
+
+      this.metadata = params.metadata
+
+    }
 
     this.httpStatusCode = params.httpStatusCode || 400
 
