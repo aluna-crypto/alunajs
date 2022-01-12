@@ -31,8 +31,8 @@ describe('ValrSideAdapter', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(`Order side not supported: ${notSupported}`)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
 
     }
 
@@ -58,8 +58,8 @@ describe('ValrSideAdapter', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(`Order side not supported: ${notSupported}`)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
 
     }
 

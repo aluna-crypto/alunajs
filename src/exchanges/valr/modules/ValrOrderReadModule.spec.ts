@@ -370,7 +370,7 @@ describe('ValrOrderReadModule', () => {
     const msg = `No symbol pair found for ${rawOrder.currencyPair}`
 
     expect(error).to.be.ok
-    expect(error?.errorMsg).to.be.eq(msg)
+    expect(error?.message).to.be.eq(msg)
 
     expect(fetchCurrencyPairsMock.callCount).to.be.eq(1)
 
