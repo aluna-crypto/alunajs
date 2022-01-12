@@ -110,6 +110,7 @@ describe('ValrKeyModule', () => {
 
   it('should properly inform when api key or secret are wrong', async () => {
 
+    // TODO: Validate error reproducibility
     const mockedError = new AlunaError({
       httpStatusCode: 401,
       message: 'API key or secret is invalid',
