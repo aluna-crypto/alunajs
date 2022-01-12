@@ -1,6 +1,6 @@
 import { ValrLog } from '../../../exchanges/valr/ValrLog'
 import { AlunaError } from '../../core/AlunaError'
-import { AlunaAdaptersErrorCodes } from '../errors/AlunaAdaptersErrorCodesEnum'
+import { AlunaAdaptersErrorCodes } from '../../errors/AlunaAdaptersErrorCodesEnum'
 
 
 

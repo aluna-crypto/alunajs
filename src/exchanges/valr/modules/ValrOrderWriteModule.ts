@@ -1,9 +1,9 @@
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaAccountsErrorCodes } from '../../../lib/enums/errors/AlunaAccountsErrorCodesEnum'
-import { AlunaGenericErrorCodes } from '../../../lib/enums/errors/AlunaGenericErrorCodesEnum'
-import { AlunaOrderErrorCodes } from '../../../lib/enums/errors/AlunaOrderErrorCodesEnum'
+import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodesEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodesEnum'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodesEnum'
 import {
   IAlunaOrderCancelParams,
   IAlunaOrderEditParams,

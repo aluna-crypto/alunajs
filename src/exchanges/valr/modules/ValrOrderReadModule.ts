@@ -1,7 +1,7 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../../lib/enums/errors/AlunaGenericErrorCodesEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodesEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,

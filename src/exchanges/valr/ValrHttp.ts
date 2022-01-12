@@ -9,7 +9,7 @@ import {
   IAlunaHttpPublicParams,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/enums/errors/AlunaHttpErrorCodesEnum'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodesEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrLog } from './ValrLog'
 

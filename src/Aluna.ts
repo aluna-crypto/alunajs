@@ -3,7 +3,7 @@ import {
   IAlunaExchange,
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
-import { AlunaExchangeErrorCodes } from './lib/enums/errors/AlunaExchangeErrorCodesEnum'
+import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodesEnum'
 import { Exchanges } from './lib/Exchanges'
 import { Log } from './lib/Log'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
