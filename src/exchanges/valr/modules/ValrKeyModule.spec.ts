@@ -4,7 +4,6 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,
@@ -111,6 +110,12 @@ describe('ValrKeyModule', () => {
 
   it('should properly inform when api key or secret are wrong', async () => {
 
+    const mockedError = new AlunaError({
+      httpStatusCode: 401,
+      message: 'API key or secret is invalid',
+      code: AlunaKeyErrorCodes.INVALID,
+    })
+
     ImportMock.mockOther(
       valrKeyModule,
       'exchange',
@@ -125,11 +130,7 @@ describe('ValrKeyModule', () => {
     ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      Promise.reject(new AlunaError({
-        httpStatusCode: 401,
-        message: ValrErrorEnum.INVALID_KEY,
-        code: AlunaKeyErrorCodes.INVALID,
-      })),
+      Promise.reject(mockedError),
     )
 
     let error: AlunaError | undefined
@@ -149,7 +150,7 @@ describe('ValrKeyModule', () => {
 
     expect(error).to.be.ok
     expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
-    expect(error?.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
+    expect(error?.message).to.be.eq(mockedError.message)
 
   })
 
