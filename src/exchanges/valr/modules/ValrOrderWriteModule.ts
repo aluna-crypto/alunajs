@@ -51,8 +51,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!accountSpecs) {
 
         throw new AlunaError({
-          errorMsg: `Account type '${account}' not found`,
-          errorCode: AlunaAdaptersErrorCodes.ADAPTER_NOT_FOUND,
+          message: `Account type '${account}' not found`,
+          code: AlunaAdaptersErrorCodes.ADAPTER_NOT_FOUND,
         })
 
       }
