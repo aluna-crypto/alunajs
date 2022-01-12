@@ -21,13 +21,13 @@ export * from './lib/enums/AlunaPositionStatusEnum'
 export * from './lib/enums/AlunaSideEnum'
 
 // errors
-export * from './lib/errors/AlunaAccountsErrorCodesEnum'
-export * from './lib/errors/AlunaAdaptersErrorCodesEnum'
-export * from './lib/errors/AlunaExchangeErrorCodesEnum'
-export * from './lib/errors/AlunaGenericErrorCodesEnum'
-export * from './lib/errors/AlunaHttpErrorCodesEnum'
-export * from './lib/errors/AlunaKeyErrorCodesEnum'
-export * from './lib/errors/AlunaOrderErrorCodesEnum'
+export * from './lib/errors/AlunaAccountsErrorCodes'
+export * from './lib/errors/AlunaAdaptersErrorCodes'
+export * from './lib/errors/AlunaExchangeErrorCodes'
+export * from './lib/errors/AlunaGenericErrorCodes'
+export * from './lib/errors/AlunaHttpErrorCodes'
+export * from './lib/errors/AlunaKeyErrorCodes'
+export * from './lib/errors/AlunaOrderErrorCodes'
 
 // modules
 export * from './lib/modules/IAlunaBalanceModule'

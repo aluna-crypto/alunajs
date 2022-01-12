@@ -3,7 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
-import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodesEnum'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import {
   IValrKeySchema,
