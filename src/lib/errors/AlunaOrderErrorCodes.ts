@@ -3,5 +3,5 @@ export const AlunaOrderErrorCodes = {
   TYPE_IS_READ_ONLY: 'order-type-is-read-only',
   IS_NOT_OPEN: 'order-isnt-open',
   PLACE_FAILED: 'order-place-fail',
-  CANCEL_FAILED: 'order-cacel-fail',
+  CANCEL_FAILED: 'order-cancel-fail',
 }
