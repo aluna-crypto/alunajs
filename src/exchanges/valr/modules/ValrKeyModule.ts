@@ -20,26 +20,13 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     ValrLog.info('fetching Valr key details')
 
-    let rawKey: IValrKeySchema
+    const { keySecret } = this.exchange
 
-    try {
-
-      const { keySecret } = this.exchange
-
-      rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
-        verb: AlunaHttpVerbEnum.GET,
-        url: 'https://api.valr.com/v1/account/api-keys/current',
-        keySecret,
-      })
-
-    } catch (error) {
-
-      ValrLog.error(error.message)
-
-      // TODO: Throw AlunaError instead
-      throw error
-
-    }
+    const rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
+      verb: AlunaHttpVerbEnum.GET,
+      url: 'https://api.valr.com/v1/account/api-keys/current',
+      keySecret,
+    })
 
     const details = this.parseDetails({ rawKey })
 
