@@ -2,6 +2,17 @@ import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../enums/AlunaSideEnum'
+import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
+
+
+
+export interface IAlunaOrderUICustomDisplay {
+  amount: IAlunaUICustomDisplaySchema
+  rate?: IAlunaUICustomDisplaySchema
+  limitRate?: IAlunaUICustomDisplaySchema
+  stopRate?: IAlunaUICustomDisplaySchema
+  total: IAlunaUICustomDisplaySchema
+}
 
 
 
@@ -16,6 +27,7 @@ export interface IAlunaOrderSchema {
 
   total: number
   amount: number
+  uiCustomDisplay?: IAlunaOrderUICustomDisplay
 
   rate?: number
   stopRate?: number

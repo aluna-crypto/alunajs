@@ -1,6 +1,16 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../enums/AlunaPositionStatusEnum'
 import { AlunaSideEnum } from '../enums/AlunaSideEnum'
+import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
+
+
+
+export interface IUIPositionCustomDisplay {
+  amount: IAlunaUICustomDisplaySchema
+  rate: IAlunaUICustomDisplaySchema
+  total: IAlunaUICustomDisplaySchema
+  pnl: IAlunaUICustomDisplaySchema
+}
 
 
 
@@ -12,6 +22,7 @@ export interface IAlunaPositionSchema {
 
   total: number
   amount: number
+  uiCustomDisplay?: IUIPositionCustomDisplay
 
   basePrice: number
   openPrice: number
