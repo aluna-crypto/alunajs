@@ -18,7 +18,9 @@ export interface IAlunaPositionSchema {
 
   id?: string | number
 
-  marketId: string
+  exchangeId: string
+  baseSymbolId: string
+  quoteSymbolId: string
 
   total: number
   amount: number
