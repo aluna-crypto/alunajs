@@ -12,7 +12,6 @@ export interface IAlunaPositionSchema {
 
   total: number
   amount: number
-  isAmountInContracts: boolean
 
   basePrice: number
   openPrice: number

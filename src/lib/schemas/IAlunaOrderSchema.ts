@@ -16,7 +16,6 @@ export interface IAlunaOrderSchema {
 
   total: number
   amount: number
-  isAmountInContracts: boolean
 
   rate?: number
   stopRate?: number
