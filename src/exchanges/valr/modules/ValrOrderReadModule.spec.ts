@@ -126,7 +126,6 @@ describe('ValrOrderReadModule', () => {
         account,
         amount,
         id,
-        isAmountInContracts,
         placedAt,
         side,
         status,
@@ -143,7 +142,6 @@ describe('ValrOrderReadModule', () => {
       expect(order.id).to.be.eq(id)
       expect(order.account).to.be.eq(account)
       expect(order.amount).to.be.eq(amount)
-      expect(order.isAmountInContracts).to.be.eq(isAmountInContracts)
       expect(order.placedAt).to.be.eq(placedAt)
       expect(order.side).to.be.eq(side)
       expect(order.status).to.be.eq(status)
@@ -273,8 +271,6 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.rate).to.be.ok
     expect(parsedOrder1.placedAt).to.be.ok
 
-    expect(parsedOrder1.isAmountInContracts).not.to.be.ok
-
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
@@ -293,8 +289,6 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder2.amount).to.be.ok
     expect(parsedOrder2.rate).to.be.ok
     expect(parsedOrder2.placedAt).to.be.ok
-
-    expect(parsedOrder2.isAmountInContracts).not.to.be.ok
 
     expect(parsedOrder2.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
