@@ -35,8 +35,8 @@ export interface IAlunaPositionSchema {
   side: AlunaSideEnum
   status: AlunaPositionStatusEnum
 
-  pnl: number
-  pnlPercentage: number
+  pl: number
+  plPercentage: number
 
   leverage?: number
   crossMargin?: boolean
