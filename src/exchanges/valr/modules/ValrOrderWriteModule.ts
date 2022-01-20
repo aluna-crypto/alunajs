@@ -153,10 +153,18 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
 
+      let code = AlunaOrderErrorCodes.PLACE_FAILED
+
+      if (meta.failedReason === 'Insufficient Balance') {
+
+        code = AlunaOrderErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
       throw new AlunaError({
         httpStatusCode: 200,
         message: meta.failedReason,
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        code,
       })
 
     }
