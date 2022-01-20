@@ -63,6 +63,13 @@ describe('ValrOrderWriteModule', () => {
     },
   }
 
+  const failedPlacedOrderNoBalance: Partial<IAlunaOrderSchema> = {
+    meta: {
+      orderStatusType: ValrOrderStatusEnum.FAILED,
+      failedReason: 'Insufficient Balance',
+    },
+  }
+
   const mockDeps = () => {
 
     ImportMock.mockOther(
@@ -284,6 +291,42 @@ describe('ValrOrderWriteModule', () => {
     expect(error).to.exist
     expect(error?.code).to.eq(AlunaOrderErrorCodes.PLACE_FAILED)
     expect(error?.message).to.eq(failedPlacedOrder.meta.failedReason)
+    expect(error?.httpStatusCode).to.eq(200)
+
+  })
+
+  it('throws if order placement fails for insufficient balance', async () => {
+
+    mockDeps()
+
+    ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'get',
+      failedPlacedOrderNoBalance,
+    )
+
+    // try to place order
+    let placeResponse: IAlunaOrderSchema | undefined
+    let error: AlunaError | undefined
+
+    try {
+
+      placeResponse = await valrOrderWriteModule.place({
+        ...placeOrderParams,
+        type: AlunaOrderTypesEnum.MARKET,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(placeResponse).not.to.exist
+
+    expect(error).to.exist
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error?.message).to.eq(failedPlacedOrderNoBalance.meta.failedReason)
     expect(error?.httpStatusCode).to.eq(200)
 
   })
