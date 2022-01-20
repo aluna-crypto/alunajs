@@ -28,6 +28,7 @@ export * from './lib/errors/AlunaGenericErrorCodes'
 export * from './lib/errors/AlunaHttpErrorCodes'
 export * from './lib/errors/AlunaKeyErrorCodes'
 export * from './lib/errors/AlunaOrderErrorCodes'
+export * from './lib/errors/AlunaPositionErrorCodes'
 
 // modules
 export * from './lib/modules/IAlunaBalanceModule'
