@@ -17,6 +17,7 @@ export interface IUIPositionCustomDisplay {
 export interface IAlunaPositionSchema {
 
   id?: string | number
+  symbolPair: string
 
   exchangeId: string
   baseSymbolId: string
