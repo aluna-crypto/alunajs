@@ -1,6 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import {
+  AlunaGenericErrorCodes,
+  AlunaOrderErrorCodes,
+} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -56,6 +60,13 @@ describe('ValrOrderWriteModule', () => {
     meta: {
       orderStatusType: ValrOrderStatusEnum.FAILED,
       failedReason: 'Order placement failed because oif this and that.',
+    },
+  }
+
+  const failedPlacedOrderNoBalance: Partial<IAlunaOrderSchema> = {
+    meta: {
+      orderStatusType: ValrOrderStatusEnum.FAILED,
+      failedReason: 'Insufficient Balance',
     },
   }
 
@@ -175,9 +186,9 @@ describe('ValrOrderWriteModule', () => {
       const msg = 'Rate param is required for placing new limit orders'
 
       expect(error).to.exist
+      expect(error?.code).to.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+      expect(error?.message).to.eq(msg)
       expect(error?.httpStatusCode).to.eq(200)
-      expect(error?.ok).to.eq(false)
-      expect(error?.errorMsg).to.eq(msg)
 
     })
 
@@ -278,9 +289,45 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+    expect(error?.message).to.eq(failedPlacedOrder.meta.failedReason)
     expect(error?.httpStatusCode).to.eq(200)
-    expect(error?.ok).to.eq(false)
-    expect(error?.errorMsg).to.eq(failedPlacedOrder.meta.failedReason)
+
+  })
+
+  it('throws if order placement fails for insufficient balance', async () => {
+
+    mockDeps()
+
+    ImportMock.mockFunction(
+      valrOrderWriteModule,
+      'get',
+      failedPlacedOrderNoBalance,
+    )
+
+    // try to place order
+    let placeResponse: IAlunaOrderSchema | undefined
+    let error: AlunaError | undefined
+
+    try {
+
+      placeResponse = await valrOrderWriteModule.place({
+        ...placeOrderParams,
+        type: AlunaOrderTypesEnum.MARKET,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(placeResponse).not.to.exist
+
+    expect(error).to.exist
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error?.message).to.eq(failedPlacedOrderNoBalance.meta.failedReason)
+    expect(error?.httpStatusCode).to.eq(200)
 
   })
 
@@ -306,8 +353,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -341,8 +388,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -376,8 +423,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -412,8 +459,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -454,8 +501,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -496,8 +543,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -538,8 +585,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(msg)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(msg)
 
     }
 
@@ -578,8 +625,8 @@ describe('ValrOrderWriteModule', () => {
 
       expect(err instanceof AlunaError).to.be.ok
 
-      const { errorMsg } = err as AlunaError
-      expect(errorMsg).to.be.eq(`Order type '${type}' is in read mode`)
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order type '${type}' is in read mode`)
 
     }
 
@@ -712,7 +759,8 @@ describe('ValrOrderWriteModule', () => {
 
     const msg = 'Order is not open/active anymore'
 
-    expect(error?.errorMsg).to.be.eq(msg)
+    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.IS_NOT_OPEN)
+    expect(error?.message).to.be.eq(msg)
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(cancelMock.callCount).to.be.eq(0)
@@ -767,9 +815,10 @@ describe('ValrOrderWriteModule', () => {
     expect(getRawMock.calledWith(cancelParams)).to.be.ok
 
     expect(error instanceof AlunaError).to.be.ok
-    expect(error?.httpStatusCode).to.eq(500)
-    expect(error?.errorMsg)
+    expect(error?.code).to.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+    expect(error?.message)
       .to.be.eq('Something went wrong, order not canceled')
+    expect(error?.httpStatusCode).to.eq(500)
 
   })
 

@@ -46,7 +46,6 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder1.total).to.be.eq(rawOriginalQuantity1 * rawPrice1)
     expect(parsedOrder1.amount).to.be.eq(rawOriginalQuantity1)
-    expect(parsedOrder1.isAmountInContracts).not.to.be.ok
     expect(parsedOrder1.rate).not.to.be.ok
     expect(parsedOrder1.limitRate).to.be.eq(rawPrice1)
     expect(parsedOrder1.stopRate).to.be.eq(Number(rawStopPrice1))
@@ -85,7 +84,6 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder2.total).to.be.eq(rawOriginalQuantity2 * rawPrice2)
     expect(parsedOrder2.amount).to.be.eq(rawOriginalQuantity2)
-    expect(parsedOrder2.isAmountInContracts).not.to.be.ok
     expect(parsedOrder2.rate).not.to.be.ok
     expect(parsedOrder2.limitRate).to.be.eq(rawPrice2)
     expect(parsedOrder2.stopRate).to.be.eq(Number(rawStopPrice2))
@@ -120,7 +118,6 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder3.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
     expect(parsedOrder3.total).to.be.eq(rawOriginalQuantity3 * rawPrice3)
     expect(parsedOrder3.amount).to.be.eq(rawOriginalQuantity3)
-    expect(parsedOrder3.isAmountInContracts).not.to.be.ok
     expect(parsedOrder3.rate).to.be.eq(rawPrice3)
     expect(parsedOrder3.limitRate).not.to.be.ok
     expect(parsedOrder3.stopRate).not.to.be.ok

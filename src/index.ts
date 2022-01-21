@@ -20,6 +20,16 @@ export * from './lib/enums/AlunaOrderTypesEnum'
 export * from './lib/enums/AlunaPositionStatusEnum'
 export * from './lib/enums/AlunaSideEnum'
 
+// errors
+export * from './lib/errors/AlunaAccountsErrorCodes'
+export * from './lib/errors/AlunaAdaptersErrorCodes'
+export * from './lib/errors/AlunaExchangeErrorCodes'
+export * from './lib/errors/AlunaGenericErrorCodes'
+export * from './lib/errors/AlunaHttpErrorCodes'
+export * from './lib/errors/AlunaKeyErrorCodes'
+export * from './lib/errors/AlunaOrderErrorCodes'
+export * from './lib/errors/AlunaPositionErrorCodes'
+
 // modules
 export * from './lib/modules/IAlunaBalanceModule'
 export * from './lib/modules/IAlunaKeyModule'

@@ -9,6 +9,7 @@ import {
   IAlunaHttpPublicParams,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrLog } from './ValrLog'
 
@@ -31,7 +32,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
   let error: AlunaError
 
-  const errorMsg = 'Error while trying to execute Axios request'
+  const message = 'Error while trying to execute Axios request'
 
   if ((param as AxiosError).isAxiosError) {
 
@@ -40,14 +41,16 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
     } = param as AxiosError
 
     error = new AlunaError({
-      errorMsg: response?.data?.message || errorMsg,
+      message: response?.data?.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
     })
 
   } else {
 
     error = new AlunaError({
-      errorMsg: param.message || errorMsg,
+      message: param.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
   }

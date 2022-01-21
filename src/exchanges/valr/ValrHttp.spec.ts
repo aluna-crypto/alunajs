@@ -172,7 +172,7 @@ describe('ValrHttp', () => {
 
   it('should ensure formatRequestError is call on resquest error', async () => {
 
-    const errorMsg = 'Dummy error'
+    const message = 'Dummy error'
 
     const formatRequestErrorSpy = Sinon.spy(
       ValrHttp,
@@ -181,7 +181,7 @@ describe('ValrHttp', () => {
 
     const requestSpy = Sinon.spy(() => {
 
-      throw new Error(errorMsg)
+      throw new Error(message)
 
     })
 
@@ -209,13 +209,13 @@ describe('ValrHttp', () => {
 
       const error = err as AlunaError
 
-      expect(error.errorMsg).to.be.eq(errorMsg)
+      expect(error.message).to.be.eq(message)
 
       const calledArg = formatRequestErrorSpy.args[0][0]
 
       expect(formatRequestErrorSpy.callCount).to.be.eq(1)
       expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(errorMsg)
+      expect(calledArg.message).to.be.eq(message)
 
     }
 
@@ -231,13 +231,13 @@ describe('ValrHttp', () => {
 
       const error = err as AlunaError
 
-      expect(error.errorMsg).to.be.eq(errorMsg)
+      expect(error.message).to.be.eq(message)
 
       const calledArg = formatRequestErrorSpy.args[1][0]
 
       expect(formatRequestErrorSpy.callCount).to.be.eq(2)
       expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(errorMsg)
+      expect(calledArg.message).to.be.eq(message)
 
     }
 
@@ -260,7 +260,7 @@ describe('ValrHttp', () => {
     const error1 = ValrHttp.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.errorMsg).to.be.eq(dummyError)
+    expect(error1.message).to.be.eq(dummyError)
     expect(error1.httpStatusCode).to.be.eq(400)
 
     const axiosError2 = {
@@ -275,7 +275,7 @@ describe('ValrHttp', () => {
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
-      error2.errorMsg,
+      error2.message,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error2.httpStatusCode).to.be.eq(400)
 
@@ -287,7 +287,7 @@ describe('ValrHttp', () => {
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
-      error3.errorMsg,
+      error3.message,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error3.httpStatusCode).to.be.eq(400)
 
@@ -298,7 +298,7 @@ describe('ValrHttp', () => {
     const error4 = ValrHttp.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.errorMsg).to.be.eq(dummyError)
+    expect(error4.message).to.be.eq(dummyError)
     expect(error4.httpStatusCode).to.be.eq(400)
 
     const unknown = {}
@@ -307,7 +307,7 @@ describe('ValrHttp', () => {
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
-      error5.errorMsg,
+      error5.message,
     ).to.be.eq('Error while trying to execute Axios request')
     expect(error5.httpStatusCode).to.be.eq(400)
 

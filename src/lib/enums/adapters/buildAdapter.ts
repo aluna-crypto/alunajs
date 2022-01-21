@@ -1,5 +1,6 @@
 import { ValrLog } from '../../../exchanges/valr/ValrLog'
 import { AlunaError } from '../../core/AlunaError'
+import { AlunaAdaptersErrorCodes } from '../../errors/AlunaAdaptersErrorCodes'
 
 
 
@@ -28,7 +29,8 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
     }
 
     const error = new AlunaError({
-      errorMsg: `${errorMessagePrefix} not supported: ${from}`,
+      message: `${errorMessagePrefix} not supported: ${from}`,
+      code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
     })
 
     ValrLog.error(error)
