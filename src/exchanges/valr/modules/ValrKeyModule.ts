@@ -1,4 +1,9 @@
-import { IAlunaKeySchema } from '../../..'
+import {
+  AlunaError,
+  AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
+  IAlunaKeySchema,
+} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
@@ -20,11 +25,11 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     ValrLog.info('fetching Valr key details')
 
+    const { keySecret } = this.exchange
+
     let rawKey: IValrKeySchema
 
     try {
-
-      const { keySecret } = this.exchange
 
       rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
@@ -34,9 +39,31 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      ValrLog.error(error.message)
+      const { message } = error
 
-      throw error
+      let code: string
+      let httpStatusCode: number
+
+      if (message === 'API key or secret is invalid') {
+
+        code = AlunaKeyErrorCodes.INVALID
+        httpStatusCode = 401
+
+      } else {
+
+        code = AlunaHttpErrorCodes.REQUEST_ERROR
+        httpStatusCode = 500
+
+      }
+
+      const alunaError = new AlunaError({
+        code,
+        message,
+        httpStatusCode,
+        metadata: error,
+      })
+
+      throw alunaError
 
     }
 

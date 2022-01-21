@@ -1,9 +1,12 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import {
+  AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
+} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
-import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,
@@ -108,7 +111,15 @@ describe('ValrKeyModule', () => {
 
   })
 
-  it('should properly inform when api key or secret are wrong', async () => {
+  it('should properly handle request error for fetchDetails', async () => {
+
+    const message = 'API key or secret is invalid'
+
+    let mockedError = new AlunaError({
+      httpStatusCode: 401,
+      message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+    })
 
     ImportMock.mockOther(
       valrKeyModule,
@@ -121,13 +132,10 @@ describe('ValrKeyModule', () => {
       } as IAlunaExchange,
     )
 
-    ImportMock.mockFunction(
+    const privateRequestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      Promise.reject(new AlunaError({
-        httpStatusCode: 401,
-        errorMsg: ValrErrorEnum.INVALID_KEY,
-      })),
+      Promise.reject(mockedError),
     )
 
     let error: AlunaError | undefined
@@ -139,14 +147,42 @@ describe('ValrKeyModule', () => {
 
     } catch (e) {
 
-      error = e as AlunaError
+      error = e
 
     }
 
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
-    expect(error?.errorMsg).to.be.eq(ValrErrorEnum.INVALID_KEY)
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+    expect(error?.message).to.be.eq(mockedError.message)
+    expect(error?.httpStatusCode).to.be.eq(401)
+
+
+    mockedError = new AlunaError({
+      code: 'any-code',
+      message: 'any-message',
+      httpStatusCode: 403,
+    })
+
+    privateRequestMock.returns(Promise.reject(mockedError))
+
+    try {
+
+      result = await valrKeyModule.fetchDetails()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error?.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(error?.message).to.be.eq(mockedError.message)
+    expect(error?.httpStatusCode).to.be.eq(500)
 
   })
 

@@ -132,7 +132,6 @@ export class ValrOrderParser {
       quoteSymbolId: quoteCurrency,
       total: amount * Number(price),
       amount,
-      isAmountInContracts: false,
       rate,
       stopRate,
       limitRate,

@@ -1,6 +1,16 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../enums/AlunaPositionStatusEnum'
 import { AlunaSideEnum } from '../enums/AlunaSideEnum'
+import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
+
+
+
+export interface IUIPositionCustomDisplay {
+  amount: IAlunaUICustomDisplaySchema
+  rate: IAlunaUICustomDisplaySchema
+  total: IAlunaUICustomDisplaySchema
+  pnl: IAlunaUICustomDisplaySchema
+}
 
 
 
@@ -8,11 +18,13 @@ export interface IAlunaPositionSchema {
 
   id?: string | number
 
-  marketId: string
+  exchangeId: string
+  baseSymbolId: string
+  quoteSymbolId: string
 
   total: number
   amount: number
-  isAmountInContracts: boolean
+  uiCustomDisplay?: IUIPositionCustomDisplay
 
   basePrice: number
   openPrice: number
@@ -23,14 +35,14 @@ export interface IAlunaPositionSchema {
   side: AlunaSideEnum
   status: AlunaPositionStatusEnum
 
-  pnl: number
-  pnlPercentage: number
+  pl: number
+  plPercentage: number
 
   leverage?: number
   crossMargin?: boolean
 
-  openedAt?: Date
-  closedAt?: Date
+  openedAt: Date
+  closedAt: Date
 
   meta: any
 

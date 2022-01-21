@@ -3,6 +3,7 @@ import {
   IAlunaExchange,
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
+import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { Exchanges } from './lib/Exchanges'
 import { Log } from './lib/Log'
 import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
@@ -46,7 +47,9 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          errorMsg: `Exchange not implemented: ${exchangeId}`,
+          message: `Exchange not supported: ${exchangeId}`,
+          code: AlunaExchangeErrorCodes.NOT_SUPPORTED,
+          httpStatusCode: 200,
         })
 
         Log.error(error)
@@ -77,7 +80,9 @@ export class Aluna extends Exchanges {
       default: {
 
         const error = new AlunaError({
-          errorMsg: `Exchange not implemented: ${exchangeId}`,
+          message: `Exchange not supported: ${exchangeId}`,
+          code: AlunaExchangeErrorCodes.NOT_SUPPORTED,
+          httpStatusCode: 200,
         })
 
         Log.error(error)
