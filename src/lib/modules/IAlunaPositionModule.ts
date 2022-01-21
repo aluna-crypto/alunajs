@@ -15,7 +15,7 @@ export interface IAlunaPositionGetParams {
 
 export interface IAlunaPositionCloseParams {
   id?: string | number
-  symbol?: string
+  symbolPair?: string
 }
 
 export interface IAlunaPositionModule extends IAlunaModule {
