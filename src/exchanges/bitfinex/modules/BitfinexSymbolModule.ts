@@ -3,9 +3,14 @@ import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { Bitfinex } from '../Bitfinex'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
-import { IBitfinexSymbols } from '../schemas/IBitfinexMarketSchema'
+import { IBitfinexSymbols } from '../schemas/IBitfinexSymbolSchema'
 
 
+
+// TODO: find a better place to define this
+const symbolsIdsPath = 'pub:list:currency'
+const labelsPath = 'pub:map:currency:label'
+const aliasesPath = 'pub:map:currency:sym'
 
 export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
@@ -19,14 +24,18 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
   }
 
-  public static listRaw (): Promise<IBitfinexSymbols[]> {
+  public static async listRaw (): Promise<IBitfinexSymbols> {
 
     BitfinexLog.info('fetching Bitfinex symbols')
 
     const { publicRequest } = BitfinexHttp
 
-    const rawSymbols = publicRequest<IBitfinexSymbols[]>({
-      url: 'https://api-pub.bitfinex.com/v2/conf/pub:map:currency:label',
+    const baseUrl = 'https://api-pub.bitfinex.com/v2/conf/'
+
+    const url = `${baseUrl}${symbolsIdsPath},${labelsPath},${aliasesPath}`
+
+    const rawSymbols = publicRequest<IBitfinexSymbols>({
+      url,
     })
 
     return rawSymbols
@@ -58,9 +67,9 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbols } = params
 
-    const [symbolTuplesArr] = rawSymbols
+    const [symbolsTupleArr] = rawSymbols
 
-    const parsedSymbols = symbolTuplesArr.map((symbolTuple) => {
+    const parsedSymbols = symbolsTupleArr.map((symbolTuple) => {
 
       const parsedSymbol = BitfinexSymbolModule.parse({
         rawSymbol: symbolTuple,
