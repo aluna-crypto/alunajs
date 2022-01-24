@@ -3,7 +3,19 @@ import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { Bitfinex } from '../Bitfinex'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
-import { IBitfinexSymbols } from '../schemas/IBitfinexSymbolSchema'
+import {
+  IBitfinexSymbols,
+  TBitfinexLabel,
+  TBitfinexProperSymbol,
+} from '../schemas/IBitfinexSymbolSchema'
+
+
+
+interface IBitfinexParseSymbolParams {
+  bitfinexSymbolId: string
+  symbolsLabelsDict: Record<string, TBitfinexLabel>
+  properSymbolsIdsDict: Record<string, TBitfinexProperSymbol>
+}
 
 
 
@@ -43,18 +55,51 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
   }
 
   public static parse (params:{
-    rawSymbol: [string, string],
+    rawSymbol: IBitfinexParseSymbolParams,
   }): IAlunaSymbolSchema {
 
+    // Consider implementing separeted parser
     const { rawSymbol } = params
 
-    const [id, name] = rawSymbol
+    const {
+      bitfinexSymbolId,
+      properSymbolsIdsDict,
+      symbolsLabelsDict,
+    } = rawSymbol
+
+    let id = bitfinexSymbolId
+
+    let name: string | undefined
+    let alias: string | undefined
+
+    const symbolLabel = symbolsLabelsDict[bitfinexSymbolId]
+
+    if (symbolLabel) {
+
+      [, name] = symbolLabel
+
+    }
+
+    const properSymbol = properSymbolsIdsDict[bitfinexSymbolId]
+
+    if (properSymbol) {
+
+      [, id] = properSymbol
+
+      alias = bitfinexSymbolId
+
+    }
 
     const symbol: IAlunaSymbolSchema = {
-      id,
+      id: id.toUpperCase(), // some symbols ids are like: 'USDt'
       name,
       exchangeId: Bitfinex.ID,
-      meta: rawSymbol,
+      alias,
+      meta: {
+        currency: bitfinexSymbolId,
+        currencyLabel: symbolLabel,
+        currencySym: properSymbol,
+      },
     }
 
     return symbol
@@ -62,22 +107,58 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
   }
 
   public static parseMany (params: {
-    rawSymbols: IBitfinexSymbols[],
+    rawSymbols: IBitfinexSymbols,
   }): IAlunaSymbolSchema[] {
 
     const { rawSymbols } = params
 
-    const [symbolsTupleArr] = rawSymbols
+    const [
+      symbolsIds,
+      symbolsLabels,
+      properSymbolsIds,
+    ] = rawSymbols
 
-    const parsedSymbols = symbolsTupleArr.map((symbolTuple) => {
+    const symbolsLabelsDict: Record<string, TBitfinexLabel> = {}
+    const properSymbolsIdsDict: Record<string, TBitfinexProperSymbol> = {}
 
-      const parsedSymbol = BitfinexSymbolModule.parse({
-        rawSymbol: symbolTuple,
-      })
+    symbolsLabels.forEach((symbolLabel) => {
 
-      return parsedSymbol
+      const [bitfinexSymbolId] = symbolLabel
+
+      symbolsLabelsDict[bitfinexSymbolId] = symbolLabel
 
     })
+
+    properSymbolsIds.forEach((properSymbol) => {
+
+      const [bitfinexSymbolId] = properSymbol
+
+      properSymbolsIdsDict[bitfinexSymbolId] = properSymbol
+
+    })
+
+    const parsedSymbols = symbolsIds.reduce((acc, bitfinexSymbolId) => {
+
+      // skipping derivatives symbols for now
+      if (/F0/.test(bitfinexSymbolId)) {
+
+        return acc
+
+      }
+
+      const rawSymbol: IBitfinexParseSymbolParams = {
+        bitfinexSymbolId,
+        properSymbolsIdsDict,
+        symbolsLabelsDict,
+      }
+
+      const parsedSymbol = BitfinexSymbolModule.parse({ rawSymbol })
+
+      acc.push(parsedSymbol)
+
+      return acc
+
+    }, [] as IAlunaSymbolSchema[])
 
     BitfinexLog.info(`parsed ${parsedSymbols.length} symbols for Bitfinex`)
 
