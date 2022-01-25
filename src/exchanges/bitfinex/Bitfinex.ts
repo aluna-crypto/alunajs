@@ -7,6 +7,7 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { BitfinexSpecs } from './BitfinexSpecs'
+import { BitfinexMarketModule } from './modules/BitfinexMarketModule'
 import { BitfinexSymbolModule } from './modules/BitfinexSymbolModule'
 
 
@@ -18,7 +19,7 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
   static readonly SPECS = BitfinexSpecs
 
   static Symbol = BitfinexSymbolModule
-  static Market = {} as any
+  static Market = BitfinexMarketModule
 
   // local definitions
   key: IAlunaKeyModule
