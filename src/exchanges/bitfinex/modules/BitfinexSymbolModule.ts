@@ -11,7 +11,7 @@ import { BitfinexSymbolParser } from '../schemas/parsers/BitfinexSymbolParser'
 
 
 
-interface IBitfinexParseSymbolParams {
+export interface IBitfinexParseSymbolParams {
   bitfinexCurrency: string
   bitfinexCurrencyLabel: TBitfinexCurrencyLabel | undefined
   bitfinexSym: TBitfinexCurrencySym | undefined
