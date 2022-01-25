@@ -14,7 +14,7 @@ describe('BitfinexSymbolParser', () => {
 
   it('should parse bitfinex symbols just fine', async () => {
 
-    BITFINEX_CURRENCIES[0].forEach((currency) => {
+    BITFINEX_CURRENCIES.forEach((currency) => {
 
       const labelIndex = BITFINEX_CURRENCIES_LABELS.findIndex((l) => {
 
