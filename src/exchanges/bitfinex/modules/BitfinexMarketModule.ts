@@ -1,6 +1,7 @@
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
+import { IBitfinexMarket } from '../schemas/IBitfinexMarketSchema'
 
 
 
@@ -9,11 +10,13 @@ export const BitfinexMarketModule = class {
   static spotTickersPath = 'pub:list:pair:exchange'
   static margingTickersPath = 'pub:list:pair:margin'
 
-  public static async listRaw (): Promise<any[]> {
+  public static async listRaw (): Promise<IBitfinexMarket[]> {
 
     BitfinexLog.info('fetching Bitfinex markets')
 
-    const rawMarketsWithCurrency = BitfinexHttp.publicRequest<any>({
+    const { publicRequest } = BitfinexHttp
+
+    const rawMarketsWithCurrency = publicRequest<IBitfinexMarket[]>({
       url: 'https://api-pub.bitfinex.com/v2/tickers?symbols=ALL',
     })
 
