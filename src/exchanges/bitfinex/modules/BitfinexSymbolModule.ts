@@ -19,12 +19,11 @@ export interface IBitfinexParseSymbolParams {
 
 
 
-// TODO: find a better place to define this
-const symbolsIdsPath = 'pub:list:currency'
-const labelsPath = 'pub:map:currency:label'
-const aliasesPath = 'pub:map:currency:sym'
-
 export const BitfinexSymbolModule: IAlunaSymbolModule = class {
+
+  static currenciesPath = 'pub:list:currency'
+  static labelsPath = 'pub:map:currency:label'
+  static currenciesSymsPath = 'pub:map:currency:sym'
 
   public static async list (): Promise<IAlunaSymbolSchema[]> {
 
@@ -44,7 +43,8 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     const baseUrl = 'https://api-pub.bitfinex.com/v2/conf/'
 
-    const url = `${baseUrl}${symbolsIdsPath},${labelsPath},${aliasesPath}`
+    const url = `${baseUrl}${this.currenciesPath},${this.labelsPath}`
+      .concat(`,${this.currenciesSymsPath}`)
 
     const rawSymbols = publicRequest<IBitfinexSymbols>({
       url,
@@ -75,7 +75,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
     const [
       symbolsIds,
       symbolsLabels,
-      properSymbolsIds,
+      currencySyms,
     ] = rawSymbols
 
     const currencyLabelsDict: Record<string, TBitfinexCurrencyLabel> = {}
@@ -89,7 +89,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     })
 
-    properSymbolsIds.forEach((currencySym) => {
+    currencySyms.forEach((currencySym) => {
 
       const [bitfinexSymbolId] = currencySym
 
