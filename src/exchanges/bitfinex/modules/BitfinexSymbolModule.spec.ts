@@ -1,128 +1,152 @@
-// TODO: fix tests for Bitfinex Symbol Module
+import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
+
+import { Bitfinex } from '../Bitfinex'
+import { BitfinexHttp } from '../BitfinexHttp'
+import * as BitfinexSymbolParserMod from '../schemas/parsers/BitfinexSymbolParser'
+import {
+  BITFINEX_CURRENCIES,
+  BITFINEX_CURRENCIES_LABELS,
+  BITFINEX_CURRENCIES_SYMS,
+  BITFINEX_PARSED_SYMBOLS,
+  BITFINEX_RAW_SYMBOLS,
+} from '../test/fixtures/bitfinexSymbols'
+import {
+  BitfinexSymbolModule,
+  IBitfinexParseSymbolParams,
+} from './BitfinexSymbolModule'
+
+
 
 describe('BitfinexSymbolModule', () => {
 
-  // it('should list Bitfinex raw symbols just fine', async () => {
+  it('should list Bitfinex raw symbols just fine', async () => {
 
-  //   const requestMock = ImportMock.mockFunction(
-  //     BitfinexHttp,
-  //     'publicRequest',
-  //     Promise.resolve(BITFINEX_RAW_SYMBOLS),
-  //   )
+    const requestMock = ImportMock.mockFunction(
+      BitfinexHttp,
+      'publicRequest',
+      Promise.resolve(BITFINEX_RAW_SYMBOLS),
+    )
 
-  //   const rawSymbols = await BitfinexSymbolModule.listRaw()
+    const rawSymbols = await BitfinexSymbolModule.listRaw()
 
-  //   expect(rawSymbols.length).to.eq(1)
-  //   expect(rawSymbols).to.deep.eq(BITFINEX_RAW_SYMBOLS)
+    expect(rawSymbols.length).to.eq(BITFINEX_RAW_SYMBOLS.length)
+    expect(rawSymbols).to.deep.eq(BITFINEX_RAW_SYMBOLS)
 
-  //   const tuplesArr = BITFINEX_RAW_SYMBOLS[0]
+    expect(requestMock.callCount).to.be.eq(1)
 
-  //   expect(tuplesArr.length).to.be.eq(6)
+  })
 
-  //   tuplesArr.forEach((tuple) => {
+  it('should list Bitfinex parsed symbols just fine', async () => {
 
-  //     const [id, name] = tuple
+    const listRawMock = ImportMock.mockFunction(
+      BitfinexSymbolModule,
+      'listRaw',
+      Promise.resolve(BITFINEX_RAW_SYMBOLS),
+    )
 
-  //     expect(id).to.be.ok
-  //     expect(name).to.be.ok
+    const parseManyMock = ImportMock.mockFunction(
+      BitfinexSymbolModule,
+      'parseMany',
+      BITFINEX_PARSED_SYMBOLS,
+    )
 
-  //   })
+    const parsedSymbols = await BitfinexSymbolModule.list()
 
-  //   expect(requestMock.callCount).to.be.eq(1)
+    expect(parsedSymbols.length).to.eq(BITFINEX_PARSED_SYMBOLS.length)
+    expect(parsedSymbols).to.deep.eq(BITFINEX_PARSED_SYMBOLS)
 
-  // })
+    expect(parsedSymbols[0].exchangeId).to.be.eq(Bitfinex.ID)
+    expect(parsedSymbols[0].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[0].id)
+    expect(parsedSymbols[0].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[0].name)
 
-  // it('should list Bitfinex parsed symbols just fine', async () => {
+    expect(parsedSymbols[1].exchangeId).to.be.eq(Bitfinex.ID)
+    expect(parsedSymbols[1].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[1].id)
+    expect(parsedSymbols[1].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[1].name)
 
-  //   const listRawMock = ImportMock.mockFunction(
-  //     BitfinexSymbolModule,
-  //     'listRaw',
-  //     Promise.resolve(BITFINEX_RAW_SYMBOLS),
-  //   )
+    expect(parsedSymbols[2].exchangeId).to.be.eq(Bitfinex.ID)
+    expect(parsedSymbols[2].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[2].id)
+    expect(parsedSymbols[2].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[2].name)
 
-  //   const parseManyMock = ImportMock.mockFunction(
-  //     BitfinexSymbolModule,
-  //     'parseMany',
-  //     BITFINEX_PARSED_SYMBOLS,
-  //   )
+    expect(listRawMock.callCount).to.eq(1)
+    expect(parseManyMock.callCount).to.eq(1)
 
-  //   const rawSymbols = await BitfinexSymbolModule.list()
+    expect(parseManyMock.calledWith({
+      rawSymbols: BITFINEX_RAW_SYMBOLS,
+    })).to.be.ok
 
-  //   expect(rawSymbols.length).to.eq(6)
-  //   expect(rawSymbols).to.deep.eq(BITFINEX_PARSED_SYMBOLS)
+    expect(parseManyMock.returned(BITFINEX_PARSED_SYMBOLS)).to.be.ok
 
-  //   expect(rawSymbols[0].exchangeId).to.be.eq(Bitfinex.ID)
-  //   expect(rawSymbols[0].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[0].id)
-  //   expect(rawSymbols[0].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[0].name)
+  })
 
-  //   expect(rawSymbols[1].exchangeId).to.be.eq(Bitfinex.ID)
-  //   expect(rawSymbols[1].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[1].id)
-  //   expect(rawSymbols[1].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[1].name)
+  it('should parse a Bitfinex symbol just fine', async () => {
 
-  //   expect(rawSymbols[2].exchangeId).to.be.eq(Bitfinex.ID)
-  //   expect(rawSymbols[2].id).to.be.eq(BITFINEX_PARSED_SYMBOLS[2].id)
-  //   expect(rawSymbols[2].name).to.be.eq(BITFINEX_PARSED_SYMBOLS[2].name)
+    const parserMock = ImportMock.mockFunction(
+      BitfinexSymbolParserMod.BitfinexSymbolParser,
+      'parse',
+      BITFINEX_PARSED_SYMBOLS[0],
+    )
 
-  //   expect(listRawMock.callCount).to.eq(1)
+    const rawSymbol: IBitfinexParseSymbolParams = {
+      bitfinexCurrency: BITFINEX_CURRENCIES[0][1],
+      bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
+      bitfinexSym: BITFINEX_CURRENCIES_SYMS[0],
+    }
 
-  //   expect(parseManyMock.callCount).to.eq(1)
-  //   expect(parseManyMock.calledWith({
-  //     rawSymbols: BITFINEX_RAW_SYMBOLS,
-  //   })).to.be.ok
+    const parsedSymbol1 = BitfinexSymbolModule.parse({
+      rawSymbol,
+    })
 
-  // })
+    expect(parserMock.callCount).to.be.eq(1)
+    expect(parserMock.calledWithExactly(rawSymbol)).to.be.ok
+    expect(parsedSymbol1).to.deep.eq(BITFINEX_PARSED_SYMBOLS[0])
 
-  // it('should parse a Bitfinex symbol just fine', async () => {
+    // new mocking
+    parserMock.returns(BITFINEX_PARSED_SYMBOLS[1])
 
-  //   const parsedSymbol1 = BitfinexSymbolModule.parse({
-  //     rawSymbol: BITFINEX_RAW_SYMBOLS[0][0],
-  //   })
+    const rawSymbol2: IBitfinexParseSymbolParams = {
+      bitfinexCurrency: BITFINEX_CURRENCIES[0][1],
+      bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
+      bitfinexSym: BITFINEX_CURRENCIES_SYMS[0],
+    }
 
-  //   expect(parsedSymbol1.exchangeId).to.be.eq(Bitfinex.ID)
-  //   expect(parsedSymbol1.id).to.be.eq(BITFINEX_RAW_SYMBOLS[0][0][0])
-  //   expect(parsedSymbol1.name).to.be.eq(BITFINEX_RAW_SYMBOLS[0][0][1])
+    const parsedSymbol2 = BitfinexSymbolModule.parse({
+      rawSymbol: rawSymbol2,
+    })
 
-  //   const parsedSymbol2 = BitfinexSymbolModule.parse({
-  //     rawSymbol: BITFINEX_RAW_SYMBOLS[0][1],
-  //   })
+    expect(parserMock.callCount).to.be.eq(2)
+    expect(parserMock.calledWithExactly(rawSymbol2)).to.be.ok
+    expect(parsedSymbol2).to.deep.eq(BITFINEX_PARSED_SYMBOLS[1])
 
-  //   expect(parsedSymbol2.exchangeId).to.be.eq(Bitfinex.ID)
-  //   expect(parsedSymbol2.id).to.be.eq(BITFINEX_RAW_SYMBOLS[0][1][0])
-  //   expect(parsedSymbol2.name).to.be.eq(BITFINEX_RAW_SYMBOLS[0][1][1])
+  })
 
-  // })
+  it('should parse many Bitfinex symbols just fine', async () => {
 
-  // it('should parse many Bitfinex symbols just fine', async () => {
+    const parseMock = ImportMock.mockFunction(
+      BitfinexSymbolModule,
+      'parse',
+    )
 
-  //   const parseMock = ImportMock.mockFunction(
-  //     BitfinexSymbolModule,
-  //     'parse',
-  //   )
+    BITFINEX_PARSED_SYMBOLS.forEach((parsed, index) => {
 
-  //   const rawSymbols = []
+      parseMock.onCall(index).returns(parsed)
 
-  //   BITFINEX_PARSED_SYMBOLS.forEach((mockedParsed, index) => {
+    })
 
-  //     parseMock.onCall(index).returns(mockedParsed)
+    const parsedSymbols = BitfinexSymbolModule.parseMany({
+      rawSymbols: BITFINEX_RAW_SYMBOLS,
+    })
 
-  //     rawSymbols.push([] as any)
+    expect(parsedSymbols.length).to.be.eq(BITFINEX_PARSED_SYMBOLS.length)
 
-  //   })
+    parsedSymbols.forEach((parsed, index) => {
 
-  //   const parsedSymbols = BitfinexSymbolModule.parseMany({
-  //     rawSymbols: [rawSymbols],
-  //   })
+      expect(parsed.exchangeId).to.be.eq(Bitfinex.ID)
+      expect(parsed.id).to.be.eq(BITFINEX_PARSED_SYMBOLS[index].id)
+      expect(parsed.name).to.be.eq(BITFINEX_PARSED_SYMBOLS[index].name)
 
-  //   expect(parsedSymbols.length).to.be.eq(BITFINEX_PARSED_SYMBOLS.length)
+    })
 
-  //   parsedSymbols.forEach((parsed, index) => {
-
-  //     expect(parsed.exchangeId).to.be.eq(Bitfinex.ID)
-  //     expect(parsed.id).to.be.eq(BITFINEX_PARSED_SYMBOLS[index].id)
-  //     expect(parsed.name).to.be.eq(BITFINEX_PARSED_SYMBOLS[index].name)
-
-  //   })
-
-  // })
+  })
 
 })
