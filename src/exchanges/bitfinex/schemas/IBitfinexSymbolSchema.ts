@@ -1,14 +1,15 @@
-export interface IBitfinexSymbols extends TSymbolsTuple {}
+export interface IBitfinexSymbols extends TBitfinexSymbolsResponse {}
 
-type TSymbolsTuple = [
-  IBitfinexSymbolsIds, IBitfinexSymbolsLabels, IProperBitfinexSymbolsIds
+type TBitfinexSymbolsResponse = [
+  IBitfinexCurrencies, IBitfinexCurrencyLabels, IBitfinexCurrencySyms
 ]
 
 
-export interface IBitfinexSymbolsIds extends Array<string> {}
+export interface IBitfinexCurrencies extends Array<string> {}
 
-export interface IBitfinexSymbolsLabels extends Array<TBitfinexLabel> {}
-export type TBitfinexLabel = [bitfinexSymbolId: string, symbolName: string]
+export interface IBitfinexCurrencyLabels extends Array<TBitfinexCurrencyLabel> {}
+export type TBitfinexCurrencyLabel = [currency: string, name: string]
 
-export interface IProperBitfinexSymbolsIds extends Array<TBitfinexProperSymbol> {}
-export type TBitfinexProperSymbol = [bitfinexSymbolId: string, symbolId: string]
+export interface IBitfinexCurrencySyms extends Array<TBitfinexCurrencySym> {}
+export type TBitfinexCurrencySym = [currency: string, symbolId: string]
+
