@@ -1,6 +1,20 @@
+import { IBitfinexCurrencySyms } from './IBitfinexSymbolSchema'
+
+
+
 export interface IBitfinexMarket extends TBitfinexMarket {}
 
+
 type TBitfinexMarket = [
+  IBitfinexTicker[],
+  IBitfinexMarginEnabledCurrencies,
+  IBitfinexCurrencySyms,
+]
+
+
+export interface IBitfinexTicker extends TBitfinexTicker {}
+
+type TBitfinexTicker = [
   SYMBOL: string,
   BID: number,
   BID_SIZE: number,
@@ -13,3 +27,6 @@ type TBitfinexMarket = [
   HIGH: number,
   LOW: number,
 ]
+
+
+export interface IBitfinexMarginEnabledCurrencies extends Array<string> {}
