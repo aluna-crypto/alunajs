@@ -8,18 +8,16 @@ import {
 
 
 
-export const BITFINEX_CURRENCIES: IBitfinexCurrencies[] = [
-  [
-    'AAVE',
-    'ADA',
-    'BTC',
-    'ETH',
-    'EUR',
-    'USD',
-    'UST',
-    'UDC',
-    'USTF0',
-  ],
+export const BITFINEX_CURRENCIES: IBitfinexCurrencies = [
+  'AAVE',
+  'ADA',
+  'BTC',
+  'ETH',
+  'EUR',
+  'USD',
+  'UST',
+  'UDC',
+  'USTF0',
 ]
 
 
