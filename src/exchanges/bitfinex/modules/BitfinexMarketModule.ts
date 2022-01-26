@@ -50,7 +50,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
   }
 
-  public static async list (): Promise<any[]> {
+  public static async list (): Promise<IAlunaMarketSchema[]> {
 
     const rawMarkets = await BitfinexMarketModule.listRaw()
 
