@@ -10,7 +10,7 @@ import { TBitfinexCurrencySym } from '../IBitfinexSymbolSchema'
 
 export interface IBitfinexMarketParseParams {
   rawTicker: IBitfinexTicker
-  isMarginEnabled: boolean
+  enabledMarginMarketsDict: Record<string, string>
   currencySymsDict: Record<string, TBitfinexCurrencySym>
 }
 
@@ -22,8 +22,8 @@ export class BitfinexMarketParser {
 
     const {
       rawTicker,
-      isMarginEnabled,
       currencySymsDict,
+      enabledMarginMarketsDict,
     } = params
 
     const [
@@ -54,21 +54,13 @@ export class BitfinexMarketParser {
 
     }
 
-    if (currencySymsDict[baseSymbolId]) {
+    baseSymbolId = currencySymsDict[baseSymbolId]
+      ? currencySymsDict[baseSymbolId][1].toUpperCase()
+      : baseSymbolId
 
-      const [, fixedBaseSymbol] = currencySymsDict[baseSymbolId]
-
-      baseSymbolId = fixedBaseSymbol.toUpperCase()
-
-    }
-
-    if (currencySymsDict[baseSymbolId]) {
-
-      const [, fixedQuoteSymbol] = currencySymsDict[baseSymbolId]
-
-      quoteSymbolId = fixedQuoteSymbol.toUpperCase()
-
-    }
+    quoteSymbolId = currencySymsDict[quoteSymbolId]
+      ? currencySymsDict[quoteSymbolId][1].toUpperCase()
+      : quoteSymbolId
 
     const ticker: IAlunaTickerSchema = {
       bid,
@@ -82,6 +74,8 @@ export class BitfinexMarketParser {
       change: dailyChangeRelative,
     }
 
+    const marginEnabled = !!enabledMarginMarketsDict[symbol.slice(1)]
+
     const parsedMarket: IAlunaMarketSchema = {
       exchangeId: Bitfinex.ID,
 
@@ -93,7 +87,7 @@ export class BitfinexMarketParser {
       ticker,
 
       spotEnabled: true,
-      marginEnabled: isMarginEnabled,
+      marginEnabled,
       derivativesEnabled: false,
 
       leverageEnabled: false,
