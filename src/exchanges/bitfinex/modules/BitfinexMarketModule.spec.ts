@@ -146,4 +146,31 @@ describe('BitfinexMarketModule', () => {
 
   })
 
+  it('should list Bitfinex parsed markets just fine', async () => {
+
+    const listRawMock = ImportMock.mockFunction(
+      BitfinexMarketModule,
+      'listRaw',
+      Promise.resolve(BITFINEX_RAW_MARKETS),
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      BitfinexMarketModule,
+      'parseMany',
+      BITFINEX_PARSED_MARKETS,
+    )
+
+    const parsedMarkets = await BitfinexMarketModule.list()
+
+    expect(listRawMock.callCount).to.be.eq(1)
+    expect(parseManyMock.callCount).to.be.eq(1)
+
+    expect(parseManyMock.calledWithExactly({
+      rawMarkets: BITFINEX_RAW_MARKETS,
+    })).to.be.ok
+
+    expect(parseManyMock.returned(parsedMarkets)).to.be.ok
+
+  })
+
 })
