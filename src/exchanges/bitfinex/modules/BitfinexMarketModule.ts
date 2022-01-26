@@ -115,7 +115,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
       const rawMarket: IBitfinexMarketParseParams = {
         rawTicker: ticker,
         currencySymsDict,
-        isMarginEnabled: !!enabledMarginMarketsDict[symbol.slice(1)],
+        enabledMarginMarketsDict,
       }
 
       const parsedMarket = BitfinexMarketModule.parse({
