@@ -10,6 +10,7 @@ import {
 import {
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
   BITFINEX_PARSED_MARKETS,
+  BITFINEX_RAW_MARKETS,
   BITFINEX_RAW_TICKERS,
 } from '../test/fixtures/bitfinexMarkets'
 import { BITFINEX_CURRENCIES_SYMS } from '../test/fixtures/bitfinexSymbols'
@@ -58,7 +59,7 @@ describe('BitfinexMarketModule', () => {
 
   })
 
-  it('should parse Bitfinex raw markets just fine', async () => {
+  it('should parse Bitfinex raw market just fine', async () => {
 
     const BitfinexMarketParserMock = ImportMock.mockFunction(
       BitfinexMarketParser,
@@ -119,6 +120,29 @@ describe('BitfinexMarketModule', () => {
     })).to.be.ok
 
     expect(BitfinexMarketParserMock.returned(parsedMarket2)).to.be.ok
+
+  })
+
+  it('should parse many Bitfinex raw markets just fine', async () => {
+
+    const BitfinexMarketParserMock = ImportMock.mockFunction(
+      BitfinexMarketModule,
+      'parse',
+    )
+
+    // mocking 'parse' method calls
+    BITFINEX_PARSED_MARKETS.forEach((parsed, i) => {
+
+      BitfinexMarketParserMock.onCall(i).returns(parsed)
+
+    })
+
+    const parsedMarkets = BitfinexMarketModule.parseMany({
+      rawMarkets: BITFINEX_RAW_MARKETS,
+    })
+
+    expect(BitfinexMarketParserMock.callCount).to.be.eq(parsedMarkets.length)
+    expect(BITFINEX_PARSED_MARKETS).to.deep.eq(parsedMarkets)
 
   })
 
