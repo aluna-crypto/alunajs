@@ -1,3 +1,7 @@
+import {
+  IAlunaKeySecretSchema,
+  IAlunaSettingsSchema,
+} from '../..'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import {
   IAlunaExchange,
@@ -7,6 +11,7 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { BitfinexSpecs } from './BitfinexSpecs'
+import { BitfinexKeyModule } from './modules/BitfinexKeyModule'
 import { BitfinexMarketModule } from './modules/BitfinexMarketModule'
 import { BitfinexSymbolModule } from './modules/BitfinexSymbolModule'
 
@@ -26,19 +31,19 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
   order: IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
 
-  // constructor (
-  //   params: {
-  //     keySecret: IAlunaKeySecretSchema,
-  //     settings?: IAlunaSettingsSchema,
-  //   },
-  // ) {
+  constructor (
+    params: {
+      keySecret: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
+    },
+  ) {
 
-  //   super(params)
+    super(params)
 
-  //   this.key = new BitfinexKeyModule({ exchange: this })
-  //   this.balance = new BitfinexBalanceModule({ exchange: this })
-  //   this.order = new BitfinexOrderWriteModule({ exchange: this })
+    this.key = new BitfinexKeyModule({ exchange: this })
+    // this.balance = new BitfinexBalanceModule({ exchange: this })
+    // this.order = new BitfinexOrderWriteModule({ exchange: this })
 
-  // }
+  }
 
 }
