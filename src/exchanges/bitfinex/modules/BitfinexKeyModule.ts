@@ -1,4 +1,8 @@
-import { IAlunaKeySchema } from '../../..'
+import {
+  AlunaError,
+  AlunaHttpErrorCodes,
+  IAlunaKeySchema,
+} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
@@ -29,7 +33,14 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      throw new Error()
+      console.log(error)
+
+      throw new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: error.message,
+        httpStatusCode: 500,
+        metadata: error,
+      })
 
     }
 
@@ -67,21 +78,24 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { rawKey } = params
 
-    const [,
-      ordersScope,,,
+    const [
+      _accountScope,
+      ordersScope,
+      _fundingScope,
+      _settingsScope,
       walletsScope,
       withdrawScope,
     ] = rawKey
 
     const canReadBalances = walletsScope[1] === 1
 
-    const canReadOrder = ordersScope[1] === 1
+    const canReadOrders = ordersScope[1] === 1
     const canCreateOrders = ordersScope[2] === 1
 
     const canWithdraw = withdrawScope[2] === 1
 
     const alunaPermissions: IAlunaKeyPermissionSchema = {
-      read: canReadBalances && canReadOrder,
+      read: canReadBalances && canReadOrders,
       trade: canCreateOrders,
       withdraw: canWithdraw,
     }
