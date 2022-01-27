@@ -7,6 +7,7 @@ import { ImportMock } from 'ts-mock-imports'
 import {
   AlunaError,
   AlunaHttpVerbEnum,
+  AlunaKeyErrorCodes,
   IAlunaKeySecretSchema,
 } from '../..'
 import * as BitfinexHttpMod from './BitfinexHttp'
@@ -92,9 +93,14 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it('should throw error for public', async () => {
+  it("should call 'handleRequestError' if public request throws", async () => {
 
-    const requestSpy = Sinon.spy(() => Promise.reject())
+    const errMsg = 'exchange offline'
+    const throwedError = new Error(errMsg)
+    const code = AlunaKeyErrorCodes.INVALID
+    const httpStatusCode = 401
+
+    const requestSpy = Sinon.spy(() => Promise.reject(throwedError))
 
     ImportMock.mockFunction(
       axios,
@@ -102,6 +108,17 @@ describe('BitfinexHttp', () => {
       {
         request: requestSpy,
       },
+    )
+
+    ImportMock.mockOther(
+      BitfinexHttpMod,
+      'handleRequestError',
+      (error: Error) => new AlunaError({
+        code,
+        message: error.message,
+        metadata: error,
+        httpStatusCode,
+      }),
     )
 
     let error
@@ -122,6 +139,10 @@ describe('BitfinexHttp', () => {
     }
 
     expect(error).to.be.ok
+    expect(error.message).to.be.eq(errMsg)
+    expect(error.code).to.be.eq(code)
+    expect(error.httpStatusCode).to.be.eq(httpStatusCode)
+    expect(error.metadata).to.deep.eq(throwedError)
 
   })
 
@@ -168,6 +189,62 @@ describe('BitfinexHttp', () => {
     }])
 
     expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+
+  })
+
+  it("should call 'handleRequestError' if private request throws", async () => {
+
+    const errMsg = 'exchange offline'
+    const throwedError = new Error(errMsg)
+    const code = AlunaKeyErrorCodes.INVALID
+    const httpStatusCode = 500
+
+    const requestSpy = Sinon.spy(() => Promise.reject(throwedError))
+
+    ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
+
+    const handleRequestErrorMock = ImportMock.mockFunction(
+      BitfinexHttpMod,
+      'handleRequestError',
+      new AlunaError({
+        code,
+        message: errMsg,
+        metadata: errMsg,
+        httpStatusCode,
+      }),
+    )
+
+    let error
+
+    try {
+
+      await privateRequest({
+        url: dummyUrl,
+        keySecret: dummyKeysecret,
+      })
+
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq(errMsg)
+    expect(error.code).to.be.eq(code)
+    expect(error.httpStatusCode).to.be.eq(httpStatusCode)
+
+    expect(handleRequestErrorMock.callCount).to.be.eq(1)
+    expect(handleRequestErrorMock.calledWithExactly(
+      throwedError,
+    )).to.be.ok
 
   })
 

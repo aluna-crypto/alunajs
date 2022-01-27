@@ -126,8 +126,7 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      // TODO: Handle errors here
-      throw Error(error)
+      throw handleRequestError(error)
 
     }
 
