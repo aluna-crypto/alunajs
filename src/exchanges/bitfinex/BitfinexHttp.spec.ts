@@ -3,20 +3,30 @@ import { expect } from 'chai'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { AlunaHttpVerbEnum } from '../..'
-import { BitfinexHttp } from './BitfinexHttp'
+import {
+  AlunaHttpVerbEnum,
+  IAlunaKeySecretSchema,
+} from '../..'
+import * as BitfinexHttpMod from './BitfinexHttp'
 
 
 
 describe('BitfinexHttp', () => {
 
+  const { BitfinexHttp } = BitfinexHttpMod
+
   const { publicRequest, privateRequest } = BitfinexHttp
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-
   const dummyBody = { dummy: 'dummy-body' }
-
   const dummyData = { data: 'dummy-data' }
+  const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
+  const dummyKeysecret: IAlunaKeySecretSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
+
+  afterEach(Sinon.restore)
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -46,7 +56,6 @@ describe('BitfinexHttp', () => {
       data: dummyBody,
     }])
 
-    Sinon.restore()
 
   })
 
@@ -117,24 +126,46 @@ describe('BitfinexHttp', () => {
 
   it('should execute private request just fine', async () => {
 
-    let error
+    const requestSpy = Sinon.spy(() => dummyData)
 
-    try {
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BitfinexHttpMod,
+      'generateAuthHeader',
+      dummySignedHeaders,
+    )
 
-      await privateRequest({
-        // http verb not informed
-        url: dummyUrl,
-        body: dummyBody,
-        keySecret: {} as any,
-      })
+    const axiosMock = ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
 
-    } catch (e) {
+    const responseData = await privateRequest({
+      url: dummyUrl,
+      body: dummyBody,
+      keySecret: dummyKeysecret,
+    })
 
-      error = e
+    expect(axiosMock.callCount).to.be.eq(1)
 
-    }
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+    expect(generateAuthHeaderMock.calledWith({
+      path: new URL(dummyUrl).pathname,
+      body: dummyBody,
+      keySecret: dummyKeysecret,
+    })).to.be.ok
 
-    expect(error).to.be.ok
+    expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: dummyUrl,
+      method: AlunaHttpVerbEnum.POST,
+      data: dummyBody,
+      headers: dummySignedHeaders,
+    }])
+
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
 
   })
 
