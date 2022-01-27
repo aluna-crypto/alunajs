@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { expect } from 'chai'
+import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -166,6 +167,51 @@ describe('BitfinexHttp', () => {
     }])
 
     expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+
+  })
+
+  it('should generate signed auth header just fine', async () => {
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const currentDate = Date.now()
+
+    const mockedDateNow = ImportMock.mockFunction(
+      Date,
+      'now',
+      currentDate,
+    )
+
+    const stringfiedBody = JSON.stringify(dummyBody)
+
+    const path = '/v2/auth/r/permissions'
+    const mockedNonce = currentDate * 1000
+
+
+    const calledSignature = `/api${path}${mockedNonce}${stringfiedBody}`
+
+    const signedHash = BitfinexHttpMod.generateAuthHeader({
+      keySecret: dummyKeysecret,
+      path,
+      body: dummyBody,
+    })
+
+    expect(mockedDateNow.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha384', dummyKeysecret.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(calledSignature)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['bfx-nonce']).to.deep.eq(mockedNonce.toString())
+    expect(signedHash['bfx-apikey']).to.deep.eq(dummyKeysecret.key)
+    expect(signedHash['bfx-signature']).to.deep.eq(digestSpy.returnValues[0])
 
   })
 
