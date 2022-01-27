@@ -1,10 +1,11 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import {
+  AlunaError,
   AlunaHttpVerbEnum,
   IAlunaKeySecretSchema,
 } from '../..'
@@ -14,7 +15,7 @@ import * as BitfinexHttpMod from './BitfinexHttp'
 
 describe('BitfinexHttp', () => {
 
-  const { BitfinexHttp } = BitfinexHttpMod
+  const { BitfinexHttp, handleRequestError } = BitfinexHttpMod
 
   const { publicRequest, privateRequest } = BitfinexHttp
 
@@ -212,6 +213,69 @@ describe('BitfinexHttp', () => {
     expect(signedHash['bfx-nonce']).to.deep.eq(mockedNonce.toString())
     expect(signedHash['bfx-apikey']).to.deep.eq(dummyKeysecret.key)
     expect(signedHash['bfx-signature']).to.deep.eq(digestSpy.returnValues[0])
+
+  })
+
+  it('should ensure request error is being handle', async () => {
+
+    const dummyErrorMsg = 'exchange is offline'
+
+    let error: AlunaError
+    let axiosThrowedError: any = {
+      isAxiosError: true,
+      response: {
+        status: 401,
+        data: ['error', 10010, dummyErrorMsg],
+      },
+    }
+
+    error = handleRequestError(axiosThrowedError as AxiosError)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(dummyErrorMsg)
+    expect(error.httpStatusCode).to.be.eq(401)
+
+    axiosThrowedError.response.data = []
+
+    error = handleRequestError(axiosThrowedError as AxiosError)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(
+      error.message,
+    ).to.be.eq('Error while trying to execute Axios request')
+    expect(error.httpStatusCode).to.be.eq(401)
+
+    axiosThrowedError = {
+      isAxiosError: true,
+    }
+
+    error = handleRequestError(axiosThrowedError as AxiosError)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(
+      error.message,
+    ).to.be.eq('Error while trying to execute Axios request')
+    expect(error.httpStatusCode).to.be.eq(400)
+
+    axiosThrowedError = {
+      message: dummyErrorMsg,
+    }
+
+    error = handleRequestError(axiosThrowedError as Error)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(dummyErrorMsg)
+    expect(error.httpStatusCode).to.be.eq(400)
+
+    axiosThrowedError = {}
+
+    error = handleRequestError(axiosThrowedError as any)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(
+      error.message,
+    ).to.be.eq('Error while trying to execute Axios request')
+    expect(error.httpStatusCode).to.be.eq(400)
 
   })
 
