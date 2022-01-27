@@ -1,0 +1,49 @@
+import { expect } from 'chai'
+
+import { Bitfinex } from './Bitfinex'
+
+
+
+describe('Bitfinex', () => {
+
+  it('should have all static properties and methods', async () => {
+
+    expect(Bitfinex.ID).to.eq('bitfinex')
+    expect(Bitfinex.SPECS).to.be.ok
+    expect(Bitfinex.Symbol).to.be.ok
+    expect(Bitfinex.Market).to.be.ok
+
+  })
+
+  it('should have all instance properties and methods', async () => {
+
+    const key = 'key'
+    const secret = 'secret'
+    const referralCode = 'myReferral'
+
+    const bitfinex = new Bitfinex({
+      keySecret: {
+        key,
+        secret,
+      },
+      settings: {
+        referralCode,
+      },
+    })
+
+    expect(bitfinex.keySecret.key).to.eq(key)
+    expect(bitfinex.keySecret.secret).to.eq(secret)
+
+    expect(bitfinex.settings).to.be.ok
+    expect(bitfinex.settings?.referralCode).to.eq(referralCode)
+
+    expect(bitfinex.key).to.be.ok
+    // expect(bitfinex.balance).to.be.ok
+    // expect(bitfinex.order).to.be.ok
+
+    // bitfinex doesn't have margin trading
+    // expect(bitfinex.position).not.to.be.ok
+
+  })
+
+})
