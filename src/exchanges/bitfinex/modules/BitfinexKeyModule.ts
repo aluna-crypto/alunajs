@@ -1,6 +1,6 @@
 import {
   AlunaError,
-  AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
   IAlunaKeySchema,
 } from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
@@ -33,14 +33,23 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      console.log(error)
+      const { message } = error
+      let { code, httpStatusCode } = error
+
+      if (['apikey: invalid', 'apikey: digest invalid'].includes(message)) {
+
+        code = AlunaKeyErrorCodes.INVALID
+        httpStatusCode = 200
+
+      }
 
       throw new AlunaError({
-        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        code,
         message: error.message,
-        httpStatusCode: 500,
+        httpStatusCode,
         metadata: error,
       })
+
 
     }
 
