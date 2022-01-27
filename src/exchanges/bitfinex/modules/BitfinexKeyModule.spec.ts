@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import {
   AlunaError,
   AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
 } from '../../..'
@@ -18,7 +19,7 @@ import { BitfinexKeyModule } from './BitfinexKeyModule'
 
 
 
-describe.only('BitfinexKeyModule', () => {
+describe('alunaPermissions', () => {
 
   const bitfinexKeyModule = BitfinexKeyModule.prototype
 
@@ -73,7 +74,11 @@ describe.only('BitfinexKeyModule', () => {
     const resquestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.reject(new Error(errMsg)),
+      Promise.reject(new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+        httpStatusCode: 500,
+      })),
     )
 
     try {
@@ -91,6 +96,67 @@ describe.only('BitfinexKeyModule', () => {
     expect(error?.httpStatusCode).to.be.eq(500)
     expect(error?.message).to.be.eq(errMsg)
     expect(resquestMock.callCount).to.be.eq(1)
+
+  })
+
+  it('should throw for invalid API based on the error message', async () => {
+
+    mockKeySecret()
+
+    const error1 = 'apikey: invalid'
+    const error2 = 'apikey: digest invalid'
+
+    let error: AlunaError | undefined
+    let result: IAlunaKeySchema | undefined
+
+    const resquestMock = ImportMock.mockFunction(
+      BitfinexHttp,
+      'privateRequest',
+      Promise.reject(new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: error1,
+        httpStatusCode: 500,
+      })),
+    )
+
+    try {
+
+      result = await bitfinexKeyModule.fetchDetails()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+    expect(error?.httpStatusCode).to.be.eq(200)
+    expect(error?.message).to.be.eq(error1)
+    expect(resquestMock.callCount).to.be.eq(1)
+
+    // new mock
+    resquestMock.returns(Promise.reject(new AlunaError({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: error2,
+      httpStatusCode: 500,
+    })))
+
+    try {
+
+      result = await bitfinexKeyModule.fetchDetails()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+    expect(error?.httpStatusCode).to.be.eq(200)
+    expect(error?.message).to.be.eq(error2)
+    expect(resquestMock.callCount).to.be.eq(2)
 
   })
 
