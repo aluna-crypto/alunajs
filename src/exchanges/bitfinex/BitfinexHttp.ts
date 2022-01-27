@@ -1,6 +1,10 @@
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 
+import {
+  AlunaError,
+  AlunaHttpErrorCodes,
+} from '../..'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -8,6 +12,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { BitfinexLog } from './BitfinexLog'
 
 
 
@@ -62,6 +67,41 @@ export const generateAuthHeader = (
 
 
 
+export const handleRequestError = (param: AxiosError | Error): AlunaError => {
+
+  let error: AlunaError
+
+  const message = 'Error while trying to execute Axios request'
+
+  if ((param as AxiosError).isAxiosError) {
+
+    const {
+      response,
+    } = param as AxiosError
+
+    error = new AlunaError({
+      message: response?.data?.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      httpStatusCode: response?.status,
+    })
+
+  } else {
+
+    error = new AlunaError({
+      message: param.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+    })
+
+  }
+
+  BitfinexLog.error(error)
+
+  return error
+
+}
+
+
+
 export const BitfinexHttp: IAlunaHttp = class {
 
   static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
@@ -95,8 +135,37 @@ export const BitfinexHttp: IAlunaHttp = class {
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 
-    // TODO: Implement private request
-    throw Error(`Not implemented ${JSON.stringify(params)}`)
+    const {
+      url,
+      body = {},
+      verb = AlunaHttpVerbEnum.POST,
+      keySecret,
+    } = params
+
+    const signedHash = generateAuthHeader({
+      path: new URL(url).pathname,
+      keySecret,
+      body,
+    })
+
+    const requestConfig = {
+      url,
+      method: verb,
+      data: body,
+      headers: signedHash,
+    }
+
+    try {
+
+      const response = await axios.create().request<T>(requestConfig)
+
+      return response.data
+
+    } catch (error) {
+
+      throw handleRequestError(error)
+
+    }
 
   }
 
