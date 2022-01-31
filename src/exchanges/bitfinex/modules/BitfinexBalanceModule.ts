@@ -9,7 +9,21 @@ import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
 
 
 
-export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
+export interface IFetchTradableBalanceParams {
+  symbol: string
+  dir: 1 | -1
+  rate: number
+  type: Uppercase<BitfinexAccountsEnum.MARGIN>
+}
+
+interface IBitifinexBalanceModule extends IAlunaBalanceModule {
+  fetchTradableBalance (params: IFetchTradableBalanceParams): Promise<number>
+}
+
+
+
+export class BitfinexBalanceModule extends AAlunaModule implements IBitifinexBalanceModule {
+
 
   public async listRaw (): Promise<IBitfinexBalanceSchema[]> {
 
@@ -75,7 +89,39 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     }, [] as IAlunaBalanceSchema[])
 
+    BitfinexLog.info(`parsed ${parsedBalances.length} Bitfinex balances`)
+
     return parsedBalances
+
+  }
+
+  public async fetchTradableBalance (
+    params: IFetchTradableBalanceParams,
+  ): Promise<number> {
+
+    const {
+      dir,
+      rate,
+      symbol,
+      type,
+    } = params
+
+    BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbol}`)
+
+    const { privateRequest } = BitfinexHttp
+
+    const [tradableBalance] = await privateRequest<[number]>({
+      url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
+      keySecret: this.exchange.keySecret,
+      body: {
+        dir,
+        rate,
+        symbol,
+        type,
+      },
+    })
+
+    return tradableBalance
 
   }
 
