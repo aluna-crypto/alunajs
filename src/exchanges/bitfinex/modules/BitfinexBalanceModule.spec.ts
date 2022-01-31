@@ -144,4 +144,31 @@ describe('BitfinexBalanceModule', () => {
 
   })
 
+  it('should list Bitfinex parsed balances just fine', async () => {
+
+    const listRawMock = ImportMock.mockFunction(
+      bitfinexBalanceModule,
+      'listRaw',
+      Promise.resolve(BITFINEX_RAW_BALANCES),
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      bitfinexBalanceModule,
+      'parseMany',
+      BITFINEX_PARSED_BALANCES,
+    )
+
+    const parsedBalances = await bitfinexBalanceModule.list()
+
+    expect(listRawMock.callCount).to.be.eq(1)
+
+    expect(parseManyMock.callCount).to.be.eq(1)
+    expect(parseManyMock.calledWithExactly({
+      rawBalances: BITFINEX_RAW_BALANCES,
+    })).to.be.ok
+
+    expect(parsedBalances).to.deep.eq(parseManyMock.returnValues[0])
+
+  })
+
 })
