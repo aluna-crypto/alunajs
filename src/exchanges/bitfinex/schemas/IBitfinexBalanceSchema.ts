@@ -2,9 +2,9 @@ import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 
 
 
-export interface IBitfinexBalanceSchema extends TBitfinexBalanceSchema {}
+export interface IBitfinexBalanceSchema extends TBitfinexBalance {}
 
-type TBitfinexBalanceSchema = [
+type TBitfinexBalance = [
   WALLET_TYPE: BitfinexAccountsEnum,
   CURRENCY: string,
   BALANCE: number,
