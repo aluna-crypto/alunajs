@@ -39,7 +39,7 @@ describe('Bitfinex', () => {
 
     expect(bitfinex.key).to.be.ok
     expect(bitfinex.balance).to.be.ok
-    // expect(bitfinex.order).to.be.ok
+    expect(bitfinex.order).to.be.ok
 
     // bitfinex doesn't have margin trading
     // expect(bitfinex.position).not.to.be.ok
