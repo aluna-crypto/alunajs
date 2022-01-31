@@ -9,6 +9,7 @@ import {
   IAlunaHttpPublicParams,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { ValrLog } from './ValrLog'
 
@@ -27,13 +28,11 @@ interface IValrSignedHeaders {
   'X-VALR-TIMESTAMP': number
 }
 
-
-
 export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
   let error: AlunaError
 
-  const errorMsg = 'Error while trying to execute Axios request'
+  const message = 'Error while trying to execute Axios request'
 
   if ((param as AxiosError).isAxiosError) {
 
@@ -42,14 +41,16 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
     } = param as AxiosError
 
     error = new AlunaError({
-      message: response?.data?.message || errorMsg,
-      statusCode: response?.status,
+      message: response?.data?.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      httpStatusCode: response?.status,
     })
 
   } else {
 
     error = new AlunaError({
-      message: param.message || errorMsg,
+      message: param.message || message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
   }
@@ -60,8 +61,6 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
 }
 
-
-
 export const generateAuthHeader = (
   params: ISignedHashParams,
 ):IValrSignedHeaders => {
@@ -69,7 +68,6 @@ export const generateAuthHeader = (
   const {
     keySecret, path, verb, body,
   } = params
-
 
   const timestamp = Date.now()
 
@@ -88,8 +86,6 @@ export const generateAuthHeader = (
   }
 
 }
-
-
 
 export const ValrHttp: IAlunaHttp = class {
 
@@ -120,8 +116,6 @@ export const ValrHttp: IAlunaHttp = class {
     }
 
   }
-
-
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
 

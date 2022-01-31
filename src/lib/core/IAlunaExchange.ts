@@ -1,13 +1,10 @@
 import { IAlunaBalanceModule } from '../modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../modules/IAlunaKeyModule'
 import { IAlunaMarketModule } from '../modules/IAlunaMarketModule'
-import {
-  IAlunaOrderReadModule,
-  IAlunaOrderWriteModule,
-} from '../modules/IAlunaOrderModule'
+import { IAlunaOrderWriteModule } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
-import { IAlunaExchangeSpecsSchema } from '../schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
@@ -18,8 +15,6 @@ import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
   interfaces to specify instance and static properties/methods sepparately.
 */
 
-
-
 // Instance properties and methods
 export interface IAlunaExchange {
 
@@ -29,20 +24,22 @@ export interface IAlunaExchange {
 
   // private modules
   key: IAlunaKeyModule
-  order: IAlunaOrderReadModule | IAlunaOrderWriteModule
+
+  // TODO: consider combining order read+write
+  // TODO: consider making optional for web3 integrations (balance only)
+  order: IAlunaOrderWriteModule
+
   balance: IAlunaBalanceModule
   position?: IAlunaPositionModule
 
 }
-
-
 
 // Static properties and methods
 export interface IAlunaExchangeStatic {
 
   // static constants
   ID: string
-  SPECS: IAlunaExchangeSpecsSchema
+  SPECS: IAlunaExchangeSchema
 
   // static public modules
   Symbol: IAlunaSymbolModule

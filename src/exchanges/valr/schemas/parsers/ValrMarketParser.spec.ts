@@ -8,7 +8,6 @@ import { ValrMarketParser } from './ValrMarketParser'
 
 describe('ValrMarketParser', () => {
 
-
   it('should parse Valr market just fine', async () => {
 
     const rawMarket = VALR_RAW_MARKETS_WITH_CURRENCY[0]
@@ -20,7 +19,7 @@ describe('ValrMarketParser', () => {
     const {
       exchangeId,
       ticker,
-      pairSymbol,
+      symbolPair,
       baseSymbolId,
       quoteSymbolId,
       spotEnabled,
@@ -43,7 +42,7 @@ describe('ValrMarketParser', () => {
     } = ticker
 
     expect(exchangeId).to.be.eq(Valr.ID)
-    expect(pairSymbol).to.be.eq(rawMarket.currencyPair)
+    expect(symbolPair).to.be.eq(rawMarket.currencyPair)
     expect(baseSymbolId).to.be.eq(rawMarket.baseCurrency)
     expect(quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)
 

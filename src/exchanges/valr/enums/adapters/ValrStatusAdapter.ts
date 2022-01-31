@@ -6,11 +6,7 @@ import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 export class ValrStatusAdapter {
 
-
-
   static readonly ERROR_MESSAGE_PREFIX = 'Order status'
-
-
 
   static translateToAluna =
     buildAdapter<ValrOrderStatusEnum, AlunaOrderStatusEnum>({
@@ -18,15 +14,15 @@ export class ValrStatusAdapter {
       mappings: {
         [ValrOrderStatusEnum.ACTIVE]: AlunaOrderStatusEnum.OPEN,
         [ValrOrderStatusEnum.PLACED]: AlunaOrderStatusEnum.OPEN,
+        [ValrOrderStatusEnum.REQUESTED]: AlunaOrderStatusEnum.OPEN,
         [ValrOrderStatusEnum.PARTIALLY_FILLED]:
         AlunaOrderStatusEnum.PARTIALLY_FILLED,
         [ValrOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
         [ValrOrderStatusEnum.FAILED]: AlunaOrderStatusEnum.CANCELED,
+        [ValrOrderStatusEnum.EXPIRED]: AlunaOrderStatusEnum.CANCELED,
         [ValrOrderStatusEnum.CANCELLED]: AlunaOrderStatusEnum.CANCELED,
       },
     })
-
-
 
   static translateToValr =
     buildAdapter<AlunaOrderStatusEnum, ValrOrderStatusEnum>({
@@ -40,7 +36,4 @@ export class ValrStatusAdapter {
       },
     })
 
-
-
 }
-

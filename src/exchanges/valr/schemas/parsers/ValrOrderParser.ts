@@ -1,3 +1,7 @@
+import {
+  AlunaOrderStatusEnum,
+  AlunaOrderTypesEnum,
+} from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
@@ -6,6 +10,8 @@ import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
 import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../../enums/ValrSideEnum'
+import { Valr } from '../../Valr'
+import { IValrCurrencyPairs } from '../IValrMarketSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
@@ -17,21 +23,32 @@ export class ValrOrderParser {
 
   static parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
+    currencyPair: IValrCurrencyPairs,
   }): IAlunaOrderSchema {
 
-    const { rawOrder } = params
+    const {
+      rawOrder,
+      currencyPair,
+    } = params
 
     const {
       orderId,
-      currencyPair,
+      stopPrice,
       originalQuantity,
     } = rawOrder
+
+    const {
+      symbol,
+      baseCurrency,
+      quoteCurrency,
+    } = currencyPair
 
     let side: ValrSideEnum
     let price: string
     let status: ValrOrderStatusEnum
     let type: ValrOrderTypesEnum
     let createdAt: string
+    let updatedAt: string
 
     /**
      * Here we first cast rawOrder to IValrOrderListSchema and then try to
@@ -50,6 +67,7 @@ export class ValrOrderParser {
         status,
         type,
         createdAt,
+        updatedAt,
       } = rawOrder as IValrOrderListSchema)
 
     } else {
@@ -60,26 +78,70 @@ export class ValrOrderParser {
         orderType: type,
         orderStatusType: status,
         orderCreatedAt: createdAt,
+        orderUpdatedAt: updatedAt,
       } = rawOrder as IValrOrderGetSchema)
 
     }
 
+    const exchangeId = Valr.ID
 
-    const amount = parseFloat(originalQuantity)
-    const rate = parseFloat(price)
+    const alnOrderType = ValrOrderTypeAdapter.translateToAluna({ from: type })
+
+    let rate: number | undefined
+    let stopRate: number | undefined
+    let limitRate: number | undefined
+
+    switch (alnOrderType) {
+
+      case AlunaOrderTypesEnum.STOP_LIMIT:
+      case AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT:
+
+        stopRate = Number(stopPrice)
+        limitRate = Number(price)
+
+        break
+
+      default:
+
+        rate = Number(price)
+
+    }
+
+    const amount = Number(originalQuantity)
+
+    const alnOrderStatus = ValrStatusAdapter.translateToAluna({ from: status })
+
+    let filledAt: Date | undefined
+    let canceledAt: Date | undefined
+
+    if (alnOrderStatus === AlunaOrderStatusEnum.FILLED) {
+
+      filledAt = new Date(updatedAt)
+
+    } else if (alnOrderStatus === AlunaOrderStatusEnum.CANCELED) {
+
+      canceledAt = new Date(updatedAt)
+
+    }
 
     const parsedOrder: IAlunaOrderSchema = {
       id: orderId,
-      symbolPair: currencyPair,
-      total: amount * rate,
+      symbolPair: symbol,
+      exchangeId,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
+      total: amount * Number(price),
       amount,
-      isAmountInContracts: false,
       rate,
+      stopRate,
+      limitRate,
       account: AlunaAccountEnum.EXCHANGE,
       side: ValrSideAdapter.translateToAluna({ from: side }),
-      status: ValrStatusAdapter.translateToAluna({ from: status }),
-      type: ValrOrderTypeAdapter.translateToAluna({ from: type }),
+      status: alnOrderStatus,
+      type: alnOrderType,
       placedAt: new Date(createdAt),
+      filledAt,
+      canceledAt,
       meta: rawOrder,
     }
 

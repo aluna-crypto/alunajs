@@ -3,13 +3,9 @@ import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
 
-
-
 /**
  * NOTE: Valr has many different order responses types
 */
-
-
 
 export interface IValrOrderListSchema {
   orderId: string
@@ -28,8 +24,6 @@ export interface IValrOrderListSchema {
   timeInForce: ValrOrderTimeInForceEnum
 }
 
-
-
 export interface IValrOrderGetSchema {
   orderId: string
   orderStatusType: ValrOrderStatusEnum
@@ -46,8 +40,6 @@ export interface IValrOrderGetSchema {
   orderCreatedAt: string
   timeInForce: ValrOrderTimeInForceEnum
 }
-
-
 
 // export interface IValrOrderHistorySchema {
 //   orderId: string

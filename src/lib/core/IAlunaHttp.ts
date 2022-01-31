@@ -9,8 +9,6 @@ export interface IAlunaHttpOptions {
   httpsAgent?: any
 }
 
-
-
 export interface IAlunaHttpPublicParams {
   url: string
   verb?: AlunaHttpVerbEnum
@@ -24,9 +22,7 @@ export interface IAlunaHttpPrivateParams extends IAlunaHttpPublicParams {
   keySecret: IAlunaKeySecretSchema
 }
 
-
 export interface IAlunaHttp {
   publicRequest<T>(params: IAlunaHttpPublicParams): Promise<T>
   privateRequest<T>(params: IAlunaHttpPrivateParams): Promise<T>
 }
-

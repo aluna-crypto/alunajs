@@ -6,15 +6,11 @@ export interface IValrKeySchema {
   allowedWithdrawAddressList?: IValrKeyAllowedWithdrawAddressList[]
 }
 
-
-
 export enum ValrApiKeyPermissions {
   VIEW_ACCESS = 'View access',
   TRADE = 'Trade',
   WITHDRAW = 'Withdraw',
 }
-
-
 
 export interface IValrKeyAllowedWithdrawAddressList {
   currency: string

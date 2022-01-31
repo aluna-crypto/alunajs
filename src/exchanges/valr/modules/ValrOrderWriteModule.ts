@@ -1,8 +1,13 @@
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
+  IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
@@ -12,6 +17,7 @@ import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
+import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 import { ValrSpecs } from '../ValrSpecs'
@@ -22,8 +28,6 @@ import { ValrOrderReadModule } from './ValrOrderReadModule'
 interface IValrPlaceOrderResponse {
   id: string
 }
-
-
 
 export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaOrderWriteModule {
 
@@ -48,6 +52,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Account type '${account}' not found`,
+          code: AlunaAdaptersErrorCodes.NOT_FOUND,
         })
 
       }
@@ -61,8 +66,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!supported || !implemented || !supportedOrderTypes) {
 
         throw new AlunaError({
-          message:
-            `Account type '${account}' not supported/implemented for Varl`,
+          message: `Account type '${account}' not supported/implemented for Varl`,
+          code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -73,6 +78,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Order type '${type}' not supported/implemented for Varl`,
+          code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -81,6 +87,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
         throw new AlunaError({
           message: `Order type '${type}' is in read mode`,
+          code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY,
         })
 
       }
@@ -103,6 +110,16 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     })
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
+
+      if (!rate) {
+
+        throw new AlunaError({
+          httpStatusCode: 200,
+          message: 'Rate param is required for placing new limit orders',
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
+        })
+
+      }
 
       Object.assign(body, {
         quantity: amount,
@@ -132,11 +149,96 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       symbolPair,
     })
 
+    const meta: IValrOrderGetSchema = (order.meta as IValrOrderGetSchema)
+
+    if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
+
+      let code = AlunaOrderErrorCodes.PLACE_FAILED
+
+      if (meta.failedReason === 'Insufficient Balance') {
+
+        code = AlunaOrderErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
+      throw new AlunaError({
+        httpStatusCode: 200,
+        message: meta.failedReason,
+        code,
+      })
+
+    }
+
     return order
 
   }
 
+  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
 
+    ValrLog.info('editing order for Valr')
+
+    const {
+      id,
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    } = params
+
+    const rawOrder = await this.getRaw({
+      id,
+      symbolPair,
+    })
+
+    const { orderStatusType } = rawOrder
+
+    let isOrderOpen: boolean
+
+    switch (orderStatusType) {
+
+      case ValrOrderStatusEnum.ACTIVE:
+      case ValrOrderStatusEnum.PLACED:
+      case ValrOrderStatusEnum.PARTIALLY_FILLED:
+
+        isOrderOpen = true
+
+        break
+
+      default:
+
+        isOrderOpen = false
+
+    }
+
+    if (!isOrderOpen) {
+
+      throw new AlunaError({
+        httpStatusCode: 200,
+        message: 'Order is not open/active anymore',
+        code: AlunaOrderErrorCodes.IS_NOT_OPEN,
+      })
+
+    }
+
+    await this.cancel({
+      id,
+      symbolPair,
+    })
+
+    const newOrder = await this.place({
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    })
+
+    return newOrder
+
+  }
 
   public async cancel (
     params: IAlunaOrderCancelParams,
@@ -166,8 +268,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
+        httpStatusCode: 500,
         message: 'Something went wrong, order not canceled',
-        statusCode: 500,
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
       })
 
       ValrLog.error(error)

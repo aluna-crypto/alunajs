@@ -3,10 +3,12 @@ import { expect } from 'chai'
 import { Aluna } from './Aluna'
 import { Binance } from './exchanges/binance/Binance'
 import { Valr } from './exchanges/valr/Valr'
+import { AlunaError } from './lib/core/AlunaError'
 import {
   IAlunaExchange,
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
+import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 
 
 
@@ -46,37 +48,10 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly instantiate Binance exchange', async () => {
-
-    let binance: IAlunaExchange | undefined
-    let error
-
-    try {
-
-      binance = Aluna.new({
-        exchangeId: 'binance',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error).not.to.be.ok
-    expect(binance).to.be.ok
-    expect(binance instanceof Binance).to.be.ok
-
-  })
-
-  it('should warn about exchange not implemented (instance)', async () => {
+  it('should warn about exchange not supported (instance)', async () => {
 
     let god: IAlunaExchange | undefined
-    let error
+    let error: AlunaError | undefined
 
     try {
 
@@ -90,13 +65,15 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error.message).to.be.eq('Exchange not implemented: god')
+
+    expect(error?.code).to.be.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
+    expect(error?.message).to.be.eq('Exchange not supported: god')
 
   })
 
@@ -113,7 +90,7 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
@@ -124,31 +101,7 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly resolve exchange Binance static class', async () => {
-
-    const exchangeId = Binance.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
-
-  })
-
-  it('should warn about exchange not implemented (static)', async () => {
+  it('should warn about exchange not supported (static)', async () => {
 
     let god: IAlunaExchangeStatic | undefined
     let error
@@ -159,13 +112,15 @@ describe('Aluna', () => {
 
     } catch (err) {
 
-      error = err
+      error = err as AlunaError
 
     }
 
     expect(god).not.to.be.ok
     expect(error).to.be.ok
-    expect(error.message).to.be.eq('Exchange not implemented: god')
+
+    expect(error?.code).to.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
+    expect(error?.message).to.be.eq('Exchange not supported: god')
 
   })
 

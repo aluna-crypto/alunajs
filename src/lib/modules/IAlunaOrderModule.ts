@@ -22,15 +22,15 @@ export interface IAlunaOrderPlaceParams {
   type: AlunaOrderTypesEnum
   side: AlunaSideEnum
   symbolPair: string
-  rate: string | number | undefined // TODO: validate tests that skips rate
+  rate?: string | number
   amount: string | number
 }
 
-
+export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
+  id: string
+}
 
 export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
-
-
 
 export interface IAlunaOrderReadModule extends IAlunaModule {
 
@@ -40,14 +40,13 @@ export interface IAlunaOrderReadModule extends IAlunaModule {
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema>
   getRaw (params: IAlunaOrderGetParams): Promise<any>
 
-  parse (params: { rawOrder: any }): IAlunaOrderSchema
-  parseMany (parms: { rawOrders: any[] }): IAlunaOrderSchema[]
+  parse (params: { rawOrder: any }): Promise<IAlunaOrderSchema>
+  parseMany (parms: { rawOrders: any[] }): Promise<IAlunaOrderSchema[]>
 
 }
 
-
-
 export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderSchema>
+  edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema>
   cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderSchema>
 }

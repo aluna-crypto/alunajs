@@ -4,7 +4,7 @@ import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 
 export interface IAlunaPositionListParams {
-  openOnly: boolean
+  openPositionsOnly: boolean
   // start?: nyumber
   // limit?: nyumber
 }
@@ -14,10 +14,9 @@ export interface IAlunaPositionGetParams {
 }
 
 export interface IAlunaPositionCloseParams {
-  id: string | number
+  id?: string | number
+  symbol?: string
 }
-
-
 
 export interface IAlunaPositionModule extends IAlunaModule {
 

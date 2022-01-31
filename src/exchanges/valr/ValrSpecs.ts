@@ -3,8 +3,8 @@ import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
-  IAlunaExchangeSpecsSchema,
-} from '../../lib/schemas/IAlunaExchangeSpecsSchema'
+  IAlunaExchangeSchema,
+} from '../../lib/schemas/IAlunaExchangeSchema'
 
 
 
@@ -53,10 +53,16 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   },
 ]
 
-export const ValrSpecs: IAlunaExchangeSpecsSchema = {
+export const ValrSpecs: IAlunaExchangeSchema = {
   id: 'valr',
-  acceptFloatAmounts: true,
-  features: {
+  name: 'Valr',
+  signupUrl: 'https://www.valr.com/signup',
+  connectApiUrl: 'https://www.valr.com/api-keys/create',
+  rateLimitingPerMinute: {
+    perApiKey: 180,
+    perIp: 360,
+  },
+  modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },

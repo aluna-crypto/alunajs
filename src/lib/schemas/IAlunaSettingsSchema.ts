@@ -1,4 +1,6 @@
 export interface IAlunaSettingsSchema {
   referralCode?: string
-  // TODO: to be continued
+  mappings?: {
+    [key: string]: string,
+  }
 }

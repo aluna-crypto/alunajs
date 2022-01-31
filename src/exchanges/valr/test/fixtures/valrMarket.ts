@@ -1,6 +1,6 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
-import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
 import {
+  IMarketWithCurrencies,
   IValrCurrencyPairs,
   IValrMarketSchema,
 } from '../../schemas/IValrMarketSchema'
@@ -63,8 +63,6 @@ export const VALR_RAW_MARKETS: IValrMarketSchema[] = [
   },
 ]
 
-
-
 export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
   {
     symbol: 'BTCZAR',
@@ -97,6 +95,19 @@ export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
     baseCurrency: 'USDC',
     quoteCurrency: 'ETH',
     shortName: 'USDC/ETH',
+    active: true,
+    minBaseAmount: '3',
+    maxBaseAmount: '11510',
+    minQuoteAmount: '0.0079',
+    maxQuoteAmount: '30',
+    tickSize: '0.00000001',
+    baseDecimalPlaces: '8',
+  },
+  {
+    symbol: 'USDCZAR',
+    baseCurrency: 'USDC',
+    quoteCurrency: 'ZAR',
+    shortName: 'USDC/ZAR',
     active: true,
     minBaseAmount: '3',
     maxBaseAmount: '11510',
@@ -139,9 +150,7 @@ export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
   },
 ]
 
-
-
-export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
+export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrencies[] = [
   {
     currencyPair: 'USDCETH',
     askPrice: '0.00039334',
@@ -186,12 +195,10 @@ export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrency[] = [
   },
 ]
 
-
-
 export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'valr',
-    pairSymbol: 'USDCETH',
+    symbolPair: 'USDCETH',
     baseSymbolId: 'USDC',
     quoteSymbolId: 'ETH',
     ticker: {
@@ -213,7 +220,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'valr',
-    pairSymbol: 'BTCZAR',
+    symbolPair: 'BTCZAR',
     baseSymbolId: 'BTC',
     quoteSymbolId: 'ZAR',
     ticker: {
@@ -235,7 +242,7 @@ export const VALR_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'valr',
-    pairSymbol: 'ETHZAR',
+    symbolPair: 'ETHZAR',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'ZAR',
     ticker: {

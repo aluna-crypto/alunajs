@@ -31,8 +31,6 @@ export const VALR_RAW_SYMBOLS: IValrSymbolSchema[] = [
   },
 ]
 
-
-
 export const VALR_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
   {
     exchangeId: Valr.ID,

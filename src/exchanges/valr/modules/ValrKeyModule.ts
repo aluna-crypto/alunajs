@@ -1,8 +1,13 @@
+import {
+  AlunaError,
+  AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
+  IAlunaKeySchema,
+} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
+import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,
@@ -14,43 +19,17 @@ import { ValrLog } from '../ValrLog'
 
 export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
-  public async validate (): Promise<boolean> {
+  public details: IAlunaKeySchema
 
-    ValrLog.info('trying to validate Valr key')
+  public async fetchDetails (): Promise<IAlunaKeySchema> {
 
-    const { read } = await this.getPermissions()
+    ValrLog.info('fetching Valr key details')
 
-    const isValid = read
-
-    let logMessage = 'Valr API key is'
-
-    if (isValid) {
-
-      logMessage = logMessage.concat(' valid')
-
-    } else {
-
-      logMessage = logMessage.concat(' invalid')
-
-    }
-
-    ValrLog.info(logMessage)
-
-    return isValid
-
-  }
-
-
-
-  public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
-
-    ValrLog.info('fetching Valr key permissions')
+    const { keySecret } = this.exchange
 
     let rawKey: IValrKeySchema
 
     try {
-
-      const { keySecret } = this.exchange
 
       rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
@@ -60,23 +39,65 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      ValrLog.error(error.message)
+      const { message } = error
 
-      throw error
+      let code: string
+      let httpStatusCode: number
+
+      if (message === 'API key or secret is invalid') {
+
+        code = AlunaKeyErrorCodes.INVALID
+        httpStatusCode = 401
+
+      } else {
+
+        code = AlunaHttpErrorCodes.REQUEST_ERROR
+        httpStatusCode = 500
+
+      }
+
+      const alunaError = new AlunaError({
+        code,
+        message,
+        httpStatusCode,
+        metadata: error,
+      })
+
+      throw alunaError
 
     }
 
-    const parsedPermissions = this.parsePermissions({ rawKey })
+    const details = this.parseDetails({ rawKey })
 
-    return parsedPermissions
+    return details
 
   }
 
+  public parseDetails (params: {
+    rawKey: IValrKeySchema,
+  }): IAlunaKeySchema {
 
+    ValrLog.info('parsing Valr key details')
+
+    const {
+      rawKey,
+    } = params
+
+    this.details = {
+      meta: rawKey,
+      accountId: undefined, //  valr doesn't give this
+      permissions: this.parsePermissions({ rawKey }),
+    }
+
+    return this.details
+
+  }
 
   public parsePermissions (params: {
     rawKey: IValrKeySchema,
   }): IAlunaKeyPermissionSchema {
+
+    ValrLog.info('parsing Valr key permissions')
 
     const { rawKey } = params
 
@@ -86,7 +107,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       read: false,
       trade: false,
       withdraw: false,
-      meta: rawKey,
     }
 
     permissions.forEach((permission) => {
@@ -113,15 +133,6 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       }
 
     })
-
-    if (alunaPermissions.withdraw) {
-
-      throw new AlunaError({
-        message: 'API key should not have withdraw permission.',
-        statusCode: 401,
-      })
-
-    }
 
     return alunaPermissions
 

@@ -43,8 +43,6 @@ export const VALR_RAW_BALANCES: IValrBalanceSchema[] = [
   },
 ]
 
-
-
 export const VALR_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
     symbolId: 'ETH',
@@ -75,4 +73,3 @@ export const VALR_PARSED_BALANCES: IAlunaBalanceSchema[] = [
     meta: {},
   },
 ]
-

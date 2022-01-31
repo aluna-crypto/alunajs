@@ -14,7 +14,7 @@ import {
   IAlunaBalanceModule,
   IAlunaBalanceSchema,
   IAlunaExchange,
-  IAlunaExchangeSpecsSchema,
+  IAlunaExchangeSchema,
   IAlunaHttp,
   IAlunaInstrumentSchema,
   IAlunaKeyModule,
@@ -48,7 +48,6 @@ describe('index', () => {
     // main
     expect(Aluna).to.be.ok
 
-
     // core
     expect(AlunaError).to.be.ok
 
@@ -60,7 +59,6 @@ describe('index', () => {
     expect(alunaHttp).not.to.be.ok
     expect(alunaModule).not.to.be.ok
 
-
     // enums
     expect(AlunaAccountEnum).to.be.ok
     expect(AlunaFeaturesModeEnum).to.be.ok
@@ -70,7 +68,6 @@ describe('index', () => {
     expect(AlunaOrderTypesEnum).to.be.ok
     expect(AlunaPositionStatusEnum).to.be.ok
     expect(AlunaSideEnum).to.be.ok
-
 
     // modules
     const alunaBalanceModule: IAlunaBalanceModule | null = null
@@ -89,10 +86,9 @@ describe('index', () => {
     expect(alunaPositionModule).not.to.be.ok
     expect(alunaSymbolModule).not.to.be.ok
 
-
     // schemas
     const alunaBalanceSchema: IAlunaBalanceSchema | null = null
-    const alunaExchangeSpecsSchema: IAlunaExchangeSpecsSchema | null = null
+    const alunaExchangeSchema: IAlunaExchangeSchema | null = null
     const alunaInstrumentSchema: IAlunaInstrumentSchema | null = null
     const alunaKeyPermissionSchema: IAlunaKeyPermissionSchema | null = null
     const alunaKeySecretSchema: IAlunaKeySecretSchema | null = null
@@ -104,7 +100,7 @@ describe('index', () => {
     const alunaTickerSchema: IAlunaTickerSchema | null = null
 
     expect(alunaBalanceSchema).not.to.be.ok
-    expect(alunaExchangeSpecsSchema).not.to.be.ok
+    expect(alunaExchangeSchema).not.to.be.ok
     expect(alunaInstrumentSchema).not.to.be.ok
     expect(alunaKeyPermissionSchema).not.to.be.ok
     expect(alunaKeySecretSchema).not.to.be.ok
@@ -116,7 +112,5 @@ describe('index', () => {
     expect(alunaTickerSchema).not.to.be.ok
 
   })
-
-
 
 })

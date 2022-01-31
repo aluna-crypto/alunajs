@@ -13,7 +13,6 @@ import { ValrSymbolModule } from './ValrSymbolModule'
 
 describe('ValrSymbolModule', () => {
 
-
   it('should list Valr raw symbols just fine', async () => {
 
     const requestMock = ImportMock.mockFunction(
@@ -43,8 +42,6 @@ describe('ValrSymbolModule', () => {
 
   })
 
-
-
   it('should list Valr parsed symbols just fine', async () => {
 
     const mockedRawSymbols = 'raw-symbols'
@@ -60,7 +57,6 @@ describe('ValrSymbolModule', () => {
       'parseMany',
       VALR_PARSED_SYMBOLS,
     )
-
 
     const rawSymbols = await ValrSymbolModule.list()
 
@@ -88,8 +84,6 @@ describe('ValrSymbolModule', () => {
 
   })
 
-
-
   it('should parse a Valr symbol just fine', async () => {
 
     const parsedSymbol1 = ValrSymbolModule.parse({
@@ -109,8 +103,6 @@ describe('ValrSymbolModule', () => {
     expect(parsedSymbol2.name).to.be.eq(VALR_RAW_SYMBOLS[2].longName)
 
   })
-
-
 
   it('should parse many Valr symbols just fine', async () => {
 

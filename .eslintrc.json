@@ -22,19 +22,21 @@
   ],
   "rules": {
     "camelcase": "off",
-    "semi": ["error", "never"],
     "no-shadow": "off",
     "no-console": "off",
     "arrow-body-style": "off",
-    "no-useless-constructor": "off",
-    "no-empty-function": "off",
+    "no-use-before-define": "off",
     "class-methods-use-this": "off",
     "lines-between-class-members": "off",
+    "padded-blocks": ["error", "always", { "allowSingleLineBlocks": true }],
+    "semi": ["error", "never"],
     "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "return" }
+    ],
     "space-before-function-paren": ["error", "always"],
-    "no-unused-vars": "warn",
-    "padded-blocks": ["error", "always"],
-    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": false }],
+    "no-unused-vars": "off",
     "max-len": [
       "error", { 
         "code": 80, 
@@ -42,24 +44,15 @@
         "ignorePattern": "^import | ^export | implements | extends | `.{30,}`"
       }
     ],
-    "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "one-var-declaration-per-line": ["error", "always"],
-    "object-curly-newline": [
-      "error", {
-        "ObjectExpression": { "minProperties": 2, "consistent": true, "multiline": true },
-        "ObjectPattern": { "minProperties": 2, "consistent": true, "multiline": true },
-        "ImportDeclaration": { "minProperties": 2, "consistent": true, "multiline": true },
-        "ExportDeclaration": "always"
-      }
-    ],
     "@typescript-eslint/no-empty-interface": [
       "error",
       {
         "allowSingleExtends": true
       }
     ],
-    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/naming-convention": [
       "error",

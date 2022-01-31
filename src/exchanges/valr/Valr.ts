@@ -26,13 +26,10 @@ export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implement
   static Symbol = ValrSymbolModule
   static Market = ValrMarketModule
 
-
   // local definitions
   key: IAlunaKeyModule
   order: IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
-
-
 
   constructor (
     params: {

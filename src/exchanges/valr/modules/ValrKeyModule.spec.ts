@@ -1,9 +1,12 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import {
+  AlunaHttpErrorCodes,
+  AlunaKeyErrorCodes,
+} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
-import { ValrErrorEnum } from '../enums/ValrErrorEnum'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,
@@ -16,37 +19,6 @@ import { ValrKeyModule } from './ValrKeyModule'
 describe('ValrKeyModule', () => {
 
   const valrKeyModule = ValrKeyModule.prototype
-
-
-  it('should validate user Valr API key just fine', async () => {
-
-    const getPermissionsMock = ImportMock.mockFunction(
-      valrKeyModule,
-      'getPermissions',
-    )
-
-    getPermissionsMock
-      .onFirstCall()
-      .returns(Promise.resolve({ read: false }))
-      .onSecondCall()
-      .returns(Promise.resolve({ read: true }))
-
-
-    const invalidKey = await valrKeyModule.validate()
-
-    expect(getPermissionsMock.callCount).to.be.eq(1)
-    expect(invalidKey).not.to.be.ok
-
-
-    const validKey = await valrKeyModule.validate()
-
-
-    expect(getPermissionsMock.callCount).to.be.eq(2)
-    expect(validKey).to.be.ok
-
-  })
-
-
 
   it('should get permissions from Valr API key just fine', async () => {
 
@@ -73,7 +45,8 @@ describe('ValrKeyModule', () => {
       requestResponse,
     )
 
-    const permissions1 = await valrKeyModule.getPermissions()
+    // first
+    const { permissions: permissions1 } = await valrKeyModule.fetchDetails()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
@@ -81,11 +54,10 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-
+    // second
     requestResponse.permissions = [ValrApiKeyPermissions.VIEW_ACCESS]
 
-    const permissions2 = await valrKeyModule.getPermissions()
-
+    const { permissions: permissions2 } = await valrKeyModule.fetchDetails()
 
     expect(permissions2.read).to.be.ok
     expect(permissions2.trade).not.to.be.ok
@@ -93,13 +65,13 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(2)
 
-
+    // third
     requestResponse.permissions = [
       ValrApiKeyPermissions.VIEW_ACCESS,
       ValrApiKeyPermissions.TRADE,
     ]
 
-    const permissions3 = await valrKeyModule.getPermissions()
+    const { permissions: permissions3 } = await valrKeyModule.fetchDetails()
 
     expect(permissions3.read).to.be.ok
     expect(permissions3.trade).to.be.ok
@@ -107,15 +79,14 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(3)
 
-
+    // forth
     requestResponse.permissions = [
       ValrApiKeyPermissions.VIEW_ACCESS,
       ValrApiKeyPermissions.TRADE,
       'NEW_ADDED_PERSSION' as ValrApiKeyPermissions,
     ]
 
-
-    const permissions4 = await valrKeyModule.getPermissions()
+    const { permissions: permissions4 } = await valrKeyModule.fetchDetails()
 
     expect(permissions4.read).to.be.ok
     expect(permissions4.trade).to.be.ok
@@ -123,14 +94,32 @@ describe('ValrKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(4)
 
+    // fifth
+    requestResponse.permissions = [
+      ValrApiKeyPermissions.VIEW_ACCESS,
+      ValrApiKeyPermissions.TRADE,
+      ValrApiKeyPermissions.WITHDRAW,
+    ]
+
+    const { permissions: permissions5 } = await valrKeyModule.fetchDetails()
+
+    expect(permissions5.read).to.be.ok
+    expect(permissions5.trade).to.be.ok
+    expect(permissions5.withdraw).to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(5)
+
   })
 
+  it('should properly handle request error for fetchDetails', async () => {
 
+    const message = 'API key or secret is invalid'
 
-  it('should not allow API KEYS with withdraw permission', async () => {
-
-    let error
-    let result
+    let mockedError = new AlunaError({
+      httpStatusCode: 401,
+      message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+    })
 
     ImportMock.mockOther(
       valrKeyModule,
@@ -143,71 +132,18 @@ describe('ValrKeyModule', () => {
       } as IAlunaExchange,
     )
 
-    const requestResponse: IValrKeySchema = {
-      label: 'Api for aluna',
-      permissions: [
-        ValrApiKeyPermissions.VIEW_ACCESS,
-        ValrApiKeyPermissions.TRADE,
-        ValrApiKeyPermissions.WITHDRAW,
-      ],
-      addedAt: '2021-09-11T18:28:37.791401Z',
-    }
-
-    const requestMock = ImportMock.mockFunction(
+    const privateRequestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      requestResponse,
+      Promise.reject(mockedError),
     )
 
-    try {
-
-      result = await valrKeyModule.getPermissions()
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = 'API key should not have withdraw permission.'
-
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-    expect(requestMock.callCount).to.be.eq(1)
-
-  })
-
-
-
-  it('should properly inform when api key or secret are wrong', async () => {
-
-    ImportMock.mockOther(
-      valrKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-      Promise.reject(new AlunaError({
-        message: ValrErrorEnum.INVALID_KEY,
-        statusCode: 401,
-      })),
-    )
-
-    let error
+    let error: AlunaError | undefined
     let result
 
     try {
 
-      result = await valrKeyModule.getPermissions()
+      result = await valrKeyModule.fetchDetails()
 
     } catch (e) {
 
@@ -218,43 +154,22 @@ describe('ValrKeyModule', () => {
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
-    expect(error.message).to.be.eq(ValrErrorEnum.INVALID_KEY)
+    expect(error?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+    expect(error?.message).to.be.eq(mockedError.message)
+    expect(error?.httpStatusCode).to.be.eq(401)
 
-  })
 
+    mockedError = new AlunaError({
+      code: 'any-code',
+      message: 'any-message',
+      httpStatusCode: 403,
+    })
 
-
-  it('should not allow API key with withdraw permission', async () => {
-
-    ImportMock.mockOther(
-      valrKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    const requestResponse: IValrKeySchema = {
-      label: 'Api for aluna',
-      permissions: [ValrApiKeyPermissions.WITHDRAW],
-      addedAt: '2021-09-11T18:28:37.791401Z',
-    }
-
-    ImportMock.mockFunction(
-      ValrHttp,
-      'privateRequest',
-      requestResponse,
-    )
-
-    let error
-    let result
+    privateRequestMock.returns(Promise.reject(mockedError))
 
     try {
 
-      result = await valrKeyModule.getPermissions()
+      result = await valrKeyModule.fetchDetails()
 
     } catch (e) {
 
@@ -264,14 +179,12 @@ describe('ValrKeyModule', () => {
 
     expect(result).not.to.be.ok
 
-    const msg = 'API key should not have withdraw permission.'
-
     expect(error).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    expect(error?.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(error?.message).to.be.eq(mockedError.message)
+    expect(error?.httpStatusCode).to.be.eq(500)
 
   })
-
-
 
   it('should parse Valr permissions just fine', async () => {
 
@@ -290,7 +203,6 @@ describe('ValrKeyModule', () => {
     expect(perm1.read).to.be.ok
     expect(perm1.trade).not.to.be.ok
     expect(perm1.withdraw).not.to.be.ok
-
 
     key.permissions = [ValrApiKeyPermissions.TRADE]
 

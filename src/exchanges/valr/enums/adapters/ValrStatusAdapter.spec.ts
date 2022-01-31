@@ -11,8 +11,6 @@ describe('ValrStatusAdapter', () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should translate Valr order status to Aluna order status', () => {
 
     expect(ValrStatusAdapter.translateToAluna({
@@ -21,6 +19,10 @@ describe('ValrStatusAdapter', () => {
 
     expect(ValrStatusAdapter.translateToAluna({
       from: ValrOrderStatusEnum.PLACED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+    expect(ValrStatusAdapter.translateToAluna({
+      from: ValrOrderStatusEnum.REQUESTED,
     })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(ValrStatusAdapter.translateToAluna({
@@ -36,9 +38,12 @@ describe('ValrStatusAdapter', () => {
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     expect(ValrStatusAdapter.translateToAluna({
-      from: ValrOrderStatusEnum.CANCELLED,
+      from: ValrOrderStatusEnum.EXPIRED,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
+    expect(ValrStatusAdapter.translateToAluna({
+      from: ValrOrderStatusEnum.CANCELLED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     try {
 
@@ -49,15 +54,13 @@ describe('ValrStatusAdapter', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
+
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
     }
 
-
   })
-
-
 
   it('should translate Aluna order status to Valr order status', () => {
 
@@ -77,7 +80,6 @@ describe('ValrStatusAdapter', () => {
       from: AlunaOrderStatusEnum.CANCELED,
     })).to.be.eq(ValrOrderStatusEnum.CANCELLED)
 
-
     try {
 
       ValrStatusAdapter.translateToValr({
@@ -87,8 +89,9 @@ describe('ValrStatusAdapter', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
+
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
     }
 

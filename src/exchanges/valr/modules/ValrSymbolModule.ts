@@ -19,8 +19,6 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
   }
 
-
-
   public static listRaw (): Promise<IValrSymbolSchema[]> {
 
     ValrLog.info('fetching Valr symbols')
@@ -32,8 +30,6 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
     return rawSymbols
 
   }
-
-
 
   public static parse (params:{
     rawSymbol: IValrSymbolSchema,
@@ -54,8 +50,6 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
     }
 
   }
-
-
 
   public static parseMany (params: {
     rawSymbols: IValrSymbolSchema[],

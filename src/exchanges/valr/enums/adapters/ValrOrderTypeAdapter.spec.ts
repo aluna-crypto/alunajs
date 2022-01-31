@@ -11,8 +11,6 @@ describe('ValrOrderTypeAdapter', () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Valr order types to Aluna order types', () => {
 
     expect(ValrOrderTypeAdapter.translateToAluna({
@@ -39,7 +37,6 @@ describe('ValrOrderTypeAdapter', () => {
       from: ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
-
     try {
 
       ValrOrderTypeAdapter.translateToAluna({
@@ -49,14 +46,13 @@ describe('ValrOrderTypeAdapter', () => {
     } catch (err) {
 
       expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
+
+      const { message } = err as AlunaError
+      expect(message).to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
 
-
   })
-
-
 
   it('should properly translate Aluna order types to Valr order types', () => {
 
@@ -76,7 +72,6 @@ describe('ValrOrderTypeAdapter', () => {
       from: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     })).to.be.eq(ValrOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
-
     try {
 
       ValrOrderTypeAdapter.translateToValr({
@@ -85,8 +80,11 @@ describe('ValrOrderTypeAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type not supported: ${notSupported}`)
+      const error: AlunaError = err
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     }
 

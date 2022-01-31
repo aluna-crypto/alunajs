@@ -7,7 +7,7 @@ export interface IAlunaMarketSchema {
 
   exchangeId: string
 
-  pairSymbol: string
+  symbolPair: string
 
   baseSymbolId: string
   quoteSymbolId: string

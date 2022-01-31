@@ -11,8 +11,6 @@ export interface IValrMarketSchema {
   changeFromPrevious: string
 }
 
-
-
 export interface IValrCurrencyPairs {
   symbol: string
   baseCurrency: string
@@ -25,4 +23,9 @@ export interface IValrCurrencyPairs {
   maxQuoteAmount: string
   tickSize: string
   baseDecimalPlaces: string
+}
+
+export interface IMarketWithCurrencies extends IValrMarketSchema {
+  baseCurrency: string
+  quoteCurrency: string
 }

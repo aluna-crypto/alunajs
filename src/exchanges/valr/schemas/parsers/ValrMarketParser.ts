@@ -1,13 +1,13 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
-import { IMarketWithCurrency } from '../../modules/ValrMarketModule'
 import { Valr } from '../../Valr'
+import { IMarketWithCurrencies } from '../IValrMarketSchema'
 
 
 
 export class ValrMarketParser {
 
   static parse (params: {
-    rawMarket: IMarketWithCurrency,
+    rawMarket: IMarketWithCurrencies,
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params
@@ -25,7 +25,6 @@ export class ValrMarketParser {
       currencyPair,
     } = rawMarket
 
-
     const ticker = {
       high: parseFloat(highPrice),
       low: parseFloat(lowPrice),
@@ -40,7 +39,7 @@ export class ValrMarketParser {
 
     return {
       exchangeId: Valr.ID,
-      pairSymbol: currencyPair,
+      symbolPair: currencyPair,
       baseSymbolId: baseCurrency,
       quoteSymbolId: quoteCurrency,
       ticker,

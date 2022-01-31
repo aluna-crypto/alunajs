@@ -6,11 +6,7 @@ import { ValrOrderTypesEnum } from '../ValrOrderTypesEnum'
 
 export class ValrOrderTypeAdapter {
 
-
-
   static readonly ERROR_MESSAGE_PREFIX = 'Order type'
-
-
 
   static translateToAluna =
     buildAdapter<ValrOrderTypesEnum, AlunaOrderTypesEnum>({
@@ -26,8 +22,6 @@ export class ValrOrderTypeAdapter {
       },
     })
 
-
-
   static translateToValr =
     buildAdapter<AlunaOrderTypesEnum, ValrOrderTypesEnum>({
       errorMessagePrefix: ValrOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
@@ -39,7 +33,5 @@ export class ValrOrderTypeAdapter {
           ValrOrderTypesEnum.TAKE_PROFIT_LIMIT,
       },
     })
-
-
 
 }
