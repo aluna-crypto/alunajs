@@ -38,7 +38,7 @@ describe('Bitfinex', () => {
     expect(bitfinex.settings?.referralCode).to.eq(referralCode)
 
     expect(bitfinex.key).to.be.ok
-    // expect(bitfinex.balance).to.be.ok
+    expect(bitfinex.balance).to.be.ok
     // expect(bitfinex.order).to.be.ok
 
     // bitfinex doesn't have margin trading
