@@ -3,7 +3,7 @@ import { IBitfinexBalanceSchema } from '../../schemas/IBitfinexBalanceSchema'
 
 
 
-export const BITFINEX_BALANCE: IBitfinexBalanceSchema[] = [
+export const BITFINEX__RAW_BALANCES: IBitfinexBalanceSchema[] = [
   [
     'exchange' as BitfinexAccountsEnum,
     'BTC',
@@ -37,24 +37,6 @@ export const BITFINEX_BALANCE: IBitfinexBalanceSchema[] = [
       order_cid: 1642169849457,
       order_gid: null,
     },
-  ],
-  [
-    'exchange' as BitfinexAccountsEnum,
-    'TRX',
-    0.00005,
-    0,
-    0.00005,
-    null,
-    null,
-  ],
-  [
-    'exchange' as BitfinexAccountsEnum,
-    'GBP',
-    0.04641484,
-    0,
-    0.04641484,
-    null,
-    null,
   ],
   [
     'exchange' as BitfinexAccountsEnum,
@@ -102,6 +84,15 @@ export const BITFINEX_BALANCE: IBitfinexBalanceSchema[] = [
   ],
   [
     'margin' as BitfinexAccountsEnum,
+    'ETH',
+    0.0071264,
+    0,
+    0.0071264,
+    null,
+    null,
+  ],
+  [
+    'funding' as BitfinexAccountsEnum,
     'ETH',
     0.0071264,
     0,
