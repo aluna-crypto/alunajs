@@ -5,6 +5,7 @@ import { IAlunaKeySecretSchema } from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
 import {
   BITFINEX_PARSED_BALANCES,
   BITFINEX_RAW_BALANCES,
@@ -13,7 +14,7 @@ import { BitfinexBalanceModule } from './BitfinexBalanceModule'
 
 
 
-describe.only('BitfinexBalanceModule', () => {
+describe('BitfinexBalanceModule', () => {
 
   const bitfinexBalanceModule = BitfinexBalanceModule.prototype
 
@@ -93,6 +94,53 @@ describe.only('BitfinexBalanceModule', () => {
       })).to.be.ok
 
     })
+
+  })
+
+  it('should parse a single Bitfinex raw balance just fine', async () => {
+
+    const balanceParserMock = ImportMock.mockFunction(
+      BitfinexBalanceParser,
+      'parser',
+      BITFINEX_PARSED_BALANCES[0],
+    )
+
+    const parsedBalance = bitfinexBalanceModule.parse({
+      rawBalance: BITFINEX_RAW_BALANCES[0],
+    })
+
+    expect(balanceParserMock.callCount).to.be.eq(1)
+    expect(balanceParserMock.calledWithExactly({
+      rawBalance: BITFINEX_RAW_BALANCES[0],
+    })).to.be.ok
+    expect(parsedBalance).to.deep.eq(balanceParserMock.returnValues[0])
+
+    // new mocking
+    balanceParserMock.returns(BITFINEX_PARSED_BALANCES[2])
+
+    const parsedBalance2 = bitfinexBalanceModule.parse({
+      rawBalance: BITFINEX_RAW_BALANCES[2],
+    })
+
+    expect(balanceParserMock.callCount).to.be.eq(2)
+    expect(balanceParserMock.calledWithExactly({
+      rawBalance: BITFINEX_RAW_BALANCES[2],
+    })).to.be.ok
+    expect(parsedBalance2).to.deep.eq(balanceParserMock.returnValues[1])
+
+
+    // new mocking
+    balanceParserMock.returns(BITFINEX_PARSED_BALANCES[5])
+
+    const parsedBalance3 = bitfinexBalanceModule.parse({
+      rawBalance: BITFINEX_RAW_BALANCES[5],
+    })
+
+    expect(balanceParserMock.callCount).to.be.eq(3)
+    expect(balanceParserMock.calledWithExactly({
+      rawBalance: BITFINEX_RAW_BALANCES[5],
+    })).to.be.ok
+    expect(parsedBalance3).to.deep.eq(balanceParserMock.returnValues[2])
 
   })
 
