@@ -10,7 +10,10 @@ import {
   BITFINEX_PARSED_BALANCES,
   BITFINEX_RAW_BALANCES,
 } from '../test/fixtures/bitfinexBalances'
-import { BitfinexBalanceModule } from './BitfinexBalanceModule'
+import {
+  BitfinexBalanceModule,
+  IFetchTradableBalanceParams,
+} from './BitfinexBalanceModule'
 
 
 
@@ -168,6 +171,40 @@ describe('BitfinexBalanceModule', () => {
     })).to.be.ok
 
     expect(parsedBalances).to.deep.eq(parseManyMock.returnValues[0])
+
+  })
+
+  it('should fetch tradable balance just file', async () => {
+
+    const { exchangeMock } = mockKeySecret()
+
+    const tradableBalace = 25.34
+
+    const requestMock = ImportMock.mockFunction(
+      BitfinexHttp,
+      'privateRequest',
+      Promise.resolve([tradableBalace]),
+    )
+
+    const params: IFetchTradableBalanceParams = {
+      dir: 1,
+      rate: 45,
+      symbol: 'fBTCUSD',
+      type: 'MARGIN',
+    }
+
+    const parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
+      params,
+    )
+
+    expect(parsedBalances).to.be.eq(tradableBalace)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
+      keySecret: exchangeMock.getValue().keySecret,
+      body: params,
+    })).to.be.ok
 
   })
 
