@@ -6,7 +6,7 @@ import { BitfinexAccountsEnum } from '../BitfinexAccountsEnum'
 
 export class BitfinexAccountsAdapter {
 
-  static readonly ERROR_MESSAGE_PREFIX = 'Balance type'
+  static readonly ERROR_MESSAGE_PREFIX = 'Account'
 
   static translateToAluna =
     buildAdapter<BitfinexAccountsEnum, AlunaAccountEnum>({
