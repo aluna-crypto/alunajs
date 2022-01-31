@@ -44,7 +44,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const { rawBalance } = params
 
-    const parsedBalance = BitfinexBalanceParser.parser({ rawBalance })
+    const parsedBalance = BitfinexBalanceParser.parse({ rawBalance })
 
     return parsedBalance
 

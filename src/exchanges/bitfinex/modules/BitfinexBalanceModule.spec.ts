@@ -101,7 +101,7 @@ describe('BitfinexBalanceModule', () => {
 
     const balanceParserMock = ImportMock.mockFunction(
       BitfinexBalanceParser,
-      'parser',
+      'parse',
       BITFINEX_PARSED_BALANCES[0],
     )
 

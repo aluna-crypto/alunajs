@@ -6,7 +6,7 @@ import { IBitfinexBalanceSchema } from '../IBitfinexBalanceSchema'
 
 export class BitfinexBalanceParser {
 
-  static parser (params: {
+  static parse (params: {
     rawBalance: IBitfinexBalanceSchema,
   }) {
 
