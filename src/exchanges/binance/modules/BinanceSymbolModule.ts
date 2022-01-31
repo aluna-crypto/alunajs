@@ -1,11 +1,9 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
-import {
-  Binance,
-  PROD_BINANCE_URL,
-} from '../Binance'
+import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
   IBinanceSymbolResponseSchema,
   IBinanceSymbolSchema,

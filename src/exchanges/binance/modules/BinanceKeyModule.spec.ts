@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaHttpErrorCodes } from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { BinanceHttp } from '../BinanceHttp'
@@ -118,7 +119,8 @@ describe('BinanceKeyModule', () => {
       'privateRequest',
       Promise.reject(new AlunaError({
         message: BinanceErrorEnum.INVALID_KEY,
-        statusCode: 401, // QUESTION: Was the 'statusCode' checked?
+        httpStatusCode: 401, // QUESTION: Was the 'statusCode' checked?
+        code: AlunaHttpErrorCodes.REQUEST_ERROR
       })),
     )
 

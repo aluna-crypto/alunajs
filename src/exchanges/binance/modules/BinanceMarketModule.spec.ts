@@ -2,11 +2,9 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
-import {
-  Binance,
-  PROD_BINANCE_URL,
-} from '../Binance'
+import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import { BinanceCurrencyMarketParser } from '../schemas/parses/BinanceCurrencyMarketParser'
 import { BinanceMarketParser } from '../schemas/parses/BinanceMarketParser'
 import {
@@ -135,13 +133,13 @@ describe('BinanceMarketModule', () => {
     parsedMarkets.forEach((parsed, index) => {
 
       const {
-        pairSymbol,
+        symbolPair,
         baseSymbolId,
         quoteSymbolId,
       } = BINANCE_PARSED_MARKET[index]
 
       expect(parsed.exchangeId).to.eq(Binance.ID)
-      expect(parsed.pairSymbol).to.be.eq(pairSymbol)
+      expect(parsed.symbolPair).to.be.eq(symbolPair)
       expect(parsed.baseSymbolId).to.be.eq(baseSymbolId)
       expect(parsed.quoteSymbolId).to.be.eq(quoteSymbolId)
 
@@ -174,7 +172,7 @@ describe('BinanceMarketModule', () => {
     expect(market).to.deep.eq(parsedMarketMock)
 
     expect(market.exchangeId).to.be.eq(Binance.ID)
-    expect(market.pairSymbol).to.be.eq(parsedMarketMock.pairSymbol)
+    expect(market.symbolPair).to.be.eq(parsedMarketMock.symbolPair)
     expect(market.baseSymbolId).to.be.eq(parsedMarketMock.baseSymbolId)
     expect(market.quoteSymbolId).to.be.eq(parsedMarketMock.quoteSymbolId)
 
@@ -242,11 +240,11 @@ describe('BinanceMarketModule', () => {
       const {
         baseSymbolId,
         quoteSymbolId,
-        pairSymbol,
+        symbolPair,
       } = BINANCE_PARSED_MARKET[index]
 
       expect(market.exchangeId).to.be.eq(Binance.ID)
-      expect(market.pairSymbol).to.be.eq(pairSymbol)
+      expect(market.symbolPair).to.be.eq(symbolPair)
       expect(market.baseSymbolId).to.be.eq(baseSymbolId)
       expect(market.quoteSymbolId).to.be.eq(quoteSymbolId)
 

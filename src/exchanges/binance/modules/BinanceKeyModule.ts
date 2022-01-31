@@ -1,10 +1,11 @@
+import { IAlunaKeyPermissionSchema } from '../../../index'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeyPermissionSchema'
-import { PROD_BINANCE_URL } from '../Binance'
+import { IAlunaKeySchema } from '../../../lib/schemas/IAlunaKeySchema'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
   BinanceApiKeyPermissions,
   IBinanceKeyAccountSchema,
@@ -86,8 +87,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read: false,
       trade: false,
-      withdraw: false,
-      meta: rawKey,
+      withdraw: false,      
     }
 
     permissions.forEach((permission: string) => {
@@ -112,6 +112,16 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return alunaPermissions
 
+  }
+
+  public fetchDetails(): Promise<IAlunaKeySchema> {
+    // TODO -> Update  
+    return null as any
+  }
+
+  public parseDetails(params: { rawKey: any; }): IAlunaKeySchema {
+    // TODO -> Update  
+    return null as any
   }
 
 }

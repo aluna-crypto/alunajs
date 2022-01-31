@@ -20,7 +20,7 @@ describe('BinanceMarketParser', () => {
     const {
       exchangeId,
       ticker,
-      pairSymbol,
+      symbolPair,
       baseSymbolId,
       quoteSymbolId,
       spotEnabled,
@@ -43,7 +43,7 @@ describe('BinanceMarketParser', () => {
     } = ticker
 
     expect(exchangeId).to.be.eq(Binance.ID)
-    expect(pairSymbol).to.be.eq(rawMarket.symbol)
+    expect(symbolPair).to.be.eq(rawMarket.symbol)
     expect(baseSymbolId).to.be.eq(rawMarket.baseCurrency)
     expect(quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)
 

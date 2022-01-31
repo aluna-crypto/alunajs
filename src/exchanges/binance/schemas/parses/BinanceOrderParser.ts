@@ -1,5 +1,6 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { Binance } from '../../Binance'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
@@ -15,6 +16,8 @@ export class BinanceOrderParser {
 
     const { rawOrder } = params
 
+    const exchangeId = Binance.ID
+
     const {
       orderId,
       time,
@@ -24,6 +27,7 @@ export class BinanceOrderParser {
       price,
       type,
       status,
+      
     } = rawOrder
 
     // TODO: Should use UTC date instead (moment? - Fix all occurrencies)
@@ -36,8 +40,10 @@ export class BinanceOrderParser {
       symbolPair: symbol,
       total: amount * rate,
       amount,
-      isAmountInContracts: false,
-      rate,
+      rate,  
+      exchangeId,
+      baseSymbolId: '', // TODO Update here
+      quoteSymbolId: '', // TODO Update here
       account: AlunaAccountEnum.EXCHANGE,
       side: BinanceSideAdapter.translateToAluna({ from: side }),
       status: BinanceStatusAdapter.translateToAluna({ from: status }),

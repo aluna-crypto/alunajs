@@ -30,7 +30,6 @@ describe('BinanceOrderParser', () => {
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.symbol)
     expect(parsedOrder.total).to.be.eq(rawOriginalQuantity * rawPrice)
     expect(parsedOrder.amount).to.be.eq(rawOriginalQuantity)
-    expect(parsedOrder.isAmountInContracts).not.to.be.ok
     expect(parsedOrder.rate).to.be.eq(rawPrice)
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 

@@ -13,11 +13,13 @@ import {
   IAlunaOrderCancelParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSpecsSchema'
+import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
-import { BinanceSpecs } from '../BinanceSpecs'
+import {
+  BinanceSpecs,
+  PROD_BINANCE_URL,
+} from '../BinanceSpecs'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'

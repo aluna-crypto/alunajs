@@ -1,10 +1,15 @@
-import { IAlunaExchangeOrderSpecsSchema } from '../../index'
+import {
+  IAlunaExchangeOrderSpecsSchema,
+  IAlunaExchangeSchema,
+} from '../../index'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
-import { IAlunaExchangeSpecsSchema } from '../../lib/schemas/IAlunaExchangeSpecsSchema'
 
 
+
+export const PROD_BINANCE_URL = 'https://api.binance.com'
+export const DEV_BINANCE_URL = 'https://testnet.binance.vision'
 
 const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
@@ -73,10 +78,16 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   },
 ]
 
-export const BinanceSpecs: IAlunaExchangeSpecsSchema = {
+export const BinanceSpecs: IAlunaExchangeSchema = {
   id: 'binance',
-  acceptFloatAmounts: true,
-  features: {
+  name: 'Binance',
+  signupUrl: 'https://accounts.binance.com/en/register',
+  connectApiUrl: 'https://www.valr.com/api-keys/create',
+  rateLimitingPerMinute: {
+    perApiKey: 1200,
+    perIp: 1200,
+  },
+  modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },

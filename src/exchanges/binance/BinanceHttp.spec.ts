@@ -293,7 +293,7 @@ describe('BinanceHttp', () => {
 
     expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
-    expect(error1.statusCode).to.be.eq(400)
+    expect(error1.httpStatusCode).to.be.eq(400)
 
 
     const axiosError2 = {
@@ -310,7 +310,7 @@ describe('BinanceHttp', () => {
     expect(
       error2.message,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.statusCode).to.be.eq(400)
+    expect(error2.httpStatusCode).to.be.eq(400)
 
 
     const axiosError3 = {
@@ -323,7 +323,7 @@ describe('BinanceHttp', () => {
     expect(
       error3.message,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.statusCode).to.be.eq(400)
+    expect(error3.httpStatusCode).to.be.eq(400)
 
 
     const error = {
@@ -334,7 +334,7 @@ describe('BinanceHttp', () => {
 
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
-    expect(error4.statusCode).to.be.eq(400)
+    expect(error4.httpStatusCode).to.be.eq(400)
 
 
     const unknown = {}
@@ -345,7 +345,7 @@ describe('BinanceHttp', () => {
     expect(
       error5.message,
     ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.statusCode).to.be.eq(400)
+    expect(error5.httpStatusCode).to.be.eq(400)
 
   })
 

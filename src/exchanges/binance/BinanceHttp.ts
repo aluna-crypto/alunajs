@@ -2,7 +2,10 @@ import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 import { URLSearchParams } from 'url'
 
-import { IAlunaKeySecretSchema } from '../..'
+import {
+  AlunaHttpErrorCodes,
+  IAlunaKeySecretSchema,
+} from '../../index'
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
@@ -70,13 +73,16 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
     error = new AlunaError({
       message: response?.data?.msg || errorMsg,
-      statusCode: response?.status,
+      httpStatusCode: response?.status,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      metadata: response?.data
     })
 
   } else {
 
     error = new AlunaError({
       message: param.message || errorMsg,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR
     })
 
   }

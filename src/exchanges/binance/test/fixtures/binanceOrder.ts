@@ -31,7 +31,6 @@ export const BINANCE_PARSED_ORDER = {
   symbolPair: 'LTCBTC',
   total: 0.1,
   amount: 1,
-  isAmountInContracts: false,
   rate: 0.1,
   account: 'exchange',
   side: 'long',

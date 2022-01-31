@@ -43,7 +43,7 @@ export class BinanceMarketParser {
 
     return {
       exchangeId: Binance.ID,
-      pairSymbol: symbol,
+      symbolPair: symbol,
       baseSymbolId: baseCurrency,
       quoteSymbolId: quoteCurrency,
       ticker,

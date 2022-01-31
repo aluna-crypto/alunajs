@@ -7,8 +7,8 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 import { BinanceSideEnum } from '../enums/BinanceSideEnum'
@@ -133,7 +133,6 @@ describe('BinanceOrderReadModule', () => {
         account,
         amount,
         id,
-        isAmountInContracts,
         placedAt,
         side,
         status,
@@ -146,7 +145,6 @@ describe('BinanceOrderReadModule', () => {
       expect(order.id).to.be.eq(id)
       expect(order.account).to.be.eq(account)
       expect(order.amount).to.be.eq(amount)
-      expect(order.isAmountInContracts).to.be.eq(isAmountInContracts)
       expect(order.placedAt).to.be.eq(placedAt)
       expect(order.side).to.be.eq(side)
       expect(order.status).to.be.eq(status)
@@ -240,7 +238,7 @@ describe('BinanceOrderReadModule', () => {
 
 
 
-  it('should parse a Binance raw order just fine', () => {
+  it('should parse a Binance raw order just fine', async () => {
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -252,7 +250,7 @@ describe('BinanceOrderReadModule', () => {
     parseMock
       .onFirstCall().returns(BINANCE_PARSED_ORDER)
 
-    const parsedOrder1 = binanceOrderReadModule.parse({ rawOrder })
+    const parsedOrder1 = await binanceOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder })).to.be.ok
@@ -263,7 +261,6 @@ describe('BinanceOrderReadModule', () => {
     expect(parsedOrder1.rate).to.be.ok
     expect(parsedOrder1.placedAt).to.be.ok
 
-    expect(parsedOrder1.isAmountInContracts).not.to.be.ok
 
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -274,7 +271,7 @@ describe('BinanceOrderReadModule', () => {
 
 
 
-  it('should parse many Binance orders just fine', () => {
+  it('should parse many Binance orders just fine', async () => {
 
     const rawOrders = [BINANCE_RAW_ORDER]
     const parsedOrders = [BINANCE_PARSED_ORDER]
@@ -290,7 +287,7 @@ describe('BinanceOrderReadModule', () => {
 
     })
 
-    const parsedManyResp = binanceOrderReadModule.parseMany({ rawOrders })
+    const parsedManyResp = await binanceOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(1)
     expect(parseMock.callCount).to.be.eq(1)

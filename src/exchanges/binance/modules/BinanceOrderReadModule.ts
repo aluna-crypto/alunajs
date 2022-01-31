@@ -5,9 +5,9 @@ import {
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
 
@@ -79,9 +79,9 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
 
 
-  public parse (params: {
+  public async parse (params: {
     rawOrder: IBinanceOrderSchema,
-  }): IAlunaOrderSchema {
+  }): Promise<IAlunaOrderSchema> {
 
     const { rawOrder } = params
 
@@ -93,19 +93,19 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
 
 
-  public parseMany (params: {
+  public async parseMany (params: {
     rawOrders: IBinanceOrderSchema[],
-  }): IAlunaOrderSchema[] {
+  }): Promise<IAlunaOrderSchema[]> {
 
     const { rawOrders } = params
 
-    const parsedOrders = rawOrders.map((rawOrder: IBinanceOrderSchema) => {
+    const parsedOrders = await Promise.all(rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
-      const parsedOrder = this.parse({ rawOrder })
+      const parsedOrder = await this.parse({ rawOrder })
 
       return parsedOrder
 
-    })
+    }))
 
     BinanceLog.info(`parsed ${parsedOrders.length} orders for Binance`)
 

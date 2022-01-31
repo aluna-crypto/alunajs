@@ -4,8 +4,8 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
   BINANCE_PARSED_BALANCES,
   BINANCE_RAW_BALANCES,

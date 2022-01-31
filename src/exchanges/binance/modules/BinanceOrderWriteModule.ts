@@ -1,3 +1,9 @@
+import {
+  AlunaAccountsErrorCodes,
+  AlunaHttpErrorCodes,
+  AlunaOrderErrorCodes,
+  IAlunaOrderEditParams,
+} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -7,10 +13,12 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
-import { BinanceSpecs } from '../BinanceSpecs'
+import {
+  BinanceSpecs,
+  PROD_BINANCE_URL,
+} from '../BinanceSpecs'
 import { BinanceOrderTypeAdapter } from '../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
@@ -49,6 +57,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Account type '${account}' not found`,
+          code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND
         })
 
       }
@@ -65,6 +74,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
         throw new AlunaError({
           message:
             `Account type '${account}' not supported/implemented for Binance`,
+            code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED
         })
 
       }
@@ -75,6 +85,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Order type '${type}' not supported/implemented for Binance`,
+          code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED
         })
 
       }
@@ -83,6 +94,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Order type '${type}' is in read mode`,
+          code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY
         })
 
       }
@@ -167,7 +179,8 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
-        statusCode: 500,
+        httpStatusCode: 500,
+        code: AlunaHttpErrorCodes.REQUEST_ERROR
       })
 
       BinanceLog.error(error)
@@ -180,6 +193,13 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     return parsedOrder
 
+  }
+
+
+  public async edit(params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
+
+    // TODO -> Add Logic to function
+    return null as any
   }
 
 }

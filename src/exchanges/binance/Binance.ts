@@ -17,12 +17,6 @@ import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
 
 
 
-// TODO: Move URLs to exchange specs
-export const PROD_BINANCE_URL = 'https://api.binance.com'
-export const DEV_BINANCE_URL = 'https://testnet.binance.vision'
-
-
-
 export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implements IAlunaExchange {
 
     // static definitions
