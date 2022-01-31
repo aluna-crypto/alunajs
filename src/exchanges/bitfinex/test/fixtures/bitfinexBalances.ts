@@ -3,7 +3,7 @@ import { IBitfinexBalanceSchema } from '../../schemas/IBitfinexBalanceSchema'
 
 
 
-export const BITFINEX__RAW_BALANCES: IBitfinexBalanceSchema[] = [
+export const BITFINEX_RAW_BALANCES: IBitfinexBalanceSchema[] = [
   [
     'exchange' as BitfinexAccountsEnum,
     'BTC',
