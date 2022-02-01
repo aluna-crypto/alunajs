@@ -16,7 +16,9 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     BitfinexLog.info('fetching Bitfinex open orders')
 
-    const rawOrders = await BitfinexHttp.privateRequest<any[]>({
+    const { privateRequest } = BitfinexHttp
+
+    const rawOrders = await privateRequest<IBitfinexOrderSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/orders',
       keySecret: this.exchange.keySecret,
     })
@@ -56,7 +58,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
   }
 
   public async parse (params: {
-    rawOrder: any,
+    rawOrder: IBitfinexOrderSchema,
   }): Promise<IAlunaOrderSchema> {
 
     const {
@@ -69,13 +71,40 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
   }
 
   public async parseMany (params: {
-    rawOrders: any[],
+    rawOrders: IBitfinexOrderSchema[],
   }): Promise<IAlunaOrderSchema[]> {
-
 
     BitfinexLog.info('parsed 8 orders for Bitfinex')
 
-    return params as any
+    const { rawOrders } = params
+
+    const ordersPromises = rawOrders.reduce((acc, rawOrder) => {
+
+      const [
+        _id,
+        _gid,
+        _cid,
+        symbol,
+      ] = rawOrder
+
+      // skipping 'funding' and 'derivative' orders for now
+      if (/f|F0/.test(symbol)) {
+
+        return acc
+
+      }
+
+      const parsedOrder = this.parse({ rawOrder })
+
+      acc.push(parsedOrder)
+
+      return acc
+
+    }, [] as Array<Promise<IAlunaOrderSchema>>)
+
+    const parsedOrders = await Promise.all(ordersPromises)
+
+    return parsedOrders
 
   }
 
