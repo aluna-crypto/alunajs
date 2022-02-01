@@ -38,7 +38,7 @@ export class BitfinexOrderParser {
       _placeholder3,
       _placeholder4,
       price,
-      _priceAvg,
+      priceAvg,
       _priceTrailing,
       priceAuxLimit,
     ] = rawOrder
@@ -82,21 +82,22 @@ export class BitfinexOrderParser {
     let stopRate: number | undefined
     let limitRate: number | undefined
 
-    let computedPrice = price
+    const fixedPrice = price || priceAvg
+    let computedPrice = fixedPrice
 
     if (type === AlunaOrderTypesEnum.STOP_LIMIT) {
 
-      stopRate = price
+      stopRate = fixedPrice
       limitRate = priceAuxLimit
       computedPrice = priceAuxLimit
 
     } else if (type === AlunaOrderTypesEnum.STOP_MARKET) {
 
-      stopRate = price
+      stopRate = fixedPrice
 
     } else {
 
-      rate = price
+      rate = fixedPrice
 
     }
 
