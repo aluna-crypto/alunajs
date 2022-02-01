@@ -4,6 +4,5 @@ export const AlunaOrderErrorCodes = {
   IS_NOT_OPEN: 'order-isnt-open',
   PLACE_FAILED: 'order-place-fail',
   CANCEL_FAILED: 'order-cancel-fail',
-  INSUFFICIENT_BALANCE: 'insufficient-balance',
   NOT_FOUND: 'order-not-found',
 }
