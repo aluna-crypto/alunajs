@@ -8,16 +8,27 @@ export class BitfinexAccountsAdapter {
 
   static readonly ERROR_MESSAGE_PREFIX = 'Account'
 
-  static translateToAluna =
-    buildAdapter<BitfinexAccountsEnum, AlunaAccountEnum>({
-      errorMessagePrefix: BitfinexAccountsAdapter.ERROR_MESSAGE_PREFIX,
-      mappings: {
-        [BitfinexAccountsEnum.EXCHANGE]: AlunaAccountEnum.EXCHANGE,
-        [BitfinexAccountsEnum.MARGIN]: AlunaAccountEnum.MARGIN,
-        [BitfinexAccountsEnum.FUNDING]: AlunaAccountEnum.LENDING,
-        [BitfinexAccountsEnum.DERIV]: AlunaAccountEnum.DERIVATIVES,
-      },
-    })
+  static translateToAluna (params: {
+    value: string,
+  }): AlunaAccountEnum {
+
+    const { value } = params
+
+    let account: AlunaAccountEnum
+
+    if (/^exchange/i.test(value)) {
+
+      account = AlunaAccountEnum.EXCHANGE
+
+    } else {
+
+      account = AlunaAccountEnum.MARGIN
+
+    }
+
+    return account
+
+  }
 
   static translateToBitfinex =
     buildAdapter<AlunaAccountEnum, BitfinexAccountsEnum>({
@@ -26,7 +37,7 @@ export class BitfinexAccountsAdapter {
         [AlunaAccountEnum.EXCHANGE]: BitfinexAccountsEnum.EXCHANGE,
         [AlunaAccountEnum.MARGIN]: BitfinexAccountsEnum.MARGIN,
         [AlunaAccountEnum.LENDING]: BitfinexAccountsEnum.FUNDING,
-        [AlunaAccountEnum.DERIVATIVES]: BitfinexAccountsEnum.DERIV,
+        [AlunaAccountEnum.DERIVATIVES]: BitfinexAccountsEnum.DERIVATIVES,
       },
     })
 
