@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { AlunaAccountEnum } from '../../../..'
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { BitfinexAccountsEnum } from '../BitfinexAccountsEnum'
+import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
 import { BitfinexAccountsAdapter } from './BitfinexAccountsAdapter'
 
 
@@ -14,35 +15,20 @@ describe('BitfinexAccountsAdapter', () => {
   it('should properly translate Bitfinex account to Aluna account', () => {
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      from: BitfinexAccountsEnum.EXCHANGE,
+      value: BitfinexOrderTypesEnum.EXCHANGE_STOP,
     })).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      from: BitfinexAccountsEnum.MARGIN,
+      value: BitfinexOrderTypesEnum.MARKET,
     })).to.be.eq(AlunaAccountEnum.MARGIN)
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      from: BitfinexAccountsEnum.FUNDING,
-    })).to.be.eq(AlunaAccountEnum.LENDING)
+      value: 'exchange',
+    })).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      from: BitfinexAccountsEnum.DERIV,
-    })).to.be.eq(AlunaAccountEnum.DERIVATIVES)
-
-    try {
-
-      BitfinexAccountsAdapter.translateToAluna({
-        from: notSupported as BitfinexAccountsEnum,
-      })
-
-    } catch (err) {
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Account not supported: ${notSupported}`)
-
-    }
+      value: 'margin',
+    })).to.be.eq(AlunaAccountEnum.MARGIN)
 
   })
 
@@ -62,7 +48,7 @@ describe('BitfinexAccountsAdapter', () => {
 
     expect(BitfinexAccountsAdapter.translateToBitfinex({
       from: AlunaAccountEnum.DERIVATIVES,
-    })).to.be.eq(BitfinexAccountsEnum.DERIV)
+    })).to.be.eq(BitfinexAccountsEnum.DERIVATIVES)
 
     try {
 
