@@ -13,6 +13,7 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
@@ -325,7 +326,7 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
-    expect(error?.code).to.eq(AlunaOrderErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error?.code).to.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error?.message).to.eq(failedPlacedOrderNoBalance.meta.failedReason)
     expect(error?.httpStatusCode).to.eq(200)
 
