@@ -76,7 +76,6 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { rawBalances } = params
 
-    // TODO: Prefer using generic types instead of casting values
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
 

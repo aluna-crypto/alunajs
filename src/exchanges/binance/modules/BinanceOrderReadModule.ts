@@ -99,13 +99,15 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { rawOrders } = params
 
-    const parsedOrders = await Promise.all(rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
+    const parsedOrders = await Promise.all(
+      rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
-      const parsedOrder = await this.parse({ rawOrder })
+        const parsedOrder = await this.parse({ rawOrder })
 
-      return parsedOrder
+        return parsedOrder
 
-    }))
+      }),
+    )
 
     BinanceLog.info(`parsed ${parsedOrders.length} orders for Binance`)
 

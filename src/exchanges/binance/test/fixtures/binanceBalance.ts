@@ -1,5 +1,12 @@
-// TODO: Add strict type defs to all fixtures
-export const BINANCE_RAW_BALANCES = [
+import {
+  AlunaAccountEnum,
+  IAlunaBalanceSchema,
+} from '../../../../index'
+import { IBinanceBalanceSchema } from '../../schemas/IBinanceBalanceSchema'
+
+
+
+export const BINANCE_RAW_BALANCES: IBinanceBalanceSchema[] = [
   {
     asset: 'BTC',
     free: '0.04400000',
@@ -22,10 +29,10 @@ export const BINANCE_RAW_BALANCES = [
   },
 ]
 
-export const BINANCE_PARSED_BALANCES = [
+export const BINANCE_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
     symbolId: 'BTC',
-    account: 'exchange',
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.044,
     total: 0.066,
     meta: {
@@ -36,7 +43,7 @@ export const BINANCE_PARSED_BALANCES = [
   },
   {
     symbolId: 'LTC',
-    account: 'exchange',
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.10,
     total: 0.20,
     meta: {
@@ -47,7 +54,7 @@ export const BINANCE_PARSED_BALANCES = [
   },
   {
     symbolId: 'ETH',
-    account: 'exchange',
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0.022,
     total: 0.022,
     meta: {
@@ -58,7 +65,7 @@ export const BINANCE_PARSED_BALANCES = [
   },
   {
     symbolId: 'USDT',
-    account: 'exchange',
+    account: AlunaAccountEnum.EXCHANGE,
     available: 0,
     total: 0,
     meta: {

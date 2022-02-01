@@ -11,7 +11,7 @@ import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 export const PROD_BINANCE_URL = 'https://api.binance.com'
 export const DEV_BINANCE_URL = 'https://testnet.binance.vision'
 
-const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
+export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,

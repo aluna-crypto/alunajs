@@ -1,3 +1,4 @@
+import { IAlunaSymbolSchema } from '../../../../index'
 import { IBinanceSymbolResponseSchema } from '../../schemas/IBinanceSymbolSchema'
 
 
@@ -240,7 +241,7 @@ export const BINANCE_RAW_SYMBOLS: IBinanceSymbolResponseSchema = {
   ],
 }
 
-export const BINANCE_PARSED_SYMBOLS = [
+export const BINANCE_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
   {
     id: 'ETH',
     exchangeId: 'binance',

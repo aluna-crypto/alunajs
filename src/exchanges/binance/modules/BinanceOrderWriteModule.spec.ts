@@ -18,6 +18,7 @@ import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BinanceHttp } from '../BinanceHttp'
 import {
   BinanceSpecs,
+  exchangeOrderTypes as binanceExchangeOrderTypes,
   PROD_BINANCE_URL,
 } from '../BinanceSpecs'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
@@ -64,7 +65,6 @@ describe('BinanceOrderWriteModule', () => {
       Promise.resolve(placedOrder),
     )
 
-    // TODO: Always use strict types defs (fix all occurrencies)
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: '0.001',
       rate: '10000',
@@ -81,7 +81,7 @@ describe('BinanceOrderWriteModule', () => {
       quantity: placeOrderParams.amount,
       price: placeOrderParams.rate,
       type: BinanceOrderTypeEnum.LIMIT,
-      timeInForce: BinanceOrderTimeInForceEnum.GTC,
+      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
     }
 
 
@@ -159,7 +159,7 @@ describe('BinanceOrderWriteModule', () => {
       placedOrder,
     )
 
-    const placeOrderParams = {
+    const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: '0.001',
       rate: '0',
       symbolPair: 'ETHZAR',
@@ -331,18 +331,13 @@ describe('BinanceOrderWriteModule', () => {
       (e) => e.type === AlunaAccountEnum.EXCHANGE,
     )
 
+    const limitOrderType = binanceExchangeOrderTypes[0]
+
     ImportMock.mockOther(
       BinanceSpecs.accounts[accountIndex],
       'orderTypes',
       [
-        // QUESTION: Should we use the pre-defined order spec instead?
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
+        limitOrderType,
       ],
     )
 
@@ -506,21 +501,11 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-    )
-
-    const objMock = {} as any // Mock getRawMock obj
-
-    // TODO: Review necessity of mocking 'getRaw' method
-    const getRawMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'getRaw',
       {
-        type: 'any-status-but-canceled' as BinanceOrderStatusEnum,
-        ...objMock,
+        status: 'any-status-but-canceled' as BinanceOrderStatusEnum,
       } as IBinanceOrderSchema,
     )
 
-    // TODO: Always use strict types defs (fix all occurrencies)
     const cancelParams: IAlunaOrderCancelParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
@@ -549,9 +534,6 @@ describe('BinanceOrderWriteModule', () => {
       },
     })).to.be.ok
 
-    expect(getRawMock.callCount).to.be.eq(1)
-    expect(getRawMock.calledWith(cancelParams)).to.be.ok
-
     expect(error instanceof AlunaError).to.be.ok
     expect(error.message).to.be.eq('Something went wrong, order not canceled')
     expect(error.statusCode).to.be.eq(500)
@@ -568,20 +550,14 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const canceledOrderResponse = {
+      status: BinanceOrderStatusEnum.CANCELED,
+    } as IBinanceOrderSchema
+
     ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-    )
-
-    const objMock = {} as any // Mock getRawMock obj
-
-    const getRawMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'getRaw',
-      {
-        status: BinanceOrderStatusEnum.CANCELED,
-        ...objMock,
-      } as IBinanceOrderSchema,
+      canceledOrderResponse,
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -590,7 +566,7 @@ describe('BinanceOrderWriteModule', () => {
       { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
     )
 
-    const cancelParams = {
+    const cancelParams: IAlunaOrderCancelParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -612,7 +588,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: getRawMock.returnValues[0],
+      rawOrder: canceledOrderResponse,
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok

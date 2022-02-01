@@ -29,14 +29,14 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     BinanceLog.info('fetching Binance symbols')
 
-    // TODO: Deconstruct public request method before using it, and fix all
-    // occurrencies that matches this use case
     const rawSymbols = await BinanceHttp
       .publicRequest<IBinanceSymbolResponseSchema>({
         url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
       })
 
-    return rawSymbols.symbols
+    const { symbols } = rawSymbols
+
+    return symbols
 
   }
 
@@ -52,13 +52,13 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
       baseAsset,
     } = rawSymbol
 
-    // TODO: Prefer assigning the output to a variable before returning it
-    // TODO: Fix all occurrencies that matches this use case
-    return {
+    const parsedSymbol = {
       id: baseAsset,
       exchangeId: Binance.ID,
       meta: rawSymbol,
     }
+
+    return parsedSymbol
 
   }
 

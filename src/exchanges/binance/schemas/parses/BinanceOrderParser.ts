@@ -27,7 +27,6 @@ export class BinanceOrderParser {
       price,
       type,
       status,
-      
     } = rawOrder
 
     // TODO: Should use UTC date instead (moment? - Fix all occurrencies)

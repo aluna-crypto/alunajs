@@ -28,34 +28,35 @@ export class BinanceCurrencyMarketParser {
 
     })
 
-    const rawMarketsWithCurrency = rawMarkets.reduce((cumulator, current) => {
+    const rawMarketsWithCurrency = rawMarkets
+      .reduce<IBinanceMarketWithCurrency[]>((cumulator, current) => {
 
-      const { symbol } = current
+        const { symbol } = current
 
-      const rawSymbol = pairSymbolsDictionary[symbol]
+        const rawSymbol = pairSymbolsDictionary[symbol]
 
-      if (rawSymbol) {
+        if (rawSymbol) {
 
-        const {
-          baseAsset,
-          quoteAsset,
-          isSpotTradingAllowed,
-          isMarginTradingAllowed,
-        } = rawSymbol
+          const {
+            baseAsset,
+            quoteAsset,
+            isSpotTradingAllowed,
+            isMarginTradingAllowed,
+          } = rawSymbol
 
-        cumulator.push({
-          ...current,
-          baseCurrency: baseAsset,
-          quoteCurrency: quoteAsset,
-          marginEnabled: isMarginTradingAllowed,
-          spotEnabled: isSpotTradingAllowed,
-        })
+          cumulator.push({
+            ...current,
+            baseCurrency: baseAsset,
+            quoteCurrency: quoteAsset,
+            marginEnabled: isMarginTradingAllowed,
+            spotEnabled: isSpotTradingAllowed,
+          })
 
-      }
+        }
 
-      return cumulator
+        return cumulator
 
-    }, [] as IBinanceMarketWithCurrency[]) // TODO: Use generic types
+      }, [])
 
     return rawMarketsWithCurrency
 

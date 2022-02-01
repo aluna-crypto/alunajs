@@ -27,7 +27,6 @@ describe('BinanceSymbolModule', () => {
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(BINANCE_RAW_SYMBOLS.symbols)
 
-    // TODO: Use for loops for repetitive validations (fix all occurrencies)
     for (let index = 0; index < 3; index += 1) {
 
       expect(rawSymbols[index].symbol)
@@ -47,7 +46,6 @@ describe('BinanceSymbolModule', () => {
 
   it('should list Binance parsed symbols just fine', async () => {
 
-    // TODO: Prefer using valid fixtures (fix all occurrencies)
     const listRawMock = ImportMock.mockFunction(
       BinanceSymbolModule,
       'listRaw',
@@ -66,14 +64,12 @@ describe('BinanceSymbolModule', () => {
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(BINANCE_PARSED_SYMBOLS)
 
-    expect(rawSymbols[0].exchangeId).to.be.eq(Binance.ID)
-    expect(rawSymbols[0].id).to.be.eq(BINANCE_PARSED_SYMBOLS[0].id)
+    for (let index = 0; index < 3; index += 1) {
 
-    expect(rawSymbols[1].exchangeId).to.be.eq(Binance.ID)
-    expect(rawSymbols[1].id).to.be.eq(BINANCE_PARSED_SYMBOLS[1].id)
+      expect(rawSymbols[index].exchangeId).to.be.eq(Binance.ID)
+      expect(rawSymbols[index].id).to.be.eq(BINANCE_PARSED_SYMBOLS[index].id)
 
-    expect(rawSymbols[2].exchangeId).to.be.eq(Binance.ID)
-    expect(rawSymbols[2].id).to.be.eq(BINANCE_PARSED_SYMBOLS[2].id)
+    }
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -113,7 +109,7 @@ describe('BinanceSymbolModule', () => {
       'parse',
     )
 
-    const rawSymbol = {}
+    const rawSymbol = BINANCE_RAW_SYMBOLS.symbols[0]
 
     parseMock
       .onFirstCall()
@@ -127,14 +123,12 @@ describe('BinanceSymbolModule', () => {
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 
-    expect(parsedSymbols[0].exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbols[0].id).to.be.eq(BINANCE_PARSED_SYMBOLS[0].id)
+    for (let index = 0; index < 3; index += 1) {
 
-    expect(parsedSymbols[1].exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbols[1].id).to.be.eq(BINANCE_PARSED_SYMBOLS[1].id)
+      expect(parsedSymbols[index].exchangeId).to.be.eq(Binance.ID)
+      expect(parsedSymbols[index].id).to.be.eq(BINANCE_PARSED_SYMBOLS[index].id)
 
-    expect(parsedSymbols[2].exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbols[2].id).to.be.eq(BINANCE_PARSED_SYMBOLS[2].id)
+    }
 
     expect(parseMock.callCount).to.be.eq(3)
     expect(parseMock.calledWith({ rawSymbol }))

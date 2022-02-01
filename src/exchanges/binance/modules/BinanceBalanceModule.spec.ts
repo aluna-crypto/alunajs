@@ -92,8 +92,8 @@ describe('BinanceBalanceModule', () => {
     expect(listRawMock.callCount).to.be.eq(1)
 
     expect(parseManyMock.callCount).to.be.eq(1)
-    // QUESTION: Should we use 'calledWithExactly' instead?
-    expect(parseManyMock.calledWith({
+
+    expect(parseManyMock.calledWithExactly({
       rawBalances: rawListMock,
     })).to.be.ok
 
@@ -132,7 +132,6 @@ describe('BinanceBalanceModule', () => {
       locked,
     } = BINANCE_RAW_BALANCES[0]
 
-    // TODO: Try keeping good readability (avoid verbosity)
     const available = parseFloat(free)
     const total = parseFloat(free) + parseFloat(locked)
 

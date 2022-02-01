@@ -24,6 +24,7 @@ import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
+import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderReadModule } from './BinanceOrderReadModule'
 
 
@@ -57,7 +58,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Account type '${account}' not found`,
-          code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND
+          code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND,
         })
 
       }
@@ -68,13 +69,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
         orderTypes,
       } = accountSpecs
 
-      // TODO: Order types should be required (review all occurrencies)
       if (!supported || !implemented) {
 
         throw new AlunaError({
           message:
             `Account type '${account}' not supported/implemented for Binance`,
-            code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED
+          code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -85,7 +85,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Order type '${type}' not supported/implemented for Binance`,
-          code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED
+          code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
       }
@@ -94,7 +94,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: `Order type '${type}' is in read mode`,
-          code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY
+          code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY,
         })
 
       }
@@ -123,7 +123,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       // QUESTION: Is Time-in-force really required?
       Object.assign(body, {
         price: rate,
-        timeInForce: BinanceOrderTimeInForceEnum.GTC,
+        timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
       })
 
     }
@@ -164,23 +164,21 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbol: symbolPair,
     }
 
-    await BinanceHttp.privateRequest<void>({
-      verb: AlunaHttpVerbEnum.DELETE,
-      url: `${PROD_BINANCE_URL}/api/v3/order`,
-      keySecret: this.exchange.keySecret,
-      body,
-    })
+    const canceledOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
+      {
+        verb: AlunaHttpVerbEnum.DELETE,
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        keySecret: this.exchange.keySecret,
+        body,
+      },
+    )
 
-    // TODO: Prefer validating if the order was canceled based on the request
-    // response
-    const rawOrder = await this.getRaw(params)
-
-    if (rawOrder.status !== BinanceOrderStatusEnum.CANCELED) {
+    if (canceledOrder.status !== BinanceOrderStatusEnum.CANCELED) {
 
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
         httpStatusCode: 500,
-        code: AlunaHttpErrorCodes.REQUEST_ERROR
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
       })
 
       BinanceLog.error(error)
@@ -189,17 +187,80 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const parsedOrder = this.parse({ rawOrder })
+    const parsedOrder = this.parse({ rawOrder: canceledOrder })
 
     return parsedOrder
 
   }
 
 
-  public async edit(params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
+  public async edit (
+    params: IAlunaOrderEditParams,
+  ): Promise<IAlunaOrderSchema> {
 
-    // TODO -> Add Logic to function
-    return null as any
+
+    BinanceLog.info('editing order for Binance')
+
+    const {
+      id,
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    } = params
+
+    const rawOrder = await this.getRaw({
+      id,
+      symbolPair,
+    })
+
+    const { status } = rawOrder
+
+    let isOrderOpen: boolean
+
+    switch (status) {
+
+      case BinanceOrderStatusEnum.NEW:
+      case BinanceOrderStatusEnum.PARTIALLY_FILLED:
+
+        isOrderOpen = true
+
+        break
+
+      default:
+
+        isOrderOpen = false
+
+    }
+
+    if (!isOrderOpen) {
+
+      throw new AlunaError({
+        httpStatusCode: 200,
+        message: 'Order is not open/active anymore',
+        code: AlunaOrderErrorCodes.IS_NOT_OPEN,
+      })
+
+    }
+
+    await this.cancel({
+      id,
+      symbolPair,
+    })
+
+    const newOrder = await this.place({
+      rate,
+      side,
+      type,
+      amount,
+      account,
+      symbolPair,
+    })
+
+    return newOrder
+
   }
 
 }

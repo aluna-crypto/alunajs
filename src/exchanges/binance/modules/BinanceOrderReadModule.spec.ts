@@ -48,7 +48,6 @@ describe('BinanceOrderReadModule', () => {
       binanceRawOrders,
     )
 
-    // TODO: Pay attention when copy-pasting 😄
     const rawOrders = await binanceOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)

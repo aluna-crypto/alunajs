@@ -204,8 +204,7 @@ describe('BinanceMarketModule', () => {
     expect(ticker.last).to.be.eq(lastTradePrice)
     expect(ticker.change).to.be.eq(change)
     expect(ticker.baseVolume).to.be.eq(volume)
-    // QUESTION: Why cast with number instead of 'parseFloat' (like above)?
-    expect(ticker.quoteVolume).to.be.eq(Number(quoteVolume))
+    expect(ticker.quoteVolume).to.be.eq(parseFloat(quoteVolume))
 
     expect(market.spotEnabled).to.be.ok
     expect(market.marginEnabled).to.be.ok
