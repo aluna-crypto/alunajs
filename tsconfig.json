@@ -13,7 +13,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "target": "es2017",
-    "useUnknownInCatchVariables": false,
+    "useUnknownInCatchVariables": false
   },
   "include": [
     "src/**/*.ts"

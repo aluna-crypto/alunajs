@@ -2,7 +2,7 @@ import axios from 'axios'
 
 import { AlunaHttpVerbEnum } from '..'
 
-import { AlunaAccountEnum } from './enums/AlunaChainsEnum'
+import { AlunaChainsEnum } from './enums/AlunaChainsEnum'
 
 
 // QUESTION: where to save this const? it's supposed to be shared by
@@ -10,9 +10,15 @@ import { AlunaAccountEnum } from './enums/AlunaChainsEnum'
 
 const API_URL = 'https://openapi.debank.com/'
 
+/**
+ * Returns all non-zero balances for a certain address in the specified chain
+ * @param address
+ * @param chain_id
+ * @returns
+ */
 export async function getTokenList (
   address: string,
-  chain_id: AlunaAccountEnum,
+  chain_id: AlunaChainsEnum,
 ) {
 
   let url = `${API_URL}v1/user/token_list?`
