@@ -16,10 +16,10 @@ type TBitfinexOrder = [
   AMOUNT: number,
   AMOUNT_ORIG: number,
   TYPE: BitfinexOrderTypesEnum,
-  TYPE_PREV: string | null,
+  TYPE_PREV: BitfinexOrderTypesEnum | null,
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
-  FLAGS: number,
+  FLAGS: string,
   STATUS: string,
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
@@ -35,7 +35,7 @@ type TBitfinexOrder = [
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
-  ROUTING: 'BFX' | 'API>BFX', // indicates origin of action: BFX, API>BFX
+  ROUTING: 'BFX' | 'API>BFX' | '', // indicates origin of action: BFX, API>BFX
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
   META: any
