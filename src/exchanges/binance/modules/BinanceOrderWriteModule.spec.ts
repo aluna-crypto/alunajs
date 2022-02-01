@@ -25,7 +25,10 @@ import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 import { BinanceSideEnum } from '../enums/BinanceSideEnum'
-import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
+import {
+  IBinanceOrderRequest,
+  IBinanceOrderSchema,
+} from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderWriteModule } from './BinanceOrderWriteModule'
 
 
@@ -74,8 +77,7 @@ describe('BinanceOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    // QUESTION: Should we define interfaces for describing request bodies?
-    const requestBody = {
+    const requestBody: IBinanceOrderRequest = {
       side: BinanceSideEnum.BUY,
       symbol: placeOrderParams.symbolPair,
       quantity: placeOrderParams.amount,
@@ -109,14 +111,14 @@ describe('BinanceOrderWriteModule', () => {
     // place short limit order
     const placeResponse2 = await binanceOrderWriteModule.place({
       ...placeOrderParams,
-      type: AlunaOrderTypesEnum.MARKET, // QUESTION: Should it be limit?
+      type: AlunaOrderTypesEnum.MARKET,
       side: AlunaSideEnum.SHORT,
     })
 
-    const requestBody2 = {
+    const requestBody2: IBinanceOrderRequest = {
       side: BinanceSideEnum.SELL,
       symbol: placeOrderParams.symbolPair,
-      type: BinanceOrderTypeEnum.MARKET, // QUESTION: Should it be limit?
+      type: BinanceOrderTypeEnum.MARKET,
       quantity: placeOrderParams.amount,
     }
 
@@ -168,7 +170,7 @@ describe('BinanceOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const requestBody = {
+    const requestBody: IBinanceOrderRequest = {
       side: BinanceSideEnum.BUY,
       symbol: placeOrderParams.symbolPair,
       type: BinanceOrderTypeEnum.MARKET,

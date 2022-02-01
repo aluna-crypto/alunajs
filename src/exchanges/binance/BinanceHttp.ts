@@ -42,18 +42,19 @@ interface IBinanceSignedSignature {
 
 export const formatBodyToBinance = (body: Record<string, any>): string => {
 
-  let formattedBody = ''
+  const formattedBody = new URLSearchParams()
 
-  // QUESTION: Why not use 'URLSearchParams'?
   Object.keys(body).map((key) => {
 
-    formattedBody += `&${key}=${body[key]}`
+    formattedBody.append(key, body[key])
 
     return key
 
   })
 
-  return formattedBody
+  const bodyStringified = `&${formattedBody.toString()}`
+
+  return bodyStringified
 
 }
 
@@ -75,14 +76,14 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       message: response?.data?.msg || errorMsg,
       httpStatusCode: response?.status,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      metadata: response?.data
+      metadata: response?.data,
     })
 
   } else {
 
     error = new AlunaError({
       message: param.message || errorMsg,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
   }

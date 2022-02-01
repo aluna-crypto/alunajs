@@ -5,7 +5,7 @@ import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
-  IBinanceSymbolResponseSchema,
+  IBinanceInfoSchema,
   IBinanceSymbolSchema,
 } from '../schemas/IBinanceSymbolSchema'
 
@@ -30,7 +30,7 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
     BinanceLog.info('fetching Binance symbols')
 
     const rawSymbols = await BinanceHttp
-      .publicRequest<IBinanceSymbolResponseSchema>({
+      .publicRequest<IBinanceInfoSchema>({
         url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
       })
 

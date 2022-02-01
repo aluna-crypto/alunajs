@@ -179,8 +179,7 @@ describe('BinanceBalanceModule', () => {
       rawBalances: BINANCE_RAW_BALANCES,
     })
 
-    // QUESTION: Whats the point of validating the fixture length?
-    expect(BINANCE_RAW_BALANCES.length).to.be.eq(4)
+
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)
 

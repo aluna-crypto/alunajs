@@ -67,7 +67,6 @@ describe('BinanceMarketModule', () => {
     expect(response.length).to.eq(3)
     expect(response).to.deep.eq(BINANCE_RAW_MARKETS_WITH_CURRENCY)
 
-    // QUESTION: Double check necessity of this for each (fix all occurrencies)
     response.forEach((res, index) => {
 
       const {

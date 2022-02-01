@@ -4,6 +4,7 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
+import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
 import { BINANCE_RAW_ORDER } from '../../test/fixtures/binanceOrder'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
 import { BinanceOrderParser } from './BinanceOrderParser'
@@ -16,8 +17,15 @@ describe('BinanceOrderParser', () => {
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
+    const { symbol: currencyPair } = rawOrder
+
+    const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+      (rm) => rm.symbol === currencyPair,
+    )
+
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
+      symbolInfo: symbolInfo!,
     })
 
     const rawOriginalQuantity = parseFloat(rawOrder.origQty)

@@ -24,7 +24,10 @@ import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
-import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
+import {
+  IBinanceOrderRequest,
+  IBinanceOrderSchema,
+} from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderReadModule } from './BinanceOrderReadModule'
 
 
@@ -111,7 +114,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       from: type,
     })
 
-    const body = {
+    const body: IBinanceOrderRequest = {
       side: BinanceSideAdapter.translateToBinance({ from: side }),
       symbol: symbolPair,
       type: translatedOrderType,
@@ -120,7 +123,6 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
-      // QUESTION: Is Time-in-force really required?
       Object.assign(body, {
         price: rate,
         timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,

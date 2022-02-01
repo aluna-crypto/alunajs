@@ -13,8 +13,6 @@ describe('BinanceCurrencyMarketParser', () => {
 
   it('should parse Binance currency pairs just fine', () => {
 
-    // QUESTION: Why use 'BINANCE_RAW_MARKET' and should it be sufixed with
-    // as 'BINANCE_RAW_MARKET_ZEROED'?
     const rawMarkets = [...BINANCE_RAW_MARKETS, BINANCE_RAW_MARKET]
     const rawSymbols = BINANCE_RAW_SYMBOLS.symbols
 

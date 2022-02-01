@@ -48,8 +48,8 @@ export interface IBinanceExchangeFilters {
   maxNumOrders: number
 }
 
-// QUESTION: Should we called it 'IBinanceInfoSchema' instead?
-export interface IBinanceSymbolResponseSchema {
+
+export interface IBinanceInfoSchema {
   timezone: string
   serverTime: number
   rateLimits: IBinanceRateLimits[]

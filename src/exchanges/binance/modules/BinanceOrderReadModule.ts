@@ -10,6 +10,7 @@ import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
+import { BinanceMarketModule } from './BinanceMarketModule'
 
 
 
@@ -85,7 +86,13 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { rawOrder } = params
 
-    const parsedOrder = BinanceOrderParser.parse({ rawOrder })
+    const { symbol: currencyPair } = rawOrder
+
+    const symbols = await BinanceMarketModule.listRaw()
+
+    const symbolInfo = symbols.find((s) => s.symbol === currencyPair)
+
+    const parsedOrder = BinanceOrderParser.parse({ rawOrder, symbolInfo })
 
     return parsedOrder
 

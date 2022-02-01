@@ -87,7 +87,7 @@ describe('BinanceKeyModule', () => {
       'privateRequest',
       Promise.reject(new AlunaError({
         message: 'any-message',
-        httpStatusCode: 401, // QUESTION: Was the 'statusCode' checked?
+        httpStatusCode: 401,
         code: AlunaHttpErrorCodes.REQUEST_ERROR,
       })),
     )

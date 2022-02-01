@@ -1,9 +1,9 @@
 import { IAlunaSymbolSchema } from '../../../../index'
-import { IBinanceSymbolResponseSchema } from '../../schemas/IBinanceSymbolSchema'
+import { IBinanceInfoSchema } from '../../schemas/IBinanceSymbolSchema'
 
 
 
-export const BINANCE_RAW_SYMBOLS: IBinanceSymbolResponseSchema = {
+export const BINANCE_RAW_SYMBOLS: IBinanceInfoSchema = {
   timezone: 'UTC',
   serverTime: 1637841089806,
   rateLimits: [
