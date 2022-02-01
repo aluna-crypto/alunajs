@@ -1,0 +1,141 @@
+import {
+  AlunaOrderStatusEnum,
+  AlunaOrderTypesEnum,
+  AlunaSideEnum,
+  IAlunaOrderSchema,
+} from '../../../..'
+import { Bitfinex } from '../../Bitfinex'
+import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
+import { BitfinexOrderStatusAdapter } from '../../enums/adapters/BitfinexOrderStatusAdapter'
+import { BitfinexOrderTypeAdapter } from '../../enums/adapters/BitfinexOrderTypeAdapter'
+import { IBitfinexOrderSchema } from '../IBitfinexOrderSchema'
+
+
+
+export class BitfinexOrderParser {
+
+  static parse (params: {
+    rawOrder: IBitfinexOrderSchema,
+  }): IAlunaOrderSchema {
+
+    const { rawOrder } = params
+
+    const [
+      id,
+      _gid,
+      _cid,
+      symbolPair,
+      mtsCreate,
+      mtsUpdate,
+      _amount,
+      amountOrig,
+      orderType,
+      _typePrev,
+      _placeholder1,
+      _placeholder2,
+      _flags,
+      orderStatus,
+      _placeholder3,
+      _placeholder4,
+      price,
+      _priceAvg,
+      _priceTrailing,
+      priceAuxLimit,
+    ] = rawOrder
+
+    let baseSymbolId: string
+    let quoteSymbolId: string
+
+    const spliter = symbolPair.indexOf(':')
+
+    if (spliter >= 0) {
+
+      baseSymbolId = symbolPair.slice(1, spliter)
+      quoteSymbolId = symbolPair.slice(spliter + 1)
+
+    } else {
+
+      baseSymbolId = symbolPair.slice(1, 4)
+      quoteSymbolId = symbolPair.slice(4)
+
+    }
+
+    const status = BitfinexOrderStatusAdapter.translateToAluna({
+      from: orderStatus,
+    })
+
+    const account = BitfinexAccountsAdapter.translateToAluna({
+      value: orderType,
+    })
+
+    const type = BitfinexOrderTypeAdapter.translateToAluna({
+      from: orderType,
+    })
+
+    const side = amountOrig > 0
+      ? AlunaSideEnum.LONG
+      : AlunaSideEnum.SHORT
+
+    const amount = Math.abs(amountOrig)
+
+    let rate: number | undefined
+    let stopRate: number | undefined
+    let limitRate: number | undefined
+
+    let computedPrice = price
+
+    if (type === AlunaOrderTypesEnum.STOP_LIMIT) {
+
+      stopRate = price
+      limitRate = priceAuxLimit
+      computedPrice = priceAuxLimit
+
+    } else if (type === AlunaOrderTypesEnum.STOP_MARKET) {
+
+      stopRate = price
+
+    } else {
+
+      rate = price
+
+    }
+
+    let filledAt: Date | undefined
+    let canceledAt: Date | undefined
+
+    if (status === AlunaOrderStatusEnum.FILLED) {
+
+      filledAt = new Date(mtsUpdate)
+
+    } else if (status === AlunaOrderStatusEnum.CANCELED) {
+
+      canceledAt = new Date(mtsUpdate)
+
+    }
+
+    const parsedOrder: IAlunaOrderSchema = {
+      id,
+      symbolPair,
+      exchangeId: Bitfinex.ID,
+      baseSymbolId,
+      quoteSymbolId,
+      total: (amount * computedPrice),
+      amount,
+      rate,
+      stopRate,
+      limitRate,
+      account,
+      side,
+      status,
+      type,
+      placedAt: new Date(mtsCreate),
+      filledAt,
+      canceledAt,
+      meta: rawOrder,
+    }
+
+    return parsedOrder
+
+  }
+
+}
