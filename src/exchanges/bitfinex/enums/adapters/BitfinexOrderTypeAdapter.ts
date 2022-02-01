@@ -36,7 +36,8 @@ export class BitfinexOrderTypeAdapter {
 
   /**
    * There is no way to make a precise conversion from Aluna to Bitfinex using
-   * the 'buildAdapter' approach
+   * the 'buildAdapter' approach because the Aluna order type lacks the order
+   * account type information.
    */
   static translateToBitfinex =
     buildAdapter<AlunaOrderTypesEnum, BitfinexOrderTypesEnum>({
