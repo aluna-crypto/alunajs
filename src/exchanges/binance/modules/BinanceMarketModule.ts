@@ -1,8 +1,8 @@
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
-import { PROD_BINANCE_URL } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
+import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
   IBinanceMarketSchema,
   IBinanceMarketWithCurrency,

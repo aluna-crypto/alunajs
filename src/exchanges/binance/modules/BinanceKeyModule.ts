@@ -15,66 +15,7 @@ import {
 
 export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
-  public async validate (): Promise<boolean> {
-
-    BinanceLog.info('trying to validate Binance key')
-
-    const { read } = await this.getPermissions()
-
-    const isValid = read
-
-    let logMessage = 'Binance API key is'
-
-    if (isValid) {
-
-      logMessage = logMessage.concat(' valid')
-
-    } else {
-
-      logMessage = logMessage.concat(' invalid')
-
-    }
-
-    BinanceLog.info(logMessage)
-
-    return isValid
-
-  }
-
-
-
-  public async getPermissions (): Promise<IAlunaKeyPermissionSchema> {
-
-    BinanceLog.info('fetching Binance key permissions')
-
-    let rawKey: IBinanceKeyAccountSchema
-
-    try {
-
-      const { keySecret } = this.exchange
-
-      rawKey = await BinanceHttp
-        .privateRequest<IBinanceKeyAccountSchema>({
-          verb: AlunaHttpVerbEnum.GET,
-          url: `${PROD_BINANCE_URL}/api/v3/account`,
-          keySecret,
-        })
-
-    } catch (error) {
-
-      BinanceLog.error(error.message)
-
-      throw error
-
-    }
-
-    const parsedPermissions = this.parsePermissions({ rawKey })
-
-    return parsedPermissions
-
-  }
-
-
+  public details: IAlunaKeySchema
 
   public parsePermissions (params: {
     rawKey: IBinanceKeyAccountSchema,
@@ -87,7 +28,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read: false,
       trade: false,
-      withdraw: false,      
+      withdraw: false,
     }
 
     permissions.forEach((permission: string) => {
@@ -114,14 +55,55 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   }
 
-  public fetchDetails(): Promise<IAlunaKeySchema> {
-    // TODO -> Update  
-    return null as any
+  public async fetchDetails (): Promise<IAlunaKeySchema> {
+
+    BinanceLog.info('fetching Binance key permissionsa')
+
+    let rawKey: IBinanceKeyAccountSchema
+
+    try {
+
+      const { keySecret } = this.exchange
+
+      rawKey = await BinanceHttp
+        .privateRequest<IBinanceKeyAccountSchema>({
+          verb: AlunaHttpVerbEnum.GET,
+          url: `${PROD_BINANCE_URL}/api/v3/account`,
+          keySecret,
+        })
+
+    } catch (error) {
+
+      BinanceLog.error(error.message)
+
+      throw error
+
+    }
+
+    const details = this.parseDetails({ rawKey })
+
+    return details
+
   }
 
-  public parseDetails(params: { rawKey: any; }): IAlunaKeySchema {
-    // TODO -> Update  
-    return null as any
+  public parseDetails (params: {
+    rawKey: IBinanceKeyAccountSchema,
+  }): IAlunaKeySchema {
+
+    BinanceLog.info('parsing Binance key details')
+
+    const {
+      rawKey,
+    } = params
+
+    this.details = {
+      meta: rawKey,
+      accountId: undefined, //  binance doesn't give this
+      permissions: this.parsePermissions({ rawKey }),
+    }
+
+    return this.details
+
   }
 
 }

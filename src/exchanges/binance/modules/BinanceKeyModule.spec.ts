@@ -6,7 +6,6 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
-import { BinanceErrorEnum } from '../enums/BinanceErrorEnum'
 import {
   BinanceApiKeyPermissions,
   IBinanceKeyAccountSchema,
@@ -18,37 +17,6 @@ import { BinanceKeyModule } from './BinanceKeyModule'
 describe('BinanceKeyModule', () => {
 
   const binanceKeyModule = BinanceKeyModule.prototype
-
-
-  it('should validate user Binance API key just fine', async () => {
-
-    const getPermissionsMock = ImportMock.mockFunction(
-      binanceKeyModule,
-      'getPermissions',
-    )
-
-    getPermissionsMock
-      .onFirstCall()
-      .returns(Promise.resolve({ read: false }))
-      .onSecondCall()
-      .returns(Promise.resolve({ read: true }))
-
-
-    const invalidKey = await binanceKeyModule.validate()
-
-    expect(getPermissionsMock.callCount).to.be.eq(1)
-    expect(invalidKey).not.to.be.ok
-
-
-    const validKey = await binanceKeyModule.validate()
-
-
-    expect(getPermissionsMock.callCount).to.be.eq(2)
-    expect(validKey).to.be.ok
-
-  })
-
-
 
   it('should get permissions from Binance API key just fine', async () => {
 
@@ -77,7 +45,7 @@ describe('BinanceKeyModule', () => {
       requestResponse,
     )
 
-    const permissions1 = await binanceKeyModule.getPermissions()
+    const { permissions: permissions1 } = await binanceKeyModule.fetchDetails()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
@@ -88,7 +56,7 @@ describe('BinanceKeyModule', () => {
 
     requestResponse.permissions = [BinanceApiKeyPermissions.SPOT]
 
-    const permissions2 = await binanceKeyModule.getPermissions()
+    const { permissions: permissions2 } = await binanceKeyModule.fetchDetails()
 
 
     expect(permissions2.read).to.be.ok
@@ -118,29 +86,28 @@ describe('BinanceKeyModule', () => {
       BinanceHttp,
       'privateRequest',
       Promise.reject(new AlunaError({
-        message: BinanceErrorEnum.INVALID_KEY,
+        message: 'any-message',
         httpStatusCode: 401, // QUESTION: Was the 'statusCode' checked?
-        code: AlunaHttpErrorCodes.REQUEST_ERROR
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
       })),
     )
 
-    let error
     let result
 
     try {
 
-      result = await binanceKeyModule.getPermissions()
+      result = await binanceKeyModule.fetchDetails()
 
     } catch (e) {
 
-      error = e
+      expect(result).not.to.be.ok
+
+      expect(e).to.be.ok
+      expect(e.message).to.be.eq('any-message')
+      expect(e.httpStatusCode).to.be.eq(401)
+      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
     }
-
-    expect(result).not.to.be.ok
-
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(BinanceErrorEnum.INVALID_KEY)
 
   })
 

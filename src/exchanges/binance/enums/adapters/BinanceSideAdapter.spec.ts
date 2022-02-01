@@ -24,7 +24,6 @@ describe('BinanceSideAdapter', () => {
         from: BinanceSideEnum.SELL,
       })).to.be.eq(AlunaSideEnum.SHORT)
 
-      let error
       let result
 
       try {
@@ -35,16 +34,15 @@ describe('BinanceSideAdapter', () => {
 
       } catch (err) {
 
-        // TODO: review and fix all occurrencies of try catch
-        error = err
+        expect(result).not.to.be.ok
+
+        expect(err instanceof AlunaError).to.be.ok
+        expect(err.message)
+          .to.be.eq(`Order side not supported: ${notSupported}`)
 
       }
 
-      expect(result).not.to.be.ok
 
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
 
     })
 
