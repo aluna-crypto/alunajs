@@ -1,3 +1,7 @@
+import { BitfinexOrderTypesEnum } from '../enums/BitfinexOrderTypesEnum'
+
+
+
 export interface IBitfinexOrderSchema extends TBitfinexOrder {}
 
 
@@ -11,7 +15,7 @@ type TBitfinexOrder = [
   MTS_UPDATE: number,
   AMOUNT: number,
   AMOUNT_ORIG: number,
-  TYPE: string,
+  TYPE: BitfinexOrderTypesEnum,
   TYPE_PREV: string | null,
   _PLACEHOLDER: string | null,
   _PLACEHOLDER: string | null,
