@@ -42,7 +42,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<any> {
+  ): Promise<IBitfinexOrderSchema> {
 
     const {
       id,
