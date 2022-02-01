@@ -31,7 +31,9 @@ export class BinanceOrderParser {
       status,
     } = rawOrder
 
-    const createdAt = new Date(time * 1000).toString()
+    const createdAt = time
+      ? new Date(time).toISOString()
+      : new Date().toISOString()
     const amount = parseFloat(origQty)
     const rate = parseFloat(price)
 

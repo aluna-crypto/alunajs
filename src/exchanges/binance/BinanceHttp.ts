@@ -117,7 +117,6 @@ export const generateAuthSignature = (
     .update(formattedBody)
     .digest('hex')
 
-  // NOTE: Prefer using multiline conditions for increased readability
   const dataQueryStringWithQuery = query
     ? dataQueryString + query
     : dataQueryString
