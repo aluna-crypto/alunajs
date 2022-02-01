@@ -33,7 +33,7 @@ describe('BitfinexBalanceParser', () => {
       } = parsedBalance
 
       const translatedAccount = BitfinexAccountsAdapter.translateToAluna({
-        from: walletType,
+        value: walletType,
       })
 
       expect(account).to.be.eq(translatedAccount)

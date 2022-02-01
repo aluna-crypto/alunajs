@@ -21,7 +21,7 @@ export class BitfinexBalanceParser {
     ] = rawBalance
 
     const account = BitfinexAccountsAdapter.translateToAluna({
-      from: walletType,
+      value: walletType,
     })
 
     const parsedBalance: IAlunaBalanceSchema = {
