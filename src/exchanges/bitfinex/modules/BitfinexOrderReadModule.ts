@@ -1,4 +1,6 @@
 import {
+  AlunaError,
+  AlunaOrderErrorCodes,
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
   IAlunaOrderSchema,
@@ -7,6 +9,7 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
+import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 
 
 
@@ -27,7 +30,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   }
 
-  public async list (): Promise<any[]> {
+  public async list (): Promise<IAlunaOrderSchema[]> {
 
     const rawOrders = await this.listRaw()
 
@@ -41,9 +44,51 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     params: IAlunaOrderGetParams,
   ): Promise<any> {
 
+    const {
+      id,
+      symbolPair,
+    } = params
+
     BitfinexLog.info('fetching Bitfinex order status')
 
-    return params as any
+    const { privateRequest } = BitfinexHttp
+
+    let response: IBitfinexOrderSchema[]
+
+    response = await privateRequest<IBitfinexOrderSchema[]>({
+      url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}`,
+      keySecret: this.exchange.keySecret,
+      body: { id: [id] },
+    })
+
+    // order do not exists or might not be 'open'
+    if (!response.length) {
+
+      response = await privateRequest<IBitfinexOrderSchema[]>({
+        url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}/hist`,
+        keySecret: this.exchange.keySecret,
+        body: { id: [id] },
+      })
+
+      if (!response.length) {
+
+        const error = new AlunaError({
+          code: AlunaOrderErrorCodes.NOT_FOUND,
+          message: 'Order was not found',
+          metadata: params,
+        })
+
+        BitfinexLog.error(error)
+
+        throw error
+
+      }
+
+    }
+
+    const [rawOrder] = response
+
+    return rawOrder
 
   }
 
@@ -61,12 +106,11 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     rawOrder: IBitfinexOrderSchema,
   }): Promise<IAlunaOrderSchema> {
 
-    const {
-      rawOrder,
-    } = params
+    const { rawOrder } = params
 
+    const parsedOrder = BitfinexOrderParser.parse({ rawOrder })
 
-    return rawOrder as any
+    return parsedOrder
 
   }
 
