@@ -23,6 +23,8 @@ export interface IAlunaOrderPlaceParams {
   side: AlunaSideEnum
   symbolPair: string
   rate?: string | number
+  limitRate?: string | number
+  stopRate?: string | number
   amount: string | number
 }
 
