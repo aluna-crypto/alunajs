@@ -14,7 +14,7 @@ import { BitfinexSpecs } from './BitfinexSpecs'
 import { BitfinexBalanceModule } from './modules/BitfinexBalanceModule'
 import { BitfinexKeyModule } from './modules/BitfinexKeyModule'
 import { BitfinexMarketModule } from './modules/BitfinexMarketModule'
-import { BitfinexOrderReadModule } from './modules/BitfinexOrderReadModule'
+import { BitfinexOrderWriteModule } from './modules/BitfinexOrderWriteModule'
 import { BitfinexSymbolModule } from './modules/BitfinexSymbolModule'
 
 
@@ -45,9 +45,7 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
 
     this.key = new BitfinexKeyModule({ exchange: this })
     this.balance = new BitfinexBalanceModule({ exchange: this })
-    this.order = new BitfinexOrderReadModule({
-      exchange: this,
-    }) as IAlunaOrderWriteModule
+    this.order = new BitfinexOrderWriteModule({ exchange: this })
 
   }
 
