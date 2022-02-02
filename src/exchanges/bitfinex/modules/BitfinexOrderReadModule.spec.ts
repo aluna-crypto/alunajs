@@ -11,14 +11,14 @@ import {
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 import {
-  BITFINEX_PARSED_ORDER,
+  BITFINEX_PARSED_ORDERS,
   BITFINEX_RAW_ORDERS,
 } from '../test/fixtures/bitfinexOrders'
 import { BitfinexOrderReadModule } from './BitfinexOrderReadModule'
 
 
 
-describe.only('BitfinexOrderReadModule', () => {
+describe('BitfinexOrderReadModule', () => {
 
   const bitfinexOrderReadModule = BitfinexOrderReadModule.prototype
 
@@ -39,7 +39,7 @@ describe.only('BitfinexOrderReadModule', () => {
 
   }
 
-  it('should list Bitfinex raw orders just fine', async () => {
+  it('should properly list Bitfinex raw orders just fine', async () => {
 
     const { exchangeMock } = mockKeySecret()
 
@@ -60,7 +60,36 @@ describe.only('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should get a raw open Bitfinex order just fine', async () => {
+  it('should properly list Bitfinex parsed orders just fine', async () => {
+
+    mockKeySecret()
+
+    const listRawMock = ImportMock.mockFunction(
+      bitfinexOrderReadModule,
+      'listRaw',
+      Promise.resolve(BITFINEX_RAW_ORDERS),
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      bitfinexOrderReadModule,
+      'parseMany',
+      Promise.resolve(BITFINEX_PARSED_ORDERS),
+    )
+
+    const rawOrders = await bitfinexOrderReadModule.list()
+
+    expect(rawOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
+
+    expect(listRawMock.callCount).to.be.eq(1)
+
+    expect(parseManyMock.callCount).to.be.eq(1)
+    expect(parseManyMock.calledWithExactly({
+      rawOrders: BITFINEX_RAW_ORDERS,
+    })).to.be.ok
+
+  })
+
+  it('should properly get a Bitfinex raw open order just fine', async () => {
 
     const { exchangeMock } = mockKeySecret()
 
@@ -90,7 +119,7 @@ describe.only('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should get a raw not open Bitfinex order just fine', async () => {
+  it('should properly get Bitfinex raw not open order just fine', async () => {
 
     const { exchangeMock } = mockKeySecret()
 
@@ -167,10 +196,10 @@ describe.only('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should get a parsed Bitfinex order just fine', async () => {
+  it('should properly get a parsed Bitfinex order just fine', async () => {
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0]
-    const returnedParsedOrder = BITFINEX_PARSED_ORDER[0]
+    const returnedParsedOrder = BITFINEX_PARSED_ORDERS[0]
 
     const getRawMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
@@ -205,14 +234,14 @@ describe.only('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should parse many Bitfinex raw orders just fine', async () => {
+  it('should properly parse many Bitfinex raw orders just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
       'parse',
     )
 
-    BITFINEX_PARSED_ORDER.forEach((rawOrder, i) => {
+    BITFINEX_PARSED_ORDERS.forEach((rawOrder, i) => {
 
       parseMock.onCall(i).returns(rawOrder)
 
@@ -222,21 +251,21 @@ describe.only('BitfinexOrderReadModule', () => {
       rawOrders: BITFINEX_RAW_ORDERS,
     })
 
-    expect(parsedOrder).to.deep.eq(BITFINEX_PARSED_ORDER)
+    expect(parsedOrder).to.deep.eq(BITFINEX_PARSED_ORDERS)
 
     // skipping 'derivatives' and 'funding' symbols
     expect(parseMock.callCount).to.be.eq(BITFINEX_RAW_ORDERS.length - 2)
 
   })
 
-  it('should parse Bitfinex raw order just fine', async () => {
+  it('should properly a parse Bitfinex raw order just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
       BitfinexOrderParser,
       'parse',
     )
 
-    BITFINEX_PARSED_ORDER.forEach((rawOrder, i) => {
+    BITFINEX_PARSED_ORDERS.forEach((rawOrder, i) => {
 
       parseMock.onCall(i).returns(rawOrder)
 
@@ -255,7 +284,7 @@ describe.only('BitfinexOrderReadModule', () => {
 
     const parsedOrders = await Promise.all(promises)
 
-    expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDER)
+    expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
     expect(parseMock.callCount).deep.eq(parsedOrders.length)
 
   })
