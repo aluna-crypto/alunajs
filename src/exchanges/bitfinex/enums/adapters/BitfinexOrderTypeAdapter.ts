@@ -1,3 +1,4 @@
+import { AlunaAccountEnum } from '../../../..'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
@@ -39,8 +40,37 @@ export class BitfinexOrderTypeAdapter {
    * the 'buildAdapter' approach because the Aluna order type lacks the order
    * account type information.
    */
-  static translateToBitfinex =
-    buildAdapter<AlunaOrderTypesEnum, BitfinexOrderTypesEnum>({
+  static translateToBitfinex (params: {
+    from: AlunaOrderTypesEnum,
+    account: AlunaAccountEnum,
+  }) {
+
+    const {
+      from,
+      account,
+    } = params
+
+    if (account === AlunaAccountEnum.EXCHANGE) {
+
+      return buildAdapter<AlunaOrderTypesEnum, BitfinexOrderTypesEnum>({
+        errorMessagePrefix: BitfinexOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
+        mappings: {
+          [AlunaOrderTypesEnum.LIMIT]: BitfinexOrderTypesEnum.EXCHANGE_LIMIT,
+          [AlunaOrderTypesEnum.MARKET]: BitfinexOrderTypesEnum.EXCHANGE_MARKET,
+          [AlunaOrderTypesEnum.STOP_MARKET]:
+            BitfinexOrderTypesEnum.EXCHANGE_STOP,
+          [AlunaOrderTypesEnum.STOP_LIMIT]:
+            BitfinexOrderTypesEnum.EXCHANGE_STOP_LIMIT,
+          [AlunaOrderTypesEnum.FILL_OF_KILL]:
+            BitfinexOrderTypesEnum.EXCHANGE_FOK,
+          [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]:
+            BitfinexOrderTypesEnum.EXCHANGE_IOC,
+        },
+      })({ from })
+
+    }
+
+    return buildAdapter<AlunaOrderTypesEnum, BitfinexOrderTypesEnum>({
       errorMessagePrefix: BitfinexOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
         [AlunaOrderTypesEnum.LIMIT]: BitfinexOrderTypesEnum.LIMIT,
@@ -53,6 +83,8 @@ export class BitfinexOrderTypeAdapter {
         [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]:
           BitfinexOrderTypesEnum.IOC,
       },
-    })
+    })({ from })
+
+  }
 
 }
