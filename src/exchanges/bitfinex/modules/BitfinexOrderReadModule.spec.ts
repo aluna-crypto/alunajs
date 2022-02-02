@@ -14,7 +14,7 @@ import { BitfinexOrderReadModule } from './BitfinexOrderReadModule'
 
 
 
-describe('BitfinexOrderReadModule', () => {
+describe.only('BitfinexOrderReadModule', () => {
 
   const bitfinexOrderReadModule = BitfinexOrderReadModule.prototype
 
@@ -156,6 +156,30 @@ describe('BitfinexOrderReadModule', () => {
     })).to.be.ok
 
     expect(parsedOrder).to.deep.eq(returnedParsedOrder)
+
+  })
+
+  it('should parse many Bitfinex orders just fine', async () => {
+
+    const parseMock = ImportMock.mockFunction(
+      bitfinexOrderReadModule,
+      'parse',
+    )
+
+    BITFINEX_PARSED_ORDER.forEach((rawOrder, i) => {
+
+      parseMock.onCall(i).returns(rawOrder)
+
+    })
+
+    const parsedOrder = await bitfinexOrderReadModule.parseMany({
+      rawOrders: BITFINEX_RAW_ORDERS,
+    })
+
+    expect(parsedOrder).to.deep.eq(BITFINEX_PARSED_ORDER)
+
+    // skipping 'derivatives' and 'funding' symbols
+    expect(parseMock.callCount).to.be.eq(BITFINEX_RAW_ORDERS.length - 2)
 
   })
 
