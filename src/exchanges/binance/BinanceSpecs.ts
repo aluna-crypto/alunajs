@@ -82,7 +82,7 @@ export const BinanceSpecs: IAlunaExchangeSchema = {
   id: 'binance',
   name: 'Binance',
   signupUrl: 'https://accounts.binance.com/en/register',
-  connectApiUrl: 'https://www.valr.com/api-keys/create',
+  connectApiUrl: 'https://www.binance.com/en/my/settings/api-management',
   rateLimitingPerMinute: {
     perApiKey: 1200,
     perIp: 1200,

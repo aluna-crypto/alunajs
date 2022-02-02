@@ -1,9 +1,8 @@
 import {
   AlunaAccountsErrorCodes,
-  AlunaHttpErrorCodes,
   AlunaOrderErrorCodes,
   IAlunaOrderEditParams,
-} from '../../..'
+} from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -132,12 +131,36 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     BinanceLog.info('placing new order for Binance')
 
-    const { orderId } = await BinanceHttp
-      .privateRequest<IBinancePlaceOrderResponse>({
-        url: `${PROD_BINANCE_URL}/api/v3/order`,
-        body,
-        keySecret: this.exchange.keySecret,
-      })
+    let orderId: string
+
+    try {
+
+      const { orderId: createdOrderId } = await BinanceHttp
+        .privateRequest<IBinancePlaceOrderResponse>({
+          url: `${PROD_BINANCE_URL}/api/v3/order`,
+          body,
+          keySecret: this.exchange.keySecret,
+        })
+
+      orderId = createdOrderId
+
+    } catch (err) {
+
+      // Insufficient Balance code
+      if (err.metadata.code === -2010) {
+
+        throw new AlunaError({
+          httpStatusCode: err.httpStatusCode,
+          message: err.message,
+          code: AlunaOrderErrorCodes.INSUFFICIENT_BALANCE,
+          metadata: err.metadata,
+        })
+
+      }
+
+      throw err
+
+    }
 
     const order = await this.get({
       id: orderId,
@@ -180,7 +203,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
         httpStatusCode: 500,
-        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
       })
 
       BinanceLog.error(error)

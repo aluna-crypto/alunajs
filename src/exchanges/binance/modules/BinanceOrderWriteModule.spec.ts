@@ -145,6 +145,138 @@ describe('BinanceOrderWriteModule', () => {
 
   })
 
+  it('should throw an error for insufficient balance when placing new order',
+    async () => {
+
+      ImportMock.mockOther(
+        binanceOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Account has insufficient balance for requested action.',
+        metadata: {
+          code: -2010,
+          msg: 'Account has insufficient balance for requested action.',
+        },
+        httpStatusCode: 400,
+      })
+
+      const requestMock = ImportMock.mockFunction(
+        BinanceHttp,
+        'privateRequest',
+        Promise.reject(mockedError),
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: '0.001',
+        rate: '10000',
+        symbolPair: 'ETHZAR',
+        side: AlunaSideEnum.LONG,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      const requestBody: IBinanceOrderRequest = {
+        side: BinanceSideEnum.BUY,
+        symbol: placeOrderParams.symbolPair,
+        quantity: placeOrderParams.amount,
+        price: placeOrderParams.rate,
+        type: BinanceOrderTypeEnum.LIMIT,
+        timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
+      }
+
+
+      try {
+
+        await binanceOrderWriteModule.place(placeOrderParams)
+
+      } catch (err) {
+
+        expect(requestMock.callCount).to.be.eq(1)
+        expect(requestMock.calledWith({
+          url: `${PROD_BINANCE_URL}/api/v3/order`,
+          body: requestBody,
+          keySecret,
+        })).to.be.ok
+
+        expect(err.code).to.be.eq(AlunaOrderErrorCodes.INSUFFICIENT_BALANCE)
+        expect(err.message)
+          .to.be.eq('Account has insufficient balance for requested action.')
+        expect(err.httpStatusCode).to.be.eq(400)
+
+
+      }
+
+    })
+
+  it('should throw an request error when placing new order', async () => {
+
+    ImportMock.mockOther(
+      binanceOrderWriteModule,
+      'exchange',
+      { keySecret } as IAlunaExchange,
+    )
+
+    const mockedError: AlunaError = new AlunaError({
+      code: 'request-error',
+      message: 'Something went wrong.',
+      metadata: {
+        code: -1000,
+        msg: 'Something went wrong.',
+      },
+      httpStatusCode: 500,
+    })
+
+    const requestMock = ImportMock.mockFunction(
+      BinanceHttp,
+      'privateRequest',
+      Promise.reject(mockedError),
+    )
+
+    const placeOrderParams: IAlunaOrderPlaceParams = {
+      amount: '0.001',
+      rate: '10000',
+      symbolPair: 'ETHZAR',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.LIMIT,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const requestBody: IBinanceOrderRequest = {
+      side: BinanceSideEnum.BUY,
+      symbol: placeOrderParams.symbolPair,
+      quantity: placeOrderParams.amount,
+      price: placeOrderParams.rate,
+      type: BinanceOrderTypeEnum.LIMIT,
+      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
+    }
+
+
+    try {
+
+      await binanceOrderWriteModule.place(placeOrderParams)
+
+    } catch (err) {
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
+
+      expect(err.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      expect(err.message).to.be.eq('Something went wrong.')
+      expect(err.httpStatusCode).to.be.eq(500)
+
+
+    }
+
+  })
+
 
 
   it('should place a new Binance market order just fine', async () => {
@@ -545,7 +677,7 @@ describe('BinanceOrderWriteModule', () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error.message).to.be.eq('Something went wrong, order not canceled')
     expect(error.httpStatusCode).to.be.eq(500)
-    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
 
