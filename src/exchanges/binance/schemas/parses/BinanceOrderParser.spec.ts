@@ -52,4 +52,28 @@ describe('BinanceOrderParser', () => {
 
   })
 
+  it('should parse Binance order just fine without time', async () => {
+
+    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
+
+    const { symbol: currencyPair } = rawOrder
+
+    const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+      (rm) => rm.symbol === currencyPair,
+    )
+
+    Object.assign(rawOrder, {
+      time: null,
+    })
+
+    const parsedOrder = BinanceOrderParser.parse({
+      rawOrder,
+      symbolInfo: symbolInfo!,
+    })
+
+    expect(parsedOrder.placedAt.getTime())
+      .to.be.eq(new Date().getTime())
+
+  })
+
 })

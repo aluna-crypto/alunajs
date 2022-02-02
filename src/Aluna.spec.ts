@@ -48,6 +48,33 @@ describe('Aluna', () => {
 
   })
 
+  it('should properly instantiate Binance exchange', async () => {
+
+    let binance: IAlunaExchange | undefined
+    let error
+
+    try {
+
+      binance = Aluna.new({
+        exchangeId: 'binance',
+        keySecret: {
+          key: 'key',
+          secret: 'secret',
+        },
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(error).not.to.be.ok
+    expect(binance).to.be.ok
+    expect(binance instanceof Binance).to.be.ok
+
+  })
+
   it('should warn about exchange not supported (instance)', async () => {
 
     let god: IAlunaExchange | undefined
@@ -80,6 +107,30 @@ describe('Aluna', () => {
   it('should properly resolve exchange Valr static class', async () => {
 
     const exchangeId = Valr.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(error).not.to.be.ok
+
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
+  it('should properly resolve exchange Binance static class', async () => {
+
+    const exchangeId = Binance.ID
 
     let Exchange: IAlunaExchangeStatic | undefined
     let error

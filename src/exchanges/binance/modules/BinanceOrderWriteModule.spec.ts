@@ -1,7 +1,11 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { AlunaHttpErrorCodes } from '../../../index'
+import {
+  AlunaHttpErrorCodes,
+  AlunaOrderErrorCodes,
+  IAlunaOrderEditParams,
+} from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -30,6 +34,7 @@ import {
   IBinanceOrderRequest,
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
+import { BINANCE_RAW_ORDER } from '../test/fixtures/binanceOrder'
 import { BinanceOrderWriteModule } from './BinanceOrderWriteModule'
 
 
@@ -598,6 +603,128 @@ describe('BinanceOrderWriteModule', () => {
     expect(canceledOrder).to.be.ok
     expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+  })
+
+  it('should edit a binance order just fine', async () => {
+
+    const mockedOrderStatus = { status: BinanceOrderStatusEnum.NEW }
+
+    const getRawMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'getRaw',
+      Promise.resolve(mockedOrderStatus),
+    )
+
+    const cancelMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'cancel',
+      Promise.resolve(true),
+    )
+
+    const placeMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'place',
+      Promise.resolve(BINANCE_RAW_ORDER),
+    )
+
+    const editOrderParams: IAlunaOrderEditParams = {
+      id: 'originalOrderId',
+      amount: '0.001',
+      rate: '0',
+      symbolPair: 'LTCBTC',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const newOrder = await binanceOrderWriteModule.edit(editOrderParams)
+
+    expect(newOrder).to.deep.eq(BINANCE_RAW_ORDER)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(cancelMock.callCount).to.be.eq(1)
+    expect(placeMock.callCount).to.be.eq(1)
+
+
+    mockedOrderStatus.status = BinanceOrderStatusEnum.PARTIALLY_FILLED
+
+    await binanceOrderWriteModule.edit(editOrderParams)
+
+    expect(getRawMock.callCount).to.be.eq(2)
+    expect(cancelMock.callCount).to.be.eq(2)
+    expect(placeMock.callCount).to.be.eq(2)
+
+  })
+
+  it('should throw if its not possible to edit the order', async () => {
+
+    const binanceOrderStatusValues = Object.values(BinanceOrderStatusEnum)
+
+    const notActiveValues = binanceOrderStatusValues.filter((status) => {
+
+      return status !== BinanceOrderStatusEnum.NEW
+        && status !== BinanceOrderStatusEnum.PARTIALLY_FILLED
+
+    })
+
+    const randomIndex = Math.floor(Math.random() * notActiveValues.length)
+
+    const randomStatus = notActiveValues[randomIndex]
+
+    const mockedOrderStatus = { status: randomStatus }
+
+    const getRawMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'getRaw',
+      Promise.resolve(mockedOrderStatus),
+    )
+
+    const cancelMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'cancel',
+      Promise.resolve(true),
+    )
+
+    const placeMock = ImportMock.mockFunction(
+      binanceOrderWriteModule,
+      'place',
+      Promise.resolve(BINANCE_RAW_ORDER),
+    )
+
+    const editOrderParams: IAlunaOrderEditParams = {
+      id: 'originalOrderId',
+      amount: '0.001',
+      rate: '0',
+      symbolPair: 'LTCBTC',
+      side: AlunaSideEnum.LONG,
+      type: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    let error
+    let result
+
+    try {
+
+      result = await binanceOrderWriteModule.edit(editOrderParams)
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const msg = 'Order is not open/active anymore'
+
+    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.IS_NOT_OPEN)
+    expect(error?.message).to.be.eq(msg)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(cancelMock.callCount).to.be.eq(0)
+    expect(placeMock.callCount).to.be.eq(0)
 
   })
 
