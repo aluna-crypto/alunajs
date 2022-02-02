@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaAccountEnum } from '../../../..'
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
@@ -90,32 +91,69 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.LIMIT,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_LIMIT)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.LIMIT,
+      account: AlunaAccountEnum.MARGIN,
     })).to.be.eq(BitfinexOrderTypesEnum.LIMIT)
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_MARKET)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.MARKET,
+      account: AlunaAccountEnum.MARGIN,
     })).to.be.eq(BitfinexOrderTypesEnum.MARKET)
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
-      from: AlunaOrderTypesEnum.STOP_LIMIT,
-    })).to.be.eq(BitfinexOrderTypesEnum.STOP_LIMIT)
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_STOP)
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.STOP_MARKET,
+      account: AlunaAccountEnum.MARGIN,
     })).to.be.eq(BitfinexOrderTypesEnum.STOP)
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_STOP_LIMIT)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+      account: AlunaAccountEnum.MARGIN,
+    })).to.be.eq(BitfinexOrderTypesEnum.STOP_LIMIT)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.FILL_OF_KILL,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_FOK)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.FILL_OF_KILL,
+      account: AlunaAccountEnum.MARGIN,
     })).to.be.eq(BitfinexOrderTypesEnum.FOK)
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+      account: AlunaAccountEnum.EXCHANGE,
+    })).to.be.eq(BitfinexOrderTypesEnum.EXCHANGE_IOC)
+
+    expect(BitfinexOrderTypeAdapter.translateToBitfinex({
+      from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+      account: AlunaAccountEnum.MARGIN,
     })).to.be.eq(BitfinexOrderTypesEnum.IOC)
 
     try {
 
       BitfinexOrderTypeAdapter.translateToBitfinex({
         from: notSupported as AlunaOrderTypesEnum,
+        account: AlunaAccountEnum.EXCHANGE,
       })
 
     } catch (err) {
