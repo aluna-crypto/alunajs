@@ -12,7 +12,6 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { BitfinexLog } from './BitfinexLog'
 
 
 
@@ -93,8 +92,6 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
     })
 
   }
-
-  BitfinexLog.error(error)
 
   return error
 
