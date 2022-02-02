@@ -6,6 +6,7 @@ import {
   IAlunaKeySecretSchema,
 } from '../../..'
 import { BitfinexHttp } from '../BitfinexHttp'
+import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 import {
   BITFINEX_PARSED_ORDER,
   BITFINEX_RAW_ORDERS,
@@ -159,7 +160,7 @@ describe.only('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should parse many Bitfinex orders just fine', async () => {
+  it('should parse many Bitfinex raw orders just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
@@ -180,6 +181,37 @@ describe.only('BitfinexOrderReadModule', () => {
 
     // skipping 'derivatives' and 'funding' symbols
     expect(parseMock.callCount).to.be.eq(BITFINEX_RAW_ORDERS.length - 2)
+
+  })
+
+  it('should parse Bitfinex raw order just fine', async () => {
+
+    const parseMock = ImportMock.mockFunction(
+      BitfinexOrderParser,
+      'parse',
+    )
+
+    BITFINEX_PARSED_ORDER.forEach((rawOrder, i) => {
+
+      parseMock.onCall(i).returns(rawOrder)
+
+    })
+
+    // removing 'derivatives' and 'funding' symbols since the parse
+    const rawOrders = BITFINEX_RAW_ORDERS.filter((r) => !/f|F0/.test(r[3]))
+
+    const promises = rawOrders.map((rawOrder) => {
+
+      return bitfinexOrderReadModule.parse({
+        rawOrder,
+      })
+
+    })
+
+    const parsedOrders = await Promise.all(promises)
+
+    expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDER)
+    expect(parseMock.callCount).deep.eq(parsedOrders.length)
 
   })
 
