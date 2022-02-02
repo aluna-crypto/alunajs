@@ -48,7 +48,7 @@ describe('BinanceOrderParser', () => {
     expect(parsedOrder.type)
       .to.be.eq(BinanceOrderTypeAdapter.translateToAluna({ from: rawType }))
     expect(parsedOrder.placedAt.getTime())
-      .to.be.eq(new Date(rawOrder.time * 1000).getTime())
+      .to.be.eq(new Date(rawOrder.time).getTime())
 
   })
 

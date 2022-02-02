@@ -67,36 +67,6 @@ describe('BinanceMarketModule', () => {
     expect(response.length).to.eq(3)
     expect(response).to.deep.eq(BINANCE_RAW_MARKETS_WITH_CURRENCY)
 
-    response.forEach((res, index) => {
-
-      const {
-        symbol,
-        askPrice,
-        bidPrice,
-        lastPrice,
-        prevClosePrice,
-        volume,
-        highPrice,
-        lowPrice,
-        priceChange,
-        baseCurrency,
-        quoteCurrency,
-      } = BINANCE_RAW_MARKETS_WITH_CURRENCY[index]
-
-      expect(res.symbol).to.be.eq(symbol)
-      expect(res.askPrice).to.be.eq(askPrice)
-      expect(res.bidPrice).to.be.eq(bidPrice)
-      expect(res.lastPrice).to.be.eq(lastPrice)
-      expect(res.prevClosePrice).to.be.eq(prevClosePrice)
-      expect(res.volume).to.be.eq(volume)
-      expect(res.highPrice).to.be.eq(highPrice)
-      expect(res.lowPrice).to.be.eq(lowPrice)
-      expect(res.priceChange).to.be.eq(priceChange)
-      expect(res.baseCurrency).to.be.eq(baseCurrency)
-      expect(res.quoteCurrency).to.be.eq(quoteCurrency)
-
-    })
-
   })
 
 
@@ -128,21 +98,6 @@ describe('BinanceMarketModule', () => {
 
     expect(parsedMarkets.length).to.eq(3)
     expect(parsedMarkets).to.deep.eq(BINANCE_PARSED_MARKET)
-
-    parsedMarkets.forEach((parsed, index) => {
-
-      const {
-        symbolPair,
-        baseSymbolId,
-        quoteSymbolId,
-      } = BINANCE_PARSED_MARKET[index]
-
-      expect(parsed.exchangeId).to.eq(Binance.ID)
-      expect(parsed.symbolPair).to.be.eq(symbolPair)
-      expect(parsed.baseSymbolId).to.be.eq(baseSymbolId)
-      expect(parsed.quoteSymbolId).to.be.eq(quoteSymbolId)
-
-    })
 
   })
 

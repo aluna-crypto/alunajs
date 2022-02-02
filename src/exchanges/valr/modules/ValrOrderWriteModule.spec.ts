@@ -406,7 +406,7 @@ describe('ValrOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: false,
-          orderTypes: []
+          orderTypes: [],
         },
       ],
     )
@@ -442,8 +442,8 @@ describe('ValrOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: true,
-          orderTypes: []
-          // missing orderTypes property
+          orderTypes: null as any,
+          // @TODO -> Need to update logic to check orderTypes
         },
       ],
     )

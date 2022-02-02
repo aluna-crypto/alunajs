@@ -190,7 +190,7 @@ export const BINANCE_RAW_MARKETS_WITH_CURRENCY: IBinanceMarketWithCurrency[] = [
 export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] = [
   {
     exchangeId: 'binance',
-    pairSymbol: 'BNBBTC',
+    symbolPair: 'BNBBTC',
     baseSymbolId: 'BNB',
     quoteSymbolId: 'BTC',
     ticker: {
@@ -238,7 +238,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'binance',
-    pairSymbol: 'LTCBTC',
+    symbolPair: 'LTCBTC',
     baseSymbolId: 'LTC',
     quoteSymbolId: 'BTC',
     ticker: {
@@ -286,7 +286,7 @@ export const BINANCE_PARSED_MARKET: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'binance',
-    pairSymbol: 'ETHBTC',
+    symbolPair: 'ETHBTC',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'BTH',
     ticker: {

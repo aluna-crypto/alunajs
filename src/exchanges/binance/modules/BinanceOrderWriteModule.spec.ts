@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaHttpErrorCodes } from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -538,7 +539,8 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(error instanceof AlunaError).to.be.ok
     expect(error.message).to.be.eq('Something went wrong, order not canceled')
-    expect(error.statusCode).to.be.eq(500)
+    expect(error.httpStatusCode).to.be.eq(500)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
   })
 
