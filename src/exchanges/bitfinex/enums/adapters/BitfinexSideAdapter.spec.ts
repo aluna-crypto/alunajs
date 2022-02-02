@@ -10,11 +10,11 @@ describe('BitfinexSideAdapter', () => {
   it('should properly translate Bitfinex order types to Aluna types', () => {
 
     expect(BitfinexSideAdapter.translateToAluna({
-      value: 100,
+      value: '100',
     })).to.be.eq(AlunaSideEnum.LONG)
 
     expect(BitfinexSideAdapter.translateToAluna({
-      value: -6,
+      value: '-6',
     })).to.be.eq(AlunaSideEnum.SHORT)
 
   })
@@ -24,12 +24,12 @@ describe('BitfinexSideAdapter', () => {
     expect(BitfinexSideAdapter.translateToBitfinex({
       amount: 80,
       side: AlunaSideEnum.LONG,
-    })).to.be.eq(80)
+    })).to.be.eq('80')
 
     expect(BitfinexSideAdapter.translateToBitfinex({
       amount: 60,
       side: AlunaSideEnum.SHORT,
-    })).to.be.eq(-60)
+    })).to.be.eq('-60')
 
   })
 
