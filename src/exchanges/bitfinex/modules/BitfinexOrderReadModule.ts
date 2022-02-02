@@ -118,8 +118,6 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     rawOrders: IBitfinexOrderSchema[],
   }): Promise<IAlunaOrderSchema[]> {
 
-    BitfinexLog.info('parsed 8 orders for Bitfinex')
-
     const { rawOrders } = params
 
     const ordersPromises = rawOrders.reduce((acc, rawOrder) => {
@@ -131,7 +129,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
         symbol,
       ] = rawOrder
 
-      // skipping 'funding' and 'derivative' orders for now
+      // skipping 'funding' and 'derivatives' orders for now
       if (/f|F0/.test(symbol)) {
 
         return acc
@@ -147,6 +145,8 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     }, [] as Array<Promise<IAlunaOrderSchema>>)
 
     const parsedOrders = await Promise.all(ordersPromises)
+
+    BitfinexLog.info(`parsed ${parsedOrders.length} orders for Bitfinex`)
 
     return parsedOrders
 
