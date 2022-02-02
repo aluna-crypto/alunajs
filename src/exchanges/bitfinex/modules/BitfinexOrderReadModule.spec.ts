@@ -2,8 +2,11 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import {
+  AlunaError,
+  AlunaOrderErrorCodes,
   IAlunaExchange,
   IAlunaKeySecretSchema,
+  IAlunaOrderGetParams,
 } from '../../..'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
@@ -119,6 +122,48 @@ describe.only('BitfinexOrderReadModule', () => {
       keySecret: exchangeMock.getValue().keySecret,
       body: { id: [id] },
     })).to.be.ok
+
+  })
+
+  it('should throw specific error if Bitfinex order is not found', async () => {
+
+    let error = {} as AlunaError
+    let result
+
+    mockKeySecret()
+
+    const requestMock = ImportMock.mockFunction(
+      BitfinexHttp,
+      'privateRequest',
+      Promise.resolve([]),
+    )
+
+    const symbolPair = 'symbol'
+    const id = 666
+
+    const params: IAlunaOrderGetParams = {
+      id,
+      symbolPair,
+    }
+
+    try {
+
+      result = await bitfinexOrderReadModule.getRaw(params)
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
+    expect(error.message).to.be.eq('Order was not found.')
+    expect(error.metadata).to.be.eq(params)
+    expect(error.httpStatusCode).to.be.eq(400)
+
+    expect(requestMock.callCount).to.be.eq(2)
 
   })
 

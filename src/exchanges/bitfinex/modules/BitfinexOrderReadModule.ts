@@ -74,7 +74,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
         const error = new AlunaError({
           code: AlunaOrderErrorCodes.NOT_FOUND,
-          message: 'Order was not found',
+          message: 'Order was not found.',
           metadata: params,
         })
 
