@@ -359,7 +359,7 @@ export const BITFINEX_RAW_ORDERS: IBitfinexOrderSchema[] = [
 
 
 
-export const BITFINEX_PARSED_ORDER: IAlunaOrderSchema[] = [
+export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
   {
     id: 85420510379,
     symbolPair: 'tETHBTC',
