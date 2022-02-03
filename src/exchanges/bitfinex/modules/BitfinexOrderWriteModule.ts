@@ -143,7 +143,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     }
 
-    const parsedOrder = this.parse({ rawOrder })
+    const parsedOrder = await this.parse({ rawOrder })
 
     return parsedOrder
 
@@ -369,8 +369,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     const body = {
       amount: translatedAmount,
-      price,
-      price_aux_limit: priceAuxLimit,
+      ...(price ? { price } : {}),
+      ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
     }
 
     if (action === 'place') {
