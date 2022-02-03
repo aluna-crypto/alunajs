@@ -54,7 +54,7 @@ export const BITFINEX_RAW_ORDERS: IBitfinexOrderSchema[] = [
     1643377698000,
     0,
     -0.0008,
-    'STOP' as BitfinexOrderTypesEnum,
+    'EXCHANGE STOP' as BitfinexOrderTypesEnum,
     null,
     null,
     null,
