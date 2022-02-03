@@ -131,18 +131,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     BinanceLog.info('placing new order for Binance')
 
-    let orderId: string
+    let placedOrder: IBinanceOrderSchema
 
     try {
 
-      const { orderId: createdOrderId } = await BinanceHttp
-        .privateRequest<IBinancePlaceOrderResponse>({
+      placedOrder = await BinanceHttp
+        .privateRequest<IBinanceOrderSchema>({
           url: `${PROD_BINANCE_URL}/api/v3/order`,
           body,
           keySecret: this.exchange.keySecret,
         })
-
-      orderId = createdOrderId
 
     } catch (err) {
 
@@ -162,9 +160,8 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const order = await this.get({
-      id: orderId,
-      symbolPair,
+    const order = await this.parse({
+      rawOrder: placedOrder
     })
 
     return order
@@ -235,40 +232,6 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       account,
       symbolPair,
     } = params
-
-    const rawOrder = await this.getRaw({
-      id,
-      symbolPair,
-    })
-
-    const { status } = rawOrder
-
-    let isOrderOpen: boolean
-
-    switch (status) {
-
-      case BinanceOrderStatusEnum.NEW:
-      case BinanceOrderStatusEnum.PARTIALLY_FILLED:
-
-        isOrderOpen = true
-
-        break
-
-      default:
-
-        isOrderOpen = false
-
-    }
-
-    if (!isOrderOpen) {
-
-      throw new AlunaError({
-        httpStatusCode: 200,
-        message: 'Order is not open/active anymore',
-        code: AlunaOrderErrorCodes.IS_NOT_OPEN,
-      })
-
-    }
 
     await this.cancel({
       id,

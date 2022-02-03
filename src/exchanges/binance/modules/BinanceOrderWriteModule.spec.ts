@@ -65,12 +65,12 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { orderId: placedOrderId },
+      Promise.resolve(placedOrder),
     )
 
-    const getMock = ImportMock.mockFunction(
+    const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
-      'get',
+      'parse',
       Promise.resolve(placedOrder),
     )
 
@@ -105,10 +105,9 @@ describe('BinanceOrderWriteModule', () => {
     })).to.be.ok
 
 
-    expect(getMock.callCount).to.be.eq(1)
-    expect(getMock.calledWith({
-      id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+    expect(parseMock.callCount).to.be.eq(1)
+    expect(parseMock.calledWith({
+      rawOrder: placedOrder
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(placedOrder)
@@ -135,10 +134,9 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-    expect(getMock.callCount).to.be.eq(2)
-    expect(getMock.calledWith({
-      id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+    expect(parseMock.callCount).to.be.eq(2)
+    expect(parseMock.calledWith({
+      rawOrder: placeResponse2
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
@@ -290,12 +288,12 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { orderId: placedOrderId },
+      Promise.resolve(placedOrder),
     )
 
-    const getMock = ImportMock.mockFunction(
+    const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
-      'get',
+      'parse',
       placedOrder,
     )
 
@@ -327,13 +325,12 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-    expect(getMock.callCount).to.be.eq(1)
-    expect(getMock.calledWith({
-      id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+    expect(parseMock.callCount).to.be.eq(1)
+    expect(parseMock.calledWith({
+      rawOrder: placedOrder
     })).to.be.ok
 
-    expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
+    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
 
 
     // place short market order
@@ -352,10 +349,9 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-    expect(getMock.callCount).to.be.eq(2)
-    expect(getMock.calledWith({
-      id: placedOrderId,
-      symbolPair: placeOrderParams.symbolPair,
+    expect(parseMock.callCount).to.be.eq(2)
+    expect(parseMock.calledWith({
+      rawOrder: placedOrder
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
@@ -740,14 +736,6 @@ describe('BinanceOrderWriteModule', () => {
 
   it('should edit a binance order just fine', async () => {
 
-    const mockedOrderStatus = { status: BinanceOrderStatusEnum.NEW }
-
-    const getRawMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'getRaw',
-      Promise.resolve(mockedOrderStatus),
-    )
-
     const cancelMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'cancel',
@@ -774,89 +762,8 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(newOrder).to.deep.eq(BINANCE_RAW_ORDER)
 
-    expect(getRawMock.callCount).to.be.eq(1)
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)
-
-
-    mockedOrderStatus.status = BinanceOrderStatusEnum.PARTIALLY_FILLED
-
-    await binanceOrderWriteModule.edit(editOrderParams)
-
-    expect(getRawMock.callCount).to.be.eq(2)
-    expect(cancelMock.callCount).to.be.eq(2)
-    expect(placeMock.callCount).to.be.eq(2)
-
-  })
-
-  it('should throw if its not possible to edit the order', async () => {
-
-    const binanceOrderStatusValues = Object.values(BinanceOrderStatusEnum)
-
-    const notActiveValues = binanceOrderStatusValues.filter((status) => {
-
-      return status !== BinanceOrderStatusEnum.NEW
-        && status !== BinanceOrderStatusEnum.PARTIALLY_FILLED
-
-    })
-
-    const randomIndex = Math.floor(Math.random() * notActiveValues.length)
-
-    const randomStatus = notActiveValues[randomIndex]
-
-    const mockedOrderStatus = { status: randomStatus }
-
-    const getRawMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'getRaw',
-      Promise.resolve(mockedOrderStatus),
-    )
-
-    const cancelMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'cancel',
-      Promise.resolve(true),
-    )
-
-    const placeMock = ImportMock.mockFunction(
-      binanceOrderWriteModule,
-      'place',
-      Promise.resolve(BINANCE_RAW_ORDER),
-    )
-
-    const editOrderParams: IAlunaOrderEditParams = {
-      id: 'originalOrderId',
-      amount: '0.001',
-      rate: '0',
-      symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
-      type: AlunaOrderTypesEnum.MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
-    }
-
-    let error
-    let result
-
-    try {
-
-      result = await binanceOrderWriteModule.edit(editOrderParams)
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = 'Order is not open/active anymore'
-
-    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.IS_NOT_OPEN)
-    expect(error?.message).to.be.eq(msg)
-
-    expect(getRawMock.callCount).to.be.eq(1)
-    expect(cancelMock.callCount).to.be.eq(0)
-    expect(placeMock.callCount).to.be.eq(0)
 
   })
 
