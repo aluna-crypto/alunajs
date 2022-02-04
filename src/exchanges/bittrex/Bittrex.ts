@@ -9,6 +9,7 @@ import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BittrexSpecs } from './BittrexSpecs'
+import { BittrexMarketModule } from './modules/BittrexMarketModule'
 
 
 
@@ -20,9 +21,8 @@ export const Bittrex: IAlunaExchangeStatic = class extends AAlunaExchange implem
 
   // @TODO - Update
   static Symbol = null as any
-  static Market = null as any
-//   static Symbol = BittrexSymbolModule 
-//   static Market = BittrexMarketModule
+  //   static Symbol = BittrexSymbolModule
+  static Market = BittrexMarketModule
 
   // local definitions
   key: IAlunaKeyModule
@@ -37,6 +37,8 @@ export const Bittrex: IAlunaExchangeStatic = class extends AAlunaExchange implem
   ) {
 
     super(params)
+
+    console.log(params) // @TODO - Pass ESLint
 
     // @TODO - Update
     // this.key = new BittrexKeyModule({ exchange: this })
