@@ -10,6 +10,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BittrexSpecs } from './BittrexSpecs'
 import { BittrexMarketModule } from './modules/BittrexMarketModule'
+import { BittrexSymbolModule } from './modules/BittrexSymbolModule'
 
 
 
@@ -19,9 +20,7 @@ export const Bittrex: IAlunaExchangeStatic = class extends AAlunaExchange implem
   static readonly ID = BittrexSpecs.id
   static readonly SPECS = BittrexSpecs
 
-  // @TODO - Update
-  static Symbol = null as any
-  //   static Symbol = BittrexSymbolModule
+  static Symbol = BittrexSymbolModule
   static Market = BittrexMarketModule
 
   // local definitions
