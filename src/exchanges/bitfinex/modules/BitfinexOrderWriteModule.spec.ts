@@ -13,6 +13,7 @@ import {
   IAlunaExchange,
   IAlunaExchangeOrderOptionsSchema,
   IAlunaKeySecretSchema,
+  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../..'
@@ -67,20 +68,20 @@ describe.only('BitfinexOrderWriteModule', () => {
   }
 
   const getMockedBitfinexOrderResponse = (params: {
-    action: 'place' | 'edit',
-    status: string,
-    text: string,
+    isPlace?: boolean,
+    status?: string,
+    text?: string,
     rawOrder?: IBitfinexOrderSchema | undefined,
   }) => {
 
     const {
-      action,
-      status,
-      text,
+      isPlace = true,
+      status = 'SUCCESS',
+      text = 'Dummy text',
       rawOrder,
     } = params
 
-    const returnedOrder = action === 'place'
+    const returnedOrder = isPlace
       ? [rawOrder]
       : rawOrder
 
@@ -109,10 +110,8 @@ describe.only('BitfinexOrderWriteModule', () => {
     const parsedOrder = BITFINEX_PARSED_ORDERS[0]
 
     const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({
-      action,
+      isPlace: action === 'place',
       rawOrder,
-      status: 'SUCCESS',
-      text: 'Dummy Text',
     })
 
     const { exchangeMock } = mockKeySecret()
@@ -305,7 +304,6 @@ describe.only('BitfinexOrderWriteModule', () => {
       const text = 'Order placement fails for some reason'
 
       const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({
-        action: 'place',
         status: 'FAIL',
         text,
       })
@@ -353,7 +351,7 @@ describe.only('BitfinexOrderWriteModule', () => {
       const text = 'Order placement fails for some reason'
 
       const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({
-        action: 'edit',
+        isPlace: false,
         status: 'FAIL',
         text,
       })
@@ -556,239 +554,340 @@ describe.only('BitfinexOrderWriteModule', () => {
 
   })
 
-  it(
-    "should throw if 'rate' param is missing [LIMIT]",
-    async () => {
+  it("should throw if 'rate' param is missing [LIMIT]", async () => {
 
-      mockKeySecret()
+    mockKeySecret()
 
-      let result
-      let error
+    let result
+    let error
 
-      let errorMessage = "'rate' param is required to place limit orders"
+    let errorMessage = "'rate' param is required to place limit orders"
 
-      const params: IAlunaOrderPlaceParams = {
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: 10,
-        side: AlunaSideEnum.LONG,
-        symbolPair,
-        type: AlunaOrderTypesEnum.LIMIT,
-      }
+    const params: IAlunaOrderPlaceParams = {
+      account: AlunaAccountEnum.EXCHANGE,
+      amount: 10,
+      side: AlunaSideEnum.LONG,
+      symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
+    }
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.place(params)
+      result = await bitfinexOrderWriteModule.place(params)
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMessage)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMessage)
+    expect(error.httpStatusCode).to.be.eq(200)
 
 
-      errorMessage = "'rate' param is required to edit limit orders"
+    errorMessage = "'rate' param is required to edit limit orders"
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.edit({
-          ...params,
-          id: 666,
-        })
+      result = await bitfinexOrderWriteModule.edit({
+        ...params,
+        id: 666,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMessage)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMessage)
+    expect(error.httpStatusCode).to.be.eq(200)
 
-    },
-  )
+  })
 
-  it(
-    "should throw if 'stopRate' param is missing [STOP-MARKET]",
-    async () => {
+  it("should throw if 'stopRate' param is missing [STOP-MARKET]", async () => {
 
-      mockKeySecret()
+    mockKeySecret()
 
-      let result
-      let error
+    let result
+    let error
 
-      let errorMsg = "'stopRate' param is required to place stop-market orders"
+    let errorMsg = "'stopRate' param is required to place stop-market orders"
 
-      const params: IAlunaOrderPlaceParams = {
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: 10,
-        side: AlunaSideEnum.LONG,
-        symbolPair,
-        type: AlunaOrderTypesEnum.STOP_MARKET,
-      }
+    const params: IAlunaOrderPlaceParams = {
+      account: AlunaAccountEnum.EXCHANGE,
+      amount: 10,
+      side: AlunaSideEnum.LONG,
+      symbolPair,
+      type: AlunaOrderTypesEnum.STOP_MARKET,
+    }
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.place(params)
+      result = await bitfinexOrderWriteModule.place(params)
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
 
-      errorMsg = "'stopRate' param is required to edit stop-market orders"
+    errorMsg = "'stopRate' param is required to edit stop-market orders"
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.edit({
-          ...params,
-          id: 666,
-        })
+      result = await bitfinexOrderWriteModule.edit({
+        ...params,
+        id: 666,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
-    },
-  )
+  })
 
-  it(
-    "should throw if 'stopRate' param is missing [STOP-LIMIT]",
-    async () => {
+  it("should throw if 'stopRate' param is missing [STOP-LIMIT]", async () => {
 
-      mockKeySecret()
+    mockKeySecret()
 
-      let result
-      let error
+    let result
+    let error
 
-      let errorMsg = "'stopRate' param is required to place stop-limit orders"
+    let errorMsg = "'stopRate' param is required to place stop-limit orders"
 
-      const params: IAlunaOrderPlaceParams = {
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: 10,
-        side: AlunaSideEnum.LONG,
-        symbolPair,
-        type: AlunaOrderTypesEnum.STOP_LIMIT,
-        limitRate: 10,
-      }
+    const params: IAlunaOrderPlaceParams = {
+      account: AlunaAccountEnum.EXCHANGE,
+      amount: 10,
+      side: AlunaSideEnum.LONG,
+      symbolPair,
+      type: AlunaOrderTypesEnum.STOP_LIMIT,
+      limitRate: 10,
+    }
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.place(params)
+      result = await bitfinexOrderWriteModule.place(params)
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
 
-      errorMsg = "'stopRate' param is required to edit stop-limit orders"
+    errorMsg = "'stopRate' param is required to edit stop-limit orders"
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.edit({
-          ...params,
-          id: 666,
-        })
+      result = await bitfinexOrderWriteModule.edit({
+        ...params,
+        id: 666,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
-    },
-  )
+  })
 
-  it(
-    "should throw if 'limitRate' param is missing [STOP-LIMIT]",
-    async () => {
+  it("should throw if 'limitRate' param is missing [STOP-LIMIT]", async () => {
 
-      mockKeySecret()
+    mockKeySecret()
 
-      let result
-      let error
+    let result
+    let error
 
-      let errorMsg = "'limitRate' param is required to place stop-limit orders"
+    let errorMsg = "'limitRate' param is required to place stop-limit orders"
 
-      const params: IAlunaOrderPlaceParams = {
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: 10,
-        side: AlunaSideEnum.LONG,
-        symbolPair,
-        type: AlunaOrderTypesEnum.STOP_LIMIT,
-        stopRate: 10,
-      }
+    const params: IAlunaOrderPlaceParams = {
+      account: AlunaAccountEnum.EXCHANGE,
+      amount: 10,
+      side: AlunaSideEnum.LONG,
+      symbolPair,
+      type: AlunaOrderTypesEnum.STOP_LIMIT,
+      stopRate: 10,
+    }
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.place(params)
+      result = await bitfinexOrderWriteModule.place(params)
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
 
-      errorMsg = "'limitRate' param is required to edit stop-limit orders"
+    errorMsg = "'limitRate' param is required to edit stop-limit orders"
 
-      try {
+    try {
 
-        result = await bitfinexOrderWriteModule.edit({
-          ...params,
-          id: 666,
-        })
+      result = await bitfinexOrderWriteModule.edit({
+        ...params,
+        id: 666,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message).to.be.eq(errorMsg)
-      expect(error.httpStatusCode).to.be.eq(200)
+    expect(result).not.to.be.ok
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message).to.be.eq(errorMsg)
+    expect(error.httpStatusCode).to.be.eq(200)
 
-    },
-  )
+  })
+
+  it('should properly cancel Bitfinex orders', async () => {
+
+    mockKeySecret()
+
+    const parsedOrder = BITFINEX_PARSED_ORDERS[0]
+
+    const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({})
+
+    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+
+    const getMock = ImportMock.mockFunction(
+      bitfinexOrderWriteModule,
+      'get',
+      parsedOrder,
+    )
+
+    const params: IAlunaOrderCancelParams = {
+      id: 10,
+      symbolPair: 'tBTCETH',
+    }
+
+    const canceledOrder = await bitfinexOrderWriteModule.cancel(params)
+
+    expect(requestMock.callCount).to.be.eq(1)
+
+    expect(getMock.callCount).to.be.eq(1)
+    expect(getMock.args[0][0]).to.deep.eq(params)
+
+    expect(canceledOrder).to.deep.eq(parsedOrder)
+
+  })
+
+  it('should throw error if order cancel request fails', async () => {
+
+    let error
+    let result
+
+    mockKeySecret()
+
+    const parsedOrder = BITFINEX_PARSED_ORDERS[0]
+
+    let errMsg = 'Order not active'
+
+    const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({
+      status: 'FAILS',
+      text: errMsg,
+    })
+
+    // const { requestMock } = mockRequest(
+
+    // )
+    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+
+    const getMock = ImportMock.mockFunction(
+      bitfinexOrderWriteModule,
+      'get',
+      parsedOrder,
+    )
+
+    const params: IAlunaOrderCancelParams = {
+      id: 10,
+      symbolPair: 'tBTCETH',
+    }
+
+    try {
+
+      result = await bitfinexOrderWriteModule.cancel(params)
+
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+    expect(error.message).to.be.eq(errMsg)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(getMock.callCount).to.be.eq(0)
+
+    errMsg = 'Order is already canceled'
+
+    requestMock.returns(
+      Promise.reject(new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+      })),
+    )
+
+    try {
+
+      result = await bitfinexOrderWriteModule.cancel(params)
+
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+    expect(error.message).to.be.eq(errMsg)
+
+    expect(requestMock.callCount).to.be.eq(2)
+    expect(getMock.callCount).to.be.eq(0)
+
+  })
 
   it('should ensure given account is one of AlunaAccountEnum', async () => {
 
