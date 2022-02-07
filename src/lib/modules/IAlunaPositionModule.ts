@@ -5,8 +5,9 @@ import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 export interface IAlunaPositionListParams {
   openPositionsOnly: boolean
-  // start?: nyumber
-  // limit?: nyumber
+  start?: number
+  end?: number
+  limit?: number
 }
 
 export interface IAlunaPositionGetParams {
