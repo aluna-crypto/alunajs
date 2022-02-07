@@ -43,7 +43,7 @@ export interface IAlunaPositionSchema {
   crossMargin?: boolean
 
   openedAt: Date
-  closedAt: Date
+  closedAt?: Date
 
   meta: any
 
