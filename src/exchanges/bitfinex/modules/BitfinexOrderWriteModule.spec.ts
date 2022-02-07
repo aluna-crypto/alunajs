@@ -31,7 +31,7 @@ import { BitfinexOrderWriteModule } from './BitfinexOrderWriteModule'
 
 
 
-describe.only('BitfinexOrderWriteModule', () => {
+describe('BitfinexOrderWriteModule', () => {
 
   const bitfinexOrderWriteModule = BitfinexOrderWriteModule.prototype
 
