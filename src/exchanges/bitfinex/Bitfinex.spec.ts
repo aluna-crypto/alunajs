@@ -40,6 +40,7 @@ describe('Bitfinex', () => {
     expect(bitfinex.key).to.be.ok
     expect(bitfinex.balance).to.be.ok
     expect(bitfinex.order).to.be.ok
+    expect(bitfinex.position).to.be.ok
 
     // expect(bitfinex.position).not.to.be.ok
 
