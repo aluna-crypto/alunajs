@@ -123,7 +123,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
         httpStatusCode,
       } = err
 
-      if (/not enough.+balance/.test(err.message)) {
+      if (/not enough.+balance/i.test(err.message)) {
 
         code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
         httpStatusCode = 400
@@ -216,6 +216,10 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
         code = AlunaOrderErrorCodes.NOT_FOUND
         message = 'order was not found or may not be open'
 
+      } else if (/not enough.+balance/i.test(err.message)) {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
       }
 
       const error = new AlunaError({
@@ -292,7 +296,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
   }
 
-  assembleBodyRequest (params: {
+  private assembleBodyRequest (params: {
     action: 'place' | 'edit',
     orderParams: IPlaceOrEditOrderParams,
   }): Record<string, any> {
@@ -359,7 +363,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
         throw new AlunaError({
           httpStatusCode: 200,
-          message: `'${key}' param is required to ${action} '${type}' orders`,
+          message: `'${key}' param is required to ${action} ${type} orders`,
           code: AlunaGenericErrorCodes.PARAM_ERROR,
         })
 
