@@ -24,8 +24,6 @@ describe('BitfinexOrderParser', () => {
         rawOrder,
       })
 
-      console.log(parsedOrder)
-
       const [
         id,
         _gid,
