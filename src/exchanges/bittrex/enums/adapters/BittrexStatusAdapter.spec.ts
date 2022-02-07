@@ -1,0 +1,81 @@
+import { expect } from 'chai'
+
+import { AlunaError } from '../../../../lib/core/AlunaError'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { BittrexOrderStatusEnum } from '../BittrexOrderStatusEnum'
+import { BittrexStatusAdapter } from './BittrexStatusAdapter'
+
+
+
+describe('BittrexStatusAdapter', () => {
+
+  const notSupported = 'not-supported'
+
+
+
+  it('should translate Bittrex order status to Aluna order status',
+    () => {
+
+      expect(BittrexStatusAdapter.translateToAluna({
+        from: BittrexOrderStatusEnum.OPEN,
+      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+      expect(BittrexStatusAdapter.translateToAluna({
+        from: BittrexOrderStatusEnum.CLOSED,
+      })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+      try {
+
+        BittrexStatusAdapter.translateToAluna({
+          from: notSupported as BittrexOrderStatusEnum,
+        })
+
+      } catch (err) {
+
+        expect(err instanceof AlunaError).to.be.ok
+        expect(err.message)
+          .to.be.eq(`Order status not supported: ${notSupported}`)
+
+      }
+
+
+    })
+
+
+
+  it('should translate Aluna order status to Bittrex order status', () => {
+
+    expect(BittrexStatusAdapter.translateToBittrex({
+      from: AlunaOrderStatusEnum.OPEN,
+    })).to.be.eq(BittrexOrderStatusEnum.OPEN)
+
+    expect(BittrexStatusAdapter.translateToBittrex({
+      from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
+    })).to.be.eq(BittrexOrderStatusEnum.OPEN)
+
+    expect(BittrexStatusAdapter.translateToBittrex({
+      from: AlunaOrderStatusEnum.FILLED,
+    })).to.be.eq(BittrexOrderStatusEnum.CLOSED)
+
+    expect(BittrexStatusAdapter.translateToBittrex({
+      from: AlunaOrderStatusEnum.CANCELED,
+    })).to.be.eq(BittrexOrderStatusEnum.CLOSED)
+
+
+    try {
+
+      BittrexStatusAdapter.translateToBittrex({
+        from: notSupported as AlunaOrderStatusEnum,
+      })
+
+    } catch (err) {
+
+      expect(err instanceof AlunaError).to.be.ok
+      expect(err.message)
+        .to.be.eq(`Order status not supported: ${notSupported}`)
+
+    }
+
+  })
+
+})
