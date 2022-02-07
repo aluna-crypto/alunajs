@@ -74,10 +74,11 @@ export const generateAuthHeader = (
   const timestamp = new Date().getTime()
 
   const contentHash = crypto
-    .createHmac('sha512', body ? JSON.stringify(body) : '')
+    .createHash('sha512')
+    .update(body ? JSON.stringify(body) : '')
     .digest('hex')
 
-  const preSigned = [timestamp, url, verb, contentHash].join('')
+  const preSigned = [timestamp, url, verb.toUpperCase(), contentHash].join('')
 
   const signedHeader = crypto
     .createHmac('sha512', keySecret.secret)

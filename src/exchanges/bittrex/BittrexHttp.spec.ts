@@ -317,10 +317,13 @@ describe('BittrexHttp', () => {
   it('should generate signed auth header just fine', async () => {
 
     const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const createHashSpy = Sinon.spy(crypto, 'createHash')
 
     const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const updateHashSpy = Sinon.spy(crypto.Hash.prototype, 'update')
 
-    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    const digestHashSpy = Sinon.spy(crypto.Hash.prototype, 'digest')
 
     const currentDate = 'current-date'
 
@@ -351,10 +354,16 @@ describe('BittrexHttp', () => {
     const url = dummyUrl
 
     const contentHash = crypto
-      .createHmac('sha512', body ? JSON.stringify(body) : '')
+      .createHash('sha512')
+      .update(body ? JSON.stringify(body) : '')
       .digest('hex')
 
-    const preSigned = [timestampMock, url, verb, contentHash].join('')
+    const preSigned = [
+      timestampMock,
+      url,
+      verb.toUpperCase(),
+      contentHash,
+    ].join('')
 
     const signedHash = BittrexHttp.generateAuthHeader({
       keySecret,
@@ -366,22 +375,27 @@ describe('BittrexHttp', () => {
 
     expect(dateMock.callCount).to.be.eq(1)
 
-    expect(createHmacSpy.callCount).to.be.eq(3)
-    expect(createHmacSpy
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHashSpy.callCount).to.be.eq(2)
+    expect(createHashSpy
       .secondCall
-      .calledWith('sha512', JSON.stringify(body))).to.be.ok
+      .calledWith('sha512')).to.be.ok
     expect(createHmacSpy
-      .thirdCall
+      .firstCall
       .calledWith('sha512', keySecret.secret)).to.be.ok
 
     expect(updateSpy.callCount).to.be.eq(1)
-    expect(updateSpy.firstCall.calledWith(preSigned)).to.be.ok
+    expect(updateHashSpy.callCount).to.be.eq(2)
+    expect(updateHashSpy.secondCall.calledWith(JSON.stringify(body))).to.be.ok
 
     expect(stringfyMock.callCount).to.be.eq(3)
     expect(stringfyMock.calledWith(body)).to.be.ok
 
-    expect(digestSpy.callCount).to.be.eq(3)
-    expect(digestSpy.calledWith('hex')).to.be.ok
+    expect(digestHmacSpy.callCount).to.be.eq(1)
+    expect(digestHmacSpy.calledWith('hex')).to.be.ok
+
+    expect(digestHashSpy.callCount).to.be.eq(2)
+    expect(digestHashSpy.calledWith('hex')).to.be.ok
 
     const signedHeader = crypto
       .createHmac('sha512', keySecret.secret)
@@ -403,7 +417,7 @@ describe('BittrexHttp', () => {
 
     expect(dateMock.callCount).to.be.eq(2)
 
-    expect(createHmacSpy.callCount).to.be.eq(6)
+    expect(createHmacSpy.callCount).to.be.eq(3)
 
     // when no body is passed must not call stringfy on empty string
     expect(stringfyMock.callCount).to.be.eq(3)
@@ -411,11 +425,9 @@ describe('BittrexHttp', () => {
 
     expect(updateSpy.callCount).to.be.eq(3)
 
-    expect(digestSpy.callCount).to.be.eq(6)
+    expect(digestHmacSpy.callCount).to.be.eq(3)
 
-    const contentHash2 = crypto
-      .createHmac('sha512', '')
-      .digest('hex')
+    const contentHash2 = crypto.createHash('sha512').update('').digest('hex')
 
     expect(signedHash2['Api-Content-Hash']).to.deep.eq(contentHash2)
     expect(
