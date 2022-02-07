@@ -35,7 +35,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
         body.start = start
         body.end = end
 
-        url = 'https://api.bitfinex.com/v2/auth/r/positions/hist'
+        url = 'https://api.bitfinex.com/v2/auth/r/positions/snap'
 
       }
 
