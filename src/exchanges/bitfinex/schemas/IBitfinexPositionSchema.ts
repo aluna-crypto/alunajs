@@ -19,8 +19,8 @@ type TBitfinexPosition = [
     LEVERAGE: number | null,
     _PLACEHOLDER: null,
     POSITION_ID: number,
-    MTS_CREATE: number | null,
-    MTS_UPDATE: number | null,
+    MTS_CREATE: number,
+    MTS_UPDATE: number,
     _PLACEHOLDER: null,
     TYPE: 0 | 1, // 0 = Margin position, 1 = Derivatives position
     _PLACEHOLDER: null,
