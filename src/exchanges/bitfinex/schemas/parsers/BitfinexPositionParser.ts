@@ -68,7 +68,7 @@ export class BitfinexPositionParser {
     })
 
     const computedBasePrice = Number(basePrice)
-    const computedAmount = Number(amount)
+    const computedAmount = Math.abs(Number(amount))
     const total = computedAmount * computedBasePrice
 
     const computedPl = pl !== null ? pl : 0
@@ -82,7 +82,7 @@ export class BitfinexPositionParser {
       quoteSymbolId,
       exchangeId: Bitfinex.ID,
       total,
-      amount: Number(amount),
+      amount: computedAmount,
       account: AlunaAccountEnum.MARGIN,
       status: computedStatus,
       side,
