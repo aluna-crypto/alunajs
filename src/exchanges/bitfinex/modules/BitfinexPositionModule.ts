@@ -67,15 +67,31 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   }
 
-  get (params?: IAlunaPositionGetParams): Promise<IAlunaPositionSchema> {
+  async get (params: IAlunaPositionGetParams): Promise<IAlunaPositionSchema> {
 
-    throw new Error('Method not implemented.')
+    const rawPosition = await this.getRaw(params)
+
+    const parsedPosition = this.parse({ rawPosition })
+
+    return parsedPosition
 
   }
 
-  getRaw (params?: IAlunaPositionGetParams): Promise<any> {
+  async getRaw (
+    params: IAlunaPositionGetParams,
+  ): Promise<IBitfinexPositionSchema> {
 
-    throw new Error('Method not implemented.')
+    const { id } = params
+
+    const { privateRequest } = BitfinexHttp
+
+    const rawPosition = await privateRequest<IBitfinexPositionSchema>({
+      url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
+      body: { id: [id], limit: 1 },
+      keySecret: this.exchange.keySecret,
+    })
+
+    return rawPosition
 
   }
 
