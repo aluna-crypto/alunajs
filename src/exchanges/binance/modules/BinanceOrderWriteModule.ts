@@ -159,7 +159,10 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
       }
 
-      throw err
+      throw new AlunaError({
+        ...err,
+        code: AlunaOrderErrorCodes.PLACE_FAILED,
+      })
 
     }
 

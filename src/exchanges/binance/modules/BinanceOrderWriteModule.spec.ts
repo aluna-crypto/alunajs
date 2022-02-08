@@ -298,7 +298,7 @@ describe('BinanceOrderWriteModule', () => {
         keySecret,
       })).to.be.ok
 
-      expect(err.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      expect(err.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
       expect(err.message).to.be.eq('Something went wrong.')
       expect(err.httpStatusCode).to.be.eq(500)
 
