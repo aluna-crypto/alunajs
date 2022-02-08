@@ -20,7 +20,6 @@ import {
 } from '../BinanceSpecs'
 import { BinanceOrderTypeAdapter } from '../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
-import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 import {
@@ -28,12 +27,6 @@ import {
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderReadModule } from './BinanceOrderReadModule'
-
-
-
-interface IBinancePlaceOrderResponse {
-  orderId: string
-}
 
 
 
@@ -122,6 +115,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
+      if (!rate) {
+
+        throw new AlunaError({
+          message: 'A rate is required for limit orders',
+          code: AlunaOrderErrorCodes.MISSING_PARAMS,
+          httpStatusCode: 401,
+        })
+
+      }
+
       Object.assign(body, {
         price: rate,
         timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
@@ -161,7 +164,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
     }
 
     const order = await this.parse({
-      rawOrder: placedOrder
+      rawOrder: placedOrder,
     })
 
     return order
@@ -186,21 +189,26 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbol: symbolPair,
     }
 
-    const canceledOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
-      {
-        verb: AlunaHttpVerbEnum.DELETE,
-        url: `${PROD_BINANCE_URL}/api/v3/order`,
-        keySecret: this.exchange.keySecret,
-        body,
-      },
-    )
+    let canceledOrder: IBinanceOrderSchema
 
-    if (canceledOrder.status !== BinanceOrderStatusEnum.CANCELED) {
+    try {
+
+      canceledOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
+        {
+          verb: AlunaHttpVerbEnum.DELETE,
+          url: `${PROD_BINANCE_URL}/api/v3/order`,
+          keySecret: this.exchange.keySecret,
+          body,
+        },
+      )
+
+    } catch (err) {
 
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
-        httpStatusCode: 500,
+        httpStatusCode: err.httpStatusCode,
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        metadata: err.metadata,
       })
 
       BinanceLog.error(error)

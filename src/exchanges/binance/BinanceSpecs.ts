@@ -84,8 +84,8 @@ export const BinanceSpecs: IAlunaExchangeSchema = {
   signupUrl: 'https://accounts.binance.com/en/register',
   connectApiUrl: 'https://www.binance.com/en/my/settings/api-management',
   rateLimitingPerMinute: {
-    perApiKey: 1200,
-    perIp: 1200,
+    perApiKey: 300,
+    perIp: 300,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,

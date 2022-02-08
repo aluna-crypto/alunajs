@@ -48,8 +48,6 @@ describe('BinanceOrderWriteModule', () => {
     secret: '',
   }
 
-  const placedOrderId = 'placed-order-id'
-
   const placedOrder = 'placed-order'
 
 
@@ -107,7 +105,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder
+      rawOrder: placedOrder,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(placedOrder)
@@ -136,7 +134,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
-      rawOrder: placeResponse2
+      rawOrder: placeResponse2,
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
@@ -204,6 +202,40 @@ describe('BinanceOrderWriteModule', () => {
         expect(err.message)
           .to.be.eq('Account has insufficient balance for requested action.')
         expect(err.httpStatusCode).to.be.eq(400)
+
+
+      }
+
+    })
+
+  it('should throw an error if a new limit order is placed without rate',
+    async () => {
+
+      ImportMock.mockOther(
+        binanceOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: '0.001',
+        symbolPair: 'ETHZAR',
+        side: AlunaSideEnum.LONG,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+        // without rate
+      }
+
+      try {
+
+        await binanceOrderWriteModule.place(placeOrderParams)
+
+      } catch (err) {
+
+        expect(err.code).to.be.eq(AlunaOrderErrorCodes.MISSING_PARAMS)
+        expect(err.message)
+          .to.be.eq('A rate is required for limit orders')
+        expect(err.httpStatusCode).to.be.eq(401)
 
 
       }
@@ -327,7 +359,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder
+      rawOrder: placedOrder,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
@@ -351,7 +383,7 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder
+      rawOrder: placedOrder,
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
@@ -634,12 +666,17 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const mockedError: AlunaError = new AlunaError({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: 'Something went wrong, order not canceled',
+      metadata: {},
+      httpStatusCode: 500,
+    })
+
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      {
-        status: 'any-status-but-canceled' as BinanceOrderStatusEnum,
-      } as IBinanceOrderSchema,
+      Promise.reject(mockedError),
     )
 
     const cancelParams: IAlunaOrderCancelParams = {
@@ -653,27 +690,23 @@ describe('BinanceOrderWriteModule', () => {
 
     } catch (err) {
 
-      error = err
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        verb: AlunaHttpVerbEnum.DELETE,
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        keySecret,
+        body: {
+          orderId: cancelParams.id,
+          symbol: cancelParams.symbolPair,
+        },
+      })).to.be.ok
+
+      expect(err instanceof AlunaError).to.be.ok
+      expect(err.message).to.be.eq('Something went wrong, order not canceled')
+      expect(err.httpStatusCode).to.be.eq(500)
+      expect(err.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
     }
-
-    expect(result).not.to.be.ok
-
-    expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWith({
-      verb: AlunaHttpVerbEnum.DELETE,
-      url: `${PROD_BINANCE_URL}/api/v3/order`,
-      keySecret,
-      body: {
-        orderId: cancelParams.id,
-        symbol: cancelParams.symbolPair,
-      },
-    })).to.be.ok
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq('Something went wrong, order not canceled')
-    expect(error.httpStatusCode).to.be.eq(500)
-    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
 

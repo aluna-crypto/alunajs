@@ -25,8 +25,6 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
       url: `${PROD_BINANCE_URL}/api/v3/ticker/24hr`,
     })
 
-    BinanceLog.info('fetching Binance symbols')
-
     const rawSymbols = await BinanceSymbolModule.listRaw()
 
     const rawMarketsWithCurrency = BinanceCurrencyMarketParser.parse({
