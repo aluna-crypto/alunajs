@@ -46,6 +46,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       message: response?.data?.message || message,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
+      metadata: response?.data,
     })
 
   } else {
@@ -65,7 +66,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
 export const generateAuthHeader = (
   params: ISignedHashParams,
-):IBittrexSignedHeaders => {
+): IBittrexSignedHeaders => {
 
   const {
     keySecret, verb, body, url,
