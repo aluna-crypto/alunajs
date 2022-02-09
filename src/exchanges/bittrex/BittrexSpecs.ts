@@ -12,7 +12,7 @@ import {
 
 export const PROD_BITTREX_URL = 'https://api.bittrex.com/v3'
 
-const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
+export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
@@ -80,14 +80,21 @@ export const BittrexSpecs: IAlunaExchangeSchema = {
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
+      implemented: false,
+      orderTypes: [],
+
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: false,
+      implemented: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: false,
+      implemented: false,
+      orderTypes: [],
     },
   ],
 }

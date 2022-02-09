@@ -29,3 +29,12 @@ export interface IBittrexOrderSchema {
     closedAt: string
     orderToCancel: IBittrexOrderToCancel
 }
+
+export interface IBittrexOrderRequest {
+    marketSymbol: string
+    direction: BittrexSideEnum
+    type: BittrexOrderTypeEnum
+    quantity: number
+    limit?: number
+    timeInForce: BittrexOrderTimeInForceEnum
+}
