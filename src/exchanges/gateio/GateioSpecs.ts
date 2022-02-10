@@ -8,8 +8,7 @@ import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 
 
 
-export const PROD_GATEIO_URL = 'https://api.gateio.com'
-export const DEV_GATEIO_URL = 'https://testnet.gateio.vision'
+export const PROD_GATEIO_URL = 'https://api.gateio.ws/api/v4'
 
 export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
@@ -24,9 +23,9 @@ export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   },
 ]
 
-export const GATEIOSpecs: IAlunaExchangeSchema = {
+export const GateioSpecs: IAlunaExchangeSchema = {
   id: 'gateio',
-  name: 'GateIO',
+  name: 'Gateio',
   signupUrl: 'https://www.gate.io/signup',
   connectApiUrl: 'https://www.gate.io/myaccount/apiv4keys',
   rateLimitingPerMinute: {
