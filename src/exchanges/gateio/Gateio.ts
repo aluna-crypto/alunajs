@@ -8,8 +8,8 @@ import {
   IAlunaSettingsSchema,
 } from '../../index'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
-import { GateioLog } from './GateioLog'
 import { GateioSpecs } from './GateioSpecs'
+import { GateioBalanceModule } from './modules/GateioBalanceModule'
 
 
 
@@ -22,7 +22,7 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
   // @TODO - Update
   static Symbol = null as any
   static Market = null as any
-  //   static Symbol = GateioSymbolModule
+  // static Symbol = GateioSymbolModule
   //   static Market = GateioMarketModule
 
   // local definitions
@@ -38,9 +38,8 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
     super(params)
 
     // @TODO - Update
-    GateioLog.info('eslint-pass')
     // this.key = new GateioKeyModule({ exchange: this })
-    // this.balance = new GateioBalanceModule({ exchange: this })
+    this.balance = new GateioBalanceModule({ exchange: this })
     // this.order = new GateioOrderWriteModule({ exchange: this })
 
   }
