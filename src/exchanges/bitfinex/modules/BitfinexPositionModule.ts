@@ -1,4 +1,8 @@
-import { IAlunaPositionModule } from '../../..'
+import {
+  AlunaError,
+  AlunaPositionErrorCodes,
+  IAlunaPositionModule,
+} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import {
   IAlunaPositionCloseParams,
@@ -7,6 +11,7 @@ import {
 } from '../../../lib/modules/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
+import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexPositionSchema } from '../schemas/IBitfinexPositionSchema'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 
@@ -30,36 +35,10 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     params?: IAlunaPositionListParams,
   ): Promise<IBitfinexPositionSchema[]> {
 
-    let url = 'https://api.bitfinex.com/v2/auth/r/positions'
-
-    const body: Record<string, any> = {}
-
-    if (params) {
-
-      const {
-        end,
-        start,
-        openPositionsOnly,
-        limit,
-      } = params
-
-      if (!openPositionsOnly) {
-
-        body.start = start
-        body.end = end
-        body.status = limit
-
-        url = 'https://api.bitfinex.com/v2/auth/r/positions/hist'
-
-      }
-
-    }
-
     const { privateRequest } = BitfinexHttp
 
     const rawPositions = await privateRequest<IBitfinexPositionSchema[]>({
-      url,
-      body,
+      url: 'https://api.bitfinex.com/v2/auth/r/positions',
       keySecret: this.exchange.keySecret,
     })
 
@@ -85,7 +64,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const { privateRequest } = BitfinexHttp
 
-    const rawPosition = await privateRequest<IBitfinexPositionSchema>({
+    const [rawPosition] = await privateRequest<Array<IBitfinexPositionSchema>>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       body: { id: [id], limit: 1 },
       keySecret: this.exchange.keySecret,
@@ -95,9 +74,35 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   }
 
-  close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionSchema> {
+  async close (
+    params: IAlunaPositionCloseParams,
+  ): Promise<IAlunaPositionSchema> {
 
-    throw new Error('Method not implemented.')
+    const { id } = params
+
+    if (!id) {
+
+      const error = new AlunaError({
+        code: AlunaPositionErrorCodes.DOESNT_HAVE_ID,
+        message: 'Position id is required to close Bitfinex positions',
+        httpStatusCode: 400,
+      })
+
+      BitfinexLog.error(error)
+
+      throw error
+
+    }
+
+    const { privateRequest } = BitfinexHttp
+
+    await privateRequest<void>({
+      url: 'https://api.bitfinex.com/v1/position/close',
+      body: { position_id: Number(id) },
+      keySecret: this.exchange.keySecret,
+    })
+
+    return this.get({ id: id.toString() })
 
   }
 
