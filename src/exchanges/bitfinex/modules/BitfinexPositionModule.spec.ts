@@ -95,9 +95,9 @@ describe('BitfinexPositionModule', () => {
 
     const { requestMock } = mockRequest(BITFINEX_RAW_POSITIONS)
 
-    const rawOrders = await bitfinexPositionModule.listRaw()
+    const rawPositions = await bitfinexPositionModule.listRaw()
 
-    expect(rawOrders).to.deep.eq(BITFINEX_RAW_POSITIONS)
+    expect(rawPositions).to.deep.eq(BITFINEX_RAW_POSITIONS)
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWithExactly({
       url: 'https://api.bitfinex.com/v2/auth/r/positions',
@@ -169,25 +169,59 @@ describe('BitfinexPositionModule', () => {
 
   })
 
-  it('should properly get a raw Bitfinex raw position', async () => {
+  it('should properly get a Bitfinex raw position', async () => {
 
     const id = '666'
 
-    const mockedRawOrder = [BITFINEX_RAW_POSITIONS[0]]
+    const mockedRawPosition = [BITFINEX_RAW_POSITIONS[0]]
 
-    const { requestMock } = mockRequest(mockedRawOrder)
+    const { requestMock } = mockRequest(mockedRawPosition)
 
-    const rawOrder = await bitfinexPositionModule.getRaw({
+    const rawPosition = await bitfinexPositionModule.getRaw({
       id,
     })
 
-    expect(rawOrder).to.deep.eq(mockedRawOrder[0])
+    expect(rawPosition).to.deep.eq(mockedRawPosition[0])
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWithExactly({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       keySecret: exchangeMock.getValue().keySecret,
       body: { id: [id], limit: 1 },
     })).to.be.ok
+
+  })
+
+  it('should properly get a Bitfinex parsed position', async () => {
+
+    const id = '666'
+
+    const mockedRawPosition = BITFINEX_RAW_POSITIONS[0]
+
+    const getRawMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'getRaw',
+      Promise.resolve(mockedRawPosition),
+    )
+
+    const { parserMock } = mockedBitfinexPositionParser(
+      BITFINEX_PARSED_POSITIONS,
+    )
+
+    const parsedPosition = await bitfinexPositionModule.get({
+      id,
+    })
+
+    expect(parsedPosition).to.deep.eq(BITFINEX_PARSED_POSITIONS[0])
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(getRawMock.args[0][0]).to.deep.eq({
+      id,
+    })
+
+    expect(parserMock.callCount).to.be.eq(1)
+    expect(parserMock.args[0][0]).to.deep.eq({
+      rawPosition: mockedRawPosition,
+    })
 
   })
 
