@@ -129,7 +129,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     const parsedPositions = rawPositions.reduce((acc, rawPosition) => {
 
       // skipping derivative positions for now
-      if (rawPosition[14] === 1) {
+      if (/^(f)|(F0)/.test(rawPosition[0])) {
 
         return acc
 
