@@ -16,14 +16,24 @@ import * as BitfinexHttpMod from './BitfinexHttp'
 
 describe('BitfinexHttp', () => {
 
+  afterEach(Sinon.restore)
+
   const { BitfinexHttp, handleRequestError } = BitfinexHttpMod
 
   const { publicRequest, privateRequest } = BitfinexHttp
 
+  const dummyV2Headers: BitfinexHttpMod.IBitfinexSignedV2Headers = {
+    'Content-Type': 'dummy-content',
+    'bfx-nonce': 'dummy-key',
+    'bfx-apikey': 'dummy-payload',
+    'bfx-signature': 'dummy-sig',
+  }
+
+  const dummyBody: Record<any, string> = { dummy: 'dummy-body' }
+
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-  const dummyBody = { dummy: 'dummy-body' }
   const dummyData = { data: 'dummy-data' }
-  const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
+
   const dummyKeysecret: IAlunaKeySecretSchema = {
     key: 'key',
     secret: 'secret',
@@ -151,10 +161,15 @@ describe('BitfinexHttp', () => {
 
     const requestSpy = Sinon.spy(() => dummyData)
 
+    const signedHeaders: BitfinexHttpMod.IGenerateAuthHeaderReturns = {
+      body: dummyBody,
+      headers: dummyV2Headers,
+    }
+
     const generateAuthHeaderMock = ImportMock.mockFunction(
       BitfinexHttpMod,
       'generateAuthHeader',
-      dummySignedHeaders,
+      signedHeaders,
     )
 
     const axiosMock = ImportMock.mockFunction(
@@ -175,7 +190,7 @@ describe('BitfinexHttp', () => {
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
-      path: new URL(dummyUrl).pathname,
+      url: dummyUrl,
       body: dummyBody,
       keySecret: dummyKeysecret,
     })).to.be.ok
@@ -184,8 +199,8 @@ describe('BitfinexHttp', () => {
     expect(requestSpy.args[0]).to.deep.eq([{
       url: dummyUrl,
       method: AlunaHttpVerbEnum.POST,
-      data: dummyBody,
-      headers: dummySignedHeaders,
+      data: signedHeaders.body,
+      headers: signedHeaders.headers,
     }])
 
     expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
@@ -248,11 +263,7 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
-
-    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
-    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
-    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+  it('should generate signed auth header for V1 API just fine', async () => {
 
     const currentDate = Date.now()
 
@@ -262,17 +273,26 @@ describe('BitfinexHttp', () => {
       currentDate,
     )
 
-    const stringfiedBody = JSON.stringify(dummyBody)
+    const url = 'https://something.com/v1/auth/r/permissions'
 
-    const path = '/v2/auth/r/permissions'
-    const mockedNonce = currentDate * 1000
+    const mockedBody = { ...dummyBody }
 
+    mockedBody.request = new URL(url).pathname
+    mockedBody.nonce = (currentDate * 1000).toString()
 
-    const calledSignature = `/api${path}${mockedNonce}${stringfiedBody}`
+    const payload = Buffer.from(JSON.stringify(mockedBody)).toString('base64')
 
-    const signedHash = BitfinexHttpMod.generateAuthHeader({
+    const expectedSig = crypto.createHmac('sha384', dummyKeysecret.secret)
+      .update(payload)
+      .digest('hex')
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const { headers, body } = BitfinexHttpMod.generateAuthHeader({
       keySecret: dummyKeysecret,
-      path,
+      url,
       body: dummyBody,
     })
 
@@ -282,14 +302,66 @@ describe('BitfinexHttp', () => {
     expect(createHmacSpy.calledWith('sha384', dummyKeysecret.secret)).to.be.ok
 
     expect(updateSpy.callCount).to.be.eq(1)
-    expect(updateSpy.calledWith(calledSignature)).to.be.ok
+    expect(updateSpy.calledWith(payload)).to.be.ok
 
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('hex')).to.be.ok
 
-    expect(signedHash['bfx-nonce']).to.deep.eq(mockedNonce.toString())
-    expect(signedHash['bfx-apikey']).to.deep.eq(dummyKeysecret.key)
-    expect(signedHash['bfx-signature']).to.deep.eq(digestSpy.returnValues[0])
+    expect(headers['X-BFX-PAYLOAD']).to.be.eq(payload)
+    expect(headers['X-BFX-APIKEY']).to.be.eq(dummyKeysecret.key)
+    expect(headers['X-BFX-SIGNATURE']).to.be.eq(expectedSig)
+
+    expect(body).to.deep.eq(mockedBody)
+
+  })
+
+  it('should generate signed auth header for V2 API just fine', async () => {
+
+    const currentDate = Date.now()
+
+    const mockedDateNow = ImportMock.mockFunction(
+      Date,
+      'now',
+      currentDate,
+    )
+
+    const url = 'https://something.com/v2/auth/r/permissions'
+
+    const path = new URL(url).pathname
+    const nonce = (currentDate * 1000).toString()
+
+    const payload = `/api${path}${nonce}${JSON.stringify(dummyBody)}`
+
+    const expectedSig = crypto.createHmac('sha384', dummyKeysecret.secret)
+      .update(payload)
+      .digest('hex')
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const { headers, body } = BitfinexHttpMod.generateAuthHeader({
+      keySecret: dummyKeysecret,
+      url,
+      body: dummyBody,
+    })
+
+    expect(mockedDateNow.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha384', dummyKeysecret.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(payload)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(headers['bfx-apikey']).to.be.eq(dummyKeysecret.key)
+    expect(headers['bfx-nonce']).to.be.eq(nonce)
+    expect(headers['bfx-signature']).to.be.eq(expectedSig)
+
+    expect(body).to.deep.eq(dummyBody)
 
   })
 
@@ -298,7 +370,24 @@ describe('BitfinexHttp', () => {
     const dummyErrorMsg = 'exchange is offline'
 
     let error: AlunaError
+
     let axiosThrowedError: any = {
+      isAxiosError: true,
+      response: {
+        request: {
+          path: 'v1/getPositions',
+        },
+        data: { message: dummyErrorMsg },
+      },
+    }
+
+    error = handleRequestError(axiosThrowedError as AxiosError)
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(dummyErrorMsg)
+    expect(error.httpStatusCode).to.be.eq(400)
+
+    axiosThrowedError = {
       isAxiosError: true,
       response: {
         status: 401,
