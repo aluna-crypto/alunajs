@@ -8,7 +8,7 @@ import {
 
 export const GATEIO_RAW_MARKETS_WITH_CURRENCY: IGateioMarketWithCurrency[] = [
   {
-    currency_pair: 'BTC_USD',
+    currency_pair: 'ETH_USD',
     last: '43516.18',
     lowest_ask: '43507.5',
     highest_bid: '43453.51',
@@ -17,7 +17,7 @@ export const GATEIO_RAW_MARKETS_WITH_CURRENCY: IGateioMarketWithCurrency[] = [
     quote_volume: '11098460.538387',
     high_24h: '43752.73',
     low_24h: '42653.53',
-    baseCurrency: 'BTC',
+    baseCurrency: 'ETH',
     quoteCurrency: 'USD',
     etf_leverage: '1',
     etf_net_value: '1',
@@ -59,7 +59,7 @@ export const GATEIO_RAW_MARKETS_WITH_CURRENCY: IGateioMarketWithCurrency[] = [
     etf_pre_timestamp: '1',
   },
   {
-    currency_pair: 'BNB_USDT',
+    currency_pair: 'LTC_USDT',
     last: '415.8712',
     lowest_ask: '416.1704',
     highest_bid: '415.8009',
@@ -68,7 +68,7 @@ export const GATEIO_RAW_MARKETS_WITH_CURRENCY: IGateioMarketWithCurrency[] = [
     quote_volume: '32891877.956143',
     high_24h: '418.8239',
     low_24h: '407.7689',
-    baseCurrency: 'BNB',
+    baseCurrency: 'LTC',
     quoteCurrency: 'USDT',
     etf_leverage: '1',
     etf_net_value: '1',
@@ -79,7 +79,7 @@ export const GATEIO_RAW_MARKETS_WITH_CURRENCY: IGateioMarketWithCurrency[] = [
 
 export const GATEIO_RAW_MARKETS: IGateioMarketSchema[] = [
   {
-    currency_pair: 'BTC_USD',
+    currency_pair: 'ETH_USD',
     last: '43516.18',
     lowest_ask: '43507.5',
     highest_bid: '43453.51',
@@ -124,7 +124,7 @@ export const GATEIO_RAW_MARKETS: IGateioMarketSchema[] = [
     etf_pre_timestamp: '1',
   },
   {
-    currency_pair: 'BNB_USDT',
+    currency_pair: 'LTC_USDT',
     last: '415.8712',
     lowest_ask: '416.1704',
     highest_bid: '415.8009',
@@ -159,8 +159,8 @@ export const GATEIO_RAW_MARKET: IGateioMarketSchema = {
 export const GATEIO_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'gateio',
-    symbolPair: 'BTC_USD',
-    baseSymbolId: 'BTC',
+    symbolPair: 'ETH_USD',
+    baseSymbolId: 'ETH',
     quoteSymbolId: 'USD',
     ticker: {
       high: 43752.73,
@@ -225,8 +225,8 @@ export const GATEIO_PARSED_MARKETS: IAlunaMarketSchema[] = [
   },
   {
     exchangeId: 'gateio',
-    symbolPair: 'BNB_USDT',
-    baseSymbolId: 'BNB',
+    symbolPair: 'LTC_USDT',
+    baseSymbolId: 'LTC',
     quoteSymbolId: 'USDT',
     ticker: {
       high: 418.8239,

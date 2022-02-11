@@ -17,8 +17,8 @@ export const GATEIO_RAW_SYMBOLS: IGateioSymbolSchema[] = [
     buy_start: 0,
   },
   {
-    id: 'BTC_USD',
-    base: 'BTC',
+    id: 'ETH_USD',
+    base: 'ETH',
     quote: 'USD',
     fee: '0.2',
     min_quote_amount: '1',
@@ -43,8 +43,8 @@ export const GATEIO_RAW_SYMBOLS: IGateioSymbolSchema[] = [
     min_quote_amount: '1',
   },
   {
-    id: 'BNB_USDT',
-    base: 'BNB',
+    id: 'LTC_USDT',
+    base: 'LTC',
     quote: 'USDT',
     fee: '0.2',
     min_quote_amount: '1',
@@ -54,5 +54,28 @@ export const GATEIO_RAW_SYMBOLS: IGateioSymbolSchema[] = [
     sell_start: 0,
     buy_start: 0,
     min_base_amount: '0.0001',
+  },
+]
+
+export const GATEIO_PARSED_SYMBOLS = [
+  {
+    id: 'BNB',
+    exchangeId: 'gateio',
+    meta: {},
+  },
+  {
+    id: 'BTC',
+    exchangeId: 'gateio',
+    meta: {},
+  },
+  {
+    id: 'LTC',
+    exchangeId: 'gateio',
+    meta: {},
+  },
+  {
+    id: 'ETH',
+    exchangeId: 'gateio',
+    meta: {},
   },
 ]

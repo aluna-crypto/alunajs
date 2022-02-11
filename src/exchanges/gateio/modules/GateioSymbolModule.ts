@@ -1,0 +1,82 @@
+import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { Gateio } from '../Gateio'
+import { GateioHttp } from '../GateioHttp'
+import { GateioLog } from '../GateioLog'
+import { PROD_GATEIO_URL } from '../GateioSpecs'
+import { IGateioSymbolSchema } from '../schemas/IGateioSymbolSchema'
+
+
+
+export const GateioSymbolModule: IAlunaSymbolModule = class {
+
+  public static async list (): Promise<IAlunaSymbolSchema[]> {
+
+    const rawSymbols = await GateioSymbolModule.listRaw()
+
+    const parsedSymbols = GateioSymbolModule.parseMany({ rawSymbols })
+
+    return parsedSymbols
+
+  }
+
+
+
+  public static async listRaw (): Promise<IGateioSymbolSchema[]> {
+
+    GateioLog.info('fetching Gateio symbols')
+
+    const rawSymbols = await GateioHttp
+      .publicRequest<IGateioSymbolSchema[]>({
+        url: `${PROD_GATEIO_URL}/spot/currency_pairs`,
+      })
+
+    return rawSymbols
+
+  }
+
+
+
+  public static parse (params:{
+    rawSymbol: IGateioSymbolSchema,
+  }): IAlunaSymbolSchema {
+
+    const { rawSymbol } = params
+
+    const {
+      base,
+    } = rawSymbol
+
+    const parsedSymbol = {
+      id: base,
+      exchangeId: Gateio.ID,
+      meta: rawSymbol,
+    }
+
+    return parsedSymbol
+
+  }
+
+
+
+  public static parseMany (params: {
+    rawSymbols: IGateioSymbolSchema[],
+  }): IAlunaSymbolSchema[] {
+
+    const { rawSymbols } = params
+
+    const parsedSymbols = rawSymbols.map((rawSymbol) => {
+
+      const parsedSymbol = GateioSymbolModule.parse({ rawSymbol })
+
+      return parsedSymbol
+
+    })
+
+    GateioLog.info(`parsed ${parsedSymbols.length} symbols for Gateio`)
+
+    return parsedSymbols
+
+  }
+
+}

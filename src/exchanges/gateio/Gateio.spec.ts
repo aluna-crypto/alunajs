@@ -10,8 +10,7 @@ describe('Gateio', () => {
 
     expect(Gateio.ID).to.eq('gateio')
     expect(Gateio.SPECS).to.be.ok
-    // @TODO
-    // expect(Gateio.Symbol).to.be.ok
+    expect(Gateio.Symbol).to.be.ok
     expect(Gateio.Market).to.be.ok
 
   })
