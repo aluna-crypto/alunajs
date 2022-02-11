@@ -12,7 +12,7 @@ describe('Gateio', () => {
     expect(Gateio.SPECS).to.be.ok
     // @TODO
     // expect(Gateio.Symbol).to.be.ok
-    // expect(Gateio.Market).to.be.ok
+    expect(Gateio.Market).to.be.ok
 
   })
 

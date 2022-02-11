@@ -10,6 +10,7 @@ import {
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import { GateioSpecs } from './GateioSpecs'
 import { GateioBalanceModule } from './modules/GateioBalanceModule'
+import { GateioMarketModule } from './modules/GateioMarketModule'
 
 
 
@@ -21,9 +22,8 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
 
   // @TODO - Update
   static Symbol = null as any
-  static Market = null as any
   // static Symbol = GateioSymbolModule
-  //   static Market = GateioMarketModule
+  static Market = GateioMarketModule
 
   // local definitions
   key: IAlunaKeyModule
