@@ -1,6 +1,7 @@
 import {
   AlunaError,
   AlunaPositionErrorCodes,
+  AlunaPositionStatusEnum,
   IAlunaPositionModule,
 } from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
@@ -102,7 +103,23 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
       keySecret: this.exchange.keySecret,
     })
 
-    return this.get({ id: id.toString() })
+    const parsedPosition = await this.get({ id: id.toString() })
+
+    if (parsedPosition.status !== AlunaPositionStatusEnum.CLOSED) {
+
+      const error = new AlunaError({
+        message: 'Position could not be closed',
+        code: AlunaPositionErrorCodes.COULD_NOT_BE_CLOSED,
+        httpStatusCode: 500,
+      })
+
+      BitfinexLog.error(error)
+
+      throw error
+
+    }
+
+    return parsedPosition
 
   }
 
