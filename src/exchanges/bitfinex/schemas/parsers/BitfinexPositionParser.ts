@@ -32,13 +32,13 @@ export class BitfinexPositionParser {
       _placeholder1,
       positionId,
       mtsCreate,
-      _mtsUpdate,
+      mtsUpdate,
       _placeholder2,
       _type,
       _placeholder3,
       _collateral,
       _collateralMin,
-      _meta,
+      meta,
     ] = rawPosition
 
 
@@ -50,7 +50,7 @@ export class BitfinexPositionParser {
     if (spliter >= 0) {
 
       baseSymbolId = symbol.slice(1, spliter)
-      quoteSymbolId = symbol.slice(spliter)
+      quoteSymbolId = symbol.slice(spliter + 1)
 
     } else {
 
@@ -80,12 +80,23 @@ export class BitfinexPositionParser {
       ? new Date(mtsCreate)
       : new Date()
 
+    let closedAt: Date | undefined
+    let closePrice: number | undefined
+
+    if (mtsUpdate && (computedStatus === AlunaPositionStatusEnum.CLOSED)) {
+
+      closedAt = new Date(mtsUpdate)
+
+      closePrice = Number(meta.trade_price)
+
+    }
+
     const position: IAlunaPositionSchema = {
       id: positionId,
       symbolPair: symbol,
+      exchangeId: Bitfinex.ID,
       baseSymbolId,
       quoteSymbolId,
-      exchangeId: Bitfinex.ID,
       total,
       amount: computedAmount,
       account: AlunaAccountEnum.MARGIN,
@@ -98,6 +109,8 @@ export class BitfinexPositionParser {
       leverage: computedLeverage,
       liquidationPrice,
       openedAt,
+      closedAt,
+      closePrice,
       meta: rawPosition,
     }
 
