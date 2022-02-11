@@ -16,14 +16,23 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 
 
 interface IBitfinexSignedHashParams {
-  body?: Record<string, any>
-  path: string
+  body: Record<string, any>
+  url: string
   keySecret: IAlunaKeySecretSchema
 }
 
 
 
-interface IBitfinexSignedHeaders {
+interface IBitfinexSignedV1Headers {
+  'Content-Type': string
+  'X-BFX-APIKEY': string
+  'X-BFX-PAYLOAD': string
+  'X-BFX-SIGNATURE': string
+}
+
+
+
+interface IBitfinexSignedV2Headers {
   'Content-Type': string
   'bfx-nonce': string
   'bfx-apikey': string
@@ -32,12 +41,19 @@ interface IBitfinexSignedHeaders {
 
 
 
+interface IGenerateAuthHeaderReturns {
+  headers: IBitfinexSignedV1Headers | IBitfinexSignedV2Headers
+  body: Record<string, any>
+}
+
+
+
 export const generateAuthHeader = (
   params: IBitfinexSignedHashParams,
-): IBitfinexSignedHeaders => {
+): IGenerateAuthHeaderReturns => {
 
   const {
-    path,
+    url,
     keySecret,
     body,
   } = params
@@ -47,20 +63,53 @@ export const generateAuthHeader = (
     secret,
   } = keySecret
 
+  const path = new URL(url).pathname
+
   const nonce = (Date.now() * 1000).toString()
 
-  const signature = `/api${path}${nonce}${JSON.stringify(body)}`
+  let headers: IBitfinexSignedV1Headers | IBitfinexSignedV2Headers
 
-  const sig = crypto.createHmac('sha384', secret)
-    .update(signature)
-    .digest('hex')
+  if (/v2/.test(path)) {
 
-  return {
-    'Content-Type': 'application/json',
-    'bfx-nonce': nonce,
-    'bfx-apikey': key,
-    'bfx-signature': sig,
+    const signature = `/api${path}${nonce}${JSON.stringify(body)}`
+
+    const sig = crypto.createHmac('sha384', secret)
+      .update(signature)
+      .digest('hex')
+
+    headers = {
+      'Content-Type': 'application/json',
+      'bfx-nonce': nonce,
+      'bfx-apikey': key,
+      'bfx-signature': sig,
+    }
+
+  } else {
+
+    body.request = path
+    body.nonce = nonce
+
+    const payload = Buffer.from(JSON.stringify(body)).toString('base64')
+
+    const sig = crypto.createHmac('sha384', secret)
+      .update(payload)
+      .digest('hex')
+
+    headers = {
+      'Content-Type': 'application/json',
+      'X-BFX-APIKEY': key,
+      'X-BFX-PAYLOAD': payload,
+      'X-BFX-SIGNATURE': sig,
+    }
+
   }
+
+  const output: IGenerateAuthHeaderReturns = {
+    body,
+    headers,
+  }
+
+  return output
 
 }
 
@@ -70,13 +119,19 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
   let error: AlunaError
 
-  const message = 'Error while trying to execute Axios request'
+  let message = 'Error while trying to execute Axios request'
 
   if ((param as AxiosError).isAxiosError) {
 
     const {
       response,
     } = param as AxiosError
+
+    if (response?.request?.path.match(new RegExp(/v1/))) {
+
+      message = response.data.message
+
+    }
 
     error = new AlunaError({
       message: response?.data?.[2] || message,
@@ -139,7 +194,7 @@ export const BitfinexHttp: IAlunaHttp = class {
     } = params
 
     const signedHash = generateAuthHeader({
-      path: new URL(url).pathname,
+      url,
       keySecret,
       body,
     })
@@ -147,8 +202,8 @@ export const BitfinexHttp: IAlunaHttp = class {
     const requestConfig = {
       url,
       method: verb,
-      data: body,
-      headers: signedHash,
+      data: signedHash.body,
+      headers: signedHash.headers,
     }
 
     try {
