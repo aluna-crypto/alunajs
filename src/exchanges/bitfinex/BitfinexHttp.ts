@@ -15,7 +15,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 
 
 
-interface IBitfinexSignedHashParams {
+export interface IBitfinexSignedHashParams {
   body: Record<string, any>
   url: string
   keySecret: IAlunaKeySecretSchema
@@ -23,7 +23,7 @@ interface IBitfinexSignedHashParams {
 
 
 
-interface IBitfinexSignedV1Headers {
+export interface IBitfinexSignedV1Headers {
   'Content-Type': string
   'X-BFX-APIKEY': string
   'X-BFX-PAYLOAD': string
@@ -32,7 +32,7 @@ interface IBitfinexSignedV1Headers {
 
 
 
-interface IBitfinexSignedV2Headers {
+export interface IBitfinexSignedV2Headers {
   'Content-Type': string
   'bfx-nonce': string
   'bfx-apikey': string
@@ -41,7 +41,7 @@ interface IBitfinexSignedV2Headers {
 
 
 
-interface IGenerateAuthHeaderReturns {
+export interface IGenerateAuthHeaderReturns {
   headers: IBitfinexSignedV1Headers | IBitfinexSignedV2Headers
   body: Record<string, any>
 }
@@ -71,10 +71,10 @@ export const generateAuthHeader = (
 
   if (/v2/.test(path)) {
 
-    const signature = `/api${path}${nonce}${JSON.stringify(body)}`
+    const payload = `/api${path}${nonce}${JSON.stringify(body)}`
 
     const sig = crypto.createHmac('sha384', secret)
-      .update(signature)
+      .update(payload)
       .digest('hex')
 
     headers = {
