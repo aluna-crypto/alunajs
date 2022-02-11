@@ -30,7 +30,7 @@ export class BitfinexPositionParser {
       priceLiq,
       leverage,
       _placeholder1,
-      _positionId,
+      positionId,
       mtsCreate,
       _mtsUpdate,
       _placeholder2,
@@ -76,7 +76,12 @@ export class BitfinexPositionParser {
     const liquidationPrice = priceLiq !== null ? priceLiq : 0
     const computedLeverage = leverage !== null ? leverage : 0
 
+    const openedAt = mtsCreate
+      ? new Date(mtsCreate)
+      : new Date()
+
     const position: IAlunaPositionSchema = {
+      id: positionId,
       symbolPair: symbol,
       baseSymbolId,
       quoteSymbolId,
@@ -92,7 +97,7 @@ export class BitfinexPositionParser {
       plPercentage,
       leverage: computedLeverage,
       liquidationPrice,
-      openedAt: new Date(mtsCreate),
+      openedAt,
       meta: rawPosition,
     }
 
