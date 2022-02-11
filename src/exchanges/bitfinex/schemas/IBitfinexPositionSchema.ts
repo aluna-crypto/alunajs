@@ -26,5 +26,18 @@ type TBitfinexPosition = [
     _PLACEHOLDER: null, // 16
     COLLATERAL: number, // 17
     COLLATERAL_MIN: number, // 18
-    META: any, // 19
+    META: IBitfinexPositionMeta, // 19
   ]
+
+
+
+  interface IBitfinexPositionMeta {
+    reason: 'TRADE' // what more?
+    order_id: number
+    liq_stage: null | number
+    order_cid: null | number
+    order_gid: null | number
+    trade_price: string
+    trade_amount: string
+    order_id_oppo: number
+  }
