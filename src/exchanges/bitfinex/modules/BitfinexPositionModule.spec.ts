@@ -6,6 +6,7 @@ import {
 } from 'ts-mock-imports'
 
 import {
+  AlunaPositionErrorCodes,
   IAlunaExchange,
   IAlunaKeySecretSchema,
   IAlunaPositionSchema,
@@ -25,6 +26,8 @@ describe('BitfinexPositionModule', () => {
   const bitfinexPositionModule = BitfinexPositionModule.prototype
 
   let exchangeMock: OtherManager<IAlunaExchange>
+
+  const id = '666'
 
   const keySecret: IAlunaKeySecretSchema = {
     key: '',
@@ -106,6 +109,36 @@ describe('BitfinexPositionModule', () => {
 
   })
 
+  it('should properly list Bitfinex parsed positions', async () => {
+
+    const mockedRawPositions = BITFINEX_RAW_POSITIONS
+    const mockedParsedPositions = BITFINEX_PARSED_POSITIONS
+
+    const listRawMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'listRaw',
+      Promise.resolve(mockedRawPositions),
+    )
+
+    const parseManyMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'parseMany',
+      mockedParsedPositions,
+    )
+
+    const parsedPositions = await bitfinexPositionModule.list()
+
+    expect(parsedPositions).to.deep.eq(mockedParsedPositions)
+
+    expect(listRawMock.callCount).to.be.eq(1)
+
+    expect(parseManyMock.callCount).to.be.eq(1)
+    expect(parseManyMock.args[0][0]).to.deep.eq({
+      rawPositions: mockedRawPositions,
+    })
+
+  })
+
   it('should properly parse a Bitfinex raw position', () => {
 
     const { parserMock } = mockedBitfinexPositionParser(
@@ -171,8 +204,6 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly get a Bitfinex raw position', async () => {
 
-    const id = '666'
-
     const mockedRawPosition = [BITFINEX_RAW_POSITIONS[0]]
 
     const { requestMock } = mockRequest(mockedRawPosition)
@@ -192,8 +223,6 @@ describe('BitfinexPositionModule', () => {
   })
 
   it('should properly get a Bitfinex parsed position', async () => {
-
-    const id = '666'
 
     const mockedRawPosition = BITFINEX_RAW_POSITIONS[0]
 
@@ -222,6 +251,112 @@ describe('BitfinexPositionModule', () => {
     expect(parserMock.args[0][0]).to.deep.eq({
       rawPosition: mockedRawPosition,
     })
+
+  })
+
+  it('should properly close Bitfinex position', async () => {
+
+    const mockedParsedPosition = BITFINEX_PARSED_POSITIONS[1]
+
+    const { requestMock } = mockRequest(true)
+
+    const getMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'get',
+      Promise.resolve(mockedParsedPosition),
+    )
+
+    const closedPosition = await bitfinexPositionModule.close({
+      id,
+    })
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.bitfinex.com/v1/position/close',
+      body: { position_id: Number(id) },
+      keySecret: exchangeMock.getValue().keySecret,
+    })).to.be.ok
+
+    expect(getMock.callCount).to.be.eq(1)
+    expect(getMock.args[0][0]).to.deep.eq({
+      id,
+    })
+
+    expect(mockedParsedPosition).to.deep.eq(closedPosition)
+
+  })
+
+  it('should ensure position id is given to close position', async () => {
+
+    let error
+    let result
+
+    const { requestMock } = mockRequest(true)
+
+    const getMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'get',
+      Promise.resolve(BITFINEX_PARSED_POSITIONS[0]),
+    )
+
+    try {
+
+      result = await bitfinexPositionModule.close({})
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const errMsg = 'Position id is required to close Bitfinex positions'
+
+    expect(error.code).to.be.eq(AlunaPositionErrorCodes.DOESNT_HAVE_ID)
+    expect(error.message).to.be.eq(errMsg)
+    expect(error.httpStatusCode).to.be.eq(400)
+
+    expect(requestMock.callCount).to.be.eq(0)
+    expect(getMock.callCount).to.be.eq(0)
+
+  })
+
+  it('should return error if position could not be closed', async () => {
+
+    let error
+    let result
+
+    const { requestMock } = mockRequest(true)
+
+    const getMock = ImportMock.mockFunction(
+      bitfinexPositionModule,
+      'get',
+      Promise.resolve(BITFINEX_RAW_POSITIONS[0]),
+    )
+
+    try {
+
+      result = await bitfinexPositionModule.close({
+        id,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const errMsg = 'Position could not be closed'
+
+    expect(error.code).to.be.eq(AlunaPositionErrorCodes.COULD_NOT_BE_CLOSED)
+    expect(error.message).to.be.eq(errMsg)
+    expect(error.httpStatusCode).to.be.eq(500)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(getMock.callCount).to.be.eq(1)
 
   })
 
