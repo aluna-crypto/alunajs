@@ -138,4 +138,35 @@ describe('BitfinexPositionModule', () => {
 
   })
 
+  it('should properly parse many Bitfinex raw positions', () => {
+
+    const { parserMock } = mockedBitfinexPositionParser(
+      BITFINEX_PARSED_POSITIONS,
+    )
+
+    const parsedPositions = bitfinexPositionModule.parseMany({
+      rawPositions: BITFINEX_RAW_POSITIONS,
+    })
+
+    expect(parsedPositions).to.deep.eq(BITFINEX_PARSED_POSITIONS)
+
+    const rawPosition1 = BITFINEX_RAW_POSITIONS.find((p) => /^f/.test(p[0]))
+
+    expect(rawPosition1).to.be.ok
+    expect(parserMock.calledWithExactly({
+      rawPosition: rawPosition1,
+    })).not.to.be.ok
+
+    const rawPosition2 = BITFINEX_RAW_POSITIONS.find((p) => /F0/.test(p[0]))
+
+    expect(rawPosition2).to.be.ok
+    expect(parserMock.calledWithExactly({
+      rawPosition: rawPosition2,
+    })).not.to.be.ok
+
+    // skipped 1 'derivatives' and 1 'funding' raw position
+    expect(parserMock.callCount).to.be.eq(BITFINEX_RAW_POSITIONS.length - 2)
+
+  })
+
 })
