@@ -272,7 +272,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     total: 3.4928999999999997,
     amount: 3,
     account: 'margin'as AlunaAccountEnum,
-    status: 'open'as AlunaPositionStatusEnum,
+    status: 'closed'as AlunaPositionStatusEnum,
     side: 'long'as AlunaSideEnum,
     basePrice: 1.1643,
     openPrice: 1.1643,
@@ -282,7 +282,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     liquidationPrice: 0,
     openedAt: new Date('1970-01-20T00:49:49.292Z'),
     meta: [
-      'tETHBTC', 'ACTIVE',
+      'tETHBTC', 'CLOSED',
       3, 1.1643,
       0, 0,
       -0.006852799999999758, -0.09447736837583776,
