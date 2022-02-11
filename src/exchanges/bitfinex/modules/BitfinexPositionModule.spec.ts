@@ -169,4 +169,26 @@ describe('BitfinexPositionModule', () => {
 
   })
 
+  it('should properly get a raw Bitfinex raw position', async () => {
+
+    const id = '666'
+
+    const mockedRawOrder = [BITFINEX_RAW_POSITIONS[0]]
+
+    const { requestMock } = mockRequest(mockedRawOrder)
+
+    const rawOrder = await bitfinexPositionModule.getRaw({
+      id,
+    })
+
+    expect(rawOrder).to.deep.eq(mockedRawOrder[0])
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
+      keySecret: exchangeMock.getValue().keySecret,
+      body: { id: [id], limit: 1 },
+    })).to.be.ok
+
+  })
+
 })
