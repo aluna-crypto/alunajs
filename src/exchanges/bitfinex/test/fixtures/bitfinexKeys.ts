@@ -1,4 +1,4 @@
-import { IAlunaKeySchema } from '../../../..'
+import { IAlunaKeySchema } from '../../../../lib/schemas/IAlunaKeySchema'
 import { IBitfinexKey } from '../../schemas/IBitfinexKeySchema'
 
 

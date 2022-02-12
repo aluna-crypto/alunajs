@@ -1,11 +1,11 @@
-import {
-  AlunaError,
-  AlunaKeyErrorCodes,
-  IAlunaKeySchema,
-} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
+import {
+  IAlunaKeyPermissionSchema,
+  IAlunaKeySchema,
+} from '../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexKey } from '../schemas/IBitfinexKeySchema'

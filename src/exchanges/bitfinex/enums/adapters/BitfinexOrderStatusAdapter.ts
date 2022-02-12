@@ -1,9 +1,7 @@
-import {
-  AlunaAdaptersErrorCodes,
-  AlunaError,
-  AlunaOrderStatusEnum,
-} from '../../../..'
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaAdaptersErrorCodes } from '../../../../lib/errors/AlunaAdaptersErrorCodes'
 import { BitfinexOrderStatusEnum } from '../BitfinexOrderStatusEnum'
 
 

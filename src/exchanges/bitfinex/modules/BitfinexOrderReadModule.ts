@@ -1,11 +1,11 @@
+import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  AlunaError,
-  AlunaOrderErrorCodes,
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
-  IAlunaOrderSchema,
-} from '../../..'
-import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+} from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'

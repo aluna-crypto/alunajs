@@ -1,7 +1,5 @@
-import {
-  IAlunaMarketSchema,
-  IAlunaTickerSchema,
-} from '../../../..'
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { IAlunaTickerSchema } from '../../../../lib/schemas/IAlunaTickerSchema'
 import { Bitfinex } from '../../Bitfinex'
 import { IBitfinexTicker } from '../IBitfinexMarketSchema'
 import { TBitfinexCurrencySym } from '../IBitfinexSymbolSchema'

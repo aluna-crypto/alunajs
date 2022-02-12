@@ -1,14 +1,12 @@
-import {
-  AlunaError,
-  AlunaPositionErrorCodes,
-  AlunaPositionStatusEnum,
-  IAlunaPositionModule,
-} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
+import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionCloseParams,
   IAlunaPositionGetParams,
   IAlunaPositionListParams,
+  IAlunaPositionModule,
 } from '../../../lib/modules/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'

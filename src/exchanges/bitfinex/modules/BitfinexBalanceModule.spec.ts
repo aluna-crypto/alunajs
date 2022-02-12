@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaKeySecretSchema } from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'

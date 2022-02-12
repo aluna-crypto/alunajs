@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
-import { AlunaAccountEnum } from '../../../..'
 import { AlunaError } from '../../../../lib/core/AlunaError'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
 import { BitfinexOrderTypeAdapter } from './BitfinexOrderTypeAdapter'

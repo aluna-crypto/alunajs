@@ -1,16 +1,14 @@
 import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 
-import {
-  AlunaError,
-  AlunaHttpErrorCodes,
-} from '../..'
+import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 
 

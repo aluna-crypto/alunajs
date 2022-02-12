@@ -1,4 +1,4 @@
-import { AlunaInstrumentStateEnum } from '../..'
+import { AlunaInstrumentStateEnum } from '../enums/AlunaInstrumentStateEnum'
 
 
 

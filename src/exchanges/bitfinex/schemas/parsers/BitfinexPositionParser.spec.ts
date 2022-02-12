@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { AlunaPositionStatusEnum } from '../../../..'
+import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { BITFINEX_RAW_POSITIONS } from '../../test/fixtures/bitfinexPosition'

@@ -1,4 +1,4 @@
-import { IAlunaSymbolSchema } from '../../../..'
+import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
 import { Bitfinex } from '../../Bitfinex'
 import {
   TBitfinexCurrencyLabel,

@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import {
-  AlunaError,
-  AlunaHttpErrorCodes,
-  AlunaKeyErrorCodes,
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
-} from '../../..'
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+} from '../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { IBitfinexKey } from '../schemas/IBitfinexKeySchema'
 import {
@@ -285,4 +285,3 @@ describe('alunaPermissions', () => {
   })
 
 })
-

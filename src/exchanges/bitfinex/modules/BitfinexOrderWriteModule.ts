@@ -1,14 +1,12 @@
-import {
-  AlunaAccountEnum,
-  AlunaHttpErrorCodes,
-  AlunaOrderTypesEnum,
-} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,

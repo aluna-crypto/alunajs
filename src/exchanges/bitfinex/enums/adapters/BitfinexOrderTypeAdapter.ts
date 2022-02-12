@@ -1,5 +1,5 @@
-import { AlunaAccountEnum } from '../../../..'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
 

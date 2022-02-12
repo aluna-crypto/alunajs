@@ -1,23 +1,23 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  AlunaAccountEnum,
-  AlunaError,
-  AlunaFeaturesModeEnum,
-  AlunaGenericErrorCodes,
-  AlunaHttpErrorCodes,
-  AlunaOrderErrorCodes,
-  AlunaOrderTypesEnum,
-  AlunaSideEnum,
-  IAlunaExchange,
-  IAlunaExchangeOrderOptionsSchema,
-  IAlunaKeySecretSchema,
   IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
-} from '../../..'
-import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+} from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
+import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'

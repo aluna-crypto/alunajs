@@ -1,8 +1,6 @@
-import {
-  AlunaAccountEnum,
-  AlunaPositionStatusEnum,
-  IAlunaPositionSchema,
-} from '../../../..'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
+import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexSideAdapter } from '../../enums/adapters/BitfinexSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'

@@ -1,8 +1,3 @@
-import {
-  IAlunaKeySecretSchema,
-  IAlunaPositionModule,
-  IAlunaSettingsSchema,
-} from '../..'
 import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import {
   IAlunaExchange,
@@ -11,6 +6,9 @@ import {
 import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
+import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BitfinexSpecs } from './BitfinexSpecs'
 import { BitfinexBalanceModule } from './modules/BitfinexBalanceModule'
 import { BitfinexKeyModule } from './modules/BitfinexKeyModule'

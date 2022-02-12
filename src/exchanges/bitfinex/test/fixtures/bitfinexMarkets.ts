@@ -1,4 +1,4 @@
-import { IAlunaMarketSchema } from '../../../..'
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import {
   IBitfinexMarket,
   IBitfinexTicker,

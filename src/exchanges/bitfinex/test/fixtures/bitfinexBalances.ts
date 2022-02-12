@@ -1,7 +1,5 @@
-import {
-  AlunaAccountEnum,
-  IAlunaBalanceSchema,
-} from '../../../..'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexAccountsEnum } from '../../enums/BitfinexAccountsEnum'
 import { IBitfinexBalanceSchema } from '../../schemas/IBitfinexBalanceSchema'
 

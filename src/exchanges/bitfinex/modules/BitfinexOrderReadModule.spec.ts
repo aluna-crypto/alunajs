@@ -1,13 +1,11 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaError,
-  AlunaOrderErrorCodes,
-  IAlunaExchange,
-  IAlunaKeySecretSchema,
-  IAlunaOrderGetParams,
-} from '../../..'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
+import { IAlunaOrderGetParams } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 import {

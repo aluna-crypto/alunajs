@@ -1,4 +1,4 @@
-import { IAlunaMarketModule } from '../../..'
+import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'

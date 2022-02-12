@@ -1,4 +1,4 @@
-import { IAlunaBalanceSchema } from '../../../..'
+import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { IBitfinexBalanceSchema } from '../IBitfinexBalanceSchema'
 

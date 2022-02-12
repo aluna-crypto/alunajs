@@ -4,12 +4,10 @@ import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaError,
-  AlunaHttpVerbEnum,
-  AlunaKeyErrorCodes,
-  IAlunaKeySecretSchema,
-} from '../..'
+import { AlunaError } from '../../lib/core/AlunaError'
+import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import * as BitfinexHttpMod from './BitfinexHttp'
 
 
