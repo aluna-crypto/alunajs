@@ -44,6 +44,9 @@ export class Aluna extends Exchanges {
       case this.Valr.ID:
         return new this.Valr(subParams)
 
+      case this.Bitfinex.ID:
+        return new this.Bitfinex(subParams)
+
       default: {
 
         const error = new AlunaError({
@@ -76,6 +79,9 @@ export class Aluna extends Exchanges {
 
       case this.Valr.ID:
         return this.Valr
+
+      case this.Bitfinex.ID:
+        return this.Bitfinex
 
       default: {
 
