@@ -12,6 +12,8 @@ import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 
 
 
+// TODO: Refatory file and tests to work with all exchanges automatically
+
 describe('Aluna', () => {
 
   it('should inherit from Exchanges and make them available statically', () => {
