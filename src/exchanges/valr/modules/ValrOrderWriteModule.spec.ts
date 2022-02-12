@@ -1,10 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaGenericErrorCodes,
-  AlunaOrderErrorCodes,
-} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -14,6 +10,8 @@ import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
