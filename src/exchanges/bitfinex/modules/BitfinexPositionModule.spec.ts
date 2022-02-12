@@ -5,6 +5,10 @@ import {
   OtherManager,
 } from 'ts-mock-imports'
 
+import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
+import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 import {
