@@ -1,5 +1,9 @@
+import {
+  AlunaSideEnum,
+  IAlunaBalanceModule,
+} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import { IFetchTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
@@ -9,21 +13,7 @@ import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
 
 
 
-export interface IFetchTradableBalanceParams {
-  symbol: string
-  dir: 1 | -1
-  rate: number
-  type: Uppercase<BitfinexAccountsEnum.MARGIN>
-}
-
-interface IBitifinexBalanceModule extends IAlunaBalanceModule {
-  fetchTradableBalance (params: IFetchTradableBalanceParams): Promise<number>
-}
-
-
-
-export class BitfinexBalanceModule extends AAlunaModule implements IBitifinexBalanceModule {
-
+export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
   public async listRaw (): Promise<IBitfinexBalanceSchema[]> {
 
@@ -100,24 +90,27 @@ export class BitfinexBalanceModule extends AAlunaModule implements IBitifinexBal
   ): Promise<number> {
 
     const {
-      dir,
       rate,
-      symbol,
-      type,
+      side,
+      symbolPair,
     } = params
 
-    BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbol}`)
+    BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbolPair}`)
 
     const { privateRequest } = BitfinexHttp
+
+    const dir = side === AlunaSideEnum.LONG
+      ? 1
+      : -1
 
     const [tradableBalance] = await privateRequest<[number]>({
       url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
       keySecret: this.exchange.keySecret,
       body: {
         dir,
-        rate,
-        symbol,
-        type,
+        rate: rate.toString(),
+        symbol: symbolPair,
+        type: BitfinexAccountsEnum.MARGIN,
       },
     })
 

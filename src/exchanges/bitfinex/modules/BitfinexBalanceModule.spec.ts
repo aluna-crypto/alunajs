@@ -1,7 +1,12 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import {
+  AlunaAccountEnum,
+  AlunaSideEnum,
+} from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { IFetchTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
@@ -10,10 +15,7 @@ import {
   BITFINEX_PARSED_BALANCES,
   BITFINEX_RAW_BALANCES,
 } from '../test/fixtures/bitfinexBalances'
-import {
-  BitfinexBalanceModule,
-  IFetchTradableBalanceParams,
-} from './BitfinexBalanceModule'
+import { BitfinexBalanceModule } from './BitfinexBalanceModule'
 
 
 
@@ -187,24 +189,51 @@ describe('BitfinexBalanceModule', () => {
     )
 
     const params: IFetchTradableBalanceParams = {
-      dir: 1,
+      side: AlunaSideEnum.LONG,
       rate: 45,
-      symbol: 'fBTCUSD',
-      type: 'MARGIN',
+      symbolPair: 'fBTCUSD',
+      account: AlunaAccountEnum.MARGIN,
     }
 
-    const parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
+    let parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
       params,
     )
 
     expect(parsedBalances).to.be.eq(tradableBalace)
 
+    const expectedBody = {
+      dir: 1,
+      rate: '45',
+      symbol: 'fBTCUSD',
+      type: BitfinexAccountsEnum.MARGIN,
+    }
+
     expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWithExactly({
+    expect(requestMock.args[0][0]).to.deep.eq({
       url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
       keySecret: exchangeMock.getValue().keySecret,
-      body: params,
-    })).to.be.ok
+      body: expectedBody,
+    }).to.be.ok
+
+    // SHORT
+    requestMock.returns(Promise.resolve([tradableBalace]))
+
+    params.side = AlunaSideEnum.SHORT
+
+    parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
+      params,
+    )
+
+    expectedBody.dir = -1
+
+    expect(parsedBalances).to.be.eq(tradableBalace)
+
+    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.args[1][0]).to.deep.eq({
+      url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
+      keySecret: exchangeMock.getValue().keySecret,
+      body: expectedBody,
+    }).to.be.ok
 
   })
 
