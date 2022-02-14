@@ -4,6 +4,7 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
+import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
 import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
 import { BINANCE_RAW_ORDER } from '../../test/fixtures/binanceOrder'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
@@ -73,6 +74,40 @@ describe('BinanceOrderParser', () => {
 
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date().getTime())
+
+  })
+
+  it('should parse Binance order just fine with updateTime', async () => {
+
+    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
+
+    const { symbol: currencyPair } = rawOrder
+
+    const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+      (rm) => rm.symbol === currencyPair,
+    )
+
+    rawOrder.status = BinanceOrderStatusEnum.CANCELED
+
+    const parsedOrder = BinanceOrderParser.parse({
+      rawOrder,
+      symbolInfo: symbolInfo!,
+    })
+
+    const updatedAt = new Date(rawOrder.updateTime).getTime()
+
+    expect(parsedOrder.canceledAt?.getTime())
+      .to.be.eq(updatedAt)
+
+    rawOrder.status = BinanceOrderStatusEnum.FILLED
+
+    const parsedOrder2 = BinanceOrderParser.parse({
+      rawOrder,
+      symbolInfo: symbolInfo!,
+    })
+
+    expect(parsedOrder2.filledAt?.getTime())
+      .to.be.eq(updatedAt)
 
   })
 
