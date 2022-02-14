@@ -2,7 +2,6 @@ import {
   IGateioMarketSchema,
   IGateioMarketWithCurrency,
 } from '../IGateioMarketSchema'
-import { IGateioSymbolSchema } from '../IGateioSymbolSchema'
 
 
 
@@ -10,45 +9,26 @@ export class GateioCurrencyMarketParser {
 
   static parse (params: {
       rawMarkets: IGateioMarketSchema[],
-      rawSymbols: IGateioSymbolSchema[],
     }): IGateioMarketWithCurrency[] {
 
     const {
       rawMarkets,
-      rawSymbols,
     } = params
-
-    const pairSymbolsDictionary: { [key:string]: IGateioSymbolSchema } = {}
-
-    rawSymbols.forEach((pair) => {
-
-      const { id: symbol } = pair
-
-      pairSymbolsDictionary[symbol] = pair
-
-    })
 
     const rawMarketsWithCurrency = rawMarkets
       .reduce<IGateioMarketWithCurrency[]>((cumulator, current) => {
 
         const { currency_pair } = current
 
-        const rawSymbol = pairSymbolsDictionary[currency_pair]
+        const splittedCurrencyPair = currency_pair.split('_')
+        const baseCurrency = splittedCurrencyPair[0]
+        const quoteCurrency = splittedCurrencyPair[1]
 
-        if (rawSymbol) {
-
-          const {
-            base,
-            quote,
-          } = rawSymbol
-
-          cumulator.push({
-            ...current,
-            baseCurrency: base,
-            quoteCurrency: quote,
-          })
-
-        }
+        cumulator.push({
+          ...current,
+          baseCurrency,
+          quoteCurrency,
+        })
 
         return cumulator
 

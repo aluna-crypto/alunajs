@@ -1,10 +1,6 @@
 import { expect } from 'chai'
 
-import {
-  GATEIO_RAW_MARKET,
-  GATEIO_RAW_MARKETS,
-} from '../../test/fixtures/gateioMarket'
-import { GATEIO_RAW_SYMBOLS } from '../../test/fixtures/gateioSymbol'
+import { GATEIO_RAW_MARKETS } from '../../test/fixtures/gateioMarket'
 import { GateioCurrencyMarketParser } from './GateioCurrencyMarketParser'
 
 
@@ -13,16 +9,13 @@ describe('GateioCurrencyMarketParser', () => {
 
   it('should parse Gateio currency pairs just fine', () => {
 
-    const rawMarkets = [...GATEIO_RAW_MARKETS, GATEIO_RAW_MARKET]
-    const rawSymbols = GATEIO_RAW_SYMBOLS
+    const rawMarkets = GATEIO_RAW_MARKETS
 
     const marketWithCurr = GateioCurrencyMarketParser.parse({
       rawMarkets,
-      rawSymbols,
     })
 
-    expect(rawMarkets.length).to.be.eq(5)
-    expect(rawSymbols.length).to.be.eq(4)
+    expect(rawMarkets.length).to.be.eq(4)
     expect(marketWithCurr.length).to.be.eq(4)
 
     marketWithCurr.forEach((item, index) => {

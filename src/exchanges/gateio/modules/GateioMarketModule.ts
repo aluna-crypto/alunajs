@@ -7,7 +7,6 @@ import {
   IGateioMarketSchema,
   IGateioMarketWithCurrency,
 } from '../schemas/IGateioMarketSchema'
-import { IGateioSymbolSchema } from '../schemas/IGateioSymbolSchema'
 import { GateioCurrencyMarketParser } from '../schemas/parsers/GateioCurrencyMarketParser'
 import { GateioMarketParser } from '../schemas/parsers/GateioMarketParser'
 
@@ -25,17 +24,8 @@ export const GateioMarketModule: IAlunaMarketModule = class {
       url: `${PROD_GATEIO_URL}/spot/tickers`,
     })
 
-    GateioLog.info('fetching Gateio symbols')
-
-    // TODO add Gateio symbols from module
-
-    const rawSymbols = await publicRequest<IGateioSymbolSchema[]>({
-      url: `${PROD_GATEIO_URL}/spot/currency_pairs`,
-    })
-
     const rawMarketsWithCurrency = GateioCurrencyMarketParser.parse({
       rawMarkets,
-      rawSymbols,
     })
 
     return rawMarketsWithCurrency

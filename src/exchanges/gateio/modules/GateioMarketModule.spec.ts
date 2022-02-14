@@ -21,10 +21,8 @@ describe('GateioMarketModule', () => {
   it('should list Gateio raw markets just fine', async () => {
 
     const rawMarkets = 'rawMarkets'
-    const rawSymbolsPairs = 'rawSymbolsPairs'
 
     const marketsURL = `${PROD_GATEIO_URL}/spot/tickers`
-    const symbolsURL = `${PROD_GATEIO_URL}/spot/currency_pairs`
 
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
@@ -33,9 +31,6 @@ describe('GateioMarketModule', () => {
 
     requestMock
       .onFirstCall().returns(Promise.resolve(rawMarkets))
-
-    requestMock
-      .onSecondCall().returns(Promise.resolve(rawSymbolsPairs))
 
     const currecyMarketParserMock = ImportMock.mockFunction(
       GateioCurrencyMarketParser,
@@ -47,14 +42,12 @@ describe('GateioMarketModule', () => {
     const response = await GateioMarketModule.listRaw()
 
 
-    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.firstCall.calledWith({ url: marketsURL })).to.be.ok
-    expect(requestMock.secondCall.calledWith({ url: symbolsURL })).to.be.ok
 
     expect(currecyMarketParserMock.callCount).to.be.eq(1)
     expect(currecyMarketParserMock.calledWith({
       rawMarkets,
-      rawSymbols: rawSymbolsPairs,
     })).to.be.ok
 
     expect(response.length).to.eq(4)
