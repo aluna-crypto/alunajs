@@ -1,8 +1,6 @@
-import {
-  AlunaOrderStatusEnum,
-  AlunaOrderTypesEnum,
-} from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'

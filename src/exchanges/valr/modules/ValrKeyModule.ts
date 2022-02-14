@@ -1,13 +1,13 @@
-import {
-  AlunaError,
-  AlunaHttpErrorCodes,
-  AlunaKeyErrorCodes,
-  IAlunaKeySchema,
-} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
+import {
+  IAlunaKeyPermissionSchema,
+  IAlunaKeySchema,
+} from '../../../lib/schemas/IAlunaKeySchema'
 import {
   IValrKeySchema,
   ValrApiKeyPermissions,

@@ -1,11 +1,13 @@
 import {
   AlunaAccountsErrorCodes,
+  AlunaGenericErrorCodes,
   AlunaOrderErrorCodes,
   IAlunaOrderEditParams,
 } from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import {
   IAlunaOrderCancelParams,
   IAlunaOrderPlaceParams,
@@ -64,7 +66,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
         orderTypes,
       } = accountSpecs
 
-      if (!supported || !implemented) {
+      if (!supported || !implemented || !orderTypes) {
 
         throw new AlunaError({
           message:
@@ -119,7 +121,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
         throw new AlunaError({
           message: 'A rate is required for limit orders',
-          code: AlunaOrderErrorCodes.MISSING_PARAMS,
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
           httpStatusCode: 401,
         })
 
@@ -153,7 +155,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
         throw new AlunaError({
           httpStatusCode: err.httpStatusCode,
           message: err.message,
-          code: AlunaOrderErrorCodes.INSUFFICIENT_BALANCE,
+          code: AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE,
           metadata: err.metadata,
         })
 

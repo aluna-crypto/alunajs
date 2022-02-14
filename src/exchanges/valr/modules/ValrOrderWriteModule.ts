@@ -3,6 +3,7 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -157,7 +158,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
       if (meta.failedReason === 'Insufficient Balance') {
 
-        code = AlunaOrderErrorCodes.INSUFFICIENT_BALANCE
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       }
 

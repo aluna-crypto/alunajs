@@ -41,11 +41,14 @@ export class Aluna extends Exchanges {
 
     switch (exchangeId) {
 
-      case this.Valr.ID:
-        return new this.Valr(subParams)
-
       case this.Binance.ID:
         return new this.Binance(subParams)
+
+      case this.Bitfinex.ID:
+        return new this.Bitfinex(subParams)
+
+      case this.Valr.ID:
+        return new this.Valr(subParams)
 
       default: {
 
@@ -77,11 +80,14 @@ export class Aluna extends Exchanges {
 
     switch (exchangeId) {
 
-      case this.Valr.ID:
-        return this.Valr
-
       case this.Binance.ID:
         return this.Binance
+
+      case this.Bitfinex.ID:
+        return this.Bitfinex
+
+      case this.Valr.ID:
+        return this.Valr
 
       default: {
 

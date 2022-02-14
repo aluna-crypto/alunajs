@@ -9,6 +9,7 @@ describe('Exchanges', () => {
   it('should reference all implemented exchanges', async () => {
 
     expect(Exchanges.Valr).to.be.ok
+    expect(Exchanges.Bitfinex).to.be.ok
 
   })
 

@@ -1,9 +1,13 @@
 import { AlunaInstrumentStateEnum } from '../enums/AlunaInstrumentStateEnum'
 
 
+
 // TODO: trim interface down to what is essential
 export interface IAlunaInstrumentSchema {
+
+  // possible useless properties
   name: string
+  splittedName: string
   state: AlunaInstrumentStateEnum
   openDate: Date
   closeDate: Date
@@ -12,8 +16,17 @@ export interface IAlunaInstrumentSchema {
   expireDate: Date
   settleDate: Date
   sessionIntervalDate: Date
+
+  // probable required properties
   price: number
-  btcPricePerUnit: number
-  usdPricePerUnit: number
-  isTradedByUnitsOfContract?: boolean
+  isInverse: boolean
+  rateSymbolId: string
+  totalSymbolId: string
+  amountSymbolId: string
+  contractValue: number
+  minTradeAmount: number
+  usdPricePerUnit?: number // Available only when `isTradedByUnitsOfContract`
+  contractCurrency: string
+  orderValueMultiplier?: number
+  isTradedByUnitsOfContract: boolean
 }

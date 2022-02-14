@@ -1,10 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaGenericErrorCodes,
-  AlunaOrderErrorCodes,
-} from '../../..'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -13,6 +9,9 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
@@ -40,8 +39,8 @@ describe('ValrOrderWriteModule', () => {
   }
 
   const placeOrderParams: IAlunaOrderPlaceParams = {
-    amount: '0.001',
-    rate: '10000',
+    amount: 0.001,
+    rate: 10000,
     symbolPair: 'ETHZAR',
     side: AlunaSideEnum.LONG,
     type: AlunaOrderTypesEnum.LIMIT,
@@ -325,7 +324,7 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse).not.to.exist
 
     expect(error).to.exist
-    expect(error?.code).to.eq(AlunaOrderErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error?.code).to.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error?.message).to.eq(failedPlacedOrderNoBalance.meta.failedReason)
     expect(error?.httpStatusCode).to.eq(200)
 
@@ -661,8 +660,8 @@ describe('ValrOrderWriteModule', () => {
 
     const editOrderParams: IAlunaOrderEditParams = {
       id: 'originalOrderId',
-      amount: '0.001',
-      rate: '0',
+      amount: 0.00,
+      rate: 0,
       symbolPair: 'ETHZAR',
       side: AlunaSideEnum.LONG,
       type: AlunaOrderTypesEnum.MARKET,
@@ -737,8 +736,8 @@ describe('ValrOrderWriteModule', () => {
 
     const editOrderParams: IAlunaOrderEditParams = {
       id: 'originalOrderId',
-      amount: '0.001',
-      rate: '0',
+      amount: 0.001,
+      rate: 0,
       symbolPair: 'ETHZAR',
       side: AlunaSideEnum.LONG,
       type: AlunaOrderTypesEnum.MARKET,
