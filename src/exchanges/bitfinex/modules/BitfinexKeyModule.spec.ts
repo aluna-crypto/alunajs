@@ -10,9 +10,10 @@ import {
   IAlunaKeySchema,
 } from '../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexHttp } from '../BitfinexHttp'
-import { IBitfinexKey } from '../schemas/IBitfinexKeySchema'
+import { IBitfinexPermissionsScope } from '../schemas/IBitfinexKeySchema'
 import {
   BITFINEX_PARSED_KEY,
+  BITFINEX_PERMISSIONS_SCOPE,
   BITFINEX_RAW_KEY,
 } from '../test/fixtures/bitfinexKeys'
 import { BitfinexKeyModule } from './BitfinexKeyModule'
@@ -48,6 +49,9 @@ describe('alunaPermissions', () => {
       Promise.resolve(BITFINEX_RAW_KEY),
     )
 
+    resquestMock.onFirstCall().returns(BITFINEX_RAW_KEY)
+    resquestMock.onSecondCall().returns(['userId'])
+
     const parseDetailsMock = ImportMock.mockFunction(
       bitfinexKeyModule,
       'parseDetails',
@@ -56,7 +60,7 @@ describe('alunaPermissions', () => {
 
     const keyDetails = await bitfinexKeyModule.fetchDetails()
 
-    expect(resquestMock.callCount).to.be.eq(1)
+    expect(resquestMock.callCount).to.be.eq(2)
     expect(parseDetailsMock.callCount).to.be.eq(1)
 
     expect(keyDetails).to.deep.eq(BITFINEX_PARSED_KEY)
@@ -164,6 +168,8 @@ describe('alunaPermissions', () => {
 
     mockKeySecret()
 
+    const accountId = 'userId'
+
     const parsePermissionsMock = ImportMock.mockFunction(
       bitfinexKeyModule,
       'parsePermissions',
@@ -184,7 +190,7 @@ describe('alunaPermissions', () => {
       withdraw: true,
     }
 
-    const newBifinexKey: IBitfinexKey = [
+    const newPermissionsScope: IBitfinexPermissionsScope = [
       ['account', 1, 1],
       ['orders', 0, 1],
       ['funding', 0, 0],
@@ -196,13 +202,19 @@ describe('alunaPermissions', () => {
     parsePermissionsMock.returns(newAlunaPermissions)
 
     const alunaKey2 = bitfinexKeyModule.parseDetails({
-      rawKey: newBifinexKey,
+      rawKey: {
+        accountId,
+        permissionsScope: newPermissionsScope,
+      },
     })
 
     expect(alunaKey2).to.deep.eq({
       permissions: newAlunaPermissions,
-      accountId: undefined,
-      meta: newBifinexKey,
+      accountId,
+      meta: {
+        accountId,
+        permissionsScope: newPermissionsScope,
+      },
     })
     expect(parsePermissionsMock.callCount).to.be.eq(2)
 
@@ -212,18 +224,23 @@ describe('alunaPermissions', () => {
 
     mockKeySecret()
 
-    let bitfinexKey: IBitfinexKey = BITFINEX_RAW_KEY
+    const accountId = 'userId'
+
+    let permissionsScope: IBitfinexPermissionsScope = BITFINEX_PERMISSIONS_SCOPE
     let alunaPermissions: IAlunaKeyPermissionSchema
 
     alunaPermissions = bitfinexKeyModule.parsePermissions({
-      rawKey: BITFINEX_RAW_KEY,
+      rawKey: {
+        accountId,
+        permissionsScope,
+      },
     })
 
     expect(alunaPermissions).to.deep.eq(BITFINEX_PARSED_KEY.permissions)
 
 
     // new mocking
-    bitfinexKey = [
+    permissionsScope = [
       ['account', 1, 1],
       ['orders', 1, 0], // can read order but cannot create it
       ['funding', 1, 0],
@@ -233,7 +250,10 @@ describe('alunaPermissions', () => {
     ]
 
     alunaPermissions = bitfinexKeyModule.parsePermissions({
-      rawKey: bitfinexKey,
+      rawKey: {
+        accountId,
+        permissionsScope,
+      },
     })
 
     expect(alunaPermissions).to.deep.eq({
@@ -243,7 +263,7 @@ describe('alunaPermissions', () => {
     })
 
     // new mocking
-    bitfinexKey = [
+    permissionsScope = [
       ['account', 1, 1],
       ['orders', 0, 1], // cannot read order but can create it
       ['funding', 1, 0],
@@ -253,9 +273,11 @@ describe('alunaPermissions', () => {
     ]
 
     alunaPermissions = bitfinexKeyModule.parsePermissions({
-      rawKey: bitfinexKey,
+      rawKey: {
+        accountId,
+        permissionsScope,
+      },
     })
-
     expect(alunaPermissions).to.deep.eq({
       read: false,
       trade: true,
@@ -263,7 +285,7 @@ describe('alunaPermissions', () => {
     })
 
     // new mocking
-    bitfinexKey = [
+    permissionsScope = [
       ['account', 1, 1],
       ['orders', 0, 0], // cannot read or create orders
       ['funding', 1, 0],
@@ -273,7 +295,10 @@ describe('alunaPermissions', () => {
     ]
 
     alunaPermissions = bitfinexKeyModule.parsePermissions({
-      rawKey: bitfinexKey,
+      rawKey: {
+        accountId,
+        permissionsScope,
+      },
     })
 
     expect(alunaPermissions).to.deep.eq({

@@ -8,7 +8,10 @@ import {
 } from '../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
-import { IBitfinexKey } from '../schemas/IBitfinexKeySchema'
+import {
+  IBitfinexKeySchema,
+  IBitfinexPermissionsScope,
+} from '../schemas/IBitfinexKeySchema'
 
 
 
@@ -22,12 +25,20 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { keySecret } = this.exchange
 
-    let rawKey: IBitfinexKey
+    const { privateRequest } = BitfinexHttp
+
+    let userInfoResponse: string[]
+    let permissionsScope: IBitfinexPermissionsScope
 
     try {
 
-      rawKey = await BitfinexHttp.privateRequest<IBitfinexKey>({
+      permissionsScope = await privateRequest<IBitfinexPermissionsScope>({
         url: 'https://api.bitfinex.com/v2/auth/r/permissions',
+        keySecret,
+      })
+
+      userInfoResponse = await privateRequest<string[]>({
+        url: 'https://api.bitfinex.com/v2/auth/r/info/user',
         keySecret,
       })
 
@@ -50,17 +61,23 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         metadata: error,
       })
 
-
     }
 
-    const details = this.parseDetails({ rawKey })
+    const [accountId] = userInfoResponse
+
+    const details = this.parseDetails({
+      rawKey: {
+        accountId,
+        permissionsScope,
+      },
+    })
 
     return details
 
   }
 
   public parseDetails (params: {
-    rawKey: IBitfinexKey,
+    rawKey: IBitfinexKeySchema,
   }): IAlunaKeySchema {
 
     BitfinexLog.info('parsing Bitfinex key details')
@@ -69,10 +86,12 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    const { accountId } = rawKey
+
     this.details = {
-      meta: rawKey,
-      accountId: undefined,
+      accountId,
       permissions: this.parsePermissions({ rawKey }),
+      meta: rawKey,
     }
 
     return this.details
@@ -80,12 +99,14 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
   }
 
   public parsePermissions (params: {
-    rawKey: IBitfinexKey,
+    rawKey: IBitfinexKeySchema,
   }): IAlunaKeyPermissionSchema {
 
     BitfinexLog.info('parsing Bitfinex key permissions')
 
     const { rawKey } = params
+
+    const { permissionsScope } = rawKey
 
     const [
       _accountScope,
@@ -94,7 +115,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       _settingsScope,
       walletsScope,
       withdrawScope,
-    ] = rawKey
+    ] = permissionsScope
 
     const canReadBalances = walletsScope[1] === 1
 
