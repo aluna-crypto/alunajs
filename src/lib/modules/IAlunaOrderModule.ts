@@ -13,7 +13,7 @@ export interface IAlunaOrderListParams {
 }
 
 export interface IAlunaOrderGetParams {
-  id: string | number
+  id: string
   symbolPair: string
 }
 
@@ -22,14 +22,14 @@ export interface IAlunaOrderPlaceParams {
   type: AlunaOrderTypesEnum
   side: AlunaSideEnum
   symbolPair: string
-  rate?: string | number
-  limitRate?: string | number
-  stopRate?: string | number
-  amount: string | number
+  rate?: number
+  limitRate?: number
+  stopRate?: number
+  amount: number
 }
 
 export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
-  id: string | number
+  id: string
 }
 
 export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
