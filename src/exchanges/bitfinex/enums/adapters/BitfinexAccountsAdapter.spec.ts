@@ -23,11 +23,11 @@ describe('BitfinexAccountsAdapter', () => {
     })).to.be.eq(AlunaAccountEnum.MARGIN)
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      value: 'exchange',
+      value: BitfinexAccountsEnum.EXCHANGE,
     })).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(BitfinexAccountsAdapter.translateToAluna({
-      value: 'margin',
+      value: BitfinexAccountsEnum.MARGIN,
     })).to.be.eq(AlunaAccountEnum.MARGIN)
 
   })

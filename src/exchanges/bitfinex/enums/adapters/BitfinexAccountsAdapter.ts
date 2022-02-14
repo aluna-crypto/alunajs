@@ -1,6 +1,7 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { BitfinexAccountsEnum } from '../BitfinexAccountsEnum'
+import { BitfinexOrderTypesEnum } from '../BitfinexOrderTypesEnum'
 
 
 
@@ -9,24 +10,24 @@ export class BitfinexAccountsAdapter {
   static readonly ERROR_MESSAGE_PREFIX = 'Account'
 
   static translateToAluna (params: {
-    value: string,
+    value: BitfinexOrderTypesEnum | BitfinexAccountsEnum,
   }): AlunaAccountEnum {
 
     const { value } = params
 
-    let account: AlunaAccountEnum
+    let translatedAccount: AlunaAccountEnum
 
     if (/^exchange/i.test(value)) {
 
-      account = AlunaAccountEnum.EXCHANGE
+      translatedAccount = AlunaAccountEnum.EXCHANGE
 
     } else {
 
-      account = AlunaAccountEnum.MARGIN
+      translatedAccount = AlunaAccountEnum.MARGIN
 
     }
 
-    return account
+    return translatedAccount
 
   }
 
