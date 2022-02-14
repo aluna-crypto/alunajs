@@ -42,7 +42,7 @@ export const BITFINEX_RAW_POSITIONS: IBitfinexPositionSchema[] = [
   [
     'tETHBTC',
     'CLOSED' as BitfinexPositionStatusEnum,
-    3,
+    0,
     1.1643,
     0,
     0,
@@ -65,7 +65,7 @@ export const BITFINEX_RAW_POSITIONS: IBitfinexPositionSchema[] = [
       order_id_oppo: 86604123998,
       liq_stage: null,
       trade_price: '1.1643',
-      trade_amount: '2.0',
+      trade_amount: '3.0',
       order_cid: 1644587967037,
       order_gid: null,
     },
