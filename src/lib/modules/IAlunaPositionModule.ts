@@ -12,7 +12,7 @@ export interface IAlunaPositionGetParams {
 }
 
 export interface IAlunaPositionCloseParams {
-  id?: string | number
+  id?: string
   symbolPair?: string
 }
 
