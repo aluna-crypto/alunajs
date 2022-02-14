@@ -41,7 +41,7 @@ describe('BitfinexOrderWriteModule', () => {
   }
 
   const symbolPair = 'tETHBTC'
-  const id = 666
+  const id = '666'
 
   const mockKeySecret = () => {
 
@@ -368,7 +368,7 @@ describe('BitfinexOrderWriteModule', () => {
           symbolPair: 'tETHBTC',
           type: AlunaOrderTypesEnum.LIMIT,
           rate: 50,
-          id: 666,
+          id,
         })
 
       } catch (err) {
@@ -437,7 +437,7 @@ describe('BitfinexOrderWriteModule', () => {
 
         result = await bitfinexOrderWriteModule.edit({
           ...params,
-          id: 666,
+          id,
         })
 
       } catch (err) {
@@ -489,7 +489,7 @@ describe('BitfinexOrderWriteModule', () => {
 
         result = await bitfinexOrderWriteModule.edit({
           ...params,
-          id: 666,
+          id,
         })
 
       } catch (err) {
@@ -593,7 +593,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       result = await bitfinexOrderWriteModule.edit({
         ...params,
-        id: 666,
+        id,
       })
 
     } catch (err) {
@@ -648,7 +648,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       result = await bitfinexOrderWriteModule.edit({
         ...params,
-        id: 666,
+        id,
       })
 
     } catch (err) {
@@ -704,7 +704,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       result = await bitfinexOrderWriteModule.edit({
         ...params,
-        id: 666,
+        id,
       })
 
     } catch (err) {
@@ -760,7 +760,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       result = await bitfinexOrderWriteModule.edit({
         ...params,
-        id: 666,
+        id,
       })
 
     } catch (err) {
@@ -793,7 +793,7 @@ describe('BitfinexOrderWriteModule', () => {
     )
 
     const params: IAlunaOrderCancelParams = {
-      id: 10,
+      id: '10',
       symbolPair: 'tBTCETH',
     }
 
@@ -836,7 +836,7 @@ describe('BitfinexOrderWriteModule', () => {
     )
 
     const params: IAlunaOrderCancelParams = {
-      id: 10,
+      id: '10',
       symbolPair: 'tBTCETH',
     }
 

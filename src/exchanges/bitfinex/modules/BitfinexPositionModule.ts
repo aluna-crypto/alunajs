@@ -65,7 +65,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const [rawPosition] = await privateRequest<Array<IBitfinexPositionSchema>>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
-      body: { id: [id], limit: 1 },
+      body: { id: [Number(id)], limit: 1 },
       keySecret: this.exchange.keySecret,
     })
 
@@ -101,7 +101,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
       keySecret: this.exchange.keySecret,
     })
 
-    const parsedPosition = await this.get({ id: id.toString() })
+    const parsedPosition = await this.get({ id })
 
     if (parsedPosition.status !== AlunaPositionStatusEnum.CLOSED) {
 

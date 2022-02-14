@@ -329,8 +329,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     const requiredParams: Record<string, any> = {}
 
-    let price: number | undefined | string
-    let priceAuxLimit: number | undefined | string
+    let price: undefined | string
+    let priceAuxLimit: undefined | string
 
     switch (type) {
 

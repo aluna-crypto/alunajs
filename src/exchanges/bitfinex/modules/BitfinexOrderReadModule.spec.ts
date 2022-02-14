@@ -100,7 +100,7 @@ describe('BitfinexOrderReadModule', () => {
     )
 
     const symbolPair = 'symbol'
-    const id = 666
+    const id = '666'
 
     const rawOrder = await bitfinexOrderReadModule.getRaw({
       id,
@@ -112,7 +112,7 @@ describe('BitfinexOrderReadModule', () => {
     expect(requestMock.calledWithExactly({
       url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}`,
       keySecret: exchangeMock.getValue().keySecret,
-      body: { id: [id] },
+      body: { id: [Number(id)] },
     })).to.be.ok
 
   })
@@ -135,7 +135,7 @@ describe('BitfinexOrderReadModule', () => {
       .returns(Promise.resolve([returnedRawOrder]))
 
     const symbolPair = 'symbol'
-    const id = 666
+    const id = '666'
 
     const rawOrder = await bitfinexOrderReadModule.getRaw({
       id,
@@ -147,7 +147,7 @@ describe('BitfinexOrderReadModule', () => {
     expect(requestMock.calledWithExactly({
       url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}/hist`,
       keySecret: exchangeMock.getValue().keySecret,
-      body: { id: [id] },
+      body: { id: [Number(id)] },
     })).to.be.ok
 
   })
@@ -166,7 +166,7 @@ describe('BitfinexOrderReadModule', () => {
     )
 
     const symbolPair = 'symbol'
-    const id = 666
+    const id = '666'
 
     const params: IAlunaOrderGetParams = {
       id,
@@ -212,7 +212,7 @@ describe('BitfinexOrderReadModule', () => {
     )
 
     const symbolPair = 'symbol'
-    const id = 666
+    const id = '666'
 
     const params = {
       symbolPair,

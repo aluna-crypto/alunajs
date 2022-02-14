@@ -45,9 +45,11 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
   ): Promise<IBitfinexOrderSchema> {
 
     const {
-      id,
+      id: stringId,
       symbolPair,
     } = params
+
+    const id = Number(stringId)
 
     BitfinexLog.info('fetching Bitfinex order status')
 

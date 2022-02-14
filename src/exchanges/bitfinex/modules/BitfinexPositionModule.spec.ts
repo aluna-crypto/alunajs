@@ -215,7 +215,7 @@ describe('BitfinexPositionModule', () => {
     expect(requestMock.calledWithExactly({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       keySecret: exchangeMock.getValue().keySecret,
-      body: { id: [id], limit: 1 },
+      body: { id: [Number(id)], limit: 1 },
     })).to.be.ok
 
   })
