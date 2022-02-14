@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { Aluna } from './Aluna'
+import { Bitfinex } from './exchanges/bitfinex/Bitfinex'
 import { Valr } from './exchanges/valr/Valr'
 import { AlunaError } from './lib/core/AlunaError'
 import {
@@ -11,6 +12,8 @@ import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 
 
 
+// TODO: Refatory file and tests to work with all exchanges automatically
+
 describe('Aluna', () => {
 
   it('should inherit from Exchanges and make them available statically', () => {
@@ -19,15 +22,25 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly instantiate exchange', async () => {
+  it('should properly instantiate exchanges', async () => {
 
     let valr: IAlunaExchange | undefined
+    let bitfinex: IAlunaExchange | undefined
+
     let error
 
     try {
 
       valr = Aluna.new({
         exchangeId: 'valr',
+        keySecret: {
+          key: 'key',
+          secret: 'secret',
+        },
+      })
+
+      bitfinex = Aluna.new({
+        exchangeId: 'bitfinex',
         keySecret: {
           key: 'key',
           secret: 'secret',
@@ -41,8 +54,12 @@ describe('Aluna', () => {
     }
 
     expect(error).not.to.be.ok
+
     expect(valr).to.be.ok
+    expect(bitfinex).to.be.ok
+
     expect(valr instanceof Valr).to.be.ok
+    expect(bitfinex instanceof Bitfinex).to.be.ok
 
   })
 
@@ -77,14 +94,15 @@ describe('Aluna', () => {
 
   it('should properly resolve exchange static class', async () => {
 
-    const exchangeId = Valr.ID
+    let Valr: IAlunaExchangeStatic | undefined
+    let Bitfinex: IAlunaExchangeStatic | undefined
 
-    let Exchange: IAlunaExchangeStatic | undefined
     let error
 
     try {
 
-      Exchange = Aluna.static({ exchangeId })
+      Valr = Aluna.static({ exchangeId: 'valr' })
+      Bitfinex = Aluna.static({ exchangeId: 'bitfinex' })
 
     } catch (err) {
 
@@ -94,8 +112,11 @@ describe('Aluna', () => {
 
     expect(error).not.to.be.ok
 
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
+    expect(Valr).to.be.ok
+    expect(Valr?.ID).to.eq('valr')
+
+    expect(Bitfinex).to.be.ok
+    expect(Bitfinex?.ID).to.eq('bitfinex')
 
   })
 

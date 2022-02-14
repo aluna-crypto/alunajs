@@ -17,6 +17,7 @@ export interface IUIPositionCustomDisplay {
 export interface IAlunaPositionSchema {
 
   id?: string | number
+  symbolPair: string
 
   exchangeId: string
   baseSymbolId: string
@@ -42,7 +43,7 @@ export interface IAlunaPositionSchema {
   crossMargin?: boolean
 
   openedAt: Date
-  closedAt: Date
+  closedAt?: Date
 
   meta: any
 
