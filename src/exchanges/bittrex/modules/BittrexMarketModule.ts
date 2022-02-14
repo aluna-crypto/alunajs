@@ -4,7 +4,6 @@ import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
 import {
-  IBittrexMarketSchema,
   IBittrexMarketSummarySchema,
   IBittrexMarketTickerSchema,
   IBittrexMarketWithTicker,
@@ -20,12 +19,6 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     const { publicRequest } = BittrexHttp
 
-    BittrexLog.info('fetching Bittrex markets')
-
-    const rawMarkets = await publicRequest<IBittrexMarketSchema[]>({
-      url: `${PROD_BITTREX_URL}/markets`,
-    })
-
     BittrexLog.info('fetching Bittrex market summaries')
 
     const rawMarketSummaries = await
@@ -40,7 +33,6 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
     })
 
     const rawMarketsWithTicker = BittrexTickerMarketParser.parse({
-      rawMarkets,
       rawMarketSummaries,
       rawMarketTickers,
     })

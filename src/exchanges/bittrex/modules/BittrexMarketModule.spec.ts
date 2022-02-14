@@ -20,11 +20,9 @@ describe('BittrexMarketModule', () => {
 
   it('should list Bittrex raw markets just fine', async () => {
 
-    const rawMarkets = 'rawMarkets'
     const rawMarketSummaries = 'rawMarketSummaries'
     const rawMarketTickers = 'rawMarketSummaries'
 
-    const marketsURL = `${PROD_BITTREX_URL}/markets`
     const marketSummariesURL = `${PROD_BITTREX_URL}/markets/summaries`
     const marketTickersURL = `${PROD_BITTREX_URL}/markets/tickers`
 
@@ -34,11 +32,9 @@ describe('BittrexMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(Promise.resolve(rawMarkets))
+      .onFirstCall().returns(Promise.resolve(rawMarketSummaries))
     requestMock
-      .onSecondCall().returns(Promise.resolve(rawMarketSummaries))
-    requestMock
-      .onThirdCall().returns(Promise.resolve(rawMarketTickers))
+      .onSecondCall().returns(Promise.resolve(rawMarketTickers))
 
 
     const ticketMarketParserMock = ImportMock.mockFunction(
@@ -51,16 +47,16 @@ describe('BittrexMarketModule', () => {
     const response = await BittrexMarketModule.listRaw()
 
 
-    expect(requestMock.callCount).to.be.eq(3)
-    expect(requestMock.firstCall.calledWith({ url: marketsURL })).to.be.ok
-    expect(requestMock.secondCall.calledWith(
+    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.firstCall.calledWith(
       { url: marketSummariesURL },
     )).to.be.ok
-    expect(requestMock.thirdCall.calledWith({ url: marketTickersURL })).to.be.ok
+    expect(requestMock.secondCall.calledWith(
+      { url: marketTickersURL },
+    )).to.be.ok
 
     expect(ticketMarketParserMock.callCount).to.be.eq(1)
     expect(ticketMarketParserMock.calledWith({
-      rawMarkets,
       rawMarketSummaries,
       rawMarketTickers,
     })).to.be.ok

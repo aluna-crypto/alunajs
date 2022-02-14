@@ -14,15 +14,12 @@ import { PROD_BITTREX_URL } from '../BittrexSpecs'
 import { BittrexOrderStatusEnum } from '../enums/BittrexOrderStatusEnum'
 import { BittrexOrderTypeEnum } from '../enums/BittrexOrderTypeEnum'
 import { BittrexSideEnum } from '../enums/BittrexSideEnum'
-import { IBittrexMarketWithTicker } from '../schemas/IBittrexMarketSchema'
 import { IBittrexOrderSchema } from '../schemas/IBittrexOrderSchema'
 import { BittrexOrderParser } from '../schemas/parses/BittrexOrderParser'
-import { BITTREX_RAW_MARKETS_WITH_TICKER } from '../test/fixtures/bittrexMarket'
 import {
   BITTREX_PARSED_ORDER,
-  BITTREX_RAW_ORDER,
+  BITTREX_RAW_LIMIT_ORDER,
 } from '../test/fixtures/bittrexOrder'
-import { BittrexMarketModule } from './BittrexMarketModule'
 import { BittrexOrderReadModule } from './BittrexOrderReadModule'
 
 
@@ -33,7 +30,7 @@ describe('BittrexOrderReadModule', () => {
 
   it('should list all Bittrex raw open orders just fine', async () => {
 
-    const bittrexRawOrders = [BITTREX_RAW_ORDER]
+    const bittrexRawOrders = [BITTREX_RAW_LIMIT_ORDER]
 
     ImportMock.mockOther(
       bittrexOrderReadModule,
@@ -179,7 +176,7 @@ describe('BittrexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      BITTREX_RAW_ORDER,
+      BITTREX_RAW_LIMIT_ORDER,
     )
 
     const symbolPair = 'symbol'
@@ -242,25 +239,13 @@ describe('BittrexOrderReadModule', () => {
 
   it('should parse a Bittrex raw order just fine', async () => {
 
-    const rawOrder: IBittrexOrderSchema = BITTREX_RAW_ORDER
-    const rawMarket:
-      IBittrexMarketWithTicker[] = BITTREX_RAW_MARKETS_WITH_TICKER
-    const symbolInfo = rawMarket
-      .find(
-        (rM) => rM.symbol === rawOrder.marketSymbol,
-      )
+    const rawOrder: IBittrexOrderSchema = BITTREX_RAW_LIMIT_ORDER
 
     const parseMock = ImportMock.mockFunction(
       BittrexOrderParser,
       'parse',
     )
 
-    const listRawMock = ImportMock.mockFunction(
-      BittrexMarketModule,
-      'listRaw',
-    )
-
-    listRawMock.onFirstCall().returns(Promise.resolve(rawMarket))
 
     parseMock
       .onFirstCall().returns(BITTREX_PARSED_ORDER)
@@ -268,10 +253,7 @@ describe('BittrexOrderReadModule', () => {
     const parsedOrder1 = await bittrexOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder, symbolInfo })).to.be.ok
-
-    expect(listRawMock.callCount).to.be.eq(1)
-    expect(listRawMock.calledWith()).to.be.ok
+    expect(parseMock.calledWith({ rawOrder })).to.be.ok
 
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.baseSymbolId).to.be.ok
@@ -294,26 +276,17 @@ describe('BittrexOrderReadModule', () => {
 
   it('should parse many Bittrex orders just fine', async () => {
 
-    const rawOrders: IBittrexOrderSchema[] = [BITTREX_RAW_ORDER]
+    const rawOrders: IBittrexOrderSchema[] = [BITTREX_RAW_LIMIT_ORDER]
     const parsedOrders: IAlunaOrderSchema[] = [BITTREX_PARSED_ORDER]
-    const rawMarket:
-      IBittrexMarketWithTicker[] = BITTREX_RAW_MARKETS_WITH_TICKER
 
     const parseMock = ImportMock.mockFunction(
       BittrexOrderParser,
       'parse',
     )
 
-    const listRawMock = ImportMock.mockFunction(
-      BittrexMarketModule,
-      'listRaw',
-    )
-
     parsedOrders.forEach((parsed, index) => {
 
       parseMock.onCall(index).returns(Promise.resolve(parsed))
-
-      listRawMock.onCall(index).returns(Promise.resolve(rawMarket))
 
     })
 

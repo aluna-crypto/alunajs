@@ -111,7 +111,6 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       marketSymbol: symbolPair,
       type: translatedOrderType,
       quantity: Number(amount),
-      timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
     }
 
     if (translatedOrderType === BittrexOrderTypeEnum.LIMIT) {
@@ -128,6 +127,13 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
       Object.assign(body, {
         limit: Number(rate),
+        timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      })
+
+    } else {
+
+      Object.assign(body, {
+        timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
       })
 
     }

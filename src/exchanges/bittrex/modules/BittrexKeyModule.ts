@@ -117,43 +117,6 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      const requestBody = {
-        currencySymbol: 'BTCEUR',
-        quantity: 0,
-        cryptoAddress: 'string',
-        cryptoAddressTag: 'string',
-        fundsTransferMethodId: 'string (uuid)',
-        clientWithdrawalId: 'string (uuid)',
-      }
-
-      await BittrexHttp
-        .privateRequest<IBittrexBalanceSchema>({
-          verb: AlunaHttpVerbEnum.POST,
-          url: `${PROD_BITTREX_URL}/withdrawals`,
-          keySecret,
-          body: requestBody,
-        })
-
-    } catch (error) {
-
-      if (error.metadata?.code === INVALID_PERMISSION_MESSAGE) {
-
-        permissions.withdraw = false
-
-      } else if (error.metadata?.code === BAD_REQUEST_MESSAGE) {
-
-        permissions.withdraw = true
-
-      } else {
-
-        throw error
-
-      }
-
-    }
-
-    try {
-
       const account = await BittrexHttp
         .privateRequest<IBittrexKeySchema>({
           verb: AlunaHttpVerbEnum.GET,

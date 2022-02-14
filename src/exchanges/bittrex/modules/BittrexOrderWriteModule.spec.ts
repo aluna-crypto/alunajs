@@ -34,7 +34,7 @@ import {
   IBittrexOrderRequest,
   IBittrexOrderSchema,
 } from '../schemas/IBittrexOrderSchema'
-import { BITTREX_RAW_ORDER } from '../test/fixtures/bittrexOrder'
+import { BITTREX_RAW_LIMIT_ORDER } from '../test/fixtures/bittrexOrder'
 import { BittrexOrderWriteModule } from './BittrexOrderWriteModule'
 
 
@@ -123,7 +123,7 @@ describe('BittrexOrderWriteModule', () => {
       marketSymbol: placeOrderParams.symbolPair,
       type: BittrexOrderTypeEnum.MARKET,
       quantity: Number(placeOrderParams.amount),
-      timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
     }
 
     expect(requestMock.callCount).to.be.eq(2)
@@ -276,7 +276,7 @@ describe('BittrexOrderWriteModule', () => {
       direction: BittrexSideEnum.SELL,
       marketSymbol: placeOrderParams.symbolPair,
       type: BittrexOrderTypeEnum.MARKET,
-      timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
       quantity: Number(placeOrderParams.amount),
     }
 
@@ -702,7 +702,7 @@ describe('BittrexOrderWriteModule', () => {
     const placeMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'place',
-      Promise.resolve(BITTREX_RAW_ORDER),
+      Promise.resolve(BITTREX_RAW_LIMIT_ORDER),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -717,7 +717,7 @@ describe('BittrexOrderWriteModule', () => {
 
     const newOrder = await bittrexOrderWriteModule.edit(editOrderParams)
 
-    expect(newOrder).to.deep.eq(BITTREX_RAW_ORDER)
+    expect(newOrder).to.deep.eq(BITTREX_RAW_LIMIT_ORDER)
 
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)

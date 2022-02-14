@@ -41,6 +41,31 @@ describe('BittrexStatusAdapter', () => {
 
     })
 
+  it('should translate Bittrex Closed order status to Aluna order status',
+    () => {
+
+      const quantity = '5'
+      const zeroedfillQty = '0'
+      const partiallyFillQty = '3'
+      const totalFillQty = '5'
+
+      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+        fillQuantity: zeroedfillQty,
+        quantity,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+        fillQuantity: partiallyFillQty,
+        quantity,
+      })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+
+      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+        fillQuantity: totalFillQty,
+        quantity,
+      })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+    })
+
 
 
   it('should translate Aluna order status to Bittrex order status', () => {

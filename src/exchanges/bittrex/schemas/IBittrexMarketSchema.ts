@@ -1,16 +1,3 @@
-export interface IBittrexMarketSchema {
-    symbol: string
-    baseCurrencySymbol: string
-    quoteCurrencySymbol: string
-    minTradeSize: string
-    precision: number
-    status: string
-    createdAt: string
-    prohibitedIn: string[]
-    associatedTermsOfService: string[]
-    tags: string[]
-}
-
 export interface IBittrexMarketSummarySchema {
     symbol: string
     high: string
@@ -28,13 +15,12 @@ export interface IBittrexMarketTickerSchema {
     askRate: string
 }
 
-export interface IBittrexMarketWithTicker extends IBittrexMarketSchema {
+export interface IBittrexMarketWithTicker extends IBittrexMarketTickerSchema {
+    baseCurrencySymbol: string
+    quoteCurrencySymbol: string
     high: string
     low: string
     volume: string
     quoteVolume: string
     percentChange: string
-    lastTradeRate: string
-    bidRate: string
-    askRate: string
 }

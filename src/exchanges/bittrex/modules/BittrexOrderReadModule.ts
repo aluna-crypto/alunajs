@@ -10,7 +10,6 @@ import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
 import { IBittrexOrderSchema } from '../schemas/IBittrexOrderSchema'
 import { BittrexOrderParser } from '../schemas/parses/BittrexOrderParser'
-import { BittrexMarketModule } from './BittrexMarketModule'
 
 
 
@@ -84,13 +83,7 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { rawOrder } = params
 
-    const { marketSymbol } = rawOrder
-
-    const symbols = await BittrexMarketModule.listRaw()
-
-    const symbolInfo = symbols.find((s) => s.symbol === marketSymbol)
-
-    const parsedOrder = BittrexOrderParser.parse({ rawOrder, symbolInfo })
+    const parsedOrder = BittrexOrderParser.parse({ rawOrder })
 
     return parsedOrder
 

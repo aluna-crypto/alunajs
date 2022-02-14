@@ -1,5 +1,4 @@
 import {
-  IBittrexMarketSchema,
   IBittrexMarketSummarySchema,
   IBittrexMarketTickerSchema,
   IBittrexMarketWithTicker,
@@ -10,7 +9,6 @@ import {
 export class BittrexTickerMarketParser {
 
   static parse (params: {
-      rawMarkets: IBittrexMarketSchema[],
       rawMarketSummaries: IBittrexMarketSummarySchema[],
       rawMarketTickers: IBittrexMarketTickerSchema[],
     }): IBittrexMarketWithTicker[] {
@@ -18,20 +16,7 @@ export class BittrexTickerMarketParser {
     const {
       rawMarketSummaries,
       rawMarketTickers,
-      rawMarkets,
     } = params
-
-    const marketSummaryDictionary:
-        { [key:string]: IBittrexMarketSummarySchema } = {}
-
-    rawMarketSummaries.forEach((pair) => {
-
-      const { symbol } = pair
-
-      marketSummaryDictionary[symbol] = pair
-
-    })
-
 
     const marketTickerDictionary:
         { [key:string]: IBittrexMarketTickerSchema } = {}
@@ -44,16 +29,14 @@ export class BittrexTickerMarketParser {
 
     })
 
-    const rawMarketsWithTicker = rawMarkets
+    const rawMarketsWithTicker = rawMarketSummaries
       .reduce<IBittrexMarketWithTicker[]>((cumulator, current) => {
 
         const { symbol } = current
 
-        const rawSummary = marketSummaryDictionary[symbol]
-
         const rawTicker = marketTickerDictionary[symbol]
 
-        if (rawSummary && rawTicker) {
+        if (rawTicker) {
 
           const {
             high,
@@ -61,7 +44,12 @@ export class BittrexTickerMarketParser {
             percentChange,
             quoteVolume,
             volume,
-          } = rawSummary
+            symbol,
+          } = current
+
+          const splittedMarketSymbol = symbol.split('-')
+          const baseCurrencySymbol = splittedMarketSymbol[0]
+          const quoteCurrencySymbol = splittedMarketSymbol[1]
 
           const {
             askRate,
@@ -70,7 +58,9 @@ export class BittrexTickerMarketParser {
           } = rawTicker
 
           cumulator.push({
-            ...current,
+            symbol,
+            baseCurrencySymbol,
+            quoteCurrencySymbol,
             high,
             low,
             percentChange,

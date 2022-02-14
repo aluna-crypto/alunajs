@@ -36,5 +36,5 @@ export interface IBittrexOrderRequest {
     type: BittrexOrderTypeEnum
     quantity: number
     limit?: number
-    timeInForce: BittrexOrderTimeInForceEnum
+    timeInForce?: BittrexOrderTimeInForceEnum
 }

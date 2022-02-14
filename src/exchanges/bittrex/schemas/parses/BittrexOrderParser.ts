@@ -1,10 +1,11 @@
+import { AlunaOrderStatusEnum } from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { Bittrex } from '../../Bittrex'
 import { BittrexOrderTypeAdapter } from '../../enums/adapters/BittrexOrderTypeAdapter'
 import { BittrexSideAdapter } from '../../enums/adapters/BittrexSideAdapter'
 import { BittrexStatusAdapter } from '../../enums/adapters/BittrexStatusAdapter'
-import { IBittrexMarketWithTicker } from '../IBittrexMarketSchema'
+import { BittrexOrderStatusEnum } from '../../enums/BittrexOrderStatusEnum'
 import { IBittrexOrderSchema } from '../IBittrexOrderSchema'
 
 
@@ -13,10 +14,9 @@ export class BittrexOrderParser {
 
   static parse (params: {
     rawOrder: IBittrexOrderSchema,
-    symbolInfo: IBittrexMarketWithTicker,
   }): IAlunaOrderSchema {
 
-    const { rawOrder, symbolInfo } = params
+    const { rawOrder } = params
 
     const exchangeId = Bittrex.ID
 
@@ -24,31 +24,64 @@ export class BittrexOrderParser {
       createdAt,
       direction,
       id,
-      limit,
+      fillQuantity,
       marketSymbol,
       quantity,
       type: orderType,
       status,
+      limit,
+      closedAt,
     } = rawOrder
 
     const amount = parseFloat(quantity)
     const rate = parseFloat(limit)
+    const total = rate ? amount * rate : amount
+    const splittedMarketSymbol = rawOrder.marketSymbol.split('-')
+    const baseSymbolId = splittedMarketSymbol[0]
+    const quoteSymbolId = splittedMarketSymbol[1]
+
+    const isClosedStatus = status === BittrexOrderStatusEnum.CLOSED
+    const orderStatus = isClosedStatus
+      ? BittrexStatusAdapter.translateClosedStatusToAluna({
+        fillQuantity,
+        quantity,
+      }) : BittrexStatusAdapter.translateToAluna({ from: status })
+
+    let filledAt: Date | undefined
+    let canceledAt: Date | undefined
+
+    if (orderStatus === AlunaOrderStatusEnum.FILLED) {
+
+      filledAt = new Date(closedAt)
+
+    }
+
+    if (orderStatus === AlunaOrderStatusEnum.CANCELED
+        || (orderStatus === AlunaOrderStatusEnum.PARTIALLY_FILLED
+          && isClosedStatus)
+    ) {
+
+      canceledAt = new Date(closedAt)
+
+    }
 
     const parsedOrder: IAlunaOrderSchema = {
       id,
       symbolPair: marketSymbol,
-      total: amount * rate,
+      total,
       amount,
       rate,
       exchangeId,
-      baseSymbolId: symbolInfo.baseCurrencySymbol,
-      quoteSymbolId: symbolInfo.quoteCurrencySymbol,
+      baseSymbolId,
+      quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
       side: BittrexSideAdapter.translateToAluna({ from: direction }),
-      status: BittrexStatusAdapter.translateToAluna({ from: status }),
+      status: orderStatus,
       type: BittrexOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),
       meta: rawOrder,
+      filledAt,
+      canceledAt,
     }
 
     return parsedOrder

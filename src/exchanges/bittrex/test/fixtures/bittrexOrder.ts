@@ -13,7 +13,7 @@ import { IBittrexOrderSchema } from '../../schemas/IBittrexOrderSchema'
 
 
 
-export const BITTREX_RAW_ORDER: IBittrexOrderSchema = {
+export const BITTREX_RAW_LIMIT_ORDER: IBittrexOrderSchema = {
   id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
   marketSymbol: 'BTC-EUR',
   direction: BittrexSideEnum.BUY,
@@ -33,6 +33,29 @@ export const BITTREX_RAW_ORDER: IBittrexOrderSchema = {
   orderToCancel: {
     id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
     type: BittrexOrderTypeEnum.LIMIT,
+  },
+}
+
+export const BITTREX_RAW_MARKET_ORDER: IBittrexOrderSchema = {
+  id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
+  marketSymbol: 'BTC-EUR',
+  direction: BittrexSideEnum.BUY,
+  type: BittrexOrderTypeEnum.MARKET,
+  quantity: '9.94497801',
+  ceiling: '10.00000000',
+  limit: null as any,
+  timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
+  clientOrderId: 'string',
+  fillQuantity: '9',
+  commission: '0.00000000',
+  proceeds: '10.00000000',
+  status: BittrexOrderStatusEnum.CLOSED,
+  createdAt: '2015-12-11T06:31:40.633Z',
+  updatedAt: '2015-12-11T06:31:40.633Z',
+  closedAt: '2015-12-11T06:31:40.633Z',
+  orderToCancel: {
+    id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
+    type: BittrexOrderTypeEnum.MARKET,
   },
 }
 

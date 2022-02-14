@@ -51,15 +51,13 @@ describe('BittrexKeyModule', () => {
 
     requestMock.onSecondCall().returns(Promise.reject(badRequestErrorMock))
 
-    requestMock.onThirdCall().returns(Promise.reject(badRequestErrorMock))
-
     const { permissions } = await bittrexKeyModule.fetchDetails()
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok
-    expect(permissions.withdraw).to.be.ok
+    expect(permissions.withdraw).not.to.be.ok
 
-    expect(requestMock.callCount).to.be.eq(4)
+    expect(requestMock.callCount).to.be.eq(3)
 
   })
 
@@ -218,60 +216,6 @@ describe('BittrexKeyModule', () => {
     )
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
-
-    let result
-
-    try {
-
-      result = await bittrexKeyModule.fetchDetails()
-
-    } catch (e) {
-
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(401)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
-
-    }
-
-  })
-
-
-
-  it('should ensure user has withdraw permissions', async () => {
-
-    ImportMock.mockOther(
-      bittrexKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    const alunaErrorMock = new AlunaError({
-      message: 'any-message',
-      httpStatusCode: 401,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-    const mockRest: any = {} // mock requestResponse
-
-    const requestResponse: IBittrexKeySchema = {
-      ...mockRest, // without accountId
-    }
-
-    const requestMock = ImportMock.mockFunction(
-      BittrexHttp,
-      'privateRequest',
-      requestResponse,
-    )
-
-    requestMock.onThirdCall().returns(Promise.reject(alunaErrorMock))
 
     let result
 

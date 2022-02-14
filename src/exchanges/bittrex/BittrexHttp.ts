@@ -42,6 +42,8 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       response,
     } = param as AxiosError
 
+    console.log(response)
+
     error = new AlunaError({
       message: response?.data?.message || message,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
