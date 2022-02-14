@@ -62,11 +62,24 @@ export class BitfinexPositionParser {
       : AlunaPositionStatusEnum.CLOSED
 
     const side = BitfinexSideAdapter.translateToAluna({
-      value: amount,
+      amount,
     })
 
+    let computedAmount: number
+
+    if (amount === 0) {
+
+      computedAmount = Math.abs(Number(meta.trade_amount))
+
+    } else {
+
+      computedAmount = Math.abs(amount)
+
+    }
+
     const computedBasePrice = Number(basePrice)
-    const computedAmount = Math.abs(Number(amount))
+    const computedOpenPrice = Number(meta.trade_price)
+
     const total = computedAmount * computedBasePrice
 
     const computedPl = pl !== null ? pl : 0
@@ -85,7 +98,7 @@ export class BitfinexPositionParser {
 
       closedAt = new Date(mtsUpdate)
 
-      closePrice = Number(meta.trade_price)
+      closePrice = computedBasePrice
 
     }
 
@@ -100,8 +113,8 @@ export class BitfinexPositionParser {
       account: AlunaAccountEnum.MARGIN,
       status: computedStatus,
       side,
-      basePrice: Number(basePrice),
-      openPrice: computedBasePrice,
+      basePrice: computedBasePrice,
+      openPrice: computedOpenPrice,
       pl: computedPl,
       plPercentage,
       leverage: computedLeverage,

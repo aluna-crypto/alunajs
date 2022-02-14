@@ -68,8 +68,21 @@ describe('BitfinexPositionParser', () => {
         ? AlunaPositionStatusEnum.OPEN
         : AlunaPositionStatusEnum.CLOSED
 
+      let computedAmount
+
+      if (amount === 0) {
+
+        computedAmount = Math.abs(Number(meta.trade_amount))
+
+      } else {
+
+        computedAmount = Math.abs(amount)
+
+      }
+
       const computedBasePrice = Number(basePrice)
-      const computedAmount = Math.abs(Number(amount))
+      const computedOpenPrice = Number(meta.trade_price)
+
       const computedTotal = computedAmount * computedBasePrice
 
       const computedPl = pl !== null ? pl : 0
@@ -88,7 +101,7 @@ describe('BitfinexPositionParser', () => {
 
         computedClosedAt = new Date(mtsUpdate)
 
-        computedClosePrice = Number(meta?.trade_price)
+        computedClosePrice = Number(computedBasePrice)
 
       }
 
@@ -102,6 +115,7 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.status).to.be.eq(computedStatus)
 
       expect(parsedPosition.basePrice).to.be.eq(computedBasePrice)
+      expect(parsedPosition.openPrice).to.be.eq(computedOpenPrice)
       expect(parsedPosition.amount).to.be.eq(computedAmount)
       expect(parsedPosition.total).to.be.eq(computedTotal)
 
