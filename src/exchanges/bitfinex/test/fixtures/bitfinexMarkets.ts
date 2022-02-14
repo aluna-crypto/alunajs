@@ -1,6 +1,6 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import {
-  IBitfinexMarket,
+  IBitfinexMarketSchema,
   IBitfinexTicker,
 } from '../../schemas/IBitfinexMarketSchema'
 import { BITFINEX_CURRENCIES_SYMS } from './bitfinexSymbols'
@@ -141,7 +141,7 @@ export const BITFINEX_MARGIN_ENABLED_CURRENCIES = [
 
 
 
-export const BITFINEX_RAW_MARKETS: IBitfinexMarket = [
+export const BITFINEX_RAW_MARKETS: IBitfinexMarketSchema = [
   BITFINEX_RAW_TICKERS,
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
   BITFINEX_CURRENCIES_SYMS,

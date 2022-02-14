@@ -3,7 +3,7 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import {
-  IBitfinexMarket,
+  IBitfinexMarketSchema,
   IBitfinexTicker,
 } from '../schemas/IBitfinexMarketSchema'
 import { TBitfinexCurrencySym } from '../schemas/IBitfinexSymbolSchema'
@@ -18,7 +18,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
   static enabledMarginMarketsPath = 'pub:list:pair:margin'
 
-  public static async listRaw (): Promise<IBitfinexMarket> {
+  public static async listRaw (): Promise<IBitfinexMarketSchema> {
 
     BitfinexLog.info('fetching Bitfinex markets')
 
@@ -40,7 +40,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
       url,
     })
 
-    const output: IBitfinexMarket = [
+    const output: IBitfinexMarketSchema = [
       rawMarkets,
       enabledMarginMarkets,
       symCurrencies,
@@ -73,7 +73,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
   }
 
   public static parseMany (params: {
-    rawMarkets: IBitfinexMarket,
+    rawMarkets: IBitfinexMarketSchema,
   }): IAlunaMarketSchema[] {
 
     const { rawMarkets } = params

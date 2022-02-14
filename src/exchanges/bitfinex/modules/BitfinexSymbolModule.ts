@@ -3,7 +3,7 @@ import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import {
-  IBitfinexSymbols,
+  IBitfinexSymbolSchema,
   TBitfinexCurrencyLabel,
   TBitfinexCurrencySym,
 } from '../schemas/IBitfinexSymbolSchema'
@@ -35,7 +35,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
   }
 
-  public static async listRaw (): Promise<IBitfinexSymbols> {
+  public static async listRaw (): Promise<IBitfinexSymbolSchema> {
 
     BitfinexLog.info('fetching Bitfinex symbols')
 
@@ -46,7 +46,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
     const url = `${baseUrl}${this.currenciesPath},${this.labelsPath}`
       .concat(`,${this.currenciesSymsPath}`)
 
-    const rawSymbols = publicRequest<IBitfinexSymbols>({
+    const rawSymbols = publicRequest<IBitfinexSymbolSchema>({
       url,
     })
 
@@ -67,7 +67,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
   }
 
   public static parseMany (params: {
-    rawSymbols: IBitfinexSymbols,
+    rawSymbols: IBitfinexSymbolSchema,
   }): IAlunaSymbolSchema[] {
 
     const { rawSymbols } = params

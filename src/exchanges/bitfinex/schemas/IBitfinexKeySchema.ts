@@ -1,8 +1,11 @@
-export interface IBitfinexKey extends TBitfinexKey {}
+export interface IBitfinexKeySchema {
+  accountId: string
+  permissionsScope: IBitfinexPermissionsScope
+}
 
+export interface IBitfinexPermissionsScope extends TBitfinexPermissionsScope {}
 
-
-type TBitfinexKey = [
+type TBitfinexPermissionsScope = [
   [scope: 'account', read: number, write: number],
   [scope: 'orders', read: number, write: number],
   [scope: 'funding', read: number, write: number],

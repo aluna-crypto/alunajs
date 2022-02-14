@@ -1,4 +1,4 @@
-export interface IBitfinexSymbols extends TBitfinexSymbolsResponse {}
+export interface IBitfinexSymbolSchema extends TBitfinexSymbolsResponse {}
 
 type TBitfinexSymbolsResponse = [
   IBitfinexCurrencies, IBitfinexCurrencyLabels, IBitfinexCurrencySyms
