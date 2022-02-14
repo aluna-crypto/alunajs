@@ -1,11 +1,9 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaAccountEnum,
-  AlunaSideEnum,
-} from '../../..'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IFetchTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
