@@ -183,25 +183,32 @@ describe('BinanceOrderWriteModule', () => {
         timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
       }
 
+      let result
+      let error
+
       try {
 
-        await binanceOrderWriteModule.place(placeOrderParams)
+        result = await binanceOrderWriteModule.place(placeOrderParams)
 
       } catch (err) {
 
-        expect(requestMock.callCount).to.be.eq(1)
-        expect(requestMock.calledWith({
-          url: `${PROD_BINANCE_URL}/api/v3/order`,
-          body: requestBody,
-          keySecret,
-        })).to.be.ok
-
-        expect(err.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
-        expect(err.message)
-          .to.be.eq('Account has insufficient balance for requested action.')
-        expect(err.httpStatusCode).to.be.eq(400)
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
+
+      expect(error.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error.message)
+        .to.be.eq('Account has insufficient balance for requested action.')
+      expect(error.httpStatusCode).to.be.eq(400)
 
     })
 
@@ -285,26 +292,31 @@ describe('BinanceOrderWriteModule', () => {
       timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
     }
 
+    let result
+    let error
 
     try {
 
-      await binanceOrderWriteModule.place(placeOrderParams)
+      result = await binanceOrderWriteModule.place(placeOrderParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        url: `${PROD_BINANCE_URL}/api/v3/order`,
-        body: requestBody,
-        keySecret,
-      })).to.be.ok
-
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-      expect(err.message).to.be.eq('Something went wrong.')
-      expect(err.httpStatusCode).to.be.eq(500)
-
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
+      body: requestBody,
+      keySecret,
+    })).to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+    expect(error.message).to.be.eq('Something went wrong.')
+    expect(error.httpStatusCode).to.be.eq(500)
 
   })
 
@@ -403,20 +415,27 @@ describe('BinanceOrderWriteModule', () => {
 
     const account = 'nonexistent'
 
+    let result
+    let error
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account,
       } as unknown as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not found`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not found`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -439,20 +458,27 @@ describe('BinanceOrderWriteModule', () => {
 
     const account = AlunaAccountEnum.EXCHANGE
 
+    let result
+    let error
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not supported/implemented for Binance`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -475,20 +501,27 @@ describe('BinanceOrderWriteModule', () => {
 
     const account = AlunaAccountEnum.EXCHANGE
 
+    let result
+    let error
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not supported/implemented for Binance`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -512,21 +545,29 @@ describe('BinanceOrderWriteModule', () => {
 
     const type = 'unsupported-type'
 
+    let result
+    let error
+
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type: type as AlunaOrderTypesEnum,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Binance`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -554,21 +595,28 @@ describe('BinanceOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let result
+    let error
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Binance`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -596,21 +644,28 @@ describe('BinanceOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let error
+    let result
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Binance`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Binance`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -638,27 +693,34 @@ describe('BinanceOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let result
+    let error
+
     try {
 
-      await binanceOrderWriteModule.place({
+      result = await binanceOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type '${type}' is in read mode`)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' is in read mode`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
 
 
   it('should ensure an order was canceled', async () => {
-
-    let result
 
     ImportMock.mockOther(
       binanceOrderWriteModule,
@@ -684,29 +746,37 @@ describe('BinanceOrderWriteModule', () => {
       symbolPair: 'symbol-pair',
     }
 
+    let result
+    let error
+
     try {
 
       result = await binanceOrderWriteModule.cancel(cancelParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        verb: AlunaHttpVerbEnum.DELETE,
-        url: `${PROD_BINANCE_URL}/api/v3/order`,
-        keySecret,
-        body: {
-          orderId: cancelParams.id,
-          symbol: cancelParams.symbolPair,
-        },
-      })).to.be.ok
+      error = err
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq('Something went wrong, order not canceled')
-      expect(err.httpStatusCode).to.be.eq(500)
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      verb: AlunaHttpVerbEnum.DELETE,
+      url: `${PROD_BINANCE_URL}/api/v3/order`,
+      keySecret,
+      body: {
+        orderId: cancelParams.id,
+        symbol: cancelParams.symbolPair,
+      },
+    })).to.be.ok
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq('Something went wrong, order not canceled')
+    expect(error.httpStatusCode).to.be.eq(500)
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
 
