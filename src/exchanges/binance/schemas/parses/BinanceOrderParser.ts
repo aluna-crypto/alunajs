@@ -31,19 +31,32 @@ export class BinanceOrderParser {
       type,
       status,
       updateTime,
+      transactTime,
     } = rawOrder
 
-    const createdAt = time
-      ? new Date(time).toISOString()
-      : new Date().toISOString()
-    const updatedAt = new Date(updateTime)
+    const updatedAt = updateTime ? new Date(updateTime) : undefined
     const amount = parseFloat(origQty)
     const rate = parseFloat(price)
 
     const orderStatus = BinanceStatusAdapter.translateToAluna({ from: status })
 
+    let createdAt: Date
     let filledAt: Date | undefined
     let canceledAt: Date | undefined
+
+    if (time) {
+
+      createdAt = new Date(time)
+
+    } else if (transactTime) {
+
+      createdAt = new Date(transactTime)
+
+    } else {
+
+      createdAt = new Date()
+
+    }
 
     if (orderStatus === AlunaOrderStatusEnum.CANCELED) {
 

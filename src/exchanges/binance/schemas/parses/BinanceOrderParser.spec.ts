@@ -49,11 +49,11 @@ describe('BinanceOrderParser', () => {
     expect(parsedOrder.type)
       .to.be.eq(BinanceOrderTypeAdapter.translateToAluna({ from: rawType }))
     expect(parsedOrder.placedAt.getTime())
-      .to.be.eq(new Date(rawOrder.time).getTime())
+      .to.be.eq(new Date(rawOrder.time!).getTime())
 
   })
 
-  it('should parse Binance order just fine without time', async () => {
+  it('should parse Binance order just fine without time and updateTime', async () => {
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -63,9 +63,9 @@ describe('BinanceOrderParser', () => {
       (rm) => rm.symbol === currencyPair,
     )
 
-    Object.assign(rawOrder, {
-      time: null,
-    })
+    rawOrder.time = undefined
+    rawOrder.status = BinanceOrderStatusEnum.CANCELED
+    rawOrder.updateTime = undefined
 
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
@@ -74,6 +74,34 @@ describe('BinanceOrderParser', () => {
 
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date().getTime())
+
+    expect(parsedOrder.canceledAt)
+      .to.be.eq(undefined)
+
+  })
+
+  it('should parse Binance order just fine with transactTime', async () => {
+
+    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
+
+    const { symbol: currencyPair } = rawOrder
+
+    const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+      (rm) => rm.symbol === currencyPair,
+    )
+
+    const transactTime = new Date().getTime()
+
+    rawOrder.time = undefined
+    rawOrder.transactTime = transactTime
+
+    const parsedOrder = BinanceOrderParser.parse({
+      rawOrder,
+      symbolInfo: symbolInfo!,
+    })
+
+    expect(parsedOrder.placedAt.getTime())
+      .to.be.eq(new Date(transactTime).getTime())
 
   })
 
@@ -87,6 +115,8 @@ describe('BinanceOrderParser', () => {
       (rm) => rm.symbol === currencyPair,
     )
 
+    rawOrder.time = new Date().getTime()
+    rawOrder.updateTime = new Date().getTime()
     rawOrder.status = BinanceOrderStatusEnum.CANCELED
 
     const parsedOrder = BinanceOrderParser.parse({

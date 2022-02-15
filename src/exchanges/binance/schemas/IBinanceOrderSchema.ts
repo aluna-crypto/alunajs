@@ -20,8 +20,9 @@ export interface IBinanceOrderSchema {
   side: BinanceSideEnum
   stopPrice: string
   icebergQty: string
-  time: number
-  updateTime: number
+  time?: number
+  updateTime?: number
+  transactTime?: number
   isWorking: boolean
   origQuoteOrderQty: string
 }

@@ -792,6 +792,8 @@ describe('BinanceOrderWriteModule', () => {
 
     const canceledOrderResponse = {
       status: BinanceOrderStatusEnum.CANCELED,
+      orderId: 1234,
+      symbol: 'ETHBUSD',
     } as IBinanceOrderSchema
 
     ImportMock.mockFunction(
@@ -800,9 +802,9 @@ describe('BinanceOrderWriteModule', () => {
       canceledOrderResponse,
     )
 
-    const parseMock = ImportMock.mockFunction(
+    const getMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
-      'parse',
+      'get',
       { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
     )
 
@@ -826,13 +828,14 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(error).to.be.undefined
 
-    expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({
-      rawOrder: canceledOrderResponse,
+    expect(getMock.callCount).to.be.eq(1)
+    expect(getMock.calledWith({
+      id: canceledOrderResponse.orderId.toString(),
+      symbolPair: canceledOrderResponse.symbol,
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(getMock.returnValues[0])
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })

@@ -220,9 +220,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const parsedOrder = this.parse({ rawOrder: canceledOrder })
+    const order = await this.get({
+      id: canceledOrder.orderId.toString(),
+      symbolPair: canceledOrder.symbol,
+    })
 
-    return parsedOrder
+    return order
 
   }
 
