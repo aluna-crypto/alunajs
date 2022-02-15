@@ -96,6 +96,18 @@
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true }],
     "import/newline-after-import": ["error", { "count": 3 }],
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [ 
+          { 
+            "target": "src/", 
+            "from": "src/index.ts", 
+            "message": "Should not import from 'src/index.ts' file, please import from the original file path instead"
+          } 
+        ]
+      }
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -116,5 +128,13 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/index.spec.ts"],
+      "rules": {
+        "import/no-restricted-paths": "off"
+      }
+    }
+  ]
 }
