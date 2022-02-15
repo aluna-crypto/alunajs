@@ -54,6 +54,7 @@
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "_" }],
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -96,6 +97,18 @@
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true }],
     "import/newline-after-import": ["error", { "count": 3 }],
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [ 
+          { 
+            "target": "src/", 
+            "from": "src/index.ts", 
+            "message": "Should not import from 'src/index.ts' file, please import from the original file path instead"
+          } 
+        ]
+      }
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -116,5 +129,19 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/index.spec.ts"],
+      "rules": {
+        "import/no-restricted-paths": "off"
+      }
+    },
+    {
+      "files": ["src/**/*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    }
+  ]
 }

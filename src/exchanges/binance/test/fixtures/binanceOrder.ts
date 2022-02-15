@@ -1,10 +1,8 @@
-import {
-  AlunaAccountEnum,
-  AlunaOrderStatusEnum,
-  AlunaOrderTypesEnum,
-  AlunaSideEnum,
-  IAlunaOrderSchema,
-} from '../../../../index'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { Binance } from '../../Binance'
 import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
 import { BinanceOrderTypeEnum } from '../../enums/BinanceOrderTypeEnum'
