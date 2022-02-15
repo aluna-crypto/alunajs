@@ -31,10 +31,22 @@ export class BittrexOrderParser {
       status,
       limit,
       closedAt,
+      proceeds,
     } = rawOrder
 
+    let rate: number | undefined
+
+    if (limit) {
+
+      rate = parseFloat(limit)
+
+    } else if (proceeds) {
+
+      rate = parseFloat(proceeds)
+
+    }
+
     const amount = parseFloat(quantity)
-    const rate = parseFloat(limit)
     const total = rate ? amount * rate : amount
     const splittedMarketSymbol = rawOrder.marketSymbol.split('-')
     const baseSymbolId = splittedMarketSymbol[0]

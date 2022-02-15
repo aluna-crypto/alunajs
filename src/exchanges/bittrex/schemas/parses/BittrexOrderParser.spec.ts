@@ -67,6 +67,7 @@ describe('BittrexOrderParser', () => {
     })
 
     const rawOriginalQuantity = rawOrder.quantity
+    const rawProceeds = rawOrder.proceeds
     const rawSide = rawOrder.direction
     const rawType = rawOrder.type
     const rawFillQty = rawOrder.fillQuantity
@@ -76,7 +77,7 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.id).to.be.eq(rawOrder.id)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.marketSymbol)
     expect(parsedOrder.total).to.be.eq(
-      parseFloat(rawOriginalQuantity),
+      parseFloat(rawOriginalQuantity) * parseFloat(rawProceeds),
     )
     expect(parsedOrder.amount).to.be.eq(parseFloat(rawOriginalQuantity))
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
@@ -119,5 +120,23 @@ describe('BittrexOrderParser', () => {
       )
 
   })
+
+  it('should calculate total of bittrex order without limit and proceeds',
+    async () => {
+
+      const rawOrder: IBittrexOrderSchema = BITTREX_RAW_MARKET_ORDER
+
+      // Without proceeds and limit
+      rawOrder.proceeds = null as any
+
+      const parsedOrder = BittrexOrderParser.parse({
+        rawOrder,
+      })
+
+      const rawQty = rawOrder.quantity
+
+      expect(parsedOrder.total).to.be.eq(parseFloat(rawQty))
+
+    })
 
 })
