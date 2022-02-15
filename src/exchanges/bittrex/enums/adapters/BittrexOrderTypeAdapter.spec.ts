@@ -32,20 +32,26 @@ describe('BittrexOrderTypeAdapter', () => {
         from: BittrexOrderTypeEnum.CEILING_MARKET,
       })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
 
+      let result
+      let error
 
       try {
 
-        BittrexOrderTypeAdapter.translateToAluna({
+        result = BittrexOrderTypeAdapter.translateToAluna({
           from: notSupported as BittrexOrderTypeEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order type not supported: ${notSupported}`)
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
 
     })
@@ -71,6 +77,8 @@ describe('BittrexOrderTypeAdapter', () => {
         from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
       })).to.be.eq(BittrexOrderTypeEnum.CEILING_MARKET)
 
+      let result
+      let error
 
       try {
 
@@ -80,11 +88,15 @@ describe('BittrexOrderTypeAdapter', () => {
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order type not supported: ${notSupported}`)
+        error = err
 
       }
+
+
+      expect(result).not.to.be.ok
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     })
 

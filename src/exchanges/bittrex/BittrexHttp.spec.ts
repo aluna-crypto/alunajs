@@ -200,29 +200,33 @@ describe('BittrexHttp', () => {
       dummySignedHeaders,
     )
 
+    let result
+    let error
+
     try {
 
-      await bittrexHttp.publicRequest({
+      result = await bittrexHttp.publicRequest({
         url: dummyUrl,
       })
 
     } catch (err) {
 
-      const error = err as AlunaError
-
-      expect(error.message).to.be.eq(message)
-
-      const calledArg = formatRequestErrorSpy.args[0][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(message)
+      error = err
 
     }
 
+    expect(result).not.to.be.ok
+    expect(error.message).to.be.eq(message)
+
+    const calledArg = formatRequestErrorSpy.args[0][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
+    expect(calledArg).to.be.ok
+    expect(calledArg.message).to.be.eq(message)
+
     try {
 
-      await bittrexHttp.privateRequest({
+      result = await bittrexHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -230,17 +234,19 @@ describe('BittrexHttp', () => {
 
     } catch (err) {
 
-      const error = err as AlunaError
+      error = err
 
-      expect(error.message).to.be.eq(message)
-
-      const calledArg = formatRequestErrorSpy.args[1][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(message)
 
     }
+
+    expect(result).not.to.be.ok
+    expect(error.message).to.be.eq(message)
+
+    const calledArg2 = formatRequestErrorSpy.args[1][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+    expect(calledArg2).to.be.ok
+    expect(calledArg2.message).to.be.eq(message)
 
   })
 

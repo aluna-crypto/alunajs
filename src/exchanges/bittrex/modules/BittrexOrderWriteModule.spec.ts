@@ -160,19 +160,24 @@ describe('BittrexOrderWriteModule', () => {
         // without rate
       }
 
+      let result
+      let error
+
       try {
 
-        await bittrexOrderWriteModule.place(placeOrderParams)
+        result = await bittrexOrderWriteModule.place(placeOrderParams)
 
       } catch (err) {
 
-        expect(err.code).to.be.eq(AlunaOrderErrorCodes.MISSING_PARAMS)
-        expect(err.message)
-          .to.be.eq('A rate is required for limit orders')
-        expect(err.httpStatusCode).to.be.eq(401)
-
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+      expect(error.code).to.be.eq(AlunaOrderErrorCodes.MISSING_PARAMS)
+      expect(error.message)
+        .to.be.eq('A rate is required for limit orders')
+      expect(error.httpStatusCode).to.be.eq(401)
 
     })
 
@@ -218,26 +223,30 @@ describe('BittrexOrderWriteModule', () => {
       timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
     }
 
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place(placeOrderParams)
+      result = await bittrexOrderWriteModule.place(placeOrderParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        url: `${PROD_BITTREX_URL}/orders`,
-        body: requestBody,
-        keySecret,
-      })).to.be.ok
-
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-      expect(err.message).to.be.eq('Something went wrong.')
-      expect(err.httpStatusCode).to.be.eq(500)
-
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      url: `${PROD_BITTREX_URL}/orders`,
+      body: requestBody,
+      keySecret,
+    })).to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+    expect(error.message).to.be.eq('Something went wrong.')
+    expect(error.httpStatusCode).to.be.eq(500)
 
   })
 
@@ -332,21 +341,26 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const account = 'nonexistent'
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account,
       } as unknown as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not found`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not found`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -368,21 +382,26 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const account = AlunaAccountEnum.EXCHANGE
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Bittrex`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not supported/implemented for Bittrex`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -404,21 +423,26 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const account = AlunaAccountEnum.EXCHANGE
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Bittrex`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not supported/implemented for Bittrex`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -441,22 +465,27 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const type = 'unsupported-type'
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type: type as AlunaOrderTypesEnum,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Order type '${type}' not supported/implemented for Bittrex`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -483,22 +512,27 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Order type '${type}' not supported/implemented for Bittrex`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -525,22 +559,27 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Order type '${type}' not supported/implemented for Bittrex`
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -567,20 +606,25 @@ describe('BittrexOrderWriteModule', () => {
     )
 
     const type = AlunaOrderTypesEnum.LIMIT
+    let result
+    let error
 
     try {
 
-      await bittrexOrderWriteModule.place({
+      result = await bittrexOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type '${type}' is in read mode`)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(`Order type '${type}' is in read mode`)
 
   })
 
@@ -612,25 +656,31 @@ describe('BittrexOrderWriteModule', () => {
       symbolPair: 'symbol-pair',
     }
 
+    let result
+    let error
+
     try {
 
-      await bittrexOrderWriteModule.cancel(cancelParams)
+      result = await bittrexOrderWriteModule.cancel(cancelParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        verb: AlunaHttpVerbEnum.DELETE,
-        url: `${PROD_BITTREX_URL}/orders/${cancelParams.id}`,
-        keySecret,
-      })).to.be.ok
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq('Something went wrong, order not canceled')
-      expect(err.httpStatusCode).to.be.eq(500)
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      verb: AlunaHttpVerbEnum.DELETE,
+      url: `${PROD_BITTREX_URL}/orders/${cancelParams.id}`,
+      keySecret,
+    })).to.be.ok
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq('Something went wrong, order not canceled')
+    expect(error.httpStatusCode).to.be.eq(500)
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
 

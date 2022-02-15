@@ -104,22 +104,22 @@ describe('BittrexKeyModule', () => {
       .onThirdCall()
       .returns(Promise.reject(invalidPermissionsErrorMock))
 
-    let result
+    let error
 
     try {
 
-      result = await bittrexKeyModule.fetchDetails()
+      await bittrexKeyModule.fetchDetails()
 
     } catch (e) {
 
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(403)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      error = e
 
     }
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('any-message')
+    expect(error.httpStatusCode).to.be.eq(403)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
   })
 
@@ -163,22 +163,10 @@ describe('BittrexKeyModule', () => {
       .onSecondCall()
       .returns(Promise.reject(invalidPermissionsErrorMock))
 
-    let result
 
-    try {
+    const result = await bittrexKeyModule.fetchDetails()
 
-      result = await bittrexKeyModule.fetchDetails()
-
-    } catch (e) {
-
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(403)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
-
-    }
+    expect(result.permissions.trade).not.to.be.ok
 
   })
 
@@ -217,22 +205,22 @@ describe('BittrexKeyModule', () => {
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
 
-    let result
+    let error
 
     try {
 
-      result = await bittrexKeyModule.fetchDetails()
+      await bittrexKeyModule.fetchDetails()
 
     } catch (e) {
 
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(401)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      error = e
 
     }
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('any-message')
+    expect(error.httpStatusCode).to.be.eq(401)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
   })
 
@@ -271,9 +259,9 @@ describe('BittrexKeyModule', () => {
 
     requestMock.onFirstCall().returns(requestResponse)
     requestMock.onSecondCall().returns(requestResponse)
-    requestMock.onThirdCall().returns(requestResponse)
 
     let result
+    let error
 
     try {
 
@@ -281,14 +269,16 @@ describe('BittrexKeyModule', () => {
 
     } catch (e) {
 
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(401)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      error = e
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('any-message')
+    expect(error.httpStatusCode).to.be.eq(401)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
   })
 
@@ -320,6 +310,7 @@ describe('BittrexKeyModule', () => {
     )
 
     let result
+    let error
 
     try {
 
@@ -327,16 +318,16 @@ describe('BittrexKeyModule', () => {
 
     } catch (e) {
 
-      expect(result).not.to.be.ok
-
-      expect(e).to.be.ok
-      expect(e.message).to.be.eq('any-message')
-      expect(e.httpStatusCode).to.be.eq(401)
-      expect(e.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+      error = e
 
     }
 
+    expect(result).not.to.be.ok
 
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('any-message')
+    expect(error.httpStatusCode).to.be.eq(401)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
 
   })
 

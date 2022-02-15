@@ -24,20 +24,25 @@ describe('BittrexStatusAdapter', () => {
         from: BittrexOrderStatusEnum.CLOSED,
       })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
+      let result
+      let error
+
       try {
 
-        BittrexStatusAdapter.translateToAluna({
+        result = BittrexStatusAdapter.translateToAluna({
           from: notSupported as BittrexOrderStatusEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order status not supported: ${notSupported}`)
+        error = err
 
       }
 
+      expect(result).not.to.be.ok
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order status not supported: ${notSupported}`)
 
     })
 
@@ -86,20 +91,25 @@ describe('BittrexStatusAdapter', () => {
       from: AlunaOrderStatusEnum.CANCELED,
     })).to.be.eq(BittrexOrderStatusEnum.CLOSED)
 
+    let result
+    let error
 
     try {
 
-      BittrexStatusAdapter.translateToBittrex({
+      result = BittrexStatusAdapter.translateToBittrex({
         from: notSupported as AlunaOrderStatusEnum,
       })
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 

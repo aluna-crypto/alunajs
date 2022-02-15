@@ -25,6 +25,7 @@ describe('BittrexSideAdapter', () => {
       })).to.be.eq(AlunaSideEnum.SHORT)
 
       let result
+      let error
 
       try {
 
@@ -34,15 +35,15 @@ describe('BittrexSideAdapter', () => {
 
       } catch (err) {
 
-        expect(result).not.to.be.ok
-
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order side not supported: ${notSupported}`)
+        error = err
 
       }
 
+      expect(result).not.to.be.ok
 
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order side not supported: ${notSupported}`)
 
     })
 
@@ -59,20 +60,25 @@ describe('BittrexSideAdapter', () => {
         from: AlunaSideEnum.SHORT,
       })).to.be.eq(BittrexSideEnum.SELL)
 
+      let result
+      let error
 
       try {
 
-        BittrexSideAdapter.translateToBittrex({
+        result = BittrexSideAdapter.translateToBittrex({
           from: notSupported as AlunaSideEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order side not supported: ${notSupported}`)
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order side not supported: ${notSupported}`)
 
     })
 
