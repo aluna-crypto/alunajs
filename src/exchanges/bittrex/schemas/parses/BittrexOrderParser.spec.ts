@@ -27,6 +27,7 @@ describe('BittrexOrderParser', () => {
     const rawPrice = rawOrder.limit
     const rawSide = rawOrder.direction
     const rawType = rawOrder.type
+    const rawFillQty = rawOrder.fillQuantity
     const rawStatus = rawOrder.status
 
     expect(parsedOrder.id).to.be.eq(rawOrder.id)
@@ -41,7 +42,13 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.side)
       .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
-      .to.be.eq(BittrexStatusAdapter.translateToAluna({ from: rawStatus }))
+      .to.be.eq(BittrexStatusAdapter.translateToAluna(
+        {
+          from: rawStatus,
+          fillQuantity: rawFillQty,
+          quantity: rawOriginalQuantity,
+        },
+      ))
     expect(parsedOrder.type)
       .to.be.eq(BittrexOrderTypeAdapter.translateToAluna({ from: rawType }))
     expect(parsedOrder.placedAt.getTime())
@@ -64,6 +71,7 @@ describe('BittrexOrderParser', () => {
     const rawType = rawOrder.type
     const rawFillQty = rawOrder.fillQuantity
     const rawQty = rawOrder.quantity
+    const rawStatus = rawOrder.status
 
     expect(parsedOrder.id).to.be.eq(rawOrder.id)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.marketSymbol)
@@ -76,8 +84,8 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.side)
       .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
-      .to.be.eq(BittrexStatusAdapter.translateClosedStatusToAluna(
-        { fillQuantity: rawFillQty, quantity: rawQty },
+      .to.be.eq(BittrexStatusAdapter.translateToAluna(
+        { fillQuantity: rawFillQty, quantity: rawQty, from: rawStatus },
       ))
     expect(parsedOrder.type)
       .to.be.eq(BittrexOrderTypeAdapter.translateToAluna({ from: rawType }))
@@ -99,10 +107,11 @@ describe('BittrexOrderParser', () => {
     const rawFillQty = rawOrder.fillQuantity
     const rawQty = rawOrder.quantity
     const rawClosedAt = rawOrder.closedAt
+    const rawStatus = rawOrder.status
 
     expect(parsedOrder.status)
-      .to.be.eq(BittrexStatusAdapter.translateClosedStatusToAluna(
-        { fillQuantity: rawFillQty, quantity: rawQty },
+      .to.be.eq(BittrexStatusAdapter.translateToAluna(
+        { fillQuantity: rawFillQty, quantity: rawQty, from: rawStatus },
       ))
     expect(parsedOrder.filledAt?.getTime())
       .to.be.eq(

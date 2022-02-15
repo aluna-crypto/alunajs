@@ -40,12 +40,11 @@ export class BittrexOrderParser {
     const baseSymbolId = splittedMarketSymbol[0]
     const quoteSymbolId = splittedMarketSymbol[1]
 
-    const isClosedStatus = status === BittrexOrderStatusEnum.CLOSED
-    const orderStatus = isClosedStatus
-      ? BittrexStatusAdapter.translateClosedStatusToAluna({
-        fillQuantity,
-        quantity,
-      }) : BittrexStatusAdapter.translateToAluna({ from: status })
+    const orderStatus = BittrexStatusAdapter.translateToAluna({
+      fillQuantity,
+      quantity,
+      from: status,
+    })
 
     let filledAt: Date | undefined
     let canceledAt: Date | undefined
@@ -55,6 +54,8 @@ export class BittrexOrderParser {
       filledAt = new Date(closedAt)
 
     }
+
+    const isClosedStatus = status === BittrexOrderStatusEnum.CLOSED
 
     if (orderStatus === AlunaOrderStatusEnum.CANCELED
         || (orderStatus === AlunaOrderStatusEnum.PARTIALLY_FILLED

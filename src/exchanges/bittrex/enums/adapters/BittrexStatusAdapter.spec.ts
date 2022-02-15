@@ -12,41 +12,7 @@ describe('BittrexStatusAdapter', () => {
   const notSupported = 'not-supported'
 
 
-
   it('should translate Bittrex order status to Aluna order status',
-    () => {
-
-      expect(BittrexStatusAdapter.translateToAluna({
-        from: BittrexOrderStatusEnum.OPEN,
-      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
-
-      expect(BittrexStatusAdapter.translateToAluna({
-        from: BittrexOrderStatusEnum.CLOSED,
-      })).to.be.eq(AlunaOrderStatusEnum.FILLED)
-
-      let result
-      let error
-
-      try {
-
-        result = BittrexStatusAdapter.translateToAluna({
-          from: notSupported as BittrexOrderStatusEnum,
-        })
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
-
-    })
-
-  it('should translate Bittrex Closed order status to Aluna order status',
     () => {
 
       const quantity = '5'
@@ -54,20 +20,29 @@ describe('BittrexStatusAdapter', () => {
       const partiallyFillQty = '3'
       const totalFillQty = '5'
 
-      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+      expect(BittrexStatusAdapter.translateToAluna({
         fillQuantity: zeroedfillQty,
         quantity,
+        from: BittrexOrderStatusEnum.CLOSED,
       })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+      expect(BittrexStatusAdapter.translateToAluna({
         fillQuantity: partiallyFillQty,
         quantity,
+        from: BittrexOrderStatusEnum.CLOSED,
       })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
-      expect(BittrexStatusAdapter.translateClosedStatusToAluna({
+      expect(BittrexStatusAdapter.translateToAluna({
         fillQuantity: totalFillQty,
         quantity,
+        from: BittrexOrderStatusEnum.CLOSED,
       })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+      expect(BittrexStatusAdapter.translateToAluna({
+        fillQuantity: totalFillQty,
+        quantity,
+        from: BittrexOrderStatusEnum.OPEN,
+      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     })
 

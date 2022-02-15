@@ -10,11 +10,23 @@ export class BittrexStatusAdapter {
 
   static readonly ERROR_MESSAGE_PREFIX = 'Order status'
 
-  static translateClosedStatusToAluna = (
-    params: { fillQuantity: string; quantity: string },
+  static translateToAluna = (
+    params: {
+      fillQuantity: string,
+      quantity: string,
+      from: BittrexOrderStatusEnum,
+    },
   ): AlunaOrderStatusEnum => {
 
-    const { fillQuantity, quantity } = params
+    const { fillQuantity, quantity, from } = params
+
+    const isOpen = from === BittrexOrderStatusEnum.OPEN
+
+    if (isOpen) {
+
+      return AlunaOrderStatusEnum.OPEN
+
+    }
 
     const parsedFillQty = parseFloat(fillQuantity)
     const parsedQty = parseFloat(quantity)
@@ -34,15 +46,6 @@ export class BittrexStatusAdapter {
     return AlunaOrderStatusEnum.CANCELED
 
   }
-
-  static translateToAluna =
-    buildAdapter<BittrexOrderStatusEnum, AlunaOrderStatusEnum>({
-      errorMessagePrefix: BittrexStatusAdapter.ERROR_MESSAGE_PREFIX,
-      mappings: {
-        [BittrexOrderStatusEnum.OPEN]: AlunaOrderStatusEnum.OPEN,
-        [BittrexOrderStatusEnum.CLOSED]: AlunaOrderStatusEnum.FILLED,
-      },
-    })
 
 
 
