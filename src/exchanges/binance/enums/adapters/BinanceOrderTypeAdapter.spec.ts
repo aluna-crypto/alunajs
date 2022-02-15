@@ -45,20 +45,26 @@ describe('BinanceOrderTypeAdapter', () => {
       })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
 
 
+      let result
+      let error
+
       try {
 
-        BinanceOrderTypeAdapter.translateToAluna({
+        result = BinanceOrderTypeAdapter.translateToAluna({
           from: notSupported as BinanceOrderTypeEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order type not supported: ${notSupported}`)
+        error = err
 
       }
 
+      expect(result).not.to.be.ok
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     })
 
@@ -91,20 +97,26 @@ describe('BinanceOrderTypeAdapter', () => {
         from: AlunaOrderTypesEnum.STOP_MARKET,
       })).to.be.eq(BinanceOrderTypeEnum.STOP_LOSS)
 
+      let result
+      let error
 
       try {
 
-        BinanceOrderTypeAdapter.translateToBinance({
+        result = BinanceOrderTypeAdapter.translateToBinance({
           from: notSupported as AlunaOrderTypesEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order type not supported: ${notSupported}`)
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order type not supported: ${notSupported}`)
 
     })
 

@@ -232,28 +232,36 @@ describe('BinanceHttp', () => {
       dummySignedHeaders,
     )
 
+    let result
+    let error
+
     try {
 
-      await binanceHttp.publicRequest({
+      result = await binanceHttp.publicRequest({
         url: dummyUrl,
       })
 
     } catch (err) {
 
-      expect(err.message).to.be.eq(errorMsg)
-
-      const calledArg = formatRequestErrorSpy.args[0][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(errorMsg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(error.message).to.be.eq(errorMsg)
+
+    const calledArg1 = formatRequestErrorSpy.args[0][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
+    expect(calledArg1).to.be.ok
+    expect(calledArg1.message).to.be.eq(errorMsg)
+
 
 
     try {
 
-      await binanceHttp.privateRequest({
+      result = await binanceHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -261,15 +269,19 @@ describe('BinanceHttp', () => {
 
     } catch (err) {
 
-      expect(err.message).to.be.eq(errorMsg)
-
-      const calledArg = formatRequestErrorSpy.args[1][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(errorMsg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(error.message).to.be.eq(errorMsg)
+
+    const calledArg2 = formatRequestErrorSpy.args[1][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+    expect(calledArg2).to.be.ok
+    expect(calledArg2.message).to.be.eq(errorMsg)
 
   })
 

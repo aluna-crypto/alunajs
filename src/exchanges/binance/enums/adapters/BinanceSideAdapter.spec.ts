@@ -25,6 +25,7 @@ describe('BinanceSideAdapter', () => {
       })).to.be.eq(AlunaSideEnum.SHORT)
 
       let result
+      let error
 
       try {
 
@@ -34,14 +35,15 @@ describe('BinanceSideAdapter', () => {
 
       } catch (err) {
 
-        expect(result).not.to.be.ok
-
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order side not supported: ${notSupported}`)
+        error = err
 
       }
 
+      expect(result).not.to.be.ok
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order side not supported: ${notSupported}`)
 
 
     })
@@ -59,20 +61,26 @@ describe('BinanceSideAdapter', () => {
         from: AlunaSideEnum.SHORT,
       })).to.be.eq(BinanceSideEnum.SELL)
 
+      let result
+      let error
 
       try {
 
-        BinanceSideAdapter.translateToBinance({
+        result = BinanceSideAdapter.translateToBinance({
           from: notSupported as AlunaSideEnum,
         })
 
       } catch (err) {
 
-        expect(err instanceof AlunaError).to.be.ok
-        expect(err.message)
-          .to.be.eq(`Order side not supported: ${notSupported}`)
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error.message)
+        .to.be.eq(`Order side not supported: ${notSupported}`)
 
     })
 
