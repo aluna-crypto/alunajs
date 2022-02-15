@@ -1,12 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import {
-  AlunaGenericErrorCodes,
-  AlunaHttpErrorCodes,
-  AlunaOrderErrorCodes,
-  IAlunaOrderEditParams,
-} from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -16,8 +10,12 @@ import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
+  IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
@@ -210,6 +208,9 @@ describe('BinanceOrderWriteModule', () => {
   it('should throw an error if a new limit order is placed without rate',
     async () => {
 
+      let result
+      let error
+
       ImportMock.mockOther(
         binanceOrderWriteModule,
         'exchange',
@@ -231,13 +232,14 @@ describe('BinanceOrderWriteModule', () => {
 
       } catch (err) {
 
-        expect(err.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-        expect(err.message)
-          .to.be.eq('A rate is required for limit orders')
-        expect(err.httpStatusCode).to.be.eq(401)
-
+        error = err
 
       }
+
+      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+      expect(error.message)
+        .to.be.eq('A rate is required for limit orders')
+      expect(error.httpStatusCode).to.be.eq(401)
 
     })
 

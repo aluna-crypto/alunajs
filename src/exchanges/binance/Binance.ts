@@ -1,13 +1,13 @@
+import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import {
-  IAlunaBalanceModule,
   IAlunaExchange,
   IAlunaExchangeStatic,
-  IAlunaKeyModule,
-  IAlunaKeySecretSchema,
-  IAlunaOrderWriteModule,
-  IAlunaSettingsSchema,
-} from '../../index'
-import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
+} from '../../lib/core/IAlunaExchange'
+import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
+import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
+import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BinanceSpecs } from './BinanceSpecs'
 import { BinanceBalanceModule } from './modules/BinanceBalanceModule'
 import { BinanceKeyModule } from './modules/BinanceKeyModule'

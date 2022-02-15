@@ -1,10 +1,10 @@
-import {
-  IAlunaExchangeOrderSpecsSchema,
-  IAlunaExchangeSchema,
-} from '../../index'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import {
+  IAlunaExchangeOrderSpecsSchema,
+  IAlunaExchangeSchema,
+} from '../../lib/schemas/IAlunaExchangeSchema'
 
 
 
