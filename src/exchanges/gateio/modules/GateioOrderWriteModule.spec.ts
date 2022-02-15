@@ -71,8 +71,8 @@ describe('GateioOrderWriteModule', () => {
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
-      amount: '0.001',
-      rate: '10000',
+      amount: 0.001,
+      rate: 10000,
       symbolPair: 'ETHZAR',
       side: AlunaSideEnum.LONG,
       type: AlunaOrderTypesEnum.LIMIT,
@@ -147,7 +147,7 @@ describe('GateioOrderWriteModule', () => {
       )
 
       const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: '0.001',
+        amount: 0.001,
         symbolPair: 'ETHZAR',
         side: AlunaSideEnum.LONG,
         type: AlunaOrderTypesEnum.LIMIT,
@@ -196,8 +196,8 @@ describe('GateioOrderWriteModule', () => {
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
-      amount: '0.001',
-      rate: '10000',
+      amount: 0.001,
+      rate: 10000,
       symbolPair: 'ETHZAR',
       side: AlunaSideEnum.LONG,
       type: AlunaOrderTypesEnum.LIMIT,
@@ -620,8 +620,8 @@ describe('GateioOrderWriteModule', () => {
 
     const editOrderParams: IAlunaOrderEditParams = {
       id: 'originalOrderId',
-      amount: '0.001',
-      rate: '0',
+      amount: 0.001,
+      rate: 0,
       symbolPair: 'LTCBTC',
       side: AlunaSideEnum.LONG,
       type: AlunaOrderTypesEnum.MARKET,
