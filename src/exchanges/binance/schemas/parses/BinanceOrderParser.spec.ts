@@ -53,32 +53,33 @@ describe('BinanceOrderParser', () => {
 
   })
 
-  it('should parse Binance order just fine without time and updateTime', async () => {
+  it('should parse Binance order just fine without time and updateTime',
+    async () => {
 
-    const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
+      const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
-    const { symbol: currencyPair } = rawOrder
+      const { symbol: currencyPair } = rawOrder
 
-    const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
-      (rm) => rm.symbol === currencyPair,
-    )
+      const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+        (rm) => rm.symbol === currencyPair,
+      )
 
-    rawOrder.time = undefined
-    rawOrder.status = BinanceOrderStatusEnum.CANCELED
-    rawOrder.updateTime = undefined
+      rawOrder.time = undefined
+      rawOrder.status = BinanceOrderStatusEnum.CANCELED
+      rawOrder.updateTime = undefined
 
-    const parsedOrder = BinanceOrderParser.parse({
-      rawOrder,
-      symbolInfo: symbolInfo!,
+      const parsedOrder = BinanceOrderParser.parse({
+        rawOrder,
+        symbolInfo: symbolInfo!,
+      })
+
+      expect(parsedOrder.placedAt.getTime())
+        .to.be.eq(new Date().getTime())
+
+      expect(parsedOrder.canceledAt)
+        .to.be.eq(undefined)
+
     })
-
-    expect(parsedOrder.placedAt.getTime())
-      .to.be.eq(new Date().getTime())
-
-    expect(parsedOrder.canceledAt)
-      .to.be.eq(undefined)
-
-  })
 
   it('should parse Binance order just fine with transactTime', async () => {
 
