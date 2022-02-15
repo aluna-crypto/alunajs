@@ -38,3 +38,10 @@ export interface IGateioOrderListResponseSchema {
   total: number
   orders: IGateioOrderSchema[]
 }
+
+export interface IGateioOrderRequest {
+  currency_pair: string
+  side: GateioSideEnum
+  amount: string
+  price: string
+}

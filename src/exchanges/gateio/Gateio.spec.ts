@@ -40,7 +40,7 @@ describe('Gateio', () => {
     // @TODO
     // expect(gateio.key).to.be.ok
     expect(gateio.balance).to.be.ok
-    // expect(gateio.order).to.be.ok
+    expect(gateio.order).to.be.ok
 
   })
 

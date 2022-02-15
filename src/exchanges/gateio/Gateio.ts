@@ -11,6 +11,7 @@ import { AAlunaExchange } from '../../lib/core/abstracts/AAlunaExchange'
 import { GateioSpecs } from './GateioSpecs'
 import { GateioBalanceModule } from './modules/GateioBalanceModule'
 import { GateioMarketModule } from './modules/GateioMarketModule'
+import { GateioOrderWriteModule } from './modules/GateioOrderWriteModule'
 import { GateioSymbolModule } from './modules/GateioSymbolModule'
 
 
@@ -39,7 +40,7 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
     // @TODO - Update
     // this.key = new GateioKeyModule({ exchange: this })
     this.balance = new GateioBalanceModule({ exchange: this })
-    // this.order = new GateioOrderWriteModule({ exchange: this })
+    this.order = new GateioOrderWriteModule({ exchange: this })
 
   }
 
