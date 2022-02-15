@@ -1,7 +1,5 @@
-import {
-  AlunaAccountEnum,
-  IAlunaBalanceSchema,
-} from '../../../../index'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
 import { IBinanceBalanceSchema } from '../../schemas/IBinanceBalanceSchema'
 
 

@@ -1,4 +1,4 @@
-import { IAlunaSymbolSchema } from '../../../../index'
+import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
 import { IBinanceInfoSchema } from '../../schemas/IBinanceSymbolSchema'
 
 
