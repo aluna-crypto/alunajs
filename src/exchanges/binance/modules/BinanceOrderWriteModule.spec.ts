@@ -215,7 +215,6 @@ describe('BinanceOrderWriteModule', () => {
   it('should throw an error if a new limit order is placed without rate',
     async () => {
 
-      let result
       let error
 
       ImportMock.mockOther(
