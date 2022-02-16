@@ -37,8 +37,7 @@ describe('Gateio', () => {
     expect(gateio.settings).to.be.ok
     expect(gateio.settings?.referralCode).to.eq(referralCode)
 
-    // @TODO
-    // expect(gateio.key).to.be.ok
+    expect(gateio.key).to.be.ok
     expect(gateio.balance).to.be.ok
     expect(gateio.order).to.be.ok
 

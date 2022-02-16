@@ -1,5 +1,5 @@
-import { AlunaOrderStatusEnum } from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { GateioOrderTypeAdapter } from '../../enums/adapters/GateioOrderTypeAdapter'
 import { GateioSideAdapter } from '../../enums/adapters/GateioSideAdapter'
