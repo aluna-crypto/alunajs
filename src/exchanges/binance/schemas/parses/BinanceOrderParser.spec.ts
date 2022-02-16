@@ -6,7 +6,10 @@ import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
 import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
 import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
-import { BINANCE_RAW_ORDER } from '../../test/fixtures/binanceOrder'
+import {
+  BINANCE_RAW_MARKET_ORDER,
+  BINANCE_RAW_ORDER,
+} from '../../test/fixtures/binanceOrder'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
 import { BinanceOrderParser } from './BinanceOrderParser'
 
@@ -141,5 +144,30 @@ describe('BinanceOrderParser', () => {
       .to.be.eq(updatedAt)
 
   })
+
+  it(
+    "should ensure immeditially filled orders have 'rate' and 'filledAt'",
+    async () => {
+
+      const rawOrder: IBinanceOrderSchema = BINANCE_RAW_MARKET_ORDER
+
+      const { symbol: currencyPair } = rawOrder
+
+      const symbolInfo = BINANCE_RAW_MARKETS_WITH_CURRENCY.find(
+        (rm) => rm.symbol === currencyPair,
+      )
+
+      const parsedOrder = BinanceOrderParser.parse({
+        rawOrder,
+        symbolInfo: symbolInfo!,
+      })
+
+      expect(parsedOrder.rate).to.be.eq(Number(rawOrder.fills![0].price))
+      expect(parsedOrder.filledAt).to.be.ok
+
+      expect(parsedOrder.filledAt).to.be.ok
+
+    },
+  )
 
 })
