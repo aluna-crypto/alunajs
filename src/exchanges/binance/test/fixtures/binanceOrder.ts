@@ -32,6 +32,31 @@ export const BINANCE_RAW_ORDER: IBinanceOrderSchema = {
   origQuoteOrderQty: '0.000000',
 }
 
+export const BINANCE_RAW_MARKET_ORDER: IBinanceOrderSchema = {
+  symbol: 'LTCBTC',
+  orderId: 29383586,
+  orderListId: -1,
+  clientOrderId: '46RtpeZf1UIjLpOIFaelrz',
+  transactTime: 1645010853101,
+  price: '0.00000000',
+  origQty: '4.00000000',
+  executedQty: '4.00000000',
+  cummulativeQuoteQty: '20.75200000',
+  status: 'FILLED' as BinanceOrderStatusEnum,
+  timeInForce: 'GTC',
+  type: BinanceOrderTypeEnum.MARKET,
+  side: BinanceSideEnum.BUY,
+  fills: [
+    {
+      price: '5.18800000',
+      qty: '4.00000000',
+      commission: '0.00400000',
+      commissionAsset: 'LTCBTC',
+      tradeId: 6683951,
+    },
+  ],
+}
+
 export const BINANCE_PARSED_ORDER: IAlunaOrderSchema = {
   id: 1,
   symbolPair: 'LTCBTC',
