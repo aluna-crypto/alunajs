@@ -18,13 +18,13 @@ export interface IBinanceOrderSchema {
   timeInForce: string
   type: BinanceOrderTypeEnum
   side: BinanceSideEnum
-  stopPrice: string
-  icebergQty: string
+  stopPrice?: string
+  icebergQty?: string
   time?: number
   updateTime?: number
   transactTime?: number
-  isWorking: boolean
-  origQuoteOrderQty: string
+  isWorking?: boolean
+  origQuoteOrderQty?: string
   fills?: IBinanceOrderFills[]
 }
 
