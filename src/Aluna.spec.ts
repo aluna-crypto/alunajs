@@ -55,7 +55,7 @@ describe('Aluna', () => {
       })
 
       bittrex = Aluna.new({
-        exchangeId: 'bitfinex',
+        exchangeId: 'bittrex',
         keySecret: {
           key: 'key',
           secret: 'secret',
