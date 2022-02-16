@@ -70,9 +70,9 @@ export class GateioOrderParser {
       status: orderStatus,
       type: GateioOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),
-      meta: rawOrder,
       filledAt,
       canceledAt,
+      meta: rawOrder,
     }
 
     return parsedOrder
