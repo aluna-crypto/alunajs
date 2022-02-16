@@ -32,11 +32,24 @@ export class BinanceOrderParser {
       status,
       updateTime,
       transactTime,
+      fills,
     } = rawOrder
 
     const updatedAt = updateTime ? new Date(updateTime) : undefined
     const amount = parseFloat(origQty)
-    const rate = parseFloat(price)
+
+    /**
+     * It seems Binance does not return the price for filled orders, but it does
+     * return a 'fills' prop when the placed order is filled immediately.
+     */
+    let rate = parseFloat(price)
+
+    if (fills?.length) {
+
+      rate = parseFloat(fills[0].price)
+
+
+    }
 
     const orderStatus = BinanceStatusAdapter.translateToAluna({ from: status })
 
@@ -66,7 +79,15 @@ export class BinanceOrderParser {
 
     if (orderStatus === AlunaOrderStatusEnum.FILLED) {
 
-      filledAt = updatedAt
+      if (fills?.length) {
+
+        filledAt = new Date()
+
+      } else {
+
+        filledAt = updatedAt
+
+      }
 
     }
 
