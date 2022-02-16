@@ -67,12 +67,11 @@ export class BittrexOrderParser {
 
     }
 
-    const isClosedStatus = status === BittrexOrderStatusEnum.CLOSED
+    const isClosed = status === BittrexOrderStatusEnum.CLOSED
+    const isCanceled = orderStatus === AlunaOrderStatusEnum.CANCELED
+    const isPartFilled = orderStatus === AlunaOrderStatusEnum.PARTIALLY_FILLED
 
-    if (orderStatus === AlunaOrderStatusEnum.CANCELED
-        || (orderStatus === AlunaOrderStatusEnum.PARTIALLY_FILLED
-          && isClosedStatus)
-    ) {
+    if (isCanceled || (isPartFilled && isClosed)) {
 
       canceledAt = new Date(closedAt)
 
@@ -92,9 +91,9 @@ export class BittrexOrderParser {
       status: orderStatus,
       type: BittrexOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),
-      meta: rawOrder,
       filledAt,
       canceledAt,
+      meta: rawOrder,
     }
 
     return parsedOrder
