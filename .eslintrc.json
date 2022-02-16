@@ -23,7 +23,7 @@
   "rules": {
     "camelcase": "off",
     "no-shadow": "off",
-    "no-console": "off",
+    "no-console": "warn",
     "arrow-body-style": "off",
     "no-use-before-define": "off",
     "class-methods-use-this": "off",

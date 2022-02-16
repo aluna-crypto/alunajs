@@ -34,6 +34,8 @@ describe('BitfinexAccountsAdapter', () => {
 
   it('should properly translate Aluna account to Bitfinex account', () => {
 
+    let error
+
     expect(BitfinexAccountsAdapter.translateToBitfinex({
       from: AlunaAccountEnum.EXCHANGE,
     })).to.be.eq(BitfinexAccountsEnum.EXCHANGE)
@@ -58,13 +60,13 @@ describe('BitfinexAccountsAdapter', () => {
 
     } catch (err) {
 
-      const error: AlunaError = err
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Account not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Account not supported: ${notSupported}`)
 
   })
 

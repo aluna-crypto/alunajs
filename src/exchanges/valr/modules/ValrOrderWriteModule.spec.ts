@@ -332,6 +332,8 @@ describe('ValrOrderWriteModule', () => {
 
   it('should ensure given account is one of AlunaAccountEnum', async () => {
 
+    let error
+
     ImportMock.mockOther(
       ValrSpecs,
       'accounts',
@@ -348,18 +350,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not found`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not found`
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given account is supported', async () => {
+
+    let error
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -384,18 +390,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not supported/implemented for Varl`
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given account is implemented', async () => {
+
+    let error
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -420,18 +430,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not supported/implemented for Varl`
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given account has orderTypes property', async () => {
+
+    let error
 
     ImportMock.mockOther(
       ValrSpecs,
@@ -457,18 +471,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Account type '${account}' not supported/implemented for Varl`
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure account orderTypes has given order type', async () => {
+
+    let error
 
     const accountIndex = ValrSpecs.accounts.findIndex(
       (e) => e.type === AlunaAccountEnum.EXCHANGE,
@@ -499,18 +517,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Order type '${type}' not supported/implemented for Varl`
+
+    expect(error).to.be.ok
+
+    const { message } = error as AlunaError
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given order type is supported', async () => {
+
+    let error
 
     const accountIndex = ValrSpecs.accounts.findIndex(
       (e) => e.type === AlunaAccountEnum.EXCHANGE,
@@ -541,18 +563,22 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+    const msg = `Order type '${type}' not supported/implemented for Varl`
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given order type is implemented', async () => {
+
+    let error
 
     const accountIndex = ValrSpecs.accounts.findIndex(
       (e) => e.type === AlunaAccountEnum.EXCHANGE,
@@ -583,18 +609,23 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Varl`
-
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(msg)
+      error = err
 
     }
+
+
+    const msg = `Order type '${type}' not supported/implemented for Varl`
+
+    expect(error instanceof AlunaError).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(msg)
 
   })
 
   it('should ensure given order type has write mode', async () => {
+
+    let error
 
     const accountIndex = ValrSpecs.accounts.findIndex(
       (e) => e.type === AlunaAccountEnum.EXCHANGE,
@@ -625,12 +656,14 @@ describe('ValrOrderWriteModule', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order type '${type}' is in read mode`)
+      error = err
 
     }
+
+    expect(error instanceof AlunaError).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order type '${type}' is in read mode`)
 
   })
 

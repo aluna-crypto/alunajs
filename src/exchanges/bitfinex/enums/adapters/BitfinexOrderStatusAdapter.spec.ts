@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { BitfinexOrderStatusEnum } from '../BitfinexOrderStatusEnum'
 import { BitfinexOrderStatusAdapter } from './BitfinexOrderStatusAdapter'
@@ -10,6 +9,7 @@ import { BitfinexOrderStatusAdapter } from './BitfinexOrderStatusAdapter'
 describe('BitfinexOrderStatusAdapter', () => {
 
   const notSupported = 'not-supported'
+  let error: any
 
   it('should translate Bitfinex order status to Aluna order status', () => {
 
@@ -54,16 +54,21 @@ describe('BitfinexOrderStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+
+    expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
   it('should translate Aluna order status to Bitfinex order status', () => {
+
+    let error
 
     expect(BitfinexOrderStatusAdapter.translateToBitfinex({
       from: AlunaOrderStatusEnum.OPEN,
@@ -89,12 +94,14 @@ describe('BitfinexOrderStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 

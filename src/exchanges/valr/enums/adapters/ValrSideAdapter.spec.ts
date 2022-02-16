@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { ValrSideEnum } from '../ValrSideEnum'
 import { ValrSideAdapter } from './ValrSideAdapter'
@@ -12,6 +11,8 @@ describe('ValrSideAdapter', () => {
   const notSupported = 'not-supported'
 
   it('should properly translate Valr order sides to Aluna order sides', () => {
+
+    let error
 
     expect(ValrSideAdapter.translateToAluna({
       from: ValrSideEnum.BUY,
@@ -29,16 +30,20 @@ describe('ValrSideAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
 
   })
 
   it('should properly translate Aluna order sides to Valr order sides', () => {
+
+    let error
 
     expect(ValrSideAdapter.translateToValr({
       from: AlunaSideEnum.LONG,
@@ -56,12 +61,14 @@ describe('ValrSideAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order side not supported: ${notSupported}`)
 
   })
 

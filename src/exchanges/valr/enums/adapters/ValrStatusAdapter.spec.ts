@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 import { ValrStatusAdapter } from './ValrStatusAdapter'
@@ -12,6 +11,8 @@ describe('ValrStatusAdapter', () => {
   const notSupported = 'not-supported'
 
   it('should translate Valr order status to Aluna order status', () => {
+
+    let error
 
     expect(ValrStatusAdapter.translateToAluna({
       from: ValrOrderStatusEnum.ACTIVE,
@@ -53,16 +54,20 @@ describe('ValrStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
   it('should translate Aluna order status to Valr order status', () => {
+
+    let error
 
     expect(ValrStatusAdapter.translateToValr({
       from: AlunaOrderStatusEnum.OPEN,
@@ -88,12 +93,14 @@ describe('ValrStatusAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error
+    expect(message).to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
