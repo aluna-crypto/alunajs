@@ -31,11 +31,13 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "lodash": "^4.17.21",
     "tslog": "^3.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.18",
     "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.178",
     "@types/node": "^15.3.1",
     "@types/sinon": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "5.4.0",
