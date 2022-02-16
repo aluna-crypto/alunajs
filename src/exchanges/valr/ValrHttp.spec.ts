@@ -373,7 +373,8 @@ describe('ValrHttp', () => {
     expect(digestSpy.calledWith('hex')).to.be.ok
 
     expect(signedHash['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
-    expect(signedHash['X-VALR-SIGNATURE']).to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash['X-VALR-SIGNATURE'])
+    .to.deep.eq(digestSpy.returnValues[0])
     expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
     const signedHash2 = ValrHttp.generateAuthHeader({
@@ -400,6 +401,7 @@ describe('ValrHttp', () => {
       signedHash2['X-VALR-SIGNATURE'],
     ).to.deep.eq(digestSpy.returnValues[1])
     expect(signedHash2['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
+    Sinon.restore()
 
   })
 

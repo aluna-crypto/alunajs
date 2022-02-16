@@ -1,9 +1,9 @@
-import {
-  AlunaSideEnum,
-  IAlunaBalanceModule,
-} from '../../..'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { IFetchTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
+import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import {
+  IAlunaBalanceModule,
+  IFetchTradableBalanceParams,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'

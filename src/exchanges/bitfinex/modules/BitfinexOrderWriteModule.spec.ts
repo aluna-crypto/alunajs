@@ -16,7 +16,10 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
+import {
+  IAlunaExchangeAccountSpecsSchema,
+  IAlunaExchangeOrderOptionsSchema,
+} from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
@@ -928,6 +931,7 @@ describe('BitfinexOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: false,
           implemented: true,
+          orderTypes: [],
         },
       ],
     )
@@ -963,6 +967,7 @@ describe('BitfinexOrderWriteModule', () => {
           type: AlunaAccountEnum.EXCHANGE,
           supported: true,
           implemented: false,
+          orderTypes: [],
         },
       ],
     )
@@ -999,7 +1004,7 @@ describe('BitfinexOrderWriteModule', () => {
           supported: true,
           implemented: true,
           // missing orderTypes property
-        },
+        } as IAlunaExchangeAccountSpecsSchema,
       ],
     )
 

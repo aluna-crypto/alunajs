@@ -54,6 +54,7 @@
     ],
     "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "_" }],
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -116,5 +117,13 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    }
+  ]
 }
