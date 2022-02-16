@@ -1,9 +1,7 @@
-import {
-  AlunaAccountEnum,
-  AlunaOrderStatusEnum,
-  AlunaOrderTypesEnum,
-  AlunaSideEnum,
-} from '../../../..'
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { GateioOrderStatusEnum } from '../../enums/GateioOrderStatusEnum'
 import { GateioOrderTimeInForceEnum } from '../../enums/GateioOrderTimeInForceEnum'
 import { GateioOrderTypeEnum } from '../../enums/GateioOrderTypeEnum'

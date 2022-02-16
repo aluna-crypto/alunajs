@@ -1,4 +1,4 @@
-import { IAlunaMarketSchema } from '../../../../index'
+import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import {
   IGateioMarketSchema,
   IGateioMarketWithCurrency,

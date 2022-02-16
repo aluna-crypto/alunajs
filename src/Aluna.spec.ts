@@ -225,6 +225,30 @@ describe('Aluna', () => {
 
   })
 
+  it('should properly resolve exchange Gateio static class', async () => {
+
+    const exchangeId = Gateio.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(error).not.to.be.ok
+
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
   it('should warn about exchange not supported (static)', async () => {
 
     let god: IAlunaExchangeStatic | undefined

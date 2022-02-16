@@ -1,13 +1,11 @@
-import {
-  AlunaAccountsErrorCodes,
-  AlunaOrderErrorCodes,
-  IAlunaOrderEditParams,
-} from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
+  IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
@@ -71,7 +69,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
       }
 
-      const orderType = orderTypes!.find((o) => o.type === type)
+      const orderType = orderTypes.find((o) => o.type === type)
 
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
