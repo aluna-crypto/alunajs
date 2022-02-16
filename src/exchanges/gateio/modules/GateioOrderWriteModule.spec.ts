@@ -153,19 +153,24 @@ describe('GateioOrderWriteModule', () => {
         // without rate
       }
 
+      let result
+      let error
+
       try {
 
-        await gateioOrderWriteModule.place(placeOrderParams)
+        result = await gateioOrderWriteModule.place(placeOrderParams)
 
       } catch (err) {
 
-        expect(err.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-        expect(err.message)
-          .to.be.eq('A rate is required for limit orders')
-        expect(err.httpStatusCode).to.be.eq(401)
-
+        error = err
 
       }
+
+      expect(result).not.to.be.ok
+      expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+      expect(error.message)
+        .to.be.eq('A rate is required for limit orders')
+      expect(error.httpStatusCode).to.be.eq(401)
 
     })
 
@@ -209,26 +214,31 @@ describe('GateioOrderWriteModule', () => {
       price: placeOrderParams.rate!.toString(),
     }
 
+    let result
+    let error
 
     try {
 
-      await gateioOrderWriteModule.place(placeOrderParams)
+      result = await gateioOrderWriteModule.place(placeOrderParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        url: `${PROD_GATEIO_URL}/spot/orders`,
-        body: requestBody,
-        keySecret,
-      })).to.be.ok
-
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-      expect(err.message).to.be.eq('Something went wrong.')
-      expect(err.httpStatusCode).to.be.eq(500)
-
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      url: `${PROD_GATEIO_URL}/spot/orders`,
+      body: requestBody,
+      keySecret,
+    })).to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+    expect(error.message).to.be.eq('Something went wrong.')
+    expect(error.httpStatusCode).to.be.eq(500)
 
   })
 
@@ -244,20 +254,27 @@ describe('GateioOrderWriteModule', () => {
 
     const account = 'nonexistent'
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account,
       } as unknown as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not found`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not found`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -280,20 +297,27 @@ describe('GateioOrderWriteModule', () => {
 
     const account = AlunaAccountEnum.EXCHANGE
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not supported/implemented for Gateio`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -316,20 +340,27 @@ describe('GateioOrderWriteModule', () => {
 
     const account = AlunaAccountEnum.EXCHANGE
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Account type '${account}' not supported/implemented for Gateio`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -353,21 +384,28 @@ describe('GateioOrderWriteModule', () => {
 
     const type = 'unsupported-type'
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type: type as AlunaOrderTypesEnum,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Gateio`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -395,21 +433,28 @@ describe('GateioOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Gateio`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -437,21 +482,28 @@ describe('GateioOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(msg)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+
+    const msg = `Order type '${type}' not supported/implemented for Gateio`
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(msg)
 
   })
 
@@ -479,19 +531,25 @@ describe('GateioOrderWriteModule', () => {
 
     const type = AlunaOrderTypesEnum.LIMIT
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.place({
+      result = await gateioOrderWriteModule.place({
         account: AlunaAccountEnum.EXCHANGE,
         type,
       } as IAlunaOrderPlaceParams)
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq(`Order type '${type}' is in read mode`)
+      error = err
 
     }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq(`Order type '${type}' is in read mode`)
 
   })
 
