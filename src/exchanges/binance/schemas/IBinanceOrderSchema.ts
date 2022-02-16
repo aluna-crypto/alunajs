@@ -25,7 +25,10 @@ export interface IBinanceOrderSchema {
   transactTime?: number
   isWorking: boolean
   origQuoteOrderQty: string
+  fills?: IBinanceOrderFills[]
 }
+
+
 
 export interface IBinanceOrderRequest {
   side: BinanceSideEnum
@@ -34,4 +37,14 @@ export interface IBinanceOrderRequest {
   quantity: string | number
   price?: string | number
   timeInForce?: BinanceOrderTimeInForceEnum
+}
+
+
+
+export interface IBinanceOrderFills {
+  price: string
+  qty: string
+  commission: string
+  commissionAsset: string
+  tradeId: number
 }
