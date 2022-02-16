@@ -14,7 +14,7 @@ describe('BinanceCurrencyMarketParser', () => {
   it('should parse Binance currency pairs just fine', () => {
 
     const rawMarkets = [...BINANCE_RAW_MARKETS, BINANCE_RAW_MARKET]
-    const rawSymbols = BINANCE_RAW_SYMBOLS.symbols
+    const rawSymbols = BINANCE_RAW_SYMBOLS
 
     const marketWithCurr = BinanceCurrencyMarketParser.parse({
       rawMarkets,
@@ -22,7 +22,7 @@ describe('BinanceCurrencyMarketParser', () => {
     })
 
     expect(rawMarkets.length).to.be.eq(4)
-    expect(rawSymbols.length).to.be.eq(3)
+    expect(rawSymbols.length).to.be.eq(4)
     expect(marketWithCurr.length).to.be.eq(3)
 
     marketWithCurr.forEach((item, index) => {
