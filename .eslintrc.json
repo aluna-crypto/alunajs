@@ -44,7 +44,7 @@
         "ignorePattern": "^import | ^export | implements | extends | `.{30,}`"
       }
     ],
-    "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/no-use-before-define": ["off"],
     "one-var-declaration-per-line": ["error", "always"],
     "@typescript-eslint/no-empty-interface": [
       "error",
@@ -52,8 +52,9 @@
         "allowSingleExtends": true
       }
     ],
-    "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-unused-vars": ["warn", { "varsIgnorePattern": "_" }],
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/naming-convention": [
       "error",
       {
@@ -116,5 +117,13 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.spec.ts"],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "off"
+      }
+    }
+  ]
 }
