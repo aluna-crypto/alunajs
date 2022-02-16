@@ -84,11 +84,13 @@ export const BitfinexSpecs: IAlunaExchangeSchema = {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: false,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: true,
       implemented: false,
+      orderTypes: [],
     },
   ],
 }

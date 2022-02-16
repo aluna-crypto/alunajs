@@ -8,7 +8,10 @@ import {
 
 
 
-const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
+export const PROD_BINANCE_URL = 'https://api.binance.com'
+export const DEV_BINANCE_URL = 'https://testnet.binance.vision'
+
+export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
@@ -41,7 +44,29 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
     type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.READ,
@@ -53,14 +78,14 @@ const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   },
 ]
 
-export const ValrSpecs: IAlunaExchangeSchema = {
-  id: 'valr',
-  name: 'Valr',
-  signupUrl: 'https://www.valr.com/signup',
-  connectApiUrl: 'https://www.valr.com/api-keys/create',
+export const BinanceSpecs: IAlunaExchangeSchema = {
+  id: 'binance',
+  name: 'Binance',
+  signupUrl: 'https://accounts.binance.com/en/register',
+  connectApiUrl: 'https://www.binance.com/en/my/settings/api-management',
   rateLimitingPerMinute: {
-    perApiKey: 180,
-    perIp: 360,
+    perApiKey: 300,
+    perIp: 300,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
@@ -75,12 +100,14 @@ export const ValrSpecs: IAlunaExchangeSchema = {
     },
     {
       type: AlunaAccountEnum.MARGIN,
-      supported: false,
+      supported: true,
+      implemented: false,
       orderTypes: [],
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
+      implemented: false,
       orderTypes: [],
     },
     {

@@ -1,8 +1,6 @@
-import {
-  AlunaAccountEnum,
-  AlunaSideEnum,
-} from '../..'
 import { IAlunaModule } from '../core/IAlunaModule'
+import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 
