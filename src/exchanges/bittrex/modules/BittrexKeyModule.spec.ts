@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { AlunaHttpErrorCodes } from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { BittrexHttp } from '../BittrexHttp'
 import { IBittrexKeySchema } from '../schemas/IBittrexKeySchema'
 import { BittrexKeyModule } from './BittrexKeyModule'

@@ -1,8 +1,10 @@
-import { IAlunaKeyPermissionSchema } from '../../../index'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
-import { IAlunaKeySchema } from '../../../lib/schemas/IAlunaKeySchema'
+import {
+  IAlunaKeyPermissionSchema,
+  IAlunaKeySchema,
+} from '../../../lib/schemas/IAlunaKeySchema'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'

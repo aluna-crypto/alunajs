@@ -1,13 +1,12 @@
-import {
-  AlunaAccountsErrorCodes,
-  AlunaOrderErrorCodes,
-  IAlunaOrderEditParams,
-} from '../../../index'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
+  IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
@@ -74,7 +73,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
       }
 
-      const orderType = orderTypes!.find((o) => o.type === type)
+      const orderType = orderTypes.find((o) => o.type === type)
 
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
@@ -119,7 +118,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
         throw new AlunaError({
           message: 'A rate is required for limit orders',
-          code: AlunaOrderErrorCodes.MISSING_PARAMS,
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
           httpStatusCode: 401,
         })
 
