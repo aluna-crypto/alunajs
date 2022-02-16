@@ -1,5 +1,5 @@
-import { AlunaOrderStatusEnum } from '../../../..'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { Bittrex } from '../../Bittrex'
 import { BittrexOrderTypeAdapter } from '../../enums/adapters/BittrexOrderTypeAdapter'
