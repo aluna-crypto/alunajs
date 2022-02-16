@@ -156,16 +156,21 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     const {
       id,
+      symbolPair,
     } = params
 
     let canceledOrder: IGateioOrderSchema
+
+    const query = new URLSearchParams()
+
+    query.append('currency_pair', symbolPair)
 
     try {
 
       canceledOrder = await GateioHttp.privateRequest<IGateioOrderSchema>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
-          url: `${PROD_GATEIO_URL}/spot/orders/${id}`,
+          url: `${PROD_GATEIO_URL}/spot/orders/${id}?${query.toString()}`,
           keySecret: this.exchange.keySecret,
         },
       )

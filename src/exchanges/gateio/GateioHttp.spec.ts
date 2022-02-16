@@ -23,6 +23,8 @@ describe('GateioHttp', () => {
 
   const dummyData = { data: 'dummy-data' }
 
+  const dummyQuery = 'dummy=dummy'
+
   it('should defaults the http verb to get on public requests', async () => {
 
     const requestSpy = Sinon.spy(async () => dummyData)
@@ -157,11 +159,63 @@ describe('GateioHttp', () => {
       body: dummyBody,
       keySecret: {},
       url: dummyUrl,
+      query: '',
     })).to.be.ok
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
       url: dummyUrl,
+      method: AlunaHttpVerbEnum.POST,
+      data: dummyBody,
+      headers: dummySignedHeaders,
+    }])
+
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+
+  })
+
+  it('should execute private request just fine with query', async () => {
+
+    const requestSpy = Sinon.spy(() => dummyData)
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      GateioHttp,
+      'generateAuthHeader',
+      dummySignedHeaders,
+    )
+
+    const axiosMock = ImportMock.mockFunction(
+      axios,
+      'create',
+      {
+        request: requestSpy,
+      },
+    )
+
+    const urlWithQuery = `${dummyUrl}?${dummyQuery}`
+
+    const responseData = await gateioHttp.privateRequest({
+      verb: AlunaHttpVerbEnum.POST,
+      url: urlWithQuery,
+      body: dummyBody,
+      keySecret: {} as IAlunaKeySecretSchema,
+    })
+
+    expect(axiosMock.callCount).to.be.eq(1)
+
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+    expect(generateAuthHeaderMock.calledWith({
+      verb: AlunaHttpVerbEnum.POST,
+      path: new URL(dummyUrl).pathname,
+      body: dummyBody,
+      keySecret: {},
+      url: urlWithQuery,
+      query: dummyQuery,
+    })).to.be.ok
+
+    expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: urlWithQuery,
       method: AlunaHttpVerbEnum.POST,
       data: dummyBody,
       headers: dummySignedHeaders,

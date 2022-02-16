@@ -525,25 +525,34 @@ describe('GateioOrderWriteModule', () => {
       symbolPair: 'symbol-pair',
     }
 
+    let result
+    let error
+
     try {
 
-      await gateioOrderWriteModule.cancel(cancelParams)
+      result = await gateioOrderWriteModule.cancel(cancelParams)
 
     } catch (err) {
 
-      expect(requestMock.callCount).to.be.eq(1)
-      expect(requestMock.calledWith({
-        verb: AlunaHttpVerbEnum.DELETE,
-        url: `${PROD_GATEIO_URL}/spot/orders/${cancelParams.id}`,
-        keySecret,
-      })).to.be.ok
-
-      expect(err instanceof AlunaError).to.be.ok
-      expect(err.message).to.be.eq('Something went wrong, order not canceled')
-      expect(err.httpStatusCode).to.be.eq(500)
-      expect(err.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+      error = err
 
     }
+
+    const query = new URLSearchParams()
+
+    query.append('currency_pair', cancelParams.symbolPair)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWith({
+      verb: AlunaHttpVerbEnum.DELETE,
+      url: `${PROD_GATEIO_URL}/spot/orders/${cancelParams.id}?${query.toString()}`,
+      keySecret,
+    })).to.be.ok
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message).to.be.eq('Something went wrong, order not canceled')
+    expect(error.httpStatusCode).to.be.eq(500)
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
 

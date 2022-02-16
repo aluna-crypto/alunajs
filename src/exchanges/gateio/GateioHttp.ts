@@ -143,12 +143,15 @@ export const GateioHttp: IAlunaHttp = class {
       keySecret,
     } = params
 
+    const query = url.includes('?') ? url.split('?')[1] : ''
+
     const signedHash = generateAuthHeader({
       verb,
       path: new URL(url).pathname,
       keySecret,
       body,
       url,
+      query,
     })
 
     const requestConfig = {

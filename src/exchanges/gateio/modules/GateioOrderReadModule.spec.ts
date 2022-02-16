@@ -206,11 +206,14 @@ describe('GateioOrderReadModule', () => {
       symbolPair,
     })
 
+    const query = new URLSearchParams()
+
+    query.append('currency_pair', symbolPair)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.includes({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${PROD_GATEIO_URL}/spot/orders/${id}`,
+      url: `${PROD_GATEIO_URL}/spot/orders/${id}?${query.toString()}`,
     })
 
     expect(rawOrder.type).to.be.eq(GateioOrderTypeEnum.LIMIT)

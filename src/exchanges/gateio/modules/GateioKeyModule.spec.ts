@@ -14,8 +14,6 @@ describe('GateioKeyModule', () => {
 
   const gateioKeyModule = GateioKeyModule.prototype
 
-  const dummyAccountId = 'dummy-id'
-
   it('should get permissions from Gateio API key just fine', async () => {
 
     ImportMock.mockOther(
@@ -52,7 +50,6 @@ describe('GateioKeyModule', () => {
     requestMock.onSecondCall().returns(Promise.reject(invalidCurrencyErrorMock))
 
     const { permissions } = await gateioKeyModule.fetchDetails()
-    console.log('🚀 ~ file: GateioKeyModule.spec.ts ~ line 55 ~ it ~ permissions', permissions)
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok

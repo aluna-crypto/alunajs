@@ -77,13 +77,18 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const {
       id,
+      symbolPair,
     } = params
+
+    const query = new URLSearchParams()
+
+    query.append('currency_pair', symbolPair)
 
     GateioLog.info('fetching Gateio order')
 
     const rawOrder = await GateioHttp.privateRequest<IGateioOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${PROD_GATEIO_URL}/spot/orders/${id}`,
+      url: `${PROD_GATEIO_URL}/spot/orders/${id}?${query.toString()}`,
       keySecret: this.exchange.keySecret,
     })
 
