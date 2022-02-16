@@ -14,6 +14,8 @@ describe('BitfinexOrderTypeAdapter', () => {
 
   it('should properly translate Bitfinex order types to Aluna types', () => {
 
+    let error
+
     expect(BitfinexOrderTypeAdapter.translateToAluna({
       from: BitfinexOrderTypesEnum.LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
@@ -78,16 +80,20 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     } catch (err) {
 
-      expect(err instanceof AlunaError).to.be.ok
-
-      const { message } = err as AlunaError
-      expect(message).to.be.eq(`Order type not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+
+    const { message } = error as AlunaError
+    expect(message).to.be.eq(`Order type not supported: ${notSupported}`)
 
   })
 
   it('should properly translate Aluna order types to Bitfinex types', () => {
+
+    let error
 
     expect(BitfinexOrderTypeAdapter.translateToBitfinex({
       from: AlunaOrderTypesEnum.LIMIT,
@@ -158,13 +164,13 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     } catch (err) {
 
-      const error: AlunaError = err
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order type not supported: ${notSupported}`)
+      error = err
 
     }
+
+    expect(error).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order type not supported: ${notSupported}`)
 
   })
 
