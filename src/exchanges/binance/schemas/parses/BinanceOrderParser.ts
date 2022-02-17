@@ -1,11 +1,11 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { ICachedSymbolPairsDictionary } from '../../../../utils/cache/SymbolPairsCache'
 import { Binance } from '../../Binance'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
-import { IBinanceMarketWithCurrency } from '../IBinanceMarketSchema'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
 
 
@@ -14,10 +14,10 @@ export class BinanceOrderParser {
 
   static parse (params: {
     rawOrder: IBinanceOrderSchema,
-    symbolInfo: IBinanceMarketWithCurrency,
+    symbolPairsDictionary: ICachedSymbolPairsDictionary,
   }): IAlunaOrderSchema {
 
-    const { rawOrder, symbolInfo } = params
+    const { rawOrder, symbolPairsDictionary } = params
 
     const exchangeId = Binance.ID
 
@@ -34,6 +34,11 @@ export class BinanceOrderParser {
       transactTime,
       fills,
     } = rawOrder
+
+    const {
+      baseSymbolId,
+      quoteSymbolId,
+    } = symbolPairsDictionary[symbol]
 
     const updatedAt = updateTime ? new Date(updateTime) : undefined
     const amount = parseFloat(origQty)
@@ -98,8 +103,8 @@ export class BinanceOrderParser {
       amount,
       rate,
       exchangeId,
-      baseSymbolId: symbolInfo.baseCurrency,
-      quoteSymbolId: symbolInfo.quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
       side: BinanceSideAdapter.translateToAluna({ from: side }),
       status: orderStatus,
