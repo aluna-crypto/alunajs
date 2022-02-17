@@ -42,7 +42,35 @@ describe('Bitfinex', () => {
     expect(bitfinex.order).to.be.ok
     expect(bitfinex.position).to.be.ok
 
-    // expect(bitfinex.position).not.to.be.ok
+  })
+
+  it('should have property mappings when is provided/setted', async () => {
+
+    const key = 'key'
+    const secret = 'secret'
+    const referralCode = 'myReferral'
+    const mappings = {
+      UST: 'USDT',
+    }
+
+    const bitfinex = new Bitfinex({
+      keySecret: {
+        key,
+        secret,
+      },
+      settings: {
+        referralCode,
+        mappings,
+      },
+    })
+
+    expect(bitfinex.settings!.mappings).to.be.ok
+    expect(bitfinex.settings!.mappings).to.deep.eq(mappings)
+
+    Bitfinex.setMappings!({ mappings })
+
+    expect(Bitfinex.mappings).to.be.ok
+    expect(Bitfinex.mappings).to.be.eq(mappings)
 
   })
 
