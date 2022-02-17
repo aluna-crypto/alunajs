@@ -7,6 +7,7 @@ interface ISymbolMappingResponse {
 
 export class BitfinexSymbolMapping {
 
+
   static translateToAluna (params: {
     symbolPair: string,
     mappings?: Record<string, string>,
@@ -34,12 +35,9 @@ export class BitfinexSymbolMapping {
 
     }
 
-    baseSymbolId = mappings?.[baseSymbolId] || baseSymbolId
-    quoteSymbolId = mappings?.[baseSymbolId] || quoteSymbolId
-
     const translated: ISymbolMappingResponse = {
-      baseSymbolId,
-      quoteSymbolId,
+      baseSymbolId: mappings?.[baseSymbolId] || baseSymbolId,
+      quoteSymbolId: mappings?.[quoteSymbolId] || quoteSymbolId,
     }
 
     return translated
