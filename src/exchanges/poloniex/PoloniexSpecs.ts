@@ -8,7 +8,7 @@ import {
 
 
 
-export const PROD_POLONIEX_URL = 'https://api.poloniex.com/v3'
+export const PROD_POLONIEX_URL = 'https://poloniex.com'
 
 export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
