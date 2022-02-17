@@ -598,6 +598,8 @@ describe('GateioOrderWriteModule', () => {
 
     query.append('currency_pair', cancelParams.symbolPair)
 
+    expect(result).not.to.be.ok
+
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
       verb: AlunaHttpVerbEnum.DELETE,
