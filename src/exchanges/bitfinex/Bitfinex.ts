@@ -48,4 +48,14 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
 
   }
 
+  static setMappings (params: {
+    mappings: Record<string, string>,
+  }) {
+
+    const { mappings } = params
+
+    Bitfinex.mappings = mappings
+
+  }
+
 }
