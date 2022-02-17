@@ -8,6 +8,7 @@ import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { SymbolPairsCache } from '../../../utils/cache/SymbolPairsCache'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -253,12 +254,20 @@ describe('BinanceOrderReadModule', () => {
       'parse',
     )
 
-    const listRawMock = ImportMock.mockFunction(
-      BinanceMarketModule,
-      'listRaw',
-    )
+    const symbolPairsDictionary = {
+      [symbolInfo!.symbol]: {
+        baseCurrencyId: symbolInfo!.baseCurrency,
+        quoteCurrencyId: symbolInfo!.quoteCurrency,
+      },
+    }
 
-    listRawMock.onFirstCall().returns(Promise.resolve(rawMarket))
+    ImportMock.mockFunction(
+      SymbolPairsCache,
+      'getInstance',
+      {
+        get: async () => symbolPairsDictionary,
+      },
+    )
 
     parseMock
       .onFirstCall().returns(BINANCE_PARSED_ORDER)
@@ -266,10 +275,7 @@ describe('BinanceOrderReadModule', () => {
     const parsedOrder1 = await binanceOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({ rawOrder, symbolInfo })).to.be.ok
-
-    expect(listRawMock.callCount).to.be.eq(1)
-    expect(listRawMock.calledWith()).to.be.ok
+    expect(parseMock.calledWith({ rawOrder, symbolPairsDictionary })).to.be.ok
 
     expect(parsedOrder1.symbolPair).to.be.ok
     expect(parsedOrder1.baseSymbolId).to.be.ok
@@ -278,7 +284,6 @@ describe('BinanceOrderReadModule', () => {
     expect(parsedOrder1.amount).to.be.ok
     expect(parsedOrder1.rate).to.be.ok
     expect(parsedOrder1.placedAt).to.be.ok
-
 
     expect(parsedOrder1.exchangeId).to.be.eq(Binance.ID)
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
