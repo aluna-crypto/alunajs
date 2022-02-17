@@ -172,6 +172,8 @@ describe('ValrHttp', () => {
 
   it('should ensure formatRequestError is call on resquest error', async () => {
 
+    let error
+
     const message = 'Dummy error'
 
     const formatRequestErrorSpy = Sinon.spy(
@@ -207,17 +209,17 @@ describe('ValrHttp', () => {
 
     } catch (err) {
 
-      const error = err as AlunaError
-
-      expect(error.message).to.be.eq(message)
-
-      const calledArg = formatRequestErrorSpy.args[0][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(message)
+      error = err
 
     }
+
+    expect(error.message).to.be.eq(message)
+
+    const calledArg1 = formatRequestErrorSpy.args[0][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
+    expect(calledArg1).to.be.ok
+    expect(calledArg1.message).to.be.eq(message)
 
     try {
 
@@ -229,17 +231,17 @@ describe('ValrHttp', () => {
 
     } catch (err) {
 
-      const error = err as AlunaError
-
-      expect(error.message).to.be.eq(message)
-
-      const calledArg = formatRequestErrorSpy.args[1][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-      expect(calledArg).to.be.ok
-      expect(calledArg.message).to.be.eq(message)
+      error = err
 
     }
+
+    expect(error.message).to.be.eq(message)
+
+    const calledArg2 = formatRequestErrorSpy.args[1][0]
+
+    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+    expect(calledArg2).to.be.ok
+    expect(calledArg2.message).to.be.eq(message)
 
   })
 
@@ -374,7 +376,7 @@ describe('ValrHttp', () => {
 
     expect(signedHash['X-VALR-API-KEY']).to.deep.eq(keySecret.key)
     expect(signedHash['X-VALR-SIGNATURE'])
-    .to.deep.eq(digestSpy.returnValues[0])
+      .to.deep.eq(digestSpy.returnValues[0])
     expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
     const signedHash2 = ValrHttp.generateAuthHeader({

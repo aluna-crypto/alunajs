@@ -50,6 +50,9 @@ export class Aluna extends Exchanges {
       case this.Bitfinex.ID:
         return new this.Bitfinex(subParams)
 
+      case this.Bittrex.ID:
+        return new this.Bittrex(subParams)
+
       case this.Valr.ID:
         return new this.Valr(subParams)
 
@@ -91,6 +94,9 @@ export class Aluna extends Exchanges {
 
       case this.Bitfinex.ID:
         return this.Bitfinex
+
+      case this.Bittrex.ID:
+        return this.Bittrex
 
       case this.Valr.ID:
         return this.Valr

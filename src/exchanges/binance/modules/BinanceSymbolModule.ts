@@ -1,13 +1,16 @@
+import {
+  each,
+  values,
+} from 'lodash'
+
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
-import {
-  IBinanceInfoSchema,
-  IBinanceSymbolSchema,
-} from '../schemas/IBinanceSymbolSchema'
+import { IBinanceInfoSchema } from '../schemas/IBinanceInfoSchemas'
+import { IBinanceSymbolSchema } from '../schemas/IBinanceSymbolSchema'
 
 
 
@@ -29,12 +32,11 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     BinanceLog.info('fetching Binance symbols')
 
-    const rawSymbols = await BinanceHttp
-      .publicRequest<IBinanceInfoSchema>({
-        url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
-      })
+    const { publicRequest } = BinanceHttp
 
-    const { symbols } = rawSymbols
+    const { symbols } = await publicRequest<IBinanceInfoSchema>({
+      url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
+    })
 
     return symbols
 
@@ -70,13 +72,39 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbols } = params
 
-    const parsedSymbols = rawSymbols.map((rawSymbol) => {
+    const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-      const parsedSymbol = BinanceSymbolModule.parse({ rawSymbol })
+    each(rawSymbols, (symbolPair) => {
 
-      return parsedSymbol
+      const {
+        baseAsset,
+        quoteAsset,
+      } = symbolPair
+
+      if (!parsedSymbolsDict[baseAsset]) {
+
+        const parsedBaseSymbol = this.parse({ rawSymbol: symbolPair })
+
+        parsedSymbolsDict[baseAsset] = parsedBaseSymbol
+
+      }
+
+      if (!parsedSymbolsDict[quoteAsset]) {
+
+        const parsedQuoteSymbol = this.parse({
+          rawSymbol: {
+            ...symbolPair,
+            baseAsset: symbolPair.quoteAsset,
+          },
+        })
+
+        parsedSymbolsDict[quoteAsset] = parsedQuoteSymbol
+
+      }
 
     })
+
+    const parsedSymbols = values(parsedSymbolsDict)
 
     BinanceLog.info(`parsed ${parsedSymbols.length} symbols for Binance`)
 

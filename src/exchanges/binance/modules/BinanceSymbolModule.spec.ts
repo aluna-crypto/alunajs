@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { Binance } from '../Binance'
@@ -19,24 +20,13 @@ describe('BinanceSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'publicRequest',
-      Promise.resolve(BINANCE_RAW_SYMBOLS),
+      Promise.resolve({ symbols: BINANCE_RAW_SYMBOLS }),
     )
 
     const rawSymbols = await BinanceSymbolModule.listRaw()
 
-    expect(rawSymbols.length).to.eq(3)
-    expect(rawSymbols).to.deep.eq(BINANCE_RAW_SYMBOLS.symbols)
-
-    for (let index = 0; index < 3; index += 1) {
-
-      expect(rawSymbols[index].symbol)
-        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].symbol)
-      expect(rawSymbols[index].baseAsset)
-        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].baseAsset)
-      expect(rawSymbols[index].quoteAsset)
-        .to.be.eq(BINANCE_RAW_SYMBOLS.symbols[index].quoteAsset)
-
-    }
+    expect(rawSymbols.length).to.eq(4)
+    expect(rawSymbols).to.deep.eq(BINANCE_RAW_SYMBOLS)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -61,15 +51,8 @@ describe('BinanceSymbolModule', () => {
 
     const rawSymbols = await BinanceSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(3)
+    expect(rawSymbols.length).to.eq(5)
     expect(rawSymbols).to.deep.eq(BINANCE_PARSED_SYMBOLS)
-
-    for (let index = 0; index < 3; index += 1) {
-
-      expect(rawSymbols[index].exchangeId).to.be.eq(Binance.ID)
-      expect(rawSymbols[index].id).to.be.eq(BINANCE_PARSED_SYMBOLS[index].id)
-
-    }
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -85,18 +68,18 @@ describe('BinanceSymbolModule', () => {
   it('should parse a Binance symbol just fine', async () => {
 
     const parsedSymbol1 = BinanceSymbolModule.parse({
-      rawSymbol: BINANCE_RAW_SYMBOLS.symbols[1],
+      rawSymbol: BINANCE_RAW_SYMBOLS[1],
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbol1.id).to.be.eq(BINANCE_RAW_SYMBOLS.symbols[1].baseAsset)
+    expect(parsedSymbol1.id).to.be.eq(BINANCE_RAW_SYMBOLS[1].baseAsset)
 
     const parsedSymbol2 = BinanceSymbolModule.parse({
-      rawSymbol: BINANCE_RAW_SYMBOLS.symbols[2],
+      rawSymbol: BINANCE_RAW_SYMBOLS[2],
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbol2.id).to.be.eq(BINANCE_RAW_SYMBOLS.symbols[2].baseAsset)
+    expect(parsedSymbol2.id).to.be.eq(BINANCE_RAW_SYMBOLS[2].baseAsset)
 
   })
 
@@ -109,29 +92,19 @@ describe('BinanceSymbolModule', () => {
       'parse',
     )
 
-    const rawSymbol = BINANCE_RAW_SYMBOLS.symbols[0]
+    each(BINANCE_PARSED_SYMBOLS, (parsed, i) => {
 
-    parseMock
-      .onFirstCall()
-      .returns(BINANCE_PARSED_SYMBOLS[0])
-      .onSecondCall()
-      .returns(BINANCE_PARSED_SYMBOLS[1])
-      .onThirdCall()
-      .returns(BINANCE_PARSED_SYMBOLS[2])
+      parseMock.onCall(i).returns(parsed)
 
-    const parsedSymbols = BinanceSymbolModule.parseMany({
-      rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 
-    for (let index = 0; index < 3; index += 1) {
+    const parsedSymbols = BinanceSymbolModule.parseMany({
+      rawSymbols: BINANCE_RAW_SYMBOLS,
+    })
 
-      expect(parsedSymbols[index].exchangeId).to.be.eq(Binance.ID)
-      expect(parsedSymbols[index].id).to.be.eq(BINANCE_PARSED_SYMBOLS[index].id)
+    expect(parsedSymbols).to.deep.eq(BINANCE_PARSED_SYMBOLS)
 
-    }
-
-    expect(parseMock.callCount).to.be.eq(3)
-    expect(parseMock.calledWith({ rawSymbol }))
+    expect(parseMock.callCount).to.be.eq(5)
 
   })
 

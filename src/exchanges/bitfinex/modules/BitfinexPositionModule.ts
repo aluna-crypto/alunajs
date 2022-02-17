@@ -5,7 +5,6 @@ import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorC
 import {
   IAlunaPositionCloseParams,
   IAlunaPositionGetParams,
-  IAlunaPositionListParams,
   IAlunaPositionModule,
 } from '../../../lib/modules/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
@@ -18,11 +17,9 @@ import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParse
 
 export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositionModule {
 
-  async list (
-    params?: IAlunaPositionListParams,
-  ): Promise<IAlunaPositionSchema[]> {
+  async list (): Promise<IAlunaPositionSchema[]> {
 
-    const rawPositions = await this.listRaw(params)
+    const rawPositions = await this.listRaw()
 
     const parsedPositions = this.parseMany({ rawPositions })
 
@@ -30,9 +27,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   }
 
-  async listRaw (
-    params?: IAlunaPositionListParams,
-  ): Promise<IBitfinexPositionSchema[]> {
+  async listRaw (): Promise<IBitfinexPositionSchema[]> {
 
     const { privateRequest } = BitfinexHttp
 
