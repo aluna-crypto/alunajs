@@ -41,6 +41,10 @@ export interface IAlunaExchangeStatic {
   ID: string
   SPECS: IAlunaExchangeSchema
 
+  setMappings?: (params: { mappings: Record<string, string> }) => void
+
+  mappings?: Record<string, string>
+
   // static public modules
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
