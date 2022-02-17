@@ -29,7 +29,12 @@ describe('BinanceOrderParser', () => {
 
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
-      symbolInfo: symbolInfo!,
+      symbolPairsDictionary: {
+        [symbolInfo!.symbol]: {
+          baseSymbolId: symbolInfo!.baseCurrency,
+          quoteSymbolId: symbolInfo!.quoteCurrency,
+        },
+      },
     })
 
     const rawOriginalQuantity = parseFloat(rawOrder.origQty)
@@ -73,7 +78,12 @@ describe('BinanceOrderParser', () => {
 
       const parsedOrder = BinanceOrderParser.parse({
         rawOrder,
-        symbolInfo: symbolInfo!,
+        symbolPairsDictionary: {
+          [symbolInfo!.symbol]: {
+            baseSymbolId: symbolInfo!.baseCurrency,
+            quoteSymbolId: symbolInfo!.quoteCurrency,
+          },
+        },
       })
 
       expect(parsedOrder.placedAt.getTime())
@@ -101,7 +111,12 @@ describe('BinanceOrderParser', () => {
 
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
-      symbolInfo: symbolInfo!,
+      symbolPairsDictionary: {
+        [symbolInfo!.symbol]: {
+          baseSymbolId: symbolInfo!.baseCurrency,
+          quoteSymbolId: symbolInfo!.quoteCurrency,
+        },
+      },
     })
 
     expect(parsedOrder.placedAt.getTime())
@@ -123,9 +138,16 @@ describe('BinanceOrderParser', () => {
     rawOrder.updateTime = new Date().getTime()
     rawOrder.status = BinanceOrderStatusEnum.CANCELED
 
+    const symbolPairsDictionary = {
+      [symbolInfo!.symbol]: {
+        baseSymbolId: symbolInfo!.baseCurrency,
+        quoteSymbolId: symbolInfo!.quoteCurrency,
+      },
+    }
+
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
-      symbolInfo: symbolInfo!,
+      symbolPairsDictionary,
     })
 
     const updatedAt = new Date(rawOrder.updateTime).getTime()
@@ -137,7 +159,7 @@ describe('BinanceOrderParser', () => {
 
     const parsedOrder2 = BinanceOrderParser.parse({
       rawOrder,
-      symbolInfo: symbolInfo!,
+      symbolPairsDictionary,
     })
 
     expect(parsedOrder2.filledAt?.getTime())
@@ -159,7 +181,12 @@ describe('BinanceOrderParser', () => {
 
       const parsedOrder = BinanceOrderParser.parse({
         rawOrder,
-        symbolInfo: symbolInfo!,
+        symbolPairsDictionary: {
+          [symbolInfo!.symbol]: {
+            baseSymbolId: symbolInfo!.baseCurrency,
+            quoteSymbolId: symbolInfo!.quoteCurrency,
+          },
+        },
       })
 
       expect(parsedOrder.rate).to.be.eq(Number(rawOrder.fills![0].price))
