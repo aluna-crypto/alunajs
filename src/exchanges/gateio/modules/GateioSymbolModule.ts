@@ -28,7 +28,7 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     const rawSymbols = await GateioHttp
       .publicRequest<IGateioSymbolSchema[]>({
-        url: `${PROD_GATEIO_URL}/spot/currency_pairs`,
+        url: `${PROD_GATEIO_URL}/spot/currencies`,
       })
 
     return rawSymbols
@@ -44,11 +44,11 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
     const { rawSymbol } = params
 
     const {
-      base,
+      currency,
     } = rawSymbol
 
     const parsedSymbol = {
-      id: base,
+      id: currency,
       exchangeId: Gateio.ID,
       meta: rawSymbol,
     }

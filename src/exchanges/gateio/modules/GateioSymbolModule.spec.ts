@@ -29,12 +29,18 @@ describe('GateioSymbolModule', () => {
 
     for (let index = 0; index < 4; index += 1) {
 
-      expect(rawSymbols[index].id)
-        .to.be.eq(GATEIO_RAW_SYMBOLS[index].id)
-      expect(rawSymbols[index].base)
-        .to.be.eq(GATEIO_RAW_SYMBOLS[index].base)
-      expect(rawSymbols[index].quote)
-        .to.be.eq(GATEIO_RAW_SYMBOLS[index].quote)
+      expect(rawSymbols[index].withdraw_delayed)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].withdraw_delayed)
+      expect(rawSymbols[index].withdraw_disabled)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].withdraw_disabled)
+      expect(rawSymbols[index].trade_disabled)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].trade_disabled)
+      expect(rawSymbols[index].deposit_disabled)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].deposit_disabled)
+      expect(rawSymbols[index].delisted)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].delisted)
+      expect(rawSymbols[index].currency)
+        .to.be.eq(GATEIO_RAW_SYMBOLS[index].currency)
 
     }
 
@@ -89,14 +95,14 @@ describe('GateioSymbolModule', () => {
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Gateio.ID)
-    expect(parsedSymbol1.id).to.be.eq(GATEIO_RAW_SYMBOLS[1].base)
+    expect(parsedSymbol1.id).to.be.eq(GATEIO_RAW_SYMBOLS[1].currency)
 
     const parsedSymbol2 = GateioSymbolModule.parse({
       rawSymbol: GATEIO_RAW_SYMBOLS[2],
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Gateio.ID)
-    expect(parsedSymbol2.id).to.be.eq(GATEIO_RAW_SYMBOLS[2].base)
+    expect(parsedSymbol2.id).to.be.eq(GATEIO_RAW_SYMBOLS[2].currency)
 
   })
 

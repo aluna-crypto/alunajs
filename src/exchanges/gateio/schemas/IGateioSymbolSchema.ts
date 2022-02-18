@@ -1,13 +1,8 @@
 export interface IGateioSymbolSchema {
-  id: string
-  base: string
-  quote: string
-  fee: string
-  min_base_amount: string
-  min_quote_amount: string
-  amount_precision: number
-  precision: number
-  trade_status: string
-  sell_start: number
-  buy_start: number
+  currency: string
+  delisted: boolean
+  withdraw_disabled: boolean
+  withdraw_delayed: boolean
+  deposit_disabled: boolean
+  trade_disabled: boolean
 }
