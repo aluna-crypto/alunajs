@@ -10,6 +10,7 @@ import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorC
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
+import { BitfinexSymbolMapping } from '../mappings/BitfinexSymbolMapping'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 import {
   BITFINEX_PARSED_POSITIONS,
@@ -32,7 +33,7 @@ describe('BitfinexPositionModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     exchangeMock = ImportMock.mockOther(
       bitfinexPositionModule,
@@ -43,8 +44,6 @@ describe('BitfinexPositionModule', () => {
     return { exchangeMock }
 
   }
-
-  beforeEach(mockKeySecret)
 
 
   const mockRequest = (requestResponse: any) => {
@@ -94,6 +93,8 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly list Bitfinex raw positions', async () => {
 
+    mockExchange()
+
     const { requestMock } = mockRequest(BITFINEX_RAW_POSITIONS)
 
     const rawPositions = await bitfinexPositionModule.listRaw()
@@ -139,12 +140,47 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly parse a Bitfinex raw position', () => {
 
+    const { exchangeMock } = mockExchange()
+
+    const mappings = {
+      UST: 'USDT',
+    }
+
+    const baseSymbolId = 'UST'
+    const quoteSymbolId = 'UCT'
+
+    ImportMock.mockFunction(
+      BitfinexSymbolMapping,
+      'translateToAluna',
+      {
+        baseSymbolId,
+        quoteSymbolId,
+      },
+    )
+
     const { parserMock } = mockedBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
       false,
     )
 
     BITFINEX_RAW_POSITIONS.forEach((rawPosition, i) => {
+
+      if (i % 3 !== 0) {
+
+        exchangeMock.set({
+          keySecret,
+          settings: {
+            mappings,
+          },
+        })
+
+      } else {
+
+        exchangeMock.set({
+          keySecret,
+        })
+
+      }
 
       // skipping 'derivatives' and 'funding'
       if (/^(f)|(F0)/.test(rawPosition[0])) {
@@ -160,6 +196,8 @@ describe('BitfinexPositionModule', () => {
       expect(BITFINEX_PARSED_POSITIONS).to.includes(parsedPosition)
       expect(parserMock.args[i][0]).to.deep.eq({
         rawPosition,
+        baseSymbolId,
+        quoteSymbolId,
       })
 
     })
@@ -201,6 +239,8 @@ describe('BitfinexPositionModule', () => {
   })
 
   it('should properly get a Bitfinex raw position', async () => {
+
+    mockExchange()
 
     const mockedRawPosition = [BITFINEX_RAW_POSITIONS[0]]
 
@@ -253,6 +293,8 @@ describe('BitfinexPositionModule', () => {
   })
 
   it('should properly close Bitfinex position', async () => {
+
+    mockExchange()
 
     const mockedParsedPosition = BITFINEX_PARSED_POSITIONS[1]
 
@@ -322,6 +364,8 @@ describe('BitfinexPositionModule', () => {
 
   it('should return error if position could not be closed', async () => {
 
+    mockExchange()
+
     let error
     let result
 
@@ -340,6 +384,8 @@ describe('BitfinexPositionModule', () => {
       })
 
     } catch (err) {
+
+      console.log(err)
 
       error = err
 
