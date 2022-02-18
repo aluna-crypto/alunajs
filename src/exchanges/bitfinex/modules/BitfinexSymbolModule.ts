@@ -5,7 +5,6 @@ import { BitfinexLog } from '../BitfinexLog'
 import {
   IBitfinexSymbolSchema,
   TBitfinexCurrencyLabel,
-  TBitfinexCurrencySym,
 } from '../schemas/IBitfinexSymbolSchema'
 import { BitfinexSymbolParser } from '../schemas/parsers/BitfinexSymbolParser'
 
@@ -14,7 +13,6 @@ import { BitfinexSymbolParser } from '../schemas/parsers/BitfinexSymbolParser'
 export interface IBitfinexParseSymbolParams {
   bitfinexCurrency: string
   bitfinexCurrencyLabel: TBitfinexCurrencyLabel | undefined
-  bitfinexSym: TBitfinexCurrencySym | undefined
 }
 
 
@@ -23,7 +21,6 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
   static currenciesPath = 'pub:list:currency'
   static labelsPath = 'pub:map:currency:label'
-  static currenciesSymsPath = 'pub:map:currency:sym'
 
   public static async list (): Promise<IAlunaSymbolSchema[]> {
 
@@ -44,7 +41,6 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
     const baseUrl = 'https://api-pub.bitfinex.com/v2/conf/'
 
     const url = `${baseUrl}${this.currenciesPath},${this.labelsPath}`
-      .concat(`,${this.currenciesSymsPath}`)
 
     const rawSymbols = publicRequest<IBitfinexSymbolSchema>({
       url,
@@ -75,25 +71,15 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
     const [
       symbolsIds,
       symbolsLabels,
-      currencySyms,
     ] = rawSymbols
 
     const currencyLabelsDict: Record<string, TBitfinexCurrencyLabel> = {}
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
 
     symbolsLabels.forEach((currencyLabel) => {
 
       const [bitfinexSymbolId] = currencyLabel
 
       currencyLabelsDict[bitfinexSymbolId] = currencyLabel
-
-    })
-
-    currencySyms.forEach((currencySym) => {
-
-      const [bitfinexSymbolId] = currencySym
-
-      currencySymsDict[bitfinexSymbolId] = currencySym
 
     })
 
@@ -109,7 +95,6 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
       const rawSymbol: IBitfinexParseSymbolParams = {
         bitfinexCurrency,
         bitfinexCurrencyLabel: currencyLabelsDict[bitfinexCurrency],
-        bitfinexSym: currencySymsDict[bitfinexCurrency],
       }
 
       const parsedSymbol = BitfinexSymbolModule.parse({ rawSymbol })
