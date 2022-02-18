@@ -10,10 +10,15 @@ describe('BitfinexBalanceParser', () => {
 
   it('should parse Bitfinex balance just fine', async () => {
 
+    const customSymbols = {
+      BTC: 'FakeBTC',
+    }
+
     BITFINEX_RAW_BALANCES.forEach((rawBalance) => {
 
       const parsedBalance = BitfinexBalanceParser.parse({
         rawBalance,
+        customCurrency: customSymbols[rawBalance[1]],
       })
 
       const [
@@ -38,7 +43,7 @@ describe('BitfinexBalanceParser', () => {
 
       expect(account).to.be.eq(translatedAccount)
 
-      expect(symbolId).to.be.eq(currency)
+      expect(symbolId).to.be.eq(customSymbols[currency] || currency)
 
       expect(available).to.be.eq(availableBalance)
       expect(total).to.be.eq(balance)
