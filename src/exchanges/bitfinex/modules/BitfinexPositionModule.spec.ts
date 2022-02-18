@@ -385,8 +385,6 @@ describe('BitfinexPositionModule', () => {
 
     } catch (err) {
 
-      console.log(err)
-
       error = err
 
     }
