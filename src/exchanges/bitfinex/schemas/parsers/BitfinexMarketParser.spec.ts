@@ -5,8 +5,6 @@ import {
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
   BITFINEX_RAW_TICKERS,
 } from '../../test/fixtures/bitfinexMarkets'
-import { BITFINEX_CURRENCIES_SYMS } from '../../test/fixtures/bitfinexSymbols'
-import { TBitfinexCurrencySym } from '../IBitfinexSymbolSchema'
 import { BitfinexMarketParser } from './BitfinexMarketParser'
 
 
@@ -15,14 +13,13 @@ describe('BitfinexMarketParser', () => {
 
   it('should parse Bitfinex raw market just fine', async () => {
 
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
+    const mappings = {
+      UST: 'USDT',
+    }
+
+    Bitfinex.setMappings!({ mappings })
+
     const enabledMarginMarketsDict: Record<string, string> = {}
-
-    BITFINEX_CURRENCIES_SYMS.forEach((s) => {
-
-      currencySymsDict[s[0]] = s
-
-    })
 
     BITFINEX_MARGIN_ENABLED_CURRENCIES.forEach((c) => {
 
@@ -34,7 +31,6 @@ describe('BitfinexMarketParser', () => {
 
       const parsedMarket = BitfinexMarketParser.parse({
         rawTicker,
-        currencySymsDict,
         enabledMarginMarketsDict,
       })
 
@@ -57,21 +53,16 @@ describe('BitfinexMarketParser', () => {
 
       }
 
-      baseSymbolId = currencySymsDict[baseSymbolId]
-        ? currencySymsDict[baseSymbolId][1].toUpperCase()
-        : baseSymbolId
-
-      quoteSymbolId = currencySymsDict[quoteSymbolId]
-        ? currencySymsDict[quoteSymbolId][1].toUpperCase()
-        : quoteSymbolId
+      const expectedBaseSymbolId = mappings[baseSymbolId] || baseSymbolId
+      const expectedQuoteSymbolId = mappings[quoteSymbolId] || quoteSymbolId
 
       const isMarginEnabled = !!enabledMarginMarketsDict[rawTicker[0].slice(1)]
 
       expect(parsedMarket.exchangeId).to.be.eq(Bitfinex.ID)
 
       expect(parsedMarket.symbolPair).to.be.eq(rawTicker[0])
-      expect(parsedMarket.baseSymbolId).to.be.eq(baseSymbolId)
-      expect(parsedMarket.quoteSymbolId).to.be.eq(quoteSymbolId)
+      expect(parsedMarket.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+      expect(parsedMarket.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
 
       expect(parsedMarket.spotEnabled).to.be.ok
       expect(parsedMarket.marginEnabled).to.be.eq(isMarginEnabled)
