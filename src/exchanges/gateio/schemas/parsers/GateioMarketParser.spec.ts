@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { Gateio } from '../../Gateio'
-import { GATEIO_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/gateioMarket'
+import { GATEIO_RAW_MARKETS } from '../../test/fixtures/gateioMarket'
 import { GateioMarketParser } from './GateioMarketParser'
 
 
@@ -11,7 +11,7 @@ describe('GateioMarketParser', () => {
 
   it('should parse Gateio market just fine', async () => {
 
-    const rawMarket = GATEIO_RAW_MARKETS_WITH_CURRENCY[0]
+    const rawMarket = GATEIO_RAW_MARKETS[0]
 
     const parsedMarket = GateioMarketParser.parse({
       rawMarket,
@@ -43,10 +43,15 @@ describe('GateioMarketParser', () => {
       quoteVolume,
     } = ticker
 
+
+    const splittedSymbol = rawMarket.currency_pair.split('_')
+    const baseCurrency = splittedSymbol[0]
+    const quoteCurrency = splittedSymbol[1]
+
     expect(exchangeId).to.be.eq(Gateio.ID)
     expect(symbolPair).to.be.eq(rawMarket.currency_pair)
-    expect(baseSymbolId).to.be.eq(rawMarket.baseCurrency)
-    expect(quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)
+    expect(baseSymbolId).to.be.eq(baseCurrency)
+    expect(quoteSymbolId).to.be.eq(quoteCurrency)
 
     expect(high).to.be.eq(parseFloat(rawMarket.high_24h))
     expect(low).to.be.eq(parseFloat(rawMarket.low_24h))

@@ -3,18 +3,14 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
-import {
-  IGateioMarketSchema,
-  IGateioMarketWithCurrency,
-} from '../schemas/IGateioMarketSchema'
-import { GateioCurrencyMarketParser } from '../schemas/parsers/GateioCurrencyMarketParser'
+import { IGateioMarketSchema } from '../schemas/IGateioMarketSchema'
 import { GateioMarketParser } from '../schemas/parsers/GateioMarketParser'
 
 
 
 export const GateioMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IGateioMarketWithCurrency[]> {
+  public static async listRaw (): Promise<IGateioMarketSchema[]> {
 
     const { publicRequest } = GateioHttp
 
@@ -24,11 +20,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
       url: `${PROD_GATEIO_URL}/spot/tickers`,
     })
 
-    const rawMarketsWithCurrency = GateioCurrencyMarketParser.parse({
-      rawMarkets,
-    })
-
-    return rawMarketsWithCurrency
+    return rawMarkets
 
   }
 
@@ -47,7 +39,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
 
   public static parse (params: {
-    rawMarket: IGateioMarketWithCurrency,
+    rawMarket: IGateioMarketSchema,
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params
@@ -61,7 +53,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
 
   public static parseMany (params: {
-    rawMarkets: IGateioMarketWithCurrency[],
+    rawMarkets: IGateioMarketSchema[],
   }): IAlunaMarketSchema[] {
 
     const { rawMarkets } = params

@@ -5,11 +5,10 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
-import { GateioCurrencyMarketParser } from '../schemas/parsers/GateioCurrencyMarketParser'
 import { GateioMarketParser } from '../schemas/parsers/GateioMarketParser'
 import {
   GATEIO_PARSED_MARKETS,
-  GATEIO_RAW_MARKETS_WITH_CURRENCY,
+  GATEIO_RAW_MARKETS,
 } from '../test/fixtures/gateioMarket'
 import { GateioMarketModule } from './GateioMarketModule'
 
@@ -20,8 +19,6 @@ describe('GateioMarketModule', () => {
 
   it('should list Gateio raw markets just fine', async () => {
 
-    const rawMarkets = 'rawMarkets'
-
     const marketsURL = `${PROD_GATEIO_URL}/spot/tickers`
 
     const requestMock = ImportMock.mockFunction(
@@ -30,28 +27,15 @@ describe('GateioMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(Promise.resolve(rawMarkets))
-
-    const currecyMarketParserMock = ImportMock.mockFunction(
-      GateioCurrencyMarketParser,
-      'parse',
-      GATEIO_RAW_MARKETS_WITH_CURRENCY,
-    )
-
+      .onFirstCall().returns(Promise.resolve(GATEIO_RAW_MARKETS))
 
     const response = await GateioMarketModule.listRaw()
-
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.firstCall.calledWith({ url: marketsURL })).to.be.ok
 
-    expect(currecyMarketParserMock.callCount).to.be.eq(1)
-    expect(currecyMarketParserMock.calledWith({
-      rawMarkets,
-    })).to.be.ok
-
     expect(response.length).to.eq(4)
-    expect(response).to.deep.eq(GATEIO_RAW_MARKETS_WITH_CURRENCY)
+    expect(response).to.deep.eq(GATEIO_RAW_MARKETS)
 
   })
 
@@ -99,7 +83,7 @@ describe('GateioMarketModule', () => {
       parsedMarketMock,
     )
 
-    const rawMarketWithCurrency = GATEIO_RAW_MARKETS_WITH_CURRENCY[0]
+    const rawMarketWithCurrency = GATEIO_RAW_MARKETS[0]
 
     const market: IAlunaMarketSchema = GateioMarketModule.parse({
       rawMarket: rawMarketWithCurrency,
@@ -172,7 +156,7 @@ describe('GateioMarketModule', () => {
 
 
     const markets: IAlunaMarketSchema[] = GateioMarketModule.parseMany({
-      rawMarkets: GATEIO_RAW_MARKETS_WITH_CURRENCY,
+      rawMarkets: GATEIO_RAW_MARKETS,
     })
 
     markets.forEach((market, index) => {

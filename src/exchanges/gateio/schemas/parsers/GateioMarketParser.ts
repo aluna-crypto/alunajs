@@ -1,13 +1,13 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { Gateio } from '../../Gateio'
-import { IGateioMarketWithCurrency } from '../IGateioMarketSchema'
+import { IGateioMarketSchema } from '../IGateioMarketSchema'
 
 
 
 export class GateioMarketParser {
 
   static parse (params: {
-    rawMarket: IGateioMarketWithCurrency,
+    rawMarket: IGateioMarketSchema,
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params
@@ -22,9 +22,11 @@ export class GateioMarketParser {
       low_24h,
       lowest_ask,
       quote_volume,
-      baseCurrency,
-      quoteCurrency,
     } = rawMarket
+
+    const splittedSymbol = currency_pair.split('_')
+    const baseCurrency = splittedSymbol[0]
+    const quoteCurrency = splittedSymbol[1]
 
 
     const ticker = {

@@ -13,8 +13,3 @@ export interface IGateioMarketSchema {
   etf_pre_timestamp: string
   etf_leverage: string
 }
-
-export interface IGateioMarketWithCurrency extends IGateioMarketSchema {
-  baseCurrency: string
-  quoteCurrency: string
-}
