@@ -18,15 +18,37 @@ describe('BitfinexOrderParser', () => {
 
     BITFINEX_RAW_ORDERS.forEach((rawOrder) => {
 
+      let baseSymbolId: string
+      let quoteSymbolId: string
+
+      const rawSymbolPair = rawOrder[3]
+
+      const spliter = rawSymbolPair.indexOf(':')
+
+      if (spliter >= 0) {
+
+        baseSymbolId = rawSymbolPair.slice(1, spliter)
+        quoteSymbolId = rawSymbolPair.slice(spliter + 1)
+
+      } else {
+
+        baseSymbolId = rawSymbolPair.slice(1, 4)
+        quoteSymbolId = rawSymbolPair.slice(4)
+
+      }
+
+
       const parsedOrder = BitfinexOrderParser.parse({
         rawOrder,
+        baseSymbolId,
+        quoteSymbolId,
       })
 
       const [
         id,
         _gid,
         _cid,
-        symbolPair,
+        _symbolPair,
         mtsCreate,
         mtsUpdate,
         _amount,
@@ -45,25 +67,10 @@ describe('BitfinexOrderParser', () => {
         priceAuxLimit,
       ] = rawOrder
 
-      let expectedBaseSymbolId: string
-      let expectedQuoteSymbolId: string
       let expectedRate
       let expectedStopRate
       let expectedLimitRate
 
-      const spliter = symbolPair.indexOf(':')
-
-      if (spliter >= 0) {
-
-        expectedBaseSymbolId = symbolPair.slice(1, spliter)
-        expectedQuoteSymbolId = symbolPair.slice(spliter + 1)
-
-      } else {
-
-        expectedBaseSymbolId = symbolPair.slice(1, 4)
-        expectedQuoteSymbolId = symbolPair.slice(4)
-
-      }
 
       const expectedStatus = BitfinexOrderStatusAdapter.translateToAluna({
         from: orderStatus,
@@ -114,11 +121,11 @@ describe('BitfinexOrderParser', () => {
       }
 
       expect(parsedOrder.id).to.be.eq(id)
-      expect(parsedOrder.symbolPair).to.be.eq(symbolPair)
+      expect(parsedOrder.symbolPair).to.be.eq(rawSymbolPair)
 
       expect(parsedOrder.exchangeId).to.be.eq(Bitfinex.ID)
-      expect(parsedOrder.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedOrder.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedOrder.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedOrder.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedOrder.amount).to.be.eq(Math.abs(amountOrig))
       expect(parsedOrder.total).to.be.eq(computedPrice * parsedOrder.amount)
