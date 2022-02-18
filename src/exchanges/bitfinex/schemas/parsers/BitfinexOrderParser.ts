@@ -14,9 +14,15 @@ export class BitfinexOrderParser {
 
   static parse (params: {
     rawOrder: IBitfinexOrderSchema,
+    baseSymbolId: string,
+    quoteSymbolId: string,
   }): IAlunaOrderSchema {
 
-    const { rawOrder } = params
+    const {
+      rawOrder,
+      baseSymbolId,
+      quoteSymbolId,
+    } = params
 
     const [
       id,
@@ -40,23 +46,6 @@ export class BitfinexOrderParser {
       _priceTrailing,
       priceAuxLimit,
     ] = rawOrder
-
-    let baseSymbolId: string
-    let quoteSymbolId: string
-
-    const spliter = symbolPair.indexOf(':')
-
-    if (spliter >= 0) {
-
-      baseSymbolId = symbolPair.slice(1, spliter)
-      quoteSymbolId = symbolPair.slice(spliter + 1)
-
-    } else {
-
-      baseSymbolId = symbolPair.slice(1, 4)
-      quoteSymbolId = symbolPair.slice(4)
-
-    }
 
     const status = BitfinexOrderStatusAdapter.translateToAluna({
       from: orderStatus,
