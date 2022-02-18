@@ -35,12 +35,11 @@ describe('BitfinexMarketModule', () => {
 
     const rawMarkets = await BitfinexMarketModule.listRaw()
 
-    expect(rawMarkets.length).to.eq(3)
+    expect(rawMarkets.length).to.eq(2)
 
     expect(rawMarkets).to.deep.eq([
       BITFINEX_RAW_TICKERS,
       BITFINEX_MARGIN_ENABLED_CURRENCIES,
-      BITFINEX_CURRENCIES_SYMS,
     ])
 
     expect(requestMock.calledWithExactly({
@@ -49,7 +48,6 @@ describe('BitfinexMarketModule', () => {
 
     const secondCallUrl = 'https://api-pub.bitfinex.com/v2/conf/'
       .concat('pub:list:pair:margin')
-      .concat(',pub:map:currency:sym')
 
     expect(requestMock.calledWithExactly({
       url: secondCallUrl,
