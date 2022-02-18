@@ -1,7 +1,11 @@
+import { BitmexInstrumentStateEnum } from '../enums/BitmexInstrumentStateEnum'
+
+
+
 export interface IBitmexSymbolsSchema {
   symbol: string
   rootSymbol: string
-  state: string
+  state: BitmexInstrumentStateEnum
   typ: string
   listing: string
   front: string
