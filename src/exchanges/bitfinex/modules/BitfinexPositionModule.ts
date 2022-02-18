@@ -10,6 +10,7 @@ import {
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
+import { BitfinexSymbolMapping } from '../mappings/BitfinexSymbolMapping'
 import { IBitfinexPositionSchema } from '../schemas/IBitfinexPositionSchema'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 
@@ -122,8 +123,18 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const { rawPosition } = params
 
+    const {
+      baseSymbolId,
+      quoteSymbolId,
+    } = BitfinexSymbolMapping.translateToAluna({
+      symbolPair: rawPosition[0],
+      mappings: this.exchange.settings?.mappings,
+    })
+
     const parsedPosition = BitfinexPositionParser.parse({
       rawPosition,
+      baseSymbolId,
+      quoteSymbolId,
     })
 
     return parsedPosition
