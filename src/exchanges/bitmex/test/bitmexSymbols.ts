@@ -1,5 +1,6 @@
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { BitmexSpecs } from '../BitmexSpecs'
+import { BitmexInstrumentStateEnum } from '../enums/BitmexInstrumentStateEnum'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 
 
@@ -8,7 +9,7 @@ export const BITMEX_RAW_SYMBOLS: IBitmexSymbolsSchema[] = [
   {
     symbol: 'XBTUSD',
     rootSymbol: 'XBT',
-    state: 'Open',
+    state: 'Settled' as BitmexInstrumentStateEnum,
     typ: 'FFWCSX',
     listing: '2016-05-13T12:00:00.000Z',
     front: '2016-05-13T12:00:00.000Z',
@@ -115,7 +116,7 @@ export const BITMEX_RAW_SYMBOLS: IBitmexSymbolsSchema[] = [
   {
     symbol: 'XBTEUR',
     rootSymbol: 'XBT',
-    state: 'Open',
+    state: 'Open' as BitmexInstrumentStateEnum,
     typ: 'FFWCSX',
     listing: '2021-06-16T04:00:00.000Z',
     front: '2021-06-16T04:00:00.000Z',
@@ -222,7 +223,7 @@ export const BITMEX_RAW_SYMBOLS: IBitmexSymbolsSchema[] = [
   {
     symbol: 'LTCUSDT',
     rootSymbol: 'LTC',
-    state: 'Open',
+    state: 'Open' as BitmexInstrumentStateEnum,
     typ: 'FFWCSX',
     listing: '2021-11-10T04:00:00.000Z',
     front: '2021-11-10T04:00:00.000Z',
@@ -329,12 +330,12 @@ export const BITMEX_RAW_SYMBOLS: IBitmexSymbolsSchema[] = [
   {
     symbol: 'ADAUSD',
     rootSymbol: 'ADA',
-    state: 'Open',
+    state: 'Open' as BitmexInstrumentStateEnum,
     typ: 'FFWCSX',
     listing: '2021-09-29T04:00:00.000Z',
     front: '2021-09-29T04:00:00.000Z',
-    expiry: null,
-    settle: null,
+    expiry: '2021-09-29T04:00:00.000Z',
+    settle: '2021-09-29T04:00:00.000Z',
     listedSettle: null,
     relistInterval: null,
     inverseLeg: '',
