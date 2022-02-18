@@ -1,9 +1,6 @@
 import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
 import { Bitfinex } from '../../Bitfinex'
-import {
-  TBitfinexCurrencyLabel,
-  TBitfinexCurrencySym,
-} from '../IBitfinexSymbolSchema'
+import { TBitfinexCurrencyLabel } from '../IBitfinexSymbolSchema'
 
 
 
@@ -12,17 +9,14 @@ export class BitfinexSymbolParser {
   static parse (params: {
     bitfinexCurrency: string,
     bitfinexCurrencyLabel: TBitfinexCurrencyLabel | undefined,
-    bitfinexSym: TBitfinexCurrencySym | undefined,
   }) {
 
     const {
       bitfinexCurrency,
       bitfinexCurrencyLabel,
-      bitfinexSym,
     } = params
 
-
-    let id = bitfinexCurrency
+    const id = Bitfinex.mappings?.[bitfinexCurrency] || bitfinexCurrency
 
     let name: string | undefined
     let alias: string | undefined
@@ -34,14 +28,6 @@ export class BitfinexSymbolParser {
 
     }
 
-    if (bitfinexSym) {
-
-      [, id] = bitfinexSym
-
-      alias = bitfinexCurrency
-
-    }
-
     const symbol: IAlunaSymbolSchema = {
       id: id.toUpperCase(), // some symbols ids are like: 'USDt'
       name,
@@ -50,7 +36,6 @@ export class BitfinexSymbolParser {
       meta: {
         currency: bitfinexCurrency,
         currencyLabel: bitfinexCurrencyLabel,
-        currencySym: bitfinexSym,
       },
     }
 
