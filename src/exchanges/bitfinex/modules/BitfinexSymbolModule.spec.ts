@@ -7,7 +7,6 @@ import * as BitfinexSymbolParserMod from '../schemas/parsers/BitfinexSymbolParse
 import {
   BITFINEX_CURRENCIES,
   BITFINEX_CURRENCIES_LABELS,
-  BITFINEX_CURRENCIES_SYMS,
   BITFINEX_PARSED_SYMBOLS,
   BITFINEX_RAW_SYMBOLS,
 } from '../test/fixtures/bitfinexSymbols'
@@ -90,7 +89,6 @@ describe('BitfinexSymbolModule', () => {
     const rawSymbol: IBitfinexParseSymbolParams = {
       bitfinexCurrency: BITFINEX_CURRENCIES[0][1],
       bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
-      bitfinexSym: BITFINEX_CURRENCIES_SYMS[0],
     }
 
     const parsedSymbol1 = BitfinexSymbolModule.parse({
@@ -107,7 +105,6 @@ describe('BitfinexSymbolModule', () => {
     const rawSymbol2: IBitfinexParseSymbolParams = {
       bitfinexCurrency: BITFINEX_CURRENCIES[0][1],
       bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
-      bitfinexSym: BITFINEX_CURRENCIES_SYMS[0],
     }
 
     const parsedSymbol2 = BitfinexSymbolModule.parse({
