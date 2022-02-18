@@ -36,8 +36,8 @@ export class BitfinexSymbolMapping {
     }
 
     const translated: ISymbolMappingResponse = {
-      baseSymbolId: mappings?.[baseSymbolId] || baseSymbolId,
-      quoteSymbolId: mappings?.[quoteSymbolId] || quoteSymbolId,
+      baseSymbolId: mappings?.[baseSymbolId] || baseSymbolId.toUpperCase(),
+      quoteSymbolId: mappings?.[quoteSymbolId] || quoteSymbolId.toUpperCase(),
     }
 
     return translated
