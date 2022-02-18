@@ -30,7 +30,7 @@ describe('GateioKeyModule', () => {
     const mockRest: any = {} // mock requestResponse
 
     const requestResponse: IGateioKeySchema = {
-      ...mockRest, // without accountId
+      ...mockRest,
     }
 
     const requestMock = ImportMock.mockFunction(
@@ -47,15 +47,21 @@ describe('GateioKeyModule', () => {
       },
     })
 
-    requestMock.onSecondCall().returns(Promise.reject(invalidCurrencyErrorMock))
+    const keyAccountResponse = {
+      user_id: 1234,
+    }
 
-    const { permissions } = await gateioKeyModule.fetchDetails()
+    requestMock.onSecondCall().returns(Promise.reject(invalidCurrencyErrorMock))
+    requestMock.onThirdCall().returns(Promise.resolve(keyAccountResponse))
+
+    const { permissions, accountId } = await gateioKeyModule.fetchDetails()
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok
     expect(permissions.withdraw).not.to.be.ok
+    expect(accountId).to.be.eq(keyAccountResponse.user_id.toString())
 
-    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.callCount).to.be.eq(3)
 
   })
 
@@ -154,9 +160,16 @@ describe('GateioKeyModule', () => {
       requestResponse,
     )
 
+    const keyAccountResponse = {
+      user_id: 1234,
+    }
+
+
+
     requestMock1
       .onSecondCall()
       .returns(Promise.reject(forbiddenErrorMock))
+    requestMock1.onThirdCall().returns(Promise.resolve(keyAccountResponse))
 
 
     const result = await gateioKeyModule.fetchDetails()
@@ -210,12 +223,17 @@ describe('GateioKeyModule', () => {
       requestResponse,
     )
 
+    const keyAccountResponse = {
+      user_id: 1234,
+    }
+
     requestMock1
       .onFirstCall()
       .returns(Promise.reject(forbiddenErrorMock))
     requestMock1
       .onSecondCall()
       .returns(Promise.reject(readOnlyErrorMock))
+    requestMock1.onThirdCall().returns(Promise.resolve(keyAccountResponse))
 
 
     const result = await gateioKeyModule.fetchDetails()
@@ -330,12 +348,71 @@ describe('GateioKeyModule', () => {
 
 
 
+  it('should throw an error when accountId is fetched', async () => {
+
+    ImportMock.mockOther(
+      gateioKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    const alunaErrorMock = new AlunaError({
+      message: 'any-message',
+      httpStatusCode: 401,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+    })
+
+    const mockRest: any = {} // mock requestResponse
+
+    const requestResponse: IGateioKeySchema = {
+      ...mockRest, // without accountId
+    }
+
+    const requestMock = ImportMock.mockFunction(
+      GateioHttp,
+      'privateRequest',
+      Promise.resolve(requestResponse),
+    )
+
+    requestMock.onThirdCall().returns(Promise.reject(alunaErrorMock))
+
+
+    let result
+    let error
+
+    try {
+
+      result = await gateioKeyModule.fetchDetails()
+
+    } catch (e) {
+
+      error = e
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('any-message')
+    expect(error.httpStatusCode).to.be.eq(401)
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+
+  })
+
+
+
   it('should parse Gateio permissions just fine', async () => {
 
     const key: IGateioKeySchema = {
       read: true,
       trade: false,
       withdraw: false,
+      accountId: undefined,
     }
 
     const perm1 = gateioKeyModule.parsePermissions({

@@ -10,7 +10,10 @@ import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
 import { IGateioBalanceSchema } from '../schemas/IGateioBalanceSchema'
-import { IGateioKeySchema } from '../schemas/IGateioKeySchema'
+import {
+  IGateioKeyAccountSchema,
+  IGateioKeySchema,
+} from '../schemas/IGateioKeySchema'
 import { IGateioOrderRequest } from '../schemas/IGateioOrderSchema'
 
 
@@ -51,6 +54,7 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       read: false,
       trade: false,
       withdraw: false,
+      accountId: undefined,
     }
 
     try {
@@ -117,6 +121,25 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
+    try {
+
+      const account = await GateioHttp
+        .privateRequest<IGateioKeyAccountSchema>({
+          verb: AlunaHttpVerbEnum.GET,
+          url: `${PROD_GATEIO_URL}/wallet/fee`,
+          keySecret,
+        })
+
+      permissions.accountId = account.user_id.toString()
+
+    } catch (error) {
+
+      GateioLog.error(error)
+
+      throw error
+
+    }
+
     const details = this.parseDetails({ rawKey: permissions })
 
     return details
@@ -133,9 +156,13 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    const {
+      accountId,
+    } = rawKey
+
     this.details = {
       meta: rawKey,
-      accountId: undefined, // accountId is not provided
+      accountId,
       permissions: this.parsePermissions({ rawKey }),
     }
 
