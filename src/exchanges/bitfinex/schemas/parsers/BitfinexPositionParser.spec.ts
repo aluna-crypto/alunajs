@@ -12,6 +12,10 @@ describe('BitfinexPositionParser', () => {
 
   it('should parse Bitfinex positions just fine', async () => {
 
+    const mappings = {
+      UST: 'USDT',
+    }
+
     BITFINEX_RAW_POSITIONS.forEach((rawPosition) => {
 
       if (/^f|F0/.test(rawPosition[0])) {
@@ -20,12 +24,35 @@ describe('BitfinexPositionParser', () => {
 
       }
 
+      const positionSymbol = rawPosition[0]
+      let baseSymbolId: string
+      let quoteSymbolId: string
+
+      const spliter = rawPosition[0].indexOf(':')
+
+      if (spliter >= 0) {
+
+        baseSymbolId = positionSymbol.slice(1, spliter)
+        quoteSymbolId = positionSymbol.slice(spliter + 1)
+
+      } else {
+
+        baseSymbolId = positionSymbol.slice(1, 4)
+        quoteSymbolId = positionSymbol.slice(4)
+
+      }
+
+      const expectedBaseSymbolId = mappings[baseSymbolId] || baseSymbolId
+      const expectedQuoteSymbolId = mappings[quoteSymbolId] || quoteSymbolId
+
       const parsedPosition = BitfinexPositionParser.parse({
         rawPosition,
+        baseSymbolId: expectedBaseSymbolId,
+        quoteSymbolId: expectedQuoteSymbolId,
       })
 
       const [
-        symbol,
+        _symbol,
         status,
         amount,
         basePrice,
@@ -46,23 +73,6 @@ describe('BitfinexPositionParser', () => {
         _collateralMin,
         meta,
       ] = rawPosition
-
-      let computedBaseSymbolId: string
-      let computedQuoteSymbolId: string
-
-      const spliter = symbol.indexOf(':')
-
-      if (spliter >= 0) {
-
-        computedBaseSymbolId = symbol.slice(1, spliter)
-        computedQuoteSymbolId = symbol.slice(spliter + 1)
-
-      } else {
-
-        computedBaseSymbolId = symbol.slice(1, 4)
-        computedQuoteSymbolId = symbol.slice(4)
-
-      }
 
       const computedStatus = status === BitfinexPositionStatusEnum.ACTIVE
         ? AlunaPositionStatusEnum.OPEN
@@ -109,8 +119,8 @@ describe('BitfinexPositionParser', () => {
 
       expect(parsedPosition.id).to.be.eq(positionId)
 
-      expect(parsedPosition.baseSymbolId).to.be.eq(computedBaseSymbolId)
-      expect(parsedPosition.quoteSymbolId).to.be.eq(computedQuoteSymbolId)
+      expect(parsedPosition.baseSymbolId).to.be.eq(expectedBaseSymbolId)
+      expect(parsedPosition.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
 
       expect(parsedPosition.status).to.be.eq(computedStatus)
 
