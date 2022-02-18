@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexSpecs } from '../BitmexSpecs'
+import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 import {
   BITMEX_PARSED_SYMBOLS,
   BITMEX_RAW_SYMBOLS,
@@ -47,12 +48,66 @@ describe.only('BitmexSymbolModule', () => {
     })
 
 
-    const rawSymbols = BitmexSymbolModule.parseMany({
+    const parsedSymbols = BitmexSymbolModule.parseMany({
       rawSymbols: BITMEX_RAW_SYMBOLS,
     })
 
     expect(parseMock.callCount).to.deep.eq(BITMEX_PARSED_SYMBOLS.length)
-    expect(rawSymbols).to.deep.eq(BITMEX_PARSED_SYMBOLS)
+    expect(parsedSymbols).to.deep.eq(BITMEX_PARSED_SYMBOLS)
+
+  })
+
+  it('should parse a Bitmex raw symbol just fine', () => {
+
+    const rawSymbol1 = {
+      symbol: 'XBTUSD',
+      rootSymbol: 'XBT',
+      quoteCurrency: 'USD',
+      askPrice: 0,
+    } as IBitmexSymbolsSchema
+
+
+    const parsedSymbol1 = BitmexSymbolModule.parse({
+      rawSymbol: rawSymbol1,
+    })
+
+    expect(parsedSymbol1.exchangeId).to.be.eq(BitmexSpecs.id)
+    expect(parsedSymbol1.id).to.be.eq(rawSymbol1.rootSymbol)
+    expect(parsedSymbol1.meta).to.be.eq(rawSymbol1)
+
+
+    const rawSymbol2 = {
+      symbol: 'ADAUSDT',
+      rootSymbol: 'ADA',
+      quoteCurrency: 'USDT',
+      askPrice: 0,
+    } as IBitmexSymbolsSchema
+
+
+    const parsedSymbol2 = BitmexSymbolModule.parse({
+      rawSymbol: rawSymbol2,
+    })
+
+    expect(parsedSymbol2.exchangeId).to.be.eq(BitmexSpecs.id)
+    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.rootSymbol)
+    expect(parsedSymbol2.meta).to.be.eq(rawSymbol2)
+
+
+    const rawSymbol3 = {
+      symbol: 'LTCEUR',
+      rootSymbol: 'LTC',
+      quoteCurrency: 'EUR',
+      askPrice: 0,
+    } as IBitmexSymbolsSchema
+
+
+    const parsedSymbol3 = BitmexSymbolModule.parse({
+      rawSymbol: rawSymbol3,
+    })
+
+    expect(parsedSymbol3.exchangeId).to.be.eq(BitmexSpecs.id)
+    expect(parsedSymbol3.id).to.be.eq(rawSymbol3.rootSymbol)
+    expect(parsedSymbol3.meta).to.be.eq(rawSymbol3)
 
   })
 
