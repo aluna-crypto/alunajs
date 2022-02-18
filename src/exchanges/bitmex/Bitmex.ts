@@ -8,6 +8,7 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
 import { BitmexSpecs } from './BitmexSpecs'
+import { BitmexMarketModule } from './modules/BitmexMarketModule'
 import { BitmexSymbolModule } from './modules/BitmexSymbolModule'
 
 
@@ -19,7 +20,7 @@ export const Bitmex: IAlunaExchangeStatic = class extends AAlunaExchange impleme
   static readonly SPECS = BitmexSpecs
 
   static Symbol = BitmexSymbolModule
-  static Market = {} as any
+  static Market = BitmexMarketModule
 
   // local definitions
   key: IAlunaKeyModule
