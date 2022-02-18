@@ -73,7 +73,14 @@ describe('BitmexMarketParser', () => {
 
       expect(parsedMarket.instrument).to.deep.eq(mockedInstrument)
 
-      expect(parsedMarket.ticker).to.deep.eq(ticker)
+      expect(parsedMarket.ticker.high).to.be.eq(ticker.high)
+      expect(parsedMarket.ticker.low).to.be.eq(ticker.low)
+      expect(parsedMarket.ticker.bid).to.be.eq(ticker.bid)
+      expect(parsedMarket.ticker.ask).to.be.eq(ticker.ask)
+      expect(parsedMarket.ticker.last).to.be.eq(ticker.last)
+      expect(parsedMarket.ticker.change).to.be.eq(ticker.change)
+      expect(parsedMarket.ticker.baseVolume).to.be.eq(ticker.baseVolume)
+      expect(parsedMarket.ticker.quoteVolume).to.be.eq(ticker.quoteVolume)
 
       expect(parsedMarket.maxLeverage).to.be.eq(maxLeverage)
       expect(parsedMarket.leverageEnabled).to.be.ok
