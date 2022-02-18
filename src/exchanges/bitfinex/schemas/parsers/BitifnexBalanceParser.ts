@@ -8,9 +8,13 @@ export class BitfinexBalanceParser {
 
   static parse (params: {
     rawBalance: IBitfinexBalanceSchema,
+    customCurrency?: string,
   }) {
 
-    const { rawBalance } = params
+    const {
+      rawBalance,
+      customCurrency,
+    } = params
 
     const [
       walletType,
@@ -26,7 +30,7 @@ export class BitfinexBalanceParser {
 
     const parsedBalance: IAlunaBalanceSchema = {
       account,
-      symbolId: currency,
+      symbolId: customCurrency || currency,
       available: availableBalance,
       total: balance,
       meta: rawBalance,
