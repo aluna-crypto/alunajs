@@ -13,7 +13,7 @@ import { BitmexSymbolModule } from './BitmexSymbolModule'
 
 
 
-describe.only('BitmexSymbolModule', () => {
+describe('BitmexSymbolModule', () => {
 
   it('should list Bitmex raw symbols just fine', async () => {
 
@@ -34,26 +34,30 @@ describe.only('BitmexSymbolModule', () => {
 
   })
 
-  it('should parse many Bitmex raw symbols just fine', () => {
+  it('should list Bitmex parsed symbols just fine', async () => {
 
-    const parseMock = ImportMock.mockFunction(
+    const listRawMock = ImportMock.mockFunction(
       BitmexSymbolModule,
-      'parse',
+      'listRaw',
+      BITMEX_RAW_SYMBOLS,
     )
 
-    each(BITMEX_PARSED_SYMBOLS, (rawSymbol, i) => {
+    const parseManyMock = ImportMock.mockFunction(
+      BitmexSymbolModule,
+      'parseMany',
+      BITMEX_PARSED_SYMBOLS,
+    )
 
-      parseMock.onCall(i).returns(rawSymbol)
+    const parsedSymbols = await BitmexSymbolModule.list()
 
-    })
+    expect(parsedSymbols).to.be.eq(BITMEX_PARSED_SYMBOLS)
 
+    expect(listRawMock.callCount).to.be.eq(1)
 
-    const parsedSymbols = BitmexSymbolModule.parseMany({
+    expect(parseManyMock.callCount).to.be.eq(1)
+    expect(parseManyMock.args[0][0]).to.deep.eq({
       rawSymbols: BITMEX_RAW_SYMBOLS,
     })
-
-    expect(parseMock.callCount).to.deep.eq(BITMEX_PARSED_SYMBOLS.length)
-    expect(parsedSymbols).to.deep.eq(BITMEX_PARSED_SYMBOLS)
 
   })
 
@@ -108,6 +112,29 @@ describe.only('BitmexSymbolModule', () => {
     expect(parsedSymbol3.exchangeId).to.be.eq(BitmexSpecs.id)
     expect(parsedSymbol3.id).to.be.eq(rawSymbol3.rootSymbol)
     expect(parsedSymbol3.meta).to.be.eq(rawSymbol3)
+
+  })
+
+  it('should parse many Bitmex raw symbols just fine', () => {
+
+    const parseMock = ImportMock.mockFunction(
+      BitmexSymbolModule,
+      'parse',
+    )
+
+    each(BITMEX_PARSED_SYMBOLS, (rawSymbol, i) => {
+
+      parseMock.onCall(i).returns(rawSymbol)
+
+    })
+
+
+    const parsedSymbols = BitmexSymbolModule.parseMany({
+      rawSymbols: BITMEX_RAW_SYMBOLS,
+    })
+
+    expect(parseMock.callCount).to.deep.eq(BITMEX_PARSED_SYMBOLS.length)
+    expect(parsedSymbols).to.deep.eq(BITMEX_PARSED_SYMBOLS)
 
   })
 
