@@ -4,6 +4,7 @@ import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitmexLog } from '../BitmexLog'
 import { IBitmexMarketsSchema } from '../schemas/IBitmexMarketsSchema'
+import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BitmexSymbolModule } from './BitmexSymbolModule'
 
 
@@ -37,7 +38,11 @@ export const BitmexMarketModule: IAlunaMarketModule = class {
 
     const { rawMarket } = params
 
-    return rawMarket as any
+    const parsedMarket = BitmexMarketParser.parse({
+      rawMarket,
+    })
+
+    return parsedMarket
 
   }
 
