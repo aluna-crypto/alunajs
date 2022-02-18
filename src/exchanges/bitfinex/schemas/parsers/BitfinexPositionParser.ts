@@ -12,9 +12,15 @@ export class BitfinexPositionParser {
 
   static parse (params: {
     rawPosition: IBitfinexPositionSchema,
+    baseSymbolId: string,
+    quoteSymbolId: string,
   }) {
 
-    const { rawPosition } = params
+    const {
+      rawPosition,
+      baseSymbolId,
+      quoteSymbolId,
+    } = params
 
     const [
       symbol,
@@ -38,24 +44,6 @@ export class BitfinexPositionParser {
       _collateralMin,
       meta,
     ] = rawPosition
-
-
-    let baseSymbolId: string
-    let quoteSymbolId: string
-
-    const spliter = symbol.indexOf(':')
-
-    if (spliter >= 0) {
-
-      baseSymbolId = symbol.slice(1, spliter)
-      quoteSymbolId = symbol.slice(spliter + 1)
-
-    } else {
-
-      baseSymbolId = symbol.slice(1, 4)
-      quoteSymbolId = symbol.slice(4)
-
-    }
 
     const computedStatus = status === BitfinexPositionStatusEnum.ACTIVE
       ? AlunaPositionStatusEnum.OPEN
