@@ -22,7 +22,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
     const { publicRequest } = BitmexHttp
 
     const rawSymbols = await publicRequest<IBitmexSymbolsSchema[]>({
-      url: `${BitmexSpecs.connectApiUrl}/instrument/activee`,
+      url: `${BitmexSpecs.connectApiUrl}/instrument/active`,
     })
 
     return rawSymbols
