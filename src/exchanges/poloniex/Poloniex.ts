@@ -8,6 +8,8 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { PoloniexMarketModule } from './modules/PoloniexMarketModule'
+import { PoloniexSymbolModule } from './modules/PoloniexSymbolModule'
 import { PoloniexLog } from './PoloniexLog'
 import { PoloniexSpecs } from './PoloniexSpecs'
 
@@ -19,9 +21,8 @@ export const Poloniex: IAlunaExchangeStatic = class extends AAlunaExchange imple
   static readonly ID = PoloniexSpecs.id
   static readonly SPECS = PoloniexSpecs
 
-  // @TODO
-  static Symbol = null as any
-  static Market = null as any
+  static Symbol = PoloniexSymbolModule
+  static Market = PoloniexMarketModule
 
   // local definitions
   key: IAlunaKeyModule
