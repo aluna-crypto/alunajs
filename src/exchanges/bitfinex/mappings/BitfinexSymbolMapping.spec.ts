@@ -37,7 +37,6 @@ describe('BitfinexSymbolMapping', () => {
 
     const pairs3 = BitfinexSymbolMapping.translateToAluna({
       symbolPair: symbolPair3,
-      mappings,
     })
 
     expect(pairs3.baseSymbolId).to.be.eq('ADA')
