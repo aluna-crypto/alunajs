@@ -1,3 +1,5 @@
+import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { BitmexSpecs } from '../BitmexSpecs'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 
 
@@ -430,5 +432,40 @@ export const BITMEX_RAW_SYMBOLS: IBitmexSymbolsSchema[] = [
     settledPriceAdjustmentRate: null,
     settledPrice: null,
     timestamp: '2022-02-18T13:53:50.000Z',
+  },
+]
+
+
+
+export const BITMEX_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'USD',
+    meta: {},
+  },
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'EUR',
+    meta: {},
+  },
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'XBT',
+    meta: {},
+  },
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'USDT',
+    meta: {},
+  },
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'ADA',
+    meta: {},
+  },
+  {
+    exchangeId: BitmexSpecs.id,
+    id: 'LCT',
+    meta: {},
   },
 ]
