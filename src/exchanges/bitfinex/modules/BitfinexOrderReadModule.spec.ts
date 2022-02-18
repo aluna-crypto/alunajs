@@ -7,6 +7,7 @@ import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderGetParams } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
+import { BitfinexSymbolMapping } from '../mappings/BitfinexSymbolMapping'
 import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 import {
   BITFINEX_PARSED_ORDERS,
@@ -25,7 +26,7 @@ describe('BitfinexOrderReadModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     const exchangeMock = ImportMock.mockOther(
       bitfinexOrderReadModule,
@@ -39,7 +40,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex raw orders just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -60,7 +61,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex parsed orders just fine', async () => {
 
-    mockKeySecret()
+    mockExchange()
 
     const listRawMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
@@ -89,7 +90,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get a Bitfinex raw open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0][0]
 
@@ -119,7 +120,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get Bitfinex raw not open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0]
 
@@ -157,7 +158,7 @@ describe('BitfinexOrderReadModule', () => {
     let error = {} as AlunaError
     let result
 
-    mockKeySecret()
+    mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -256,11 +257,22 @@ describe('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should properly a parse Bitfinex raw order just fine', async () => {
+  it('should parse a Bitfinex raw order just fine', async () => {
+
+    const { exchangeMock } = mockExchange()
 
     const parseMock = ImportMock.mockFunction(
       BitfinexOrderParser,
       'parse',
+    )
+
+    const bitfinexMappingsMock = ImportMock.mockFunction(
+      BitfinexSymbolMapping,
+      'translateToAluna',
+      {
+        baseSymbolId: 'BTC',
+        quoteSymbolId: 'ETH',
+      },
     )
 
     BITFINEX_PARSED_ORDERS.forEach((rawOrder, i) => {
@@ -272,7 +284,23 @@ describe('BitfinexOrderReadModule', () => {
     // removing 'derivatives' and 'funding' symbols since the parse
     const rawOrders = BITFINEX_RAW_ORDERS.filter((r) => !/f|F0/.test(r[3]))
 
-    const promises = rawOrders.map((rawOrder) => {
+    const promises = rawOrders.map((rawOrder, i) => {
+
+      if (i % 3 !== 0) {
+
+        exchangeMock.set({
+          keySecret,
+          settings: { mappings: {} },
+        })
+
+      } else {
+
+        exchangeMock.set({
+          keySecret,
+          settings: undefined,
+        })
+
+      }
 
       return bitfinexOrderReadModule.parse({
         rawOrder,
@@ -283,7 +311,8 @@ describe('BitfinexOrderReadModule', () => {
     const parsedOrders = await Promise.all(promises)
 
     expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
-    expect(parseMock.callCount).deep.eq(parsedOrders.length)
+    expect(parseMock.callCount).to.be.eq(parsedOrders.length)
+    expect(bitfinexMappingsMock.callCount).to.be.eq(parsedOrders.length)
 
   })
 
