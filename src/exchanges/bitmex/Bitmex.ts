@@ -7,7 +7,10 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
+import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BitmexSpecs } from './BitmexSpecs'
+import { BitmexKeyModule } from './modules/BitmexKeyModule'
 import { BitmexMarketModule } from './modules/BitmexMarketModule'
 import { BitmexSymbolModule } from './modules/BitmexSymbolModule'
 
@@ -24,25 +27,24 @@ export const Bitmex: IAlunaExchangeStatic = class extends AAlunaExchange impleme
 
   // local definitions
   key: IAlunaKeyModule
-  // order: IAlunaOrderWriteModule
   order: IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
   position: IAlunaPositionModule
 
-  // constructor (
-  //   params: {
-  //     keySecret: IAlunaKeySecretSchema,
-  //     settings?: IAlunaSettingsSchema,
-  //   },
-  // ) {
+  constructor (
+    params: {
+      keySecret: IAlunaKeySecretSchema,
+      settings?: IAlunaSettingsSchema,
+    },
+  ) {
 
-  //   super(params)
+    super(params)
 
-  //   this.key = new BitmexKeyModule({ exchange: this })
-  //   this.balance = new BitmexBalanceModule({ exchange: this })
-  //   this.order = new BitmexOrderWriteModule({ exchange: this })
-  //   this.position = new BitmexPositionModule({ exchange: this })
+    this.key = new BitmexKeyModule({ exchange: this })
+    // this.balance = new BitmexBalanceModule({ exchange: this })
+    // this.order = new BitmexOrderWriteModule({ exchange: this })
+    // this.position = new BitmexPositionModule({ exchange: this })
 
-  // }
+  }
 
 }
