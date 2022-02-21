@@ -1,6 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  clone,
+  each,
+  filter,
+} from 'lodash'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
@@ -14,7 +18,24 @@ describe('BitmexBalanceParser', () => {
 
   it('should properly parse BitMEX raw balances', () => {
 
-    each(BITMEX_RAW_BALANCES, (rawBalance) => {
+    const [usdtBalance] = filter(
+      BITMEX_RAW_BALANCES,
+      (raw) => raw.currency === BitmexSettlementCurrencyEnum.USDT,
+    )
+
+    const clonedBalance = clone(usdtBalance)
+
+    clonedBalance.walletBalance = 680000000
+    clonedBalance.availableMargin = 350000000
+
+    const rawBalances = [
+      ...BITMEX_RAW_BALANCES,
+      clonedBalance,
+    ]
+
+    expect(rawBalances.length).to.be.eq(4)
+
+    each(rawBalances, (rawBalance) => {
 
       const {
         currency,
