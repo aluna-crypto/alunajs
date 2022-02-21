@@ -1,4 +1,8 @@
-import { filter } from 'lodash'
+import {
+  filter,
+  map,
+  omit,
+} from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
@@ -87,12 +91,22 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    /**
+     * According with 'BitMEX' API documentation both API 'KEY' and 'SECRET' are
+     * returned in each key object. However, during my tests, I've seen only the
+     * API 'KEY' (id) inside each key object. For safety we are removing any
+     * 'secret' property that may exists inside each raw single key object to
+     * avoid having this data stored inside the 'IAlunaKeySchema' 'meta'
+     * property
+     */
+    const rawKeysWithoutSecrets = map(rawKey, (k) => omit(k, 'secret'))
+
     const [{ userId }] = rawKey
 
     this.details = {
       accountId: userId.toString(),
       permissions: this.parsePermissions({ rawKey }),
-      meta: rawKey,
+      meta: rawKeysWithoutSecrets,
     }
 
     return this.details
