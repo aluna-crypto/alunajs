@@ -39,7 +39,7 @@ describe('Bitmex', () => {
     expect(bitmex.settings?.referralCode).to.eq(referralCode)
 
     expect(bitmex.key).to.be.ok
-    // expect(bitmex.balance).to.be.ok
+    expect(bitmex.balance).to.be.ok
     // expect(bitmex.order).to.be.ok
     // expect(bitmex.position).to.be.ok
 

@@ -10,6 +10,7 @@ import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BitmexSpecs } from './BitmexSpecs'
+import { BitmexBalanceModule } from './modules/BitmexBalanceModule'
 import { BitmexKeyModule } from './modules/BitmexKeyModule'
 import { BitmexMarketModule } from './modules/BitmexMarketModule'
 import { BitmexSymbolModule } from './modules/BitmexSymbolModule'
@@ -41,7 +42,7 @@ export const Bitmex: IAlunaExchangeStatic = class extends AAlunaExchange impleme
     super(params)
 
     this.key = new BitmexKeyModule({ exchange: this })
-    // this.balance = new BitmexBalanceModule({ exchange: this })
+    this.balance = new BitmexBalanceModule({ exchange: this })
     // this.order = new BitmexOrderWriteModule({ exchange: this })
     // this.position = new BitmexPositionModule({ exchange: this })
 
