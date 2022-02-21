@@ -16,7 +16,7 @@ import { BitmexBalanceParser } from './BitmexBalanceParser'
 describe('BitmexBalanceParser', () => {
 
 
-  it('should properly parse BitMEX raw balances', () => {
+  it('should properly parse bitmex raw balances', () => {
 
     const [usdtBalance] = filter(
       BITMEX_RAW_BALANCES,
