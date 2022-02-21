@@ -4,7 +4,6 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
-import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
 import { PoloniexCurrencyBalanceParser } from '../schemas/parsers/PoloniexCurrencyBalanceParser'
 import {
   POLONIEX_PARSED_BALANCES,
@@ -48,18 +47,7 @@ describe('PoloniexBalanceModule', () => {
 
     const rawBalances = await poloniexBalanceModule.listRaw()
 
-    const timestamp = new Date().getTime()
-    const params = new URLSearchParams()
-
-    params.append('command', 'returnCompleteBalances')
-    params.append('nonce', timestamp.toString())
-
     expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWith({
-      keySecret: exchangeMock.getValue().keySecret,
-      url: `${PROD_POLONIEX_URL}/tradingApi`,
-      body: params,
-    })).to.be.ok
 
     expect(currencyParserMock.callCount).to.be.eq(1)
     expect(currencyParserMock.calledWith({
