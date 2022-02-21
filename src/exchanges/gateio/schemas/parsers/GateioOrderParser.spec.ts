@@ -26,6 +26,7 @@ describe('GateioOrderParser', () => {
     const rawSide = rawOrder.side
     const rawType = rawOrder.type
     const rawStatus = rawOrder.status
+    const rawLeftToFill = parseFloat(rawOrder.left)
 
     expect(parsedOrder.id).to.be.eq(rawOrder.id)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.currency_pair)
@@ -37,7 +38,13 @@ describe('GateioOrderParser', () => {
     expect(parsedOrder.side)
       .to.be.eq(GateioSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
-      .to.be.eq(GateioStatusAdapter.translateToAluna({ from: rawStatus }))
+      .to.be.eq(GateioStatusAdapter.translateToAluna(
+        {
+          from: rawStatus,
+          leftToFill: rawLeftToFill,
+          amount: rawOriginalQuantity,
+        },
+      ))
     expect(parsedOrder.type)
       .to.be.eq(GateioOrderTypeAdapter.translateToAluna({ from: rawType }))
     expect(parsedOrder.placedAt.getTime())

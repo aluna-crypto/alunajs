@@ -29,9 +29,11 @@ export class GateioOrderParser {
       price,
       create_time_ms,
       update_time_ms,
+      left,
     } = rawOrder
 
     const amount = parseFloat(quantity)
+    const leftToFill = parseFloat(left)
     const rate = parseFloat(price)
     const total = amount * rate
     const splittedMarketSymbol = currency_pair.split('_')
@@ -39,7 +41,9 @@ export class GateioOrderParser {
     const quoteSymbolId = splittedMarketSymbol[1]
     const createdAt = new Date(create_time_ms)
 
-    const orderStatus = GateioStatusAdapter.translateToAluna({ from: status })
+    const orderStatus = GateioStatusAdapter.translateToAluna(
+      { from: status, leftToFill, amount },
+    )
 
     let filledAt: Date | undefined
     let canceledAt: Date | undefined

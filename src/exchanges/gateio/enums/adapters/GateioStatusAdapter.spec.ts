@@ -16,22 +16,41 @@ describe('GateioStatusAdapter', () => {
   it('should translate Gateio order status to Aluna order status',
     () => {
 
+      const zeroedLeftToFill = 0
+      const leftToFill = 2
+      const totalLeftToFillAmount = 2
+      const additionalAmount = 3
+
       expect(GateioStatusAdapter.translateToAluna({
         from: GateioOrderStatusEnum.OPEN,
+        leftToFill,
+        amount: additionalAmount,
+      })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+
+      expect(GateioStatusAdapter.translateToAluna({
+        from: GateioOrderStatusEnum.OPEN,
+        leftToFill: zeroedLeftToFill,
+        amount: totalLeftToFillAmount,
       })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(GateioStatusAdapter.translateToAluna({
         from: GateioOrderStatusEnum.CLOSED,
+        leftToFill: zeroedLeftToFill,
+        amount: totalLeftToFillAmount,
       })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
       expect(GateioStatusAdapter.translateToAluna({
         from: GateioOrderStatusEnum.CANCELLED,
+        leftToFill: zeroedLeftToFill,
+        amount: totalLeftToFillAmount,
       })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       try {
 
         GateioStatusAdapter.translateToAluna({
           from: notSupported as GateioOrderStatusEnum,
+          leftToFill: zeroedLeftToFill,
+          amount: totalLeftToFillAmount,
         })
 
       } catch (err) {
