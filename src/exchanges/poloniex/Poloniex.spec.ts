@@ -10,9 +10,8 @@ describe('Poloniex', () => {
 
     expect(Poloniex.ID).to.eq('poloniex')
     expect(Poloniex.SPECS).to.be.ok
-    // @TODO
-    // expect(Poloniex.Symbol).to.be.ok
-    // expect(Poloniex.Market).to.be.ok
+    expect(Poloniex.Symbol).to.be.ok
+    expect(Poloniex.Market).to.be.ok
 
   })
 
@@ -40,7 +39,7 @@ describe('Poloniex', () => {
 
     // @TODO
     // expect(poloniex.key).to.be.ok
-    // expect(poloniex.balance).to.be.ok
+    expect(poloniex.balance).to.be.ok
     // expect(poloniex.order).to.be.ok
 
   })
