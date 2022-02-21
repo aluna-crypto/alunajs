@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { expect } from 'chai'
+import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -12,22 +13,30 @@ import * as BitmexHttpMod from './BitmexHttp'
 
 describe('BitmexHttp', () => {
 
-  const { bitmexRequestErrorHandler } = BitmexHttpMod
+  afterEach(Sinon.restore)
+
+  const {
+    generateAuthHeader,
+    bitmexRequestErrorHandler,
+  } = BitmexHttpMod
 
   const {
     publicRequest,
     privateRequest,
   } = BitmexHttpMod.BitmexHttp
 
-
-
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
-  const dummyBody = { dummy: 'dummy-body' }
+  const dummyBody = { ids: ['id'] }
 
-  // const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
+  const dummySignedHeaders = {
+    'api-expires': 'expires',
+    'api-key': 'key',
+    'api-signature': 'signature',
+  }
 
   const dummyData = { data: 'dummy-data' }
+
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -90,91 +99,57 @@ describe('BitmexHttp', () => {
 
   })
 
-  // it('should defaults the http verb to post on private requests', \
-  // async () => {
+  it('should defaults the http verb to POST on private requests',
+    async () => {
 
-  //   const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+      const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
 
-  //   const generateAuthHeaderMock = ImportMock.mockFunction(
-  //     BitmexHttp,
-  //     'generateAuthHeader',
-  //     dummySignedHeaders,
-  //   )
+      const generateAuthHeaderMock = ImportMock.mockFunction(
+        BitmexHttpMod,
+        'generateAuthHeader',
+        dummySignedHeaders,
+      )
 
-  //   const axiosCreate = ImportMock.mockFunction(
-  //     axios,
-  //     'create',
-  //     {
-  //       request: requestSpy,
-  //     },
-  //   )
+      const axiosCreate = ImportMock.mockFunction(
+        axios,
+        'create',
+        {
+          request: requestSpy,
+        },
+      )
 
-  //   await privateRequest({
-  //     // http verb not informed
-  //     keySecret: {} as IAlunaKeySecretSchema,
-  //     url: 'http://dummy.com',
-  //   })
-
-  //   expect(axiosCreate.callCount).to.be.eq(1)
-
-  //   expect(generateAuthHeaderMock.callCount).to.be.eq(1)
-
-  //   expect(requestSpy.callCount).to.be.eq(1)
-
-  //   expect(requestSpy.args[0]).to.deep.eq([{
-  //     url: 'http://dummy.com',
-  //     method: AlunaHttpVerbEnum.POST,
-  //     data: undefined,
-  //     headers: dummySignedHeaders,
-  //   }])
-
-  // })
-
-  it('should execute private request just fine', async () => {
-
-    let error
-    let result
-
-    try {
-
-      result = await privateRequest({
-        verb: AlunaHttpVerbEnum.POST,
-        url: dummyUrl,
-        body: dummyBody,
+      await privateRequest({
+      // http verb not informed
         keySecret: {} as IAlunaKeySecretSchema,
+        url: 'http://dummy.com',
       })
 
+      expect(axiosCreate.callCount).to.be.eq(1)
 
-    } catch (err) {
+      expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
-      error = err
+      expect(requestSpy.callCount).to.be.eq(1)
 
-    }
-
-    expect(result).not.to.ok
-
-    expect(error.message).to.be.eq('not implemented')
-
-  })
-
-  it('should ensure formatRequestError is call on resquest error', async (
-
-  ) => {
-
-    const message = 'Dummy error'
-
-    const formatRequestErrorSpy = Sinon.spy(
-      BitmexHttpMod,
-      'bitmexRequestErrorHandler',
-    )
-
-    const requestSpy = Sinon.spy(() => {
-
-      throw new Error(message)
+      expect(requestSpy.args[0]).to.deep.eq([{
+        url: 'http://dummy.com',
+        method: AlunaHttpVerbEnum.POST,
+        data: undefined,
+        headers: dummySignedHeaders,
+      }])
 
     })
 
-    ImportMock.mockFunction(
+  it('should execute private request just fine', async () => {
+
+    const requestSpy = Sinon.spy(() => dummyData)
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BitmexHttpMod,
+      'generateAuthHeader',
+      dummySignedHeaders,
+    )
+
+    const axiosMock = ImportMock.mockFunction(
       axios,
       'create',
       {
@@ -182,31 +157,112 @@ describe('BitmexHttp', () => {
       },
     )
 
-    let result
-    let error
+    const responseData = await privateRequest({
+      verb: AlunaHttpVerbEnum.POST,
+      url: dummyUrl,
+      body: dummyBody,
+      keySecret: {} as IAlunaKeySecretSchema,
+    })
 
-    try {
+    expect(axiosMock.callCount).to.be.eq(1)
 
-      result = await publicRequest({
-        url: dummyUrl,
-      })
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+    expect(generateAuthHeaderMock.calledWith({
+      verb: AlunaHttpVerbEnum.POST,
+      path: new URL(dummyUrl).pathname,
+      body: dummyBody,
+      keySecret: {},
+    })).to.be.ok
 
-    } catch (err) {
+    expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      url: dummyUrl,
+      method: AlunaHttpVerbEnum.POST,
+      data: dummyBody,
+      headers: dummySignedHeaders,
+    }])
 
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(message)
-
-    const calledArg = formatRequestErrorSpy.args[0][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-    expect(calledArg).to.be.ok
-    expect(calledArg.message).to.be.eq(message)
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
 
   })
+
+  it(
+    "should ensure 'bitmexRequestErrorHandler' is call on resquest error",
+    async () => {
+
+      let error
+
+      const message = 'Dummy error'
+
+      const formatRequestErrorSpy = Sinon.spy(
+        BitmexHttpMod,
+        'bitmexRequestErrorHandler',
+      )
+
+      const requestSpy = Sinon.spy(() => {
+
+        throw new Error(message)
+
+      })
+
+      ImportMock.mockFunction(
+        axios,
+        'create',
+        {
+          request: requestSpy,
+        },
+      )
+
+      ImportMock.mockFunction(
+        BitmexHttpMod,
+        'generateAuthHeader',
+        dummySignedHeaders,
+      )
+
+      try {
+
+        await publicRequest({
+          url: dummyUrl,
+        })
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(error.message).to.be.eq(message)
+
+      const calledArg1 = formatRequestErrorSpy.args[0][0]
+
+      expect(formatRequestErrorSpy.callCount).to.be.eq(1)
+      expect(calledArg1).to.be.ok
+      expect(calledArg1.message).to.be.eq(message)
+
+      try {
+
+        await privateRequest({
+          url: dummyUrl,
+          body: dummyBody,
+          keySecret: {} as IAlunaKeySecretSchema,
+        })
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(error.message).to.be.eq(message)
+
+      const calledArg2 = formatRequestErrorSpy.args[1][0]
+
+      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+      expect(calledArg2).to.be.ok
+      expect(calledArg2.message).to.be.eq(message)
+
+    },
+  )
 
   it('should ensure request error is being handle', async () => {
 
@@ -294,130 +350,92 @@ describe('BitmexHttp', () => {
 
   })
 
-  // it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine', async () => {
 
-  //   const createHmacSpy = Sinon.spy(crypto, 'createHmac')
-  //   const createHashSpy = Sinon.spy(crypto, 'createHash')
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
 
-  //   const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
-  //   const updateHashSpy = Sinon.spy(crypto.Hash.prototype, 'update')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
-  //   const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
-  //   const digestHashSpy = Sinon.spy(crypto.Hash.prototype, 'digest')
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
 
-  //   const currentDate = 'current-date'
+    const mockedNonce = Date.now().toString()
 
-  //   const timestampMock = { toString: () => currentDate }
+    const dateNowToStringMock = { toString: () => mockedNonce }
 
-  //   const dateMock = ImportMock.mockFunction(
-  //     Date.prototype,
-  //     'getTime',
-  //     timestampMock,
-  //   )
+    const dateNowMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      dateNowToStringMock,
+    )
 
-  //   const stringifyBody = 'stringify-body'
+    const stringifyBody = 'stringify-body'
 
-  //   const stringfyMock = ImportMock.mockFunction(
-  //     JSON,
-  //     'stringify',
-  //     stringifyBody,
-  //   )
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+      stringifyBody,
+    )
 
-  //   const keySecret = {
-  //     key: 'dummy-key',
-  //     secret: 'dummy-secret',
-  //   } as IAlunaKeySecretSchema
+    const keySecret = {
+      key: 'dummy-key',
+      secret: 'dummy-secret',
+    } as IAlunaKeySecretSchema
 
-  //   const path = 'path'
-  //   const verb = 'verb' as AlunaHttpVerbEnum
-  //   const body = dummyBody
-  //   const url = dummyUrl
+    const path = 'path'
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const body = dummyBody
 
-  //   const contentHash = crypto
-  //     .createHash('sha512')
-  //     .update(body ? JSON.stringify(body) : '')
-  //     .digest('hex')
+    const signedHash = generateAuthHeader({
+      keySecret,
+      path,
+      verb,
+      body,
+    })
 
-  //   const preSigned = [
-  //     timestampMock,
-  //     url,
-  //     verb.toUpperCase(),
-  //     contentHash,
-  //   ].join('')
+    expect(dateNowMock.callCount).to.be.eq(1)
 
-  //   const signedHash = generateAuthHeader({
-  //     keySecret,
-  //     path,
-  //     verb,
-  //     body,
-  //     url,
-  //   })
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', keySecret.secret)).to.be.ok
 
-  //   expect(dateMock.callCount).to.be.eq(1)
+    expect(updateSpy.callCount).to.be.eq(4)
+    expect(updateSpy.calledWith(mockedNonce)).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(stringifyBody)).to.be.ok
 
-  //   expect(createHmacSpy.callCount).to.be.eq(1)
-  //   expect(createHashSpy.callCount).to.be.eq(2)
-  //   expect(createHashSpy
-  //     .secondCall
-  //     .calledWith('sha512')).to.be.ok
-  //   expect(createHmacSpy
-  //     .firstCall
-  //     .calledWith('sha512', keySecret.secret)).to.be.ok
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith(body)).to.be.ok
 
-  //   expect(updateSpy.callCount).to.be.eq(1)
-  //   expect(updateHashSpy.callCount).to.be.eq(2)
-  //   expect(updateHashSpy.secondCall.calledWith(JSON.stringify(body))).to.be.
-  // ok
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
 
-  //   expect(stringfyMock.callCount).to.be.eq(3)
-  //   expect(stringfyMock.calledWith(body)).to.be.ok
+    expect(signedHash['api-expires']).to.deep.eq(mockedNonce)
+    expect(signedHash['api-key']).to.deep.eq(keySecret.key)
+    expect(signedHash['api-signature']).to.deep.eq(digestSpy.returnValues[0])
 
-  //   expect(digestHmacSpy.callCount).to.be.eq(1)
-  //   expect(digestHmacSpy.calledWith('hex')).to.be.ok
+    const signedHash2 = generateAuthHeader({
+      keySecret,
+      path,
+      verb,
+      // without a body
+    })
 
-  //   expect(digestHashSpy.callCount).to.be.eq(2)
-  //   expect(digestHashSpy.calledWith('hex')).to.be.ok
+    expect(dateNowMock.callCount).to.be.eq(2)
 
-  //   const signedHeader = crypto
-  //     .createHmac('sha512', keySecret.secret)
-  //     .update(preSigned)
-  //     .digest('hex')
+    expect(createHmacSpy.callCount).to.be.eq(2)
 
-  //   expect(signedHash['Api-Content-Hash']).to.deep.eq(contentHash)
-  //   expect(signedHash['Api-Key']).to.deep.eq(keySecret.key)
-  //   expect(signedHash['Api-Timestamp']).to.deep.eq(timestampMock)
-  //   expect(signedHash['Api-Signature']).to.deep.eq(signedHeader)
+    // when no body is passed must not call stringfy on empty string
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith('')).not.to.be.ok
 
-  //   const signedHash2 = generateAuthHeader({
-  //     keySecret,
-  //     path,
-  //     verb,
-  //     url,
-  //     // without a body
-  //   })
+    expect(updateSpy.callCount).to.be.eq(8)
 
-  //   expect(dateMock.callCount).to.be.eq(2)
+    expect(digestSpy.callCount).to.be.eq(2)
 
-  //   expect(createHmacSpy.callCount).to.be.eq(3)
+    expect(signedHash2['api-expires']).to.deep.eq(mockedNonce)
+    expect(signedHash2['api-key']).to.deep.eq(keySecret.key)
+    expect(signedHash2['api-signature']).to.deep.eq(digestSpy.returnValues[1])
 
-  //   // when no body is passed must not call stringfy on empty string
-  //   expect(stringfyMock.callCount).to.be.eq(3)
-  //   expect(stringfyMock.calledWith('')).not.to.be.ok
-
-  //   expect(updateSpy.callCount).to.be.eq(3)
-
-  //   expect(digestHmacSpy.callCount).to.be.eq(3)
-
-  //   const contentHash2 = crypto.createHash('sha512').update('').digest('hex')
-
-  //   expect(signedHash2['Api-Content-Hash']).to.deep.eq(contentHash2)
-  //   expect(
-  //     signedHash2['Api-Key'],
-  //   ).to.deep.eq(keySecret.key)
-  //   expect(signedHash2['Api-Timestamp']).to.deep.eq(timestampMock)
-
-  //   Sinon.restore()
-
-  // })
+  })
 
 })
