@@ -24,6 +24,10 @@ describe('PoloniexStatusAdapter', () => {
         from: PoloniexOrderStatusEnum.PARTIALLY_FILLED,
       })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
+      expect(PoloniexStatusAdapter.translateToAluna({
+        from: PoloniexOrderStatusEnum.CANCELED,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
       let result
       let error
 
@@ -58,6 +62,10 @@ describe('PoloniexStatusAdapter', () => {
     expect(PoloniexStatusAdapter.translateToPoloniex({
       from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(PoloniexOrderStatusEnum.PARTIALLY_FILLED)
+
+    expect(PoloniexStatusAdapter.translateToPoloniex({
+      from: AlunaOrderStatusEnum.CANCELED,
+    })).to.be.eq(PoloniexOrderStatusEnum.CANCELED)
 
     let result
     let error

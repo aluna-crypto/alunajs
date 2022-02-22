@@ -1,5 +1,6 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
@@ -41,46 +42,45 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     const rawOrdersWithCurrencyAndStatus: IPoloniexOrderStatusInfo[] = []
 
     await Promise.all(
-      currencies.map
-        <Promise<IPoloniexOrderStatusInfo[]>>(async (currencyPair) => {
+      currencies.map(async (currencyPair) => {
 
-          const rawOrder = rawOrders[currencyPair]
+        const rawOrder = rawOrders[currencyPair]
 
-          const orderWithStatusAndCurrency = await Promise.all(
-            rawOrder.map(async (order) => {
+        const orderWithStatusAndCurrency = await Promise.all(
+          rawOrder.map(async (order) => {
 
-              const { orderNumber } = order
+            const { orderNumber } = order
 
-              const timestamp = new Date().getTime()
-              const statusParams = new URLSearchParams()
+            const timestamp = new Date().getTime()
+            const statusParams = new URLSearchParams()
 
-              statusParams.append('command', 'returnOrderStatus')
-              statusParams.append('orderNumber', orderNumber)
-              statusParams.append('nonce', timestamp.toString())
+            statusParams.append('command', 'returnOrderStatus')
+            statusParams.append('orderNumber', orderNumber)
+            statusParams.append('nonce', timestamp.toString())
 
-              const { result } = await PoloniexHttp
-                .privateRequest<IPoloniexOrderStatusSchema>({
-                  url: `${PROD_POLONIEX_URL}/tradingApi`,
-                  keySecret: this.exchange.keySecret,
-                  body: statusParams,
-                })
+            const { result } = await PoloniexHttp
+              .privateRequest<IPoloniexOrderStatusSchema>({
+                url: `${PROD_POLONIEX_URL}/tradingApi`,
+                keySecret: this.exchange.keySecret,
+                body: statusParams,
+              })
 
-              const { status, currencyPair } = result[orderNumber]
+            const { status, currencyPair } = result[orderNumber]
 
-              return {
-                ...order,
-                currencyPair,
-                status,
-              }
+            return {
+              ...order,
+              currencyPair,
+              status,
+            }
 
-            }),
-          )
+          }),
+        )
 
-          rawOrdersWithCurrencyAndStatus.push(...orderWithStatusAndCurrency)
+        rawOrdersWithCurrencyAndStatus.push(...orderWithStatusAndCurrency)
 
-          return orderWithStatusAndCurrency
+        return orderWithStatusAndCurrency
 
-        }),
+      }),
     )
 
     return rawOrdersWithCurrencyAndStatus
@@ -107,17 +107,26 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const {
       id,
+      symbolPair,
     } = params
 
-    // @TODO -> Update function to fetch for single order
-    PoloniexLog.info('fetching Poloniex order status')
+    PoloniexLog.info('fetching Poloniex order')
 
-    const rawOrder = await PoloniexHttp
-      .privateRequest<IPoloniexOrderStatusInfo>({
-        verb: AlunaHttpVerbEnum.GET,
-        url: `${PROD_POLONIEX_URL}/orders/${id}`,
-        keySecret: this.exchange.keySecret,
+    const rawOrders = await this.listRaw()
+
+    const rawOrder = rawOrders.find(
+      (order) => order.orderNumber === id && order.currencyPair === symbolPair,
+    )
+
+    if (!rawOrder) {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: 'Order not found',
+        httpStatusCode: 404,
       })
+
+    }
 
     return rawOrder
 

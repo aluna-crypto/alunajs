@@ -19,6 +19,8 @@ export class PoloniexStatusAdapter {
         [PoloniexOrderStatusEnum.OPEN]: AlunaOrderStatusEnum.OPEN,
         [PoloniexOrderStatusEnum.PARTIALLY_FILLED]:
           AlunaOrderStatusEnum.PARTIALLY_FILLED,
+        [PoloniexOrderStatusEnum.CANCELED]:
+          AlunaOrderStatusEnum.CANCELED,
       },
     })
 
@@ -31,6 +33,8 @@ export class PoloniexStatusAdapter {
         [AlunaOrderStatusEnum.OPEN]: PoloniexOrderStatusEnum.OPEN,
         [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
           PoloniexOrderStatusEnum.PARTIALLY_FILLED,
+        [AlunaOrderStatusEnum.CANCELED]:
+          PoloniexOrderStatusEnum.CANCELED,
       },
     })
 

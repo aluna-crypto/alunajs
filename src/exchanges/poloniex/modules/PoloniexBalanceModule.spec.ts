@@ -21,7 +21,7 @@ describe('PoloniexBalanceModule', () => {
 
   it('should list all Poloniex raw balances', async () => {
 
-    const exchangeMock = ImportMock.mockOther(
+    ImportMock.mockOther(
       poloniexBalanceModule,
       'exchange',
       {

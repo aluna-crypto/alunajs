@@ -40,7 +40,7 @@ describe('Poloniex', () => {
     // @TODO
     // expect(poloniex.key).to.be.ok
     expect(poloniex.balance).to.be.ok
-    // expect(poloniex.order).to.be.ok
+    expect(poloniex.order).to.be.ok
 
   })
 

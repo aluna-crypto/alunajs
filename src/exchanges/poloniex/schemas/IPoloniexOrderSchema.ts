@@ -30,6 +30,17 @@ export interface IPoloniexOrderStatusSchema {
   }
 }
 
-export interface IPoloniexOrderWithCurrency extends IPoloniexOrderInfo {
+export interface IPoloniexOrderResponse {
+  orderNumber: string
+  resultingTrades: IPoloniexOrderInfo[]
+  fee: string
+  clientOrderId: string
   currencyPair: string
+}
+
+export interface IPoloniexOrderCanceledResponse {
+  success: number
+  amount: string
+  clientOrderId: string
+  message: string
 }

@@ -3,16 +3,15 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
 import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
-import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
 import { IPoloniexOrderStatusInfo } from '../schemas/IPoloniexOrderSchema'
 import { PoloniexOrderParser } from '../schemas/parsers/PoloniexOrderParser'
 import {
@@ -174,14 +173,17 @@ describe('PoloniexOrderReadModule', () => {
       } as IAlunaExchange,
     )
 
-    const requestMock = ImportMock.mockFunction(
-      PoloniexHttp,
-      'privateRequest',
-      POLONIEX_RAW_LIMIT_ORDER,
+    const listRawMock = ImportMock.mockFunction(
+      poloniexOrderReadModule,
+      'listRaw',
+      [POLONIEX_RAW_LIMIT_ORDER],
     )
 
-    const symbolPair = 'symbol'
-    const id = 'id'
+
+    const { currencyPair, orderNumber } = POLONIEX_RAW_LIMIT_ORDER
+
+    const symbolPair = currencyPair
+    const id = orderNumber
 
     const rawOrder = await poloniexOrderReadModule.getRaw({
       id,
@@ -189,11 +191,8 @@ describe('PoloniexOrderReadModule', () => {
     })
 
 
-    expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.args[0][0]).to.includes({
-      verb: AlunaHttpVerbEnum.GET,
-      url: `${PROD_POLONIEX_URL}/orders/${id}`,
-    })
+    expect(listRawMock.callCount).to.be.eq(1)
+    expect(listRawMock.calledWith()).to.be.ok
 
     expect(rawOrder.type).to.be.eq(PoloniexOrderTypeEnum.SELL)
     expect(rawOrder.status).to.be.eq(PoloniexOrderStatusEnum.OPEN)
@@ -305,6 +304,56 @@ describe('PoloniexOrderReadModule', () => {
       }))
 
     })
+
+  })
+
+  it('should throw an error when an order is not found', async () => {
+
+    const keySecret = {
+      key: '',
+      secret: '',
+    }
+
+    ImportMock.mockOther(
+      poloniexOrderReadModule,
+      'exchange',
+      {
+        keySecret,
+      } as IAlunaExchange,
+    )
+
+    const listRawMock = ImportMock.mockFunction(
+      poloniexOrderReadModule,
+      'listRaw',
+      [POLONIEX_RAW_LIMIT_ORDER],
+    )
+
+    const symbolPair = 'symbol-pair'
+    const id = 'order-id'
+
+    let result
+    let error
+
+    try {
+
+      result = await poloniexOrderReadModule.getRaw({
+        id,
+        symbolPair,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(listRawMock.callCount).to.be.eq(1)
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
+    expect(error.message).to.be.eq('Order not found')
+    expect(error.httpStatusCode).to.be.eq(404)
 
   })
 
