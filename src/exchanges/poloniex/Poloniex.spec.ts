@@ -37,8 +37,7 @@ describe('Poloniex', () => {
     expect(poloniex.settings).to.be.ok
     expect(poloniex.settings?.referralCode).to.eq(referralCode)
 
-    // @TODO
-    // expect(poloniex.key).to.be.ok
+    expect(poloniex.key).to.be.ok
     expect(poloniex.balance).to.be.ok
     expect(poloniex.order).to.be.ok
 

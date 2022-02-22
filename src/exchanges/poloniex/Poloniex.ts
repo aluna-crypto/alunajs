@@ -9,6 +9,7 @@ import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { PoloniexBalanceModule } from './modules/PoloniexBalanceModule'
+import { PoloniexKeyModule } from './modules/PoloniexKeyModule'
 import { PoloniexMarketModule } from './modules/PoloniexMarketModule'
 import { PoloniexOrderWriteModule } from './modules/PoloniexOrderWriteModule'
 import { PoloniexSymbolModule } from './modules/PoloniexSymbolModule'
@@ -39,7 +40,7 @@ export const Poloniex: IAlunaExchangeStatic = class extends AAlunaExchange imple
 
     super(params)
 
-    // this.key = new PoloniexKeyModule({ exchange: this })
+    this.key = new PoloniexKeyModule({ exchange: this })
     this.balance = new PoloniexBalanceModule({ exchange: this })
     this.order = new PoloniexOrderWriteModule({ exchange: this })
 
