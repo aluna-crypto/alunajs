@@ -1,6 +1,9 @@
 import { BigNumber } from 'bignumber.js'
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  each,
+  filter,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaInstrumentStateEnum } from '../../../../lib/enums/AlunaInstrumentStateEnum'
@@ -20,6 +23,7 @@ describe('BitmexInstrumentParser', () => {
     computeMinTradeAmount,
     computeContractCurrency,
     computeOrderValueMultiplier,
+    computeUsdPricePerUnit,
   } = BitmexInstrumentParser
 
   it('should properly create Aluna instrument', () => {
@@ -320,6 +324,33 @@ describe('BitmexInstrumentParser', () => {
       expect(amountSymbolId).to.be.eq(expectedAmountSymbolId)
       expect(rateSymbolId).to.be.eq(expectedRateSymbolId)
       expect(totalSymbolId).to.be.eq(expectedTotalSymbolId)
+
+    })
+
+  })
+
+  it('should properly compute USD price per unit for quanto contracts', () => {
+
+    const quantoContracts = filter(BITMEX_RAW_SYMBOLS, (s) => s.isQuanto)
+
+    each(quantoContracts, (rawMarket) => {
+
+      const {
+        multiplier,
+        markPrice,
+        quoteToSettleMultiplier,
+      } = rawMarket
+
+      const expectedUsdPricePerUnit = new BigNumber(Math.abs(multiplier))
+        .times(markPrice)
+        .div(quoteToSettleMultiplier || 1)
+        .toNumber()
+
+      const usdPricePerUnit = computeUsdPricePerUnit({
+        rawMarket,
+      })
+
+      expect(expectedUsdPricePerUnit).to.be.eq(usdPricePerUnit)
 
     })
 
