@@ -16,6 +16,15 @@ export interface IAlunaPositionCloseParams {
   symbolPair?: string
 }
 
+export interface IAlunaPositionGetLeverageParams {
+  symbolPair: string
+}
+
+export interface IAlunaPositionSetLeverageParams {
+  symbolPair: string
+  leverage: number
+}
+
 export interface IAlunaPositionModule extends IAlunaModule {
 
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionSchema[]>
@@ -29,4 +38,6 @@ export interface IAlunaPositionModule extends IAlunaModule {
   parse (params: { rawPosition: any }): IAlunaPositionSchema
   parseMany (params: { rawPositions: any[] }): IAlunaPositionSchema[]
 
+  setLeverage? (params: IAlunaPositionGetLeverageParams): Promise<number>
+  getLeverage? (params: IAlunaPositionSetLeverageParams): any
 }
