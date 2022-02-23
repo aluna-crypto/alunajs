@@ -8,7 +8,7 @@ import {
   IPoloniexSymbolSchema,
   IPoloniexSymbolWithCurrency,
 } from '../schemas/IPoloniexSymbolSchema'
-import { PoloniexCurrencySymbolParser } from '../schemas/parsers/PoloniexCurrencySymbolParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
@@ -27,9 +27,10 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
         url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
       })
 
-    const rawSymbolsWithCurrency = PoloniexCurrencySymbolParser.parse({
-      rawSymbols,
-    })
+    const rawSymbolsWithCurrency = PoloniexCurrencyParser
+      .parse<IPoloniexSymbolWithCurrency>({
+        rawInfo: rawSymbols,
+      })
 
     return rawSymbolsWithCurrency
 

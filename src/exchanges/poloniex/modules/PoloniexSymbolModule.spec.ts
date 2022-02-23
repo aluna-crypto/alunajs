@@ -3,7 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
-import { PoloniexCurrencySymbolParser } from '../schemas/parsers/PoloniexCurrencySymbolParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import {
   POLONIEX_PARSED_SYMBOLS,
   POLONIEX_RAW_SYMBOL,
@@ -25,7 +25,7 @@ describe('PoloniexSymbolModule', () => {
     )
 
     const parserMock = ImportMock.mockFunction(
-      PoloniexCurrencySymbolParser,
+      PoloniexCurrencyParser,
       'parse',
       POLONIEX_RAW_SYMBOLS_WITH_CURRENCY,
     )

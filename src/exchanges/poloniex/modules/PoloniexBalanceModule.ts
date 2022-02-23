@@ -9,7 +9,7 @@ import {
   IPoloniexBalanceSchema,
   IPoloniexBalanceWithCurrency,
 } from '../schemas/IPoloniexBalanceSchema'
-import { PoloniexCurrencyBalanceParser } from '../schemas/parsers/PoloniexCurrencyBalanceParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
@@ -34,9 +34,10 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
         body: params,
       })
 
-    const rawBalancesWithCurrency = PoloniexCurrencyBalanceParser.parse({
-      rawBalances,
-    })
+    const rawBalancesWithCurrency = PoloniexCurrencyParser
+      .parse<IPoloniexBalanceWithCurrency>({
+        rawInfo: rawBalances,
+      })
 
     return rawBalancesWithCurrency
 

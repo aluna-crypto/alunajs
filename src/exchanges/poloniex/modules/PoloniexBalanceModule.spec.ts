@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
-import { PoloniexCurrencyBalanceParser } from '../schemas/parsers/PoloniexCurrencyBalanceParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import {
   POLONIEX_PARSED_BALANCES,
   POLONIEX_RAW_BALANCES,
@@ -39,7 +39,7 @@ describe('PoloniexBalanceModule', () => {
     )
 
     const currencyParserMock = ImportMock.mockFunction(
-      PoloniexCurrencyBalanceParser,
+      PoloniexCurrencyParser,
       'parse',
       POLONIEX_RAW_BALANCES_WITH_CURRENCY,
     )
@@ -51,7 +51,7 @@ describe('PoloniexBalanceModule', () => {
 
     expect(currencyParserMock.callCount).to.be.eq(1)
     expect(currencyParserMock.calledWith({
-      rawBalances: POLONIEX_RAW_BALANCES,
+      rawInfo: POLONIEX_RAW_BALANCES,
     })).to.be.ok
 
     expect(rawBalances.length).to.eq(3)

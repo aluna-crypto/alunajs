@@ -5,7 +5,7 @@ import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
-import { PoloniexCurrencyMarketParser } from '../schemas/parsers/PoloniexCurrencyMarketParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import { PoloniexMarketParser } from '../schemas/parsers/PoloniexMarketParser'
 import {
   POLONIEX_PARSED_MARKETS,
@@ -35,7 +35,7 @@ describe('PoloniexMarketModule', () => {
 
 
     const ticketMarketParserMock = ImportMock.mockFunction(
-      PoloniexCurrencyMarketParser,
+      PoloniexCurrencyParser,
       'parse',
       POLONIEX_RAW_MARKETS_WITH_CURRENCY,
     )
@@ -51,7 +51,7 @@ describe('PoloniexMarketModule', () => {
 
     expect(ticketMarketParserMock.callCount).to.be.eq(1)
     expect(ticketMarketParserMock.calledWith({
-      rawMarkets,
+      rawInfo: rawMarkets,
     })).to.be.ok
 
     expect(response.length).to.eq(3)

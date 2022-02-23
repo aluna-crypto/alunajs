@@ -7,7 +7,7 @@ import {
   IPoloniexMarketSchema,
   IPoloniexMarketWithCurrency,
 } from '../schemas/IPoloniexMarketSchema'
-import { PoloniexCurrencyMarketParser } from '../schemas/parsers/PoloniexCurrencyMarketParser'
+import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import { PoloniexMarketParser } from '../schemas/parsers/PoloniexMarketParser'
 
 
@@ -28,9 +28,10 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
       url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
     })
 
-    const rawMarketsWithCurrency = PoloniexCurrencyMarketParser.parse({
-      rawMarkets,
-    })
+    const rawMarketsWithCurrency = PoloniexCurrencyParser
+      .parse<IPoloniexMarketWithCurrency>({
+        rawInfo: rawMarkets,
+      })
 
     return rawMarketsWithCurrency
 
