@@ -1,10 +1,16 @@
+import { BitmexOrderStatusEnum } from '../enums/BitmexOrderStatusEnum'
+import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
+import { BitmexSideEnum } from '../enums/BitmexSideEnum'
+
+
+
 export interface IBitmexOrderSchema {
   orderID: string
   clOrdID: string
   clOrdLinkID: string
   account: number
   symbol: string
-  side: string
+  side: BitmexSideEnum
   simpleOrderQty: number
   orderQty: number
   price: number
@@ -14,12 +20,12 @@ export interface IBitmexOrderSchema {
   pegPriceType: string
   currency: string
   settlCurrency: string
-  ordType: string
+  ordType: BitmexOrderTypeEnum
   timeInForce: string
   execInst: string
   contingencyType: string
   exDestination: string
-  ordStatus: string
+  ordStatus: BitmexOrderStatusEnum
   triggered: string
   workingIndicator: true
   ordRejReason: string
