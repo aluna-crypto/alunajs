@@ -50,6 +50,16 @@ export class BitmexInstrumentParser {
       rawMarket,
     })
 
+    let usdPricePerUnit: number | undefined
+
+    if (isQuanto) {
+
+      usdPricePerUnit = BitmexInstrumentParser.computeUsdPricePerUnit({
+        rawMarket,
+      })
+
+    }
+
     const orderValueMultiplier = BitmexInstrumentParser
       .computeOrderValueMultiplier({
         rawMarket,
@@ -93,11 +103,13 @@ export class BitmexInstrumentParser {
       contractValue,
       contractCurrency,
       orderValueMultiplier,
+      usdPricePerUnit,
     }
 
     return instrument
 
   }
+
 
 
   public static computeContractValue (params: {
@@ -142,6 +154,7 @@ export class BitmexInstrumentParser {
     return contractValue
 
   }
+
 
 
   public static computeContractCurrency = (params: {
@@ -222,6 +235,8 @@ export class BitmexInstrumentParser {
 
   }
 
+
+
   public static computeMinTradeAmount = (params: {
     rawMarket: IBitmexMarketsSchema,
   }): number => {
@@ -238,6 +253,7 @@ export class BitmexInstrumentParser {
     return minTradeAmount
 
   }
+
 
 
   public static computeOrderValueMultiplier = (params: {
@@ -268,6 +284,29 @@ export class BitmexInstrumentParser {
     }
 
     return orderValueMultiplier
+
+  }
+
+
+
+  public static computeUsdPricePerUnit (params: {
+    rawMarket: IBitmexMarketsSchema,
+  }): number {
+
+    const { rawMarket } = params
+
+    const {
+      multiplier,
+      markPrice,
+      quoteToSettleMultiplier,
+    } = rawMarket
+
+    const usdPricePerUnit = new BigNumber(Math.abs(multiplier))
+      .times(markPrice)
+      .div(quoteToSettleMultiplier)
+      .toNumber()
+
+    return usdPricePerUnit
 
   }
 
