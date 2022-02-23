@@ -2,7 +2,9 @@ import { map } from 'lodash'
 
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
+import { BitmexSpecs } from '../BitmexSpecs'
 import { IBitmexMarketsSchema } from '../schemas/IBitmexMarketsSchema'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BitmexSymbolModule } from './BitmexSymbolModule'
@@ -29,6 +31,36 @@ export const BitmexMarketModule: IAlunaMarketModule = class {
     const parsedMarkets = BitmexMarketModule.parseMany({ rawMarkets })
 
     return parsedMarkets
+
+  }
+
+  public static async getRaw (params: {
+      symbolPair: string,
+    }): Promise<IBitmexMarketsSchema> {
+
+    const { symbolPair } = params
+
+    const { publicRequest } = BitmexHttp
+
+    const [rawMarket] = await publicRequest<IBitmexMarketsSchema[]>({
+      url: `${BitmexSpecs.connectApiUrl}/instrument?symbol=${symbolPair}`,
+    })
+
+    return rawMarket
+
+  }
+
+  public static async get (params: {
+      symbolPair: string,
+    }): Promise<IAlunaMarketSchema> {
+
+    const { symbolPair } = params
+
+    const rawMarket = await this.getRaw({ symbolPair })
+
+    const parsedMarket = this.parse({ rawMarket })
+
+    return parsedMarket
 
   }
 
