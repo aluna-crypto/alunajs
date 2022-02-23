@@ -37,7 +37,7 @@ export interface IBitmexSymbolsSchema {
   settlCurrency: string
   underlyingToPositionMultiplier: number | null
   underlyingToSettleMultiplier: number | null
-  quoteToSettleMultiplier: number | null
+  quoteToSettleMultiplier: number
   isQuanto: boolean
   isInverse: boolean
   initMargin: number
