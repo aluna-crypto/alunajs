@@ -1,7 +1,11 @@
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  each,
+  map,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'
 import { BITMEX_RAW_SYMBOLS } from '../test/bitmexSymbols'
@@ -52,6 +56,62 @@ describe('BitmexMarketModule', () => {
     expect(parseManyMock.args[0][0]).to.deep.eq({
       rawMarkets: BITMEX_RAW_SYMBOLS,
     })
+
+  })
+
+  it('should get a Bitmex raw market just fine', async () => {
+
+    const requestMock = ImportMock.mockFunction(
+      BitmexHttp,
+      'publicRequest',
+    )
+
+    const promises = map(BITMEX_RAW_SYMBOLS, async (rawMarket, i) => {
+
+      requestMock.onCall(i).returns([rawMarket])
+
+      const returned = await BitmexMarketModule.getRaw!({
+        symbolPair: rawMarket.symbol,
+      })
+
+      expect(returned).to.deep.eq(rawMarket)
+
+    })
+
+    await Promise.all(promises)
+
+  })
+
+  it('should get a Bitmex parsed market just fine', async () => {
+
+    const symbolPair = 'XBTUSD'
+
+    const rawMarket = BITMEX_RAW_SYMBOLS[0]
+    const parsedMarket = BITMEX_PARSED_MARKETS[0]
+
+    const getRawMock = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'getRaw',
+      Promise.resolve(rawMarket),
+    )
+
+    const parseMock = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'parse',
+      parsedMarket,
+    )
+
+    const result = await BitmexMarketModule.get!({
+      symbolPair,
+    })
+
+    expect(result).to.be.eq(parsedMarket)
+
+    expect(getRawMock.args[0][0]).to.deep.eq({ symbolPair })
+    expect(getRawMock.callCount).to.be.eq(1)
+
+    expect(parseMock.args[0][0]).to.deep.eq({ rawMarket })
+    expect(parseMock.callCount).to.be.eq(1)
 
   })
 
