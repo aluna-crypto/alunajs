@@ -12,7 +12,7 @@ export class BitmexMarketParser {
 
   public static parse (params: {
     rawMarket: IBitmexMarketsSchema,
-  }) {
+  }): IAlunaMarketSchema {
 
     const { rawMarket } = params
 
