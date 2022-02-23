@@ -1,8 +1,8 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import {
+  IAlunaBalanceGetTradableBalanceParams,
   IAlunaBalanceModule,
-  IFetchTradableBalanceParams,
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
@@ -85,8 +85,8 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
   }
 
-  public async fetchTradableBalance (
-    params: IFetchTradableBalanceParams,
+  public async getTradableBalance (
+    params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
 
     const {
