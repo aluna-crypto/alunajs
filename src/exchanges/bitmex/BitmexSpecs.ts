@@ -8,8 +8,7 @@ import {
 
 
 
-// export const PROD_BITMEX_URL = 'https://bitmex.com/api/v1'
-export const PROD_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
+export const PROD_BITMEX_URL = 'https://bitmex.com/api/v1'
 export const DEV_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
 
 
