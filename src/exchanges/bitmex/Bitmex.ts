@@ -13,7 +13,8 @@ import { BitmexSpecs } from './BitmexSpecs'
 import { BitmexBalanceModule } from './modules/BitmexBalanceModule'
 import { BitmexKeyModule } from './modules/BitmexKeyModule'
 import { BitmexMarketModule } from './modules/BitmexMarketModule'
-import { BitmexOrderReadModule } from './modules/BitmexOrderReadModule'
+import { BitmexOrderWriteModule } from './modules/BitmexOrderWriteModule'
+import { BitmexPositionModule } from './modules/BitmexPositionModule'
 import { BitmexSymbolModule } from './modules/BitmexSymbolModule'
 
 
@@ -44,11 +45,8 @@ export const Bitmex: IAlunaExchangeStatic = class extends AAlunaExchange impleme
 
     this.key = new BitmexKeyModule({ exchange: this })
     this.balance = new BitmexBalanceModule({ exchange: this })
-    this.order = new BitmexOrderReadModule({
-      exchange: this,
-    }) as IAlunaOrderWriteModule
-
-    // this.position = new BitmexPositionModule({ exchange: this })
+    this.order = new BitmexOrderWriteModule({ exchange: this })
+    this.position = new BitmexPositionModule({ exchange: this })
 
   }
 
