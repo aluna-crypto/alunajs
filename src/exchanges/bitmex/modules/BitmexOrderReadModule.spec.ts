@@ -89,4 +89,36 @@ describe.only('BitmexOrderReadModule', () => {
 
   })
 
+  it('should get a Bitmex raw order just fine', async () => {
+
+    const { exchangeMock } = mockExchange()
+
+    const rawOrder = BITMEX_RAW_ORDERS[0]
+
+    const requestMock = ImportMock.mockFunction(
+      BitmexHttp,
+      'privateRequest',
+      Promise.resolve(rawOrder),
+    )
+
+    const symbolPair = rawOrder.symbol
+    const id = rawOrder.orderID
+
+    const orderResponse = await bitmexOrderReadModule.getRaw({
+      id,
+      symbolPair,
+    })
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.args[0][0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      url: 'https://bitmex.com/api/v1/order',
+      keySecret: exchangeMock.getValue().keySecret,
+      body: { filter: { orderID: id } },
+    })
+
+    expect(rawOrder).to.deep.eq(orderResponse)
+
+  })
+
 })
