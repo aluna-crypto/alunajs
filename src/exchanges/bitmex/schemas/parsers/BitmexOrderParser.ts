@@ -319,4 +319,81 @@ export class BitmexOrderParser {
 
   }
 
+
+  public static translateOrderQtyToAluna (params: {
+    orderQty: number,
+    isInverse: boolean,
+    contractValue: number,
+    computedOrderPrice: number,
+    isTradedByUnitsOfContract: boolean,
+  }): number {
+
+    const {
+      orderQty,
+      isInverse,
+      contractValue,
+      computedOrderPrice,
+      isTradedByUnitsOfContract,
+    } = params
+
+    if (isTradedByUnitsOfContract) {
+
+      return orderQty
+
+    }
+
+    const bigNumber = new BigNumber(orderQty)
+
+    let amount: number
+
+    if (isInverse) {
+
+      amount = bigNumber
+        .div(computedOrderPrice)
+        .toNumber()
+
+    } else {
+
+      amount = bigNumber
+        .times(contractValue)
+        .toNumber()
+
+    }
+
+    return amount
+
+
+  }
+
+
+  static translateAmountToBitmex (params: {
+    amount: number,
+    isInverse: boolean,
+    contractValue: number,
+    isTradedByUnitsOfContract: boolean,
+  }): number {
+
+    const {
+      amount,
+      isInverse,
+      contractValue,
+      isTradedByUnitsOfContract,
+    } = params
+
+    const orderQtyIsCorrect = isTradedByUnitsOfContract || isInverse
+
+    if (orderQtyIsCorrect) {
+
+      return amount
+
+    }
+
+    const orderQty = new BigNumber(amount)
+      .div(contractValue)
+      .toNumber()
+
+    return orderQty
+
+  }
+
 }
