@@ -4,6 +4,7 @@ import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitmexOrderStatusEnum } from '../enums/BitmexOrderStatusEnum'
+import { BitmexOrderTriggeredStatus } from '../enums/BitmexOrderTriggeredStatus'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { BitmexSideEnum } from '../enums/BitmexSideEnum'
 import { IBitmexOrderSchema } from '../schemas/IBitmexOrderSchema'
@@ -33,7 +34,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'New' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
@@ -68,7 +69,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'Filled' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
@@ -103,7 +104,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'New' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
@@ -138,7 +139,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'New' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
@@ -173,7 +174,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'Canceled' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
@@ -208,7 +209,7 @@ export const BITMEX_RAW_ORDERS: IBitmexOrderSchema[] = [
     contingencyType: '',
     exDestination: 'XBME',
     ordStatus: 'PartiallyFilled' as BitmexOrderStatusEnum,
-    triggered: '',
+    triggered: '' as BitmexOrderTriggeredStatus,
     workingIndicator: true,
     ordRejReason: '',
     simpleLeavesQty: null,
