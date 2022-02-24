@@ -1,18 +1,26 @@
 import { expect } from 'chai'
+import {
+  each,
+  map,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
+import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
+import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'
 import {
   BITMEX_PARSED_ORDERS,
   BITMEX_RAW_ORDERS,
 } from '../test/bitmexOrders'
+import { BitmexMarketModule } from './BitmexMarketModule'
 import { BitmexOrderReadModule } from './BitmexOrderReadModule'
 
 
 
-describe.only('BitmexOrderReadModule', () => {
+describe('BitmexOrderReadModule', () => {
 
   const bitmexOrderReadModule = BitmexOrderReadModule.prototype
 
@@ -154,6 +162,118 @@ describe.only('BitmexOrderReadModule', () => {
     })
 
     expect(parsedOrder).to.deep.eq(orderResponse)
+
+  })
+
+  it('should parse a Bitmex raw order just fine', async () => {
+
+    const parsedMarket = BITMEX_PARSED_MARKETS[0]
+
+    const bitmexMarketModule = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'get',
+      Promise.resolve(parsedMarket),
+    )
+
+    const bitmexOrderParserMock = ImportMock.mockFunction(
+      BitmexOrderParser,
+      'parse',
+    )
+
+    each(BITMEX_PARSED_ORDERS, (parsedOrder, i) => {
+
+      bitmexOrderParserMock.onCall(i).returns(parsedOrder)
+
+    })
+
+    const promises = map(BITMEX_RAW_ORDERS, async (rawOrder, i) => {
+
+      const orderResponse = await bitmexOrderReadModule.parse({
+        rawOrder,
+      })
+
+      expect(bitmexMarketModule.args[i][0]).to.deep.eq({
+        symbolPair: rawOrder.symbol,
+      })
+
+      expect(bitmexOrderParserMock.returned(orderResponse)).to.be.ok
+
+    })
+
+    await Promise.all(promises)
+
+    expect(bitmexMarketModule.callCount).to.be.eq(BITMEX_RAW_ORDERS.length)
+    expect(bitmexOrderParserMock.callCount).to.be.eq(BITMEX_RAW_ORDERS.length)
+
+  })
+
+  it('should throw error if market is not found for order symbol', async () => {
+
+    let error
+    let result
+
+    const rawOrder = BITMEX_RAW_ORDERS[0]
+
+    const bitmexMarketModule = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'get',
+      Promise.resolve(undefined),
+    )
+
+    const bitmexOrderParserMock = ImportMock.mockFunction(
+      BitmexOrderParser,
+      'parse',
+    )
+
+    try {
+
+      result = await bitmexOrderReadModule.parse({
+        rawOrder,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error.message)
+      .to.be.eq(`Bitmex symbol pair not found for ${rawOrder.symbol}`)
+
+    expect(bitmexMarketModule.callCount).to.be.eq(1)
+    expect(bitmexMarketModule.args[0][0]).to.deep.eq({
+      symbolPair: rawOrder.symbol,
+    })
+
+    expect(bitmexOrderParserMock.callCount).to.be.eq(0)
+
+  })
+
+  it('should parse Bitmex many raw orders just fine', async () => {
+
+    const rawOrders = BITMEX_RAW_ORDERS
+    const parsedOrders = BITMEX_PARSED_ORDERS.slice(0, rawOrders.length)
+
+    const parseMock = ImportMock.mockFunction(
+      bitmexOrderReadModule,
+      'parse',
+    )
+
+    each(parsedOrders, (parsedOrder, i) => {
+
+      parseMock.onCall(i).returns(parsedOrder)
+
+    })
+
+    const parseOrderResponse = await bitmexOrderReadModule.parseMany({
+      rawOrders,
+    })
+
+    expect(parseMock.callCount).to.be.eq(parsedOrders.length)
+    expect(parseOrderResponse).to.deep.eq(parsedOrders)
 
   })
 
