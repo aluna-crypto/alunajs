@@ -8,7 +8,9 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
 import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'
 import {
@@ -56,7 +58,7 @@ describe('BitmexOrderReadModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: 'https://bitmex.com/api/v1/order',
+      url: `${PROD_BITMEX_URL}/order`,
       keySecret: exchangeMock.getValue().keySecret,
       body: { filter: { open: true } },
     })
@@ -106,7 +108,7 @@ describe('BitmexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BitmexHttp,
       'privateRequest',
-      Promise.resolve(rawOrder),
+      Promise.resolve([rawOrder]),
     )
 
     const symbolPair = rawOrder.symbol
@@ -120,12 +122,56 @@ describe('BitmexOrderReadModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: 'https://bitmex.com/api/v1/order',
+      url: `${PROD_BITMEX_URL}/order`,
       keySecret: exchangeMock.getValue().keySecret,
       body: { filter: { orderID: id } },
     })
 
     expect(rawOrder).to.deep.eq(orderResponse)
+
+  })
+
+  it('should throw error if Bitmex raw order is not found', async () => {
+
+    let result
+    let error
+
+    const { exchangeMock } = mockExchange()
+
+    const requestMock = ImportMock.mockFunction(
+      BitmexHttp,
+      'privateRequest',
+      Promise.resolve([]),
+    )
+
+    const symbolPair = 'XBTBTC'
+    const id = 'orderId'
+
+    try {
+
+      result = await bitmexOrderReadModule.getRaw({
+        id,
+        symbolPair,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
+    expect(error.message).to.be.eq(`Order not found for id: ${id}`)
+
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.args[0][0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      url: `${PROD_BITMEX_URL}/order`,
+      keySecret: exchangeMock.getValue().keySecret,
+      body: { filter: { orderID: id } },
+    })
 
   })
 
