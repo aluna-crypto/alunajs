@@ -89,6 +89,8 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
     params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
 
+    // TODO: Validate params and throw error
+
     const {
       rate,
       side,
@@ -108,8 +110,12 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       keySecret: this.exchange.keySecret,
       body: {
         dir,
-        rate: rate.toString(),
         symbol: symbolPair,
+
+        // TODO: Remove "!" after validating params above
+        rate: rate!.toString(),
+
+        // TODO: Consider using `account` property from params
         type: BitfinexAccountsEnum.MARGIN,
       },
     })

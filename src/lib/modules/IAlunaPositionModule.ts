@@ -38,7 +38,8 @@ export interface IAlunaPositionModule extends IAlunaModule {
   parse (params: { rawPosition: any }): IAlunaPositionSchema
   parseMany (params: { rawPositions: any[] }): IAlunaPositionSchema[]
 
-  // TODO: Adjust return type of method `IAlunaPositionSetLeverageParams`
-  setLeverage? (params: IAlunaPositionGetLeverageParams): Promise<number>
-  getLeverage? (params: IAlunaPositionSetLeverageParams): any
+  // TODO: Adjust return type of method `IAlunaPositionGetLeverageParams`
+  getLeverage? (params: IAlunaPositionGetLeverageParams): any
+  setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<number>
+
 }
