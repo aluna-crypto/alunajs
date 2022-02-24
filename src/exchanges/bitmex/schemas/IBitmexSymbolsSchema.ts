@@ -55,10 +55,10 @@ export interface IBitmexSymbolsSchema {
   fundingBaseSymbol: string
   fundingQuoteSymbol: string
   fundingPremiumSymbol: string
-  fundingTimestamp: string
-  fundingInterval: string
-  fundingRate: number
-  indicativeFundingRate: number
+  fundingTimestamp: string | null
+  fundingInterval: string | null
+  fundingRate: number | null
+  indicativeFundingRate: number | null
   rebalanceTimestamp: string | null
   rebalanceInterval: string | null
   openingTimestamp: string
@@ -90,9 +90,9 @@ export interface IBitmexSymbolsSchema {
   bidPrice: number
   midPrice: number
   askPrice: number
-  impactBidPrice: number
-  impactMidPrice: number
-  impactAskPrice: number
+  impactBidPrice: number | null
+  impactMidPrice: number | null
+  impactAskPrice: number | null
   hasLiquidity: boolean
   openInterest: number
   openValue: number
