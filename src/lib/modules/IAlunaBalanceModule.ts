@@ -7,9 +7,9 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 export interface IAlunaBalanceGetTradableBalanceParams {
   symbolPair: string
-  account: AlunaAccountEnum
-  side: AlunaSideEnum
-  rate: number
+  account?: AlunaAccountEnum
+  side?: AlunaSideEnum
+  rate?: number
 }
 
 
