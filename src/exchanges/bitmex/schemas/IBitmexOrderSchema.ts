@@ -1,5 +1,4 @@
 import { BitmexOrderStatusEnum } from '../enums/BitmexOrderStatusEnum'
-import { BitmexOrderTriggeredStatus } from '../enums/BitmexOrderTriggeredStatus'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { BitmexSideEnum } from '../enums/BitmexSideEnum'
 
@@ -27,7 +26,7 @@ export interface IBitmexOrderSchema {
   contingencyType: string
   exDestination: string
   ordStatus: BitmexOrderStatusEnum
-  triggered: BitmexOrderTriggeredStatus
+  triggered: 'StopOrderTriggered' | ''
   workingIndicator: true
   ordRejReason: string
   simpleLeavesQty: number | null
