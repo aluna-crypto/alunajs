@@ -5,7 +5,7 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 
 
-export interface IFetchTradableBalanceParams {
+export interface IAlunaBalanceGetTradableBalanceParams {
   symbolPair: string
   account: AlunaAccountEnum
   side: AlunaSideEnum
@@ -22,6 +22,8 @@ export interface IAlunaBalanceModule extends IAlunaModule {
   parse (params: { rawBalance: any }): IAlunaBalanceSchema
   parseMany (params: { rawBalances: any[] }): IAlunaBalanceSchema[]
 
-  fetchTradableBalance? (params: IFetchTradableBalanceParams): Promise<number>
+  getTradableBalance? (
+    params: IAlunaBalanceGetTradableBalanceParams
+  ): Promise<number>
 
 }
