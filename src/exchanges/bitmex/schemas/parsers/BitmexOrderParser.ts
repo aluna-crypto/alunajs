@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTriggeredStatusEnum } from '../../../../lib/enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import {
@@ -10,7 +11,6 @@ import {
 } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
 import { BitmexSpecs } from '../../BitmexSpecs'
-import { BitmexOrderTriggeredAdapter } from '../../enums/adapters/BitmexOrderTriggeredAdapter'
 import { BitmexOrderTypeAdapter } from '../../enums/adapters/BitmexOrderTypeAdapter'
 import { BitmexSideAdapter } from '../../enums/adapters/BitmexSideAdapter'
 import { BitmexStatusAdapter } from '../../enums/adapters/BitmexStatusAdapter'
@@ -61,9 +61,9 @@ export class BitmexOrderParser {
       from: ordType,
     })
 
-    const triggeredStatus = BitmexOrderTriggeredAdapter.translateToAluna({
-      from: triggered,
-    })
+    const triggeredStatus = triggered === ''
+      ? AlunaOrderTriggeredStatusEnum.UNTRIGGERED
+      : AlunaOrderTriggeredStatusEnum.TRIGGERED
 
     let rate: number | undefined
     let stopRate: number | undefined
