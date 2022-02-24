@@ -18,7 +18,7 @@ import { BitmexOrderParser } from './BitmexOrderParser'
 
 
 
-describe.only('BitmexOrderParser', () => {
+describe('BitmexOrderParser', () => {
 
   const {
     parse,
