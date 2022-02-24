@@ -95,6 +95,8 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       symbolPair,
     } = params
 
+    // TODO: Validate params existence upfront
+
     BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbolPair}`)
 
     const { privateRequest } = BitfinexHttp
@@ -108,8 +110,12 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       keySecret: this.exchange.keySecret,
       body: {
         dir,
-        rate: rate.toString(),
         symbol: symbolPair,
+
+        // TODO: Remove "!" after validating params above
+        rate: rate!.toString(),
+
+        // TODO: Consider using `account` property from params
         type: BitfinexAccountsEnum.MARGIN,
       },
     })
