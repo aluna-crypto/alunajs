@@ -121,4 +121,40 @@ describe.only('BitmexOrderReadModule', () => {
 
   })
 
+  it('should get a Bitmex parsed order just fine', async () => {
+
+    const rawOrder = BITMEX_RAW_ORDERS[0]
+    const parsedOrder = BITMEX_PARSED_ORDERS[0]
+
+    const rawOrderMock = ImportMock.mockFunction(
+      bitmexOrderReadModule,
+      'getRaw',
+      rawOrder,
+    )
+
+    const parseMock = ImportMock.mockFunction(
+      bitmexOrderReadModule,
+      'parse',
+      parsedOrder,
+    )
+
+    const params = {
+      id: 'id',
+      symbolPair: 'symbolPair',
+    }
+
+    const orderResponse = await bitmexOrderReadModule.get(params)
+
+    expect(rawOrderMock.callCount).to.be.eq(1)
+    expect(rawOrderMock.calledWith(params)).to.be.ok
+
+    expect(parseMock.callCount).to.be.eq(1)
+    expect(parseMock.args[0][0]).to.deep.eq({
+      rawOrder,
+    })
+
+    expect(parsedOrder).to.deep.eq(orderResponse)
+
+  })
+
 })
