@@ -8,6 +8,11 @@ import {
 
 
 
+// export const PROD_BITMEX_URL = 'https://bitmex.com/api/v1'
+export const PROD_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
+export const DEV_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
+
+
 const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.LIMIT,
@@ -72,19 +77,19 @@ export const BitmexSpecs: IAlunaExchangeSchema = {
       type: AlunaAccountEnum.EXCHANGE,
       supported: false,
       implemented: false,
-      orderTypes: exchangeOrderTypes,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
-      orderTypes: exchangeOrderTypes,
+      orderTypes: [],
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: true,
-      orderTypes: [],
+      orderTypes: exchangeOrderTypes,
     },
     {
       type: AlunaAccountEnum.LENDING,
