@@ -3,7 +3,7 @@ import { PoloniexPositionSideEnum } from '../enums/PoloniexPositionSideEnum'
 
 
 export interface IPoloniexPositionInfo {
-  amount: string,
+  amount: string
   total: string
   basePrice: string
   liquidationPrice: number
@@ -13,7 +13,7 @@ export interface IPoloniexPositionInfo {
 }
 
 export interface IPoloniexPositionSchema {
-  [key: string]: 
+  [key: string]: IPoloniexPositionInfo
 }
 
 export interface IPoloniexPositionWithCurrency extends IPoloniexPositionInfo {
