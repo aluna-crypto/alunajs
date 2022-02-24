@@ -18,12 +18,14 @@ import { BitmexOrderParser } from './BitmexOrderParser'
 
 
 
-describe('BitmexOrderParser', () => {
+describe.only('BitmexOrderParser', () => {
 
   const {
     parse,
-    computeAmountAndTotal,
+    computeOrderAmount,
+    computeOrderTotal,
     assembleUiCustomDisplay,
+    translateAmountToOrderQty,
   } = BitmexOrderParser
 
   it('should properly parse Bitmex orders', () => {
@@ -49,13 +51,16 @@ describe('BitmexOrderParser', () => {
       expectedUICustonDisplay,
     )
 
-    const computeAmountAndTotalMock = ImportMock.mockFunction(
+    const computeOrderAmountMock = ImportMock.mockFunction(
       BitmexOrderParser,
-      'computeAmountAndTotal',
-      {
-        computedAmount,
-        computedTotal,
-      },
+      'computeOrderAmount',
+      computedAmount,
+    )
+
+    const computeOrderTotalMock = ImportMock.mockFunction(
+      BitmexOrderParser,
+      'computeOrderTotal',
+      computedTotal,
     )
 
     each(BITMEX_RAW_ORDERS, (rawOrder, index) => {
@@ -159,18 +164,26 @@ describe('BitmexOrderParser', () => {
         computedTotal,
       })
 
-      expect(computeAmountAndTotalMock.callCount).to.be.eq(index + 1)
-      expect(computeAmountAndTotalMock.args[index][0]).to.deep.eq({
-        computedPrice: expectedComputedPrice,
-        instrument: mockedInstrument,
+
+      expect(computeOrderAmountMock.callCount).to.be.eq(index + 1)
+      expect(computeOrderAmountMock.args[index][0]).to.deep.eq({
         orderQty: rawOrder.orderQty,
+        instrument: mockedInstrument,
+        computedPrice: expectedComputedPrice,
+      })
+
+      expect(computeOrderTotalMock.callCount).to.be.eq(index + 1)
+      expect(computeOrderTotalMock.args[index][0]).to.deep.eq({
+        instrument: mockedInstrument,
+        computedPrice: expectedComputedPrice,
+        computedAmount,
       })
 
     })
 
   })
 
-  it("should properly compute order 'amount' and 'total' [INVERSE]", () => {
+  it("should properly compute order 'amount' [INVERSE INSTRUMENT]", () => {
 
     const orderQty = 100
 
@@ -180,31 +193,24 @@ describe('BitmexOrderParser', () => {
       isInverse: true,
       isTradedByUnitsOfContract: false,
       contractValue: 0.0898,
-      price: 38000,
-      usdPricePerUnit: 5,
     } as IAlunaInstrumentSchema
 
-    const expectedTotal = orderQty
+
     const expectedAmount = new BigNumber(orderQty)
       .div(computedPrice)
       .toNumber()
 
-
-    const {
-      computedAmount,
-      computedTotal,
-    } = computeAmountAndTotal({
-      orderQty,
-      instrument,
+    const computedAmount = computeOrderAmount({
       computedPrice,
+      instrument,
+      orderQty,
     })
 
     expect(computedAmount).to.be.eq(expectedAmount)
-    expect(expectedTotal).to.be.eq(computedTotal)
 
   })
 
-  it("should properly compute order 'amount' and 'total' [QUANTO]", () => {
+  it("should properly compute order 'amount' [QUANTO INSTRUMENT]", () => {
 
     const orderQty = 5
 
@@ -214,11 +220,88 @@ describe('BitmexOrderParser', () => {
       isInverse: false,
       isTradedByUnitsOfContract: true,
       contractValue: 0.0898,
-      price: 38000,
-      usdPricePerUnit: 5,
     } as IAlunaInstrumentSchema
 
+
     const expectedAmount = orderQty
+
+    const computedAmount = computeOrderAmount({
+      computedPrice,
+      instrument,
+      orderQty,
+    })
+
+    expect(computedAmount).to.be.eq(expectedAmount)
+
+  })
+
+  it(
+    "should properly compute order 'amount' [NOR QUANTO/INVERSE INSTRUMENT]",
+    () => {
+
+      const orderQty = 0.05
+
+      const computedPrice = 32000
+
+      const instrument = {
+        isInverse: false,
+        isTradedByUnitsOfContract: false,
+        contractValue: 0.0898,
+      } as IAlunaInstrumentSchema
+
+
+      const expectedAmount = new BigNumber(orderQty)
+        .times(instrument.contractValue)
+        .toNumber()
+
+
+      const computedAmount = computeOrderAmount({
+        computedPrice,
+        instrument,
+        orderQty,
+      })
+
+      expect(computedAmount).to.be.eq(expectedAmount)
+
+    },
+  )
+
+  it("should properly compute order 'total' [INVERSE INSTRUMENT]", () => {
+
+    const computedPrice = 32000
+    const computedAmount = 10
+
+    const instrument = {
+      isInverse: true,
+      isTradedByUnitsOfContract: false,
+      usdPricePerUnit: 20,
+      price: 200,
+    } as IAlunaInstrumentSchema
+
+
+    const expectedTotal = computedAmount
+
+    const computedTotal = computeOrderTotal({
+      computedPrice,
+      computedAmount,
+      instrument,
+    })
+
+    expect(computedTotal).to.be.eq(expectedTotal)
+
+  })
+
+  it("should properly compute order 'total' [QUANTO INSTRUMENT]", () => {
+
+    const computedPrice = 200
+    const computedAmount = 290
+
+    const instrument = {
+      isInverse: false,
+      isTradedByUnitsOfContract: true,
+      usdPricePerUnit: 10,
+      price: 50,
+    } as IAlunaInstrumentSchema
 
     const priceRatio = new BigNumber(computedPrice)
       .div(instrument.price)
@@ -228,64 +311,124 @@ describe('BitmexOrderParser', () => {
       .times(instrument.usdPricePerUnit!)
       .toNumber()
 
-    const expectedTotal = new BigNumber(orderQty)
+    const expectedTotal = new BigNumber(computedAmount)
       .times(pricePerContract)
       .toNumber()
 
-
-    const {
-      computedAmount,
-      computedTotal,
-    } = computeAmountAndTotal({
-      orderQty,
-      instrument,
+    const computedTotal = computeOrderTotal({
       computedPrice,
+      computedAmount,
+      instrument,
     })
 
-    expect(computedAmount).to.be.eq(expectedAmount)
-    expect(expectedTotal).to.be.eq(computedTotal)
+    expect(computedTotal).to.be.eq(expectedTotal)
 
   })
 
   it(
-    "should properly compute order 'amount' and 'total' [NOR QUANTO/INVERSE]",
+    "should properly compute order 'total' [NOR QUANTO/INVERSE INSTRUMENT]",
     () => {
 
-      const orderQty = 5
-      const computedPrice = 32000
+      const computedPrice = 200
+      const computedAmount = 290
 
       const instrument = {
         isInverse: false,
         isTradedByUnitsOfContract: false,
-        contractValue: 0.0898,
-        price: 38000,
-        usdPricePerUnit: 5,
+        usdPricePerUnit: 10,
+        price: 50,
       } as IAlunaInstrumentSchema
 
-      const expectedAmount = new BigNumber(orderQty)
-        .times(instrument.contractValue)
-        .toNumber()
-
-      const expectedTotal = new BigNumber(expectedAmount)
+      const expectedTotal = new BigNumber(computedAmount)
         .times(computedPrice)
         .toNumber()
 
-      const {
-        computedAmount,
-        computedTotal,
-      } = computeAmountAndTotal({
-        orderQty,
-        instrument,
+      const computedTotal = computeOrderTotal({
         computedPrice,
+        computedAmount,
+        instrument,
       })
 
-      expect(computedAmount).to.be.eq(expectedAmount)
-      expect(expectedTotal).to.be.eq(computedTotal)
+      expect(computedTotal).to.be.eq(expectedTotal)
 
     },
   )
 
-  it("should properly assemble 'uiCustomDisplay' for order [INVERSE]", () => {
+  it(
+    "should properly translate amount to 'orderQty' [INVERSE INSTRUMENT]",
+    () => {
+
+      const amount = 300
+
+      const instrument = {
+        isInverse: true,
+        contractValue: 10,
+        isTradedByUnitsOfContract: false,
+      } as IAlunaInstrumentSchema
+
+      const expectedOrderQty = amount
+
+      const orderQty = translateAmountToOrderQty({
+        amount,
+        instrument,
+      })
+
+      expect(orderQty).to.be.eq(expectedOrderQty)
+
+    },
+  )
+
+  it(
+    "should properly translate amount to 'orderQty' [QUANTO INSTRUMENT]",
+    () => {
+
+      const amount = 0.04
+
+      const instrument = {
+        isInverse: false,
+        contractValue: 10,
+        isTradedByUnitsOfContract: true,
+      } as IAlunaInstrumentSchema
+
+      const expectedOrderQty = amount
+
+      const orderQty = translateAmountToOrderQty({
+        amount,
+        instrument,
+      })
+
+      expect(orderQty).to.be.eq(expectedOrderQty)
+
+    },
+  )
+
+  it(
+    "should translate amount to 'orderQty' [NOR QUANTO/INVERSE INSTRUMENT]",
+    () => {
+
+      const amount = 0.04
+
+      const instrument = {
+        isInverse: false,
+        contractValue: 10,
+        isTradedByUnitsOfContract: false,
+      } as IAlunaInstrumentSchema
+
+      const expectedOrderQty = new BigNumber(amount)
+        .div(instrument.contractValue)
+        .toNumber()
+
+      const orderQty = translateAmountToOrderQty({
+        amount,
+        instrument,
+      })
+
+      expect(orderQty).to.be.eq(expectedOrderQty)
+
+    },
+  )
+
+  it("should properly assemble 'uiCustomDisplay' [INVERSE INSTRUMENT]", () => {
 
     const rawOrder = {
       ordType: BitmexOrderTypeEnum.LIMIT,
@@ -333,7 +476,7 @@ describe('BitmexOrderParser', () => {
 
   })
 
-  it("should properly assemble 'uiCustomDisplay' for order [QUANTO]", () => {
+  it("should properly assemble 'uiCustomDisplay' [QUANTO INSTRUMENT]", () => {
 
     const rawOrder = {
       ordType: BitmexOrderTypeEnum.MARKET,
@@ -385,7 +528,7 @@ describe('BitmexOrderParser', () => {
   })
 
   it(
-    "should properly assemble 'uiCustomDisplay' for order [NOR QUANTO/INVERSE]",
+    "should properly assemble 'uiCustomDisplay'[NOR QUANTO/INVERSE INSTRUMENT]",
     () => {
 
       const rawOrder = {
