@@ -11,7 +11,7 @@ import { BitmexSymbolModule } from './BitmexSymbolModule'
 
 
 
-export const BitmexMarketModule: IAlunaMarketModule = class {
+export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
 
   public static async listRaw (): Promise<IBitmexMarketsSchema[]> {
