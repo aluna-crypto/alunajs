@@ -11,12 +11,12 @@ export interface IBitmexOrderSchema {
   account: number
   symbol: string
   side: BitmexSideEnum
-  simpleOrderQty: number
+  simpleOrderQty: number | null
   orderQty: number
-  price: number
-  displayQty: number
-  stopPx: number
-  pegOffsetValue: number
+  price: number | null
+  displayQty: number | null
+  stopPx: number | null
+  pegOffsetValue: number | null
   pegPriceType: string
   currency: string
   settlCurrency: string
@@ -29,11 +29,11 @@ export interface IBitmexOrderSchema {
   triggered: string
   workingIndicator: true
   ordRejReason: string
-  simpleLeavesQty: number
+  simpleLeavesQty: number | null
   leavesQty: number
-  simpleCumQty: number
+  simpleCumQty: number | null
   cumQty: number
-  avgPx: number
+  avgPx: number | null
   multiLegReportingType: string
   text: string
   transactTime: string
