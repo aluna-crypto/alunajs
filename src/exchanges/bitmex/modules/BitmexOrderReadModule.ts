@@ -4,6 +4,7 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderReadModule,
@@ -11,6 +12,7 @@ import {
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { IBitmexOrderSchema } from '../schemas/IBitmexOrderSchema'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
 import { BitmexMarketModule } from './BitmexMarketModule'
@@ -27,7 +29,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const rawOrders = await privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
-      url: 'https://bitmex.com/api/v1/order',
+      url: `${PROD_BITMEX_URL}/order`,
       keySecret: this.exchange.keySecret,
       body: { filter: { open: true } },
     })
@@ -56,14 +58,27 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     BitmexLog.info('fetching Bitmex order status')
 
-    const rawOrder = await BitmexHttp.privateRequest<IBitmexOrderSchema>({
+    const orderRes = await BitmexHttp.privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
-      url: 'https://bitmex.com/api/v1/order',
+      url: `${PROD_BITMEX_URL}/order`,
       keySecret: this.exchange.keySecret,
       body: { filter: { orderID: id } },
     })
 
-    return rawOrder
+    if (!orderRes.length) {
+
+      const alunaError = new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: `Order not found for id: ${id}`,
+      })
+
+      BitmexLog.error(alunaError)
+
+      throw alunaError
+
+    }
+
+    return orderRes[0]
 
   }
 
@@ -87,21 +102,21 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const { symbol } = rawOrder
 
-    const parsedMarket = await BitmexMarketModule.get!({
+    const parsedMarket = await BitmexMarketModule.get({
       symbolPair: symbol,
     })
 
     if (!parsedMarket) {
 
-      const error = new AlunaError({
+      const alunaError = new AlunaError({
         code: AlunaGenericErrorCodes.PARAM_ERROR,
         message: `Bitmex symbol pair not found for ${symbol}`,
         httpStatusCode: 400,
       })
 
-      BitmexLog.error(error)
+      BitmexLog.error(alunaError)
 
-      throw error
+      throw alunaError
 
     }
 
