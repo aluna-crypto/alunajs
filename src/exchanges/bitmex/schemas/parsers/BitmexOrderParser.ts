@@ -10,6 +10,7 @@ import {
 } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
 import { BitmexSpecs } from '../../BitmexSpecs'
+import { BitmexOrderTriggeredAdapter } from '../../enums/adapters/BitmexOrderTriggeredAdapter'
 import { BitmexOrderTypeAdapter } from '../../enums/adapters/BitmexOrderTypeAdapter'
 import { BitmexSideAdapter } from '../../enums/adapters/BitmexSideAdapter'
 import { BitmexStatusAdapter } from '../../enums/adapters/BitmexStatusAdapter'
@@ -45,6 +46,7 @@ export class BitmexOrderParser {
       ordType,
       transactTime,
       timestamp,
+      triggered,
     } = rawOrder
 
     const computedStatus = BitmexStatusAdapter.translateToAluna({
@@ -57,6 +59,10 @@ export class BitmexOrderParser {
 
     const computedType = BitmexOrderTypeAdapter.translateToAluna({
       from: ordType,
+    })
+
+    const triggeredStatus = BitmexOrderTriggeredAdapter.translateToAluna({
+      from: triggered,
     })
 
     let rate: number | undefined
@@ -85,13 +91,16 @@ export class BitmexOrderParser {
 
     }
 
-    const {
-      computedAmount,
-      computedTotal,
-    } = BitmexOrderParser.computeAmountAndTotal({
-      computedPrice,
-      instrument,
+    const computedAmount = BitmexOrderParser.computeOrderAmount({
       orderQty,
+      instrument,
+      computedPrice,
+    })
+
+    const computedTotal = BitmexOrderParser.computeOrderTotal({
+      instrument,
+      computedPrice,
+      computedAmount,
     })
 
     const placedAt = new Date(transactTime)
@@ -137,6 +146,7 @@ export class BitmexOrderParser {
       placedAt,
       filledAt,
       canceledAt,
+      triggeredStatus,
       meta: rawOrder,
     }
 
@@ -253,32 +263,28 @@ export class BitmexOrderParser {
 
   }
 
-  public static computeAmountAndTotal (params: {
-    orderQty: number,
+  public static computeOrderTotal (params: {
     computedPrice: number,
+    computedAmount: number,
     instrument: IAlunaInstrumentSchema,
   }) {
 
     const {
-      orderQty,
       instrument,
       computedPrice,
+      computedAmount,
     } = params
 
     const {
       isInverse,
       isTradedByUnitsOfContract,
-      contractValue,
       usdPricePerUnit,
       price,
     } = instrument
 
-    let computedAmount: number
     let computedTotal: number
 
     if (isTradedByUnitsOfContract) {
-
-      computedAmount = orderQty
 
       const priceRatio = new BigNumber(computedPrice)
         .div(price)
@@ -294,17 +300,9 @@ export class BitmexOrderParser {
 
     } else if (isInverse) {
 
-      computedTotal = orderQty
-
-      computedAmount = new BigNumber(orderQty)
-        .div(computedPrice)
-        .toNumber()
+      computedTotal = computedAmount
 
     } else {
-
-      computedAmount = new BigNumber(orderQty)
-        .times(contractValue)
-        .toNumber()
 
       computedTotal = new BigNumber(computedAmount)
         .times(computedPrice)
@@ -312,29 +310,28 @@ export class BitmexOrderParser {
 
     }
 
-    return {
-      computedAmount,
-      computedTotal,
-    }
+    return computedTotal
 
   }
 
 
-  public static translateOrderQtyToAluna (params: {
+  public static computeOrderAmount (params: {
     orderQty: number,
-    isInverse: boolean,
-    contractValue: number,
-    computedOrderPrice: number,
-    isTradedByUnitsOfContract: boolean,
+    computedPrice: number,
+    instrument: IAlunaInstrumentSchema,
   }): number {
 
     const {
       orderQty,
+      computedPrice,
+      instrument,
+    } = params
+
+    const {
       isInverse,
       contractValue,
-      computedOrderPrice,
       isTradedByUnitsOfContract,
-    } = params
+    } = instrument
 
     if (isTradedByUnitsOfContract) {
 
@@ -349,7 +346,7 @@ export class BitmexOrderParser {
     if (isInverse) {
 
       amount = bigNumber
-        .div(computedOrderPrice)
+        .div(computedPrice)
         .toNumber()
 
     } else {
@@ -366,19 +363,21 @@ export class BitmexOrderParser {
   }
 
 
-  static translateAmountToBitmex (params: {
+  static translateAmountToOrderQty (params: {
     amount: number,
-    isInverse: boolean,
-    contractValue: number,
-    isTradedByUnitsOfContract: boolean,
+    instrument: IAlunaInstrumentSchema,
   }): number {
 
     const {
       amount,
+      instrument,
+    } = params
+
+    const {
       isInverse,
       contractValue,
       isTradedByUnitsOfContract,
-    } = params
+    } = instrument
 
     const orderQtyIsCorrect = isTradedByUnitsOfContract || isInverse
 
