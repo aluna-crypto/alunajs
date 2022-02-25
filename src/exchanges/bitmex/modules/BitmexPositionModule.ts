@@ -4,7 +4,6 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaPositionCloseParams,
   IAlunaPositionGetLeverageParams,
@@ -71,8 +70,8 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
     if (!symbolPair) {
 
       const error = new AlunaError({
-        code: AlunaOrderErrorCodes.MISSING_PARAMS,
-        message: 'Position symbol is required to close Bitmex positions',
+        code: AlunaGenericErrorCodes.PARAM_ERROR,
+        message: 'Position symbol is required to get Bitmex positions',
         httpStatusCode: 400,
       })
 
@@ -104,7 +103,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
     if (!symbolPair) {
 
       const error = new AlunaError({
-        code: AlunaOrderErrorCodes.MISSING_PARAMS,
+        code: AlunaGenericErrorCodes.PARAM_ERROR,
         message: 'Position symbol is required to close Bitmex positions',
         httpStatusCode: 400,
       })
