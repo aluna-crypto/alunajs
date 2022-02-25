@@ -16,7 +16,7 @@ import {
 } from '../../../lib/schemas/IAlunaKeySchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
-import { BitmexSpecs } from '../BitmexSpecs'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { IBitmexKeysSchema } from '../schemas/IBitmexKeysSchema'
 
 
@@ -37,7 +37,7 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       rawKey = await BitmexHttp.privateRequest<IBitmexKeysSchema>({
         verb: AlunaHttpVerbEnum.GET,
-        url: `${BitmexSpecs.connectApiUrl}/apiKey`,
+        url: `${PROD_BITMEX_URL}/apiKey`,
         keySecret,
       })
 

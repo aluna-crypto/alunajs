@@ -5,7 +5,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { BitmexHttp } from '../BitmexHttp'
-import { BitmexSpecs } from '../BitmexSpecs'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexBalanceParser } from '../schemas/parsers/BitmexBalanceParser'
 import {
   BITMEX_PARSED_BALANCES,
@@ -43,7 +43,7 @@ describe('BitmexBalanceModule', () => {
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${BitmexSpecs.connectApiUrl}/user/margin`,
+      url: `${PROD_BITMEX_URL}/user/margin`,
       body: { currency: 'all' },
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok

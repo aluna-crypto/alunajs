@@ -3,7 +3,10 @@ import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { BitmexHttp } from '../BitmexHttp'
-import { BitmexSpecs } from '../BitmexSpecs'
+import {
+  BitmexSpecs,
+  PROD_BITMEX_URL,
+} from '../BitmexSpecs'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 import {
   BITMEX_PARSED_SYMBOLS,
@@ -27,7 +30,7 @@ describe('BitmexSymbolModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
-      url: `${BitmexSpecs.connectApiUrl}/instrument/active`,
+      url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
     expect(rawSymbols).to.be.eq(BITMEX_RAW_SYMBOLS)

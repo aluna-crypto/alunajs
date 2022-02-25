@@ -8,7 +8,7 @@ import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
-import { BitmexSpecs } from '../BitmexSpecs'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 
 
@@ -22,7 +22,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
     const { publicRequest } = BitmexHttp
 
     const rawSymbols = await publicRequest<IBitmexSymbolsSchema[]>({
-      url: `${BitmexSpecs.connectApiUrl}/instrument/active`,
+      url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
     return rawSymbols

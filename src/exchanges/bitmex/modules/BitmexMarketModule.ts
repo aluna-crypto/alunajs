@@ -4,7 +4,7 @@ import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
-import { BitmexSpecs } from '../BitmexSpecs'
+import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { IBitmexMarketsSchema } from '../schemas/IBitmexMarketsSchema'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BitmexSymbolModule } from './BitmexSymbolModule'
@@ -35,15 +35,15 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
   }
 
   public static async getRaw (params: {
-      symbolPair: string,
-    }): Promise<IBitmexMarketsSchema> {
+    symbolPair: string,
+  }): Promise<IBitmexMarketsSchema> {
 
     const { symbolPair } = params
 
     const { publicRequest } = BitmexHttp
 
     const [rawMarket] = await publicRequest<IBitmexMarketsSchema[]>({
-      url: `${BitmexSpecs.connectApiUrl}/instrument?symbol=${symbolPair}`,
+      url: `${PROD_BITMEX_URL}/instrument?symbol=${symbolPair}`,
     })
 
     return rawMarket
