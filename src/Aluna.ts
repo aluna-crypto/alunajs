@@ -44,6 +44,9 @@ export class Aluna extends Exchanges {
       case this.Binance.ID:
         return new this.Binance(subParams)
 
+      case this.Gateio.ID:
+        return new this.Gateio(subParams)
+
       case this.Bitfinex.ID:
         return new this.Bitfinex(subParams)
 
@@ -88,6 +91,9 @@ export class Aluna extends Exchanges {
 
       case this.Binance.ID:
         return this.Binance
+
+      case this.Gateio.ID:
+        return this.Gateio
 
       case this.Bitfinex.ID:
         return this.Bitfinex
