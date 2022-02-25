@@ -76,7 +76,7 @@ export class BitmexPositionParser {
     const openPrice = avgEntryPrice
 
     const bigNumber = new BigNumber(unrealisedPnl)
-    const pl = totalSymbolId === BitmexSettlementCurrencyEnum.BTC
+    const computedPl = totalSymbolId === BitmexSettlementCurrencyEnum.BTC
       ? bigNumber.times(10 ** -8).toNumber()
       : bigNumber.times(10 ** -6).toNumber()
 
@@ -100,11 +100,11 @@ export class BitmexPositionParser {
       computedAmount: amount,
     })
 
-    const uiCustomDisplay = this.assembleUiCustomDisplay({
+    const uiCustomDisplay = BitmexPositionParser.assembleUiCustomDisplay({
       computedAmount: amount,
       computedTotal: total,
       instrument,
-      pl,
+      computedPl,
       rawPosition,
     })
 
@@ -122,7 +122,7 @@ export class BitmexPositionParser {
       account: AlunaAccountEnum.DERIVATIVES,
       side,
       status,
-      pl,
+      pl: computedPl,
       plPercentage: unrealisedRoePcnt,
       leverage: computeLeverage,
       crossMargin: !!crossMargin,
@@ -140,7 +140,7 @@ export class BitmexPositionParser {
     rawPosition: IBitmexPositionSchema,
     computedAmount: number,
     computedTotal: number,
-    pl: number,
+    computedPl: number,
     instrument: IAlunaInstrumentSchema,
   }): IAlunaUIPositionCustomDisplay {
 
@@ -149,7 +149,7 @@ export class BitmexPositionParser {
       instrument,
       computedAmount,
       rawPosition,
-      pl,
+      computedPl,
     } = params
 
     const {
@@ -183,7 +183,7 @@ export class BitmexPositionParser {
 
     const uiCustomDisplayPl: IAlunaUICustomDisplaySchema = {
       symbolId: totalSymbolId,
-      value: pl,
+      value: computedPl,
     }
 
     if (isTradedByUnitsOfContract) {
