@@ -146,7 +146,7 @@ export const BITMEX_RAW_BALANCES: IBitmexBalanceSchema[] = [
 
 export const BITMEX_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
-    symbolId: 'XBt',
+    symbolId: 'BTC',
     account: 'derivatives' as AlunaAccountEnum,
     available: 0.00492116,
     total: 0.00492116,
@@ -197,10 +197,10 @@ export const BITMEX_PARSED_BALANCES: IAlunaBalanceSchema[] = [
     },
   },
   {
-    symbolId: 'USDt',
+    symbolId: 'USDT',
     account: 'derivatives' as AlunaAccountEnum,
-    available: 0,
-    total: 0,
+    available: 60,
+    total: 90,
     meta: {
       account: 1766960,
       currency: 'USDt',
