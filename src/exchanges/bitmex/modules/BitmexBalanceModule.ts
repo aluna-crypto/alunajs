@@ -2,8 +2,12 @@ import { map } from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceGetTradableBalanceParams,
+  IAlunaBalanceModule,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { BitmexSpecs } from '../BitmexSpecs'
@@ -74,6 +78,33 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
     BitmexLog.info(`parsed ${parsedBalances.length} balances for BitMEX`)
 
     return parsedBalances
+
+  }
+
+  public async getTradableBalance (
+    params: IAlunaBalanceGetTradableBalanceParams,
+  ): Promise<number> {
+
+    // TODO: Validate params and throw errors accordingly
+    const {
+      symbolPair,
+    } = params
+
+    const markets = await Bitmex.Market.list()
+    const balances = await this.list()
+
+    const leverage = this.exchange.position!.getLeverage!({ symbolPair })
+
+    const tradableBalance = 123
+
+    console.log({
+      params,
+      markets,
+      balances,
+      leverage,
+    })
+
+    return tradableBalance
 
   }
 
