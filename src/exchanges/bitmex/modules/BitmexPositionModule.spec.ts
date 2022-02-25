@@ -25,7 +25,7 @@ import { BitmexPositionModule } from './BitmexPositionModule'
 
 
 
-describe.only('BitmexPositionModule', () => {
+describe('BitmexPositionModule', () => {
 
   const bitmexPositionModule = BitmexPositionModule.prototype
 
