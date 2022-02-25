@@ -89,7 +89,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
     params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
 
-    // TODO: Validate params and throw error
+    // TODO: Validate params and throw errors accordingly
 
     const {
       rate,
