@@ -4,7 +4,11 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
-import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
+import {
+  IAlunaPositionSchema,
+  IAlunaUIPositionCustomDisplay,
+} from '../../../../lib/schemas/IAlunaPositionSchema'
+import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
 import { BitmexSpecs } from '../../BitmexSpecs'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { IBitmexPositionSchema } from '../IBitmexPositionSchema'
@@ -16,14 +20,16 @@ export class BitmexPositionParser {
 
   public static parse (params: {
     rawPosition: IBitmexPositionSchema,
+    instrument: IAlunaInstrumentSchema,
     baseSymbolId: string,
     quoteSymbolId: string,
-    instrument: IAlunaInstrumentSchema,
   }): IAlunaPositionSchema {
 
     const {
       rawPosition,
       instrument,
+      baseSymbolId,
+      quoteSymbolId,
     } = params
 
     const {
@@ -31,8 +37,6 @@ export class BitmexPositionParser {
     } = instrument
 
     const {
-      underlying,
-      quoteCurrency,
       currentQty,
       avgCostPrice,
       avgEntryPrice,
@@ -96,11 +100,19 @@ export class BitmexPositionParser {
       computedAmount: amount,
     })
 
+    const uiCustomDisplay = this.assembleUiCustomDisplay({
+      computedAmount: amount,
+      computedTotal: total,
+      instrument,
+      pl,
+      rawPosition,
+    })
+
     const position: IAlunaPositionSchema = {
       exchangeId: BitmexSpecs.id,
       symbolPair: symbol,
-      baseSymbolId: underlying,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       total,
       amount,
       basePrice,
@@ -116,10 +128,98 @@ export class BitmexPositionParser {
       crossMargin: !!crossMargin,
       openedAt,
       closedAt,
+      uiCustomDisplay,
       meta: rawPosition,
     }
 
     return position
+
+  }
+
+  public static assembleUiCustomDisplay (params: {
+    rawPosition: IBitmexPositionSchema,
+    computedAmount: number,
+    computedTotal: number,
+    pl: number,
+    instrument: IAlunaInstrumentSchema,
+  }): IAlunaUIPositionCustomDisplay {
+
+    const {
+      computedTotal,
+      instrument,
+      computedAmount,
+      rawPosition,
+      pl,
+    } = params
+
+    const {
+      homeNotional,
+      underlying,
+      quoteCurrency,
+      avgCostPrice,
+    } = rawPosition
+
+    const {
+      isInverse,
+      totalSymbolId,
+      isTradedByUnitsOfContract,
+      amountSymbolId,
+    } = instrument
+
+    const uiCustomDisplayRate: IAlunaUICustomDisplaySchema = {
+      symbolId: quoteCurrency,
+      value: avgCostPrice,
+    }
+
+    const uiCustomDisplayAmount: IAlunaUICustomDisplaySchema = {
+      symbolId: '',
+      value: 0,
+    }
+
+    const uiCustomDisplayTotal: IAlunaUICustomDisplaySchema = {
+      symbolId: '',
+      value: 0,
+    }
+
+    const uiCustomDisplayPl: IAlunaUICustomDisplaySchema = {
+      symbolId: totalSymbolId,
+      value: pl,
+    }
+
+    if (isTradedByUnitsOfContract) {
+
+      uiCustomDisplayAmount.symbolId = 'Cont'
+      uiCustomDisplayAmount.value = computedAmount
+
+      uiCustomDisplayTotal.symbolId = underlying
+      uiCustomDisplayTotal.value = homeNotional
+
+    } else if (isInverse) {
+
+      uiCustomDisplayAmount.symbolId = amountSymbolId
+      uiCustomDisplayAmount.value = computedTotal
+
+      uiCustomDisplayTotal.symbolId = 'XBT'
+      uiCustomDisplayTotal.value = computedAmount
+
+    } else {
+
+      uiCustomDisplayAmount.symbolId = amountSymbolId
+      uiCustomDisplayAmount.value = computedAmount
+
+      uiCustomDisplayTotal.symbolId = amountSymbolId
+      uiCustomDisplayTotal.value = computedAmount
+
+      uiCustomDisplayRate.symbolId = totalSymbolId
+
+    }
+
+    return {
+      amount: uiCustomDisplayAmount,
+      rate: uiCustomDisplayRate,
+      total: uiCustomDisplayTotal,
+      pnl: uiCustomDisplayPl,
+    }
 
   }
 
