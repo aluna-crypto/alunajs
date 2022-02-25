@@ -1,3 +1,5 @@
+import { each } from 'lodash'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
@@ -116,9 +118,9 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   }
 
-  parse (params: {
+  async parse (params: {
     rawPosition: IBitfinexPositionSchema,
-  }): IAlunaPositionSchema {
+  }): Promise<IAlunaPositionSchema> {
 
     const { rawPosition } = params
 
@@ -130,28 +132,30 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   }
 
-  parseMany (params: {
+  async parseMany (params: {
     rawPositions: IBitfinexPositionSchema[],
-  }): IAlunaPositionSchema[] {
+  }): Promise<IAlunaPositionSchema[]> {
 
     const { rawPositions } = params
 
-    const parsedPositions = rawPositions.reduce((acc, rawPosition) => {
+    const parsedPositionsPromise: Promise<IAlunaPositionSchema>[] = []
+
+    each(rawPositions, async (rawPosition) => {
 
       // skipping derivative positions for now
       if (/^(f)|(F0)/.test(rawPosition[0])) {
 
-        return acc
+        return
 
       }
 
       const parsedPosition = this.parse({ rawPosition })
 
-      acc.push(parsedPosition)
+      parsedPositionsPromise.push(parsedPosition)
 
-      return acc
+    })
 
-    }, [] as IAlunaPositionSchema[])
+    const parsedPositions = await Promise.all(parsedPositionsPromise)
 
     return parsedPositions
 
