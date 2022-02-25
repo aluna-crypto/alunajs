@@ -18,6 +18,11 @@ describe('BitmexBalanceParser', () => {
 
   it('should properly parse bitmex raw balances', () => {
 
+    const mappings = {
+      XBt: 'BTC',
+      USDt: 'USDT',
+    }
+
     const [usdtBalance] = filter(
       BITMEX_RAW_BALANCES,
       (raw) => raw.currency === BitmexSettlementCurrencyEnum.USDT,
@@ -87,7 +92,7 @@ describe('BitmexBalanceParser', () => {
 
       const parsedBalance = BitmexBalanceParser.parse({ rawBalance })
 
-      expect(parsedBalance.symbolId).to.be.eq(currency)
+      expect(parsedBalance.symbolId).to.be.eq(mappings[currency] || currency)
       expect(parsedBalance.account).to.be.eq(AlunaAccountEnum.DERIVATIVES)
       expect(parsedBalance.available).to.be.eq(expectedAvailable)
       expect(parsedBalance.total).to.be.eq(expectedTotal)

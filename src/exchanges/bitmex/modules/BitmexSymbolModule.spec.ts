@@ -66,6 +66,8 @@ describe('BitmexSymbolModule', () => {
 
   it('should parse a Bitmex raw symbol just fine', () => {
 
+    const mapping = { XBT: 'BTC' }
+
     const rawSymbol1 = {
       symbol: 'XBTUSD',
       rootSymbol: 'XBT',
@@ -79,7 +81,7 @@ describe('BitmexSymbolModule', () => {
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(BitmexSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(rawSymbol1.rootSymbol)
+    expect(parsedSymbol1.id).to.be.eq(mapping[rawSymbol1.rootSymbol])
     expect(parsedSymbol1.meta).to.be.eq(rawSymbol1)
 
 

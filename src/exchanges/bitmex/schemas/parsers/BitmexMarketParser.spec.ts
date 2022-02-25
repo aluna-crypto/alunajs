@@ -19,6 +19,10 @@ describe('BitmexMarketParser', () => {
 
     const mockedInstrument = {} as IAlunaInstrumentSchema
 
+    const mappings = {
+      XBT: 'BTC',
+    }
+
     const bitmexInstrumentParserMock = ImportMock.mockFunction(
       BitmexInstrumentParser,
       'parse',
@@ -68,7 +72,10 @@ describe('BitmexMarketParser', () => {
       expect(parsedMarket.exchangeId).to.deep.eq(BitmexSpecs.id)
 
       expect(parsedMarket.symbolPair).to.deep.eq(symbol)
-      expect(parsedMarket.baseSymbolId).to.deep.eq(rootSymbol)
+
+      const expectedBaseSymboId = mappings[rootSymbol] || rootSymbol
+
+      expect(parsedMarket.baseSymbolId).to.deep.eq(expectedBaseSymboId)
       expect(parsedMarket.quoteSymbolId).to.deep.eq(quoteCurrency)
 
       expect(parsedMarket.instrument).to.deep.eq(mockedInstrument)
