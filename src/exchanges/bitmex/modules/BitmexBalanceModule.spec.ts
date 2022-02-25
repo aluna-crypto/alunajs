@@ -1,9 +1,14 @@
+import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  each,
+  filter,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexBalanceParser } from '../schemas/parsers/BitmexBalanceParser'
@@ -11,7 +16,9 @@ import {
   BITMEX_PARSED_BALANCES,
   BITMEX_RAW_BALANCES,
 } from '../test/bitmexBalances'
+import { BITMEX_RAW_SYMBOLS } from '../test/bitmexSymbols'
 import { BitmexBalanceModule } from './BitmexBalanceModule'
+import { BitmexMarketModule } from './BitmexMarketModule'
 
 
 
@@ -128,6 +135,175 @@ describe('BitmexBalanceModule', () => {
     expect(parseMock.callCount).to.be.eq(BITMEX_RAW_BALANCES.length)
 
     expect(parsedBalances).to.deep.eq(BITMEX_PARSED_BALANCES)
+
+  })
+
+  it('should properly get tradable balance for XBt', async () => {
+
+    const symbolPair = 'XBTUSD'
+    const mockedBalance = BITMEX_PARSED_BALANCES[0]
+    const mockedLeverage = 1
+
+    const [rawMarket] = filter(BITMEX_RAW_SYMBOLS, (s) => {
+
+      return s.settlCurrency === 'XBt'
+
+    })
+
+    const getRawMock = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'getRaw',
+      Promise.resolve(rawMarket),
+    )
+
+    const listMock = ImportMock.mockFunction(
+      bitmexBalanceModule,
+      'list',
+      Promise.resolve([mockedBalance]),
+    )
+
+    ImportMock.mockOther(
+      bitmexBalanceModule,
+      'exchange',
+      {
+        position: {
+          getLeverage: () => Promise.resolve(mockedLeverage),
+        } as any,
+      },
+    )
+
+    const expectedLeverage = new BigNumber(mockedBalance.available)
+      .times(mockedLeverage)
+      .toNumber()
+
+    const leverage = await bitmexBalanceModule.getTradableBalance({
+      symbolPair,
+    })
+
+    expect(leverage).to.be.eq(expectedLeverage)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(getRawMock.args[0][0]).to.deep.eq({
+      symbolPair,
+    })
+
+    expect(listMock.callCount).to.be.eq(1)
+
+  })
+
+  it('should properly get tradable balance for USDt', async () => {
+
+    const symbolPair = 'XBTUSDT'
+    const mockedBalance = BITMEX_PARSED_BALANCES[1]
+    const mockedLeverage = 0
+
+    const [rawMarket] = filter(BITMEX_RAW_SYMBOLS, (s) => {
+
+      return s.settlCurrency === 'USDt'
+
+    })
+
+    const getRawMock = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'getRaw',
+      Promise.resolve(rawMarket),
+    )
+
+    const listMock = ImportMock.mockFunction(
+      bitmexBalanceModule,
+      'list',
+      Promise.resolve([mockedBalance]),
+    )
+
+    ImportMock.mockOther(
+      bitmexBalanceModule,
+      'exchange',
+      {
+        position: {
+          getLeverage: () => Promise.resolve(mockedLeverage),
+        } as any,
+      },
+    )
+
+    const expectedTradableBalance = mockedBalance.available
+
+    const tradableBalance = await bitmexBalanceModule.getTradableBalance({
+      symbolPair,
+    })
+
+    expect(tradableBalance).to.be.eq(expectedTradableBalance)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(getRawMock.args[0][0]).to.deep.eq({
+      symbolPair,
+    })
+
+    expect(listMock.callCount).to.be.eq(1)
+
+  })
+
+  it('should throw error if balance is not found for symbol', async () => {
+
+    let error
+    let result
+
+    const symbolPair = 'XBTUSD'
+    const mockedLeverage = 1
+
+    const [rawMarket] = filter(BITMEX_RAW_SYMBOLS, (s) => {
+
+      return s.settlCurrency === 'XBt'
+
+    })
+
+    const getRawMock = ImportMock.mockFunction(
+      BitmexMarketModule,
+      'getRaw',
+      Promise.resolve(rawMarket),
+    )
+
+    const listMock = ImportMock.mockFunction(
+      bitmexBalanceModule,
+      'list',
+      Promise.resolve([]),
+    )
+
+    ImportMock.mockOther(
+      bitmexBalanceModule,
+      'exchange',
+      {
+        position: {
+          getLeverage: () => Promise.resolve(mockedLeverage),
+        } as any,
+      },
+    )
+
+    try {
+
+      result = await bitmexBalanceModule.getTradableBalance({
+        symbolPair,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    const msg = `No available balance found for asset: ${symbolPair}`
+
+    expect(error).to.be.ok
+    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(error.message).to.be.eq(msg)
+
+    expect(getRawMock.callCount).to.be.eq(1)
+    expect(getRawMock.args[0][0]).to.deep.eq({
+      symbolPair,
+    })
+
+    expect(listMock.callCount).to.be.eq(1)
 
   })
 
