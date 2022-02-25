@@ -63,8 +63,25 @@ export class BitmexBalanceParser {
 
     }
 
+    let symbolId: string
+
+    // TODO: Apply mapping here
+    if (currency === 'XBt') {
+
+      symbolId = 'BTC'
+
+    } else if (currency === 'USDt') {
+
+      symbolId = 'USDT'
+
+    } else {
+
+      symbolId = currency
+
+    }
+
     const balance: IAlunaBalanceSchema = {
-      symbolId: currency,
+      symbolId,
       account: AlunaAccountEnum.DERIVATIVES,
       available: computedAvailable,
       total: computedTotal,
