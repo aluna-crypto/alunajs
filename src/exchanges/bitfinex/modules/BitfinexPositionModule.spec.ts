@@ -60,7 +60,7 @@ describe('BitfinexPositionModule', () => {
 
   }
 
-  const mockedBitfinexPositionParser = (
+  const mockBitfinexPositionParser = (
     resonse: IAlunaPositionSchema[],
     mockBitfinexModule = true,
   ) => {
@@ -85,7 +85,7 @@ describe('BitfinexPositionModule', () => {
 
     resonse.forEach((res, i) => {
 
-      parserMock.onCall(i).returns(res)
+      parserMock.onCall(i).returns(Promise.resolve(res))
 
     })
 
@@ -140,7 +140,7 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly parse a Bitfinex raw position', async () => {
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
       false,
     )
@@ -174,7 +174,7 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly parse many Bitfinex raw positions', async () => {
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 
@@ -233,7 +233,7 @@ describe('BitfinexPositionModule', () => {
       Promise.resolve(mockedRawPosition),
     )
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 
