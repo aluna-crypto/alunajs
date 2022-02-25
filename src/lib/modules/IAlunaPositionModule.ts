@@ -8,7 +8,8 @@ export interface IAlunaPositionListParams {
 }
 
 export interface IAlunaPositionGetParams {
-  id: string
+  id?: string
+  symbolPair?: string
 }
 
 export interface IAlunaPositionCloseParams {
@@ -35,11 +36,10 @@ export interface IAlunaPositionModule extends IAlunaModule {
 
   close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionSchema>
 
-  parse (params: { rawPosition: any }): IAlunaPositionSchema
-  parseMany (params: { rawPositions: any[] }): IAlunaPositionSchema[]
+  parse (params: { rawPosition: any }): Promise<IAlunaPositionSchema>
+  parseMany (params: { rawPositions: any[] }): Promise<IAlunaPositionSchema[]>
 
-  // TODO: Adjust return type of method `IAlunaPositionGetLeverageParams`
-  getLeverage? (params: IAlunaPositionGetLeverageParams): any
+  getLeverage? (params: IAlunaPositionGetLeverageParams): Promise<number>
   setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<number>
 
 }
