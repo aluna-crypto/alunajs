@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { Aluna } from './Aluna'
 import { Binance } from './exchanges/binance/Binance'
 import { Bitfinex } from './exchanges/bitfinex/Bitfinex'
+import { Bitmex } from './exchanges/bitmex/Bitmex'
 import { Bittrex } from './exchanges/bittrex/Bittrex'
 import { Gateio } from './exchanges/gateio/Gateio'
 import { Valr } from './exchanges/valr/Valr'
@@ -22,9 +23,10 @@ describe('Aluna', () => {
   it('should inherit from Exchanges and make them available statically', () => {
 
     expect(Aluna.Binance).to.be.ok
-    expect(Aluna.Gateio).to.be.ok
     expect(Aluna.Bitfinex).to.be.ok
+    expect(Aluna.Bitmex).to.be.ok
     expect(Aluna.Bittrex).to.be.ok
+    expect(Aluna.Gateio).to.be.ok
     expect(Aluna.Valr).to.be.ok
 
   })
@@ -34,6 +36,7 @@ describe('Aluna', () => {
     let gateio: IAlunaExchange | undefined
     let binance: IAlunaExchange | undefined
     let bitfinex: IAlunaExchange | undefined
+    let bitmex: IAlunaExchange | undefined
     let bittrex: IAlunaExchange | undefined
     let valr: IAlunaExchange | undefined
 
@@ -59,6 +62,14 @@ describe('Aluna', () => {
 
       bitfinex = Aluna.new({
         exchangeId: 'bitfinex',
+        keySecret: {
+          key: 'key',
+          secret: 'secret',
+        },
+      })
+
+      bitmex = Aluna.new({
+        exchangeId: 'bitmex',
         keySecret: {
           key: 'key',
           secret: 'secret',
@@ -92,12 +103,14 @@ describe('Aluna', () => {
     expect(gateio).to.be.ok
     expect(binance).to.be.ok
     expect(bitfinex).to.be.ok
+    expect(bitmex).to.be.ok
     expect(bittrex).to.be.ok
     expect(valr).to.be.ok
 
     expect(gateio instanceof Gateio).to.be.ok
     expect(binance instanceof Binance).to.be.ok
     expect(bitfinex instanceof Bitfinex).to.be.ok
+    expect(bitmex instanceof Bitmex).to.be.ok
     expect(bittrex instanceof Bittrex).to.be.ok
     expect(valr instanceof Valr).to.be.ok
 
@@ -129,33 +142,6 @@ describe('Aluna', () => {
 
     expect(error?.code).to.be.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
     expect(error?.message).to.be.eq('Exchange not supported: god')
-
-  })
-
-  it('should properly instantiate Gateio exchange', async () => {
-
-    let gateio: IAlunaExchange | undefined
-    let error
-
-    try {
-
-      gateio = Aluna.new({
-        exchangeId: 'gateio',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error).not.to.be.ok
-    expect(gateio).to.be.ok
-    expect(gateio instanceof Gateio).to.be.ok
 
   })
 
@@ -258,6 +244,30 @@ describe('Aluna', () => {
   it('should properly resolve exchange Gateio static class', async () => {
 
     const exchangeId = Gateio.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(error).not.to.be.ok
+
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
+  it('should properly resolve exchange Bitmex static class', async () => {
+
+    const exchangeId = Bitmex.ID
 
     let Exchange: IAlunaExchangeStatic | undefined
     let error
