@@ -9,7 +9,7 @@ export interface IBitmexPositionSchema {
   maintMarginReq: number
   riskLimit: number
   leverage: number
-  crossMargin: number
+  crossMargin: boolean
   deleveragePercentile: number
   rebalancedPnl: number
   prevRealisedPnl: number
