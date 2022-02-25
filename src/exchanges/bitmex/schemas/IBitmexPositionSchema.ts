@@ -41,7 +41,7 @@ export interface IBitmexPositionSchema {
   grossOpenCost: number
   grossOpenPremium: number
   grossExecCost: number
-  isOpen: true
+  isOpen: boolean
   markPrice: number
   markValue: number
   riskValue: number

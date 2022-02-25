@@ -34,7 +34,6 @@ export class BitmexPositionParser {
       underlying,
       quoteCurrency,
       currentQty,
-      openingQty,
       avgCostPrice,
       avgEntryPrice,
       homeNotional,
@@ -46,6 +45,7 @@ export class BitmexPositionParser {
       crossMargin,
       openingTimestamp,
       prevClosePrice,
+      isOpen,
     } = rawPosition
 
     const openedAt = new Date(openingTimestamp)
@@ -54,7 +54,7 @@ export class BitmexPositionParser {
     let closedAt: Date | undefined
     let closePrice: number | undefined
 
-    if (openingQty !== 0) {
+    if (isOpen) {
 
       status = AlunaPositionStatusEnum.OPEN
 
