@@ -16,6 +16,9 @@ export class BitmexMarketParser {
 
     const { rawMarket } = params
 
+    // TODO: Remove after implementing mapping
+    const tempMapping = { XBT: 'BTC' }
+
     const {
       symbol,
       rootSymbol,
@@ -29,6 +32,9 @@ export class BitmexMarketParser {
       askPrice,
       initMargin,
     } = rawMarket
+
+    const baseSymbolId = tempMapping[rootSymbol] || rootSymbol
+    const quoteSymbolId = tempMapping[quoteCurrency] || quoteCurrency
 
     const instrument = BitmexInstrumentParser.parse({
       rawMarket,
@@ -57,8 +63,8 @@ export class BitmexMarketParser {
     const market: IAlunaMarketSchema = {
       symbolPair: symbol,
       exchangeId: BitmexSpecs.id,
-      baseSymbolId: rootSymbol,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       ticker,
       spotEnabled: false,
       marginEnabled: false,

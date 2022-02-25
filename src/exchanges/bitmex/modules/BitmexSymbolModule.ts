@@ -49,12 +49,15 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbol } = params
 
+    // TODO: Remove after implementing mapping
+    const tempMapping = { XBT: 'BTC' }
+
     const {
       rootSymbol,
     } = rawSymbol
 
     const parsedSymbol: IAlunaSymbolSchema = {
-      id: rootSymbol,
+      id: tempMapping[rootSymbol] || rootSymbol,
       exchangeId: Bitmex.ID,
       meta: rawSymbol,
     }
