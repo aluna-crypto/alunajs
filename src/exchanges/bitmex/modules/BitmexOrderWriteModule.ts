@@ -320,7 +320,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
         orderTypes: supportedOrderTypes,
       } = accountSpecs
 
-      if (!supported || !implemented || !supportedOrderTypes) {
+      if (!supported || !implemented) {
 
         throw new AlunaError({
           message: `Account type '${account}' not supported/implemented for ${BitmexSpecs.name}`,
