@@ -8,7 +8,7 @@ import {
 
 
 
-export const PROD_BITMEX_URL = 'https://bitmex.com/api/v1'
+export const PROD_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
 export const DEV_BITMEX_URL = 'https://testnet.bitmex.com/api/v1'
 
 
@@ -61,7 +61,7 @@ export const BitmexSpecs: IAlunaExchangeSchema = {
   id: 'bitmex',
   name: 'BitMEX',
   signupUrl: 'https://www.bitmex.com/register',
-  connectApiUrl: 'https://www.bitmex.com/api/v1',
+  connectApiUrl: 'https://www.bitmex.com/app/apiKeys',
   rateLimitingPerMinute: {
     // double check rate limits later
     perApiKey: 120,
