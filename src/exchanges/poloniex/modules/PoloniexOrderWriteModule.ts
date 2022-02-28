@@ -12,7 +12,7 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
-import { PoloniexOrderTypeAdapter } from '../enums/adapters/PoloniexOrderTypeAdapter'
+import { PoloniexSideAdapter } from '../enums/adapters/PoloniexSideAdapter'
 import { PoloniexOrderTimeInForceEnum } from '../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
@@ -102,8 +102,8 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     }
 
-    const translatedOrderType = PoloniexOrderTypeAdapter.translateToPoloniex({
-      from: side,
+    const translatedOrderType = PoloniexSideAdapter.translateToPoloniex({
+      side,
     })
 
     if (!rate) {

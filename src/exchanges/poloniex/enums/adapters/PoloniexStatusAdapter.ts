@@ -19,10 +19,50 @@ export class PoloniexStatusAdapter {
         [PoloniexOrderStatusEnum.OPEN]: AlunaOrderStatusEnum.OPEN,
         [PoloniexOrderStatusEnum.PARTIALLY_FILLED]:
           AlunaOrderStatusEnum.PARTIALLY_FILLED,
+        [PoloniexOrderStatusEnum.FILLED]:
+          AlunaOrderStatusEnum.FILLED,
         [PoloniexOrderStatusEnum.CANCELED]:
           AlunaOrderStatusEnum.CANCELED,
       },
     })
+
+
+
+    static translatePoloniexStatus = (params: {
+      status?: PoloniexOrderStatusEnum,
+      startingAmount: string,
+      amount: string,
+      isFilled: boolean,
+    }): PoloniexOrderStatusEnum => {
+
+      const {
+        startingAmount, amount, isFilled, status,
+      } = params
+
+      if (status) {
+
+        return status
+
+      }
+
+      if (isFilled) {
+
+        return PoloniexOrderStatusEnum.FILLED
+
+      }
+
+      const isPartiallyFilled = parseFloat(startingAmount)
+          !== parseFloat(amount)
+
+      if (isPartiallyFilled) {
+
+        return PoloniexOrderStatusEnum.PARTIALLY_FILLED
+
+      }
+
+      return PoloniexOrderStatusEnum.OPEN
+
+    }
 
 
 
@@ -35,6 +75,8 @@ export class PoloniexStatusAdapter {
           PoloniexOrderStatusEnum.PARTIALLY_FILLED,
         [AlunaOrderStatusEnum.CANCELED]:
           PoloniexOrderStatusEnum.CANCELED,
+        [AlunaOrderStatusEnum.FILLED]:
+          PoloniexOrderStatusEnum.FILLED,
       },
     })
 

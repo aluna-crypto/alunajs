@@ -12,6 +12,28 @@ describe('PoloniexStatusAdapter', () => {
   const notSupported = 'not-supported'
 
 
+  it('should translate Poloniex status', () => {
+
+    const rawStartingAmount = '0.05'
+    const rawAmount = '0.05'
+    const rawPartiallyFilledAmount = '0.04'
+
+    expect(PoloniexStatusAdapter.translatePoloniexStatus({
+      isFilled: true,
+      amount: rawAmount,
+      startingAmount: rawStartingAmount,
+    })).to.be.eq(PoloniexOrderStatusEnum.FILLED)
+
+    expect(PoloniexStatusAdapter.translatePoloniexStatus({
+      isFilled: false,
+      amount: rawAmount,
+      startingAmount: rawPartiallyFilledAmount,
+    })).to.be.eq(PoloniexOrderStatusEnum.PARTIALLY_FILLED)
+
+
+  })
+
+
 
   it('should translate Poloniex order status to Aluna order status',
     () => {

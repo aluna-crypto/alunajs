@@ -3,13 +3,12 @@ import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
-import { PoloniexOrderStatusEnum } from '../../enums/PoloniexOrderStatusEnum'
 import { PoloniexOrderTypeEnum } from '../../enums/PoloniexOrderTypeEnum'
-import { IPoloniexOrderStatusInfo } from '../../schemas/IPoloniexOrderSchema'
+import { IPoloniexOrderWithCurrency } from '../../schemas/IPoloniexOrderSchema'
 
 
 
-export const POLONIEX_RAW_LIMIT_ORDER: IPoloniexOrderStatusInfo = {
+export const POLONIEX_RAW_LIMIT_ORDER: IPoloniexOrderWithCurrency = {
   orderNumber: '3810998527',
   type: PoloniexOrderTypeEnum.SELL,
   rate: '500.00000000',
@@ -20,7 +19,8 @@ export const POLONIEX_RAW_LIMIT_ORDER: IPoloniexOrderStatusInfo = {
   margin: 0,
   clientOrderId: '1234',
   currencyPair: 'BUSD_BNB',
-  status: PoloniexOrderStatusEnum.OPEN,
+  baseCurrency: 'BUSD',
+  quoteCurrency: 'BNB',
 }
 
 export const POLONIEX_PARSED_ORDER: IAlunaOrderSchema = {

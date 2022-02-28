@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 import { PoloniexSideAdapter } from './PoloniexSideAdapter'
@@ -17,33 +17,16 @@ describe('PoloniexSideAdapter', () => {
     () => {
 
       expect(PoloniexSideAdapter.translateToAluna({
-        from: PoloniexOrderTypeEnum.BUY,
+        orderType: PoloniexOrderTypeEnum.BUY,
       })).to.be.eq(AlunaSideEnum.LONG)
 
       expect(PoloniexSideAdapter.translateToAluna({
-        from: PoloniexOrderTypeEnum.SELL,
+        orderType: PoloniexOrderTypeEnum.SELL,
       })).to.be.eq(AlunaSideEnum.SHORT)
 
-      let result
-      let error
-
-      try {
-
-        result = PoloniexSideAdapter.translateToAluna({
-          from: notSupported as PoloniexOrderTypeEnum,
-        })
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+      expect(PoloniexSideAdapter.translateToAluna({
+        orderType: 'any-order-type' as any,
+      })).to.be.eq(AlunaSideEnum.LONG)
 
     })
 
@@ -53,32 +36,24 @@ describe('PoloniexSideAdapter', () => {
     () => {
 
       expect(PoloniexSideAdapter.translateToPoloniex({
-        from: AlunaSideEnum.LONG,
+        side: AlunaSideEnum.LONG,
       })).to.be.eq(PoloniexOrderTypeEnum.BUY)
 
       expect(PoloniexSideAdapter.translateToPoloniex({
-        from: AlunaSideEnum.SHORT,
+        side: AlunaSideEnum.SHORT,
       })).to.be.eq(PoloniexOrderTypeEnum.SELL)
 
-      let result
-      let error
+      expect(PoloniexSideAdapter.translateToPoloniex({
+        side: 'any-side' as any,
+      })).to.be.eq(PoloniexOrderTypeEnum.BUY)
 
-      try {
+    })
 
-        result = PoloniexSideAdapter.translateToPoloniex({
-          from: notSupported as AlunaSideEnum,
-        })
+  it('should properly translate Poloniex order side to Aluna order types',
+    () => {
 
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+      expect(PoloniexSideAdapter.translateToAlunaOrderType())
+        .to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     })
 

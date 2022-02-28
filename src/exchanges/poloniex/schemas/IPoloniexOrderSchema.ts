@@ -20,6 +20,13 @@ export interface IPoloniexOrderStatusInfo extends IPoloniexOrderInfo {
   currencyPair: string
 }
 
+export interface IPoloniexOrderWithCurrency extends IPoloniexOrderInfo {
+  currencyPair: string
+  baseCurrency: string
+  quoteCurrency: string
+  isFilled?: boolean
+}
+
 export interface IPoloniexOrderSchema {
   [key: string]: IPoloniexOrderInfo[]
 }
@@ -28,6 +35,15 @@ export interface IPoloniexOrderStatusSchema {
   result: {
     [key: string]: IPoloniexOrderStatusInfo,
   }
+}
+
+
+export interface IPoloniexOrderErrorSchema {
+  error: string
+}
+
+export interface IPoloniexOrderErrorResultSchema {
+  result: IPoloniexOrderErrorSchema
 }
 
 export interface IPoloniexOrderResponse {

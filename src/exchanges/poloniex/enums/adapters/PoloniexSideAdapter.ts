@@ -1,4 +1,4 @@
-import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 
@@ -11,26 +11,54 @@ export class PoloniexSideAdapter {
   static readonly ERROR_MESSAGE_PREFIX = 'Order side'
 
 
+  static translateToAluna =
+  (params: { orderType: PoloniexOrderTypeEnum }): AlunaSideEnum => {
 
-  static translateToAluna = buildAdapter<PoloniexOrderTypeEnum, AlunaSideEnum>({
-    errorMessagePrefix: PoloniexSideAdapter.ERROR_MESSAGE_PREFIX,
-    mappings: {
-      [PoloniexOrderTypeEnum.BUY]: AlunaSideEnum.LONG,
-      [PoloniexOrderTypeEnum.SELL]: AlunaSideEnum.SHORT,
-    },
-  })
+    const { orderType } = params
 
+    if (orderType === PoloniexOrderTypeEnum.BUY) {
 
+      return AlunaSideEnum.LONG
+
+    }
+
+    if (orderType === PoloniexOrderTypeEnum.SELL) {
+
+      return AlunaSideEnum.SHORT
+
+    }
+
+    return AlunaSideEnum.LONG
+
+  }
 
   static translateToPoloniex =
-    buildAdapter<AlunaSideEnum, PoloniexOrderTypeEnum>({
-      errorMessagePrefix: PoloniexSideAdapter.ERROR_MESSAGE_PREFIX,
-      mappings: {
-        [AlunaSideEnum.LONG]: PoloniexOrderTypeEnum.BUY,
-        [AlunaSideEnum.SHORT]: PoloniexOrderTypeEnum.SELL,
-      },
-    })
+    (params: { side: AlunaSideEnum }): PoloniexOrderTypeEnum => {
+
+      const { side } = params
+
+      if (side === AlunaSideEnum.LONG) {
+
+        return PoloniexOrderTypeEnum.BUY
+
+      }
+
+      if (side === AlunaSideEnum.SHORT) {
+
+        return PoloniexOrderTypeEnum.SELL
+
+      }
+
+      return PoloniexOrderTypeEnum.BUY
+
+    }
 
 
+    static translateToAlunaOrderType = (): AlunaOrderTypesEnum => {
+
+      // Poloniex only supports LIMIT orders
+      return AlunaOrderTypesEnum.LIMIT
+
+    }
 
 }
