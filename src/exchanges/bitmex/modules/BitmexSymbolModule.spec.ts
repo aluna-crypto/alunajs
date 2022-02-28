@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPublicHttpRequest } from '../../../../test/utils/http/mocks'
+import { mockPublicHttpRequest } from '../../../../test/helpers/http'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,

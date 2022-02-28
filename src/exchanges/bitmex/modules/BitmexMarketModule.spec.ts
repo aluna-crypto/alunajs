@@ -5,7 +5,7 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPublicHttpRequest } from '../../../../test/utils/http/mocks'
+import { mockPublicHttpRequest } from '../../../../test/helpers/http'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'

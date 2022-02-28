@@ -5,8 +5,8 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
-import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'

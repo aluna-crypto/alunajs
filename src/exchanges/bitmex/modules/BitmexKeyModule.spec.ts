@@ -4,8 +4,8 @@ import {
   omit,
 } from 'lodash'
 
-import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
-import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
