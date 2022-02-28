@@ -10,11 +10,10 @@ import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
 import {
-  IPoloniexOrderErrorResultSchema,
+  getOrderStatusResponse,
   IPoloniexOrderInfo,
   IPoloniexOrderSchema,
   IPoloniexOrderStatusInfo,
-  IPoloniexOrderStatusSchema,
   IPoloniexOrderWithCurrency,
 } from '../schemas/IPoloniexOrderSchema'
 import { PoloniexOrderParser } from '../schemas/parsers/PoloniexOrderParser'
@@ -35,12 +34,13 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     statusParams.append('nonce', timestamp.toString())
 
     const { result } = await PoloniexHttp
-      .privateRequest
-      <IPoloniexOrderStatusSchema | IPoloniexOrderErrorResultSchema>({
-        url: `${PROD_POLONIEX_URL}/tradingApi`,
-        keySecret: this.exchange.keySecret,
-        body: statusParams,
-      })
+      .privateRequest<getOrderStatusResponse>(
+        {
+          url: `${PROD_POLONIEX_URL}/tradingApi`,
+          keySecret: this.exchange.keySecret,
+          body: statusParams,
+        },
+      )
 
     if (result.error) {
 

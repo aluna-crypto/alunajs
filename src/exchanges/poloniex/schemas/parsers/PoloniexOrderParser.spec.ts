@@ -25,7 +25,6 @@ describe('PoloniexOrderParser', () => {
 
     const rawOriginalQuantity = rawOrder.amount
     const rawPrice = rawOrder.rate
-    const rawType = rawOrder.type
     const rawSide = rawOrder.type
     const rawTotal = rawOrder.total
 

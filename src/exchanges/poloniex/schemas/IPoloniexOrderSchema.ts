@@ -60,3 +60,6 @@ export interface IPoloniexOrderCanceledResponse {
   clientOrderId: string
   message: string
 }
+
+export type getOrderStatusResponse =
+IPoloniexOrderStatusSchema | IPoloniexOrderErrorResultSchema

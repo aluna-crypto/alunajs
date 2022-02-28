@@ -9,10 +9,6 @@ import { PoloniexSideAdapter } from './PoloniexSideAdapter'
 
 describe('PoloniexSideAdapter', () => {
 
-  const notSupported = 'not-supported'
-
-
-
   it('should properly translate Poloniex order sides to Aluna order sides',
     () => {
 
