@@ -5,7 +5,8 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
+import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
@@ -26,32 +27,16 @@ describe('BitmexOrderReadModule', () => {
 
   const bitmexOrderReadModule = BitmexOrderReadModule.prototype
 
-  const mockExchange = () => {
-
-    const exchangeMock = ImportMock.mockOther(
-      bitmexOrderReadModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    return { exchangeMock }
-
-  }
-
   it('should list Bitmex raw orders just fine', async () => {
 
-    const { exchangeMock } = mockExchange()
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexOrderReadModule,
+    })
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      Promise.resolve(BITMEX_RAW_ORDERS),
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(BITMEX_RAW_ORDERS),
+    })
 
     const rawBalances = await bitmexOrderReadModule.listRaw()
 
@@ -101,15 +86,17 @@ describe('BitmexOrderReadModule', () => {
 
   it('should get a Bitmex raw order just fine', async () => {
 
-    const { exchangeMock } = mockExchange()
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexOrderReadModule,
+    })
+
 
     const rawOrder = BITMEX_RAW_ORDERS[0]
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      Promise.resolve([rawOrder]),
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve([rawOrder]),
+    })
 
     const symbolPair = rawOrder.symbol
     const id = rawOrder.orderID
@@ -136,13 +123,14 @@ describe('BitmexOrderReadModule', () => {
     let result
     let error
 
-    const { exchangeMock } = mockExchange()
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexOrderReadModule,
+    })
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      Promise.resolve([]),
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve([]),
+    })
 
     const symbolPair = 'XBTBTC'
     const id = 'orderId'

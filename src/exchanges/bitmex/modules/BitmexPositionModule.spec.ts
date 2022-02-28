@@ -3,15 +3,12 @@ import {
   each,
   filter,
 } from 'lodash'
-import {
-  ImportMock,
-  OtherManager,
-} from 'ts-mock-imports'
+import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
+import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
-import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexPositionParser } from '../schemas/parsers/BitmexPositionParser'
@@ -29,45 +26,18 @@ describe('BitmexPositionModule', () => {
 
   const bitmexPositionModule = BitmexPositionModule.prototype
 
-  let exchangeMock: OtherManager<IAlunaExchange>
-
   const symbol = 'XBTUSD'
-
-  const keySecret: IAlunaKeySecretSchema = {
-    key: '',
-    secret: '',
-  }
-
-  const mockExchange = () => {
-
-    exchangeMock = ImportMock.mockOther(
-      bitmexPositionModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
-
-    return { exchangeMock }
-
-  }
-
-  beforeEach(mockExchange)
-
-
-  const mockRequest = (requestResponse: any) => {
-
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      Promise.resolve(requestResponse),
-    )
-
-    return { requestMock }
-
-  }
 
   it('should properly list Bitmex raw positions', async () => {
 
-    const { requestMock } = mockRequest(Promise.resolve(BITMEX_RAW_POSITIONS))
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexPositionModule,
+    })
+
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(BITMEX_RAW_POSITIONS),
+    })
 
     const rawPositions = await bitmexPositionModule.listRaw()
 
@@ -223,9 +193,16 @@ describe('BitmexPositionModule', () => {
 
   it('should properly get a Bitmex raw position', async () => {
 
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexPositionModule,
+    })
+
     const mockedRawPosition = BITMEX_RAW_POSITIONS[0]
 
-    const { requestMock } = mockRequest(Promise.resolve([mockedRawPosition]))
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve([mockedRawPosition]),
+    })
 
     const rawPosition = await bitmexPositionModule.getRaw({
       symbolPair: symbol,
@@ -248,7 +225,10 @@ describe('BitmexPositionModule', () => {
     let error
     let result
 
-    const { requestMock } = mockRequest(true)
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+    })
+
     try {
 
       result = await bitmexPositionModule.getRaw({})
@@ -308,9 +288,15 @@ describe('BitmexPositionModule', () => {
 
   it('should properly close Bitmex position', async () => {
 
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexPositionModule,
+    })
+
     const mockedParsedPosition = BITMEX_PARSED_POSITIONS[0]
 
-    const { requestMock } = mockRequest(Promise.resolve(true))
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+    })
 
     const getMock = ImportMock.mockFunction(
       bitmexPositionModule,
@@ -343,7 +329,10 @@ describe('BitmexPositionModule', () => {
     let error
     let result
 
-    const { requestMock } = mockRequest(true)
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+    })
+
     try {
 
       result = await bitmexPositionModule.close({})
@@ -411,6 +400,10 @@ describe('BitmexPositionModule', () => {
 
   it('should set position leverage just fine', async () => {
 
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexPositionModule,
+    })
+
     const leverage = 50
 
     const [position] = filter(BITMEX_RAW_POSITIONS, (p) => {
@@ -419,7 +412,10 @@ describe('BitmexPositionModule', () => {
 
     })
 
-    const { requestMock } = mockRequest(Promise.resolve(position))
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(position),
+    })
 
     const leverageRes = await bitmexPositionModule.setLeverage({
       leverage,

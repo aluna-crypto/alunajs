@@ -2,8 +2,9 @@ import { expect } from 'chai'
 import { assign } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
+import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -22,7 +23,6 @@ import {
   IAlunaExchangeAccountSpecsSchema,
   IAlunaExchangeOrderOptionsSchema,
 } from '../../../lib/schemas/IAlunaExchangeSchema'
-import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -45,35 +45,17 @@ describe('BitmexOrderWriteModule', () => {
 
   const bitmexOrderWriteModule = BitmexOrderWriteModule.prototype
 
-  const keySecret: IAlunaKeySecretSchema = {
-    key: '',
-    secret: '',
-  }
-
   const rawOrder = BITMEX_RAW_ORDERS[0]
   const parsedOrder = BITMEX_PARSED_ORDERS[0]
   const symbolPair = 'XBTUSD'
   const id = '666'
 
-  const mockExchange = () => {
-
-    const exchangeMock = ImportMock.mockOther(
-      bitmexOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
-
-    return { exchangeMock }
-
-  }
-
   const mockRequest = (requestResponse: any) => {
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
       requestResponse,
-    )
+    })
 
     const bitmexMarketModuleMock = ImportMock.mockFunction(
       BitmexMarketModule,
@@ -136,7 +118,9 @@ describe('BitmexOrderWriteModule', () => {
             const randomStopRate = (Math.random() * 10) + 1
             const randomLimitRate = (Math.random() * 10) + 1
 
-            mockExchange()
+            const { exchangeMock } = mockExchangeModule({
+              module: bitmexOrderWriteModule,
+            })
 
             const params: IAlunaOrderPlaceParams = {
               account: AlunaAccountEnum.DERIVATIVES,
@@ -251,7 +235,7 @@ describe('BitmexOrderWriteModule', () => {
             expect(requestMock.args[0][0]).to.deep.eq({
               url: `${PROD_BITMEX_URL}/order`,
               body: expectedRequestBody,
-              keySecret,
+              keySecret: exchangeMock.getValue().keySecret,
               verb: expectedHttpVerb,
             }).to.be.ok
 
@@ -304,7 +288,7 @@ describe('BitmexOrderWriteModule', () => {
     'should throw if there is no enough exchange balance for place/edit order',
     async () => {
 
-      mockExchange()
+      mockExchangeModule({ module: bitmexOrderWriteModule })
 
       let result
       let error
@@ -379,7 +363,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it('should throw when trying to edit nonexistent order', async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     const errorMessage = 'Invalid orderID'
 
@@ -433,7 +417,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it("should throw if 'rate' param is missing [LIMIT]", async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     let result
     let error
@@ -498,7 +482,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it("should throw if 'stopRate' param is missing [STOP-MARKET]", async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     let result
     let error
@@ -563,7 +547,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it("should throw if 'stopRate' param is missing [STOP-LIMIT]", async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     let result
     let error
@@ -629,7 +613,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it("should throw if 'limitRate' param is missing [STOP-LIMIT]", async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     let result
     let error
@@ -695,7 +679,7 @@ describe('BitmexOrderWriteModule', () => {
 
   it('should properly cancel Bitmex orders', async () => {
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     const {
       parseMock,
@@ -725,7 +709,7 @@ describe('BitmexOrderWriteModule', () => {
     let error
     let result
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     const errMsg = 'Invalid orderID'
 
@@ -769,7 +753,7 @@ describe('BitmexOrderWriteModule', () => {
     let error
     let result
 
-    mockExchange()
+    mockExchangeModule({ module: bitmexOrderWriteModule })
 
     const errMsg = 'Sever is down'
 

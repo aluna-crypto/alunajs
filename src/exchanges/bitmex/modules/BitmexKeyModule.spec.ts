@@ -3,13 +3,12 @@ import {
   map,
   omit,
 } from 'lodash'
-import { ImportMock } from 'ts-mock-imports'
 
+import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
+import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { IBitmexKeysSchema } from '../schemas/IBitmexKeysSchema'
 import { BitmexKeyModule } from './BitmexKeyModule'
@@ -19,37 +18,28 @@ import { BitmexKeyModule } from './BitmexKeyModule'
 describe('BitmexKeyModule', () => {
 
   const userId = 777
-  const apiKey = 'my-api-key'
+  const key = 'my-api-key'
   const secret = 'my-api-secret'
-
-  const keySecret: IAlunaKeySecretSchema = {
-    key: apiKey,
-    secret,
-  }
 
   const bitmexKeyModule = BitmexKeyModule.prototype
 
-  const mockExchange = () => {
 
-    const exchangeMock = ImportMock.mockOther(
-      bitmexKeyModule,
-      'exchange',
-      {
-        keySecret,
-      } as IAlunaExchange,
-    )
-
-    return { exchangeMock }
-
-  }
 
   it('should fetch permissions details from Bitmex Key just fine', async () => {
 
-    mockExchange()
+    mockExchangeModule({
+      module: bitmexKeyModule,
+      overrides: {
+        keySecret: {
+          key,
+          secret,
+        },
+      },
+    })
 
     const rawKey: IBitmexKeysSchema = [
       {
-        id: apiKey,
+        id: key,
         secret,
         name: 'my_api',
         nonce: 0,
@@ -60,7 +50,7 @@ describe('BitmexKeyModule', () => {
         created: '2021-12-27T16:14:43.760Z',
       },
       {
-        id: apiKey,
+        id: key,
         secret,
         name: 'my_api_2',
         nonce: 0,
@@ -72,11 +62,10 @@ describe('BitmexKeyModule', () => {
       },
     ]
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      rawKey,
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(rawKey),
+    })
 
     const expectedAccountId = userId.toString()
 
@@ -159,22 +148,12 @@ describe('BitmexKeyModule', () => {
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
-    ImportMock.mockOther(
-      bitmexKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
+    mockExchangeModule({ module: bitmexKeyModule })
 
-    const privateRequestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      Promise.reject(mockedError),
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.reject(mockedError),
+    })
 
     let error: AlunaError | undefined
     let result
@@ -203,7 +182,7 @@ describe('BitmexKeyModule', () => {
       httpStatusCode: 403,
     })
 
-    privateRequestMock.returns(Promise.reject(mockedError))
+    requestMock.returns(Promise.reject(mockedError))
 
     try {
 
@@ -226,11 +205,19 @@ describe('BitmexKeyModule', () => {
 
   it('should parse Bitmex permissions just fine', async () => {
 
-    mockExchange()
+    mockExchangeModule({
+      module: bitmexKeyModule,
+      overrides: {
+        keySecret: {
+          key,
+          secret,
+        },
+      },
+    })
 
     const rawKey: IBitmexKeysSchema = [
       {
-        id: apiKey,
+        id: key,
         name: 'my_api',
         nonce: 0,
         cidr: '0.0.0.0/0',

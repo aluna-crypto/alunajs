@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockPublicHttpRequest } from '../../../../test/utils/http/mocks'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -20,11 +21,10 @@ describe('BitmexSymbolModule', () => {
 
   it('should list Bitmex raw symbols just fine', async () => {
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'publicRequest',
-      Promise.resolve(BITMEX_RAW_SYMBOLS),
-    )
+    const { requestMock } = mockPublicHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(BITMEX_RAW_SYMBOLS),
+    })
 
     const rawSymbols = await BitmexSymbolModule.listRaw()
 

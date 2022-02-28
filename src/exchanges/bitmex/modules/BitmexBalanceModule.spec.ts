@@ -6,7 +6,8 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { mockExchangeModule } from '../../../../test/utils/exchange/mocks'
+import { mockPrivateHttpRequest } from '../../../../test/utils/http/mocks'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
@@ -28,22 +29,14 @@ describe('BitmexBalanceModule', () => {
 
   it('should properly list Bitmex raw balances', async () => {
 
-    const exchangeMock = ImportMock.mockOther(
-      bitmexBalanceModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
+    const { exchangeMock } = mockExchangeModule({
+      module: bitmexBalanceModule,
+    })
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'privateRequest',
-      BITMEX_RAW_BALANCES,
-    )
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve(BITMEX_RAW_BALANCES),
+    })
 
     const rawBalances = await bitmexBalanceModule.listRaw()
 
@@ -162,15 +155,14 @@ describe('BitmexBalanceModule', () => {
       Promise.resolve([mockedBalance]),
     )
 
-    ImportMock.mockOther(
-      bitmexBalanceModule,
-      'exchange',
-      {
+    mockExchangeModule({
+      module: bitmexBalanceModule,
+      overrides: {
         position: {
           getLeverage: () => Promise.resolve(mockedLeverage),
         } as any,
       },
-    )
+    })
 
     const expectedLeverage = new BigNumber(mockedBalance.available)
       .times(mockedLeverage)
@@ -215,15 +207,14 @@ describe('BitmexBalanceModule', () => {
       Promise.resolve([mockedBalance]),
     )
 
-    ImportMock.mockOther(
-      bitmexBalanceModule,
-      'exchange',
-      {
+    mockExchangeModule({
+      module: bitmexBalanceModule,
+      overrides: {
         position: {
           getLeverage: () => Promise.resolve(mockedLeverage),
         } as any,
       },
-    )
+    })
 
     const expectedTradableBalance = mockedBalance.available
 
@@ -268,15 +259,14 @@ describe('BitmexBalanceModule', () => {
       Promise.resolve([]),
     )
 
-    ImportMock.mockOther(
-      bitmexBalanceModule,
-      'exchange',
-      {
+    mockExchangeModule({
+      module: bitmexBalanceModule,
+      overrides: {
         position: {
           getLeverage: () => Promise.resolve(mockedLeverage),
         } as any,
       },
-    )
+    })
 
     try {
 

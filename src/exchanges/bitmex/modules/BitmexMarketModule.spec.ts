@@ -5,6 +5,7 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockPublicHttpRequest } from '../../../../test/utils/http/mocks'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'
@@ -61,10 +62,9 @@ describe('BitmexMarketModule', () => {
 
   it('should get a Bitmex raw market just fine', async () => {
 
-    const requestMock = ImportMock.mockFunction(
-      BitmexHttp,
-      'publicRequest',
-    )
+    const { requestMock } = mockPublicHttpRequest({
+      exchangeHttp: BitmexHttp,
+    })
 
     const promises = map(BITMEX_RAW_SYMBOLS, async (rawMarket, i) => {
 
