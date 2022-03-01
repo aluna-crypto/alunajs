@@ -20,7 +20,6 @@ export interface IAlunaExchange {
 
   // basics
   keySecret: IAlunaKeySecretSchema
-  settings?: IAlunaSettingsSchema
 
   // private modules
   key: IAlunaKeyModule
@@ -41,9 +40,7 @@ export interface IAlunaExchangeStatic {
   ID: string
   SPECS: IAlunaExchangeSchema
 
-  setMappings?: (params: { mappings: Record<string, string> }) => void
-
-  mappings?: Record<string, string>
+  settings?: IAlunaSettingsSchema
 
   // static public modules
   Symbol: IAlunaSymbolModule
