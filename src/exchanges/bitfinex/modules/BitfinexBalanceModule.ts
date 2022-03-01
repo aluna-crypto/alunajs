@@ -1,8 +1,8 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import {
+  IAlunaBalanceGetTradableBalanceParams,
   IAlunaBalanceModule,
-  IFetchTradableBalanceParams,
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
@@ -92,9 +92,11 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
   }
 
-  public async fetchTradableBalance (
-    params: IFetchTradableBalanceParams,
+  public async getTradableBalance (
+    params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
+
+    // TODO: Validate params and throw errors accordingly
 
     const {
       rate,
@@ -115,8 +117,12 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       keySecret: this.exchange.keySecret,
       body: {
         dir,
-        rate: rate.toString(),
         symbol: symbolPair,
+
+        // TODO: Remove "!" after validating params above
+        rate: rate!.toString(),
+
+        // TODO: Consider using `account` property from params
         type: BitfinexAccountsEnum.MARGIN,
       },
     })

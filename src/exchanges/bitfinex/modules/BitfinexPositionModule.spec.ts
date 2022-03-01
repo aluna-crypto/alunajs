@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { map } from 'lodash'
 import Sinon from 'sinon'
 import {
   ImportMock,
@@ -58,7 +59,7 @@ describe('BitfinexPositionModule', () => {
 
   }
 
-  const mockedBitfinexPositionParser = (
+  const mockBitfinexPositionParser = (
     resonse: IAlunaPositionSchema[],
     mockBitfinexModule = true,
   ) => {
@@ -83,7 +84,7 @@ describe('BitfinexPositionModule', () => {
 
     resonse.forEach((res, i) => {
 
-      parserMock.onCall(i).returns(res)
+      parserMock.onCall(i).returns(Promise.resolve(res))
 
     })
 
@@ -138,9 +139,7 @@ describe('BitfinexPositionModule', () => {
 
   })
 
-  it('should properly parse a Bitfinex raw position', () => {
-
-    const { exchangeMock } = mockExchange()
+  it('should properly parse a Bitfinex raw position', async () => {
 
     const mappings = {
       UST: 'USDT',
@@ -158,12 +157,12 @@ describe('BitfinexPositionModule', () => {
       },
     )
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
       false,
     )
 
-    BITFINEX_RAW_POSITIONS.forEach((rawPosition, i) => {
+    const promises = map(BITFINEX_RAW_POSITIONS, async (rawPosition, i) => {
 
       if (i % 3 !== 0) {
 
@@ -189,7 +188,7 @@ describe('BitfinexPositionModule', () => {
 
       }
 
-      const parsedPosition = bitfinexPositionModule.parse({
+      const parsedPosition = await bitfinexPositionModule.parse({
         rawPosition,
       })
 
@@ -202,18 +201,20 @@ describe('BitfinexPositionModule', () => {
 
     })
 
+    await Promise.all(promises)
+
     // skipped 1 'derivatives' and 1 'funding' raw position
     expect(parserMock.callCount).to.be.eq(BITFINEX_RAW_POSITIONS.length - 2)
 
   })
 
-  it('should properly parse many Bitfinex raw positions', () => {
+  it('should properly parse many Bitfinex raw positions', async () => {
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 
-    const parsedPositions = bitfinexPositionModule.parseMany({
+    const parsedPositions = await bitfinexPositionModule.parseMany({
       rawPositions: BITFINEX_RAW_POSITIONS,
     })
 
@@ -270,7 +271,7 @@ describe('BitfinexPositionModule', () => {
       Promise.resolve(mockedRawPosition),
     )
 
-    const { parserMock } = mockedBitfinexPositionParser(
+    const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 

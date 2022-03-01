@@ -5,7 +5,7 @@ import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
 
 
 
-export interface IUIPositionCustomDisplay {
+export interface IAlunaUIPositionCustomDisplay {
   amount: IAlunaUICustomDisplaySchema
   rate: IAlunaUICustomDisplaySchema
   total: IAlunaUICustomDisplaySchema
@@ -25,7 +25,7 @@ export interface IAlunaPositionSchema {
 
   total: number
   amount: number
-  uiCustomDisplay?: IUIPositionCustomDisplay
+  uiCustomDisplay?: IAlunaUIPositionCustomDisplay
 
   basePrice: number
   openPrice: number

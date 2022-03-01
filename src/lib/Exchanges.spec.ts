@@ -10,6 +10,8 @@ describe('Exchanges', () => {
 
     expect(Exchanges.Valr).to.be.ok
     expect(Exchanges.Bitfinex).to.be.ok
+    expect(Exchanges.Binance).to.be.ok
+    expect(Exchanges.Gateio).to.be.ok
 
   })
 

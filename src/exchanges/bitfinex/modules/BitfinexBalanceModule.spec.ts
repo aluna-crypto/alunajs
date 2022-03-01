@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
-import { IFetchTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
+import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../../lib/schemas/IAlunaSettingsSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
@@ -191,7 +191,7 @@ describe('BitfinexBalanceModule', () => {
 
   })
 
-  it('should fetch tradable balance just file', async () => {
+  it('should get tradable balance just file', async () => {
 
     const { exchangeMock } = mockExchange()
 
@@ -203,14 +203,14 @@ describe('BitfinexBalanceModule', () => {
       Promise.resolve([tradableBalace]),
     )
 
-    const params: IFetchTradableBalanceParams = {
+    const params: IAlunaBalanceGetTradableBalanceParams = {
       side: AlunaSideEnum.LONG,
       rate: 45,
       symbolPair: 'fBTCUSD',
       account: AlunaAccountEnum.MARGIN,
     }
 
-    let parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
+    let parsedBalances = await bitfinexBalanceModule.getTradableBalance(
       params,
     )
 
@@ -235,7 +235,7 @@ describe('BitfinexBalanceModule', () => {
 
     params.side = AlunaSideEnum.SHORT
 
-    parsedBalances = await bitfinexBalanceModule.fetchTradableBalance(
+    parsedBalances = await bitfinexBalanceModule.getTradableBalance(
       params,
     )
 
