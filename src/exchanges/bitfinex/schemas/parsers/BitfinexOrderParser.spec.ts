@@ -37,11 +37,8 @@ describe('BitfinexOrderParser', () => {
 
       }
 
-
       const parsedOrder = BitfinexOrderParser.parse({
         rawOrder,
-        baseSymbolId,
-        quoteSymbolId,
       })
 
       const [
