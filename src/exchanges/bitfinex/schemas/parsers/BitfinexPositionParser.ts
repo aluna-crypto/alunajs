@@ -1,10 +1,12 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexSideAdapter } from '../../enums/adapters/BitfinexSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { IBitfinexPositionSchema } from '../IBitfinexPositionSchema'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -12,15 +14,9 @@ export class BitfinexPositionParser {
 
   static parse (params: {
     rawPosition: IBitfinexPositionSchema,
-    baseSymbolId: string,
-    quoteSymbolId: string,
   }) {
 
-    const {
-      rawPosition,
-      baseSymbolId,
-      quoteSymbolId,
-    } = params
+    const { rawPosition } = params
 
     const [
       symbol,
@@ -44,6 +40,23 @@ export class BitfinexPositionParser {
       _collateralMin,
       meta,
     ] = rawPosition
+
+    let {
+      baseSymbolId,
+      quoteSymbolId,
+    } = BitfinexSymbolParser.splitSymbolPair({ symbolPair: symbol })
+
+    const symbolMappings = Bitfinex.settings.mappings
+
+    baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseSymbolId,
+      symbolMappings,
+    })
+
+    quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteSymbolId,
+      symbolMappings,
+    })
 
     const computedStatus = status === BitfinexPositionStatusEnum.ACTIVE
       ? AlunaPositionStatusEnum.OPEN
