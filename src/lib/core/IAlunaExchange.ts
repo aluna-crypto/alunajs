@@ -40,8 +40,7 @@ export interface IAlunaExchangeStatic {
   ID: string
   SPECS: IAlunaExchangeSchema
 
-  settings?: IAlunaSettingsSchema
-
+  settings: IAlunaSettingsSchema
   // static public modules
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
@@ -51,5 +50,9 @@ export interface IAlunaExchangeStatic {
     keySecret: IAlunaKeySecretSchema,
     settings?: IAlunaSettingsSchema,
   }): IAlunaExchange
+
+  setSettings (params: {
+    settings?: IAlunaSettingsSchema,
+  }): any
 
 }
