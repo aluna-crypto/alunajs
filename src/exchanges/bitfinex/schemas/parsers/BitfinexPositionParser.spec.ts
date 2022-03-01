@@ -47,8 +47,6 @@ describe('BitfinexPositionParser', () => {
 
       const parsedPosition = BitfinexPositionParser.parse({
         rawPosition,
-        baseSymbolId: expectedBaseSymbolId,
-        quoteSymbolId: expectedQuoteSymbolId,
       })
 
       const [
