@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
@@ -59,6 +60,20 @@ describe('BinanceOrderParser', () => {
   it('should parse Binance order just fine without time and updateTime',
     async () => {
 
+      const mockedDate = new Date(Date.now())
+
+      function mockedDateConstructor () {
+
+        return mockedDate
+
+      }
+
+      ImportMock.mockOther(
+        global,
+        'Date',
+        mockedDateConstructor as any,
+      )
+
       const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
       const { symbol: currencyPair } = rawOrder
@@ -76,11 +91,9 @@ describe('BinanceOrderParser', () => {
         symbolInfo: symbolInfo!,
       })
 
-      expect(parsedOrder.placedAt.getTime())
-        .to.be.eq(new Date().getTime())
+      expect(parsedOrder.placedAt).to.deep.eq(mockedDate)
 
-      expect(parsedOrder.canceledAt)
-        .to.be.eq(undefined)
+      expect(parsedOrder.canceledAt).to.be.eq(undefined)
 
     })
 
@@ -104,8 +117,7 @@ describe('BinanceOrderParser', () => {
       symbolInfo: symbolInfo!,
     })
 
-    expect(parsedOrder.placedAt.getTime())
-      .to.be.eq(new Date(transactTime).getTime())
+    expect(parsedOrder.placedAt).to.deep.eq(new Date(transactTime))
 
   })
 
