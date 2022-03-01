@@ -50,7 +50,7 @@ export class BitfinexOrderParser {
       quoteSymbolId,
     } = BitfinexSymbolParser.splitSymbolPair({ symbolPair })
 
-    const symbolMappings = Bitfinex.settings?.mappings
+    const symbolMappings = Bitfinex.settings.mappings
 
     baseSymbolId = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: baseSymbolId,
