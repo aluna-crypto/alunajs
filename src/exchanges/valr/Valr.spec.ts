@@ -34,9 +34,6 @@ describe('Valr', () => {
     expect(valr.keySecret.key).to.eq(key)
     expect(valr.keySecret.secret).to.eq(secret)
 
-    expect(valr.settings).to.be.ok
-    expect(valr.settings?.referralCode).to.eq(referralCode)
-
     expect(valr.key).to.be.ok
     expect(valr.balance).to.be.ok
     expect(valr.order).to.be.ok

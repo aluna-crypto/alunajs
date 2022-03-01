@@ -34,9 +34,6 @@ describe('Bittrex', () => {
     expect(bittrex.keySecret.key).to.eq(key)
     expect(bittrex.keySecret.secret).to.eq(secret)
 
-    expect(bittrex.settings).to.be.ok
-    expect(bittrex.settings?.referralCode).to.eq(referralCode)
-
     expect(bittrex.key).to.be.ok
     expect(bittrex.balance).to.be.ok
     expect(bittrex.order).to.be.ok
