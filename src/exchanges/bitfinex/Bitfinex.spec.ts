@@ -19,15 +19,11 @@ describe('Bitfinex', () => {
 
     const key = 'key'
     const secret = 'secret'
-    const referralCode = 'myReferral'
 
     const bitfinex = new Bitfinex({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 

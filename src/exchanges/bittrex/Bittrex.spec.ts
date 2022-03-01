@@ -19,15 +19,11 @@ describe('Bittrex', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const bittrex = new Bittrex({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 

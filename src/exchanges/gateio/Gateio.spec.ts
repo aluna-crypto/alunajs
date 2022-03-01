@@ -19,15 +19,11 @@ describe('Gateio', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const gateio = new Gateio({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 

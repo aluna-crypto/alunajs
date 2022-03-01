@@ -7,7 +7,6 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { GateioSpecs } from './GateioSpecs'
 import { GateioBalanceModule } from './modules/GateioBalanceModule'
 import { GateioKeyModule } from './modules/GateioKeyModule'
@@ -33,7 +32,6 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
 
   constructor (params: {
     keySecret: IAlunaKeySecretSchema,
-    settings?: IAlunaSettingsSchema,
   }) {
 
     super(params)

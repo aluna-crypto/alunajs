@@ -7,7 +7,6 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BittrexSpecs } from './BittrexSpecs'
 import { BittrexBalanceModule } from './modules/BittrexBalanceModule'
 import { BittrexKeyModule } from './modules/BittrexKeyModule'
@@ -34,7 +33,6 @@ export const Bittrex: IAlunaExchangeStatic = class extends AAlunaExchange implem
   constructor (
     params: {
       keySecret: IAlunaKeySecretSchema,
-      settings?: IAlunaSettingsSchema,
     },
   ) {
 

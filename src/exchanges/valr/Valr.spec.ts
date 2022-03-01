@@ -19,15 +19,11 @@ describe('Valr', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const valr = new Valr({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 

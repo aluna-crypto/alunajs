@@ -20,15 +20,11 @@ describe('Bitmex', () => {
 
     const key = 'key'
     const secret = 'secret'
-    const referralCode = 'myReferral'
 
     const bitmex = new Bitmex({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 

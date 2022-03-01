@@ -22,15 +22,11 @@ describe('Binance', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const binance = new Binance({
       keySecret: {
         key,
         secret,
-      },
-      settings: {
-        referralCode,
       },
     })
 
