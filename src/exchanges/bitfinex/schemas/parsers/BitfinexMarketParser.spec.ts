@@ -1,23 +1,61 @@
 import { expect } from 'chai'
+import Sinon from 'sinon'
+import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import {
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
   BITFINEX_RAW_TICKERS,
 } from '../../test/fixtures/bitfinexMarkets'
 import { BitfinexMarketParser } from './BitfinexMarketParser'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
 describe('BitfinexMarketParser', () => {
 
+  afterEach(Sinon.restore)
+
   it('should parse Bitfinex raw market just fine', async () => {
 
-    const mappings = {
-      UST: 'USDT',
-    }
+    let mappings: Record<string, string> | undefined
 
-    Bitfinex.setMappings!({ mappings })
+    const bitfinexSettingsMock = ImportMock.mockOther(
+      Bitfinex,
+      'settings',
+    )
+
+    const translateSymbolIdSpy = Sinon.spy(
+      (params: any) => {
+
+        const {
+          symbolMappings = {},
+          exchangeSymbolId,
+        } = params
+
+        return symbolMappings[params.exchangeSymbolId] || exchangeSymbolId
+
+      },
+    )
+
+    ImportMock.mockOther(
+      AlunaSymbolMapping,
+      'translateSymbolId',
+      translateSymbolIdSpy,
+    )
+
+    const mockedBaseSymbolId = 'BTC'
+    const mockedQuoteSymbolId = 'UST'
+
+    const splitSymbolPairMock = ImportMock.mockFunction(
+      BitfinexSymbolParser,
+      'splitSymbolPair',
+      {
+        baseSymbolId: mockedBaseSymbolId,
+        quoteSymbolId: mockedQuoteSymbolId,
+      },
+    )
 
     const enabledMarginMarketsDict: Record<string, string> = {}
 
@@ -27,7 +65,27 @@ describe('BitfinexMarketParser', () => {
 
     })
 
-    BITFINEX_RAW_TICKERS.forEach((rawTicker) => {
+    BITFINEX_RAW_TICKERS.forEach((rawTicker, index) => {
+
+      if (index % 2 === 0) {
+
+        mappings = { UST: 'USDT' }
+
+        bitfinexSettingsMock.set({ mappings })
+
+      } else if (index % 3 === 0) {
+
+        mappings = {}
+
+        bitfinexSettingsMock.set({})
+
+      } else {
+
+        mappings = {}
+
+        bitfinexSettingsMock.set(undefined)
+
+      }
 
       const parsedMarket = BitfinexMarketParser.parse({
         rawTicker,
@@ -36,33 +94,16 @@ describe('BitfinexMarketParser', () => {
 
       const symbol = rawTicker[0]
 
-      let baseSymbolId: string
-      let quoteSymbolId: string
-
-      const spliter = symbol.indexOf(':')
-
-      if (spliter >= 0) {
-
-        baseSymbolId = symbol.slice(1, spliter)
-        quoteSymbolId = symbol.slice(spliter + 1)
-
-      } else {
-
-        baseSymbolId = symbol.slice(1, 4)
-        quoteSymbolId = symbol.slice(4)
-
-      }
-
-      const expectedBaseSymbolId = mappings[baseSymbolId] || baseSymbolId
-      const expectedQuoteSymbolId = mappings[quoteSymbolId] || quoteSymbolId
+      const baseSymbolId = mappings[mockedBaseSymbolId] || mockedBaseSymbolId
+      const quoteSymbolId = mappings[mockedQuoteSymbolId] || mockedQuoteSymbolId
 
       const isMarginEnabled = !!enabledMarginMarketsDict[rawTicker[0].slice(1)]
 
       expect(parsedMarket.exchangeId).to.be.eq(Bitfinex.ID)
 
-      expect(parsedMarket.symbolPair).to.be.eq(rawTicker[0])
-      expect(parsedMarket.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedMarket.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedMarket.symbolPair).to.be.eq(symbol)
+      expect(parsedMarket.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedMarket.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedMarket.spotEnabled).to.be.ok
       expect(parsedMarket.marginEnabled).to.be.eq(isMarginEnabled)
@@ -85,6 +126,15 @@ describe('BitfinexMarketParser', () => {
       expect(parsedMarket.instrument).not.to.be.ok
       expect(parsedMarket.leverageEnabled).not.to.be.ok
       expect(parsedMarket.maxLeverage).not.to.be.ok
+
+      expect(splitSymbolPairMock.callCount).to.be.eq(index + 1)
+
+      const translateSymbolIdSpyCallCount = index === 0
+        ? 2
+        : (index + 1) * 2
+
+      expect(translateSymbolIdSpy.callCount)
+        .to.be.eq(translateSymbolIdSpyCallCount)
 
     })
 
