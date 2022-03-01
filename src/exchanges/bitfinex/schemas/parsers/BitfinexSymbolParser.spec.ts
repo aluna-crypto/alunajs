@@ -21,52 +21,29 @@ describe('BitfinexSymbolParser', () => {
 
   it('should parse bitfinex symbols just fine', async () => {
 
-    let mappings: Record<string, string> | undefined
+    const mappings: Record<string, string> = {
+      UST: 'USDT',
+    }
 
     const translateSymbolIdMock = ImportMock.mockFunction(
       AlunaSymbolMapping,
       'translateSymbolId',
     )
 
-    const bitfinexSettingsMock = ImportMock.mockOther(
+    ImportMock.mockOther(
       Bitfinex,
       'settings',
+      { mappings },
     )
 
     BITFINEX_CURRENCIES.forEach((currency, index) => {
 
-      if (index % 2) {
-
-        mappings = {
-          UST: 'USDT',
-        }
-
-        bitfinexSettingsMock.set({
-          mappings,
-        })
-
-      } else if (index % 3) {
-
-        mappings = undefined
-
-        bitfinexSettingsMock.set({
-          mappings,
-        })
-
-      } else {
-
-        mappings = undefined
-
-        bitfinexSettingsMock.set(undefined)
-
-      }
-
-      const expectedSymbol = mappings
-        ? mappings[currency] || currency
+      const expectedSymbol = mappings[currency]
+        ? mappings[currency]
         : currency
 
-      const expectedAlias = mappings
-        ? mappings[currency] || undefined
+      const expectedAlias = mappings[currency]
+        ? currency
         : undefined
 
       translateSymbolIdMock.returns(expectedSymbol)

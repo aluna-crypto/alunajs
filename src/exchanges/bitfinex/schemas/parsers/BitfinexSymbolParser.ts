@@ -24,15 +24,15 @@ export class BitfinexSymbolParser {
       bitfinexCurrencyLabel,
     } = params
 
-    const symbolMappings = Bitfinex.settings?.mappings
+    const symbolMappings = Bitfinex.settings.mappings
 
     const id = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: bitfinexCurrency,
       symbolMappings,
     })
 
-    const alias = symbolMappings
-      ? symbolMappings[bitfinexCurrency]
+    const alias = symbolMappings[bitfinexCurrency]
+      ? bitfinexCurrency
       : undefined
 
     let name: string | undefined

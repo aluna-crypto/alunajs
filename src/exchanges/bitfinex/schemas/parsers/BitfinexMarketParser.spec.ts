@@ -19,11 +19,12 @@ describe('BitfinexMarketParser', () => {
 
   it('should parse Bitfinex raw market just fine', async () => {
 
-    let mappings: Record<string, string> | undefined
+    const mappings: Record<string, string> = {}
 
     const bitfinexSettingsMock = ImportMock.mockOther(
       Bitfinex,
       'settings',
+      { mappings: { UST: 'USDT' } },
     )
 
     const translateSymbolIdSpy = Sinon.spy(
@@ -67,25 +68,7 @@ describe('BitfinexMarketParser', () => {
 
     BITFINEX_RAW_TICKERS.forEach((rawTicker, index) => {
 
-      if (index % 2 === 0) {
-
-        mappings = { UST: 'USDT' }
-
-        bitfinexSettingsMock.set({ mappings })
-
-      } else if (index % 3 === 0) {
-
-        mappings = {}
-
-        bitfinexSettingsMock.set({})
-
-      } else {
-
-        mappings = {}
-
-        bitfinexSettingsMock.set(undefined)
-
-      }
+      bitfinexSettingsMock.set({ mappings })
 
       const parsedMarket = BitfinexMarketParser.parse({
         rawTicker,
