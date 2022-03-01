@@ -32,12 +32,19 @@ describe('BitmexPositionParser', () => {
     const computedAmount = 10
     const computedTotal = 20
 
-    const mockedDate = Date.now()
+    const dateNow = Date.now()
+    const mockedDate = new Date(dateNow)
 
-    ImportMock.mockFunction(
-      global.Date,
-      'now',
-      mockedDate,
+    function fakeDateConstructor () {
+
+      return mockedDate
+
+    }
+
+    ImportMock.mockOther(
+      global,
+      'Date',
+      fakeDateConstructor as any,
     )
 
     const assembleUiCustomDisplayMock = ImportMock.mockFunction(
