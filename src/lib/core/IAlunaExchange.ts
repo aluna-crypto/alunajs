@@ -40,10 +40,11 @@ export interface IAlunaExchangeStatic {
   ID: string
   SPECS: IAlunaExchangeSchema
 
-  settings: IAlunaSettingsSchema
   // static public modules
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
+
+  settings: IAlunaSettingsSchema
 
   // constructor must match the one of AAlunaExchange
   new (params: {
