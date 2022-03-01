@@ -8,7 +8,6 @@ import {
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
-import { BitfinexSymbolMapping } from '../mappings/BitfinexSymbolMapping'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 
@@ -111,18 +110,8 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const { rawOrder } = params
 
-    const {
-      baseSymbolId,
-      quoteSymbolId,
-    } = BitfinexSymbolMapping.translateToAluna({
-      symbolPair: rawOrder[3],
-      mappings: this.exchange.settings?.mappings,
-    })
-
     const parsedOrder = BitfinexOrderParser.parse({
       rawOrder,
-      baseSymbolId,
-      quoteSymbolId,
     })
 
     return parsedOrder

@@ -11,7 +11,6 @@ import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorC
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
-import { BitfinexSymbolMapping } from '../mappings/BitfinexSymbolMapping'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 import {
   BITFINEX_PARSED_POSITIONS,
@@ -141,45 +140,12 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly parse a Bitfinex raw position', async () => {
 
-    const mappings = {
-      UST: 'USDT',
-    }
-
-    const baseSymbolId = 'UST'
-    const quoteSymbolId = 'UCT'
-
-    ImportMock.mockFunction(
-      BitfinexSymbolMapping,
-      'translateToAluna',
-      {
-        baseSymbolId,
-        quoteSymbolId,
-      },
-    )
-
     const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
       false,
     )
 
     const promises = map(BITFINEX_RAW_POSITIONS, async (rawPosition, i) => {
-
-      if (i % 3 !== 0) {
-
-        exchangeMock.set({
-          keySecret,
-          settings: {
-            mappings,
-          },
-        })
-
-      } else {
-
-        exchangeMock.set({
-          keySecret,
-        })
-
-      }
 
       // skipping 'derivatives' and 'funding'
       if (/^(f)|(F0)/.test(rawPosition[0])) {
@@ -195,8 +161,6 @@ describe('BitfinexPositionModule', () => {
       expect(BITFINEX_PARSED_POSITIONS).to.includes(parsedPosition)
       expect(parserMock.args[i][0]).to.deep.eq({
         rawPosition,
-        baseSymbolId,
-        quoteSymbolId,
       })
 
     })

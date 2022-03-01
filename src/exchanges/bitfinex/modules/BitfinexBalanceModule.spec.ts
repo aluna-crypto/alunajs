@@ -6,7 +6,6 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../../lib/schemas/IAlunaSettingsSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
@@ -25,10 +24,6 @@ describe('BitfinexBalanceModule', () => {
   const keySecret: IAlunaKeySecretSchema = {
     key: '',
     secret: '',
-  }
-
-  const mappings = {
-    UST: 'USDT',
   }
 
   const mockExchange = () => {
@@ -109,7 +104,7 @@ describe('BitfinexBalanceModule', () => {
 
   it('should parse a single Bitfinex raw balance just fine', async () => {
 
-    const { exchangeMock } = mockExchange()
+    mockExchange()
 
     const balanceParserMock = ImportMock.mockFunction(
       BitfinexBalanceParser,
@@ -124,8 +119,8 @@ describe('BitfinexBalanceModule', () => {
     expect(balanceParserMock.callCount).to.be.eq(1)
     expect(balanceParserMock.calledWithExactly({
       rawBalance: BITFINEX_RAW_BALANCES[0],
-      customCurrency: undefined,
     })).to.be.ok
+
     expect(parsedBalance).to.deep.eq(balanceParserMock.returnValues[0])
 
     // new mocking
@@ -138,18 +133,12 @@ describe('BitfinexBalanceModule', () => {
     expect(balanceParserMock.callCount).to.be.eq(2)
     expect(balanceParserMock.calledWithExactly({
       rawBalance: BITFINEX_RAW_BALANCES[2],
-      customCurrency: undefined,
     })).to.be.ok
     expect(parsedBalance2).to.deep.eq(balanceParserMock.returnValues[1])
 
 
     // new mocking
     balanceParserMock.returns(BITFINEX_PARSED_BALANCES[5])
-
-    exchangeMock.set({
-      keySecret,
-      settings: { mappings } as IAlunaSettingsSchema,
-    } as IAlunaExchange)
 
     const parsedBalance3 = bitfinexBalanceModule.parse({
       rawBalance: BITFINEX_RAW_BALANCES[5],
@@ -158,7 +147,6 @@ describe('BitfinexBalanceModule', () => {
     expect(balanceParserMock.callCount).to.be.eq(3)
     expect(balanceParserMock.calledWithExactly({
       rawBalance: BITFINEX_RAW_BALANCES[5],
-      customCurrency: undefined,
     })).to.be.ok
     expect(parsedBalance3).to.deep.eq(balanceParserMock.returnValues[2])
 
