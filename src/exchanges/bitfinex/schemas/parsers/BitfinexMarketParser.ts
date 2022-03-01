@@ -1,8 +1,9 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IAlunaTickerSchema } from '../../../../lib/schemas/IAlunaTickerSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
-import { BitfinexSymbolMapping } from '../../mappings/BitfinexSymbolMapping'
 import { IBitfinexTicker } from '../IBitfinexMarketSchema'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -24,8 +25,11 @@ export class BitfinexMarketParser {
 
     const [
       symbol,
-      bid,,
-      ask,,,
+      bid,
+      _bid_size,
+      ask,
+      _ask_size,
+      _daily_change,
       dailyChangeRelative,
       lastPrice,
       volume,
@@ -33,14 +37,22 @@ export class BitfinexMarketParser {
       low,
     ] = rawTicker
 
-    const {
+    let {
       baseSymbolId,
       quoteSymbolId,
-    } = BitfinexSymbolMapping.translateToAluna({
-      symbolPair: symbol,
-      mappings: Bitfinex.mappings,
+    } = BitfinexSymbolParser.splitSymbolPair({ symbolPair: symbol })
+
+    const symbolMappings = Bitfinex.settings?.mappings
+
+    baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseSymbolId,
+      symbolMappings,
     })
 
+    quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteSymbolId,
+      symbolMappings,
+    })
     const ticker: IAlunaTickerSchema = {
       bid,
       ask,
@@ -57,20 +69,14 @@ export class BitfinexMarketParser {
 
     const parsedMarket: IAlunaMarketSchema = {
       exchangeId: Bitfinex.ID,
-
       symbolPair: symbol,
-
       baseSymbolId,
       quoteSymbolId,
-
       ticker,
-
       spotEnabled: true,
       marginEnabled,
       derivativesEnabled: false,
-
       leverageEnabled: false,
-
       meta: rawTicker,
     }
 
