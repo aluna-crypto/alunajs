@@ -28,6 +28,8 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
   static Symbol = BitfinexSymbolModule
   static Market = BitfinexMarketModule
 
+  public static settings?: IAlunaSettingsSchema
+
   // local definitions
   key: IAlunaKeyModule
   order: IAlunaOrderWriteModule
@@ -36,7 +38,6 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
 
   constructor (params: {
     keySecret: IAlunaKeySecretSchema,
-    settings?: IAlunaSettingsSchema,
   }) {
 
     super(params)
@@ -45,16 +46,6 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
     this.balance = new BitfinexBalanceModule({ exchange: this })
     this.order = new BitfinexOrderWriteModule({ exchange: this })
     this.position = new BitfinexPositionModule({ exchange: this })
-
-  }
-
-  static setMappings (params: {
-    mappings: Record<string, string>,
-  }) {
-
-    const { mappings } = params
-
-    Bitfinex.mappings = mappings
 
   }
 
