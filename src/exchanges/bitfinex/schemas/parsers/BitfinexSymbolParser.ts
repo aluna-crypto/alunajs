@@ -1,6 +1,14 @@
 import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import { TBitfinexCurrencyLabel } from '../IBitfinexSymbolSchema'
+
+
+
+interface ISplitSymbolPairResponse {
+  baseSymbolId: string
+  quoteSymbolId: string
+}
 
 
 
@@ -9,18 +17,25 @@ export class BitfinexSymbolParser {
   static parse (params: {
     bitfinexCurrency: string,
     bitfinexCurrencyLabel: TBitfinexCurrencyLabel | undefined,
-  }) {
+  }): IAlunaSymbolSchema {
 
     const {
       bitfinexCurrency,
       bitfinexCurrencyLabel,
     } = params
 
-    const id = Bitfinex.mappings?.[bitfinexCurrency] || bitfinexCurrency
+    const symbolMappings = Bitfinex.settings?.mappings
+
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: bitfinexCurrency,
+      symbolMappings,
+    })
+
+    const alias = symbolMappings
+      ? symbolMappings[bitfinexCurrency]
+      : undefined
 
     let name: string | undefined
-    let alias: string | undefined
-
 
     if (bitfinexCurrencyLabel) {
 
@@ -29,7 +44,7 @@ export class BitfinexSymbolParser {
     }
 
     const symbol: IAlunaSymbolSchema = {
-      id: id.toUpperCase(), // some symbols ids are like: 'USDt'
+      id,
       name,
       exchangeId: Bitfinex.ID,
       alias,
@@ -40,6 +55,38 @@ export class BitfinexSymbolParser {
     }
 
     return symbol
+
+  }
+
+
+
+  public static splitSymbolPair (params: {
+    symbolPair: string,
+  }): ISplitSymbolPairResponse {
+
+    const { symbolPair } = params
+
+    let baseSymbolId: string
+    let quoteSymbolId: string
+
+    const spliter = symbolPair.indexOf(':')
+
+    if (spliter >= 0) {
+
+      baseSymbolId = symbolPair.slice(1, spliter)
+      quoteSymbolId = symbolPair.slice(spliter + 1)
+
+    } else {
+
+      baseSymbolId = symbolPair.slice(1, 4)
+      quoteSymbolId = symbolPair.slice(4)
+
+    }
+
+    return {
+      baseSymbolId,
+      quoteSymbolId,
+    }
 
   }
 
