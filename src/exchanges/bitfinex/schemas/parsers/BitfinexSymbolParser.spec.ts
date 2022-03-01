@@ -1,7 +1,14 @@
 import { expect } from 'chai'
+import {
+  each,
+  filter,
+  map,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
+import { BITFINEX_RAW_MARKETS } from '../../test/fixtures/bitfinexMarkets'
 import {
   BITFINEX_CURRENCIES,
   BITFINEX_CURRENCIES_LABELS,
@@ -14,24 +21,55 @@ describe('BitfinexSymbolParser', () => {
 
   it('should parse bitfinex symbols just fine', async () => {
 
-    const bitfinexMappings = ImportMock.mockOther(
-      Bitfinex,
-      'mappings',
+    let mappings: Record<string, string> | undefined
+
+    const translateSymbolIdMock = ImportMock.mockFunction(
+      AlunaSymbolMapping,
+      'translateSymbolId',
     )
 
-    bitfinexMappings.set(undefined)
+    const bitfinexSettingsMock = ImportMock.mockOther(
+      Bitfinex,
+      'settings',
+    )
 
-    const mappings = {
-      UST: 'USDT',
-    }
+    BITFINEX_CURRENCIES.forEach((currency, index) => {
 
-    BITFINEX_CURRENCIES.forEach((currency) => {
+      if (index % 2) {
 
-      if (currency === 'UST') {
+        mappings = {
+          UST: 'USDT',
+        }
 
-        bitfinexMappings.set(mappings)
+        bitfinexSettingsMock.set({
+          mappings,
+        })
+
+      } else if (index % 3) {
+
+        mappings = undefined
+
+        bitfinexSettingsMock.set({
+          mappings,
+        })
+
+      } else {
+
+        mappings = undefined
+
+        bitfinexSettingsMock.set(undefined)
 
       }
+
+      const expectedSymbol = mappings
+        ? mappings[currency] || currency
+        : currency
+
+      const expectedAlias = mappings
+        ? mappings[currency] || undefined
+        : undefined
+
+      translateSymbolIdMock.returns(expectedSymbol)
 
       const labelIndex = BITFINEX_CURRENCIES_LABELS.findIndex((l) => {
 
@@ -46,7 +84,6 @@ describe('BitfinexSymbolParser', () => {
 
 
       let expectedName: string | undefined
-      let expectedSym: string | undefined
 
       if (BITFINEX_CURRENCIES_LABELS[labelIndex]) {
 
@@ -68,27 +105,62 @@ describe('BitfinexSymbolParser', () => {
       } = parsedSymbol
 
       expect(exchangeId).to.be.eq(Bitfinex.ID)
+      expect(expectedSymbol).to.be.eq(id)
       expect(name).to.be.eq(expectedName)
-
-      if (alias) {
-
-        expect(id).to.be.eq(expectedSym?.toUpperCase())
-        expect(alias).to.be.eq(currency)
-
-      } else {
-
-        expect(expectedSym).not.to.be.ok
-        expect(alias).not.to.be.ok
-
-      }
-
+      expect(expectedAlias).to.be.eq(alias)
       expect(slug).not.to.be.ok
       expect(meta).to.deep.eq({
         currency,
         currencyLabel: BITFINEX_CURRENCIES_LABELS[labelIndex],
       })
 
+      expect(translateSymbolIdMock.callCount).to.be.eq(index + 1)
+
     })
+
+  })
+
+  it('should properly split symbol pair', async () => {
+
+    const spotOrMarginMarkets = filter(BITFINEX_RAW_MARKETS[0], (m) => {
+
+      return !/(f|F0)/.test(m[0])
+
+    })
+
+    const symbolsPairs = map(spotOrMarginMarkets, (market) => market[0])
+
+    each(symbolsPairs, (symbolPair) => {
+
+      let expectedBaseSymbolId: string
+      let expectedQuoteSymbolId: string
+
+      const spliter = symbolPair.indexOf(':')
+
+      if (spliter >= 0) {
+
+        expectedBaseSymbolId = symbolPair.slice(1, spliter)
+        expectedQuoteSymbolId = symbolPair.slice(spliter + 1)
+
+      } else {
+
+        expectedBaseSymbolId = symbolPair.slice(1, 4)
+        expectedQuoteSymbolId = symbolPair.slice(4)
+
+      }
+
+      const {
+        baseSymbolId,
+        quoteSymbolId,
+      } = BitfinexSymbolParser.splitSymbolPair({
+        symbolPair,
+      })
+
+      expect(baseSymbolId).to.be.eq(expectedBaseSymbolId)
+      expect(quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+
+    })
+
 
   })
 
