@@ -2,11 +2,13 @@ import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { BitfinexOrderStatusAdapter } from '../../enums/adapters/BitfinexOrderStatusAdapter'
 import { BitfinexOrderTypeAdapter } from '../../enums/adapters/BitfinexOrderTypeAdapter'
 import { IBitfinexOrderSchema } from '../IBitfinexOrderSchema'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -14,14 +16,10 @@ export class BitfinexOrderParser {
 
   static parse (params: {
     rawOrder: IBitfinexOrderSchema,
-    baseSymbolId: string,
-    quoteSymbolId: string,
   }): IAlunaOrderSchema {
 
     const {
       rawOrder,
-      baseSymbolId,
-      quoteSymbolId,
     } = params
 
     const [
@@ -46,6 +44,23 @@ export class BitfinexOrderParser {
       _priceTrailing,
       priceAuxLimit,
     ] = rawOrder
+
+    let {
+      baseSymbolId,
+      quoteSymbolId,
+    } = BitfinexSymbolParser.splitSymbolPair({ symbolPair })
+
+    const symbolMappings = Bitfinex.settings?.mappings
+
+    baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseSymbolId,
+      symbolMappings,
+    })
+
+    quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteSymbolId,
+      symbolMappings,
+    })
 
     const status = BitfinexOrderStatusAdapter.translateToAluna({
       from: orderStatus,
