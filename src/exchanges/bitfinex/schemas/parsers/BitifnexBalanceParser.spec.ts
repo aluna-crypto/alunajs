@@ -1,5 +1,8 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { BITFINEX_RAW_BALANCES } from '../../test/fixtures/bitfinexBalances'
 import { BitfinexBalanceParser } from './BitifnexBalanceParser'
@@ -10,20 +13,30 @@ describe('BitfinexBalanceParser', () => {
 
   it('should parse Bitfinex balance just fine', async () => {
 
-    const customSymbols = {
-      BTC: 'FakeBTC',
-    }
+    ImportMock.mockOther(
+      Bitfinex,
+      'settings',
+      { mappings: { UST: 'USDT' } },
+    )
 
-    BITFINEX_RAW_BALANCES.forEach((rawBalance) => {
+    const translateSymbolIdMock = ImportMock.mockFunction(
+      AlunaSymbolMapping,
+      'translateSymbolId',
+    )
+
+    BITFINEX_RAW_BALANCES.forEach((rawBalance, index) => {
+
+      const expectedSymbolId = rawBalance[1]
+
+      translateSymbolIdMock.returns(expectedSymbolId)
 
       const parsedBalance = BitfinexBalanceParser.parse({
         rawBalance,
-        customCurrency: customSymbols[rawBalance[1]],
       })
 
       const [
         walletType,
-        currency,
+        _currency,
         balance,
         _unsettledInterest,
         availableBalance,
@@ -42,13 +55,12 @@ describe('BitfinexBalanceParser', () => {
       })
 
       expect(account).to.be.eq(translatedAccount)
-
-      expect(symbolId).to.be.eq(customSymbols[currency] || currency)
-
+      expect(symbolId).to.be.eq(expectedSymbolId)
       expect(available).to.be.eq(availableBalance)
       expect(total).to.be.eq(balance)
-
       expect(meta).to.deep.eq(rawBalance)
+
+      expect(translateSymbolIdMock.callCount).to.be.eq(index + 1)
 
     })
 
