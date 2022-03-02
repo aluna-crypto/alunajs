@@ -5,7 +5,8 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import { IAlunaTickerSchema } from '../../../../lib/schemas/IAlunaTickerSchema'
-import { BitmexSpecs } from '../../BitmexSpecs'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { Bitmex } from '../../Bitmex'
 import { BITMEX_RAW_SYMBOLS } from '../../test/bitmexSymbols'
 import { BitmexInstrumentParser } from './BitmexInstrumentParser'
 import { BitmexMarketParser } from './BitmexMarketParser'
@@ -19,9 +20,11 @@ describe('BitmexMarketParser', () => {
 
     const mockedInstrument = {} as IAlunaInstrumentSchema
 
-    const mappings = {
-      XBT: 'BTC',
-    }
+    const translatedSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
 
     const bitmexInstrumentParserMock = ImportMock.mockFunction(
       BitmexInstrumentParser,
@@ -29,7 +32,7 @@ describe('BitmexMarketParser', () => {
       mockedInstrument,
     )
 
-    each(BITMEX_RAW_SYMBOLS, (rawMarket) => {
+    each(BITMEX_RAW_SYMBOLS, (rawMarket, index) => {
 
       const {
         symbol,
@@ -69,14 +72,12 @@ describe('BitmexMarketParser', () => {
         rawMarket,
       })
 
-      expect(parsedMarket.exchangeId).to.deep.eq(BitmexSpecs.id)
+      expect(parsedMarket.exchangeId).to.be.eq(Bitmex.ID)
 
-      expect(parsedMarket.symbolPair).to.deep.eq(symbol)
+      expect(parsedMarket.symbolPair).to.be.eq(symbol)
 
-      const expectedBaseSymboId = mappings[rootSymbol] || rootSymbol
-
-      expect(parsedMarket.baseSymbolId).to.deep.eq(expectedBaseSymboId)
-      expect(parsedMarket.quoteSymbolId).to.deep.eq(quoteCurrency)
+      expect(parsedMarket.baseSymbolId).to.be.eq(translatedSymbolId)
+      expect(parsedMarket.quoteSymbolId).to.be.eq(translatedSymbolId)
 
       expect(parsedMarket.instrument).to.deep.eq(mockedInstrument)
 
@@ -96,6 +97,24 @@ describe('BitmexMarketParser', () => {
       expect(parsedMarket.marginEnabled).not.to.be.ok
 
       expect(parsedMarket.meta).to.deep.eq(rawMarket)
+
+      const mappingCallCount = index === 0
+        ? 2
+        : (index + 1) * 2
+
+      const argsIndex = index === 0
+        ? 0
+        : index * 2
+
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(mappingCallCount)
+      expect(alunaSymbolMappingMock.args[argsIndex][0]).to.deep.eq({
+        exchangeSymbolId: rootSymbol,
+        symbolMappings: {},
+      })
+      expect(alunaSymbolMappingMock.args[argsIndex + 1][0]).to.deep.eq({
+        exchangeSymbolId: quoteCurrency,
+        symbolMappings: {},
+      })
 
     })
 
