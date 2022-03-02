@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import {
@@ -90,19 +91,33 @@ describe('GateioSymbolModule', () => {
 
   it('should parse a Gateio symbol just fine', async () => {
 
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
+    alunaSymbolMappingMock.returns(translateSymbolId)
+
+    const rawSymbol1 = GATEIO_RAW_SYMBOLS[1]
+    const rawSymbol2 = GATEIO_RAW_SYMBOLS[2]
+
     const parsedSymbol1 = GateioSymbolModule.parse({
-      rawSymbol: GATEIO_RAW_SYMBOLS[1],
+      rawSymbol: rawSymbol1,
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Gateio.ID)
-    expect(parsedSymbol1.id).to.be.eq(GATEIO_RAW_SYMBOLS[1].currency)
+    expect(parsedSymbol1.id).to.be.eq(translateSymbolId)
+    expect(parsedSymbol1.alias).to.be.eq(rawSymbol1.currency)
+
+
+    alunaSymbolMappingMock.returns(rawSymbol2.currency)
 
     const parsedSymbol2 = GateioSymbolModule.parse({
-      rawSymbol: GATEIO_RAW_SYMBOLS[2],
+      rawSymbol: rawSymbol2,
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Gateio.ID)
-    expect(parsedSymbol2.id).to.be.eq(GATEIO_RAW_SYMBOLS[2].currency)
+    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.currency)
+    expect(parsedSymbol2.alias).not.to.be.ok
 
   })
 
