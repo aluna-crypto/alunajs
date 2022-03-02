@@ -8,12 +8,22 @@ export interface IAlunaPositionListParams {
 }
 
 export interface IAlunaPositionGetParams {
-  id: string
+  id?: string
+  symbolPair?: string
 }
 
 export interface IAlunaPositionCloseParams {
   id?: string
   symbolPair?: string
+}
+
+export interface IAlunaPositionGetLeverageParams {
+  symbolPair: string
+}
+
+export interface IAlunaPositionSetLeverageParams {
+  symbolPair: string
+  leverage: number
 }
 
 export interface IAlunaPositionModule extends IAlunaModule {
@@ -26,7 +36,10 @@ export interface IAlunaPositionModule extends IAlunaModule {
 
   close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionSchema>
 
-  parse (params: { rawPosition: any }): IAlunaPositionSchema
-  parseMany (params: { rawPositions: any[] }): IAlunaPositionSchema[]
+  parse (params: { rawPosition: any }): Promise<IAlunaPositionSchema>
+  parseMany (params: { rawPositions: any[] }): Promise<IAlunaPositionSchema[]>
+
+  getLeverage? (params: IAlunaPositionGetLeverageParams): Promise<number>
+  setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<number>
 
 }

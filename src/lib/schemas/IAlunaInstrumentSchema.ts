@@ -13,8 +13,8 @@ export interface IAlunaInstrumentSchema {
   closeDate: Date
   listingDate: Date
   frontDate: Date
-  expireDate: Date
-  settleDate: Date
+  expireDate: Date | null
+  settleDate: Date | null
   sessionIntervalDate: Date
 
   // probable required properties
