@@ -40,7 +40,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
     } = param as AxiosError
 
     error = new AlunaError({
-      message: response?.data?.message || message,
+      message: response?.data?.error || message,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
       metadata: response?.data,
@@ -79,7 +79,7 @@ export const generateAuthSignature = (
     .update(timestamp.toString())
     .update(verb.toUpperCase())
     .update(path)
-    .update(body ? body.toString() : '')
+    .update(body ? JSON.stringify(body) : '')
     .digest('hex')
 
 
