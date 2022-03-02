@@ -1,8 +1,12 @@
+import BigNumber from 'bignumber.js'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -58,11 +62,23 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
       locked,
     } = rawBalance
 
+    const symbolMappings = Binance.settings.mappings
+
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: asset,
+      symbolMappings,
+    })
+
+    const available = Number(free)
+    const total = new BigNumber(available)
+      .plus(Number(locked))
+      .toNumber()
+
     return {
-      symbolId: asset,
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      available: Number(free),
-      total: Number(free) + Number(locked),
+      available,
+      total,
       meta: rawBalance,
     }
 
