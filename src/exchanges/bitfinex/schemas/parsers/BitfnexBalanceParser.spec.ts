@@ -2,22 +2,15 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
-import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { BITFINEX_RAW_BALANCES } from '../../test/fixtures/bitfinexBalances'
-import { BitfinexBalanceParser } from './BitifnexBalanceParser'
+import { BitfinexBalanceParser } from './BitfnexBalanceParser'
 
 
 
 describe('BitfinexBalanceParser', () => {
 
   it('should parse Bitfinex balance just fine', async () => {
-
-    ImportMock.mockOther(
-      Bitfinex,
-      'settings',
-      { mappings: { UST: 'USDT' } },
-    )
 
     const translateSymbolIdMock = ImportMock.mockFunction(
       AlunaSymbolMapping,

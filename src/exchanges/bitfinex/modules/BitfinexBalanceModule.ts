@@ -9,7 +9,7 @@ import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 import { IBitfinexBalanceSchema } from '../schemas/IBitfinexBalanceSchema'
-import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitfnexBalanceParser'
 
 
 

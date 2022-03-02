@@ -8,7 +8,7 @@ import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlu
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
-import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitfnexBalanceParser'
 import {
   BITFINEX_PARSED_BALANCES,
   BITFINEX_RAW_BALANCES,
