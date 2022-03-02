@@ -3,6 +3,8 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
@@ -57,8 +59,13 @@ export class GateioBalanceModule extends AAlunaModule implements IAlunaBalanceMo
       locked,
     } = rawBalance
 
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Gateio.settings.mappings,
+    })
+
     return {
-      symbolId: currency,
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
       total: Number(available) + Number(locked),

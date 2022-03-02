@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { GateioHttp } from '../GateioHttp'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
 import {
@@ -17,7 +18,6 @@ import { GateioBalanceModule } from './GateioBalanceModule'
 describe('GateioBalanceModule', () => {
 
   const gateioBalanceModule = GateioBalanceModule.prototype
-
 
   it('should list all Gateio raw balances', async () => {
 
@@ -53,8 +53,6 @@ describe('GateioBalanceModule', () => {
 
   })
 
-
-
   it('should list all Gateio parsed balances', async () => {
 
     const rawListMock = ['arr-of-raw-balances']
@@ -87,37 +85,44 @@ describe('GateioBalanceModule', () => {
 
   })
 
-
-
   it('should parse a single Gateio raw balance', () => {
 
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
+    alunaSymbolMappingMock.returns(translateSymbolId)
+
+    const rawBalance1 = GATEIO_RAW_BALANCES[0]
+    const rawBalance2 = GATEIO_RAW_BALANCES[1]
+
     const parsedBalance1 = gateioBalanceModule.parse({
-      rawBalance: GATEIO_RAW_BALANCES[0],
+      rawBalance: rawBalance1,
     })
 
     const {
       available,
-      currency,
       locked,
-    } = GATEIO_RAW_BALANCES[0]
+    } = rawBalance1
 
     const availableAmount = parseFloat(available)
     const total = parseFloat(available) + parseFloat(locked)
 
-    expect(parsedBalance1.symbolId).to.be.eq(currency)
+    expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(availableAmount)
     expect(parsedBalance1.total).to.be.eq(total)
 
 
+    alunaSymbolMappingMock.returns(rawBalance2.currency)
+
     const parsedBalance2 = gateioBalanceModule.parse({
-      rawBalance: GATEIO_RAW_BALANCES[1],
+      rawBalance: rawBalance2,
     })
 
-    const currency2 = GATEIO_RAW_BALANCES[1].currency
-    const available2 = parseFloat(GATEIO_RAW_BALANCES[1].available)
-    const total2 = parseFloat(GATEIO_RAW_BALANCES[1].available)
-      + parseFloat(GATEIO_RAW_BALANCES[1].locked)
+    const currency2 = rawBalance2.currency
+    const available2 = Number(rawBalance2.available)
+    const total2 = Number(rawBalance2.available) + Number(rawBalance2.locked)
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance2.symbolId).to.be.eq(currency2)
@@ -125,8 +130,6 @@ describe('GateioBalanceModule', () => {
     expect(parsedBalance2.total).to.be.eq(total2)
 
   })
-
-
 
   it('should parse many Gateio raw balances', async () => {
 
