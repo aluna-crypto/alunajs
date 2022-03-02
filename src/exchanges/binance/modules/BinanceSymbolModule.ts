@@ -5,6 +5,7 @@ import {
 
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
@@ -54,9 +55,21 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
       baseAsset,
     } = rawSymbol
 
-    const parsedSymbol = {
-      id: baseAsset,
+    const symbolMappings = Binance.settings.mappings
+
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseAsset,
+      symbolMappings,
+    })
+
+    const alias = id !== baseAsset
+      ? baseAsset
+      : undefined
+
+    const parsedSymbol: IAlunaSymbolSchema = {
+      id,
       exchangeId: Binance.ID,
+      alias,
       meta: rawSymbol,
     }
 
