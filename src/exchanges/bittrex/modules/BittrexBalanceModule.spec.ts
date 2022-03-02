@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BittrexHttp } from '../BittrexHttp'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
 import {
@@ -107,37 +108,56 @@ describe('BittrexBalanceModule', () => {
 
   it('should parse a single Bittrex raw balance', () => {
 
+    const translatedSymbolId = 'ETH'
+
+    const rawBalance1 = BITTREX_RAW_BALANCES[0]
+    const rawBalance2 = BITTREX_RAW_BALANCES[1]
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
+
     const parsedBalance1 = bittrexBalanceModule.parse({
-      rawBalance: BITTREX_RAW_BALANCES[0],
+      rawBalance: rawBalance1,
     })
 
     const {
       available: amountAvailable,
-      currencySymbol,
       total: totalAmount,
-    } = BITTREX_RAW_BALANCES[0]
+    } = rawBalance1
 
-    const available = parseFloat(amountAvailable)
-    const total = parseFloat(totalAmount)
+    const available = Number(amountAvailable)
+    const total = Number(totalAmount)
 
-    expect(parsedBalance1.symbolId).to.be.eq(currencySymbol)
+    expect(parsedBalance1.symbolId).to.be.eq(translatedSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
-
-    const parsedBalance2 = bittrexBalanceModule.parse({
-      rawBalance: BITTREX_RAW_BALANCES[1],
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: rawBalance1.currencySymbol,
+      symbolMappings: {},
     })
 
-    const currency2 = BITTREX_RAW_BALANCES[1].currencySymbol
-    const available2 = parseFloat(BITTREX_RAW_BALANCES[1].available)
-    const total2 = parseFloat(BITTREX_RAW_BALANCES[1].total)
+
+    const parsedBalance2 = bittrexBalanceModule.parse({
+      rawBalance: rawBalance2,
+    })
+
+    const available2 = parseFloat(rawBalance2.available)
+    const total2 = parseFloat(rawBalance2.total)
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.symbolId).to.be.eq(translatedSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawBalance2.currencySymbol,
+      symbolMappings: {},
+    })
 
   })
 
