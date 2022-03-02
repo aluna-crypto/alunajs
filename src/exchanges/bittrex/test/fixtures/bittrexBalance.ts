@@ -1,24 +1,24 @@
 export const BITTREX_RAW_BALANCES = [
   {
-    currencySymbol: 'BTCEUR',
+    currencySymbol: 'BTC',
     total: '1500.00000000',
     available: '1500.00000000',
     updatedAt: '2021-11-23T17:32:17.06Z',
   },
   {
-    currencySymbol: 'ETHEUR',
+    currencySymbol: 'ETH',
     total: '32.00000000',
     available: '32.00000000',
     updatedAt: '2021-11-23T17:32:17.06Z',
   },
   {
-    currencySymbol: 'LTCEUR',
+    currencySymbol: 'LTC',
     total: '11.00000000',
     available: '11.00000000',
     updatedAt: '2021-11-23T17:32:17.06Z',
   },
   {
-    currencySymbol: 'BTCUSD',
+    currencySymbol: 'USD',
     total: '0.00000000',
     available: '0.00000000',
     updatedAt: '2021-11-23T17:32:17.06Z',
@@ -27,21 +27,21 @@ export const BITTREX_RAW_BALANCES = [
 
 export const BITTREX_PARSED_BALANCES = [
   {
-    symbolId: 'BTCEUR',
+    symbolId: 'BTC',
     account: 'exchange',
     available: 1500,
     total: 1500,
     meta: {},
   },
   {
-    symbolId: 'ETHEUR',
+    symbolId: 'ETH',
     account: 'exchange',
     available: 32,
     total: 32,
     meta: {},
   },
   {
-    symbolId: 'LTCEUR',
+    symbolId: 'LTC',
     account: 'exchange',
     available: 11,
     total: 11,
