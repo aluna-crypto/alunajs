@@ -1,10 +1,13 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { BITFINEX_RAW_POSITIONS } from '../../test/fixtures/bitfinexPosition'
 import { BitfinexPositionParser } from './BitfinexPositionParser'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -12,11 +15,39 @@ describe('BitfinexPositionParser', () => {
 
   it('should parse Bitfinex positions just fine', async () => {
 
-    const mappings = {
-      UST: 'USDT',
+    const mockedSymbolId = 'BTC'
+
+    const baseSymbolId = mockedSymbolId
+    const quoteSymbolId = mockedSymbolId
+
+    const splitSymbolPairMock = ImportMock.mockFunction(
+      BitfinexSymbolParser,
+      'splitSymbolPair',
+      {
+        baseSymbolId,
+        quoteSymbolId,
+      },
+    )
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: mockedSymbolId,
+    })
+
+    const mockedDate = new Date(Date.now())
+
+    function fakeDateConstructor () {
+
+      return mockedDate
+
     }
 
-    BITFINEX_RAW_POSITIONS.forEach((rawPosition) => {
+    ImportMock.mockOther(
+      global,
+      'Date',
+      fakeDateConstructor as any,
+    )
+
+    BITFINEX_RAW_POSITIONS.forEach((rawPosition, index) => {
 
       if (/^f|F0/.test(rawPosition[0])) {
 
@@ -24,33 +55,12 @@ describe('BitfinexPositionParser', () => {
 
       }
 
-      const positionSymbol = rawPosition[0]
-      let baseSymbolId: string
-      let quoteSymbolId: string
-
-      const spliter = rawPosition[0].indexOf(':')
-
-      if (spliter >= 0) {
-
-        baseSymbolId = positionSymbol.slice(1, spliter)
-        quoteSymbolId = positionSymbol.slice(spliter + 1)
-
-      } else {
-
-        baseSymbolId = positionSymbol.slice(1, 4)
-        quoteSymbolId = positionSymbol.slice(4)
-
-      }
-
-      const expectedBaseSymbolId = mappings[baseSymbolId] || baseSymbolId
-      const expectedQuoteSymbolId = mappings[quoteSymbolId] || quoteSymbolId
-
       const parsedPosition = BitfinexPositionParser.parse({
         rawPosition,
       })
 
       const [
-        _symbol,
+        symbol,
         status,
         amount,
         basePrice,
@@ -117,8 +127,9 @@ describe('BitfinexPositionParser', () => {
 
       expect(parsedPosition.id).to.be.eq(positionId)
 
-      expect(parsedPosition.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedPosition.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedPosition.symbolPair).to.be.eq(symbol)
+      expect(parsedPosition.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedPosition.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedPosition.status).to.be.eq(computedStatus)
 
@@ -126,7 +137,6 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.openPrice).to.be.eq(computedOpenPrice)
       expect(parsedPosition.amount).to.be.eq(computedAmount)
       expect(parsedPosition.total).to.be.eq(computedTotal)
-
 
       expect(parsedPosition.pl).to.be.eq(computedPl)
       expect(parsedPosition.plPercentage).to.be.eq(computedPlPercentage)
@@ -136,6 +146,14 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.openedAt).to.deep.eq(computedOpenedAt)
       expect(parsedPosition.closedAt).to.deep.eq(computedClosedAt)
       expect(parsedPosition.closePrice).to.deep.eq(computedClosePrice)
+
+      expect(splitSymbolPairMock.callCount).to.be.eq(index + 1)
+
+      const symbolMockCallCount = index === 0
+        ? 2
+        : (index + 1) * 2
+
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(symbolMockCallCount)
 
     })
 
