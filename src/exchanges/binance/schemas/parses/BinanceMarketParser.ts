@@ -1,4 +1,5 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../../Binance'
 import { IBinanceMarketWithCurrency } from '../IBinanceMarketSchema'
 
@@ -28,6 +29,17 @@ export class BinanceMarketParser {
       spotEnabled,
     } = rawMarket
 
+    const symbolMappings = Binance.settings.mappings
+
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings,
+    })
 
     const ticker = {
       high: parseFloat(highPrice),
@@ -44,8 +56,8 @@ export class BinanceMarketParser {
     return {
       exchangeId: Binance.ID,
       symbolPair: symbol,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       ticker,
       spotEnabled,
       marginEnabled,
