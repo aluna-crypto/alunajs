@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import {
@@ -75,21 +76,44 @@ describe('BittrexSymbolModule', () => {
 
   it('should parse a Bittrex symbol just fine', async () => {
 
+    const translatedSymbolId = 'ETH'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
+
+    const rawSymbol1 = BITTREX_RAW_SYMBOLS[1]
+    const rawSymbol2 = BITTREX_RAW_SYMBOLS[2]
+
     const parsedSymbol1 = BittrexSymbolModule.parse({
-      rawSymbol: BITTREX_RAW_SYMBOLS[1],
+      rawSymbol: rawSymbol1,
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Bittrex.ID)
-    expect(parsedSymbol1.id).to.be.eq(BITTREX_RAW_SYMBOLS[1].symbol)
-    expect(parsedSymbol1.name).to.be.eq(BITTREX_RAW_SYMBOLS[1].name)
+    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
+    expect(parsedSymbol1.name).to.be.eq(rawSymbol1.name)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol1.symbol,
+      symbolMappings: {},
+    })
+
+    alunaSymbolMappingMock.returns(rawSymbol2.symbol)
 
     const parsedSymbol2 = BittrexSymbolModule.parse({
-      rawSymbol: BITTREX_RAW_SYMBOLS[2],
+      rawSymbol: rawSymbol2,
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Bittrex.ID)
-    expect(parsedSymbol2.id).to.be.eq(BITTREX_RAW_SYMBOLS[2].symbol)
-    expect(parsedSymbol2.name).to.be.eq(BITTREX_RAW_SYMBOLS[2].name)
+    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.symbol)
+    expect(parsedSymbol2.name).to.be.eq(rawSymbol2.name)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol2.symbol,
+      symbolMappings: {},
+    })
 
   })
 
