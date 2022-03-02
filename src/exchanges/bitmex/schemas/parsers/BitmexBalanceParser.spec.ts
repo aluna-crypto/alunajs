@@ -7,6 +7,7 @@ import {
 } from 'lodash'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { BITMEX_RAW_BALANCES } from '../../test/bitmexBalances'
 import { BitmexBalanceParser } from './BitmexBalanceParser'
@@ -18,10 +19,11 @@ describe('BitmexBalanceParser', () => {
 
   it('should properly parse bitmex raw balances', () => {
 
-    const mappings = {
-      XBt: 'BTC',
-      USDt: 'USDT',
-    }
+    const translatedSymbolId = 'ETH'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
 
     const [usdtBalance] = filter(
       BITMEX_RAW_BALANCES,
@@ -40,7 +42,7 @@ describe('BitmexBalanceParser', () => {
 
     expect(rawBalances.length).to.be.eq(4)
 
-    each(rawBalances, (rawBalance) => {
+    each(rawBalances, (rawBalance, index) => {
 
       const {
         currency,
@@ -92,11 +94,17 @@ describe('BitmexBalanceParser', () => {
 
       const parsedBalance = BitmexBalanceParser.parse({ rawBalance })
 
-      expect(parsedBalance.symbolId).to.be.eq(mappings[currency] || currency)
+      expect(parsedBalance.symbolId).to.be.eq(translatedSymbolId)
       expect(parsedBalance.account).to.be.eq(AlunaAccountEnum.DERIVATIVES)
       expect(parsedBalance.available).to.be.eq(expectedAvailable)
       expect(parsedBalance.total).to.be.eq(expectedTotal)
       expect(parsedBalance.meta).to.deep.eq(rawBalance)
+
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(index + 1)
+      expect(alunaSymbolMappingMock.args[index][0]).to.deep.eq({
+        exchangeSymbolId: currency,
+        symbolMappings: {},
+      })
 
     })
 

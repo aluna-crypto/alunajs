@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { Bitmex } from '../../Bitmex'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { IBitmexBalanceSchema } from '../IBitmexBalanceSchema'
 
@@ -15,17 +17,16 @@ export class BitmexBalanceParser {
 
     const { rawBalance } = params
 
-    // TODO: Remove after implementing mapping
-    const tempMapping = {
-      XBt: 'BTC',
-      USDt: 'USDT',
-    }
-
     const {
       currency,
       walletBalance,
       availableMargin,
     } = rawBalance
+
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Bitmex.settings.mappings,
+    })
 
     let computedAvailable: number
     let computedTotal: number
@@ -70,7 +71,7 @@ export class BitmexBalanceParser {
     }
 
     const balance: IAlunaBalanceSchema = {
-      symbolId: tempMapping[currency] || currency,
+      symbolId,
       account: AlunaAccountEnum.DERIVATIVES,
       available: computedAvailable,
       total: computedTotal,
