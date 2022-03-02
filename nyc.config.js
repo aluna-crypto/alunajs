@@ -6,6 +6,7 @@ module.exports = {
   exclude: [
     '**/*.spec.ts',
     '**/test/**',
+    '**/*.mock.ts',
   ],
   'report-dir': `${__dirname}/coverage-mocha`,
   'temp-dir': `${__dirname}/coverage-nyc`,
