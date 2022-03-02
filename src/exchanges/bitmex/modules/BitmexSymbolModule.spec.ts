@@ -3,6 +3,7 @@ import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockPublicHttpRequest } from '../../../../test/helpers/http'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -66,7 +67,11 @@ describe('BitmexSymbolModule', () => {
 
   it('should parse a Bitmex raw symbol just fine', () => {
 
-    const mapping = { XBT: 'BTC' }
+    const translatedSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
 
     const rawSymbol1 = {
       symbol: 'XBTUSD',
@@ -81,9 +86,15 @@ describe('BitmexSymbolModule', () => {
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(BitmexSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(mapping[rawSymbol1.rootSymbol])
+    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
+    expect(parsedSymbol1.alias).to.be.eq(rawSymbol1.rootSymbol)
     expect(parsedSymbol1.meta).to.be.eq(rawSymbol1)
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol1.rootSymbol,
+      symbolMappings: {},
+    })
 
     const rawSymbol2 = {
       symbol: 'ADAUSDT',
@@ -98,9 +109,15 @@ describe('BitmexSymbolModule', () => {
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(BitmexSpecs.id)
-    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.rootSymbol)
+    expect(parsedSymbol2.id).to.be.eq(translatedSymbolId)
+    expect(parsedSymbol2.alias).to.be.eq(rawSymbol2.rootSymbol)
     expect(parsedSymbol2.meta).to.be.eq(rawSymbol2)
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol2.rootSymbol,
+      symbolMappings: {},
+    })
 
     const rawSymbol3 = {
       symbol: 'LTCEUR',
@@ -109,6 +126,8 @@ describe('BitmexSymbolModule', () => {
       askPrice: 0,
     } as IBitmexSymbolsSchema
 
+    alunaSymbolMappingMock.returns(rawSymbol3.rootSymbol)
+
 
     const parsedSymbol3 = BitmexSymbolModule.parse({
       rawSymbol: rawSymbol3,
@@ -116,7 +135,15 @@ describe('BitmexSymbolModule', () => {
 
     expect(parsedSymbol3.exchangeId).to.be.eq(BitmexSpecs.id)
     expect(parsedSymbol3.id).to.be.eq(rawSymbol3.rootSymbol)
+    expect(parsedSymbol3.alias).not.to.be.ok
     expect(parsedSymbol3.meta).to.be.eq(rawSymbol3)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(3)
+    expect(alunaSymbolMappingMock.args[2][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol3.rootSymbol,
+      symbolMappings: {},
+    })
+
 
   })
 
