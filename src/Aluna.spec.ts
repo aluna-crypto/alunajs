@@ -6,6 +6,7 @@ import { Bitfinex } from './exchanges/bitfinex/Bitfinex'
 import { Bitmex } from './exchanges/bitmex/Bitmex'
 import { Bittrex } from './exchanges/bittrex/Bittrex'
 import { Gateio } from './exchanges/gateio/Gateio'
+import { Poloniex } from './exchanges/poloniex/Poloniex'
 import { Valr } from './exchanges/valr/Valr'
 import { AlunaError } from './lib/core/AlunaError'
 import {
@@ -28,6 +29,7 @@ describe('Aluna', () => {
     expect(Aluna.Bittrex).to.be.ok
     expect(Aluna.Gateio).to.be.ok
     expect(Aluna.Valr).to.be.ok
+    expect(Aluna.Poloniex).to.be.ok
 
   })
 
@@ -39,6 +41,7 @@ describe('Aluna', () => {
     let bitmex: IAlunaExchange | undefined
     let bittrex: IAlunaExchange | undefined
     let valr: IAlunaExchange | undefined
+    let poloniex: IAlunaExchange | undefined
 
     let error
 
@@ -92,6 +95,14 @@ describe('Aluna', () => {
         },
       })
 
+      poloniex = Aluna.new({
+        exchangeId: 'poloniex',
+        keySecret: {
+          key: 'key',
+          secret: 'secret',
+        },
+      })
+
     } catch (err) {
 
       error = err
@@ -106,6 +117,7 @@ describe('Aluna', () => {
     expect(bitmex).to.be.ok
     expect(bittrex).to.be.ok
     expect(valr).to.be.ok
+    expect(poloniex).to.be.ok
 
     expect(gateio instanceof Gateio).to.be.ok
     expect(binance instanceof Binance).to.be.ok
@@ -113,6 +125,7 @@ describe('Aluna', () => {
     expect(bitmex instanceof Bitmex).to.be.ok
     expect(bittrex instanceof Bittrex).to.be.ok
     expect(valr instanceof Valr).to.be.ok
+    expect(poloniex instanceof Poloniex).to.be.ok
 
   })
 
@@ -268,6 +281,30 @@ describe('Aluna', () => {
   it('should properly resolve exchange Bitmex static class', async () => {
 
     const exchangeId = Bitmex.ID
+
+    let Exchange: IAlunaExchangeStatic | undefined
+    let error
+
+    try {
+
+      Exchange = Aluna.static({ exchangeId })
+
+    } catch (err) {
+
+      error = err as AlunaError
+
+    }
+
+    expect(error).not.to.be.ok
+
+    expect(Exchange).to.be.ok
+    expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
+  it('should properly resolve exchange Poloniex static class', async () => {
+
+    const exchangeId = Poloniex.ID
 
     let Exchange: IAlunaExchangeStatic | undefined
     let error
