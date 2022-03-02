@@ -15,10 +15,9 @@ export class PoloniexOrderParser {
 
   static parse (params: {
     rawOrder: IPoloniexOrderWithCurrency | IPoloniexOrderStatusInfo,
-    isFilled?: boolean,
   }): IAlunaOrderSchema {
 
-    const { rawOrder, isFilled = false } = params
+    const { rawOrder } = params
 
     const exchangeId = Poloniex.ID
 
@@ -42,7 +41,6 @@ export class PoloniexOrderParser {
         status: (rawOrder as IPoloniexOrderStatusInfo).status,
         amount,
         startingAmount,
-        isFilled,
       })
 
     const orderStatus = PoloniexStatusAdapter.translateToAluna({
@@ -61,6 +59,14 @@ export class PoloniexOrderParser {
 
     }
 
+    let filledAt: Date | undefined
+
+    if (orderStatus === AlunaOrderStatusEnum.FILLED) {
+
+      filledAt = new Date()
+
+    }
+
     const parsedOrder: IAlunaOrderSchema = {
       id: orderNumber,
       symbolPair: currencyPair,
@@ -76,6 +82,7 @@ export class PoloniexOrderParser {
       type: PoloniexSideAdapter.translateToAlunaOrderType(),
       placedAt: new Date(date),
       canceledAt,
+      filledAt,
       meta: rawOrder,
     }
 

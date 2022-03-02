@@ -32,22 +32,15 @@ export class PoloniexStatusAdapter {
       status?: PoloniexOrderStatusEnum,
       startingAmount: string,
       amount: string,
-      isFilled: boolean,
     }): PoloniexOrderStatusEnum => {
 
       const {
-        startingAmount, amount, isFilled, status,
+        startingAmount, amount, status,
       } = params
 
       if (status) {
 
         return status
-
-      }
-
-      if (isFilled) {
-
-        return PoloniexOrderStatusEnum.FILLED
 
       }
 

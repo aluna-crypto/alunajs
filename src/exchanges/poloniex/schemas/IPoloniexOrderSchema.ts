@@ -24,7 +24,6 @@ export interface IPoloniexOrderWithCurrency extends IPoloniexOrderInfo {
   currencyPair: string
   baseCurrency: string
   quoteCurrency: string
-  isFilled?: boolean
 }
 
 export interface IPoloniexOrderSchema {

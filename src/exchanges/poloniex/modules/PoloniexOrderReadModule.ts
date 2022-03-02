@@ -6,6 +6,7 @@ import {
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
@@ -23,7 +24,7 @@ import { PoloniexOrderParser } from '../schemas/parsers/PoloniexOrderParser'
 export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
 
-  public async getOrderStatus (orderNumber: string)
+  private async getOrderStatus (orderNumber: string)
     : Promise<IPoloniexOrderStatusInfo> {
 
     const timestamp = new Date().getTime()
@@ -57,7 +58,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   }
 
-  public async getOrderTrades (orderNumber: string)
+  private async getOrderTrades (orderNumber: string)
     : Promise<IPoloniexOrderInfo[]> {
 
     const timestamp = new Date().getTime()
@@ -159,7 +160,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IPoloniexOrderStatusInfo | IPoloniexOrderWithCurrency> {
+  ): Promise<IPoloniexOrderStatusInfo> {
 
     const {
       id,
@@ -170,7 +171,6 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     let result
     let orderTrades: IPoloniexOrderInfo[] = []
-    let isFilled = false
 
     try {
 
@@ -181,8 +181,6 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
       try {
 
         orderTrades = await this.getOrderTrades(id)
-
-        isFilled = true
 
       } catch (err) {
 
@@ -219,20 +217,14 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     }
 
-    const splittedCurrencyPair = symbolPair.split('_')
-    const baseCurrency = splittedCurrencyPair[0]
-    const quoteCurrency = splittedCurrencyPair[1]
-
-    const rawOrderWithCurrency: IPoloniexOrderWithCurrency = {
+    const rawOrderTradeWithStatus: IPoloniexOrderStatusInfo = {
       ...orderTrades[0],
       currencyPair: symbolPair,
-      baseCurrency,
-      quoteCurrency,
+      status: PoloniexOrderStatusEnum.FILLED,
       orderNumber: id,
-      isFilled,
     }
 
-    return rawOrderWithCurrency
+    return rawOrderTradeWithStatus
 
   }
 
@@ -256,9 +248,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const { rawOrder } = params
 
-    const { isFilled } = rawOrder as IPoloniexOrderWithCurrency
-
-    const parsedOrder = PoloniexOrderParser.parse({ rawOrder, isFilled })
+    const parsedOrder = PoloniexOrderParser.parse({ rawOrder })
 
     return parsedOrder
 

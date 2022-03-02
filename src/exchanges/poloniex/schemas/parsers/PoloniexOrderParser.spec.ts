@@ -82,4 +82,30 @@ describe('PoloniexOrderParser', () => {
 
   })
 
+
+
+  it('should parse filled Poloniex order just fine', async () => {
+
+    const rawOrder: IPoloniexOrderStatusInfo = {
+      ...POLONIEX_RAW_LIMIT_ORDER,
+      status: PoloniexOrderStatusEnum.FILLED,
+    }
+
+    const parsedOrder = PoloniexOrderParser.parse({
+      rawOrder,
+    })
+
+    const rawStatus = rawOrder.status
+
+    expect(parsedOrder.status)
+      .to.be.eq(PoloniexStatusAdapter.translateToAluna(
+        { from: rawStatus },
+      ))
+    expect(parsedOrder.filledAt?.getTime())
+      .to.be.eq(
+        new Date().getTime(),
+      )
+
+  })
+
 })
