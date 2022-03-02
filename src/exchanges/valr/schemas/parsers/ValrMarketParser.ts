@@ -1,4 +1,5 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Valr } from '../../Valr'
 import { IMarketWithCurrencies } from '../IValrMarketSchema'
 
@@ -25,6 +26,16 @@ export class ValrMarketParser {
       currencyPair,
     } = rawMarket
 
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Valr.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Valr.settings.mappings,
+    })
+
     const ticker = {
       high: parseFloat(highPrice),
       low: parseFloat(lowPrice),
@@ -40,8 +51,8 @@ export class ValrMarketParser {
     return {
       exchangeId: Valr.ID,
       symbolPair: currencyPair,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       ticker,
       spotEnabled: false,
       marginEnabled: false,
