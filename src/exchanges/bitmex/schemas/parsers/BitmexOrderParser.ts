@@ -30,9 +30,9 @@ export class BitmexOrderParser {
 
     const {
       rawOrder,
+      instrument,
       baseSymbolId,
       quoteSymbolId,
-      instrument,
     } = params
 
     const {
