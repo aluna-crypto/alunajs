@@ -9,7 +9,7 @@ import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
+import { validateCache } from '../../utils/cache/AlunaCache.mock'
 import * as GateioHttpMod from './GateioHttp'
 
 
@@ -461,69 +461,24 @@ describe('GateioHttp', () => {
 
   })
 
-  it('should write output to cache for public requests', async () => {
+  it('should validate cache usage', async () => {
 
-    const { axiosCreateMock } = mockAxiosRequest(dummyData)
+    mockAxiosRequest(dummyData)
 
-    const {
-      cache,
-      hashCacheKey,
-    } = mockAlunaCache()
+    await validateCache({
+      cacheResult: dummyData,
+      callMethod: async () => {
 
-    const params: IAlunaHttpPublicParams = {
-      url: dummyUrl,
-      body: dummyBody,
-      verb: AlunaHttpVerbEnum.GET,
-    }
+        const params: IAlunaHttpPublicParams = {
+          url: dummyUrl,
+          body: dummyBody,
+          verb: AlunaHttpVerbEnum.GET,
+        }
 
-    await GateioHttp.publicRequest(params)
+        await GateioHttp.publicRequest(params)
 
-    expect(cache.has.callCount).to.eq(1)
-    expect(cache.get.callCount).to.eq(0)
-    expect(cache.set.callCount).to.eq(1)
+      },
 
-    expect(axiosCreateMock.callCount).to.be.eq(1)
-
-    expect(hashCacheKey.callCount).to.be.eq(1)
-    expect(hashCacheKey.args[0][0]).to.deep.eq({
-      prefix: GateioHttpMod.GATEIO_HTTP_CACHE_KEY_PREFIX,
-      args: params,
-    })
-
-  })
-
-  it('should not execute request when cache is present', async () => {
-
-    const { axiosCreateMock } = mockAxiosRequest(dummyData)
-
-    const {
-      cache,
-      hashCacheKey,
-    } = mockAlunaCache({
-      has: true,
-      get: dummyData,
-    })
-
-    const params: IAlunaHttpPublicParams = {
-      url: dummyUrl,
-      body: dummyBody,
-      verb: AlunaHttpVerbEnum.GET,
-    }
-
-    const response = await GateioHttp.publicRequest(params)
-
-    expect(response).to.deep.eq(dummyData)
-
-    expect(cache.has.callCount).to.eq(1)
-    expect(cache.get.callCount).to.eq(1)
-    expect(cache.set.callCount).to.eq(0)
-
-    expect(axiosCreateMock.callCount).to.be.eq(0)
-
-    expect(hashCacheKey.callCount).to.be.eq(1)
-    expect(hashCacheKey.args[0][0]).to.deep.eq({
-      prefix: GateioHttpMod.GATEIO_HTTP_CACHE_KEY_PREFIX,
-      args: params,
     })
 
   })
