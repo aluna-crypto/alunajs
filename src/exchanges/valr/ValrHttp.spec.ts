@@ -1,9 +1,10 @@
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
@@ -26,26 +27,6 @@ describe('ValrHttp', () => {
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
 
   const dummyData = { data: 'dummy-data' }
-
-  const mockAxiosRequest = (response?: any) => {
-
-    const requestSpy = Sinon.spy(() => response || {})
-
-    const axiosCreateMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    return {
-      requestSpy,
-      axiosCreateMock,
-    }
-
-  }
-
 
   it('should defaults the http verb to get on public requests', async () => {
 
