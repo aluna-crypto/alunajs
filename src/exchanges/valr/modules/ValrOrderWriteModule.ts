@@ -64,10 +64,10 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         orderTypes: supportedOrderTypes,
       } = accountSpecs
 
-      if (!supported || !implemented || !supportedOrderTypes) {
+      if (!supported || !implemented) {
 
         throw new AlunaError({
-          message: `Account type '${account}' not supported/implemented for Varl`,
+          message: `Account type '${account}' not supported/implemented for Valr`,
           code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
@@ -78,7 +78,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       if (!orderType || !orderType.implemented || !orderType.supported) {
 
         throw new AlunaError({
-          message: `Order type '${type}' not supported/implemented for Varl`,
+          message: `Order type '${type}' not supported/implemented for Valr`,
           code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
         })
 
