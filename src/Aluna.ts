@@ -121,7 +121,8 @@ export class Aluna extends Exchanges {
         break
 
       case this.Poloniex.ID:
-        return this.Poloniex
+        exchange = this.Poloniex
+        break
 
       default: {
 
