@@ -77,6 +77,14 @@ describe('PoloniexOrderParser', () => {
 
   it('should parse canceled Poloniex order just fine', async () => {
 
+    const mockedDate = new Date()
+
+    ImportMock.mockFunction(
+      global,
+      'Date',
+      mockedDate,
+    )
+
     const rawOrder: IPoloniexOrderStatusInfo = {
       ...POLONIEX_RAW_LIMIT_ORDER,
       status: PoloniexOrderStatusEnum.CANCELED,
@@ -88,20 +96,9 @@ describe('PoloniexOrderParser', () => {
       rawOrder,
     })
 
-    const rawStatus = rawOrder.status
-
-    expect(parsedOrder.status)
-      .to.be.eq(PoloniexStatusAdapter.translateToAluna(
-        { from: rawStatus },
-      ))
-    expect(parsedOrder.canceledAt?.getTime())
-      .to.be.eq(
-        new Date().getTime(),
-      )
-    expect(parsedOrder.amount)
-      .to.be.eq(
-        parseFloat(rawOrder.amount),
-      )
+    expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+    expect(parsedOrder.canceledAt!).to.be.eq(new Date())
+    expect(parsedOrder.amount).to.be.eq(Number(rawOrder.amount))
 
   })
 
