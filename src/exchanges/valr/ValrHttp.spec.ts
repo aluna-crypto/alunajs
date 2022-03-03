@@ -75,7 +75,7 @@ describe('ValrHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
@@ -151,7 +151,7 @@ describe('ValrHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 

@@ -77,7 +77,7 @@ describe('GateioHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
@@ -155,7 +155,7 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
@@ -201,7 +201,7 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
