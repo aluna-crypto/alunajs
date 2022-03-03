@@ -15,6 +15,8 @@ import * as PoloniexHttpMod from './PoloniexHttp'
 
 describe('PoloniexHttp', () => {
 
+  afterEach(Sinon.restore)
+
   const { PoloniexHttp } = PoloniexHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
@@ -370,10 +372,7 @@ describe('PoloniexHttp', () => {
 
     expect(digestSpy.callCount).to.be.eq(2)
 
-    expect(
-      signedHash2.Sign,
-    ).to.deep.eq(digestSpy.returnValues[1])
-    Sinon.restore()
+    expect(signedHash2.Sign).to.deep.eq(digestSpy.returnValues[1])
 
   })
 
