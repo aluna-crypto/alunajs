@@ -11,8 +11,12 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { GateioLog } from './GateioLog'
 
+
+
+export const GATEIO_HTTP_CACHE_KEY_PREFIX = 'GateioHttp.publicRequest'
 
 
 interface ISignedHashParams {
@@ -114,6 +118,17 @@ export const GateioHttp: IAlunaHttp = class {
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
+    const cacheKey = AlunaCache.hashCacheKey({
+      args: params,
+      prefix: GATEIO_HTTP_CACHE_KEY_PREFIX,
+    })
+
+    if (AlunaCache.cache.has(cacheKey)) {
+
+      return AlunaCache.cache.get<T>(cacheKey)!
+
+    }
+
     const requestConfig = {
       url,
       method: verb,
@@ -123,6 +138,8 @@ export const GateioHttp: IAlunaHttp = class {
     try {
 
       const response = await axios.create().request<T>(requestConfig)
+
+      AlunaCache.cache.set<T>(cacheKey, response.data)
 
       return response.data
 

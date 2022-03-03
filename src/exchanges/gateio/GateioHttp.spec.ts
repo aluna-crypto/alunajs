@@ -5,15 +5,19 @@ import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../lib/core/AlunaError'
+import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import * as GateioHttp from './GateioHttp'
+import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
+import * as GateioHttpMod from './GateioHttp'
 
 
 
 describe('GateioHttp', () => {
 
-  const { GateioHttp: gateioHttp } = GateioHttp
+  const { GateioHttp } = GateioHttpMod
+
+  afterEach(Sinon.restore)
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
@@ -25,11 +29,11 @@ describe('GateioHttp', () => {
 
   const dummyQuery = 'dummy=dummy'
 
-  it('should defaults the http verb to get on public requests', async () => {
+  const mockAxiosRequest = (response?: any) => {
 
-    const requestSpy = Sinon.spy(async () => dummyData)
+    const requestSpy = Sinon.spy(() => response || {})
 
-    const axiosCreate = ImportMock.mockFunction(
+    const axiosCreateMock = ImportMock.mockFunction(
       axios,
       'create',
       {
@@ -37,13 +41,27 @@ describe('GateioHttp', () => {
       },
     )
 
-    await gateioHttp.publicRequest({
+    return {
+      requestSpy,
+      axiosCreateMock,
+    }
+
+  }
+
+  it('should defaults the http verb to get on public requests', async () => {
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
+
+    await GateioHttp.publicRequest({
       // http verb not informed
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
 
@@ -57,23 +75,18 @@ describe('GateioHttp', () => {
 
   it('should execute public request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await gateioHttp.publicRequest({
+    const responseData = await GateioHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -88,29 +101,24 @@ describe('GateioHttp', () => {
 
   it('should defaults the http verb to post on private requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
-
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      GateioHttp,
+      GateioHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    await gateioHttp.privateRequest({
+    await GateioHttp.privateRequest({
       // http verb not informed
       keySecret: {} as IAlunaKeySecretSchema,
       url: 'http://dummy.com',
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
@@ -127,30 +135,25 @@ describe('GateioHttp', () => {
 
   it('should execute private request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      GateioHttp,
+      GateioHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await gateioHttp.privateRequest({
+    const responseData = await GateioHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -176,32 +179,27 @@ describe('GateioHttp', () => {
 
   it('should execute private request just fine with query', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      GateioHttp,
+      GateioHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
     const urlWithQuery = `${dummyUrl}?${dummyQuery}`
 
-    const responseData = await gateioHttp.privateRequest({
+    const responseData = await GateioHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: urlWithQuery,
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -229,27 +227,15 @@ describe('GateioHttp', () => {
 
     const message = 'Dummy error'
 
+    mockAxiosRequest(Promise.reject(new Error(message)))
+
     const formatRequestErrorSpy = Sinon.spy(
-      GateioHttp,
+      GateioHttpMod,
       'handleRequestError',
     )
 
-    const requestSpy = Sinon.spy(() => {
-
-      throw new Error(message)
-
-    })
-
     ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    ImportMock.mockFunction(
-      GateioHttp,
+      GateioHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
@@ -259,7 +245,7 @@ describe('GateioHttp', () => {
 
     try {
 
-      result = await gateioHttp.publicRequest({
+      result = await GateioHttp.publicRequest({
         url: dummyUrl,
       })
 
@@ -280,7 +266,7 @@ describe('GateioHttp', () => {
 
     try {
 
-      result = await gateioHttp.privateRequest({
+      result = await GateioHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -318,7 +304,7 @@ describe('GateioHttp', () => {
       },
     }
 
-    const error1 = GateioHttp.handleRequestError(axiosError1 as AxiosError)
+    const error1 = GateioHttpMod.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
@@ -332,7 +318,7 @@ describe('GateioHttp', () => {
       },
     }
 
-    const error2 = GateioHttp.handleRequestError(axiosError2 as AxiosError)
+    const error2 = GateioHttpMod.handleRequestError(axiosError2 as AxiosError)
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
@@ -344,7 +330,7 @@ describe('GateioHttp', () => {
       isAxiosError: true,
     }
 
-    const error3 = GateioHttp.handleRequestError(axiosError3 as AxiosError)
+    const error3 = GateioHttpMod.handleRequestError(axiosError3 as AxiosError)
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
@@ -356,7 +342,7 @@ describe('GateioHttp', () => {
       message: dummyError,
     }
 
-    const error4 = GateioHttp.handleRequestError(error as Error)
+    const error4 = GateioHttpMod.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
@@ -364,7 +350,7 @@ describe('GateioHttp', () => {
 
     const unknown = {}
 
-    const error5 = GateioHttp.handleRequestError(unknown as any)
+    const error5 = GateioHttpMod.handleRequestError(unknown as any)
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
@@ -425,7 +411,7 @@ describe('GateioHttp', () => {
       (timestampMock / 1000).toString(),
     ].join('\n')
 
-    const signedHash = GateioHttp.generateAuthHeader({
+    const signedHash = GateioHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -466,7 +452,7 @@ describe('GateioHttp', () => {
     expect(Number(signedHash.Timestamp) * 1000).to.eq(timestampMock)
     expect(signedHash.SIGN).to.deep.eq(signedHeader)
 
-    const signedHash2 = GateioHttp.generateAuthHeader({
+    const signedHash2 = GateioHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -491,7 +477,72 @@ describe('GateioHttp', () => {
     ).to.deep.eq(keySecret.key)
     expect(Number(signedHash2.Timestamp) * 1000).to.deep.eq(timestampMock)
 
-    Sinon.restore()
+  })
+
+  it('should write output to cache for public requests', async () => {
+
+    const { axiosCreateMock } = mockAxiosRequest(dummyData)
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache()
+
+    const params: IAlunaHttpPublicParams = {
+      url: dummyUrl,
+      body: dummyBody,
+      verb: AlunaHttpVerbEnum.GET,
+    }
+
+    await GateioHttp.publicRequest(params)
+
+    expect(cache.has.callCount).to.eq(1)
+    expect(cache.get.callCount).to.eq(0)
+    expect(cache.set.callCount).to.eq(1)
+
+    expect(axiosCreateMock.callCount).to.be.eq(1)
+
+    expect(hashCacheKey.callCount).to.be.eq(1)
+    expect(hashCacheKey.args[0][0]).to.deep.eq({
+      prefix: GateioHttpMod.GATEIO_HTTP_CACHE_KEY_PREFIX,
+      args: params,
+    })
+
+  })
+
+  it('should not execute request when cache is present', async () => {
+
+    const { axiosCreateMock } = mockAxiosRequest(dummyData)
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      has: true,
+      get: dummyData,
+    })
+
+    const params: IAlunaHttpPublicParams = {
+      url: dummyUrl,
+      body: dummyBody,
+      verb: AlunaHttpVerbEnum.GET,
+    }
+
+    const response = await GateioHttp.publicRequest(params)
+
+    expect(response).to.deep.eq(dummyData)
+
+    expect(cache.has.callCount).to.eq(1)
+    expect(cache.get.callCount).to.eq(1)
+    expect(cache.set.callCount).to.eq(0)
+
+    expect(axiosCreateMock.callCount).to.be.eq(0)
+
+    expect(hashCacheKey.callCount).to.be.eq(1)
+    expect(hashCacheKey.args[0][0]).to.deep.eq({
+      prefix: GateioHttpMod.GATEIO_HTTP_CACHE_KEY_PREFIX,
+      args: params,
+    })
 
   })
 
