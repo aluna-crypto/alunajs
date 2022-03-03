@@ -1,6 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { PoloniexSideAdapter } from '../../enums/adapters/PoloniexSideAdapter'
 import { PoloniexStatusAdapter } from '../../enums/adapters/PoloniexStatusAdapter'
 import { Poloniex } from '../../Poloniex'
@@ -32,9 +33,17 @@ export class PoloniexOrderParser {
       startingAmount,
     } = rawOrder
 
-    const splittedMarketSymbol = currencyPair.split('_')
-    const baseSymbolId = splittedMarketSymbol[0]
-    const quoteSymbolId = splittedMarketSymbol[1]
+    const [baseCurrency, quoteCurrency] = currencyPair.split('_')
+
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
 
     const translatedPoloniexStatus = PoloniexStatusAdapter
       .translatePoloniexStatus({
