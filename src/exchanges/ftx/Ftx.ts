@@ -10,6 +10,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { FtxLog } from './FtxLog'
 import { FtxSpecs } from './FtxSpecs'
+import { FtxMarketModule } from './modules/FtxMarketModule'
 
 
 
@@ -19,11 +20,9 @@ export const Ftx: IAlunaExchangeStatic = class extends AAlunaExchange implements
   static readonly ID = FtxSpecs.id
   static readonly SPECS = FtxSpecs
 
-  // @TODO -> Update
   static Symbol = null as any
-  static Market = null as any
   // static Symbol = FtxSymbolModule
-  // static Market = FtxMarketModule
+  static Market = FtxMarketModule
 
   // local definitions
   key: IAlunaKeyModule

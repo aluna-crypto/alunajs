@@ -11,7 +11,7 @@ describe('Ftx', () => {
     expect(Ftx.ID).to.eq('ftx')
     expect(Ftx.SPECS).to.be.ok
     // expect(Ftx.Symbol).to.be.ok
-    // expect(Ftx.Market).to.be.ok
+    expect(Ftx.Market).to.be.ok
 
   })
 
