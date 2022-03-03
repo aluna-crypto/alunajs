@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { PoloniexSideAdapter } from '../../enums/adapters/PoloniexSideAdapter'
 import { PoloniexStatusAdapter } from '../../enums/adapters/PoloniexStatusAdapter'
@@ -107,6 +109,20 @@ describe('PoloniexOrderParser', () => {
 
   it('should parse filled Poloniex order just fine', async () => {
 
+    const mockedDate = new Date()
+
+    function fakeDateConstructor () {
+
+      return mockedDate
+
+    }
+
+    ImportMock.mockOther(
+      global,
+      'Date',
+      fakeDateConstructor as any,
+    )
+
     const rawOrder: IPoloniexOrderStatusInfo = {
       ...POLONIEX_RAW_LIMIT_ORDER,
       status: PoloniexOrderStatusEnum.FILLED,
@@ -116,16 +132,8 @@ describe('PoloniexOrderParser', () => {
       rawOrder,
     })
 
-    const rawStatus = rawOrder.status
-
-    expect(parsedOrder.status)
-      .to.be.eq(PoloniexStatusAdapter.translateToAluna(
-        { from: rawStatus },
-      ))
-    expect(parsedOrder.filledAt?.getTime())
-      .to.be.eq(
-        new Date().getTime(),
-      )
+    expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
+    expect(parsedOrder.filledAt!).to.deep.eq(new Date())
 
   })
 
