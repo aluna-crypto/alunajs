@@ -5,15 +5,19 @@ import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../lib/core/AlunaError'
+import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import * as ValrHttp from './ValrHttp'
+import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
+import * as ValrHttpMod from './ValrHttp'
 
 
 
 describe('ValrHttp', () => {
 
-  const { ValrHttp: valrHttp } = ValrHttp
+  afterEach(Sinon.restore)
+
+  const { ValrHttp } = ValrHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
@@ -23,11 +27,11 @@ describe('ValrHttp', () => {
 
   const dummyData = { data: 'dummy-data' }
 
-  it('should defaults the http verb to get on public requests', async () => {
+  const mockAxiosRequest = (response?: any) => {
 
-    const requestSpy = Sinon.spy(async () => dummyData)
+    const requestSpy = Sinon.spy(() => response || {})
 
-    const axiosCreate = ImportMock.mockFunction(
+    const axiosCreateMock = ImportMock.mockFunction(
       axios,
       'create',
       {
@@ -35,13 +39,28 @@ describe('ValrHttp', () => {
       },
     )
 
-    await valrHttp.publicRequest({
+    return {
+      requestSpy,
+      axiosCreateMock,
+    }
+
+  }
+
+
+  it('should defaults the http verb to get on public requests', async () => {
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
+
+    await ValrHttp.publicRequest({
       // http verb not informed
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
 
@@ -55,23 +74,18 @@ describe('ValrHttp', () => {
 
   it('should execute public request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await valrHttp.publicRequest({
+    const responseData = await ValrHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -86,29 +100,24 @@ describe('ValrHttp', () => {
 
   it('should defaults the http verb to post on private requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      ValrHttp,
+      ValrHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    await valrHttp.privateRequest({
+    await ValrHttp.privateRequest({
       // http verb not informed
       keySecret: {} as IAlunaKeySecretSchema,
       url: 'http://dummy.com',
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
@@ -125,30 +134,25 @@ describe('ValrHttp', () => {
 
   it('should execute private request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      ValrHttp,
+      ValrHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await valrHttp.privateRequest({
+    const responseData = await ValrHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -176,34 +180,22 @@ describe('ValrHttp', () => {
 
     const message = 'Dummy error'
 
+    mockAxiosRequest(Promise.reject(new Error(message)))
+
     const formatRequestErrorSpy = Sinon.spy(
-      ValrHttp,
+      ValrHttpMod,
       'handleRequestError',
     )
 
-    const requestSpy = Sinon.spy(() => {
-
-      throw new Error(message)
-
-    })
-
     ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    ImportMock.mockFunction(
-      ValrHttp,
+      ValrHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
     try {
 
-      await valrHttp.publicRequest({
+      await ValrHttp.publicRequest({
         url: dummyUrl,
       })
 
@@ -223,7 +215,7 @@ describe('ValrHttp', () => {
 
     try {
 
-      await valrHttp.privateRequest({
+      await ValrHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -259,7 +251,7 @@ describe('ValrHttp', () => {
       },
     }
 
-    const error1 = ValrHttp.handleRequestError(axiosError1 as AxiosError)
+    const error1 = ValrHttpMod.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
@@ -273,7 +265,7 @@ describe('ValrHttp', () => {
       },
     }
 
-    const error2 = ValrHttp.handleRequestError(axiosError2 as AxiosError)
+    const error2 = ValrHttpMod.handleRequestError(axiosError2 as AxiosError)
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
@@ -285,7 +277,7 @@ describe('ValrHttp', () => {
       isAxiosError: true,
     }
 
-    const error3 = ValrHttp.handleRequestError(axiosError3 as AxiosError)
+    const error3 = ValrHttpMod.handleRequestError(axiosError3 as AxiosError)
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
@@ -297,7 +289,7 @@ describe('ValrHttp', () => {
       message: dummyError,
     }
 
-    const error4 = ValrHttp.handleRequestError(error as Error)
+    const error4 = ValrHttpMod.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
@@ -305,7 +297,7 @@ describe('ValrHttp', () => {
 
     const unknown = {}
 
-    const error5 = ValrHttp.handleRequestError(unknown as any)
+    const error5 = ValrHttpMod.handleRequestError(unknown as any)
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
@@ -350,7 +342,7 @@ describe('ValrHttp', () => {
     const verb = 'verb' as AlunaHttpVerbEnum
     const body = dummyBody
 
-    const signedHash = ValrHttp.generateAuthHeader({
+    const signedHash = ValrHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -379,7 +371,7 @@ describe('ValrHttp', () => {
       .to.deep.eq(digestSpy.returnValues[0])
     expect(signedHash['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
 
-    const signedHash2 = ValrHttp.generateAuthHeader({
+    const signedHash2 = ValrHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -403,7 +395,73 @@ describe('ValrHttp', () => {
       signedHash2['X-VALR-SIGNATURE'],
     ).to.deep.eq(digestSpy.returnValues[1])
     expect(signedHash2['X-VALR-TIMESTAMP']).to.deep.eq(timestampMock)
-    Sinon.restore()
+
+  })
+
+  it('should write output to cache for public requests', async () => {
+
+    const { axiosCreateMock } = mockAxiosRequest(dummyData)
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache()
+
+    const params: IAlunaHttpPublicParams = {
+      url: dummyUrl,
+      body: dummyBody,
+      verb: AlunaHttpVerbEnum.GET,
+    }
+
+    await ValrHttp.publicRequest(params)
+
+    expect(cache.has.callCount).to.eq(1)
+    expect(cache.get.callCount).to.eq(0)
+    expect(cache.set.callCount).to.eq(1)
+
+    expect(axiosCreateMock.callCount).to.be.eq(1)
+
+    expect(hashCacheKey.callCount).to.be.eq(1)
+    expect(hashCacheKey.args[0][0]).to.deep.eq({
+      prefix: ValrHttpMod.VALR_HTTP_CACHE_KEY_PREFIX,
+      args: params,
+    })
+
+  })
+
+  it('should not execute request when cache is present', async () => {
+
+    const { axiosCreateMock } = mockAxiosRequest(dummyData)
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      has: true,
+      get: dummyData,
+    })
+
+    const params: IAlunaHttpPublicParams = {
+      url: dummyUrl,
+      body: dummyBody,
+      verb: AlunaHttpVerbEnum.GET,
+    }
+
+    const response = await ValrHttp.publicRequest(params)
+
+    expect(response).to.deep.eq(dummyData)
+
+    expect(cache.has.callCount).to.eq(1)
+    expect(cache.get.callCount).to.eq(1)
+    expect(cache.set.callCount).to.eq(0)
+
+    expect(axiosCreateMock.callCount).to.be.eq(0)
+
+    expect(hashCacheKey.callCount).to.be.eq(1)
+    expect(hashCacheKey.args[0][0]).to.deep.eq({
+      prefix: ValrHttpMod.VALR_HTTP_CACHE_KEY_PREFIX,
+      args: params,
+    })
 
   })
 
