@@ -19,23 +19,16 @@ describe('Poloniex', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const poloniex = new Poloniex({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(poloniex.keySecret.key).to.eq(key)
     expect(poloniex.keySecret.secret).to.eq(secret)
-
-    expect(poloniex.settings).to.be.ok
-    expect(poloniex.settings?.referralCode).to.eq(referralCode)
 
     expect(poloniex.key).to.be.ok
     expect(poloniex.balance).to.be.ok

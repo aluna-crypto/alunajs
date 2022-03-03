@@ -7,7 +7,6 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { PoloniexBalanceModule } from './modules/PoloniexBalanceModule'
 import { PoloniexKeyModule } from './modules/PoloniexKeyModule'
 import { PoloniexMarketModule } from './modules/PoloniexMarketModule'
@@ -34,7 +33,6 @@ export const Poloniex: IAlunaExchangeStatic = class extends AAlunaExchange imple
   constructor (
     params: {
       keySecret: IAlunaKeySecretSchema,
-      settings?: IAlunaSettingsSchema,
     },
   ) {
 
