@@ -53,7 +53,7 @@ export interface IAlunaExchangeStatic {
   }): IAlunaExchange
 
   setSettings (params: {
-    settings?: IAlunaSettingsSchema,
-  }): any
+    settings: IAlunaSettingsSchema,
+  }): void
 
 }
