@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
@@ -16,13 +16,11 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioSideEnum } from '../enums/GateioSideEnum'
 import { GateioHttp } from '../GateioHttp'
 import {
-  exchangeOrderTypes as gateioExchangeOrderTypes,
   GateioSpecs,
   PROD_GATEIO_URL,
 } from '../GateioSpecs'
@@ -242,318 +240,14 @@ describe('GateioOrderWriteModule', () => {
 
   })
 
+  it('should validate exchange specs when placing new orders', async () => {
 
-
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not found`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: GateioSpecs,
+      orderWriteModule: gateioOrderWriteModule,
+    })
 
   })
-
-
-
-  it('should ensure given account is supported', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given account is implemented', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    const limitOrderType = gateioExchangeOrderTypes[0]
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        limitOrderType,
-      ],
-    )
-
-    const type = 'unsupported-type'
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is supported', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is implemented', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type has write mode', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(`Order type '${type}' is in read mode`)
-
-  })
-
-
 
   it('should ensure an order was canceled', async () => {
 
