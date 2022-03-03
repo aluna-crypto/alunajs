@@ -53,13 +53,9 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
       symbolMappings: Gateio.settings.mappings,
     })
 
-    let alias: string | undefined
-
-    if (id !== currency) {
-
-      alias = currency
-
-    }
+    const alias = id !== currency
+      ? currency
+      : undefined
 
     const parsedSymbol = {
       id,
