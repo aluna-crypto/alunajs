@@ -59,6 +59,9 @@ export class Aluna extends Exchanges {
       case this.Valr.ID:
         return new this.Valr(subParams)
 
+      case this.Poloniex.ID:
+        return new this.Poloniex(subParams)
+
       default: {
 
         const error = new AlunaError({
@@ -116,6 +119,9 @@ export class Aluna extends Exchanges {
       case this.Valr.ID:
         exchange = this.Valr
         break
+
+      case this.Poloniex.ID:
+        return this.Poloniex
 
       default: {
 
