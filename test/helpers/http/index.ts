@@ -52,7 +52,7 @@ export const mockPrivateHttpRequest = (params: {
 
 export const mockAxiosRequest = (response?: any) => {
 
-  const requestSpy = Sinon.spy(() => response || {})
+  const requestSpy = Sinon.spy(async () => response || {})
 
   const axiosCreateMock = ImportMock.mockFunction(
     axios,
