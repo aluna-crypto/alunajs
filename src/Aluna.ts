@@ -92,36 +92,36 @@ export class Aluna extends Exchanges {
       settings,
     } = params
 
-    let exchange: IAlunaExchangeStatic
+    let Exchange: IAlunaExchangeStatic
 
     switch (exchangeId) {
 
       case this.Binance.ID:
-        exchange = this.Binance
+        Exchange = this.Binance
         break
 
       case this.Gateio.ID:
-        exchange = this.Gateio
+        Exchange = this.Gateio
         break
 
       case this.Bitfinex.ID:
-        exchange = this.Bitfinex
+        Exchange = this.Bitfinex
         break
 
       case this.Bitmex.ID:
-        exchange = this.Bitmex
+        Exchange = this.Bitmex
         break
 
       case this.Bittrex.ID:
-        exchange = this.Bittrex
+        Exchange = this.Bittrex
         break
 
       case this.Valr.ID:
-        exchange = this.Valr
+        Exchange = this.Valr
         break
 
       case this.Poloniex.ID:
-        exchange = this.Poloniex
+        Exchange = this.Poloniex
         break
 
       default: {
@@ -140,9 +140,13 @@ export class Aluna extends Exchanges {
 
     }
 
-    exchange.setSettings({ settings })
+    if (settings) {
 
-    return exchange
+      Exchange.setSettings({ settings })
+
+    }
+
+    return Exchange
 
   }
 
