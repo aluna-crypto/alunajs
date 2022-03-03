@@ -1,4 +1,5 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Poloniex } from '../../Poloniex'
 import { IPoloniexMarketWithCurrency } from '../IPoloniexMarketSchema'
 
@@ -26,6 +27,15 @@ export class PoloniexMarketParser {
       percentChange,
     } = rawMarket
 
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
 
     const ticker = {
       high: parseFloat(high24hr),
@@ -42,8 +52,8 @@ export class PoloniexMarketParser {
     return {
       exchangeId: Poloniex.ID,
       symbolPair: currencyPair,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       ticker,
       spotEnabled: true,
       marginEnabled: false,
