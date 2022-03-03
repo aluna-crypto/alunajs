@@ -7,7 +7,9 @@ export abstract class AAlunaExchange {
 
   public keySecret: IAlunaKeySecretSchema
 
-  public static settings: IAlunaSettingsSchema
+  public static settings: IAlunaSettingsSchema = {
+    mappings: {},
+  }
 
   constructor (params: {
     keySecret: IAlunaKeySecretSchema,
@@ -18,16 +20,12 @@ export abstract class AAlunaExchange {
   }
 
   public static setSettings (params: {
-    settings?: IAlunaSettingsSchema,
+    settings: IAlunaSettingsSchema,
   }) {
 
     const { settings } = params
 
-    const defaultSettings: IAlunaSettingsSchema = {
-      mappings: {},
-    }
-
-    this.settings = settings || defaultSettings
+    this.settings = settings
 
   }
 
