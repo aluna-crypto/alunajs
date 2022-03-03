@@ -1,4 +1,9 @@
 import { expect } from 'chai'
+import {
+  each,
+  keys,
+  values,
+} from 'lodash'
 
 import { Aluna } from './Aluna'
 import { Binance } from './exchanges/binance/Binance'
@@ -14,22 +19,22 @@ import {
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
+import { Exchanges } from './lib/Exchanges'
+import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
-
-// TODO: Refatory file and tests to work with all exchanges automatically
 
 describe('Aluna', () => {
 
   it('should inherit from Exchanges and make them available statically', () => {
 
-    expect(Aluna.Binance).to.be.ok
-    expect(Aluna.Bitfinex).to.be.ok
-    expect(Aluna.Bitmex).to.be.ok
-    expect(Aluna.Bittrex).to.be.ok
-    expect(Aluna.Gateio).to.be.ok
-    expect(Aluna.Valr).to.be.ok
-    expect(Aluna.Poloniex).to.be.ok
+    const allExchangesNames = keys(Exchanges)
+
+    each(allExchangesNames, (exchangeName) => {
+
+      expect(Aluna[exchangeName]).to.be.ok
+
+    })
 
   })
 
@@ -323,6 +328,39 @@ describe('Aluna', () => {
 
     expect(Exchange).to.be.ok
     expect(Exchange?.ID).to.eq(exchangeId)
+
+  })
+
+  it('should properly set settings for exchange static class', async () => {
+
+    const referralCode = '123'
+    const mappings = { XBT: 'BTC' }
+
+    const exchangesArr = values(Aluna.exchanges)
+
+    const settings: IAlunaSettingsSchema = {
+      referralCode,
+      mappings,
+    }
+
+    each(exchangesArr, ({ ID }: any) => {
+
+      const Exchange = Aluna.static({
+        exchangeId: ID,
+        settings,
+      })
+
+      expect(Exchange.settings.mappings).to.deep.eq(mappings)
+      expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+
+      // Set static prop 'settings' to default value on static Exchange
+      Exchange.setSettings({
+        settings: {
+          mappings: {},
+        },
+      })
+
+    })
 
   })
 
