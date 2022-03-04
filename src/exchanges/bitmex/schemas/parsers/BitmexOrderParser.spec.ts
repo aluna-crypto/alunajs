@@ -8,8 +8,8 @@ import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
+import { BitmexOrderSideAdapter } from '../../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../../enums/adapters/BitmexSideAdapter'
 import { BitmexStatusAdapter } from '../../enums/adapters/BitmexStatusAdapter'
 import { BitmexOrderTypeEnum } from '../../enums/BitmexOrderTypeEnum'
 import { BITMEX_RAW_ORDERS } from '../../test/bitmexOrders'
@@ -79,7 +79,7 @@ describe('BitmexOrderParser', () => {
         from: ordStatus,
       })
 
-      const expectedComputedSide = BitmexSideAdapter.translateToAluna({
+      const expectedComputedSide = BitmexOrderSideAdapter.translateToAluna({
         from: side,
       })
 

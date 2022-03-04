@@ -4,7 +4,7 @@ import { BitmexSideEnum } from '../BitmexSideEnum'
 
 
 
-export class BitmexSideAdapter {
+export class BitmexOrderSideAdapter {
 
 
 
@@ -14,7 +14,7 @@ export class BitmexSideAdapter {
 
   static translateToAluna =
     buildAdapter<BitmexSideEnum, AlunaOrderSideEnum>({
-      errorMessagePrefix: BitmexSideAdapter.ERROR_MESSAGE_PREFIX,
+      errorMessagePrefix: BitmexOrderSideAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
         [BitmexSideEnum.BUY]: AlunaOrderSideEnum.BUY,
         [BitmexSideEnum.SELL]: AlunaOrderSideEnum.SELL,
@@ -24,7 +24,7 @@ export class BitmexSideAdapter {
 
   static translateToBitmex =
     buildAdapter<AlunaOrderSideEnum, BitmexSideEnum>({
-      errorMessagePrefix: BitmexSideAdapter.ERROR_MESSAGE_PREFIX,
+      errorMessagePrefix: BitmexOrderSideAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
         [AlunaOrderSideEnum.BUY]: BitmexSideEnum.BUY,
         [AlunaOrderSideEnum.SELL]: BitmexSideEnum.SELL,

@@ -24,8 +24,8 @@ import {
   BitmexSpecs,
   PROD_BITMEX_URL,
 } from '../BitmexSpecs'
+import { BitmexOrderSideAdapter } from '../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../enums/adapters/BitmexSideAdapter'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
 import {
@@ -126,7 +126,7 @@ describe('BitmexOrderWriteModule', () => {
               symbolPair,
             }
 
-            const expectedSide = BitmexSideAdapter.translateToBitmex({
+            const expectedSide = BitmexOrderSideAdapter.translateToBitmex({
               from: side,
             })
 

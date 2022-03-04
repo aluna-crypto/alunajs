@@ -2,11 +2,11 @@ import { expect } from 'chai'
 
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BitmexSideEnum } from '../BitmexSideEnum'
-import { BitmexSideAdapter } from './BitmexSideAdapter'
+import { BitmexOrderSideAdapter } from './BitmexOrderSideAdapter'
 
 
 
-describe('BitmexSideAdapter', () => {
+describe('BitmexOrderSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
@@ -14,17 +14,17 @@ describe('BitmexSideAdapter', () => {
 
     let error
 
-    expect(BitmexSideAdapter.translateToAluna({
+    expect(BitmexOrderSideAdapter.translateToAluna({
       from: BitmexSideEnum.BUY,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-    expect(BitmexSideAdapter.translateToAluna({
+    expect(BitmexOrderSideAdapter.translateToAluna({
       from: BitmexSideEnum.SELL,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
     try {
 
-      BitmexSideAdapter.translateToAluna({
+      BitmexOrderSideAdapter.translateToAluna({
         from: notSupported as BitmexSideEnum,
       })
 
@@ -45,17 +45,17 @@ describe('BitmexSideAdapter', () => {
 
     let error
 
-    expect(BitmexSideAdapter.translateToBitmex({
+    expect(BitmexOrderSideAdapter.translateToBitmex({
       from: AlunaOrderSideEnum.BUY,
     })).to.be.eq(BitmexSideEnum.BUY)
 
-    expect(BitmexSideAdapter.translateToBitmex({
+    expect(BitmexOrderSideAdapter.translateToBitmex({
       from: AlunaOrderSideEnum.SELL,
     })).to.be.eq(BitmexSideEnum.SELL)
 
     try {
 
-      BitmexSideAdapter.translateToBitmex({
+      BitmexOrderSideAdapter.translateToBitmex({
         from: notSupported as AlunaOrderSideEnum,
       })
 
