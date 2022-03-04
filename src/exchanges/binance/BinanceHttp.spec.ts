@@ -1,19 +1,24 @@
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
+import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import * as BinanceHttp from './BinanceHttp'
+import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import * as BinanceHttpMod from './BinanceHttp'
 
 
 
 describe('BinanceHttp', () => {
 
-  const { BinanceHttp: binanceHttp } = BinanceHttp
+  afterEach(Sinon.restore)
+
+  const { BinanceHttp } = BinanceHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
@@ -37,23 +42,18 @@ describe('BinanceHttp', () => {
 
   it('should defaults the http verb to get on public requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    await binanceHttp.publicRequest({
+    await BinanceHttp.publicRequest({
       // http verb not informed
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
 
@@ -65,29 +65,20 @@ describe('BinanceHttp', () => {
 
   })
 
-
-
   it('should execute public request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await binanceHttp.publicRequest({
+    const responseData = await BinanceHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
       url: dummyUrl,
       body: dummyBody,
     })
 
-
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -96,53 +87,44 @@ describe('BinanceHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
-
-
   it('should format a body to binance format', async () => {
 
-    const formattedBody = BinanceHttp.formatBodyToBinance(dummyBody)
+    const formattedBody = BinanceHttpMod.formatBodyToBinance(dummyBody)
 
     expect(formattedBody).to.be.eq('&dummy=dummy-body')
 
   })
 
-
-
-  it('should defaults the http verb to post on private requests',
+  it(
+    'should defaults the http verb to post on private requests',
     async () => {
 
-      const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+      const {
+        requestSpy,
+        axiosCreateMock,
+      } = mockAxiosRequest(dummyData)
 
       const generateAuthHeaderMock = ImportMock.mockFunction(
-        BinanceHttp,
+        BinanceHttpMod,
         'generateAuthSignature',
         dummySignedBody,
       )
 
-      const axiosCreate = ImportMock.mockFunction(
-        axios,
-        'create',
-        {
-          request: requestSpy,
-        },
-      )
-
-      await binanceHttp.privateRequest({
+      await BinanceHttp.privateRequest({
       // http verb not informed
         keySecret: {} as IAlunaKeySecretSchema,
         url: 'http://dummy.com',
       })
 
-      expect(axiosCreate.callCount).to.be.eq(1)
+      expect(axiosCreateMock.callCount).to.be.eq(1)
 
       expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
       expect(requestSpy.callCount).to.be.eq(1)
-
 
       expect(requestSpy.args[0]).to.deep.eq([{
         url: `http://dummy.com?${formattedQuery.toString()}`,
@@ -150,37 +132,30 @@ describe('BinanceHttp', () => {
         headers: dummySignedHeaders,
       }])
 
-    })
-
-
+    },
+  )
 
   it('should execute private request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      BinanceHttp,
+      BinanceHttpMod,
       'generateAuthSignature',
       dummySignedBody,
     )
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await binanceHttp.privateRequest({
+    const responseData = await BinanceHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -197,37 +172,23 @@ describe('BinanceHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
-
-
 
   it('should ensure formatRequestError is call on request error', async () => {
 
     const errorMsg = 'Dummy error'
 
+    mockAxiosRequest(Promise.reject(new Error(errorMsg)))
+
     const formatRequestErrorSpy = Sinon.spy(
-      BinanceHttp,
+      BinanceHttpMod,
       'handleRequestError',
     )
 
-    const requestSpy = Sinon.spy(() => {
-
-      throw new Error(errorMsg)
-
-    })
-
     ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    ImportMock.mockFunction(
-      BinanceHttp,
+      BinanceHttpMod,
       'generateAuthSignature',
       dummySignedHeaders,
     )
@@ -237,7 +198,7 @@ describe('BinanceHttp', () => {
 
     try {
 
-      result = await binanceHttp.publicRequest({
+      result = await BinanceHttp.publicRequest({
         url: dummyUrl,
       })
 
@@ -257,11 +218,9 @@ describe('BinanceHttp', () => {
     expect(calledArg1).to.be.ok
     expect(calledArg1.message).to.be.eq(errorMsg)
 
-
-
     try {
 
-      result = await binanceHttp.privateRequest({
+      result = await BinanceHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -285,8 +244,6 @@ describe('BinanceHttp', () => {
 
   })
 
-
-
   it('should ensure request error is being handle', async () => {
 
     const dummyError = 'dummy-error'
@@ -301,7 +258,7 @@ describe('BinanceHttp', () => {
       },
     }
 
-    const error1 = BinanceHttp.handleRequestError(axiosError1 as AxiosError)
+    const error1 = BinanceHttpMod.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
@@ -316,7 +273,7 @@ describe('BinanceHttp', () => {
       },
     }
 
-    const error2 = BinanceHttp.handleRequestError(axiosError2 as AxiosError)
+    const error2 = BinanceHttpMod.handleRequestError(axiosError2 as AxiosError)
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
@@ -329,7 +286,7 @@ describe('BinanceHttp', () => {
       isAxiosError: true,
     }
 
-    const error3 = BinanceHttp.handleRequestError(axiosError3 as AxiosError)
+    const error3 = BinanceHttpMod.handleRequestError(axiosError3 as AxiosError)
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
@@ -342,7 +299,7 @@ describe('BinanceHttp', () => {
       message: dummyError,
     }
 
-    const error4 = BinanceHttp.handleRequestError(error as Error)
+    const error4 = BinanceHttpMod.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
@@ -351,7 +308,7 @@ describe('BinanceHttp', () => {
 
     const unknown = {}
 
-    const error5 = BinanceHttp.handleRequestError(unknown as any)
+    const error5 = BinanceHttpMod.handleRequestError(unknown as any)
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
@@ -360,7 +317,6 @@ describe('BinanceHttp', () => {
     expect(error5.httpStatusCode).to.be.eq(400)
 
   })
-
 
   it('should generate signed auth header just fine with body', async () => {
 
@@ -385,7 +341,7 @@ describe('BinanceHttp', () => {
     const stringifyBody = 'stringify-body'
 
     const stringfyMock = ImportMock.mockFunction(
-      BinanceHttp,
+      BinanceHttpMod,
       'formatBodyToBinance',
       stringifyBody,
     )
@@ -397,7 +353,7 @@ describe('BinanceHttp', () => {
     const verb = 'verb' as AlunaHttpVerbEnum
     const body = dummyBody
 
-    const signedHash = BinanceHttp.generateAuthSignature({
+    const signedHash = BinanceHttpMod.generateAuthSignature({
       keySecret,
       verb,
       body,
@@ -422,7 +378,7 @@ describe('BinanceHttp', () => {
 
     expect(signedHash.signature).to.deep.eq(digestSpy.returnValues[0])
 
-    const signedHash2 = BinanceHttp.generateAuthSignature({
+    const signedHash2 = BinanceHttpMod.generateAuthSignature({
       keySecret,
       verb,
       // without a body
@@ -443,7 +399,6 @@ describe('BinanceHttp', () => {
     expect(
       signedHash2.signature,
     ).to.deep.eq(digestSpy.returnValues[1])
-    Sinon.restore()
 
   })
 
@@ -468,7 +423,7 @@ describe('BinanceHttp', () => {
     )
 
     const stringfyMock = ImportMock.mockFunction(
-      BinanceHttp,
+      BinanceHttpMod,
       'formatBodyToBinance',
       '',
     )
@@ -482,7 +437,7 @@ describe('BinanceHttp', () => {
 
     const dummyQuery = 'dummy-query'
 
-    const signedHash = BinanceHttp.generateAuthSignature({
+    const signedHash = BinanceHttpMod.generateAuthSignature({
       keySecret,
       verb,
       body,
@@ -506,7 +461,7 @@ describe('BinanceHttp', () => {
 
     expect(signedHash.signature).to.deep.eq(digestSpy.returnValues[0])
 
-    const signedHash2 = BinanceHttp.generateAuthSignature({
+    const signedHash2 = BinanceHttpMod.generateAuthSignature({
       keySecret,
       verb,
       // without a body
@@ -527,10 +482,29 @@ describe('BinanceHttp', () => {
     expect(
       signedHash2.signature,
     ).to.deep.eq(digestSpy.returnValues[1])
-    Sinon.restore()
 
   })
 
+  it('should validate cache usage', async () => {
 
+    mockAxiosRequest(dummyData)
+
+    await validateCache({
+      cacheResult: dummyData,
+      callMethod: async () => {
+
+        const params: IAlunaHttpPublicParams = {
+          url: dummyUrl,
+          body: dummyBody,
+          verb: AlunaHttpVerbEnum.GET,
+        }
+
+        await BinanceHttp.publicRequest(params)
+
+      },
+
+    })
+
+  })
 
 })

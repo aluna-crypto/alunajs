@@ -2,6 +2,8 @@ import { BigNumber } from 'bignumber.js'
 
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IAlunaTickerSchema } from '../../../../lib/schemas/IAlunaTickerSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { Bitmex } from '../../Bitmex'
 import { BitmexSpecs } from '../../BitmexSpecs'
 import { IBitmexMarketsSchema } from '../IBitmexMarketsSchema'
 import { BitmexInstrumentParser } from './BitmexInstrumentParser'
@@ -15,9 +17,6 @@ export class BitmexMarketParser {
   }): IAlunaMarketSchema {
 
     const { rawMarket } = params
-
-    // TODO: Remove after implementing mapping
-    const tempMapping = { XBT: 'BTC' }
 
     const {
       symbol,
@@ -33,8 +32,15 @@ export class BitmexMarketParser {
       initMargin,
     } = rawMarket
 
-    const baseSymbolId = tempMapping[rootSymbol] || rootSymbol
-    const quoteSymbolId = tempMapping[quoteCurrency] || quoteCurrency
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: rootSymbol,
+      symbolMappings: Bitmex.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Bitmex.settings.mappings,
+    })
 
     const instrument = BitmexInstrumentParser.parse({
       rawMarket,

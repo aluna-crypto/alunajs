@@ -1,3 +1,4 @@
+import axios from 'axios'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -44,5 +45,26 @@ export const mockPrivateHttpRequest = (params: {
   )
 
   return { requestMock }
+
+}
+
+
+
+export const mockAxiosRequest = (response?: any) => {
+
+  const requestSpy = Sinon.spy(async () => response || {})
+
+  const axiosCreateMock = ImportMock.mockFunction(
+    axios,
+    'create',
+    {
+      request: requestSpy,
+    },
+  )
+
+  return {
+    requestSpy,
+    axiosCreateMock,
+  }
 
 }

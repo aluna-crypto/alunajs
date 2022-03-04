@@ -110,7 +110,9 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const { rawOrder } = params
 
-    const parsedOrder = BitfinexOrderParser.parse({ rawOrder })
+    const parsedOrder = BitfinexOrderParser.parse({
+      rawOrder,
+    })
 
     return parsedOrder
 

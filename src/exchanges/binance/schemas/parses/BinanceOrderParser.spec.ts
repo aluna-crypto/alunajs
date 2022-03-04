@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
@@ -18,7 +19,21 @@ import { BinanceOrderParser } from './BinanceOrderParser'
 
 describe('BinanceOrderParser', () => {
 
+  const translatedSymbol = 'ETH'
+
+  const mockDeps = () => {
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbol,
+    })
+
+    return { alunaSymbolMappingMock }
+
+  }
+
   it('should parse Binance order just fine', async () => {
+
+    const { alunaSymbolMappingMock } = mockDeps()
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -40,6 +55,8 @@ describe('BinanceOrderParser', () => {
     const rawStatus = rawOrder.status
 
     expect(parsedOrder.id).to.be.eq(rawOrder.orderId)
+    expect(parsedOrder.baseSymbolId).to.be.eq(translatedSymbol)
+    expect(parsedOrder.quoteSymbolId).to.be.eq(translatedSymbol)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.symbol)
     expect(parsedOrder.total).to.be.eq(rawOriginalQuantity * rawPrice)
     expect(parsedOrder.amount).to.be.eq(rawOriginalQuantity)
@@ -55,9 +72,12 @@ describe('BinanceOrderParser', () => {
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date(rawOrder.time!).getTime())
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+
   })
 
-  it('should parse Binance order just fine without time and updateTime',
+  it(
+    'should parse Binance order just fine without time and updateTime',
     async () => {
 
       const mockedDate = new Date(Date.now())
@@ -73,6 +93,8 @@ describe('BinanceOrderParser', () => {
         'Date',
         mockedDateConstructor as any,
       )
+
+      const { alunaSymbolMappingMock } = mockDeps()
 
       const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -91,13 +113,18 @@ describe('BinanceOrderParser', () => {
         symbolInfo: symbolInfo!,
       })
 
-      expect(parsedOrder.placedAt).to.deep.eq(mockedDate)
+      expect(parsedOrder.placedAt.getTime()).to.be.eq(new Date().getTime())
 
       expect(parsedOrder.canceledAt).to.be.eq(undefined)
 
-    })
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+
+    },
+  )
 
   it('should parse Binance order just fine with transactTime', async () => {
+
+    const { alunaSymbolMappingMock } = mockDeps()
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -119,9 +146,13 @@ describe('BinanceOrderParser', () => {
 
     expect(parsedOrder.placedAt).to.deep.eq(new Date(transactTime))
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+
   })
 
   it('should parse Binance order just fine with updateTime', async () => {
+
+    const { alunaSymbolMappingMock } = mockDeps()
 
     const rawOrder: IBinanceOrderSchema = BINANCE_RAW_ORDER
 
@@ -140,10 +171,19 @@ describe('BinanceOrderParser', () => {
       symbolInfo: symbolInfo!,
     })
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: symbolInfo!.baseCurrency,
+      symbolMappings: {},
+    })
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: symbolInfo!.quoteCurrency,
+      symbolMappings: {},
+    })
+
     const updatedAt = new Date(rawOrder.updateTime).getTime()
 
-    expect(parsedOrder.canceledAt?.getTime())
-      .to.be.eq(updatedAt)
+    expect(parsedOrder.canceledAt?.getTime()).to.be.eq(updatedAt)
 
     rawOrder.status = BinanceOrderStatusEnum.FILLED
 
@@ -152,14 +192,25 @@ describe('BinanceOrderParser', () => {
       symbolInfo: symbolInfo!,
     })
 
-    expect(parsedOrder2.filledAt?.getTime())
-      .to.be.eq(updatedAt)
+    expect(parsedOrder2.filledAt?.getTime()).to.be.eq(updatedAt)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(4)
+    expect(alunaSymbolMappingMock.args[2][0]).to.deep.eq({
+      exchangeSymbolId: symbolInfo!.baseCurrency,
+      symbolMappings: {},
+    })
+    expect(alunaSymbolMappingMock.args[3][0]).to.deep.eq({
+      exchangeSymbolId: symbolInfo!.quoteCurrency,
+      symbolMappings: {},
+    })
 
   })
 
   it(
     "should ensure immeditially filled orders have 'rate' and 'filledAt'",
     async () => {
+
+      const { alunaSymbolMappingMock } = mockDeps()
 
       const rawOrder: IBinanceOrderSchema = BINANCE_RAW_MARKET_ORDER
 
@@ -178,6 +229,8 @@ describe('BinanceOrderParser', () => {
       expect(parsedOrder.filledAt).to.be.ok
 
       expect(parsedOrder.filledAt).to.be.ok
+
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
 
     },
   )

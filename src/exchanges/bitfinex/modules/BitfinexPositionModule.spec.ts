@@ -33,7 +33,7 @@ describe('BitfinexPositionModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     exchangeMock = ImportMock.mockOther(
       bitfinexPositionModule,
@@ -44,8 +44,6 @@ describe('BitfinexPositionModule', () => {
     return { exchangeMock }
 
   }
-
-  beforeEach(mockKeySecret)
 
 
   const mockRequest = (requestResponse: any) => {
@@ -94,6 +92,8 @@ describe('BitfinexPositionModule', () => {
   }
 
   it('should properly list Bitfinex raw positions', async () => {
+
+    mockExchange()
 
     const { requestMock } = mockRequest(BITFINEX_RAW_POSITIONS)
 
@@ -205,6 +205,8 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly get a Bitfinex raw position', async () => {
 
+    mockExchange()
+
     const mockedRawPosition = [BITFINEX_RAW_POSITIONS[0]]
 
     const { requestMock } = mockRequest(mockedRawPosition)
@@ -256,6 +258,8 @@ describe('BitfinexPositionModule', () => {
   })
 
   it('should properly close Bitfinex position', async () => {
+
+    mockExchange()
 
     const mockedParsedPosition = BITFINEX_PARSED_POSITIONS[1]
 
@@ -324,6 +328,8 @@ describe('BitfinexPositionModule', () => {
   })
 
   it('should return error if position could not be closed', async () => {
+
+    mockExchange()
 
     let error
     let result

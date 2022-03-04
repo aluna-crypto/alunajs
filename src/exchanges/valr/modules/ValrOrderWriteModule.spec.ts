@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
@@ -16,7 +16,6 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
@@ -330,343 +329,6 @@ describe('ValrOrderWriteModule', () => {
 
   })
 
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      ValrSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not found`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account is supported', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      ValrSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for Varl`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account is implemented', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      ValrSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for Varl`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account has orderTypes property', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      ValrSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: true,
-          orderTypes: null as any,
-          // @TODO -> Need to update logic to check orderTypes
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for Varl`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    let error
-
-    const accountIndex = ValrSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      ValrSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = 'unsupported-type'
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for Varl`
-
-    expect(error).to.be.ok
-
-    const { message } = error as AlunaError
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type is supported', async () => {
-
-    let error
-
-    const accountIndex = ValrSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      ValrSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for Varl`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type is implemented', async () => {
-
-    let error
-
-    const accountIndex = ValrSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      ValrSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-
-    const msg = `Order type '${type}' not supported/implemented for Varl`
-
-    expect(error instanceof AlunaError).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type has write mode', async () => {
-
-    let error
-
-    const accountIndex = ValrSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      ValrSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await valrOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error instanceof AlunaError).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(`Order type '${type}' is in read mode`)
-
-  })
-
   it('should edit order just fine', async () => {
 
     mockDeps()
@@ -903,6 +565,15 @@ describe('ValrOrderWriteModule', () => {
     expect(canceledOrder).to.be.ok
     expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+  })
+
+  it('should validate exchange specs when placing new orders', async () => {
+
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: ValrSpecs,
+      orderWriteModule: valrOrderWriteModule,
+    })
 
   })
 

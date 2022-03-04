@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import {
   VALR_PARSED_SYMBOLS,
   VALR_RAW_SYMBOLS,
@@ -86,21 +87,46 @@ describe('ValrSymbolModule', () => {
 
   it('should parse a Valr symbol just fine', async () => {
 
+    const expectedSymbol = 'ETH'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: expectedSymbol,
+    })
+
+    const rawSymbol1 = VALR_RAW_SYMBOLS[1]
+    const rawSymbol2 = VALR_RAW_SYMBOLS[2]
+
     const parsedSymbol1 = ValrSymbolModule.parse({
-      rawSymbol: VALR_RAW_SYMBOLS[1],
+      rawSymbol: rawSymbol1,
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Valr.ID)
-    expect(parsedSymbol1.id).to.be.eq(VALR_RAW_SYMBOLS[1].shortName)
-    expect(parsedSymbol1.name).to.be.eq(VALR_RAW_SYMBOLS[1].longName)
+    expect(parsedSymbol1.id).to.be.eq(expectedSymbol)
+    expect(parsedSymbol1.name).to.be.eq(rawSymbol1.longName)
+    expect(parsedSymbol1.alias).to.be.eq(rawSymbol1.shortName)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol1.shortName,
+      symbolMappings: {},
+    })
+
+    alunaSymbolMappingMock.returns(rawSymbol2.shortName)
 
     const parsedSymbol2 = ValrSymbolModule.parse({
-      rawSymbol: VALR_RAW_SYMBOLS[2],
+      rawSymbol: rawSymbol2,
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Valr.ID)
-    expect(parsedSymbol2.id).to.be.eq(VALR_RAW_SYMBOLS[2].shortName)
-    expect(parsedSymbol2.name).to.be.eq(VALR_RAW_SYMBOLS[2].longName)
+    expect(parsedSymbol2.id).to.be.eq(expectedSymbol)
+    expect(parsedSymbol2.name).to.be.eq(rawSymbol2.longName)
+    expect(parsedSymbol2.alias).not.to.be.ok
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol2.shortName,
+      symbolMappings: {},
+    })
 
   })
 

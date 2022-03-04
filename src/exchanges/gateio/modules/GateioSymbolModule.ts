@@ -1,5 +1,6 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
@@ -47,9 +48,19 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
       currency,
     } = rawSymbol
 
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Gateio.settings.mappings,
+    })
+
+    const alias = id !== currency
+      ? currency
+      : undefined
+
     const parsedSymbol = {
-      id: currency,
+      id,
       exchangeId: Gateio.ID,
+      alias,
       meta: rawSymbol,
     }
 

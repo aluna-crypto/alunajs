@@ -3,6 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import {
@@ -113,6 +114,10 @@ describe('PoloniexBalanceModule', () => {
 
   it('should parse a single Poloniex raw balance', () => {
 
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
     const parsedBalance1 = poloniexBalanceModule.parse({
       rawBalance: POLONIEX_RAW_BALANCES_WITH_CURRENCY[0],
     })
@@ -120,17 +125,17 @@ describe('PoloniexBalanceModule', () => {
     const {
       available: amountAvailable,
       onOrders,
-      currency,
     } = POLONIEX_RAW_BALANCES_WITH_CURRENCY[0]
 
     const available = parseFloat(amountAvailable)
     const total = available + parseFloat(onOrders)
 
-    expect(parsedBalance1.symbolId).to.be.eq(currency)
+    expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
 
     const parsedBalance2 = poloniexBalanceModule.parse({
       rawBalance: POLONIEX_RAW_BALANCES_WITH_CURRENCY[1],
@@ -138,7 +143,6 @@ describe('PoloniexBalanceModule', () => {
 
     const rawBalance2 = POLONIEX_RAW_BALANCES_WITH_CURRENCY[1]
 
-    const currency2 = rawBalance2.currency
     const available2 = parseFloat(
       rawBalance2.available,
     )
@@ -146,9 +150,11 @@ describe('PoloniexBalanceModule', () => {
       + parseFloat(rawBalance2.onOrders)
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
 
   })
 

@@ -1,4 +1,6 @@
 import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { IBitfinexBalanceSchema } from '../IBitfinexBalanceSchema'
 
@@ -24,9 +26,14 @@ export class BitfinexBalanceParser {
       value: walletType,
     })
 
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Bitfinex.settings.mappings,
+    })
+
     const parsedBalance: IAlunaBalanceSchema = {
       account,
-      symbolId: currency,
+      symbolId,
       available: availableBalance,
       total: balance,
       meta: rawBalance,

@@ -10,6 +10,11 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { AlunaCache } from '../../utils/cache/AlunaCache'
+
+
+
+export const BITMEX_HTTP_CACHE_KEY_PREFIX = 'BitmexHttp.publicRequest'
 
 
 
@@ -111,6 +116,17 @@ export const BitmexHttp: IAlunaHttp = class {
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
+    const cacheKey = AlunaCache.hashCacheKey({
+      args: params,
+      prefix: BITMEX_HTTP_CACHE_KEY_PREFIX,
+    })
+
+    if (AlunaCache.cache.has(cacheKey)) {
+
+      return AlunaCache.cache.get<T>(cacheKey)!
+
+    }
+
     const requestConfig = {
       url,
       method: verb,
@@ -120,6 +136,8 @@ export const BitmexHttp: IAlunaHttp = class {
     try {
 
       const response = await axios.create().request<T>(requestConfig)
+
+      AlunaCache.cache.set<T>(cacheKey, response.data)
 
       return response.data
 

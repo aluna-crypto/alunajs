@@ -31,8 +31,8 @@ describe('BitmexOrderParser', () => {
   it('should properly parse Bitmex orders', () => {
 
     const expectedUICustonDisplay = {} as IAlunaUICustomDisplaySchema
-    const expectedBaseSymbolId = 'XBT'
-    const expectedQuoteSymbolId = 'USD'
+    const baseSymbolId = 'XBT'
+    const quoteSymbolId = 'USD'
     const computedAmount = 10
     const computedTotal = 20
 
@@ -131,15 +131,15 @@ describe('BitmexOrderParser', () => {
 
       const parsedOrder = parse({
         instrument: mockedInstrument,
-        baseSymbolId: expectedBaseSymbolId,
-        quoteSymbolId: expectedQuoteSymbolId,
+        baseSymbolId,
+        quoteSymbolId,
         rawOrder,
       })
 
       expect(parsedOrder.id).to.be.eq(rawOrder.orderID)
       expect(parsedOrder.symbolPair).to.be.eq(rawOrder.symbol)
-      expect(parsedOrder.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedOrder.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedOrder.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedOrder.quoteSymbolId).to.be.eq(quoteSymbolId)
       expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.DERIVATIVES)
       expect(parsedOrder.amount).to.be.eq(computedAmount)
       expect(parsedOrder.total).to.be.eq(computedTotal)

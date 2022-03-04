@@ -1,5 +1,12 @@
+import {
+  each,
+  entries,
+} from 'lodash'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaBalanceGetTradableBalanceParams,
   IAlunaBalanceModule,
@@ -7,9 +14,10 @@ import {
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
+import { BitfinexAccountsAdapter } from '../enums/adapters/BitfinexAccountsAdapter'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 import { IBitfinexBalanceSchema } from '../schemas/IBitfinexBalanceSchema'
-import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitfnexBalanceParser'
 
 
 
@@ -48,7 +56,9 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const { rawBalance } = params
 
-    const parsedBalance = BitfinexBalanceParser.parse({ rawBalance })
+    const parsedBalance = BitfinexBalanceParser.parse({
+      rawBalance,
+    })
 
     return parsedBalance
 
@@ -89,13 +99,36 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
     params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
 
-    // TODO: Validate params and throw errors accordingly
-
     const {
       rate,
       side,
+      account,
       symbolPair,
     } = params
+
+    const requiredParams = {
+      rate,
+      side,
+      account,
+    }
+
+    each(entries(requiredParams), ([paramName, paramValue]) => {
+
+      if (!paramValue) {
+
+        throw new AlunaError({
+          httpStatusCode: 422,
+          message: `'${paramName}' param is required to get Bitfinex tradable balance`,
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
+        })
+
+      }
+
+    })
+
+    const translatedAccount = BitfinexAccountsAdapter.translateToBitfinex({
+      from: account!,
+    })
 
     BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbolPair}`)
 
@@ -111,12 +144,8 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       body: {
         dir,
         symbol: symbolPair,
-
-        // TODO: Remove "!" after validating params above
         rate: rate!.toString(),
-
-        // TODO: Consider using `account` property from params
-        type: BitfinexAccountsEnum.MARGIN,
+        type: translatedAccount,
       },
     })
 

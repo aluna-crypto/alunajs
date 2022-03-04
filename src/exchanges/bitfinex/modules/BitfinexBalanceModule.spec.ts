@@ -1,14 +1,20 @@
 import { expect } from 'chai'
+import {
+  map,
+  omit,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
-import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitfnexBalanceParser'
 import {
   BITFINEX_PARSED_BALANCES,
   BITFINEX_RAW_BALANCES,
@@ -26,12 +32,14 @@ describe('BitfinexBalanceModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     const exchangeMock = ImportMock.mockOther(
       bitfinexBalanceModule,
       'exchange',
-      { keySecret } as IAlunaExchange,
+      {
+        keySecret,
+      } as IAlunaExchange,
     )
 
     return { exchangeMock }
@@ -40,7 +48,7 @@ describe('BitfinexBalanceModule', () => {
 
   it('should list all Bitfinex raw balances', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -102,6 +110,8 @@ describe('BitfinexBalanceModule', () => {
 
   it('should parse a single Bitfinex raw balance just fine', async () => {
 
+    mockExchange()
+
     const balanceParserMock = ImportMock.mockFunction(
       BitfinexBalanceParser,
       'parse',
@@ -116,6 +126,7 @@ describe('BitfinexBalanceModule', () => {
     expect(balanceParserMock.calledWithExactly({
       rawBalance: BITFINEX_RAW_BALANCES[0],
     })).to.be.ok
+
     expect(parsedBalance).to.deep.eq(balanceParserMock.returnValues[0])
 
     // new mocking
@@ -176,7 +187,7 @@ describe('BitfinexBalanceModule', () => {
 
   it('should get tradable balance just file', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const tradableBalace = 25.34
 
@@ -234,5 +245,61 @@ describe('BitfinexBalanceModule', () => {
     }).to.be.ok
 
   })
+
+  it(
+    'should throw if missing any required param to get tradable balace',
+    async () => {
+
+      mockExchange()
+
+      const { requestMock } = mockPrivateHttpRequest({
+        exchangeHttp: BitfinexHttp,
+        requestResponse: Promise.resolve([10]),
+      })
+
+      const params: IAlunaBalanceGetTradableBalanceParams = {
+        side: AlunaSideEnum.LONG,
+        symbolPair: 'fBTCUSD',
+        rate: 10,
+        account: AlunaAccountEnum.MARGIN,
+      }
+
+      const requiredParams = ['rate', 'account', 'side']
+
+      const expectPromises = map(requiredParams, async (param) => {
+
+        let error
+        let result
+
+        const modifiedParams = omit(params, param.toString()) as any
+
+        try {
+
+          result = await bitfinexBalanceModule.getTradableBalance(
+            modifiedParams,
+          )
+
+        } catch (err) {
+
+          error = err
+
+        }
+
+        expect(result).not.to.be.ok
+
+        const msg = `${param} param is required to get Bitfinex tradable balance`
+
+        expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+        expect(error.message).to.be.eq(msg)
+        expect(error.httpStatusCode).to.be.eq(422)
+
+        expect(requestMock.callCount).to.be.eq(0)
+
+      })
+
+      await Promise.resolve(expectPromises)
+
+    },
+  )
 
 })

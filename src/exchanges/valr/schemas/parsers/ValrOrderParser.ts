@@ -2,6 +2,7 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
 import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
@@ -83,6 +84,16 @@ export class ValrOrderParser {
 
     const exchangeId = Valr.ID
 
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Valr.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Valr.settings.mappings,
+    })
+
     const alnOrderType = ValrOrderTypeAdapter.translateToAluna({ from: type })
 
     let rate: number | undefined
@@ -126,8 +137,8 @@ export class ValrOrderParser {
       id: orderId,
       symbolPair: symbol,
       exchangeId,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       total: amount * Number(price),
       amount,
       rate,

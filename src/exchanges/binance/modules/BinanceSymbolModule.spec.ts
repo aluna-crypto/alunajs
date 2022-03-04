@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import {
@@ -32,8 +33,6 @@ describe('BinanceSymbolModule', () => {
 
   })
 
-
-
   it('should list Binance parsed symbols just fine', async () => {
 
     const listRawMock = ImportMock.mockFunction(
@@ -63,27 +62,39 @@ describe('BinanceSymbolModule', () => {
 
   })
 
-
-
   it('should parse a Binance symbol just fine', async () => {
 
+    const rawSymbol1 = BINANCE_RAW_SYMBOLS[0]
+    const rawSymbol2 = BINANCE_RAW_SYMBOLS[1]
+
+    const translatedSymbol = 'BTC'
+
+    const symbolMappingMock = ImportMock.mockFunction(
+      AlunaSymbolMapping,
+      'translateSymbolId',
+      translatedSymbol,
+    )
+
     const parsedSymbol1 = BinanceSymbolModule.parse({
-      rawSymbol: BINANCE_RAW_SYMBOLS[1],
+      rawSymbol: rawSymbol1,
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbol1.id).to.be.eq(BINANCE_RAW_SYMBOLS[1].baseAsset)
+    expect(parsedSymbol1.id).to.be.eq(translatedSymbol)
+    expect(parsedSymbol1.alias).to.be.eq(rawSymbol1.baseAsset)
+
+
+    symbolMappingMock.returns(rawSymbol2.baseAsset)
 
     const parsedSymbol2 = BinanceSymbolModule.parse({
-      rawSymbol: BINANCE_RAW_SYMBOLS[2],
+      rawSymbol: rawSymbol2,
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(Binance.ID)
-    expect(parsedSymbol2.id).to.be.eq(BINANCE_RAW_SYMBOLS[2].baseAsset)
+    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.baseAsset)
+    expect(parsedSymbol2.alias).to.be.eq(undefined)
 
   })
-
-
 
   it('should parse many Binance symbols just fine', async () => {
 

@@ -6,15 +6,26 @@ import { IAlunaSettingsSchema } from '../../schemas/IAlunaSettingsSchema'
 export abstract class AAlunaExchange {
 
   public keySecret: IAlunaKeySecretSchema
-  public settings?: IAlunaSettingsSchema
+
+  public static settings: IAlunaSettingsSchema = {
+    mappings: {},
+  }
 
   constructor (params: {
     keySecret: IAlunaKeySecretSchema,
-    settings?: IAlunaSettingsSchema,
   }) {
 
     this.keySecret = params.keySecret
-    this.settings = params.settings
+
+  }
+
+  public static setSettings (params: {
+    settings: IAlunaSettingsSchema,
+  }) {
+
+    const { settings } = params
+
+    this.settings = settings
 
   }
 

@@ -1,28 +1,64 @@
 import { expect } from 'chai'
+import Sinon from 'sinon'
+import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import {
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
   BITFINEX_RAW_TICKERS,
 } from '../../test/fixtures/bitfinexMarkets'
-import { BITFINEX_CURRENCIES_SYMS } from '../../test/fixtures/bitfinexSymbols'
-import { TBitfinexCurrencySym } from '../IBitfinexSymbolSchema'
 import { BitfinexMarketParser } from './BitfinexMarketParser'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
 describe('BitfinexMarketParser', () => {
 
+  afterEach(Sinon.restore)
+
   it('should parse Bitfinex raw market just fine', async () => {
 
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
+    const mappings: Record<string, string> = {}
+
+    const bitfinexSettingsMock = ImportMock.mockOther(
+      Bitfinex,
+      'settings',
+      { mappings: { UST: 'USDT' } },
+    )
+
+    const translateSymbolIdSpy = Sinon.spy(
+      (params: any) => {
+
+        const {
+          symbolMappings = {},
+          exchangeSymbolId,
+        } = params
+
+        return symbolMappings[params.exchangeSymbolId] || exchangeSymbolId
+
+      },
+    )
+
+    ImportMock.mockOther(
+      AlunaSymbolMapping,
+      'translateSymbolId',
+      translateSymbolIdSpy,
+    )
+
+    const mockedBaseSymbolId = 'BTC'
+    const mockedQuoteSymbolId = 'UST'
+
+    const splitSymbolPairMock = ImportMock.mockFunction(
+      BitfinexSymbolParser,
+      'splitSymbolPair',
+      {
+        baseSymbolId: mockedBaseSymbolId,
+        quoteSymbolId: mockedQuoteSymbolId,
+      },
+    )
+
     const enabledMarginMarketsDict: Record<string, string> = {}
-
-    BITFINEX_CURRENCIES_SYMS.forEach((s) => {
-
-      currencySymsDict[s[0]] = s
-
-    })
 
     BITFINEX_MARGIN_ENABLED_CURRENCIES.forEach((c) => {
 
@@ -30,46 +66,25 @@ describe('BitfinexMarketParser', () => {
 
     })
 
-    BITFINEX_RAW_TICKERS.forEach((rawTicker) => {
+    BITFINEX_RAW_TICKERS.forEach((rawTicker, index) => {
+
+      bitfinexSettingsMock.set({ mappings })
 
       const parsedMarket = BitfinexMarketParser.parse({
         rawTicker,
-        currencySymsDict,
         enabledMarginMarketsDict,
       })
 
       const symbol = rawTicker[0]
 
-      let baseSymbolId: string
-      let quoteSymbolId: string
-
-      const spliter = symbol.indexOf(':')
-
-      if (spliter >= 0) {
-
-        baseSymbolId = symbol.slice(1, spliter)
-        quoteSymbolId = symbol.slice(spliter + 1)
-
-      } else {
-
-        baseSymbolId = symbol.slice(1, 4)
-        quoteSymbolId = symbol.slice(4)
-
-      }
-
-      baseSymbolId = currencySymsDict[baseSymbolId]
-        ? currencySymsDict[baseSymbolId][1].toUpperCase()
-        : baseSymbolId
-
-      quoteSymbolId = currencySymsDict[quoteSymbolId]
-        ? currencySymsDict[quoteSymbolId][1].toUpperCase()
-        : quoteSymbolId
+      const baseSymbolId = mappings[mockedBaseSymbolId] || mockedBaseSymbolId
+      const quoteSymbolId = mappings[mockedQuoteSymbolId] || mockedQuoteSymbolId
 
       const isMarginEnabled = !!enabledMarginMarketsDict[rawTicker[0].slice(1)]
 
       expect(parsedMarket.exchangeId).to.be.eq(Bitfinex.ID)
 
-      expect(parsedMarket.symbolPair).to.be.eq(rawTicker[0])
+      expect(parsedMarket.symbolPair).to.be.eq(symbol)
       expect(parsedMarket.baseSymbolId).to.be.eq(baseSymbolId)
       expect(parsedMarket.quoteSymbolId).to.be.eq(quoteSymbolId)
 
@@ -94,6 +109,15 @@ describe('BitfinexMarketParser', () => {
       expect(parsedMarket.instrument).not.to.be.ok
       expect(parsedMarket.leverageEnabled).not.to.be.ok
       expect(parsedMarket.maxLeverage).not.to.be.ok
+
+      expect(splitSymbolPairMock.callCount).to.be.eq(index + 1)
+
+      const translateSymbolIdSpyCallCount = index === 0
+        ? 2
+        : (index + 1) * 2
+
+      expect(translateSymbolIdSpy.callCount)
+        .to.be.eq(translateSymbolIdSpyCallCount)
 
     })
 

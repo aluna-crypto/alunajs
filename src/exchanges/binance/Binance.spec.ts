@@ -22,23 +22,16 @@ describe('Binance', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const binance = new Binance({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(binance.keySecret.key).to.eq(key)
     expect(binance.keySecret.secret).to.eq(secret)
-
-    expect(binance.settings).to.be.ok
-    expect(binance.settings?.referralCode).to.eq(referralCode)
 
     expect(binance.key).to.be.ok
     expect(binance.balance).to.be.ok

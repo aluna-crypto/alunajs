@@ -1,131 +1,70 @@
 import { expect } from 'chai'
+import {
+  each,
+  entries,
+  keys,
+  values,
+} from 'lodash'
 
 import { Aluna } from './Aluna'
-import { Binance } from './exchanges/binance/Binance'
-import { Bitfinex } from './exchanges/bitfinex/Bitfinex'
-import { Bitmex } from './exchanges/bitmex/Bitmex'
-import { Bittrex } from './exchanges/bittrex/Bittrex'
-import { Gateio } from './exchanges/gateio/Gateio'
-import { Poloniex } from './exchanges/poloniex/Poloniex'
-import { Valr } from './exchanges/valr/Valr'
 import { AlunaError } from './lib/core/AlunaError'
 import {
   IAlunaExchange,
   IAlunaExchangeStatic,
 } from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
+import { Exchanges } from './lib/Exchanges'
+import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
-
-// TODO: Refatory file and tests to work with all exchanges automatically
 
 describe('Aluna', () => {
 
   it('should inherit from Exchanges and make them available statically', () => {
 
-    expect(Aluna.Binance).to.be.ok
-    expect(Aluna.Bitfinex).to.be.ok
-    expect(Aluna.Bitmex).to.be.ok
-    expect(Aluna.Bittrex).to.be.ok
-    expect(Aluna.Gateio).to.be.ok
-    expect(Aluna.Valr).to.be.ok
-    expect(Aluna.Poloniex).to.be.ok
+    const allExchangesNames = keys(Exchanges)
+
+    each(allExchangesNames, (exchangeName) => {
+
+      expect(Aluna[exchangeName]).to.be.ok
+
+    })
 
   })
 
-  it('should properly instantiate exchanges', async () => {
+  it('should properly instantiate all exchanges', async () => {
 
-    let gateio: IAlunaExchange | undefined
-    let binance: IAlunaExchange | undefined
-    let bitfinex: IAlunaExchange | undefined
-    let bitmex: IAlunaExchange | undefined
-    let bittrex: IAlunaExchange | undefined
-    let valr: IAlunaExchange | undefined
-    let poloniex: IAlunaExchange | undefined
+    const allExchanges = entries(Exchanges)
 
-    let error
+    each(allExchanges, ([exchangeName, Exchange]) => {
 
-    try {
+      let exchange: IAlunaExchange | undefined
 
-      gateio = Aluna.new({
-        exchangeId: 'gateio',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+      let error
 
-      binance = Aluna.new({
-        exchangeId: 'binance',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+      try {
 
-      bitfinex = Aluna.new({
-        exchangeId: 'bitfinex',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+        exchange = Aluna.new({
+          exchangeId: Exchange.ID,
+          keySecret: {
+            key: 'key',
+            secret: 'secret',
+          },
+        })
 
-      bitmex = Aluna.new({
-        exchangeId: 'bitmex',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+      } catch (err) {
 
-      bittrex = Aluna.new({
-        exchangeId: 'bittrex',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+        error = err
 
-      valr = Aluna.new({
-        exchangeId: 'valr',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+      }
 
-      poloniex = Aluna.new({
-        exchangeId: 'poloniex',
-        keySecret: {
-          key: 'key',
-          secret: 'secret',
-        },
-      })
+      expect(error).not.to.be.ok
 
-    } catch (err) {
+      expect(exchange).to.be.ok
 
-      error = err
+      expect(exchange instanceof Exchanges[exchangeName]).to.be.ok
 
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(gateio).to.be.ok
-    expect(binance).to.be.ok
-    expect(bitfinex).to.be.ok
-    expect(bitmex).to.be.ok
-    expect(bittrex).to.be.ok
-    expect(valr).to.be.ok
-    expect(poloniex).to.be.ok
-
-    expect(gateio instanceof Gateio).to.be.ok
-    expect(binance instanceof Binance).to.be.ok
-    expect(bitfinex instanceof Bitfinex).to.be.ok
-    expect(bitmex instanceof Bitmex).to.be.ok
-    expect(bittrex instanceof Bittrex).to.be.ok
-    expect(valr instanceof Valr).to.be.ok
-    expect(poloniex instanceof Poloniex).to.be.ok
+    })
 
   })
 
@@ -158,171 +97,66 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly resolve exchange Binance static class', async () => {
+  it('should properly resolve exchange static classes', async () => {
 
-    const exchangeId = Binance.ID
+    const exchangesArr = values(Exchanges)
 
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
+    each(exchangesArr, (StaticExchange) => {
 
-    try {
+      const exchangeId = (<IAlunaExchangeStatic> StaticExchange).ID
 
-      Exchange = Aluna.static({ exchangeId })
+      let Exchange: IAlunaExchangeStatic | undefined
+      let error
 
-    } catch (err) {
+      try {
 
-      error = err as AlunaError
+        Exchange = Aluna.static({ exchangeId })
 
-    }
+      } catch (err) {
 
-    expect(error).not.to.be.ok
+        error = err as AlunaError
 
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
+      }
 
-  })
+      expect(error).not.to.be.ok
 
-  it('should properly resolve exchange Bitfinex static class', async () => {
+      expect(Exchange).to.be.ok
+      expect(Exchange!.ID).to.eq(exchangeId)
 
-    const exchangeId = Bitfinex.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
+    })
 
   })
 
-  it('should properly resolve exchange Bittrex static class', async () => {
+  it('should properly set settings for exchange static class', async () => {
 
-    const exchangeId = Bittrex.ID
+    const referralCode = '123'
+    const mappings = { XBT: 'BTC' }
 
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
+    const exchangesArr = values(Aluna.exchanges)
 
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
+    const settings: IAlunaSettingsSchema = {
+      referralCode,
+      mappings,
     }
 
-    expect(error).not.to.be.ok
+    each(exchangesArr, ({ ID }: any) => {
 
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
+      const Exchange = Aluna.static({
+        exchangeId: ID,
+        settings,
+      })
 
-  })
+      expect(Exchange.settings.mappings).to.deep.eq(mappings)
+      expect(Exchange.settings.referralCode).to.be.eq(referralCode)
 
-  it('should properly resolve exchange Valr static class', async () => {
+      // Set static prop 'settings' to default value on static Exchange
+      Exchange.setSettings({
+        settings: {
+          mappings: {},
+        },
+      })
 
-    const exchangeId = Valr.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
-
-  })
-
-  it('should properly resolve exchange Gateio static class', async () => {
-
-    const exchangeId = Gateio.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
-
-  })
-
-  it('should properly resolve exchange Bitmex static class', async () => {
-
-    const exchangeId = Bitmex.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
-
-  })
-
-  it('should properly resolve exchange Poloniex static class', async () => {
-
-    const exchangeId = Poloniex.ID
-
-    let Exchange: IAlunaExchangeStatic | undefined
-    let error
-
-    try {
-
-      Exchange = Aluna.static({ exchangeId })
-
-    } catch (err) {
-
-      error = err as AlunaError
-
-    }
-
-    expect(error).not.to.be.ok
-
-    expect(Exchange).to.be.ok
-    expect(Exchange?.ID).to.eq(exchangeId)
+    })
 
   })
 

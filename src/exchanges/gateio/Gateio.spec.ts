@@ -19,23 +19,16 @@ describe('Gateio', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const gateio = new Gateio({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(gateio.keySecret.key).to.eq(key)
     expect(gateio.keySecret.secret).to.eq(secret)
-
-    expect(gateio.settings).to.be.ok
-    expect(gateio.settings?.referralCode).to.eq(referralCode)
 
     expect(gateio.key).to.be.ok
     expect(gateio.balance).to.be.ok

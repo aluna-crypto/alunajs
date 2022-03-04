@@ -2,6 +2,8 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
@@ -71,10 +73,15 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
       onOrders,
     } = rawBalance
 
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
+
     const total = parseFloat(available) + parseFloat(onOrders)
 
     return {
-      symbolId: currency,
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: parseFloat(available),
       total,

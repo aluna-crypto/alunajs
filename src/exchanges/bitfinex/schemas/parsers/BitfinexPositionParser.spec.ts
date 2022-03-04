@@ -1,10 +1,13 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { BITFINEX_RAW_POSITIONS } from '../../test/fixtures/bitfinexPosition'
 import { BitfinexPositionParser } from './BitfinexPositionParser'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -12,7 +15,39 @@ describe('BitfinexPositionParser', () => {
 
   it('should parse Bitfinex positions just fine', async () => {
 
-    BITFINEX_RAW_POSITIONS.forEach((rawPosition) => {
+    const mockedSymbolId = 'BTC'
+
+    const baseSymbolId = mockedSymbolId
+    const quoteSymbolId = mockedSymbolId
+
+    const splitSymbolPairMock = ImportMock.mockFunction(
+      BitfinexSymbolParser,
+      'splitSymbolPair',
+      {
+        baseSymbolId,
+        quoteSymbolId,
+      },
+    )
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: mockedSymbolId,
+    })
+
+    const mockedDate = new Date(Date.now())
+
+    function fakeDateConstructor () {
+
+      return mockedDate
+
+    }
+
+    ImportMock.mockOther(
+      global,
+      'Date',
+      fakeDateConstructor as any,
+    )
+
+    BITFINEX_RAW_POSITIONS.forEach((rawPosition, index) => {
 
       if (/^f|F0/.test(rawPosition[0])) {
 
@@ -46,23 +81,6 @@ describe('BitfinexPositionParser', () => {
         _collateralMin,
         meta,
       ] = rawPosition
-
-      let computedBaseSymbolId: string
-      let computedQuoteSymbolId: string
-
-      const spliter = symbol.indexOf(':')
-
-      if (spliter >= 0) {
-
-        computedBaseSymbolId = symbol.slice(1, spliter)
-        computedQuoteSymbolId = symbol.slice(spliter + 1)
-
-      } else {
-
-        computedBaseSymbolId = symbol.slice(1, 4)
-        computedQuoteSymbolId = symbol.slice(4)
-
-      }
 
       const computedStatus = status === BitfinexPositionStatusEnum.ACTIVE
         ? AlunaPositionStatusEnum.OPEN
@@ -109,8 +127,9 @@ describe('BitfinexPositionParser', () => {
 
       expect(parsedPosition.id).to.be.eq(positionId)
 
-      expect(parsedPosition.baseSymbolId).to.be.eq(computedBaseSymbolId)
-      expect(parsedPosition.quoteSymbolId).to.be.eq(computedQuoteSymbolId)
+      expect(parsedPosition.symbolPair).to.be.eq(symbol)
+      expect(parsedPosition.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedPosition.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedPosition.status).to.be.eq(computedStatus)
 
@@ -118,7 +137,6 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.openPrice).to.be.eq(computedOpenPrice)
       expect(parsedPosition.amount).to.be.eq(computedAmount)
       expect(parsedPosition.total).to.be.eq(computedTotal)
-
 
       expect(parsedPosition.pl).to.be.eq(computedPl)
       expect(parsedPosition.plPercentage).to.be.eq(computedPlPercentage)
@@ -128,6 +146,14 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.openedAt).to.deep.eq(computedOpenedAt)
       expect(parsedPosition.closedAt).to.deep.eq(computedClosedAt)
       expect(parsedPosition.closePrice).to.deep.eq(computedClosePrice)
+
+      expect(splitSymbolPairMock.callCount).to.be.eq(index + 1)
+
+      const symbolMockCallCount = index === 0
+        ? 2
+        : (index + 1) * 2
+
+      expect(alunaSymbolMappingMock.callCount).to.be.eq(symbolMockCallCount)
 
     })
 

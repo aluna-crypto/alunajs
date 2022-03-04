@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
@@ -18,12 +18,10 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BinanceHttp } from '../BinanceHttp'
 import {
   BinanceSpecs,
-  exchangeOrderTypes as binanceExchangeOrderTypes,
   PROD_BINANCE_URL,
 } from '../BinanceSpecs'
 import { BinanceOrderStatusEnum } from '../enums/BinanceOrderStatusEnum'
@@ -49,7 +47,6 @@ describe('BinanceOrderWriteModule', () => {
   }
 
   const placedOrder = 'placed-order'
-
 
   it('should place a new Binance limit order just fine', async () => {
 
@@ -140,7 +137,8 @@ describe('BinanceOrderWriteModule', () => {
 
   })
 
-  it('should throw an error for insufficient balance when placing new order',
+  it(
+    'should throw an error for insufficient balance when placing new order',
     async () => {
 
       ImportMock.mockOther(
@@ -210,9 +208,11 @@ describe('BinanceOrderWriteModule', () => {
         .to.be.eq('Account has insufficient balance for requested action.')
       expect(error.httpStatusCode).to.be.eq(400)
 
-    })
+    },
+  )
 
-  it('should throw an error if a new limit order is placed without rate',
+  it(
+    'should throw an error if a new limit order is placed without rate',
     async () => {
 
       let error
@@ -247,7 +247,8 @@ describe('BinanceOrderWriteModule', () => {
         .to.be.eq('A rate is required for limit orders')
       expect(error.httpStatusCode).to.be.eq(401)
 
-    })
+    },
+  )
 
   it('should throw an request error when placing new order', async () => {
 
@@ -318,8 +319,6 @@ describe('BinanceOrderWriteModule', () => {
     expect(error.httpStatusCode).to.be.eq(500)
 
   })
-
-
 
   it('should place a new Binance market order just fine', async () => {
 
@@ -402,322 +401,14 @@ describe('BinanceOrderWriteModule', () => {
 
   })
 
+  it('should validate exchange specs when placing new orders', async () => {
 
-
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    ImportMock.mockOther(
-      BinanceSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-
-    let result
-    let error
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not found`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: BinanceSpecs,
+      orderWriteModule: binanceOrderWriteModule,
+    })
 
   })
-
-
-
-  it('should ensure given account is supported', async () => {
-
-    ImportMock.mockOther(
-      BinanceSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    let result
-    let error
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Binance`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given account is implemented', async () => {
-
-    ImportMock.mockOther(
-      BinanceSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    let result
-    let error
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Binance`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    const accountIndex = BinanceSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    const limitOrderType = binanceExchangeOrderTypes[0]
-
-    ImportMock.mockOther(
-      BinanceSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        limitOrderType,
-      ],
-    )
-
-    const type = 'unsupported-type'
-
-    let result
-    let error
-
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Binance`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is supported', async () => {
-
-    const accountIndex = BinanceSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BinanceSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Binance`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is implemented', async () => {
-
-    const accountIndex = BinanceSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BinanceSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let error
-    let result
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Binance`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type has write mode', async () => {
-
-    const accountIndex = BinanceSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BinanceSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await binanceOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' is in read mode`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
 
   it('should ensure an order was canceled', async () => {
 
@@ -756,7 +447,6 @@ describe('BinanceOrderWriteModule', () => {
 
       error = err
 
-
     }
 
     expect(result).not.to.be.ok
@@ -778,8 +468,6 @@ describe('BinanceOrderWriteModule', () => {
     expect(error.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
 
   })
-
-
 
   it('should cancel an open order just fine', async () => {
 

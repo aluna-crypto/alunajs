@@ -11,8 +11,12 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { BittrexLog } from './BittrexLog'
 
+
+
+export const BITTREX_HTTP_CACHE_KEY_PREFIX = 'BittrexHttp.publicRequest'
 
 
 interface ISignedHashParams {
@@ -105,6 +109,17 @@ export const BittrexHttp: IAlunaHttp = class {
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
+    const cacheKey = AlunaCache.hashCacheKey({
+      args: params,
+      prefix: BITTREX_HTTP_CACHE_KEY_PREFIX,
+    })
+
+    if (AlunaCache.cache.has(cacheKey)) {
+
+      return AlunaCache.cache.get<T>(cacheKey)!
+
+    }
+
     const requestConfig = {
       url,
       method: verb,
@@ -114,6 +129,8 @@ export const BittrexHttp: IAlunaHttp = class {
     try {
 
       const response = await axios.create().request<T>(requestConfig)
+
+      AlunaCache.cache.set<T>(cacheKey, response.data)
 
       return response.data
 

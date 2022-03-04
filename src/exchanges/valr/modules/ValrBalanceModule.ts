@@ -3,7 +3,9 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
+import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
 import { ValrLog } from '../ValrLog'
 
@@ -49,8 +51,13 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
       total,
     } = rawBalance
 
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Valr.settings.mappings,
+    })
+
     return {
-      symbolId: currency,
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
       total: Number(total),

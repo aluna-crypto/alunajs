@@ -1,5 +1,6 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
@@ -61,10 +62,20 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
       currency,
     } = rawSymbol
 
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Poloniex.settings.mappings,
+    })
+
+    const alias = id !== currency
+      ? currency
+      : undefined
+
     const parsedSymbol: IAlunaSymbolSchema = {
-      id: currency,
+      id,
       name,
       exchangeId: Poloniex.ID,
+      alias,
       meta: rawSymbol,
     }
 

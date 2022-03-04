@@ -1,5 +1,6 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
@@ -48,10 +49,20 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
       name,
     } = rawSymbol
 
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: symbol,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
+    const alias = id !== symbol
+      ? symbol
+      : undefined
+
     const parsedSymbol: IAlunaSymbolSchema = {
-      id: symbol,
+      id,
       name,
       exchangeId: Bittrex.ID,
+      alias,
       meta: rawSymbol,
     }
 

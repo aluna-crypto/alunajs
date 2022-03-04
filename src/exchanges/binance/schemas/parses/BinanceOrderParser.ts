@@ -1,6 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../../Binance'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
 import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
@@ -17,7 +18,10 @@ export class BinanceOrderParser {
     symbolInfo: IBinanceMarketWithCurrency,
   }): IAlunaOrderSchema {
 
-    const { rawOrder, symbolInfo } = params
+    const {
+      rawOrder,
+      symbolInfo,
+    } = params
 
     const exchangeId = Binance.ID
 
@@ -34,6 +38,23 @@ export class BinanceOrderParser {
       transactTime,
       fills,
     } = rawOrder
+
+    const {
+      baseCurrency,
+      quoteCurrency,
+    } = symbolInfo
+
+    const symbolMappings = Binance.settings.mappings
+
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings,
+    })
 
     const updatedAt = updateTime ? new Date(updateTime) : undefined
     const amount = parseFloat(origQty)
@@ -98,8 +119,8 @@ export class BinanceOrderParser {
       amount,
       rate,
       exchangeId,
-      baseSymbolId: symbolInfo.baseCurrency,
-      quoteSymbolId: symbolInfo.quoteCurrency,
+      baseSymbolId,
+      quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
       side: BinanceSideAdapter.translateToAluna({ from: side }),
       status: orderStatus,

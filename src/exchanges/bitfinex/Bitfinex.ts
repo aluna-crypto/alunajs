@@ -8,7 +8,6 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BitfinexSpecs } from './BitfinexSpecs'
 import { BitfinexBalanceModule } from './modules/BitfinexBalanceModule'
 import { BitfinexKeyModule } from './modules/BitfinexKeyModule'
@@ -30,17 +29,13 @@ export const Bitfinex: IAlunaExchangeStatic = class extends AAlunaExchange imple
 
   // local definitions
   key: IAlunaKeyModule
-  // order: IAlunaOrderWriteModule
   order: IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
   position: IAlunaPositionModule
 
-  constructor (
-    params: {
-      keySecret: IAlunaKeySecretSchema,
-      settings?: IAlunaSettingsSchema,
-    },
-  ) {
+  constructor (params: {
+    keySecret: IAlunaKeySecretSchema,
+  }) {
 
     super(params)
 

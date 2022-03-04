@@ -18,26 +18,6 @@ import { GateioOrderParser } from '../schemas/parsers/GateioOrderParser'
 
 export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  private detachOrderFromResponse (
-    params: {
-      rawOrdersResponse: IGateioOrderListResponseSchema[],
-    },
-  ): IGateioOrderSchema[] {
-
-    const { rawOrdersResponse } = params
-
-    const rawOrders: IGateioOrderSchema[] = []
-
-    rawOrdersResponse.map((rawOrderResponse) => {
-
-      return rawOrders.push(...rawOrderResponse.orders)
-
-    })
-
-    return rawOrders
-
-  }
-
   public async listRaw (): Promise<IGateioOrderSchema[]> {
 
     GateioLog.info('fetching Gateio open orders')
@@ -69,8 +49,6 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
   }
 
-
-
   public async getRaw (
     params: IAlunaOrderGetParams,
   ): Promise<IGateioOrderSchema> {
@@ -96,8 +74,6 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
   }
 
-
-
   public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
 
     const rawOrder = await this.getRaw(params)
@@ -107,8 +83,6 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
     return parsedOrder
 
   }
-
-
 
   public async parse (params: {
     rawOrder: IGateioOrderSchema,
@@ -122,8 +96,6 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
     return parsedOrder
 
   }
-
-
 
   public async parseMany (params: {
     rawOrders: IGateioOrderSchema[],
@@ -144,6 +116,26 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
     GateioLog.info(`parsed ${parsedOrders.length} orders for Gateio`)
 
     return parsedOrders
+
+  }
+
+  private detachOrderFromResponse (
+    params: {
+      rawOrdersResponse: IGateioOrderListResponseSchema[],
+    },
+  ): IGateioOrderSchema[] {
+
+    const { rawOrdersResponse } = params
+
+    const rawOrders: IGateioOrderSchema[] = []
+
+    rawOrdersResponse.map((rawOrderResponse) => {
+
+      return rawOrders.push(...rawOrderResponse.orders)
+
+    })
+
+    return rawOrders
 
   }
 

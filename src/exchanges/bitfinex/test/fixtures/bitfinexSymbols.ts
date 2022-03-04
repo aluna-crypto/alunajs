@@ -3,7 +3,6 @@ import { Bitfinex } from '../../Bitfinex'
 import {
   IBitfinexCurrencies,
   TBitfinexCurrencyLabel,
-  TBitfinexCurrencySym,
 } from '../../schemas/IBitfinexSymbolSchema'
 
 
@@ -35,17 +34,9 @@ export const BITFINEX_CURRENCIES_LABELS: TBitfinexCurrencyLabel[] = [
 
 
 
-export const BITFINEX_CURRENCIES_SYMS: TBitfinexCurrencySym[] = [
-  ['UDC', 'USDC'],
-  ['UST', 'USDT'],
-]
-
-
-
 export const BITFINEX_RAW_SYMBOLS = [
   BITFINEX_CURRENCIES,
   BITFINEX_CURRENCIES_LABELS,
-  BITFINEX_CURRENCIES_SYMS,
 ]
 
 

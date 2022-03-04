@@ -6,7 +6,6 @@ import {
   IBitfinexMarketSchema,
   IBitfinexTicker,
 } from '../schemas/IBitfinexMarketSchema'
-import { TBitfinexCurrencySym } from '../schemas/IBitfinexSymbolSchema'
 import {
   BitfinexMarketParser,
   IBitfinexMarketParseParams,
@@ -31,19 +30,14 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
     const baseUrl = 'https://api-pub.bitfinex.com/v2/conf/'
 
     const url = `${baseUrl}${this.enabledMarginMarketsPath}`
-      .concat(',pub:map:currency:sym')
 
-    const [
-      enabledMarginMarkets,
-      symCurrencies,
-    ] = await publicRequest<[string[], TBitfinexCurrencySym[]]>({
+    const [enabledMarginMarkets] = await publicRequest<[string[]]>({
       url,
     })
 
     const output: IBitfinexMarketSchema = [
       rawMarkets,
       enabledMarginMarkets,
-      symCurrencies,
     ]
 
     return output
@@ -81,23 +75,13 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
     const [
       rawBitfinexTickers,
       enabledMarginMarkets,
-      currencySyms,
     ] = rawMarkets
 
     const enabledMarginMarketsDict: Record<string, string> = {}
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
 
     enabledMarginMarkets.forEach((market) => {
 
       enabledMarginMarketsDict[market] = market
-
-    })
-
-    currencySyms.forEach((currencySym) => {
-
-      const [bitfinexSymbolId] = currencySym
-
-      currencySymsDict[bitfinexSymbolId] = currencySym
 
     })
 
@@ -114,7 +98,6 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
       const rawMarket: IBitfinexMarketParseParams = {
         rawTicker: ticker,
-        currencySymsDict,
         enabledMarginMarketsDict,
       }
 

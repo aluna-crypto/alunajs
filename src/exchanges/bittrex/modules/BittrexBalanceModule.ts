@@ -3,6 +3,8 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
@@ -52,13 +54,18 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
     const { rawBalance } = params
 
     const {
+      total,
       available,
       currencySymbol,
-      total,
     } = rawBalance
 
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currencySymbol,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
     return {
-      symbolId: currencySymbol,
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
       total: Number(total),

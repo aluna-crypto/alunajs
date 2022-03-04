@@ -1,12 +1,15 @@
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
+import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { validateCache } from '../../utils/cache/AlunaCache.mock'
 import * as BitmexHttpMod from './BitmexHttp'
 
 
@@ -40,15 +43,10 @@ describe('BitmexHttp', () => {
 
   it('should defaults the http verb to get on public requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => dummyData)
-
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     await publicRequest({
       // http verb not informed
@@ -56,7 +54,7 @@ describe('BitmexHttp', () => {
       body: dummyBody,
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
 
@@ -70,15 +68,10 @@ describe('BitmexHttp', () => {
 
   it('should execute public request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
-
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const responseData = await publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -86,7 +79,7 @@ describe('BitmexHttp', () => {
       body: dummyBody,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -95,27 +88,22 @@ describe('BitmexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
   it('should defaults the http verb to POST on private requests',
     async () => {
 
-      const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+      const {
+        requestSpy,
+        axiosCreateMock,
+      } = mockAxiosRequest(dummyData)
 
       const generateAuthHeaderMock = ImportMock.mockFunction(
         BitmexHttpMod,
         'generateAuthHeader',
         dummySignedHeaders,
-      )
-
-      const axiosCreate = ImportMock.mockFunction(
-        axios,
-        'create',
-        {
-          request: requestSpy,
-        },
       )
 
       await privateRequest({
@@ -124,7 +112,7 @@ describe('BitmexHttp', () => {
         url: 'http://dummy.com',
       })
 
-      expect(axiosCreate.callCount).to.be.eq(1)
+      expect(axiosCreateMock.callCount).to.be.eq(1)
 
       expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
@@ -141,20 +129,15 @@ describe('BitmexHttp', () => {
 
   it('should execute private request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
       BitmexHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
-    )
-
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
     )
 
     const responseData = await privateRequest({
@@ -164,7 +147,7 @@ describe('BitmexHttp', () => {
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -182,7 +165,7 @@ describe('BitmexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData.data)
 
   })
 
@@ -194,23 +177,11 @@ describe('BitmexHttp', () => {
 
       const message = 'Dummy error'
 
+      mockAxiosRequest(Promise.reject(new Error(message)))
+
       const formatRequestErrorSpy = Sinon.spy(
         BitmexHttpMod,
         'bitmexRequestErrorHandler',
-      )
-
-      const requestSpy = Sinon.spy(() => {
-
-        throw new Error(message)
-
-      })
-
-      ImportMock.mockFunction(
-        axios,
-        'create',
-        {
-          request: requestSpy,
-        },
       )
 
       ImportMock.mockFunction(
@@ -435,6 +406,28 @@ describe('BitmexHttp', () => {
     expect(signedHash2['api-expires']).to.deep.eq(mockedNonce)
     expect(signedHash2['api-key']).to.deep.eq(keySecret.key)
     expect(signedHash2['api-signature']).to.deep.eq(digestSpy.returnValues[1])
+
+  })
+
+  it('should validate cache usage', async () => {
+
+    mockAxiosRequest(dummyData)
+
+    await validateCache({
+      cacheResult: dummyData,
+      callMethod: async () => {
+
+        const params: IAlunaHttpPublicParams = {
+          url: dummyUrl,
+          body: dummyBody,
+          verb: AlunaHttpVerbEnum.GET,
+        }
+
+        await publicRequest(params)
+
+      },
+
+    })
 
   })
 

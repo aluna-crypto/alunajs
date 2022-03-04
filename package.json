@@ -32,7 +32,10 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.2",
+    "fast-json-stable-stringify": "^2.1.0",
+    "js-sha512": "^0.8.0",
     "lodash": "^4.17.21",
+    "node-cache": "^5.1.2",
     "tslog": "^3.2.0"
   },
   "devDependencies": {

@@ -2,7 +2,6 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { BitfinexHttp } from '../BitfinexHttp'
-import { TBitfinexCurrencySym } from '../schemas/IBitfinexSymbolSchema'
 import {
   BitfinexMarketParser,
   IBitfinexMarketParseParams,
@@ -13,7 +12,6 @@ import {
   BITFINEX_RAW_MARKETS,
   BITFINEX_RAW_TICKERS,
 } from '../test/fixtures/bitfinexMarkets'
-import { BITFINEX_CURRENCIES_SYMS } from '../test/fixtures/bitfinexSymbols'
 import { BitfinexMarketModule } from './BitfinexMarketModule'
 
 
@@ -30,17 +28,15 @@ describe('BitfinexMarketModule', () => {
     requestMock.onFirstCall().returns(Promise.resolve(BITFINEX_RAW_TICKERS))
     requestMock.onSecondCall().returns(Promise.resolve([
       BITFINEX_MARGIN_ENABLED_CURRENCIES,
-      BITFINEX_CURRENCIES_SYMS,
     ]))
 
     const rawMarkets = await BitfinexMarketModule.listRaw()
 
-    expect(rawMarkets.length).to.eq(3)
+    expect(rawMarkets.length).to.eq(2)
 
     expect(rawMarkets).to.deep.eq([
       BITFINEX_RAW_TICKERS,
       BITFINEX_MARGIN_ENABLED_CURRENCIES,
-      BITFINEX_CURRENCIES_SYMS,
     ])
 
     expect(requestMock.calledWithExactly({
@@ -49,7 +45,6 @@ describe('BitfinexMarketModule', () => {
 
     const secondCallUrl = 'https://api-pub.bitfinex.com/v2/conf/'
       .concat('pub:list:pair:margin')
-      .concat(',pub:map:currency:sym')
 
     expect(requestMock.calledWithExactly({
       url: secondCallUrl,
@@ -68,14 +63,7 @@ describe('BitfinexMarketModule', () => {
     )
 
     // creating dicitonaries to call 'parse' method
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
     const enabledMarginMarketsDict: Record<string, string> = {}
-
-    BITFINEX_CURRENCIES_SYMS.forEach((s) => {
-
-      currencySymsDict[s[0]] = s
-
-    })
 
     BITFINEX_MARGIN_ENABLED_CURRENCIES.forEach((c) => {
 
@@ -84,7 +72,6 @@ describe('BitfinexMarketModule', () => {
     })
 
     const rawMarket: IBitfinexMarketParseParams = {
-      currencySymsDict,
       enabledMarginMarketsDict,
       rawTicker: BITFINEX_RAW_TICKERS[0],
     }
@@ -95,7 +82,6 @@ describe('BitfinexMarketModule', () => {
 
     expect(BitfinexMarketParserMock.calledWithExactly({
       rawTicker: BITFINEX_RAW_TICKERS[0],
-      currencySymsDict,
       enabledMarginMarketsDict,
     })).to.be.ok
 
@@ -115,7 +101,6 @@ describe('BitfinexMarketModule', () => {
 
     expect(BitfinexMarketParserMock.calledWithExactly({
       rawTicker: BITFINEX_RAW_TICKERS[1],
-      currencySymsDict,
       enabledMarginMarketsDict,
     })).to.be.ok
 

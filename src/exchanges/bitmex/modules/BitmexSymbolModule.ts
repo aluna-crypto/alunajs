@@ -5,6 +5,7 @@ import {
 
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
@@ -49,16 +50,21 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbol } = params
 
-    // TODO: Remove after implementing mapping
-    const tempMapping = { XBT: 'BTC' }
+    const { rootSymbol } = rawSymbol
 
-    const {
-      rootSymbol,
-    } = rawSymbol
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: rootSymbol,
+      symbolMappings: Bitmex.settings.mappings,
+    })
+
+    const alias = id !== rootSymbol
+      ? rootSymbol
+      : undefined
 
     const parsedSymbol: IAlunaSymbolSchema = {
-      id: tempMapping[rootSymbol] || rootSymbol,
+      id,
       exchangeId: Bitmex.ID,
+      alias,
       meta: rawSymbol,
     }
 

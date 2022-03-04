@@ -92,7 +92,10 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const symbolInfo = symbols.find((s) => s.symbol === currencyPair)
 
-    const parsedOrder = BinanceOrderParser.parse({ rawOrder, symbolInfo })
+    const parsedOrder = BinanceOrderParser.parse({
+      rawOrder,
+      symbolInfo,
+    })
 
     return parsedOrder
 

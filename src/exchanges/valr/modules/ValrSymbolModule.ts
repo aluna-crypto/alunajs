@@ -1,5 +1,6 @@
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import { Valr } from '../Valr'
 import { ValrHttp } from '../ValrHttp'
@@ -42,10 +43,24 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
       shortName,
     } = rawSymbol
 
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: shortName,
+      symbolMappings: Valr.settings.mappings,
+    })
+
+    let alias: string | undefined
+
+    if (id !== shortName) {
+
+      alias = shortName
+
+    }
+
     return {
-      id: shortName,
+      id,
       name: longName,
       exchangeId: Valr.ID,
+      alias,
       meta: rawSymbol,
     }
 

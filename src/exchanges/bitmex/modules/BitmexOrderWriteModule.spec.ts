@@ -792,7 +792,7 @@ describe('BitmexOrderWriteModule', () => {
 
   })
 
-  it('should test exchange specs when placing new orders', async () => {
+  it('should validate exchange specs when placing new orders', async () => {
 
     await testExchangeSpecsForOrderWriteModule({
       exchangeSpecs: BitmexSpecs,

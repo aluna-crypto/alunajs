@@ -25,7 +25,7 @@ describe('BitfinexOrderReadModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     const exchangeMock = ImportMock.mockOther(
       bitfinexOrderReadModule,
@@ -39,7 +39,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex raw orders just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -60,7 +60,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex parsed orders just fine', async () => {
 
-    mockKeySecret()
+    mockExchange()
 
     const listRawMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
@@ -89,7 +89,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get a Bitfinex raw open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0][0]
 
@@ -119,7 +119,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get Bitfinex raw not open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0]
 
@@ -157,7 +157,7 @@ describe('BitfinexOrderReadModule', () => {
     let error = {} as AlunaError
     let result
 
-    mockKeySecret()
+    mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -256,7 +256,9 @@ describe('BitfinexOrderReadModule', () => {
 
   })
 
-  it('should properly a parse Bitfinex raw order just fine', async () => {
+  it('should parse a Bitfinex raw order just fine', async () => {
+
+    mockExchange()
 
     const parseMock = ImportMock.mockFunction(
       BitfinexOrderParser,
@@ -283,7 +285,7 @@ describe('BitfinexOrderReadModule', () => {
     const parsedOrders = await Promise.all(promises)
 
     expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
-    expect(parseMock.callCount).deep.eq(parsedOrders.length)
+    expect(parseMock.callCount).to.be.eq(parsedOrders.length)
 
   })
 

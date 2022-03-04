@@ -1,9 +1,11 @@
+import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BinanceHttp } from '../BinanceHttp'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
@@ -122,38 +124,61 @@ describe('BinanceBalanceModule', () => {
 
   it('should parse a single Binance raw balance', () => {
 
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
+    alunaSymbolMappingMock.returns(translateSymbolId)
+
+    const rawBalance1 = BINANCE_RAW_BALANCES[0]
+    const rawBalance2 = BINANCE_RAW_BALANCES[1]
+
     const parsedBalance1 = binanceBalanceModule.parse({
-      rawBalance: BINANCE_RAW_BALANCES[0],
+      rawBalance: rawBalance1,
     })
 
     const {
       asset,
       free,
       locked,
-    } = BINANCE_RAW_BALANCES[0]
+    } = rawBalance1
 
-    const available = parseFloat(free)
-    const total = parseFloat(free) + parseFloat(locked)
+    const available = Number(free)
+    const total = new BigNumber(available)
+      .plus(Number(locked))
+      .toNumber()
 
-    expect(parsedBalance1.symbolId).to.be.eq(asset)
+    expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
-
-    const parsedBalance2 = binanceBalanceModule.parse({
-      rawBalance: BINANCE_RAW_BALANCES[1],
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: asset,
+      symbolMappings: {},
     })
 
-    const currency2 = BINANCE_RAW_BALANCES[1].asset
-    const available2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
-    const total2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
-      + parseFloat(BINANCE_RAW_BALANCES[1].locked)
+
+    const parsedBalance2 = binanceBalanceModule.parse({
+      rawBalance: rawBalance2,
+    })
+
+    const available2 = Number(rawBalance2.free)
+    const total2 = new BigNumber(available2)
+      .plus(Number(rawBalance2.locked))
+      .toNumber()
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawBalance2.asset,
+      symbolMappings: {},
+    })
 
   })
 

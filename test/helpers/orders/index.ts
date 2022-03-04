@@ -175,22 +175,15 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
 
   let error
 
-  const supportedAccountIndex = exchangeSpecs.accounts.findIndex((acc) => {
-
-    return acc.supported && acc.implemented
-
-  })
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[supportedAccountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
-        supported: false,
+        type: AlunaAccountEnum.DERIVATIVES,
+        supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [],
       },
     ],
   )
@@ -235,20 +228,23 @@ const orderTypeIsSupported = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
-        supported: false,
+        type: AlunaAccountEnum.DERIVATIVES,
+        supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: false,
+            implemented: false,
+            mode: AlunaFeaturesModeEnum.WRITE,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
@@ -293,23 +289,27 @@ const orderTypeIsImplemented = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
+        type: AlunaAccountEnum.DERIVATIVES,
         supported: true,
-        implemented: false,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        implemented: true,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: true,
+            implemented: false,
+            mode: AlunaFeaturesModeEnum.WRITE,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
+
 
   const type = AlunaOrderTypesEnum.LIMIT
 
@@ -351,20 +351,23 @@ const orderTypeIsInWriteMode = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
+        type: AlunaAccountEnum.DERIVATIVES,
         supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.READ,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: true,
+            implemented: true,
+            mode: AlunaFeaturesModeEnum.READ,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
