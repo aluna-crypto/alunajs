@@ -29,6 +29,25 @@ export const FTX_RAW_LIMIT_ORDER: IFtxOrderSchema = {
   future: 'BNB/USD',
 }
 
+export const FTX_RAW_MARKET_ORDER: IFtxOrderSchema = {
+  id: 126122300599,
+  clientId: 123,
+  market: 'BNB/USD',
+  type: FtxOrderTypeEnum.MARKET,
+  side: FtxSideEnum.BUY,
+  price: null,
+  size: 3,
+  status: FtxOrderStatusEnum.OPEN,
+  filledSize: 0,
+  remainingSize: 3,
+  reduceOnly: false,
+  avgFillPrice: null,
+  postOnly: false,
+  ioc: true,
+  createdAt: '2022-03-04T12:46:02.053004+00:00',
+  future: 'BNB/USD',
+}
+
 
 export const FTX_PARSED_ORDER: IAlunaOrderSchema = {
   id: 126107749540,

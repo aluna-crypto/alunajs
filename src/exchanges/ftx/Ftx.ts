@@ -11,6 +11,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { FtxSpecs } from './FtxSpecs'
 import { FtxBalanceModule } from './modules/FtxBalanceModule'
 import { FtxMarketModule } from './modules/FtxMarketModule'
+import { FtxOrderWriteModule } from './modules/FtxOrderWriteModule'
 
 
 
@@ -38,7 +39,7 @@ export const Ftx: IAlunaExchangeStatic = class extends AAlunaExchange implements
 
     // this.key = new FtxKeyModule({ exchange: this })
     this.balance = new FtxBalanceModule({ exchange: this })
-    // this.order = new FtxOrderWriteModule({ exchange: this })
+    this.order = new FtxOrderWriteModule({ exchange: this })
 
   }
 

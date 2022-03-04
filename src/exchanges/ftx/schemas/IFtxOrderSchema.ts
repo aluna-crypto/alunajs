@@ -10,8 +10,8 @@ export interface IFtxOrderSchema {
   future: string
   id: number
   market: string
-  price: number
-  avgFillPrice: number
+  price: number | null
+  avgFillPrice: number | null
   remainingSize: number
   side: FtxSideEnum
   size: number
@@ -21,4 +21,12 @@ export interface IFtxOrderSchema {
   ioc: boolean
   postOnly: boolean
   clientId: number
+}
+
+export interface IFtxOrderRequest {
+  market: string
+  side: FtxSideEnum
+  type: FtxOrderTypeEnum
+  size: number
+  price: number | null
 }

@@ -39,7 +39,7 @@ describe('Ftx', () => {
 
     // expect(ftx.key).to.be.ok
     expect(ftx.balance).to.be.ok
-    // expect(ftx.order).to.be.ok
+    expect(ftx.order).to.be.ok
 
   })
 

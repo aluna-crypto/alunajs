@@ -33,7 +33,7 @@ export class FtxOrderParser {
     const baseSymbolId = splittedSymbolPair[0]
     const quoteSymbolId = splittedSymbolPair[1]
 
-    const total = size * price
+    const total = price ? size * price : size
 
     const orderStatus = FtxStatusAdapter.translateToAluna({ from: status })
 
@@ -44,7 +44,7 @@ export class FtxOrderParser {
       symbolPair: market,
       total,
       amount: size,
-      rate: price,
+      rate: price || undefined,
       exchangeId,
       baseSymbolId,
       quoteSymbolId,
