@@ -360,7 +360,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       if (!value) {
 
         throw new AlunaError({
-          httpStatusCode: 200,
+          httpStatusCode: 422,
           message: `'${key}' param is required to ${action} ${type} orders`,
           code: AlunaGenericErrorCodes.PARAM_ERROR,
         })

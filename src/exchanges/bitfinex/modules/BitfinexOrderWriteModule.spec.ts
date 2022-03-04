@@ -583,7 +583,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
 
     errorMessage = "'rate' param is required to edit limit orders"
@@ -604,7 +604,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
@@ -638,7 +638,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
 
     errorMsg = "'stopRate' param is required to edit stop-market orders"
@@ -659,7 +659,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
@@ -694,7 +694,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
 
     errorMsg = "'stopRate' param is required to edit stop-limit orders"
@@ -715,7 +715,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
@@ -750,7 +750,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
 
     errorMsg = "'limitRate' param is required to edit stop-limit orders"
@@ -771,7 +771,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
