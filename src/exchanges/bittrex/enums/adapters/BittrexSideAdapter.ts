@@ -22,13 +22,14 @@ export class BittrexSideAdapter {
 
 
 
-  static translateToBittrex = buildAdapter<AlunaOrderSideEnum, BittrexSideEnum>({
-    errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
-    mappings: {
-      [AlunaOrderSideEnum.BUY]: BittrexSideEnum.BUY,
-      [AlunaOrderSideEnum.SELL]: BittrexSideEnum.SELL,
-    },
-  })
+  static translateToBittrex =
+    buildAdapter<AlunaOrderSideEnum, BittrexSideEnum>({
+      errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [AlunaOrderSideEnum.BUY]: BittrexSideEnum.BUY,
+        [AlunaOrderSideEnum.SELL]: BittrexSideEnum.SELL,
+      },
+    })
 
 
 
