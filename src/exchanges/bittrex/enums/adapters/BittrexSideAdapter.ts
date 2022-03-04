@@ -1,5 +1,5 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BittrexSideEnum } from '../BittrexSideEnum'
 
 
@@ -12,21 +12,21 @@ export class BittrexSideAdapter {
 
 
 
-  static translateToAluna = buildAdapter<BittrexSideEnum, AlunaSideEnum>({
+  static translateToAluna = buildAdapter<BittrexSideEnum, AlunaOrderSideEnum>({
     errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [BittrexSideEnum.BUY]: AlunaSideEnum.LONG,
-      [BittrexSideEnum.SELL]: AlunaSideEnum.SHORT,
+      [BittrexSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+      [BittrexSideEnum.SELL]: AlunaOrderSideEnum.SELL,
     },
   })
 
 
 
-  static translateToBittrex = buildAdapter<AlunaSideEnum, BittrexSideEnum>({
+  static translateToBittrex = buildAdapter<AlunaOrderSideEnum, BittrexSideEnum>({
     errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [AlunaSideEnum.LONG]: BittrexSideEnum.BUY,
-      [AlunaSideEnum.SHORT]: BittrexSideEnum.SELL,
+      [AlunaOrderSideEnum.BUY]: BittrexSideEnum.BUY,
+      [AlunaOrderSideEnum.SELL]: BittrexSideEnum.SELL,
     },
   })
 

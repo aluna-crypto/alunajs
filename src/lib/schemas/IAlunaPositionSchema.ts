@@ -1,6 +1,6 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { AlunaPositionStatusEnum } from '../enums/AlunaPositionStatusEnum'
-import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
 
 
@@ -33,7 +33,7 @@ export interface IAlunaPositionSchema {
   liquidationPrice: number
 
   account: AlunaAccountEnum
-  side: AlunaSideEnum
+  side: AlunaOrderSideEnum
   status: AlunaPositionStatusEnum
 
   pl: number

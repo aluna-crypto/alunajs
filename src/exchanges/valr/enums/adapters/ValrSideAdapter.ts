@@ -1,5 +1,5 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { ValrSideEnum } from '../ValrSideEnum'
 
 
@@ -8,19 +8,19 @@ export class ValrSideAdapter {
 
   static readonly ERROR_MESSAGE_PREFIX = 'Order side'
 
-  static translateToAluna = buildAdapter<ValrSideEnum, AlunaSideEnum>({
+  static translateToAluna = buildAdapter<ValrSideEnum, AlunaOrderSideEnum>({
     errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [ValrSideEnum.BUY]: AlunaSideEnum.LONG,
-      [ValrSideEnum.SELL]: AlunaSideEnum.SHORT,
+      [ValrSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+      [ValrSideEnum.SELL]: AlunaOrderSideEnum.SELL,
     },
   })
 
-  static translateToValr = buildAdapter<AlunaSideEnum, ValrSideEnum>({
+  static translateToValr = buildAdapter<AlunaOrderSideEnum, ValrSideEnum>({
     errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [AlunaSideEnum.LONG]: ValrSideEnum.BUY,
-      [AlunaSideEnum.SHORT]: ValrSideEnum.SELL,
+      [AlunaOrderSideEnum.BUY]: ValrSideEnum.BUY,
+      [AlunaOrderSideEnum.SELL]: ValrSideEnum.SELL,
     },
   })
 

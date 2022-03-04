@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { Binance } from '../../Binance'
 import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
@@ -67,7 +67,7 @@ export const BINANCE_PARSED_ORDER: IAlunaOrderSchema = {
   amount: 1,
   rate: 0.1,
   account: AlunaAccountEnum.EXCHANGE,
-  side: AlunaSideEnum.LONG,
+  side: AlunaOrderSideEnum.BUY,
   status: AlunaOrderStatusEnum.OPEN,
   type: AlunaOrderTypesEnum.LIMIT,
   placedAt: new Date('+049497-08-20T11:52:39.000Z'),

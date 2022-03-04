@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BittrexSideEnum } from '../BittrexSideEnum'
 import { BittrexSideAdapter } from './BittrexSideAdapter'
 
@@ -18,11 +18,11 @@ describe('BittrexSideAdapter', () => {
 
       expect(BittrexSideAdapter.translateToAluna({
         from: BittrexSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(BittrexSideAdapter.translateToAluna({
         from: BittrexSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
       let error
@@ -53,11 +53,11 @@ describe('BittrexSideAdapter', () => {
     () => {
 
       expect(BittrexSideAdapter.translateToBittrex({
-        from: AlunaSideEnum.LONG,
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(BittrexSideEnum.BUY)
 
       expect(BittrexSideAdapter.translateToBittrex({
-        from: AlunaSideEnum.SHORT,
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(BittrexSideEnum.SELL)
 
       let result
@@ -66,7 +66,7 @@ describe('BittrexSideAdapter', () => {
       try {
 
         result = BittrexSideAdapter.translateToBittrex({
-          from: notSupported as AlunaSideEnum,
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

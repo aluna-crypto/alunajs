@@ -1,5 +1,5 @@
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 
 
@@ -12,38 +12,38 @@ export class PoloniexSideAdapter {
 
 
   static translateToAluna =
-  (params: { orderType: PoloniexOrderTypeEnum }): AlunaSideEnum => {
+  (params: { orderType: PoloniexOrderTypeEnum }): AlunaOrderSideEnum => {
 
     const { orderType } = params
 
     if (orderType === PoloniexOrderTypeEnum.BUY) {
 
-      return AlunaSideEnum.LONG
+      return AlunaOrderSideEnum.BUY
 
     }
 
     if (orderType === PoloniexOrderTypeEnum.SELL) {
 
-      return AlunaSideEnum.SHORT
+      return AlunaOrderSideEnum.SELL
 
     }
 
-    return AlunaSideEnum.LONG
+    return AlunaOrderSideEnum.BUY
 
   }
 
   static translateToPoloniex =
-    (params: { side: AlunaSideEnum }): PoloniexOrderTypeEnum => {
+    (params: { side: AlunaOrderSideEnum }): PoloniexOrderTypeEnum => {
 
       const { side } = params
 
-      if (side === AlunaSideEnum.LONG) {
+      if (side === AlunaOrderSideEnum.BUY) {
 
         return PoloniexOrderTypeEnum.BUY
 
       }
 
-      if (side === AlunaSideEnum.SHORT) {
+      if (side === AlunaOrderSideEnum.SELL) {
 
         return PoloniexOrderTypeEnum.SELL
 

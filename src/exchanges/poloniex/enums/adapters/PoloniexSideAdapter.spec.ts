@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 import { PoloniexSideAdapter } from './PoloniexSideAdapter'
 
@@ -14,15 +14,15 @@ describe('PoloniexSideAdapter', () => {
 
       expect(PoloniexSideAdapter.translateToAluna({
         orderType: PoloniexOrderTypeEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(PoloniexSideAdapter.translateToAluna({
         orderType: PoloniexOrderTypeEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       expect(PoloniexSideAdapter.translateToAluna({
         orderType: 'any-order-type' as any,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     })
 
@@ -32,11 +32,11 @@ describe('PoloniexSideAdapter', () => {
     () => {
 
       expect(PoloniexSideAdapter.translateToPoloniex({
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
       })).to.be.eq(PoloniexOrderTypeEnum.BUY)
 
       expect(PoloniexSideAdapter.translateToPoloniex({
-        side: AlunaSideEnum.SHORT,
+        side: AlunaOrderSideEnum.SELL,
       })).to.be.eq(PoloniexOrderTypeEnum.SELL)
 
       expect(PoloniexSideAdapter.translateToPoloniex({

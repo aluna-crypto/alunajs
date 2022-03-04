@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BinanceSideEnum } from '../BinanceSideEnum'
 import { BinanceSideAdapter } from './BinanceSideAdapter'
 
@@ -18,11 +18,11 @@ describe('BinanceSideAdapter', () => {
 
       expect(BinanceSideAdapter.translateToAluna({
         from: BinanceSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(BinanceSideAdapter.translateToAluna({
         from: BinanceSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
       let error
@@ -54,11 +54,11 @@ describe('BinanceSideAdapter', () => {
     () => {
 
       expect(BinanceSideAdapter.translateToBinance({
-        from: AlunaSideEnum.LONG,
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(BinanceSideEnum.BUY)
 
       expect(BinanceSideAdapter.translateToBinance({
-        from: AlunaSideEnum.SHORT,
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(BinanceSideEnum.SELL)
 
       let result
@@ -67,7 +67,7 @@ describe('BinanceSideAdapter', () => {
       try {
 
         result = BinanceSideAdapter.translateToBinance({
-          from: notSupported as AlunaSideEnum,
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

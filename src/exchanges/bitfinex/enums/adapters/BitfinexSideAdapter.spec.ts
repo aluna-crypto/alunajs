@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BitfinexSideAdapter } from './BitfinexSideAdapter'
 
 
@@ -11,11 +11,11 @@ describe('BitfinexSideAdapter', () => {
 
     expect(BitfinexSideAdapter.translateToAluna({
       amount: 100,
-    })).to.be.eq(AlunaSideEnum.LONG)
+    })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(BitfinexSideAdapter.translateToAluna({
       amount: -6,
-    })).to.be.eq(AlunaSideEnum.SHORT)
+    })).to.be.eq(AlunaOrderSideEnum.SELL)
 
   })
 
@@ -23,12 +23,12 @@ describe('BitfinexSideAdapter', () => {
 
     expect(BitfinexSideAdapter.translateToBitfinex({
       amount: 80,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
     })).to.be.eq('80')
 
     expect(BitfinexSideAdapter.translateToBitfinex({
       amount: 60,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })).to.be.eq('-60')
 
   })

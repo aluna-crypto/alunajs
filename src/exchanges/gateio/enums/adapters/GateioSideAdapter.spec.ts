@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { GateioSideEnum } from '../GateioSideEnum'
 import { GateioSideAdapter } from './GateioSideAdapter'
 
@@ -18,11 +18,11 @@ describe('GateioSideAdapter', () => {
 
       expect(GateioSideAdapter.translateToAluna({
         from: GateioSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(GateioSideAdapter.translateToAluna({
         from: GateioSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
 
@@ -52,18 +52,18 @@ describe('GateioSideAdapter', () => {
     () => {
 
       expect(GateioSideAdapter.translateToGateio({
-        from: AlunaSideEnum.LONG,
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(GateioSideEnum.BUY)
 
       expect(GateioSideAdapter.translateToGateio({
-        from: AlunaSideEnum.SHORT,
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(GateioSideEnum.SELL)
 
 
       try {
 
         GateioSideAdapter.translateToGateio({
-          from: notSupported as AlunaSideEnum,
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

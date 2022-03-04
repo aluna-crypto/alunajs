@@ -1,6 +1,6 @@
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
@@ -75,8 +75,8 @@ export class BitfinexOrderParser {
     })
 
     const side = amountOrig > 0
-      ? AlunaSideEnum.LONG
-      : AlunaSideEnum.SHORT
+      ? AlunaOrderSideEnum.BUY
+      : AlunaOrderSideEnum.SELL
 
     const amount = Math.abs(amountOrig)
 

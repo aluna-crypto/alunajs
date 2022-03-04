@@ -1,4 +1,4 @@
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 
 
 
@@ -6,20 +6,20 @@ export class BitfinexSideAdapter {
 
   static translateToAluna (params: {
     amount: number,
-  }): AlunaSideEnum {
+  }): AlunaOrderSideEnum {
 
     const { amount } = params
 
     const side = Number(amount) > 0
-      ? AlunaSideEnum.LONG
-      : AlunaSideEnum.SHORT
+      ? AlunaOrderSideEnum.BUY
+      : AlunaOrderSideEnum.SELL
 
     return side
 
   }
 
   static translateToBitfinex (params: {
-    side: AlunaSideEnum,
+    side: AlunaOrderSideEnum,
     amount: number | string,
   }): string {
 
@@ -28,7 +28,7 @@ export class BitfinexSideAdapter {
       amount,
     } = params
 
-    const fixedAmount = side === AlunaSideEnum.LONG
+    const fixedAmount = side === AlunaOrderSideEnum.BUY
       ? Math.abs(Number(amount))
       : -Math.abs(Number(amount))
 

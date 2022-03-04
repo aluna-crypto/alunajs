@@ -5,7 +5,7 @@ import {
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaBalanceGetTradableBalanceParams,
@@ -134,7 +134,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const { privateRequest } = BitfinexHttp
 
-    const dir = side === AlunaSideEnum.LONG
+    const dir = side === AlunaOrderSideEnum.BUY
       ? 1
       : -1
 

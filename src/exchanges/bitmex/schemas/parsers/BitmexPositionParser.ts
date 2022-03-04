@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import {
   IAlunaPositionSchema,
@@ -81,8 +81,8 @@ export class BitmexPositionParser {
       : bigNumber.times(10 ** -6).toNumber()
 
     const side = homeNotional > 0
-      ? AlunaSideEnum.LONG
-      : AlunaSideEnum.SHORT
+      ? AlunaOrderSideEnum.BUY
+      : AlunaOrderSideEnum.SELL
 
     const computeLeverage = crossMargin
       ? undefined

@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../../enums/ValrOrderTimeInForceEnum'
@@ -146,7 +146,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     rate: 12000,
     account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaSideEnum.LONG,
+    side: AlunaOrderSideEnum.BUY,
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
     placedAt: new Date('2021-06-08T00:55:12.982Z'),
@@ -162,7 +162,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     rate: 10000,
     account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaSideEnum.LONG,
+    side: AlunaOrderSideEnum.BUY,
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:47:50.350Z'),
@@ -178,7 +178,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     rate: 80000,
     account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaSideEnum.SHORT,
+    side: AlunaOrderSideEnum.SELL,
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.LIMIT,
     placedAt: new Date('2021-06-08T01:49:08.173Z'),
@@ -194,7 +194,7 @@ export const VALR_PARSED_OPEN_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.001,
     rate: 50000,
     account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaSideEnum.SHORT,
+    side: AlunaOrderSideEnum.SELL,
     status: AlunaOrderStatusEnum.OPEN,
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     placedAt: new Date('2021-06-08T01:51:43.960Z'),

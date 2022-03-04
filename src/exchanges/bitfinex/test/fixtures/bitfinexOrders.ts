@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexOrderTypesEnum } from '../../enums/BitfinexOrderTypesEnum'
 import { IBitfinexOrderSchema } from '../../schemas/IBitfinexOrderSchema'
@@ -370,7 +370,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'margin' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'market' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-28T13:53:32.000Z'),
@@ -423,7 +423,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: 0.065852,
     limitRate: undefined,
     account: 'margin' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'stop-market' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-28T13:48:17.000Z'),
@@ -476,7 +476,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'exchange' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'market' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-28T12:52:45.000Z'),
@@ -529,7 +529,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'exchange' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'canceled' as AlunaOrderStatusEnum,
     type: 'limit' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-14T16:04:05.000Z'),
@@ -566,7 +566,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: 3021.8,
     limitRate: 3779.1,
     account: 'exchange' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'canceled' as AlunaOrderStatusEnum,
     type: 'stop-limit' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-14T15:43:19.000Z'),
@@ -603,7 +603,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'exchange' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'limit' as AlunaOrderTypesEnum,
     placedAt: new Date('2022-01-14T15:36:54.000Z'),
@@ -656,7 +656,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'margin' as AlunaAccountEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'market' as AlunaOrderTypesEnum,
     placedAt: new Date('2021-12-29T16:40:41.000Z'),
@@ -709,7 +709,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'margin' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'partially-filled' as AlunaOrderStatusEnum,
     type: 'market' as AlunaOrderTypesEnum,
     placedAt: new Date('2021-12-29T16:35:56.000Z'),
@@ -762,7 +762,7 @@ export const BITFINEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     stopRate: undefined,
     limitRate: undefined,
     account: 'margin' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'filled' as AlunaOrderStatusEnum,
     type: 'market' as AlunaOrderTypesEnum,
     placedAt: new Date('2021-12-16T22:39:39.000Z'),

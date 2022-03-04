@@ -8,8 +8,8 @@ import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/o
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -96,7 +96,7 @@ describe('BitmexOrderWriteModule', () => {
     AlunaOrderTypesEnum.STOP_MARKET,
   ]
 
-  const sides = Object.values(AlunaSideEnum)
+  const sides = Object.values(AlunaOrderSideEnum)
 
   const promises = actions.map(async (action) => {
 
@@ -306,7 +306,7 @@ describe('BitmexOrderWriteModule', () => {
       const params: IAlunaOrderPlaceParams = {
         account: AlunaAccountEnum.DERIVATIVES,
         amount: 10,
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         symbolPair,
         type: AlunaOrderTypesEnum.LIMIT,
         rate: 50,
@@ -381,7 +381,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderEditParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 50,
@@ -429,7 +429,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
     }
@@ -494,7 +494,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_MARKET,
     }
@@ -559,7 +559,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       limitRate: 10,
@@ -625,7 +625,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       stopRate: 10,

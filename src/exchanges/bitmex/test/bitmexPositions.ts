@@ -1,6 +1,6 @@
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { IBitmexPositionSchema } from '../schemas/IBitmexPositionSchema'
 
@@ -489,7 +489,7 @@ export const BITMEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     closePrice: undefined,
     liquidationPrice: 0,
     account: 'derivatives' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'open' as AlunaPositionStatusEnum,
     pl: 0.000112,
     plPercentage: 0.4251,
@@ -517,7 +517,7 @@ export const BITMEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     closePrice: undefined,
     liquidationPrice: 0,
     account: 'derivatives' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'open' as AlunaPositionStatusEnum,
     pl: 0.00971,
     plPercentage: 0.2571,
@@ -545,7 +545,7 @@ export const BITMEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     closePrice: undefined,
     liquidationPrice: 0,
     account: 'derivatives' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'open' as AlunaPositionStatusEnum,
     pl: -0.00073,
     plPercentage: -0.5222,
@@ -573,7 +573,7 @@ export const BITMEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     closePrice: undefined,
     liquidationPrice: 0,
     account: 'derivatives' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'open' as AlunaPositionStatusEnum,
     pl: 0.000325,
     plPercentage: 0.0831,
@@ -601,7 +601,7 @@ export const BITMEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     closePrice: undefined,
     liquidationPrice: 0,
     account: 'derivatives' as AlunaAccountEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     status: 'open' as AlunaPositionStatusEnum,
     pl: 0.118407,
     plPercentage: 0.304,
