@@ -1,5 +1,5 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
-import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
+import { AlunaPositionSideEnum } from '../../../../lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
@@ -240,7 +240,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 2,
     account: 'margin' as AlunaAccountEnum,
     status: 'open' as AlunaPositionStatusEnum,
-    side: 'long' as AlunaOrderSideEnum,
+    side: 'long' as AlunaPositionSideEnum,
     basePrice: 1.1643,
     openPrice: 1.1643,
     pl: -0.006852799999999758,
@@ -271,7 +271,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 3,
     account: 'margin'as AlunaAccountEnum,
     status: 'closed'as AlunaPositionStatusEnum,
-    side: 'long'as AlunaOrderSideEnum,
+    side: 'long'as AlunaPositionSideEnum,
     basePrice: 1.1643,
     openPrice: 1.1643,
     pl: -0.006852799999999758,
@@ -302,7 +302,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 4,
     account: 'margin' as AlunaAccountEnum,
     status: 'open' as AlunaPositionStatusEnum,
-    side: 'long' as AlunaOrderSideEnum,
+    side: 'long' as AlunaPositionSideEnum,
     basePrice: 3.1643,
     openPrice: 3.1643,
     pl: -0.006852799999999758,
@@ -333,7 +333,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 4,
     account: 'margin' as AlunaAccountEnum,
     status: 'open' as AlunaPositionStatusEnum,
-    side: 'long' as AlunaOrderSideEnum,
+    side: 'long' as AlunaPositionSideEnum,
     basePrice: 3.1643,
     openPrice: 3.1643,
     pl: -0.006852799999999758,
@@ -364,7 +364,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 4,
     account: 'margin' as AlunaAccountEnum,
     status: 'open' as AlunaPositionStatusEnum,
-    side: 'long' as AlunaOrderSideEnum,
+    side: 'long' as AlunaPositionSideEnum,
     basePrice: 3.1643,
     openPrice: 3.1643,
     pl: -0.006852799999999758,
