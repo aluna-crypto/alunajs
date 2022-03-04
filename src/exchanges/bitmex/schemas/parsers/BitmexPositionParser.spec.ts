@@ -4,10 +4,10 @@ import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
-import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
+import { BitmexPositionSideAdapter } from '../../enums/adapters/BitmexPositionSideAdapter'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { BITMEX_RAW_POSITIONS } from '../../test/bitmexPositions'
 import { IBitmexPositionSchema } from '../IBitmexPositionSchema'
@@ -122,9 +122,9 @@ describe('BitmexPositionParser', () => {
 
       const expectedPlPercentage = unrealisedRoePcnt
 
-      const expectedSide = homeNotional > 0
-        ? AlunaOrderSideEnum.BUY
-        : AlunaOrderSideEnum.SELL
+      const expectedSide = BitmexPositionSideAdapter.translateToAluna({
+        homeNotional,
+      })
 
       const expectedLeverage = crossMargin
         ? undefined
