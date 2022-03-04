@@ -38,7 +38,7 @@ describe('Ftx', () => {
     expect(ftx.settings?.referralCode).to.eq(referralCode)
 
     // expect(ftx.key).to.be.ok
-    // expect(ftx.balance).to.be.ok
+    expect(ftx.balance).to.be.ok
     // expect(ftx.order).to.be.ok
 
   })

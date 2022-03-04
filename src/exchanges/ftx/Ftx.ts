@@ -8,8 +8,8 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { FtxLog } from './FtxLog'
 import { FtxSpecs } from './FtxSpecs'
+import { FtxBalanceModule } from './modules/FtxBalanceModule'
 import { FtxMarketModule } from './modules/FtxMarketModule'
 
 
@@ -36,10 +36,8 @@ export const Ftx: IAlunaExchangeStatic = class extends AAlunaExchange implements
 
     super(params)
 
-    FtxLog.info('Fodase')
-    // @TODO -> Update
     // this.key = new FtxKeyModule({ exchange: this })
-    // this.balance = new FtxBalanceModule({ exchange: this })
+    this.balance = new FtxBalanceModule({ exchange: this })
     // this.order = new FtxOrderWriteModule({ exchange: this })
 
   }
