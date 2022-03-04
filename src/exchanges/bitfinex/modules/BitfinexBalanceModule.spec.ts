@@ -1,9 +1,15 @@
 import { expect } from 'chai'
+import {
+  map,
+  omit,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
@@ -239,5 +245,61 @@ describe('BitfinexBalanceModule', () => {
     }).to.be.ok
 
   })
+
+  it(
+    'should throw if missing any required param to get tradable balace',
+    async () => {
+
+      mockExchange()
+
+      const { requestMock } = mockPrivateHttpRequest({
+        exchangeHttp: BitfinexHttp,
+        requestResponse: Promise.resolve([10]),
+      })
+
+      const params: IAlunaBalanceGetTradableBalanceParams = {
+        side: AlunaSideEnum.LONG,
+        symbolPair: 'fBTCUSD',
+        rate: 10,
+        account: AlunaAccountEnum.MARGIN,
+      }
+
+      const requiredParams = ['rate', 'account', 'side']
+
+      const expectPromises = map(requiredParams, async (param) => {
+
+        let error
+        let result
+
+        const modifiedParams = omit(params, param.toString()) as any
+
+        try {
+
+          result = await bitfinexBalanceModule.getTradableBalance(
+            modifiedParams,
+          )
+
+        } catch (err) {
+
+          error = err
+
+        }
+
+        expect(result).not.to.be.ok
+
+        const msg = `${param} param is required to get Bitfinex tradable balance`
+
+        expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+        expect(error.message).to.be.eq(msg)
+        expect(error.httpStatusCode).to.be.eq(422)
+
+        expect(requestMock.callCount).to.be.eq(0)
+
+      })
+
+      await Promise.resolve(expectPromises)
+
+    },
+  )
 
 })
