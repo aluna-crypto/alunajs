@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Bitfinex } from '../../Bitfinex'
+import { BitfinexPositionSideAdapter } from '../../enums/adapters/BitfinexPositionSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { BITFINEX_RAW_POSITIONS } from '../../test/fixtures/bitfinexPosition'
 import { BitfinexPositionParser } from './BitfinexPositionParser'
@@ -123,6 +124,10 @@ describe('BitfinexPositionParser', () => {
 
       }
 
+      const expectedSide = BitfinexPositionSideAdapter.translateToAluna({
+        amount,
+      })
+
       expect(parsedPosition.exchangeId).to.be.eq(Bitfinex.ID)
 
       expect(parsedPosition.id).to.be.eq(positionId)
@@ -132,6 +137,7 @@ describe('BitfinexPositionParser', () => {
       expect(parsedPosition.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedPosition.status).to.be.eq(computedStatus)
+      expect(parsedPosition.side).to.be.eq(expectedSide)
 
       expect(parsedPosition.basePrice).to.be.eq(computedBasePrice)
       expect(parsedPosition.openPrice).to.be.eq(computedOpenPrice)
