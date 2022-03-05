@@ -18,8 +18,8 @@ import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import { BitfinexOrderReadModule } from './BitfinexOrderReadModule'
 
@@ -322,7 +322,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       from: type,
     })
 
-    const translatedAmount = BitfinexSideAdapter.translateToBitfinex({
+    const translatedAmount = BitfinexOrderSideAdapter.translateToBitfinex({
       amount: Number(amount),
       side,
     })

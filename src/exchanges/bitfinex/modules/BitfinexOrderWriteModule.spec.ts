@@ -19,8 +19,8 @@ import {
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import {
   BITFINEX_PARSED_ORDERS,
@@ -189,7 +189,7 @@ describe('BitfinexOrderWriteModule', () => {
                 symbolPair,
               }
 
-              const expectedAmount = BitfinexSideAdapter.translateToBitfinex({
+              const expectedAmount = BitfinexOrderSideAdapter.translateToBitfinex({
                 amount,
                 side,
               })

@@ -2,7 +2,7 @@ import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 
 
 
-export class BitfinexSideAdapter {
+export class BitfinexOrderSideAdapter {
 
   static translateToAluna (params: {
     amount: number,
