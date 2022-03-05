@@ -4,7 +4,7 @@ import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 
 
 
-export class PoloniexSideAdapter {
+export class PoloniexOrderSideAdapter {
 
 
 

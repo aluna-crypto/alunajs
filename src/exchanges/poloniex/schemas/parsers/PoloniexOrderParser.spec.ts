@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
-import { PoloniexSideAdapter } from '../../enums/adapters/PoloniexSideAdapter'
+import { PoloniexOrderSideAdapter } from '../../enums/adapters/PoloniexOrderSideAdapter'
 import { PoloniexStatusAdapter } from '../../enums/adapters/PoloniexStatusAdapter'
 import { PoloniexOrderStatusEnum } from '../../enums/PoloniexOrderStatusEnum'
 import { Poloniex } from '../../Poloniex'
@@ -50,13 +50,13 @@ describe('PoloniexOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(PoloniexSideAdapter.translateToAluna({ orderType: rawSide }))
+      .to.be.eq(PoloniexOrderSideAdapter.translateToAluna({ orderType: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(PoloniexStatusAdapter.translateToAluna({
         from: PoloniexOrderStatusEnum.OPEN,
       }))
     expect(parsedOrder.type)
-      .to.be.eq(PoloniexSideAdapter.translateToAlunaOrderType())
+      .to.be.eq(PoloniexOrderSideAdapter.translateToAlunaOrderType())
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date(rawOrder.date).getTime())
 
