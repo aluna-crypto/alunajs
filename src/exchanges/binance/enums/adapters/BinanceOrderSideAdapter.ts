@@ -4,7 +4,7 @@ import { BinanceSideEnum } from '../BinanceSideEnum'
 
 
 
-export class BinanceSideAdapter {
+export class BinanceOrderSideAdapter {
 
 
 
@@ -13,7 +13,7 @@ export class BinanceSideAdapter {
 
 
   static translateToAluna = buildAdapter<BinanceSideEnum, AlunaOrderSideEnum>({
-    errorMessagePrefix: BinanceSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: BinanceOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [BinanceSideEnum.BUY]: AlunaOrderSideEnum.BUY,
       [BinanceSideEnum.SELL]: AlunaOrderSideEnum.SELL,
@@ -24,7 +24,7 @@ export class BinanceSideAdapter {
 
   static translateToBinance =
     buildAdapter<AlunaOrderSideEnum, BinanceSideEnum>({
-      errorMessagePrefix: BinanceSideAdapter.ERROR_MESSAGE_PREFIX,
+      errorMessagePrefix: BinanceOrderSideAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
         [AlunaOrderSideEnum.BUY]: BinanceSideEnum.BUY,
         [AlunaOrderSideEnum.SELL]: BinanceSideEnum.SELL,

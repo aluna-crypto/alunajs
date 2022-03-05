@@ -3,8 +3,8 @@ import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../../Binance'
+import { BinanceOrderSideAdapter } from '../../enums/adapters/BinanceOrderSideAdapter'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
-import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
 import { IBinanceMarketWithCurrency } from '../IBinanceMarketSchema'
 import { IBinanceOrderSchema } from '../IBinanceOrderSchema'
@@ -122,7 +122,7 @@ export class BinanceOrderParser {
       baseSymbolId,
       quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      side: BinanceSideAdapter.translateToAluna({ from: side }),
+      side: BinanceOrderSideAdapter.translateToAluna({ from: side }),
       status: orderStatus,
       type: BinanceOrderTypeAdapter.translateToAluna({ from: type }),
       placedAt: new Date(createdAt),

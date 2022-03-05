@@ -3,11 +3,11 @@ import { expect } from 'chai'
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BinanceSideEnum } from '../BinanceSideEnum'
-import { BinanceSideAdapter } from './BinanceSideAdapter'
+import { BinanceOrderSideAdapter } from './BinanceOrderSideAdapter'
 
 
 
-describe('BinanceSideAdapter', () => {
+describe('BinanceOrderSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
@@ -16,11 +16,11 @@ describe('BinanceSideAdapter', () => {
   it('should properly translate Binance order sides to Aluna order sides',
     () => {
 
-      expect(BinanceSideAdapter.translateToAluna({
+      expect(BinanceOrderSideAdapter.translateToAluna({
         from: BinanceSideEnum.BUY,
       })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-      expect(BinanceSideAdapter.translateToAluna({
+      expect(BinanceOrderSideAdapter.translateToAluna({
         from: BinanceSideEnum.SELL,
       })).to.be.eq(AlunaOrderSideEnum.SELL)
 
@@ -29,7 +29,7 @@ describe('BinanceSideAdapter', () => {
 
       try {
 
-        result = BinanceSideAdapter.translateToAluna({
+        result = BinanceOrderSideAdapter.translateToAluna({
           from: notSupported as BinanceSideEnum,
         })
 
@@ -53,11 +53,11 @@ describe('BinanceSideAdapter', () => {
   it('should properly translate Aluna order sides to Binance order sides',
     () => {
 
-      expect(BinanceSideAdapter.translateToBinance({
+      expect(BinanceOrderSideAdapter.translateToBinance({
         from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(BinanceSideEnum.BUY)
 
-      expect(BinanceSideAdapter.translateToBinance({
+      expect(BinanceOrderSideAdapter.translateToBinance({
         from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(BinanceSideEnum.SELL)
 
@@ -66,7 +66,7 @@ describe('BinanceSideAdapter', () => {
 
       try {
 
-        result = BinanceSideAdapter.translateToBinance({
+        result = BinanceOrderSideAdapter.translateToBinance({
           from: notSupported as AlunaOrderSideEnum,
         })
 
