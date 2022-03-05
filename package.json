@@ -2,7 +2,7 @@
   "name": "aluna.js",
   "version": "0.0.1",
   "description": "Aluna exchanges hub.",
-  "main": "dist/src/index.js",
+  "main": "dist/index.js",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
     "Sergio Torres<sergio@aluna.social>"
