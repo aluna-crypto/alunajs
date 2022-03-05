@@ -16,8 +16,6 @@ import * as ValrHttpMod from './ValrHttp'
 
 describe('ValrHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const { ValrHttp } = ValrHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'

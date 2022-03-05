@@ -16,8 +16,6 @@ import * as BinanceHttpMod from './BinanceHttp'
 
 describe('BinanceHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const { BinanceHttp } = BinanceHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'

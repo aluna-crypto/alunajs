@@ -16,8 +16,6 @@ import * as BitmexHttpMod from './BitmexHttp'
 
 describe('BitmexHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const {
     generateAuthHeader,
     bitmexRequestErrorHandler,
