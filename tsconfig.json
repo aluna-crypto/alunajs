@@ -20,6 +20,12 @@
     "src/**/*.ts"
   ],
   "exclude": [
+    ".history",
     "node_modules",
+    "**/*.spec.ts",
+    "**/*.mock.ts",
+    "**/test/**/*",
+    "**/mocks/**/*",
+    "**/fixtures/**/*",
   ]
 }
