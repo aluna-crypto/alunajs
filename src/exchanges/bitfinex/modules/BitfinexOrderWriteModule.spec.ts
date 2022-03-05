@@ -216,7 +216,7 @@ describe('BitfinexOrderWriteModule', () => {
 
               } else {
 
-                expectedRequestBody.id = id
+                expectedRequestBody.id = Number(id)
 
                 expectedUrl = 'https://api.bitfinex.com/v2/auth/w/order/update'
 
@@ -778,7 +778,7 @@ describe('BitfinexOrderWriteModule', () => {
 
   it('should properly cancel Bitfinex orders', async () => {
 
-    mockKeySecret()
+    const { exchangeMock } = mockKeySecret()
 
     const parsedOrder = BITFINEX_PARSED_ORDERS[0]
 
@@ -793,13 +793,18 @@ describe('BitfinexOrderWriteModule', () => {
     )
 
     const params: IAlunaOrderCancelParams = {
-      id: '10',
+      id,
       symbolPair: 'tBTCETH',
     }
 
     const canceledOrder = await bitfinexOrderWriteModule.cancel(params)
 
     expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.args[0][0]).to.deep.eq({
+      url: 'https://api.bitfinex.com/v2/auth/w/order/cancel',
+      body: { id: Number(id) },
+      keySecret: exchangeMock.getValue().keySecret,
+    })
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.args[0][0]).to.deep.eq(params)
