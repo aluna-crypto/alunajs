@@ -4,7 +4,7 @@ import { BittrexSideEnum } from '../BittrexSideEnum'
 
 
 
-export class BittrexSideAdapter {
+export class BittrexOrderSideAdapter {
 
 
 
@@ -13,7 +13,7 @@ export class BittrexSideAdapter {
 
 
   static translateToAluna = buildAdapter<BittrexSideEnum, AlunaOrderSideEnum>({
-    errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: BittrexOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [BittrexSideEnum.BUY]: AlunaOrderSideEnum.BUY,
       [BittrexSideEnum.SELL]: AlunaOrderSideEnum.SELL,
@@ -24,7 +24,7 @@ export class BittrexSideAdapter {
 
   static translateToBittrex =
     buildAdapter<AlunaOrderSideEnum, BittrexSideEnum>({
-      errorMessagePrefix: BittrexSideAdapter.ERROR_MESSAGE_PREFIX,
+      errorMessagePrefix: BittrexOrderSideAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
         [AlunaOrderSideEnum.BUY]: BittrexSideEnum.BUY,
         [AlunaOrderSideEnum.SELL]: BittrexSideEnum.SELL,

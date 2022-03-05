@@ -17,8 +17,8 @@ import {
   BittrexSpecs,
   PROD_BITTREX_URL,
 } from '../BittrexSpecs'
+import { BittrexOrderSideAdapter } from '../enums/adapters/BittrexOrderSideAdapter'
 import { BittrexOrderTypeAdapter } from '../enums/adapters/BittrexOrderTypeAdapter'
-import { BittrexSideAdapter } from '../enums/adapters/BittrexSideAdapter'
 import { BittrexOrderTimeInForceEnum } from '../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../enums/BittrexOrderTypeEnum'
 import {
@@ -106,7 +106,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
     })
 
     const body: IBittrexOrderRequest = {
-      direction: BittrexSideAdapter.translateToBittrex({ from: side }),
+      direction: BittrexOrderSideAdapter.translateToBittrex({ from: side }),
       marketSymbol: symbolPair,
       type: translatedOrderType,
       quantity: Number(amount),
