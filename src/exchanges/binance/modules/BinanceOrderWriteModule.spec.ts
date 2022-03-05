@@ -6,9 +6,9 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -72,7 +72,7 @@ describe('BinanceOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -111,7 +111,7 @@ describe('BinanceOrderWriteModule', () => {
     const placeResponse2 = await binanceOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     const requestBody2: IBinanceOrderRequest = {
@@ -167,7 +167,7 @@ describe('BinanceOrderWriteModule', () => {
         amount: 0.001,
         rate: 10000,
         symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
       }
@@ -226,7 +226,7 @@ describe('BinanceOrderWriteModule', () => {
       const placeOrderParams: IAlunaOrderPlaceParams = {
         amount: 0.001,
         symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
         // without rate
@@ -278,7 +278,7 @@ describe('BinanceOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -344,7 +344,7 @@ describe('BinanceOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -379,7 +379,7 @@ describe('BinanceOrderWriteModule', () => {
     // place short market order
     const placeResponse2 = await binanceOrderWriteModule.place({
       ...placeOrderParams,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     expect(requestMock.callCount).to.be.eq(2)
@@ -546,7 +546,7 @@ describe('BinanceOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }

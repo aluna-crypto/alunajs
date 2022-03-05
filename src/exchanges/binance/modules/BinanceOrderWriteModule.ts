@@ -18,8 +18,8 @@ import {
   BinanceSpecs,
   PROD_BINANCE_URL,
 } from '../BinanceSpecs'
+import { BinanceOrderSideAdapter } from '../enums/adapters/BinanceOrderSideAdapter'
 import { BinanceOrderTypeAdapter } from '../enums/adapters/BinanceOrderTypeAdapter'
-import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 import {
@@ -107,7 +107,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
     })
 
     const body: IBinanceOrderRequest = {
-      side: BinanceSideAdapter.translateToBinance({ from: side }),
+      side: BinanceOrderSideAdapter.translateToBinance({ from: side }),
       symbol: symbolPair,
       type: translatedOrderType,
       quantity: amount,

@@ -6,9 +6,9 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
@@ -41,7 +41,7 @@ describe('ValrOrderWriteModule', () => {
     amount: 0.001,
     rate: 10000,
     symbolPair: 'ETHZAR',
-    side: AlunaSideEnum.LONG,
+    side: AlunaOrderSideEnum.BUY,
     type: AlunaOrderTypesEnum.LIMIT,
     account: AlunaAccountEnum.EXCHANGE,
   }
@@ -129,7 +129,7 @@ describe('ValrOrderWriteModule', () => {
     const placeResponse2 = await valrOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     const requestBody2 = {
@@ -234,7 +234,7 @@ describe('ValrOrderWriteModule', () => {
     // place short market order
     const placeResponse2 = await valrOrderWriteModule.place({
       ...marketOrderPlaceParams,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     expect(requestMock.callCount).to.be.eq(2)
@@ -358,7 +358,7 @@ describe('ValrOrderWriteModule', () => {
       amount: 0.00,
       rate: 0,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -434,7 +434,7 @@ describe('ValrOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }

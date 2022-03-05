@@ -1,13 +1,13 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { BittrexSideEnum } from '../BittrexSideEnum'
-import { BittrexSideAdapter } from './BittrexSideAdapter'
+import { BittrexOrderSideAdapter } from './BittrexOrderSideAdapter'
 
 
 
-describe('BittrexSideAdapter', () => {
+describe('BittrexOrderSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
@@ -16,20 +16,20 @@ describe('BittrexSideAdapter', () => {
   it('should properly translate Bittrex order sides to Aluna order sides',
     () => {
 
-      expect(BittrexSideAdapter.translateToAluna({
+      expect(BittrexOrderSideAdapter.translateToAluna({
         from: BittrexSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-      expect(BittrexSideAdapter.translateToAluna({
+      expect(BittrexOrderSideAdapter.translateToAluna({
         from: BittrexSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
       let error
 
       try {
 
-        result = BittrexSideAdapter.translateToAluna({
+        result = BittrexOrderSideAdapter.translateToAluna({
           from: notSupported as BittrexSideEnum,
         })
 
@@ -52,12 +52,12 @@ describe('BittrexSideAdapter', () => {
   it('should properly translate Aluna order sides to Bittrex order sides',
     () => {
 
-      expect(BittrexSideAdapter.translateToBittrex({
-        from: AlunaSideEnum.LONG,
+      expect(BittrexOrderSideAdapter.translateToBittrex({
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(BittrexSideEnum.BUY)
 
-      expect(BittrexSideAdapter.translateToBittrex({
-        from: AlunaSideEnum.SHORT,
+      expect(BittrexOrderSideAdapter.translateToBittrex({
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(BittrexSideEnum.SELL)
 
       let result
@@ -65,8 +65,8 @@ describe('BittrexSideAdapter', () => {
 
       try {
 
-        result = BittrexSideAdapter.translateToBittrex({
-          from: notSupported as AlunaSideEnum,
+        result = BittrexOrderSideAdapter.translateToBittrex({
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

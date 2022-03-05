@@ -8,7 +8,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaBalanceGetTradableBalanceParams } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
@@ -198,7 +198,7 @@ describe('BitfinexBalanceModule', () => {
     )
 
     const params: IAlunaBalanceGetTradableBalanceParams = {
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       rate: 45,
       symbolPair: 'fBTCUSD',
       account: AlunaAccountEnum.MARGIN,
@@ -227,7 +227,7 @@ describe('BitfinexBalanceModule', () => {
     // SHORT
     requestMock.returns(Promise.resolve([tradableBalace]))
 
-    params.side = AlunaSideEnum.SHORT
+    params.side = AlunaOrderSideEnum.SELL
 
     parsedBalances = await bitfinexBalanceModule.getTradableBalance(
       params,
@@ -258,7 +258,7 @@ describe('BitfinexBalanceModule', () => {
       })
 
       const params: IAlunaBalanceGetTradableBalanceParams = {
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         symbolPair: 'fBTCUSD',
         rate: 10,
         account: AlunaAccountEnum.MARGIN,

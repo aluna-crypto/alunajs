@@ -5,8 +5,8 @@ import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/o
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -19,8 +19,8 @@ import {
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import {
   BITFINEX_PARSED_ORDERS,
@@ -155,7 +155,7 @@ describe('BitfinexOrderWriteModule', () => {
     AlunaOrderTypesEnum.STOP_MARKET,
   ]
 
-  const sides = Object.values(AlunaSideEnum)
+  const sides = Object.values(AlunaOrderSideEnum)
 
   const promises = actions.map(async (action) => {
 
@@ -189,10 +189,11 @@ describe('BitfinexOrderWriteModule', () => {
                 symbolPair,
               }
 
-              const expectedAmount = BitfinexSideAdapter.translateToBitfinex({
-                amount,
-                side,
-              })
+              const expectedAmount = BitfinexOrderSideAdapter
+                .translateToBitfinex({
+                  amount,
+                  side,
+                })
 
               const expectedType = BitfinexOrderTypeAdapter
                 .translateToBitfinex({
@@ -215,7 +216,7 @@ describe('BitfinexOrderWriteModule', () => {
 
               } else {
 
-                expectedRequestBody.id = id
+                expectedRequestBody.id = Number(id)
 
                 expectedUrl = 'https://api.bitfinex.com/v2/auth/w/order/update'
 
@@ -316,7 +317,7 @@ describe('BitfinexOrderWriteModule', () => {
         result = await bitfinexOrderWriteModule.place({
           account: AlunaAccountEnum.EXCHANGE,
           amount: 10,
-          side: AlunaSideEnum.LONG,
+          side: AlunaOrderSideEnum.BUY,
           symbolPair: 'tETHBTC',
           type: AlunaOrderTypesEnum.LIMIT,
           rate: 50,
@@ -363,7 +364,7 @@ describe('BitfinexOrderWriteModule', () => {
         result = await bitfinexOrderWriteModule.edit({
           account: AlunaAccountEnum.EXCHANGE,
           amount: 10,
-          side: AlunaSideEnum.LONG,
+          side: AlunaOrderSideEnum.BUY,
           symbolPair: 'tETHBTC',
           type: AlunaOrderTypesEnum.LIMIT,
           rate: 50,
@@ -407,7 +408,7 @@ describe('BitfinexOrderWriteModule', () => {
       const params: IAlunaOrderPlaceParams = {
         account: AlunaAccountEnum.EXCHANGE,
         amount: 10,
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         symbolPair: 'tETHBTC',
         type: AlunaOrderTypesEnum.LIMIT,
         rate: 50,
@@ -527,7 +528,7 @@ describe('BitfinexOrderWriteModule', () => {
     const params: IAlunaOrderEditParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair: 'tETHBTC',
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 50,
@@ -565,7 +566,7 @@ describe('BitfinexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
     }
@@ -620,7 +621,7 @@ describe('BitfinexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_MARKET,
     }
@@ -675,7 +676,7 @@ describe('BitfinexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       limitRate: 10,
@@ -731,7 +732,7 @@ describe('BitfinexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       stopRate: 10,
@@ -777,7 +778,7 @@ describe('BitfinexOrderWriteModule', () => {
 
   it('should properly cancel Bitfinex orders', async () => {
 
-    mockKeySecret()
+    const { exchangeMock } = mockKeySecret()
 
     const parsedOrder = BITFINEX_PARSED_ORDERS[0]
 
@@ -792,13 +793,18 @@ describe('BitfinexOrderWriteModule', () => {
     )
 
     const params: IAlunaOrderCancelParams = {
-      id: '10',
+      id,
       symbolPair: 'tBTCETH',
     }
 
     const canceledOrder = await bitfinexOrderWriteModule.cancel(params)
 
     expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.args[0][0]).to.deep.eq({
+      url: 'https://api.bitfinex.com/v2/auth/w/order/cancel',
+      body: { id: Number(id) },
+      keySecret: exchangeMock.getValue().keySecret,
+    })
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.args[0][0]).to.deep.eq(params)

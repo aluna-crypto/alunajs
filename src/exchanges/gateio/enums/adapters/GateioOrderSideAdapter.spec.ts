@@ -1,13 +1,13 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { GateioSideEnum } from '../GateioSideEnum'
-import { GateioSideAdapter } from './GateioSideAdapter'
+import { GateioOrderSideAdapter } from './GateioOrderSideAdapter'
 
 
 
-describe('GateioSideAdapter', () => {
+describe('GateioOrderSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
@@ -16,19 +16,19 @@ describe('GateioSideAdapter', () => {
   it('should properly translate Gateio order sides to Aluna order sides',
     () => {
 
-      expect(GateioSideAdapter.translateToAluna({
+      expect(GateioOrderSideAdapter.translateToAluna({
         from: GateioSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-      expect(GateioSideAdapter.translateToAluna({
+      expect(GateioOrderSideAdapter.translateToAluna({
         from: GateioSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
 
       try {
 
-        result = GateioSideAdapter.translateToAluna({
+        result = GateioOrderSideAdapter.translateToAluna({
           from: notSupported as GateioSideEnum,
         })
 
@@ -51,19 +51,19 @@ describe('GateioSideAdapter', () => {
   it('should properly translate Aluna order sides to Gateio order sides',
     () => {
 
-      expect(GateioSideAdapter.translateToGateio({
-        from: AlunaSideEnum.LONG,
+      expect(GateioOrderSideAdapter.translateToGateio({
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(GateioSideEnum.BUY)
 
-      expect(GateioSideAdapter.translateToGateio({
-        from: AlunaSideEnum.SHORT,
+      expect(GateioOrderSideAdapter.translateToGateio({
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(GateioSideEnum.SELL)
 
 
       try {
 
-        GateioSideAdapter.translateToGateio({
-          from: notSupported as AlunaSideEnum,
+        GateioOrderSideAdapter.translateToGateio({
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

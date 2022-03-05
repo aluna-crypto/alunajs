@@ -3,8 +3,8 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { BinanceOrderSideAdapter } from '../../enums/adapters/BinanceOrderSideAdapter'
 import { BinanceOrderTypeAdapter } from '../../enums/adapters/BinanceOrderTypeAdapter'
-import { BinanceSideAdapter } from '../../enums/adapters/BinanceSideAdapter'
 import { BinanceStatusAdapter } from '../../enums/adapters/BinanceStatusAdapter'
 import { BinanceOrderStatusEnum } from '../../enums/BinanceOrderStatusEnum'
 import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../../test/fixtures/binanceMarket'
@@ -64,7 +64,7 @@ describe('BinanceOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(BinanceSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(BinanceOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(BinanceStatusAdapter.translateToAluna({ from: rawStatus }))
     expect(parsedOrder.type)

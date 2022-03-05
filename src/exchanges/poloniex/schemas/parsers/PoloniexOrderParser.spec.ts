@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
-import { PoloniexSideAdapter } from '../../enums/adapters/PoloniexSideAdapter'
+import { PoloniexOrderSideAdapter } from '../../enums/adapters/PoloniexOrderSideAdapter'
 import { PoloniexStatusAdapter } from '../../enums/adapters/PoloniexStatusAdapter'
 import { PoloniexOrderStatusEnum } from '../../enums/PoloniexOrderStatusEnum'
 import { Poloniex } from '../../Poloniex'
@@ -38,6 +38,14 @@ describe('PoloniexOrderParser', () => {
     const rawSide = rawOrder.type
     const rawTotal = rawOrder.total
 
+    const expectedSide = PoloniexOrderSideAdapter.translateToAluna({
+      orderType: rawSide,
+    })
+
+    const expectedStatus = PoloniexStatusAdapter.translateToAluna({
+      from: PoloniexOrderStatusEnum.OPEN,
+    })
+
     expect(parsedOrder.id).to.be.eq(rawOrder.orderNumber)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.currencyPair)
     expect(parsedOrder.baseSymbolId).to.be.eq(translateSymbolId)
@@ -49,14 +57,10 @@ describe('PoloniexOrderParser', () => {
     expect(parsedOrder.rate).to.be.eq(parseFloat(rawPrice))
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
-    expect(parsedOrder.side)
-      .to.be.eq(PoloniexSideAdapter.translateToAluna({ orderType: rawSide }))
-    expect(parsedOrder.status)
-      .to.be.eq(PoloniexStatusAdapter.translateToAluna({
-        from: PoloniexOrderStatusEnum.OPEN,
-      }))
+    expect(parsedOrder.side).to.be.eq(expectedSide)
+    expect(parsedOrder.status).to.be.eq(expectedStatus)
     expect(parsedOrder.type)
-      .to.be.eq(PoloniexSideAdapter.translateToAlunaOrderType())
+      .to.be.eq(PoloniexOrderSideAdapter.translateToAlunaOrderType())
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date(rawOrder.date).getTime())
 

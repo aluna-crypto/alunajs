@@ -16,8 +16,6 @@ import * as PoloniexHttpMod from './PoloniexHttp'
 
 describe('PoloniexHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const { PoloniexHttp } = PoloniexHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'

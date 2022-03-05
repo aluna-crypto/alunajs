@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import {
   IAlunaPositionSchema,
@@ -10,6 +9,7 @@ import {
 } from '../../../../lib/schemas/IAlunaPositionSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
 import { BitmexSpecs } from '../../BitmexSpecs'
+import { BitmexPositionSideAdapter } from '../../enums/adapters/BitmexPositionSideAdapter'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { IBitmexPositionSchema } from '../IBitmexPositionSchema'
 import { BitmexOrderParser } from './BitmexOrderParser'
@@ -80,9 +80,9 @@ export class BitmexPositionParser {
       ? bigNumber.times(10 ** -8).toNumber()
       : bigNumber.times(10 ** -6).toNumber()
 
-    const side = homeNotional > 0
-      ? AlunaSideEnum.LONG
-      : AlunaSideEnum.SHORT
+    const side = BitmexPositionSideAdapter.translateToAluna({
+      homeNotional,
+    })
 
     const computeLeverage = crossMargin
       ? undefined

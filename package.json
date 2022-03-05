@@ -10,14 +10,14 @@
   "license": "MIT",
   "private": false,
   "engines": {
-    "node": "^16.13"
+    "node": "^16.14"
   },
   "scripts": {
     "lintfix": "eslint --fix --ext .js,.ts . --max-warnings=0",
     "clean": "rimraf dist",
     "build": "yarn clean && yarn build:index && tsc -p ./tsconfig.dist.json && yarn build:index:clean",
-    "build:index": "yarn cti entrypoint ./src -s false -e 'exchanges' -i '.spec' -o index.ts -w -b",
     "build:index:clean": "rm -rf src/index.ts",
+    "build:index": "yarn cti entrypoint ./src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
     "build:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
     "test:jest": "jest --coverage=false",
     "test:jest:watch": "jest --watchAll --coverage=false",

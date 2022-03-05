@@ -1,6 +1,4 @@
 module.exports = {
-  all: true,
-  'check-coverage': true,
   extension: ['.ts'],
   include: ['src/**/*.ts'],
   exclude: [
@@ -8,10 +6,12 @@ module.exports = {
     '**/test/**',
     '**/*.mock.ts',
   ],
+  all: false,
+  'skip-full': true,
+  'check-coverage': true,
   'report-dir': `${__dirname}/coverage-mocha`,
   'temp-dir': `${__dirname}/coverage-nyc`,
-  'skip-full': false,
-  reporter: ['text', 'html'],
+  reporter: ['text', 'html', 'text-summary'],
   branches: 100,
   lines: 100,
   functions: 100,

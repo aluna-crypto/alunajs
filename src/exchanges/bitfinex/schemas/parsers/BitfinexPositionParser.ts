@@ -3,7 +3,7 @@ import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStat
 import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
-import { BitfinexSideAdapter } from '../../enums/adapters/BitfinexSideAdapter'
+import { BitfinexPositionSideAdapter } from '../../enums/adapters/BitfinexPositionSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { IBitfinexPositionSchema } from '../IBitfinexPositionSchema'
 import { BitfinexSymbolParser } from './BitfinexSymbolParser'
@@ -62,7 +62,7 @@ export class BitfinexPositionParser {
       ? AlunaPositionStatusEnum.OPEN
       : AlunaPositionStatusEnum.CLOSED
 
-    const side = BitfinexSideAdapter.translateToAluna({
+    const side = BitfinexPositionSideAdapter.translateToAluna({
       amount,
     })
 

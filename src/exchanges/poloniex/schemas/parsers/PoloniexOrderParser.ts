@@ -2,7 +2,7 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
-import { PoloniexSideAdapter } from '../../enums/adapters/PoloniexSideAdapter'
+import { PoloniexOrderSideAdapter } from '../../enums/adapters/PoloniexOrderSideAdapter'
 import { PoloniexStatusAdapter } from '../../enums/adapters/PoloniexStatusAdapter'
 import { Poloniex } from '../../Poloniex'
 import {
@@ -86,9 +86,9 @@ export class PoloniexOrderParser {
       baseSymbolId,
       quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      side: PoloniexSideAdapter.translateToAluna({ orderType: type }),
+      side: PoloniexOrderSideAdapter.translateToAluna({ orderType: type }),
       status: orderStatus,
-      type: PoloniexSideAdapter.translateToAlunaOrderType(),
+      type: PoloniexOrderSideAdapter.translateToAlunaOrderType(),
       placedAt: new Date(date),
       canceledAt,
       filledAt,

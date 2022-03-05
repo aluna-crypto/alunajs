@@ -18,8 +18,6 @@ describe('GateioHttp', () => {
 
   const { GateioHttp } = GateioHttpMod
 
-  afterEach(Sinon.restore)
-
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
   const dummyBody = { dummy: 'dummy-body' }

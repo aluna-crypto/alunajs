@@ -3,9 +3,9 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
@@ -342,7 +342,7 @@ describe('PoloniexOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.SHORT)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.SELL)
 
   })
 
@@ -379,7 +379,7 @@ describe('PoloniexOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.SHORT)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.SELL)
 
   })
 

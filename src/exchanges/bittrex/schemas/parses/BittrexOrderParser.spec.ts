@@ -2,8 +2,8 @@ import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { BittrexOrderSideAdapter } from '../../enums/adapters/BittrexOrderSideAdapter'
 import { BittrexOrderTypeAdapter } from '../../enums/adapters/BittrexOrderTypeAdapter'
-import { BittrexSideAdapter } from '../../enums/adapters/BittrexSideAdapter'
 import { BittrexStatusAdapter } from '../../enums/adapters/BittrexStatusAdapter'
 import {
   BITTREX_RAW_LIMIT_ORDER,
@@ -50,7 +50,7 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(BittrexOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(BittrexStatusAdapter.translateToAluna(
         {
@@ -103,7 +103,7 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(BittrexOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(BittrexStatusAdapter.translateToAluna(
         { fillQuantity: rawFillQty, quantity: rawQty, from: rawStatus },

@@ -2,8 +2,8 @@ import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { GateioOrderSideAdapter } from '../../enums/adapters/GateioOrderSideAdapter'
 import { GateioOrderTypeAdapter } from '../../enums/adapters/GateioOrderTypeAdapter'
-import { GateioSideAdapter } from '../../enums/adapters/GateioSideAdapter'
 import { GateioStatusAdapter } from '../../enums/adapters/GateioStatusAdapter'
 import { GateioOrderStatusEnum } from '../../enums/GateioOrderStatusEnum'
 import { GATEIO_RAW_ORDER } from '../../test/fixtures/gateioOrder'
@@ -46,7 +46,7 @@ describe('GateioOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(GateioSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(GateioOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status).to.be.eq(GateioStatusAdapter.translateToAluna({
       from: rawStatus,
       leftToFill: rawLeftToFill,

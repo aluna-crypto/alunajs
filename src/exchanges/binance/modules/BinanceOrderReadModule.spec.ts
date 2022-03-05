@@ -4,9 +4,9 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
@@ -229,7 +229,7 @@ describe('BinanceOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -267,7 +267,7 @@ describe('BinanceOrderReadModule', () => {
     expect(parseResponse.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parseResponse.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parseResponse.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parseResponse.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parseResponse.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(marketListRawMock.callCount).to.be.eq(1)
 

@@ -6,9 +6,9 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -70,7 +70,7 @@ describe('GateioOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -107,7 +107,7 @@ describe('GateioOrderWriteModule', () => {
     const placeResponse2 = await gateioOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.LIMIT,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     const requestBody2: IGateioOrderRequest = {
@@ -145,7 +145,7 @@ describe('GateioOrderWriteModule', () => {
       const placeOrderParams: IAlunaOrderPlaceParams = {
         amount: 0.001,
         symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
         // without rate
@@ -200,7 +200,7 @@ describe('GateioOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -384,7 +384,7 @@ describe('GateioOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }

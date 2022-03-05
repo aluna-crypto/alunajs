@@ -15,8 +15,6 @@ import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 describe('BitfinexMarketParser', () => {
 
-  afterEach(Sinon.restore)
-
   it('should parse Bitfinex raw market just fine', async () => {
 
     const mappings: Record<string, string> = {}

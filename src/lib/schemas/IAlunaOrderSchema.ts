@@ -1,8 +1,8 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../enums/AlunaOrderStatusEnum'
 import { AlunaOrderTriggeredStatusEnum } from '../enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
 
 
@@ -35,7 +35,7 @@ export interface IAlunaOrderSchema {
   limitRate?: number
 
   account: AlunaAccountEnum
-  side: AlunaSideEnum
+  side: AlunaOrderSideEnum
   status: AlunaOrderStatusEnum
   type: AlunaOrderTypesEnum
 

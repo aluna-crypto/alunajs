@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { BitfinexOrderStatusAdapter } from '../../enums/adapters/BitfinexOrderStatusAdapter'
@@ -82,8 +82,8 @@ describe('BitfinexOrderParser', () => {
       })
 
       const expectedSide = amountOrig > 0
-        ? AlunaSideEnum.LONG
-        : AlunaSideEnum.SHORT
+        ? AlunaOrderSideEnum.BUY
+        : AlunaOrderSideEnum.SELL
 
       const fixedPrice = price || priceAvg
       let computedPrice = fixedPrice

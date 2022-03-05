@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { GateioOrderStatusEnum } from '../../enums/GateioOrderStatusEnum'
 import { GateioOrderTimeInForceEnum } from '../../enums/GateioOrderTimeInForceEnum'
 import { GateioOrderTypeEnum } from '../../enums/GateioOrderTypeEnum'
@@ -48,7 +48,7 @@ export const GATEIO_PARSED_ORDER = {
   baseSymbolId: 'BNB',
   quoteSymbolId: 'USDT',
   account: AlunaAccountEnum.EXCHANGE,
-  side: AlunaSideEnum.SHORT,
+  side: AlunaOrderSideEnum.SELL,
   status: AlunaOrderStatusEnum.OPEN,
   type: AlunaOrderTypesEnum.LIMIT,
   placedAt: new Date('2022-02-14T13:38:47.566Z'),

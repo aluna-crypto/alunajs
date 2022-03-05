@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexOrderTypeEnum } from '../../enums/PoloniexOrderTypeEnum'
 import { IPoloniexOrderWithCurrency } from '../../schemas/IPoloniexOrderSchema'
@@ -33,7 +33,7 @@ export const POLONIEX_PARSED_ORDER: IAlunaOrderSchema = {
   baseSymbolId: 'BUSD',
   quoteSymbolId: 'BNB',
   account: AlunaAccountEnum.EXCHANGE,
-  side: AlunaSideEnum.SHORT,
+  side: AlunaOrderSideEnum.SELL,
   status: AlunaOrderStatusEnum.OPEN,
   type: AlunaOrderTypesEnum.LIMIT,
   placedAt: new Date('2022-02-21T16:48:46.000Z'),

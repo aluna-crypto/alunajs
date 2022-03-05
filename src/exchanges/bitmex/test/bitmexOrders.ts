@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitmexOrderStatusEnum } from '../enums/BitmexOrderStatusEnum'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
@@ -237,7 +237,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 70,
     total: 38.934,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: 0.5562,
     stopRate: undefined,
     limitRate: undefined,
@@ -296,7 +296,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 3,
     total: 7.285256482856184,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: 0.6573,
     stopRate: undefined,
     limitRate: undefined,
@@ -355,7 +355,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 1,
     total: 72.44670804507149,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: 1963.6,
     stopRate: undefined,
     limitRate: undefined,
@@ -414,7 +414,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 2,
     total: 43.84776096170627,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: undefined,
     stopRate: 59.444,
     limitRate: undefined,
@@ -473,7 +473,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 7,
     total: 27.515853792925245,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'short' as AlunaSideEnum,
+    side: 'short' as AlunaOrderSideEnum,
     rate: undefined,
     stopRate: 0.11633,
     limitRate: 0.10634,
@@ -533,7 +533,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.003050501044796608,
     total: 100,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: 32781.5,
     stopRate: undefined,
     limitRate: undefined,
@@ -592,7 +592,7 @@ export const BITMEX_PARSED_ORDERS: IAlunaOrderSchema[] = [
     amount: 0.4,
     total: 22.2,
     status: 'open' as AlunaOrderStatusEnum,
-    side: 'long' as AlunaSideEnum,
+    side: 'long' as AlunaOrderSideEnum,
     rate: 55.5,
     stopRate: undefined,
     limitRate: undefined,

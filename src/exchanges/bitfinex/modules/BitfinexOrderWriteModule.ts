@@ -18,8 +18,8 @@ import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import { BitfinexOrderReadModule } from './BitfinexOrderReadModule'
 
@@ -52,7 +52,7 @@ type TBitfinexEditCancelOrderResponse = [
 
 
 interface IPlaceOrEditOrderParams extends IAlunaOrderPlaceParams {
-  id?: string | number
+  id?: string
 }
 
 
@@ -251,7 +251,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
       const response = await privateRequest<TBitfinexPlaceOrderResponse>({
         url: 'https://api.bitfinex.com/v2/auth/w/order/cancel',
-        body: { id },
+        body: { id: Number(id) },
         keySecret: this.exchange.keySecret,
       })
 
@@ -322,7 +322,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       from: type,
     })
 
-    const translatedAmount = BitfinexSideAdapter.translateToBitfinex({
+    const translatedAmount = BitfinexOrderSideAdapter.translateToBitfinex({
       amount: Number(amount),
       side,
     })
@@ -384,7 +384,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } else {
 
-      Object.assign(body, { id })
+      Object.assign(body, { id: Number(id) })
 
     }
 

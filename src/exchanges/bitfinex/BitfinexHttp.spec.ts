@@ -17,8 +17,6 @@ import * as BitfinexHttpMod from './BitfinexHttp'
 
 describe('BitfinexHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const { BitfinexHttp, handleRequestError } = BitfinexHttpMod
 
   const { publicRequest, privateRequest } = BitfinexHttp

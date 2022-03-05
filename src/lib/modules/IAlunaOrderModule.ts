@@ -1,7 +1,7 @@
 import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 
@@ -20,7 +20,7 @@ export interface IAlunaOrderGetParams {
 export interface IAlunaOrderPlaceParams {
   account: AlunaAccountEnum
   type: AlunaOrderTypesEnum
-  side: AlunaSideEnum
+  side: AlunaOrderSideEnum
   symbolPair: string
   rate?: number
   limitRate?: number

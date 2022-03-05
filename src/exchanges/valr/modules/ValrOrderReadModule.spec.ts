@@ -5,9 +5,9 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
@@ -226,7 +226,7 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -272,7 +272,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
     const parsedOrder2 = await valrOrderReadModule.parse({
       rawOrder: rawOrder2,
@@ -291,7 +291,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder2.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder2.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder2.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder2.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 

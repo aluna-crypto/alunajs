@@ -22,8 +22,8 @@ import {
   BitmexSpecs,
   PROD_BITMEX_URL,
 } from '../BitmexSpecs'
+import { BitmexOrderSideAdapter } from '../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../enums/adapters/BitmexSideAdapter'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { IBitmexOrderSchema } from '../schemas/IBitmexOrderSchema'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
@@ -204,7 +204,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       from: type,
     })
 
-    const translatedSide = BitmexSideAdapter.translateToBitmex({
+    const translatedSide = BitmexOrderSideAdapter.translateToBitmex({
       from: side,
     })
 

@@ -16,8 +16,6 @@ import * as BittrexHttpMod from './BittrexHttp'
 
 describe('BittrexHttp', () => {
 
-  afterEach(Sinon.restore)
-
   const { BittrexHttp } = BittrexHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'

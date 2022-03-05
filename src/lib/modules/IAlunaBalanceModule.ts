@@ -1,6 +1,6 @@
 import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
-import { AlunaSideEnum } from '../enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 
@@ -8,7 +8,7 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 export interface IAlunaBalanceGetTradableBalanceParams {
   symbolPair: string
   account?: AlunaAccountEnum
-  side?: AlunaSideEnum
+  side?: AlunaOrderSideEnum
   rate?: number
 }
 

@@ -2,8 +2,8 @@ import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { ValrOrderSideAdapter } from '../../enums/adapters/ValrOrderSideAdapter'
 import { ValrOrderTypeAdapter } from '../../enums/adapters/ValrOrderTypeAdapter'
-import { ValrSideAdapter } from '../../enums/adapters/ValrSideAdapter'
 import { ValrStatusAdapter } from '../../enums/adapters/ValrStatusAdapter'
 import { VALR_RAW_CURRENCY_PAIRS } from '../../test/fixtures/valrMarket'
 import {
@@ -55,7 +55,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder1.side)
-      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide1 }))
+      .to.be.eq(ValrOrderSideAdapter.translateToAluna({ from: rawSide1 }))
     expect(parsedOrder1.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ from: rawStatus1 }))
     expect(parsedOrder1.type)
@@ -100,7 +100,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder2.side)
-      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide2 }))
+      .to.be.eq(ValrOrderSideAdapter.translateToAluna({ from: rawSide2 }))
     expect(parsedOrder2.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ from: rawStatus2 }))
     expect(parsedOrder2.type)
@@ -142,7 +142,7 @@ describe('ValrOrderParser', () => {
     expect(parsedOrder3.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder3.side)
-      .to.be.eq(ValrSideAdapter.translateToAluna({ from: rawSide3 }))
+      .to.be.eq(ValrOrderSideAdapter.translateToAluna({ from: rawSide3 }))
     expect(parsedOrder3.status)
       .to.be.eq(ValrStatusAdapter.translateToAluna({ from: rawStatus3 }))
     expect(parsedOrder3.type)
