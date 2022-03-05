@@ -2,8 +2,8 @@ import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { GateioOrderSideAdapter } from '../../enums/adapters/GateioOrderSideAdapter'
 import { GateioOrderTypeAdapter } from '../../enums/adapters/GateioOrderTypeAdapter'
-import { GateioSideAdapter } from '../../enums/adapters/GateioSideAdapter'
 import { GateioStatusAdapter } from '../../enums/adapters/GateioStatusAdapter'
 import { Gateio } from '../../Gateio'
 import { IGateioOrderSchema } from '../IGateioOrderSchema'
@@ -79,7 +79,7 @@ export class GateioOrderParser {
       baseSymbolId,
       quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      side: GateioSideAdapter.translateToAluna({ from: side }),
+      side: GateioOrderSideAdapter.translateToAluna({ from: side }),
       status: orderStatus,
       type: GateioOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),

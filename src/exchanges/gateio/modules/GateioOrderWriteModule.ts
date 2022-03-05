@@ -10,7 +10,7 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
-import { GateioSideAdapter } from '../enums/adapters/GateioSideAdapter'
+import { GateioOrderSideAdapter } from '../enums/adapters/GateioOrderSideAdapter'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import {
@@ -108,7 +108,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
     }
 
     const body: IGateioOrderRequest = {
-      side: GateioSideAdapter.translateToGateio({ from: side }),
+      side: GateioOrderSideAdapter.translateToGateio({ from: side }),
       currency_pair: symbolPair,
       amount: amount.toString(),
       price: rate.toString(),

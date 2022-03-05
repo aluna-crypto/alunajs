@@ -4,7 +4,7 @@ import { GateioSideEnum } from '../GateioSideEnum'
 
 
 
-export class GateioSideAdapter {
+export class GateioOrderSideAdapter {
 
 
 
@@ -13,7 +13,7 @@ export class GateioSideAdapter {
 
 
   static translateToAluna = buildAdapter<GateioSideEnum, AlunaOrderSideEnum>({
-    errorMessagePrefix: GateioSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: GateioOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [GateioSideEnum.BUY]: AlunaOrderSideEnum.BUY,
       [GateioSideEnum.SELL]: AlunaOrderSideEnum.SELL,
@@ -23,7 +23,7 @@ export class GateioSideAdapter {
 
 
   static translateToGateio = buildAdapter<AlunaOrderSideEnum, GateioSideEnum>({
-    errorMessagePrefix: GateioSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: GateioOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [AlunaOrderSideEnum.BUY]: GateioSideEnum.BUY,
       [AlunaOrderSideEnum.SELL]: GateioSideEnum.SELL,
