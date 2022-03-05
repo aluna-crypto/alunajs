@@ -4,12 +4,12 @@ import { ValrSideEnum } from '../ValrSideEnum'
 
 
 
-export class ValrSideAdapter {
+export class ValrOrderSideAdapter {
 
   static readonly ERROR_MESSAGE_PREFIX = 'Order side'
 
   static translateToAluna = buildAdapter<ValrSideEnum, AlunaOrderSideEnum>({
-    errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: ValrOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [ValrSideEnum.BUY]: AlunaOrderSideEnum.BUY,
       [ValrSideEnum.SELL]: AlunaOrderSideEnum.SELL,
@@ -17,7 +17,7 @@ export class ValrSideAdapter {
   })
 
   static translateToValr = buildAdapter<AlunaOrderSideEnum, ValrSideEnum>({
-    errorMessagePrefix: ValrSideAdapter.ERROR_MESSAGE_PREFIX,
+    errorMessagePrefix: ValrOrderSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
       [AlunaOrderSideEnum.BUY]: ValrSideEnum.BUY,
       [AlunaOrderSideEnum.SELL]: ValrSideEnum.SELL,

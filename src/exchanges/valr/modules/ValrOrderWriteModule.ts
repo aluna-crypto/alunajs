@@ -13,8 +13,8 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { ValrOrderSideAdapter } from '../enums/adapters/ValrOrderSideAdapter'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
-import { ValrSideAdapter } from '../enums/adapters/ValrSideAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
@@ -102,7 +102,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     }
 
     const body = {
-      side: ValrSideAdapter.translateToValr({ from: side }),
+      side: ValrOrderSideAdapter.translateToValr({ from: side }),
       pair: symbolPair,
     }
 

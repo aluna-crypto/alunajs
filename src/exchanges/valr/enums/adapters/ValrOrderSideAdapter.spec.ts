@@ -2,11 +2,11 @@ import { expect } from 'chai'
 
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { ValrSideEnum } from '../ValrSideEnum'
-import { ValrSideAdapter } from './ValrSideAdapter'
+import { ValrOrderSideAdapter } from './ValrOrderSideAdapter'
 
 
 
-describe('ValrSideAdapter', () => {
+describe('ValrOrderSideAdapter', () => {
 
   const notSupported = 'not-supported'
 
@@ -14,17 +14,17 @@ describe('ValrSideAdapter', () => {
 
     let error
 
-    expect(ValrSideAdapter.translateToAluna({
+    expect(ValrOrderSideAdapter.translateToAluna({
       from: ValrSideEnum.BUY,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-    expect(ValrSideAdapter.translateToAluna({
+    expect(ValrOrderSideAdapter.translateToAluna({
       from: ValrSideEnum.SELL,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
     try {
 
-      ValrSideAdapter.translateToAluna({
+      ValrOrderSideAdapter.translateToAluna({
         from: notSupported as ValrSideEnum,
       })
 
@@ -45,17 +45,17 @@ describe('ValrSideAdapter', () => {
 
     let error
 
-    expect(ValrSideAdapter.translateToValr({
+    expect(ValrOrderSideAdapter.translateToValr({
       from: AlunaOrderSideEnum.BUY,
     })).to.be.eq(ValrSideEnum.BUY)
 
-    expect(ValrSideAdapter.translateToValr({
+    expect(ValrOrderSideAdapter.translateToValr({
       from: AlunaOrderSideEnum.SELL,
     })).to.be.eq(ValrSideEnum.SELL)
 
     try {
 
-      ValrSideAdapter.translateToValr({
+      ValrOrderSideAdapter.translateToValr({
         from: notSupported as AlunaOrderSideEnum,
       })
 
