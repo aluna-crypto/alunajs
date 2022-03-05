@@ -189,10 +189,11 @@ describe('BitfinexOrderWriteModule', () => {
                 symbolPair,
               }
 
-              const expectedAmount = BitfinexOrderSideAdapter.translateToBitfinex({
-                amount,
-                side,
-              })
+              const expectedAmount = BitfinexOrderSideAdapter
+                .translateToBitfinex({
+                  amount,
+                  side,
+                })
 
               const expectedType = BitfinexOrderTypeAdapter
                 .translateToBitfinex({

@@ -38,6 +38,14 @@ describe('PoloniexOrderParser', () => {
     const rawSide = rawOrder.type
     const rawTotal = rawOrder.total
 
+    const expectedSide = PoloniexOrderSideAdapter.translateToAluna({
+      orderType: rawSide,
+    })
+
+    const expectedStatus = PoloniexStatusAdapter.translateToAluna({
+      from: PoloniexOrderStatusEnum.OPEN,
+    })
+
     expect(parsedOrder.id).to.be.eq(rawOrder.orderNumber)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.currencyPair)
     expect(parsedOrder.baseSymbolId).to.be.eq(translateSymbolId)
@@ -49,12 +57,8 @@ describe('PoloniexOrderParser', () => {
     expect(parsedOrder.rate).to.be.eq(parseFloat(rawPrice))
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
-    expect(parsedOrder.side)
-      .to.be.eq(PoloniexOrderSideAdapter.translateToAluna({ orderType: rawSide }))
-    expect(parsedOrder.status)
-      .to.be.eq(PoloniexStatusAdapter.translateToAluna({
-        from: PoloniexOrderStatusEnum.OPEN,
-      }))
+    expect(parsedOrder.side).to.be.eq(expectedSide)
+    expect(parsedOrder.status).to.be.eq(expectedStatus)
     expect(parsedOrder.type)
       .to.be.eq(PoloniexOrderSideAdapter.translateToAlunaOrderType())
     expect(parsedOrder.placedAt.getTime())
