@@ -1,7 +1,8 @@
 import { expect } from 'chai'
-import Sinon, { spy } from 'sinon'
+import { spy } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mochaHooks } from '../../../test/mocha/hooks'
 import { AlunaCache } from './AlunaCache'
 
 
@@ -60,8 +61,7 @@ export const validateCache = async (params: IValidateCacheParams) => {
 
   await validateWriteToCache(params)
 
-  ImportMock.restore()
-  Sinon.restore()
+  mochaHooks.beforeEach()
 
   await validateReadFromCache(params)
 
