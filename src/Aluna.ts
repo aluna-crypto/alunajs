@@ -34,33 +34,37 @@ export class Aluna extends Exchanges {
       settings,
     }, null, 0))
 
-    const subParams = {
-      keySecret,
-      settings,
-    }
+    let Exchange: IAlunaExchangeStatic
 
     switch (exchangeId) {
 
       case this.Binance.ID:
-        return new this.Binance(subParams)
+        Exchange = this.Binance
+        break
 
       case this.Gateio.ID:
-        return new this.Gateio(subParams)
+        Exchange = this.Gateio
+        break
 
       case this.Bitfinex.ID:
-        return new this.Bitfinex(subParams)
+        Exchange = this.Bitfinex
+        break
 
       case this.Bitmex.ID:
-        return new this.Bitmex(subParams)
+        Exchange = this.Bitmex
+        break
 
       case this.Bittrex.ID:
-        return new this.Bittrex(subParams)
+        Exchange = this.Bittrex
+        break
 
       case this.Valr.ID:
-        return new this.Valr(subParams)
+        Exchange = this.Valr
+        break
 
       case this.Poloniex.ID:
-        return new this.Poloniex(subParams)
+        Exchange = this.Poloniex
+        break
 
       default: {
 
@@ -77,6 +81,14 @@ export class Aluna extends Exchanges {
       }
 
     }
+
+    if (settings) {
+
+      Exchange.setSettings({ settings })
+
+    }
+
+    return new Exchange({ keySecret })
 
   }
 
