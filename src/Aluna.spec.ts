@@ -14,6 +14,7 @@ import {
 } from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { Exchanges } from './lib/Exchanges'
+import { IAlunaKeySecretSchema } from './lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
@@ -127,38 +128,85 @@ describe('Aluna', () => {
 
   })
 
-  it('should properly set settings for exchange static class', async () => {
+  it(
+    "should properly set Exchange settings when 'new' method is called",
+    async () => {
 
-    const referralCode = '123'
-    const mappings = { XBT: 'BTC' }
+      const referralCode = '123'
+      const mappings = { XBT: 'BTC' }
 
-    const exchangesArr = values(Aluna.exchanges)
+      const exchangesArr = values(Aluna.exchanges)
 
-    const settings: IAlunaSettingsSchema = {
-      referralCode,
-      mappings,
-    }
+      const keySecret: IAlunaKeySecretSchema = {
+        key: '',
+        secret: '',
+      }
 
-    each(exchangesArr, ({ ID }: any) => {
+      const settings: IAlunaSettingsSchema = {
+        referralCode,
+        mappings,
+      }
 
-      const Exchange = Aluna.static({
-        exchangeId: ID,
-        settings,
+      each(exchangesArr, (Exchange: any) => {
+
+        const exchange = Aluna.new({
+          keySecret,
+          exchangeId: Exchange.ID,
+          settings,
+        })
+
+        expect(exchange.keySecret).to.be.eq(keySecret)
+
+        expect(Exchange.settings.mappings).to.deep.eq(mappings)
+        expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+
+        // Set static prop 'settings' to default value on static Exchange
+        Exchange.setSettings({
+          settings: {
+            mappings: {},
+          },
+        })
+
       })
 
-      expect(Exchange.settings.mappings).to.deep.eq(mappings)
-      expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+    },
+  )
 
-      // Set static prop 'settings' to default value on static Exchange
-      Exchange.setSettings({
-        settings: {
-          mappings: {},
-        },
+  it(
+    "should properly set Exchange settings when 'static' method is called",
+    async () => {
+
+      const referralCode = '123'
+      const mappings = { XBT: 'BTC' }
+
+      const exchangesArr = values(Aluna.exchanges)
+
+      const settings: IAlunaSettingsSchema = {
+        referralCode,
+        mappings,
+      }
+
+      each(exchangesArr, ({ ID }: any) => {
+
+        const Exchange = Aluna.static({
+          exchangeId: ID,
+          settings,
+        })
+
+        expect(Exchange.settings.mappings).to.deep.eq(mappings)
+        expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+
+        // Set static prop 'settings' to default value on static Exchange
+        Exchange.setSettings({
+          settings: {
+            mappings: {},
+          },
+        })
+
       })
 
-    })
-
-  })
+    },
+  )
 
   it('should warn about exchange not supported (static)', async () => {
 

@@ -49,7 +49,6 @@ export interface IAlunaExchangeStatic {
   // constructor must match the one of AAlunaExchange
   new (params: {
     keySecret: IAlunaKeySecretSchema,
-    settings?: IAlunaSettingsSchema,
   }): IAlunaExchange
 
   setSettings (params: {
