@@ -12,6 +12,7 @@ import { FtxSpecs } from './FtxSpecs'
 import { FtxBalanceModule } from './modules/FtxBalanceModule'
 import { FtxMarketModule } from './modules/FtxMarketModule'
 import { FtxOrderWriteModule } from './modules/FtxOrderWriteModule'
+import { FtxSymbolModule } from './modules/FtxSymbolModule'
 
 
 
@@ -21,8 +22,7 @@ export const Ftx: IAlunaExchangeStatic = class extends AAlunaExchange implements
   static readonly ID = FtxSpecs.id
   static readonly SPECS = FtxSpecs
 
-  static Symbol = null as any
-  // static Symbol = FtxSymbolModule
+  static Symbol = FtxSymbolModule
   static Market = FtxMarketModule
 
   // local definitions
