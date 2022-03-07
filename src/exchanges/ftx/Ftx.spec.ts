@@ -10,7 +10,7 @@ describe('Ftx', () => {
 
     expect(Ftx.ID).to.eq('ftx')
     expect(Ftx.SPECS).to.be.ok
-    // expect(Ftx.Symbol).to.be.ok
+    expect(Ftx.Symbol).to.be.ok
     expect(Ftx.Market).to.be.ok
 
   })
@@ -37,7 +37,7 @@ describe('Ftx', () => {
     expect(ftx.settings).to.be.ok
     expect(ftx.settings?.referralCode).to.eq(referralCode)
 
-    // expect(ftx.key).to.be.ok
+    expect(ftx.key).to.be.ok
     expect(ftx.balance).to.be.ok
     expect(ftx.order).to.be.ok
 

@@ -10,6 +10,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { FtxSpecs } from './FtxSpecs'
 import { FtxBalanceModule } from './modules/FtxBalanceModule'
+import { FtxKeyModule } from './modules/FtxKeyModule'
 import { FtxMarketModule } from './modules/FtxMarketModule'
 import { FtxOrderWriteModule } from './modules/FtxOrderWriteModule'
 import { FtxSymbolModule } from './modules/FtxSymbolModule'
@@ -37,7 +38,7 @@ export const Ftx: IAlunaExchangeStatic = class extends AAlunaExchange implements
 
     super(params)
 
-    // this.key = new FtxKeyModule({ exchange: this })
+    this.key = new FtxKeyModule({ exchange: this })
     this.balance = new FtxBalanceModule({ exchange: this })
     this.order = new FtxOrderWriteModule({ exchange: this })
 
