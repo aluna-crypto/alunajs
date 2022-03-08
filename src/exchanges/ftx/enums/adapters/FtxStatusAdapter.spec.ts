@@ -16,38 +16,40 @@ describe('FtxStatusAdapter', () => {
   it('should translate Ftx order status to Aluna order status',
     () => {
 
+      const zeroedFilledAmount = 0
+      const partiallyFilledAmount = 2.5
+      const totalFilledAmount = 5
+      const size = 5
+
       expect(FtxStatusAdapter.translateToAluna({
         from: FtxOrderStatusEnum.NEW,
+        filledSize: zeroedFilledAmount,
+        size,
       })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(FtxStatusAdapter.translateToAluna({
         from: FtxOrderStatusEnum.OPEN,
+        filledSize: zeroedFilledAmount,
+        size,
       })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(FtxStatusAdapter.translateToAluna({
+        from: FtxOrderStatusEnum.OPEN,
+        filledSize: partiallyFilledAmount,
+        size,
+      })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+
+      expect(FtxStatusAdapter.translateToAluna({
         from: FtxOrderStatusEnum.CLOSED,
+        filledSize: totalFilledAmount,
+        size,
       })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
-      let result
-      let error
-
-      try {
-
-        result = FtxStatusAdapter.translateToAluna({
-          from: notSupported as FtxOrderStatusEnum,
-        })
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
+      expect(FtxStatusAdapter.translateToAluna({
+        from: FtxOrderStatusEnum.CLOSED,
+        filledSize: zeroedFilledAmount,
+        size,
+      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     })
 
@@ -57,6 +59,10 @@ describe('FtxStatusAdapter', () => {
 
     expect(FtxStatusAdapter.translateToFtx({
       from: AlunaOrderStatusEnum.OPEN,
+    })).to.be.eq(FtxOrderStatusEnum.OPEN)
+
+    expect(FtxStatusAdapter.translateToFtx({
+      from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(FtxOrderStatusEnum.OPEN)
 
     expect(FtxStatusAdapter.translateToFtx({

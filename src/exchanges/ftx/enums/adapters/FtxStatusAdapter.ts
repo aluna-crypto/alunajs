@@ -11,17 +11,44 @@ export class FtxStatusAdapter {
   static readonly ERROR_MESSAGE_PREFIX = 'Order status'
 
 
+  static translateToAluna = (
+    params: {
+        from: FtxOrderStatusEnum,
+        size: number,
+        filledSize: number,
+    },
+  ) => {
 
-  static translateToAluna =
-    buildAdapter<FtxOrderStatusEnum, AlunaOrderStatusEnum>({
-      errorMessagePrefix: FtxStatusAdapter.ERROR_MESSAGE_PREFIX,
-      mappings: {
-        [FtxOrderStatusEnum.NEW]: AlunaOrderStatusEnum.OPEN,
-        [FtxOrderStatusEnum.OPEN]:
-          AlunaOrderStatusEnum.OPEN,
-        [FtxOrderStatusEnum.CLOSED]: AlunaOrderStatusEnum.FILLED,
-      },
-    })
+    const { filledSize, from, size } = params
+
+
+    const isClosed = from === FtxOrderStatusEnum.CLOSED
+
+    if (isClosed) {
+
+      const isFilled = filledSize === size
+
+      if (isFilled) {
+
+        return AlunaOrderStatusEnum.FILLED
+
+      }
+
+      return AlunaOrderStatusEnum.CANCELED
+
+    }
+
+    const isPartiallyFilled = filledSize > 0 && filledSize < size
+
+    if (isPartiallyFilled) {
+
+      return AlunaOrderStatusEnum.PARTIALLY_FILLED
+
+    }
+
+    return AlunaOrderStatusEnum.OPEN
+
+  }
 
 
 
@@ -29,6 +56,7 @@ export class FtxStatusAdapter {
     buildAdapter<AlunaOrderStatusEnum, FtxOrderStatusEnum>({
       errorMessagePrefix: FtxStatusAdapter.ERROR_MESSAGE_PREFIX,
       mappings: {
+        [AlunaOrderStatusEnum.PARTIALLY_FILLED]: FtxOrderStatusEnum.OPEN,
         [AlunaOrderStatusEnum.OPEN]: FtxOrderStatusEnum.OPEN,
         [AlunaOrderStatusEnum.FILLED]: FtxOrderStatusEnum.CLOSED,
         [AlunaOrderStatusEnum.CANCELED]: FtxOrderStatusEnum.CLOSED,
