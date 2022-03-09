@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { map } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../src/lib/core/AlunaError'
@@ -13,6 +14,17 @@ import {
   IAlunaExchangeOrderOptionsSchema,
   IAlunaExchangeSchema,
 } from '../../../src/lib/schemas/IAlunaExchangeSchema'
+import { mockValidateParams } from '../../../src/utils/validation/validateParams.mock'
+
+
+
+const runBeforeEach = () => {
+
+  ImportMock.restore()
+
+  mockValidateParams()
+
+}
 
 
 
@@ -32,6 +44,7 @@ const accountIsOneOfExchangeAccounts = async (params: {
     'accounts',
     [],
   )
+
   const account = 'nonexistent'
 
   try {
@@ -52,8 +65,6 @@ const accountIsOneOfExchangeAccounts = async (params: {
 
   const { message } = error as AlunaError
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -105,8 +116,6 @@ const accountIsSupported = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -156,8 +165,6 @@ const accountIsImplemented = async (params: {
 
   const { message } = error
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -209,8 +216,6 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
 
   const { message } = error
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -270,8 +275,6 @@ const orderTypeIsSupported = async (params: {
 
   const { message } = error
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -333,8 +336,6 @@ const orderTypeIsImplemented = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -392,8 +393,6 @@ const orderTypeIsInWriteMode = async (params: {
   const { message } = error
   expect(message).to.be.eq(`Order type '${type}' is in read mode`)
 
-  ImportMock.restore()
-
 }
 
 
@@ -403,12 +402,25 @@ export const testExchangeSpecsForOrderWriteModule = async (params: {
   exchangeSpecs: IAlunaExchangeSchema,
 }) => {
 
-  await accountIsOneOfExchangeAccounts(params)
-  await accountIsSupported(params)
-  await accountIsImplemented(params)
-  await orderTypeIsOneOfAccountOrderTypes(params)
-  await orderTypeIsSupported(params)
-  await orderTypeIsImplemented(params)
-  await orderTypeIsInWriteMode(params)
+  const callbacks = [
+    accountIsOneOfExchangeAccounts,
+    accountIsSupported,
+    accountIsImplemented,
+    orderTypeIsOneOfAccountOrderTypes,
+    orderTypeIsSupported,
+    orderTypeIsImplemented,
+    orderTypeIsInWriteMode,
+  ]
+
+  const callbackPromises = map(callbacks, async (callback) => {
+
+    runBeforeEach()
+
+    await callback(params)
+
+  })
+
+  await Promise.all(callbackPromises)
+
 
 }
