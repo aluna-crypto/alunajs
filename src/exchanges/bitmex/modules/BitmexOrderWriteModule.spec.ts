@@ -19,6 +19,7 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -46,7 +47,9 @@ describe('BitmexOrderWriteModule', () => {
   const symbolPair = 'XBTUSD'
   const id = '666'
 
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (
+    requestResponse: any,
+  ) => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
@@ -71,9 +74,12 @@ describe('BitmexOrderWriteModule', () => {
       Promise.resolve(parsedOrder),
     )
 
+    const { validateParamsMock } = mockValidateParams()
+
     return {
       parseMock,
       requestMock,
+      validateParamsMock,
       bitmexMarketModuleMock,
       translateAmountToOrderQtyMock,
     }
@@ -143,6 +149,7 @@ describe('BitmexOrderWriteModule', () => {
             const {
               parseMock,
               requestMock,
+              validateParamsMock,
               bitmexMarketModuleMock,
               translateAmountToOrderQtyMock,
             } = mockRequest(mockedOrderResponse)
@@ -269,6 +276,12 @@ describe('BitmexOrderWriteModule', () => {
             expect(bitmexMarketModuleMock.args[0][0]).to.deep.eq({
               symbolPair: params.symbolPair,
             })
+
+            if (action === 'place') {
+
+              expect(validateParamsMock.callCount).to.be.eq(1)
+
+            }
 
           })
 
