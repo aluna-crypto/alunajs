@@ -27,7 +27,7 @@
     "test:mocha:watch": "mocha --watch",
     "test:mocha:cover": "nyc mocha --bail",
     "test:mocha:cover:watch": "nyc mocha --watch",
-    "test:mocha:ci": "nyc mocha --bail --forbid-only"
+    "test:mocha:ci": "nyc mocha --bail --forbid-only --reporter dot"
   },
   "dependencies": {
     "axios": "^0.21.1",
