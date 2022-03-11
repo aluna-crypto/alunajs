@@ -1,3 +1,5 @@
+import { forOwn } from 'lodash'
+
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
@@ -9,13 +11,12 @@ import {
   IPoloniexSymbolSchema,
   IPoloniexSymbolWithCurrency,
 } from '../schemas/IPoloniexSymbolSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
 export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
-  public static async listRaw (): Promise<IPoloniexSymbolWithCurrency[]> {
+  public static async listRaw (): Promise<IPoloniexSymbolSchema> {
 
     PoloniexLog.info('fetching Poloniex symbols')
 
@@ -23,17 +24,13 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     query.append('command', 'returnCurrencies')
 
-    const rawSymbols = await PoloniexHttp
-      .publicRequest<IPoloniexSymbolSchema>({
-        url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
-      })
+    const { publicRequest } = PoloniexHttp
 
-    const rawSymbolsWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexSymbolWithCurrency>({
-        rawInfo: rawSymbols,
-      })
+    const rawSymbols = await publicRequest<IPoloniexSymbolSchema>({
+      url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
+    })
 
-    return rawSymbolsWithCurrency
+    return rawSymbols
 
   }
 
@@ -86,16 +83,23 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
 
   public static parseMany (params: {
-    rawSymbols: IPoloniexSymbolWithCurrency[],
+    rawSymbols: IPoloniexSymbolSchema,
   }): IAlunaSymbolSchema[] {
 
     const { rawSymbols } = params
 
-    const parsedSymbols = rawSymbols.map((rawSymbol) => {
+    const parsedSymbols: IAlunaSymbolSchema[] = []
 
-      const parsedSymbol = PoloniexSymbolModule.parse({ rawSymbol })
+    forOwn(rawSymbols, (value, key) => {
 
-      return parsedSymbol
+      const rawSymbol: IPoloniexSymbolWithCurrency = {
+        currency: key,
+        ...value,
+      }
+
+      const parsedMarket = PoloniexSymbolModule.parse({ rawSymbol })
+
+      parsedSymbols.push(parsedMarket)
 
     })
 
