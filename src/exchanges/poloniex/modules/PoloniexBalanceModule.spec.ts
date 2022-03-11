@@ -43,7 +43,7 @@ describe('PoloniexBalanceModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    expect(rawBalances).to.deep.eq(POLONIEX_RAW_BALANCES)
+    expect(rawBalances).to.deep.eq(POLONIEX_RAW_BALANCES_WITH_CURRENCY)
 
   })
 
@@ -162,7 +162,7 @@ describe('PoloniexBalanceModule', () => {
 
 
     const parsedBalances = poloniexBalanceModule.parseMany({
-      rawBalances: POLONIEX_RAW_BALANCES,
+      rawBalances: POLONIEX_RAW_BALANCES_WITH_CURRENCY,
     })
 
     expect(parseMock.callCount).to.be.eq(2)

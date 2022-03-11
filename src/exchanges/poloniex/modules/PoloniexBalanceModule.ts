@@ -1,4 +1,7 @@
-import { forOwn } from 'lodash'
+import {
+  forEach,
+  forOwn,
+} from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -18,7 +21,7 @@ import {
 
 export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IPoloniexBalanceSchema> {
+  public async listRaw (): Promise<IPoloniexBalanceWithCurrency[]> {
 
     PoloniexLog.info('fetching Poloniex balances')
 
@@ -38,7 +41,18 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
       body: params,
     })
 
-    return rawBalances
+    const rawBalancesWithCurrency: IPoloniexBalanceWithCurrency[] = []
+
+    forOwn(rawBalances, (value, key) => {
+
+      rawBalancesWithCurrency.push({
+        currency: key,
+        ...value,
+      })
+
+    })
+
+    return rawBalancesWithCurrency
 
   }
 
@@ -90,19 +104,14 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
 
   public parseMany (params: {
-    rawBalances: IPoloniexBalanceSchema,
+    rawBalances: IPoloniexBalanceWithCurrency[],
   }): IAlunaBalanceSchema[] {
 
     const { rawBalances } = params
 
     const parsedBalances: IAlunaBalanceSchema[] = []
 
-    forOwn(rawBalances, (value, key) => {
-
-      const rawBalance: IPoloniexBalanceWithCurrency = {
-        currency: key,
-        ...value,
-      }
+    forEach(rawBalances, (rawBalance) => {
 
       const {
         available,
