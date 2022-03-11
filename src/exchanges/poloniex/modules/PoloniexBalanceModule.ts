@@ -1,3 +1,5 @@
+import { forOwn } from 'lodash'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
@@ -11,13 +13,12 @@ import {
   IPoloniexBalanceSchema,
   IPoloniexBalanceWithCurrency,
 } from '../schemas/IPoloniexBalanceSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
 export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IPoloniexBalanceWithCurrency[]> {
+  public async listRaw (): Promise<IPoloniexBalanceSchema> {
 
     PoloniexLog.info('fetching Poloniex balances')
 
@@ -29,19 +30,15 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
     params.append('command', 'returnCompleteBalances')
     params.append('nonce', timestamp.toString())
 
-    const rawBalances = await PoloniexHttp
-      .privateRequest<IPoloniexBalanceSchema>({
-        keySecret,
-        url: `${PROD_POLONIEX_URL}/tradingApi`,
-        body: params,
-      })
+    const { privateRequest } = PoloniexHttp
 
-    const rawBalancesWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexBalanceWithCurrency>({
-        rawInfo: rawBalances,
-      })
+    const rawBalances = await privateRequest<IPoloniexBalanceSchema>({
+      keySecret,
+      url: `${PROD_POLONIEX_URL}/tradingApi`,
+      body: params,
+    })
 
-    return rawBalancesWithCurrency
+    return rawBalances
 
   }
 
@@ -93,34 +90,40 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
 
   public parseMany (params: {
-    rawBalances: IPoloniexBalanceWithCurrency[],
+    rawBalances: IPoloniexBalanceSchema,
   }): IAlunaBalanceSchema[] {
 
     const { rawBalances } = params
 
-    const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
-      (accumulator, rawBalance) => {
+    const parsedBalances: IAlunaBalanceSchema[] = []
 
-        const {
-          available,
-          onOrders,
-        } = rawBalance
+    forOwn(rawBalances, (value, key) => {
 
-        const total = parseFloat(available) + parseFloat(onOrders)
+      const rawBalance: IPoloniexBalanceWithCurrency = {
+        currency: key,
+        ...value,
+      }
 
-        if (total > 0) {
+      const {
+        available,
+        onOrders,
+      } = rawBalance
 
-          const parsedBalance = this.parse({ rawBalance })
+      const total = Number(available) + Number(onOrders)
 
-          accumulator.push(parsedBalance)
+      if (total > 0) {
 
-        }
+        const parsedBalance = this.parse({
+          rawBalance,
+        })
 
-        return accumulator
+        parsedBalances.push(parsedBalance)
 
-      },
-      [],
-    )
+      }
+
+    })
+
+    PoloniexLog.info(`Parsed ${parsedBalances.length} for Poloniex`)
 
     return parsedBalances
 
