@@ -36,7 +36,7 @@ describe('PoloniexMarketModule', () => {
       { url: marketSummariesURL },
     )).to.be.ok
 
-    expect(response).to.deep.eq(POLONIEX_RAW_MARKET)
+    expect(response).to.deep.eq(POLONIEX_RAW_MARKETS_WITH_CURRENCY)
 
   })
 
@@ -150,7 +150,7 @@ describe('PoloniexMarketModule', () => {
 
 
     const markets = PoloniexMarketModule.parseMany({
-      rawMarkets: POLONIEX_RAW_MARKET,
+      rawMarkets: POLONIEX_RAW_MARKETS_WITH_CURRENCY,
     })
 
     expect(markets).to.deep.eq(POLONIEX_PARSED_MARKETS)
