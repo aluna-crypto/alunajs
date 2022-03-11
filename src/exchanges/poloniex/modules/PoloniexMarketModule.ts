@@ -1,3 +1,5 @@
+import { forOwn } from 'lodash'
+
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { PoloniexHttp } from '../PoloniexHttp'
@@ -7,14 +9,13 @@ import {
   IPoloniexMarketSchema,
   IPoloniexMarketWithCurrency,
 } from '../schemas/IPoloniexMarketSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import { PoloniexMarketParser } from '../schemas/parsers/PoloniexMarketParser'
 
 
 
 export const PoloniexMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IPoloniexMarketWithCurrency[]> {
+  public static async listRaw (): Promise<IPoloniexMarketSchema> {
 
     const { publicRequest } = PoloniexHttp
 
@@ -28,12 +29,7 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
       url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
     })
 
-    const rawMarketsWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexMarketWithCurrency>({
-        rawInfo: rawMarkets,
-      })
-
-    return rawMarketsWithCurrency
+    return rawMarkets
 
   }
 
@@ -66,16 +62,27 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
 
   public static parseMany (params: {
-    rawMarkets: IPoloniexMarketWithCurrency[],
+    rawMarkets: IPoloniexMarketSchema,
   }): IAlunaMarketSchema[] {
 
     const { rawMarkets } = params
 
-    const parsedMarkets = rawMarkets.map((rawMarket) => {
+    const parsedMarkets: IAlunaMarketSchema[] = []
 
-      const parsedMarket = PoloniexMarketParser.parse({ rawMarket })
+    forOwn(rawMarkets, (value, key) => {
 
-      return parsedMarket
+      const [quoteCurrency, baseCurrency] = key.split('_')
+
+      const rawMarket: IPoloniexMarketWithCurrency = {
+        currencyPair: key,
+        baseCurrency,
+        quoteCurrency,
+        ...value,
+      }
+
+      const parsedMarket = PoloniexMarketModule.parse({ rawMarket })
+
+      parsedMarkets.push(parsedMarket)
 
     })
 
