@@ -17,6 +17,9 @@ import {
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioSideEnum } from '../enums/GateioSideEnum'
 import { GateioHttp } from '../GateioHttp'
@@ -54,6 +57,8 @@ describe('GateioOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const { validateParamsMock } = mockValidateParams()
+
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
@@ -88,11 +93,11 @@ describe('GateioOrderWriteModule', () => {
 
 
     expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWith({
+    expect(requestMock.args[0][0]).to.deep.eq({
       url: `${PROD_GATEIO_URL}/spot/orders`,
       body: requestBody,
       keySecret,
-    })).to.be.ok
+    })
 
 
     expect(parseMock.callCount).to.be.eq(1)
@@ -102,13 +107,24 @@ describe('GateioOrderWriteModule', () => {
 
     expect(placeResponse1).to.deep.eq(placedOrder)
 
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: placeOrderParams,
+      schema: placeOrderParamsSchema,
+    })
+
 
     // place short limit order
-    const placeResponse2 = await gateioOrderWriteModule.place({
-      ...placeOrderParams,
-      type: AlunaOrderTypesEnum.LIMIT,
+    const placeOrderParams2: IAlunaOrderPlaceParams = {
+      amount: 0.001,
+      rate: 10000,
+      symbolPair: 'ETHZAR',
       side: AlunaOrderSideEnum.SELL,
-    })
+      type: AlunaOrderTypesEnum.LIMIT,
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const placeResponse2 = await gateioOrderWriteModule.place(placeOrderParams2)
 
     const requestBody2: IGateioOrderRequest = {
       side: GateioSideEnum.SELL,
@@ -118,11 +134,11 @@ describe('GateioOrderWriteModule', () => {
     }
 
     expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.calledWith({
+    expect(requestMock.args[1][0]).to.deep.eq({
       url: `${PROD_GATEIO_URL}/spot/orders`,
       body: requestBody2,
       keySecret,
-    })).to.be.ok
+    })
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
@@ -131,46 +147,13 @@ describe('GateioOrderWriteModule', () => {
 
     expect(placeResponse2).to.deep.eq(placedOrder)
 
-  })
-
-  it('should throw an error if a new limit order is placed without rate',
-    async () => {
-
-      ImportMock.mockOther(
-        gateioOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
-
-      const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: 0.001,
-        symbolPair: 'ETHZAR',
-        side: AlunaOrderSideEnum.BUY,
-        type: AlunaOrderTypesEnum.LIMIT,
-        account: AlunaAccountEnum.EXCHANGE,
-        // without rate
-      }
-
-      let result
-      let error
-
-      try {
-
-        result = await gateioOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
-
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(validateParamsMock.args[1][0]).to.deep.eq({
+      params: placeOrderParams2,
+      schema: placeOrderParamsSchema,
     })
+
+  })
 
   it('should throw an request error when placing new order', async () => {
 
@@ -367,6 +350,8 @@ describe('GateioOrderWriteModule', () => {
 
   it('should edit a gateio order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     const cancelMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'cancel',
@@ -385,7 +370,7 @@ describe('GateioOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'LTCBTC',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
@@ -395,6 +380,12 @@ describe('GateioOrderWriteModule', () => {
 
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: editOrderParams,
+      schema: editOrderParamsSchema,
+    })
 
   })
 
