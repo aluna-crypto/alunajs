@@ -17,10 +17,10 @@ export interface IAlunaBalanceGetTradableBalanceParams {
 export interface IAlunaBalanceModule extends IAlunaModule {
 
   list (): Promise<IAlunaBalanceSchema[]>
-  listRaw (): Promise<any[]>
+  listRaw (): Promise<any>
 
   parse (params: { rawBalance: any }): IAlunaBalanceSchema
-  parseMany (params: { rawBalances: any[] }): IAlunaBalanceSchema[]
+  parseMany (params: { rawBalances: any }): IAlunaBalanceSchema[]
 
   getTradableBalance? (
     params: IAlunaBalanceGetTradableBalanceParams
