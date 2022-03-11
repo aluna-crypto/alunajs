@@ -57,8 +57,8 @@ export const POLONIEX_RAW_MARKETS_WITH_CURRENCY
     : IPoloniexMarketWithCurrency[] = [
       {
         id: 50,
-        baseCurrency: 'BTC',
-        quoteCurrency: 'LTC',
+        baseCurrency: 'LTC',
+        quoteCurrency: 'BTC',
         currencyPair: 'BTC_LTC',
         last: '0.00289979',
         lowestAsk: '0.00290072',
@@ -74,8 +74,8 @@ export const POLONIEX_RAW_MARKETS_WITH_CURRENCY
       },
       {
         id: 148,
-        baseCurrency: 'BTC',
-        quoteCurrency: 'ETH',
+        baseCurrency: 'ETH',
+        quoteCurrency: 'BTC',
         currencyPair: 'BTC_ETH',
         last: '0.07092277',
         lowestAsk: '0.07094162',
@@ -91,8 +91,8 @@ export const POLONIEX_RAW_MARKETS_WITH_CURRENCY
       },
       {
         id: 733,
-        baseCurrency: 'BTC',
-        quoteCurrency: 'ADA',
+        baseCurrency: 'ADA',
+        quoteCurrency: 'BTC',
         currencyPair: 'BTC_ADA',
         last: '0.00002461',
         lowestAsk: '0.00002478',
