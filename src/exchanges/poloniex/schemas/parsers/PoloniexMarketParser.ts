@@ -45,8 +45,9 @@ export class PoloniexMarketParser {
       last: parseFloat(last),
       date: new Date(),
       change: parseFloat(percentChange),
-      baseVolume: parseFloat(baseVolume),
-      quoteVolume: parseFloat(quoteVolume),
+      // Poloniex 'base' and 'quote' currency are inverted
+      baseVolume: parseFloat(quoteVolume),
+      quoteVolume: parseFloat(baseVolume),
     }
 
     return {

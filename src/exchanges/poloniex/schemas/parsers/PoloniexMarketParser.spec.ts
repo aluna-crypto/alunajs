@@ -45,6 +45,7 @@ describe('PoloniexMarketParser', () => {
       change,
       date,
       baseVolume,
+      quoteVolume,
     } = ticker
 
     expect(exchangeId).to.be.eq(Poloniex.ID)
@@ -58,7 +59,8 @@ describe('PoloniexMarketParser', () => {
     expect(ask).to.be.eq(Number(rawMarket.lowestAsk))
     expect(last).to.be.eq(Number(rawMarket.last))
     expect(change).to.be.eq(Number(rawMarket.percentChange))
-    expect(baseVolume).to.be.eq(Number(rawMarket.baseVolume))
+    expect(quoteVolume).to.be.eq(Number(rawMarket.baseVolume))
+    expect(baseVolume).to.be.eq(Number(rawMarket.quoteVolume))
     expect(date).to.be.ok
 
     expect(spotEnabled).to.be.ok
