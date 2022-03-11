@@ -23,73 +23,6 @@ import { PoloniexOrderParser } from '../schemas/parsers/PoloniexOrderParser'
 
 export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-
-  private async getOrderStatus (orderNumber: string)
-    : Promise<IPoloniexOrderStatusInfo> {
-
-    const timestamp = new Date().getTime()
-    const statusParams = new URLSearchParams()
-
-    statusParams.append('command', 'returnOrderStatus')
-    statusParams.append('orderNumber', orderNumber)
-    statusParams.append('nonce', timestamp.toString())
-
-    const { result } = await PoloniexHttp
-      .privateRequest<getOrderStatusResponse>(
-        {
-          url: `${PROD_POLONIEX_URL}/tradingApi`,
-          keySecret: this.exchange.keySecret,
-          body: statusParams,
-        },
-      )
-
-    if (result.error) {
-
-      throw new AlunaError({
-        code: AlunaOrderErrorCodes.NOT_FOUND,
-        message: result.error as string,
-        httpStatusCode: 404,
-        metadata: result.error,
-      })
-
-    }
-
-    return result[orderNumber]
-
-  }
-
-  private async getOrderTrades (orderNumber: string)
-    : Promise<IPoloniexOrderInfo[]> {
-
-    const timestamp = new Date().getTime()
-    const statusParams = new URLSearchParams()
-
-    statusParams.append('command', 'returnOrderTrades')
-    statusParams.append('orderNumber', orderNumber)
-    statusParams.append('nonce', timestamp.toString())
-
-    const rawOrderTrades = await PoloniexHttp
-      .privateRequest<IPoloniexOrderInfo[] | { error: string }>({
-        url: `${PROD_POLONIEX_URL}/tradingApi`,
-        keySecret: this.exchange.keySecret,
-        body: statusParams,
-      })
-
-    if ('error' in rawOrderTrades) {
-
-      throw new AlunaError({
-        code: AlunaOrderErrorCodes.NOT_FOUND,
-        message: rawOrderTrades.error as string,
-        httpStatusCode: 404,
-        metadata: rawOrderTrades,
-      })
-
-    }
-
-    return rawOrderTrades
-
-  }
-
   public async listRaw (): Promise<IPoloniexOrderWithCurrency[]> {
 
     PoloniexLog.info('fetching Poloniex open orders')
@@ -275,6 +208,73 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     PoloniexLog.info(`parsed ${parsedOrders.length} orders for Poloniex`)
 
     return parsedOrders
+
+  }
+
+
+  private async getOrderStatus (orderNumber: string)
+    : Promise<IPoloniexOrderStatusInfo> {
+
+    const timestamp = new Date().getTime()
+    const statusParams = new URLSearchParams()
+
+    statusParams.append('command', 'returnOrderStatus')
+    statusParams.append('orderNumber', orderNumber)
+    statusParams.append('nonce', timestamp.toString())
+
+    const { result } = await PoloniexHttp
+      .privateRequest<getOrderStatusResponse>(
+        {
+          url: `${PROD_POLONIEX_URL}/tradingApi`,
+          keySecret: this.exchange.keySecret,
+          body: statusParams,
+        },
+      )
+
+    if (result.error) {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: result.error as string,
+        httpStatusCode: 404,
+        metadata: result.error,
+      })
+
+    }
+
+    return result[orderNumber]
+
+  }
+
+  private async getOrderTrades (orderNumber: string)
+    : Promise<IPoloniexOrderInfo[]> {
+
+    const timestamp = new Date().getTime()
+    const statusParams = new URLSearchParams()
+
+    statusParams.append('command', 'returnOrderTrades')
+    statusParams.append('orderNumber', orderNumber)
+    statusParams.append('nonce', timestamp.toString())
+
+    const rawOrderTrades = await PoloniexHttp
+      .privateRequest<IPoloniexOrderInfo[] | { error: string }>({
+        url: `${PROD_POLONIEX_URL}/tradingApi`,
+        keySecret: this.exchange.keySecret,
+        body: statusParams,
+      })
+
+    if ('error' in rawOrderTrades) {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: rawOrderTrades.error as string,
+        httpStatusCode: 404,
+        metadata: rawOrderTrades,
+      })
+
+    }
+
+    return rawOrderTrades
 
   }
 
