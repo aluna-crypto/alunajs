@@ -51,6 +51,8 @@ export const POLONIEX_RAW_MARKET: IPoloniexMarketSchema = {
   },
 }
 
+
+
 export const POLONIEX_RAW_MARKETS_WITH_CURRENCY
     : IPoloniexMarketWithCurrency[] = [
       {
@@ -106,12 +108,14 @@ export const POLONIEX_RAW_MARKETS_WITH_CURRENCY
       },
     ]
 
+
+
 export const POLONIEX_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'poloniex',
     symbolPair: 'BTC_LTC',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'LTC',
+    baseSymbolId: 'LTC',
+    quoteSymbolId: 'BTC',
     ticker: {
       high: 0.00295473,
       low: 0.0028744,
@@ -132,8 +136,8 @@ export const POLONIEX_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'poloniex',
     symbolPair: 'BTC_ETH',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'ETH',
+    baseSymbolId: 'ETH',
+    quoteSymbolId: 'BTC',
     ticker: {
       high: 0.07190323,
       low: 0.0699866,
@@ -154,8 +158,8 @@ export const POLONIEX_PARSED_MARKETS: IAlunaMarketSchema[] = [
   {
     exchangeId: 'poloniex',
     symbolPair: 'BTC_ADA',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'ADA',
+    baseSymbolId: 'ADA',
+    quoteSymbolId: 'BTC',
     ticker: {
       high: 0.00002482,
       low: 0.00002457,

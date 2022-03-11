@@ -25,27 +25,31 @@ export const POLONIEX_RAW_BALANCES: IPoloniexBalanceSchema = {
   },
 }
 
+
+
 export const POLONIEX_RAW_BALANCES_WITH_CURRENCY
-  : IPoloniexBalanceWithCurrency[] = [
-    {
-      currency: 'BNB',
-      available: '3.00000000',
-      onOrders: '2.00000000',
-      btcValue: '0.00000000',
-    },
-    {
-      currency: 'ETH',
-      available: '5.00000000',
-      onOrders: '0.00000000',
-      btcValue: '0.00000000',
-    },
-    {
-      currency: 'BTC',
-      available: '0.00000000',
-      onOrders: '0.00000000',
-      btcValue: '0.00000000',
-    },
-  ]
+: IPoloniexBalanceWithCurrency[] = [
+  {
+    currency: 'BNB',
+    available: '3.00000000',
+    onOrders: '2.00000000',
+    btcValue: '0.00000000',
+  },
+  {
+    currency: 'ETH',
+    available: '5.00000000',
+    onOrders: '0.00000000',
+    btcValue: '0.00000000',
+  },
+  {
+    currency: 'BTC',
+    available: '0.00000000',
+    onOrders: '0.00000000',
+    btcValue: '0.00000000',
+  },
+]
+
+
 
 export const POLONIEX_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
