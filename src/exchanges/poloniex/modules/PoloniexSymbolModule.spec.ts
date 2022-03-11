@@ -27,7 +27,7 @@ describe('PoloniexSymbolModule', () => {
 
     const rawSymbols = await PoloniexSymbolModule.listRaw()
 
-    expect(rawSymbols).to.deep.eq(POLONIEX_RAW_SYMBOL)
+    expect(rawSymbols).to.deep.eq(POLONIEX_RAW_SYMBOLS_WITH_CURRENCY)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -122,7 +122,7 @@ describe('PoloniexSymbolModule', () => {
       .returns(POLONIEX_PARSED_SYMBOLS[2])
 
     const parsedSymbols = PoloniexSymbolModule.parseMany({
-      rawSymbols: POLONIEX_RAW_SYMBOL,
+      rawSymbols: POLONIEX_RAW_SYMBOLS_WITH_CURRENCY,
     })
 
     expect(parsedSymbols).to.deep.eq(POLONIEX_PARSED_SYMBOLS)

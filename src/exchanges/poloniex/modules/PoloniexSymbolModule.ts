@@ -1,4 +1,7 @@
-import { forOwn } from 'lodash'
+import {
+  forOwn,
+  map,
+} from 'lodash'
 
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
@@ -16,7 +19,7 @@ import {
 
 export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
-  public static async listRaw (): Promise<IPoloniexSymbolSchema> {
+  public static async listRaw (): Promise<IPoloniexSymbolWithCurrency[]> {
 
     PoloniexLog.info('fetching Poloniex symbols')
 
@@ -30,7 +33,18 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
       url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
     })
 
-    return rawSymbols
+    const rawSymbolsWithCurrency: IPoloniexSymbolWithCurrency[] = []
+
+    forOwn(rawSymbols, (value, key) => {
+
+      rawSymbolsWithCurrency.push({
+        currency: key,
+        ...value,
+      })
+
+    })
+
+    return rawSymbolsWithCurrency
 
   }
 
@@ -83,23 +97,16 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
 
   public static parseMany (params: {
-    rawSymbols: IPoloniexSymbolSchema,
+    rawSymbols: IPoloniexSymbolWithCurrency[],
   }): IAlunaSymbolSchema[] {
 
     const { rawSymbols } = params
 
-    const parsedSymbols: IAlunaSymbolSchema[] = []
+    const parsedSymbols = map(rawSymbols, (rawSymbol) => {
 
-    forOwn(rawSymbols, (value, key) => {
+      const parsedSymbol = PoloniexSymbolModule.parse({ rawSymbol })
 
-      const rawSymbol: IPoloniexSymbolWithCurrency = {
-        currency: key,
-        ...value,
-      }
-
-      const parsedMarket = PoloniexSymbolModule.parse({ rawSymbol })
-
-      parsedSymbols.push(parsedMarket)
+      return parsedSymbol
 
     })
 
