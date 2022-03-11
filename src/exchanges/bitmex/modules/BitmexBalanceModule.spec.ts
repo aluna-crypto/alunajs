@@ -6,6 +6,8 @@ import { ImportMock } from 'ts-mock-imports'
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
 import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { BitmexHttp } from '../BitmexHttp'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
@@ -254,6 +256,24 @@ describe('BitmexBalanceModule', () => {
 
       expect(listMock.callCount).to.be.eq(1)
       expect(translateSymbolIdMock.callCount).to.be.eq(1)
+
+    },
+  )
+
+  it(
+    "should ensure 'getTradableBalance' validate its specific params",
+    async () => {
+
+      const {
+        error,
+        result,
+      } = await executeAndCatch(async () => bitmexBalanceModule
+        .getTradableBalance({} as any))
+
+      expect(result).not.to.be.ok
+
+      expect(error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+      expect(error!.message).to.be.eq('"symbolPair" is required')
 
     },
   )

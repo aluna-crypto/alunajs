@@ -12,12 +12,14 @@ import {
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { IBitmexBalanceSchema } from '../schemas/IBitmexBalanceSchema'
 import { BitmexBalanceParser } from '../schemas/parsers/BitmexBalanceParser'
+import { bitmexGetTradableBalanceParamsSchema } from '../validation/schemas/bitmexGetTradableBalanceParamsSchema'
 import { BitmexMarketModule } from './BitmexMarketModule'
 
 
@@ -90,6 +92,11 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
   public async getTradableBalance (
     params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
+
+    validateParams({
+      params,
+      schema: bitmexGetTradableBalanceParamsSchema,
+    })
 
     const { symbolPair } = params
 
