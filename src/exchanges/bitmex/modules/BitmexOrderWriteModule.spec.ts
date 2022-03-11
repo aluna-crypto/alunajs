@@ -19,6 +19,8 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
@@ -179,6 +181,8 @@ describe('BitmexOrderWriteModule', () => {
 
             } else {
 
+              assign(params, { id })
+
               assign(mockedOrderResponse, {
                 id,
               })
@@ -277,9 +281,21 @@ describe('BitmexOrderWriteModule', () => {
               symbolPair: params.symbolPair,
             })
 
+            expect(validateParamsMock.callCount).to.be.eq(1)
+
             if (action === 'place') {
 
-              expect(validateParamsMock.callCount).to.be.eq(1)
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: placeOrderParamsSchema,
+              })
+
+            } else {
+
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: editOrderParamsSchema,
+              })
 
             }
 
