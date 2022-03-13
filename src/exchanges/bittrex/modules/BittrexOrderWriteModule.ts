@@ -2,6 +2,8 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -149,9 +151,39 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     } catch (err) {
 
+      let {
+        code,
+        message,
+      } = err
+
+      const { metadata } = err
+
+      if (metadata.code === 'INSUFFICIENT_FUNDS') {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+        message = 'Account has insufficient balance for requested action.'
+
+      } else if (metadata.code === 'DUST_TRADE_DISALLOWED_MIN_VALUE') {
+
+        code = AlunaGenericErrorCodes.UNKNOWN
+
+        message = 'The amount of quote currency involved in a transaction '
+          .concat('would be less than the minimum limit of 10K satoshis')
+
+      } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
+
+        code = AlunaOrderErrorCodes.PLACE_FAILED
+
+        message = 'The trade was smaller than the min trade size quantity for '
+          .concat('the market')
+
+      }
+
       throw new AlunaError({
         ...err,
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        code,
+        message,
       })
 
     }
