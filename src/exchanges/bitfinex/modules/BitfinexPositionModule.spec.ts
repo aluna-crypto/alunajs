@@ -318,7 +318,7 @@ describe('BitfinexPositionModule', () => {
       id,
     })
 
-    const invertSide = mockedParsedPosition1.side === AlunaPositionSideEnum.LONG
+    const side = mockedParsedPosition1.side === AlunaPositionSideEnum.LONG
       ? AlunaOrderSideEnum.SELL
       : AlunaOrderSideEnum.BUY
 
@@ -328,7 +328,7 @@ describe('BitfinexPositionModule', () => {
       amount: mockedParsedPosition1.amount,
       symbolPair: mockedParsedPosition1.symbolPair,
       type: AlunaOrderTypesEnum.MARKET,
-      side: invertSide,
+      side,
     }])
 
     expect(closedPosition).to.deep.eq({
