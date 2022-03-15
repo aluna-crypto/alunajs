@@ -3,7 +3,12 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -21,21 +26,28 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public details: IAlunaKeySchema
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     ValrLog.info('fetching Valr key details')
 
     const { keySecret } = this.exchange
 
     let rawKey: IValrKeySchema
+    let apiRequestCount = 0
 
     try {
 
-      rawKey = await ValrHttp.privateRequest<IValrKeySchema>({
+      const {
+        data: rawKeyInfo,
+        apiRequestCount: requestApiCount,
+      } = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: 'https://api.valr.com/v1/account/api-keys/current',
         keySecret,
       })
+
+      rawKey = rawKeyInfo
+      apiRequestCount += requestApiCount
 
     } catch (error) {
 
@@ -67,15 +79,28 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsRequestCount,
+    } = this.parseDetails({ rawKey })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + parseDetailsRequestCount
+
+    const response: IAlunaKeyFetchDetailsReturns = {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
+
+    return response
 
   }
 
   public parseDetails (params: {
     rawKey: IValrKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     ValrLog.info('parsing Valr key details')
 
@@ -83,19 +108,29 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    const {
+      key: permissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
     this.details = {
       meta: rawKey,
       accountId: undefined, //  valr doesn't give this
-      permissions: this.parsePermissions({ rawKey }),
+      permissions,
     }
 
-    return this.details
+    const totalApiRequestCount = parsePermissionsCount + 1
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parsePermissions (params: {
     rawKey: IValrKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     ValrLog.info('parsing Valr key permissions')
 
@@ -134,7 +169,12 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     })
 
-    return alunaPermissions
+    const response: IAlunaKeyParsePermissionsReturns = {
+      apiRequestCount: 0,
+      key: alunaPermissions,
+    }
+
+    return response
 
   }
 

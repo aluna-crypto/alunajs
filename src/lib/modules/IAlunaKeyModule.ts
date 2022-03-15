@@ -1,6 +1,9 @@
 import { IAlunaModule } from '../core/IAlunaModule'
 import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
-import { IAlunaKeySchema } from '../schemas/IAlunaKeySchema'
+import {
+  IAlunaKeyPermissionSchema,
+  IAlunaKeySchema,
+} from '../schemas/IAlunaKeySchema'
 
 
 
@@ -32,12 +35,12 @@ export interface IAlunaKeyParseDetailsReturns extends IAlunaApiRequestSchema {
 
 
 
-export interface IAlunaKeyParsePermissionsParams {
-  rawKeys: any[]
+export interface IAlunaKeyParsePermissionsParams<T> {
+  rawKey: T
 }
 
 export interface IAlunaKeyParsePermissionsReturns extends IAlunaApiRequestSchema {
-  keys: IAlunaKeySchema[]
+  key: IAlunaKeyPermissionSchema
 }
 
 
@@ -46,6 +49,6 @@ export interface IAlunaKeyParsePermissionsReturns extends IAlunaApiRequestSchema
  * Fetch
  */
 
-export interface IAlunaKeyFetchDetailsReturns {
+export interface IAlunaKeyFetchDetailsReturns extends IAlunaApiRequestSchema {
   key: IAlunaKeySchema
 }
