@@ -1,11 +1,11 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { PoloniexHttp } from '../PoloniexHttp'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import {
   POLONIEX_PARSED_BALANCES,
   POLONIEX_RAW_BALANCES,
@@ -39,23 +39,10 @@ describe('PoloniexBalanceModule', () => {
       POLONIEX_RAW_BALANCES,
     )
 
-    const currencyParserMock = ImportMock.mockFunction(
-      PoloniexCurrencyParser,
-      'parse',
-      POLONIEX_RAW_BALANCES_WITH_CURRENCY,
-    )
-
-
     const rawBalances = await poloniexBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    expect(currencyParserMock.callCount).to.be.eq(1)
-    expect(currencyParserMock.calledWith({
-      rawInfo: POLONIEX_RAW_BALANCES,
-    })).to.be.ok
-
-    expect(rawBalances.length).to.eq(3)
     expect(rawBalances).to.deep.eq(POLONIEX_RAW_BALANCES_WITH_CURRENCY)
 
   })
@@ -178,25 +165,25 @@ describe('PoloniexBalanceModule', () => {
       rawBalances: POLONIEX_RAW_BALANCES_WITH_CURRENCY,
     })
 
-
     expect(parseMock.callCount).to.be.eq(2)
-    expect(parsedBalances.length).to.be.eq(2)
+    expect(parseMock.callCount).to.be.eq(2)
 
-    parsedBalances.forEach((balance, index) => {
+    each(parsedBalances, (parsedBalance, index) => {
 
-      const {
-        account,
-        available,
-        symbolId,
-        total,
-      } = POLONIEX_PARSED_BALANCES[index]
+      const rawBalance = POLONIEX_RAW_BALANCES[parsedBalance.symbolId]
 
-      expect(balance.account).to.be.eq(account)
-      expect(balance.available).to.be.eq(available)
-      expect(balance.total).to.be.eq(total)
-      expect(balance.symbolId).to.be.eq(symbolId)
+      expect(parseMock.args[index][0]).to.deep.eq({
+        rawBalance: {
+          currency: parsedBalance.symbolId,
+          ...rawBalance,
+        },
+      })
 
     })
+
+    expect(parsedBalances.length).to.be.eq(2)
+    expect(parsedBalances).to.deep.eq(POLONIEX_PARSED_BALANCES)
+
 
   })
 

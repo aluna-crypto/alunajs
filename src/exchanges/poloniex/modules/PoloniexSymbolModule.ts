@@ -1,3 +1,8 @@
+import {
+  forOwn,
+  map,
+} from 'lodash'
+
 import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
@@ -9,7 +14,6 @@ import {
   IPoloniexSymbolSchema,
   IPoloniexSymbolWithCurrency,
 } from '../schemas/IPoloniexSymbolSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
@@ -23,15 +27,22 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     query.append('command', 'returnCurrencies')
 
-    const rawSymbols = await PoloniexHttp
-      .publicRequest<IPoloniexSymbolSchema>({
-        url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
+    const { publicRequest } = PoloniexHttp
+
+    const rawSymbols = await publicRequest<IPoloniexSymbolSchema>({
+      url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
+    })
+
+    const rawSymbolsWithCurrency: IPoloniexSymbolWithCurrency[] = []
+
+    forOwn(rawSymbols, (value, key) => {
+
+      rawSymbolsWithCurrency.push({
+        currency: key,
+        ...value,
       })
 
-    const rawSymbolsWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexSymbolWithCurrency>({
-        rawInfo: rawSymbols,
-      })
+    })
 
     return rawSymbolsWithCurrency
 
@@ -91,7 +102,7 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbols } = params
 
-    const parsedSymbols = rawSymbols.map((rawSymbol) => {
+    const parsedSymbols = map(rawSymbols, (rawSymbol) => {
 
       const parsedSymbol = PoloniexSymbolModule.parse({ rawSymbol })
 

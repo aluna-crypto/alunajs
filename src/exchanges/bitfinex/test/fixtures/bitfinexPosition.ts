@@ -302,7 +302,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     amount: 4,
     account: 'margin' as AlunaAccountEnum,
     status: 'open' as AlunaPositionStatusEnum,
-    side: 'long' as AlunaPositionSideEnum,
+    side: 'short' as AlunaPositionSideEnum,
     basePrice: 3.1643,
     openPrice: 3.1643,
     pl: -0.006852799999999758,
@@ -312,7 +312,7 @@ export const BITFINEX_PARSED_POSITIONS: IAlunaPositionSchema[] = [
     openedAt: new Date('1970-01-20T00:49:49.292Z'),
     meta: [
       'tATOMBTC', 'ACTIVE',
-      4, 3.1643,
+      -4, 3.1643,
       0, 0,
       -0.006852799999999758, -0.09447736837583776,
       0, 0.07746639479288778,

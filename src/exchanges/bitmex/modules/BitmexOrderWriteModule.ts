@@ -16,6 +16,9 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import {
@@ -47,6 +50,11 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
+    validateParams<IAlunaOrderPlaceParams>({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       type,
@@ -98,6 +106,11 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       type,
       account,
     } = params
+
+    validateParams<IAlunaOrderPlaceParams>({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     this.validateOrderTypeAgainstExchangeSpecs({
       account,

@@ -79,6 +79,9 @@ export const BitfinexSpecs: IAlunaExchangeSchema = {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
+  features: {
+    offersPositionId: true,
+  },
   accounts: [
     {
       type: AlunaAccountEnum.EXCHANGE,

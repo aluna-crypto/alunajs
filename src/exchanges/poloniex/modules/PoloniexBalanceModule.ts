@@ -1,3 +1,8 @@
+import {
+  forEach,
+  forOwn,
+} from 'lodash'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
@@ -11,7 +16,6 @@ import {
   IPoloniexBalanceSchema,
   IPoloniexBalanceWithCurrency,
 } from '../schemas/IPoloniexBalanceSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
@@ -29,17 +33,24 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
     params.append('command', 'returnCompleteBalances')
     params.append('nonce', timestamp.toString())
 
-    const rawBalances = await PoloniexHttp
-      .privateRequest<IPoloniexBalanceSchema>({
-        keySecret,
-        url: `${PROD_POLONIEX_URL}/tradingApi`,
-        body: params,
+    const { privateRequest } = PoloniexHttp
+
+    const rawBalances = await privateRequest<IPoloniexBalanceSchema>({
+      keySecret,
+      url: `${PROD_POLONIEX_URL}/tradingApi`,
+      body: params,
+    })
+
+    const rawBalancesWithCurrency: IPoloniexBalanceWithCurrency[] = []
+
+    forOwn(rawBalances, (value, key) => {
+
+      rawBalancesWithCurrency.push({
+        currency: key,
+        ...value,
       })
 
-    const rawBalancesWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexBalanceWithCurrency>({
-        rawInfo: rawBalances,
-      })
+    })
 
     return rawBalancesWithCurrency
 
@@ -98,29 +109,30 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const { rawBalances } = params
 
-    const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
-      (accumulator, rawBalance) => {
+    const parsedBalances: IAlunaBalanceSchema[] = []
 
-        const {
-          available,
-          onOrders,
-        } = rawBalance
+    forEach(rawBalances, (rawBalance) => {
 
-        const total = parseFloat(available) + parseFloat(onOrders)
+      const {
+        available,
+        onOrders,
+      } = rawBalance
 
-        if (total > 0) {
+      const total = Number(available) + Number(onOrders)
 
-          const parsedBalance = this.parse({ rawBalance })
+      if (total > 0) {
 
-          accumulator.push(parsedBalance)
+        const parsedBalance = this.parse({
+          rawBalance,
+        })
 
-        }
+        parsedBalances.push(parsedBalance)
 
-        return accumulator
+      }
 
-      },
-      [],
-    )
+    })
+
+    PoloniexLog.info(`Parsed ${parsedBalances.length} for Poloniex`)
 
     return parsedBalances
 

@@ -2,6 +2,9 @@ import { each } from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaPositionSideEnum } from '../../../lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
 import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
 import {
@@ -60,13 +63,27 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const { privateRequest } = BitfinexHttp
 
-    const [rawPosition] = await privateRequest<Array<IBitfinexPositionSchema>>({
+    const response = await privateRequest<Array<IBitfinexPositionSchema>>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       body: { id: [Number(id)], limit: 1 },
       keySecret: this.exchange.keySecret,
     })
 
-    return rawPosition
+    if (!response.length) {
+
+      const error = new AlunaError({
+        code: AlunaPositionErrorCodes.NOT_FOUND,
+        message: 'Position not found',
+        httpStatusCode: 400,
+      })
+
+      BitfinexLog.error(error)
+
+      throw error
+
+    }
+
+    return response[0]
 
   }
 
@@ -90,22 +107,14 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
-    const { privateRequest } = BitfinexHttp
+    const position = await this.get({ id })
 
-    await privateRequest<void>({
-      url: 'https://api.bitfinex.com/v1/position/close',
-      body: { position_id: Number(id) },
-      keySecret: this.exchange.keySecret,
-    })
-
-    const parsedPosition = await this.get({ id })
-
-    if (parsedPosition.status !== AlunaPositionStatusEnum.CLOSED) {
+    if (position.status === AlunaPositionStatusEnum.CLOSED) {
 
       const error = new AlunaError({
-        message: 'Position could not be closed',
-        code: AlunaPositionErrorCodes.COULD_NOT_BE_CLOSED,
-        httpStatusCode: 500,
+        code: AlunaPositionErrorCodes.ALREADY_CLOSED,
+        message: 'Position is already closed',
+        httpStatusCode: 400,
       })
 
       BitfinexLog.error(error)
@@ -114,7 +123,15 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
-    return parsedPosition
+    await this.placeMarketOrderToClosePosition({ position })
+
+    const closedPosition: IAlunaPositionSchema = {
+      ...position,
+      status: AlunaPositionStatusEnum.CLOSED,
+      closedAt: new Date(),
+    }
+
+    return closedPosition
 
   }
 
@@ -158,6 +175,33 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     const parsedPositions = await Promise.all(parsedPositionsPromise)
 
     return parsedPositions
+
+  }
+
+  private async placeMarketOrderToClosePosition (params: {
+    position: IAlunaPositionSchema,
+  }): Promise<void> {
+
+    const {
+      position: {
+        symbolPair,
+        account,
+        amount,
+        side: positionSide,
+      },
+    } = params
+
+    const invertedOrderSide = positionSide === AlunaPositionSideEnum.LONG
+      ? AlunaOrderSideEnum.SELL
+      : AlunaOrderSideEnum.BUY
+
+    await this.exchange.order.place({
+      account,
+      side: invertedOrderSide,
+      amount,
+      symbolPair,
+      type: AlunaOrderTypesEnum.MARKET,
+    })
 
   }
 

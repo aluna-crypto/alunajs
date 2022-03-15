@@ -10,6 +10,9 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { GateioOrderSideAdapter } from '../enums/adapters/GateioOrderSideAdapter'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
@@ -30,6 +33,12 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
+
 
     const {
       amount,
@@ -97,21 +106,11 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     }
 
-    if (!rate) {
-
-      throw new AlunaError({
-        message: 'A rate is required for limit orders',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-      })
-
-    }
-
     const body: IGateioOrderRequest = {
       side: GateioOrderSideAdapter.translateToGateio({ from: side }),
       currency_pair: symbolPair,
       amount: amount.toString(),
-      price: rate.toString(),
+      price: rate!.toString(),
     }
 
     GateioLog.info('placing new order for Gateio')
@@ -199,6 +198,10 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderSchema> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     GateioLog.info('editing order for Gateio')
 

@@ -8,7 +8,6 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -17,6 +16,9 @@ import {
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexSpecs } from '../PoloniexSpecs'
 import { POLONIEX_RAW_LIMIT_ORDER } from '../test/fixtures/poloniexOrder'
@@ -37,6 +39,8 @@ describe('PoloniexOrderWriteModule', () => {
 
 
   it('should place a new Poloniex limit order just fine', async () => {
+
+    const { validateParamsMock } = mockValidateParams()
 
     ImportMock.mockOther(
       poloniexOrderWriteModule,
@@ -72,49 +76,17 @@ describe('PoloniexOrderWriteModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-
     expect(getMock.callCount).to.be.eq(1)
 
     expect(placeResponse1).to.deep.eq(placedOrder)
 
-  })
-
-  it('should throw an error if a new limit order is placed without rate',
-    async () => {
-
-      let error
-
-      ImportMock.mockOther(
-        poloniexOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
-
-      const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: 0.001,
-        symbolPair: 'ETHZAR',
-        side: AlunaOrderSideEnum.BUY,
-        type: AlunaOrderTypesEnum.LIMIT,
-        account: AlunaAccountEnum.EXCHANGE,
-        // without rate
-      }
-
-      try {
-
-        await poloniexOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
-
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: placeOrderParams,
+      schema: placeOrderParamsSchema,
     })
+
+  })
 
   it('should throw an request error when placing new order', async () => {
 
@@ -294,6 +266,8 @@ describe('PoloniexOrderWriteModule', () => {
 
   it('should edit a poloniex order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     const cancelMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'cancel',
@@ -312,7 +286,7 @@ describe('PoloniexOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'LTCBTC',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
@@ -322,6 +296,12 @@ describe('PoloniexOrderWriteModule', () => {
 
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: editOrderParams,
+      schema: editOrderParamsSchema,
+    })
 
   })
 

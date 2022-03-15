@@ -1,3 +1,8 @@
+import {
+  forOwn,
+  map,
+} from 'lodash'
+
 import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { PoloniexHttp } from '../PoloniexHttp'
@@ -7,7 +12,6 @@ import {
   IPoloniexMarketSchema,
   IPoloniexMarketWithCurrency,
 } from '../schemas/IPoloniexMarketSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import { PoloniexMarketParser } from '../schemas/parsers/PoloniexMarketParser'
 
 
@@ -28,10 +32,20 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
       url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
     })
 
-    const rawMarketsWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexMarketWithCurrency>({
-        rawInfo: rawMarkets,
+    const rawMarketsWithCurrency: IPoloniexMarketWithCurrency[] = []
+
+    forOwn(rawMarkets, (value, key) => {
+
+      const [quoteCurrency, baseCurrency] = key.split('_')
+
+      rawMarketsWithCurrency.push({
+        currencyPair: key,
+        quoteCurrency,
+        baseCurrency,
+        ...value,
       })
+
+    })
 
     return rawMarketsWithCurrency
 
@@ -71,9 +85,9 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     const { rawMarkets } = params
 
-    const parsedMarkets = rawMarkets.map((rawMarket) => {
+    const parsedMarkets = map(rawMarkets, (rawMarket) => {
 
-      const parsedMarket = PoloniexMarketParser.parse({ rawMarket })
+      const parsedMarket = PoloniexMarketModule.parse({ rawMarket })
 
       return parsedMarket
 

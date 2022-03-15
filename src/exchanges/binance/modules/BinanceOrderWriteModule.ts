@@ -3,7 +3,6 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -12,6 +11,9 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import {
@@ -35,6 +37,11 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -114,16 +121,6 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
     }
 
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
-
-      if (!rate) {
-
-        throw new AlunaError({
-          message: 'A rate is required for limit orders',
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-          httpStatusCode: 401,
-        })
-
-      }
 
       Object.assign(body, {
         price: rate,
@@ -234,6 +231,10 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderSchema> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     BinanceLog.info('editing order for Binance')
 

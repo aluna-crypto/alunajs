@@ -2,6 +2,7 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -11,6 +12,9 @@ import {
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import {
@@ -34,6 +38,11 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderSchema> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -114,16 +123,6 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     if (translatedOrderType === BittrexOrderTypeEnum.LIMIT) {
 
-      if (!rate) {
-
-        throw new AlunaError({
-          message: 'A rate is required for limit orders',
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-          httpStatusCode: 401,
-        })
-
-      }
-
       Object.assign(body, {
         limit: Number(rate),
         timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
@@ -152,9 +151,39 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     } catch (err) {
 
+      let {
+        code,
+        message,
+      } = err
+
+      const { metadata } = err
+
+      if (metadata.code === 'INSUFFICIENT_FUNDS') {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+        message = 'Account has insufficient balance for requested action.'
+
+      } else if (metadata.code === 'DUST_TRADE_DISALLOWED_MIN_VALUE') {
+
+        code = AlunaGenericErrorCodes.UNKNOWN
+
+        message = 'The amount of quote currency involved in a transaction '
+          .concat('would be less than the minimum limit of 10K satoshis')
+
+      } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
+
+        code = AlunaOrderErrorCodes.PLACE_FAILED
+
+        message = 'The trade was smaller than the min trade size quantity for '
+          .concat('the market')
+
+      }
+
       throw new AlunaError({
         ...err,
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        code,
+        message,
       })
 
     }
@@ -217,6 +246,10 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderSchema> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     BittrexLog.info('editing order for Bittrex')
 

@@ -10,7 +10,6 @@ import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -19,6 +18,7 @@ import {
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BinanceHttp } from '../BinanceHttp'
 import {
   BinanceSpecs,
@@ -49,6 +49,8 @@ describe('BinanceOrderWriteModule', () => {
   const placedOrder = 'placed-order'
 
   it('should place a new Binance limit order just fine', async () => {
+
+    const { validateParamsMock } = mockValidateParams()
 
     ImportMock.mockOther(
       binanceOrderWriteModule,
@@ -114,6 +116,8 @@ describe('BinanceOrderWriteModule', () => {
       side: AlunaOrderSideEnum.SELL,
     })
 
+    delete placeResponse2.rate
+
     const requestBody2: IBinanceOrderRequest = {
       side: BinanceSideEnum.SELL,
       symbol: placeOrderParams.symbolPair,
@@ -134,6 +138,8 @@ describe('BinanceOrderWriteModule', () => {
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
+
+    expect(validateParamsMock.callCount).to.be.eq(2)
 
   })
 
@@ -207,45 +213,6 @@ describe('BinanceOrderWriteModule', () => {
       expect(error.message)
         .to.be.eq('Account has insufficient balance for requested action.')
       expect(error.httpStatusCode).to.be.eq(400)
-
-    },
-  )
-
-  it(
-    'should throw an error if a new limit order is placed without rate',
-    async () => {
-
-      let error
-
-      ImportMock.mockOther(
-        binanceOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
-
-      const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: 0.001,
-        symbolPair: 'ETHZAR',
-        side: AlunaOrderSideEnum.BUY,
-        type: AlunaOrderTypesEnum.LIMIT,
-        account: AlunaAccountEnum.EXCHANGE,
-        // without rate
-      }
-
-      try {
-
-        await binanceOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
 
     },
   )
@@ -345,15 +312,17 @@ describe('BinanceOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'ETHZAR',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
     const requestBody: IBinanceOrderRequest = {
       side: BinanceSideEnum.BUY,
       symbol: placeOrderParams.symbolPair,
-      type: BinanceOrderTypeEnum.MARKET,
+      type: BinanceOrderTypeEnum.LIMIT,
       quantity: placeOrderParams.amount,
+      price: placeOrderParams.rate,
+      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
     }
 
 
@@ -547,7 +516,7 @@ describe('BinanceOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'LTCBTC',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 

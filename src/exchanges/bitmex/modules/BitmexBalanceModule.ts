@@ -1,24 +1,25 @@
 import BigNumber from 'bignumber.js'
 import {
-  filter,
+  find,
   map,
 } from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import {
   IAlunaBalanceGetTradableBalanceParams,
   IAlunaBalanceModule,
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { validateParams } from '../../../utils/validation/validateParams'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
-import { BitmexSettlementCurrencyEnum } from '../enums/BitmexSettlementCurrencyEnum'
 import { IBitmexBalanceSchema } from '../schemas/IBitmexBalanceSchema'
 import { BitmexBalanceParser } from '../schemas/parsers/BitmexBalanceParser'
+import { bitmexGetTradableBalanceParamsSchema } from '../validation/schemas/bitmexGetTradableBalanceParamsSchema'
 import { BitmexMarketModule } from './BitmexMarketModule'
 
 
@@ -92,43 +93,43 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
     params: IAlunaBalanceGetTradableBalanceParams,
   ): Promise<number> {
 
+    validateParams({
+      params,
+      schema: bitmexGetTradableBalanceParamsSchema,
+    })
+
     const { symbolPair } = params
 
     BitmexLog.info(`fetching Bitmex tradable balance for ${symbolPair}`)
 
-    const { settlCurrency } = await BitmexMarketModule.getRaw({
+    const market = await BitmexMarketModule.get({
       symbolPair,
+    })
+
+    const { instrument } = market
+
+    const { totalSymbolId } = instrument!
+
+    const assetSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: totalSymbolId,
+      symbolMappings: Bitmex.settings.mappings,
     })
 
     const balances = await this.list()
 
-    // TODO: refact after implementing mappings
-    const desiredAsset = filter(balances, ({ symbolId }) => {
+    const desiredAsset = find(balances, ({ symbolId }) => {
 
-      if (settlCurrency === BitmexSettlementCurrencyEnum.BTC) {
-
-        return symbolId === 'BTC'
-
-      }
-
-      return symbolId === 'USDT'
+      return symbolId === assetSymbolId
 
     })
 
-    if (!desiredAsset.length) {
+    if (!desiredAsset) {
 
-      const alunaError = new AlunaError({
-        code: AlunaHttpErrorCodes.REQUEST_ERROR,
-        message: `No available balance found for asset: ${symbolPair}`,
-      })
-
-      BitmexLog.error(alunaError)
-
-      throw alunaError
+      return 0
 
     }
 
-    const { available } = desiredAsset[0]
+    const { available } = desiredAsset
 
     const leverage = await this.exchange.position!.getLeverage!({
       symbolPair,
