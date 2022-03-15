@@ -6,7 +6,7 @@ import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 export interface IAlunaSymbolModule {
 
 
-  listRaw (): Promise<IAlunaSymbolListRawReturns>
+  listRaw (): Promise<IAlunaSymbolListRawReturns<T>>
   list (): Promise<IAlunaSymbolListReturns>
 
   getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns>
@@ -47,9 +47,8 @@ export interface IAlunaSymbolParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaSymbolListRawReturns extends IAlunaApiRequestSchema {
-  rawSymbols: any[]
-
+export interface IAlunaSymbolListRawReturns<T> extends IAlunaApiRequestSchema {
+  rawSymbols: T[]
 }
 export interface IAlunaSymbolListReturns extends IAlunaApiRequestSchema {
   symbols: IAlunaSymbolSchema[]

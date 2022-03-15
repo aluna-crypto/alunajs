@@ -1,5 +1,10 @@
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
-import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { IValrSymbolSchema } from '../schemas/IValrSymbolSchema'
 import { Valr } from '../Valr'
@@ -10,31 +15,44 @@ import { ValrLog } from '../ValrLog'
 
 export const ValrSymbolModule: IAlunaSymbolModule = class {
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await ValrSymbolModule.listRaw()
+    const { apiRequestCount, rawSymbols } = await ValrSymbolModule.listRaw()
 
-    const parsedSymbols = ValrSymbolModule.parseMany({ rawSymbols })
+    const {
+      symbols,
+      apiRequestCount: parseManyApiRequestCount,
+    } = ValrSymbolModule.parseMany({ rawSymbols })
 
-    return parsedSymbols
+    const totalApiRequestCount = apiRequestCount + parseManyApiRequestCount
+
+    return {
+      symbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  public static listRaw (): Promise<IValrSymbolSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IValrSymbolSchema>> {
 
     ValrLog.info('fetching Valr symbols')
 
-    const rawSymbols = ValrHttp.publicRequest<IValrSymbolSchema[]>({
-      url: 'https://api.valr.com/v1/public/currencies',
-    })
+    const { data: rawSymbols, apiRequestCount } = await ValrHttp
+      .publicRequest<IValrSymbolSchema[]>({
+        url: 'https://api.valr.com/v1/public/currencies',
+      })
 
-    return rawSymbols
+    return {
+      rawSymbols,
+      apiRequestCount,
+    }
 
   }
 
   public static parse (params:{
     rawSymbol: IValrSymbolSchema,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
@@ -56,7 +74,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     }
 
-    return {
+    const symbol = {
       id,
       name: longName,
       exchangeId: Valr.ID,
@@ -64,17 +82,31 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
       meta: rawSymbol,
     }
 
+    const response: IAlunaSymbolParseReturns = {
+      symbol,
+      apiRequestCount: 1,
+    }
+
+    return response
+
   }
 
   public static parseMany (params: {
     rawSymbols: IValrSymbolSchema[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
+    let parsedSymbolsCount = 0
+
     const parsedSymbols = rawSymbols.map((rawSymbol) => {
 
-      const parsedSymbol = ValrSymbolModule.parse({ rawSymbol })
+      const {
+        symbol: parsedSymbol,
+        apiRequestCount,
+      } = ValrSymbolModule.parse({ rawSymbol })
+
+      parsedSymbolsCount += apiRequestCount
 
       return parsedSymbol
 
@@ -82,7 +114,12 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     ValrLog.info(`parsed ${parsedSymbols.length} symbols for Valr`)
 
-    return parsedSymbols
+    const response: IAlunaSymbolParseManyReturns = {
+      symbols: parsedSymbols,
+      apiRequestCount: parsedSymbolsCount,
+    }
+
+    return response
 
   }
 
