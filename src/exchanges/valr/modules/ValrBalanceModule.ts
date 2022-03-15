@@ -1,7 +1,13 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
+  IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { IValrBalanceSchema } from '../schemas/IValrBalanceSchema'
@@ -13,35 +19,62 @@ import { ValrLog } from '../ValrLog'
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IValrBalanceSchema[]> {
+  public async listRaw (): Promise<IAlunaBalanceListRawReturns> {
 
     ValrLog.info('fetching Valr balances')
 
-    const rawBalances = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
+    const {
+      data: rawBalances,
+      apiRequestCount,
+    } = await ValrHttp.privateRequest<IValrBalanceSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/account/balances',
       keySecret: this.exchange.keySecret,
     })
 
-    return rawBalances
+    return {
+      rawBalances,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      rawBalances,
+      apiRequestCount: listRawRequestCount,
+    } = await this.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyRequestCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     ValrLog.info(`parsed ${parsedBalances.length} balances for Valr`)
 
-    return parsedBalances
+    const totalApiRequestCount = parseManyRequestCount
+    + apiRequestCount
+    + listRawRequestCount
+
+    const response: IAlunaBalanceListReturns = {
+      apiRequestCount: totalApiRequestCount,
+      balances: parsedBalances,
+    }
+
+    return response
 
   }
 
   public parse (params: {
     rawBalance: IValrBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
@@ -56,7 +89,7 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
       symbolMappings: Valr.settings.mappings,
     })
 
-    return {
+    const parsedBalance: IAlunaBalanceSchema = {
       symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
@@ -64,19 +97,33 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
       meta: rawBalance,
     }
 
+    const response: IAlunaBalanceParseReturns = {
+      balance: parsedBalance,
+      apiRequestCount: 1,
+    }
+
+    return response
+
   }
 
   public parseMany (params: {
     rawBalances: IValrBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
 
       if (parseFloat(rawBalance.total) > 0) {
 
-        const parsedBalance = this.parse({ rawBalance })
+        const {
+          balance: parsedBalance,
+          apiRequestCount: parseRequestCount,
+        } = this.parse({ rawBalance })
+
+        apiRequestCount += parseRequestCount + 1
 
         accumulator.push(parsedBalance)
 
@@ -86,7 +133,12 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
     }, [] as IAlunaBalanceSchema[])
 
-    return parsedBalances
+    const response: IAlunaBalanceParseManyReturns = {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
+
+    return response
 
   }
 
