@@ -17,14 +17,20 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const { apiRequestCount, rawSymbols } = await ValrSymbolModule.listRaw()
+    const { apiRequestCount: listRawRequestCount, rawSymbols } = await ValrSymbolModule.listRaw()
+
+    let apiRequestCount = 0
 
     const {
       symbols,
       apiRequestCount: parseManyApiRequestCount,
     } = ValrSymbolModule.parseMany({ rawSymbols })
 
-    const totalApiRequestCount = apiRequestCount + parseManyApiRequestCount
+    apiRequestCount += 1
+
+    const totalApiRequestCount = listRawRequestCount
+    + parseManyApiRequestCount
+    + apiRequestCount
 
     return {
       symbols,
@@ -106,7 +112,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
         apiRequestCount,
       } = ValrSymbolModule.parse({ rawSymbol })
 
-      parsedSymbolsCount += apiRequestCount
+      parsedSymbolsCount += apiRequestCount + 1
 
       return parsedSymbol
 

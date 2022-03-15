@@ -1,3 +1,7 @@
+import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+
+
+
 export interface IValrMarketSchema {
   currencyPair: string
   askPrice: string
@@ -28,4 +32,24 @@ export interface IValrCurrencyPairs {
 export interface IMarketWithCurrencies extends IValrMarketSchema {
   baseCurrency: string
   quoteCurrency: string
+}
+
+export interface IValrMarketCurrencyParserResponseSchema {
+  rawMarketsWithCurrency: IMarketWithCurrencies[]
+  apiRequestCount: number
+}
+
+export interface IValrMarketParserResponseSchema {
+  market: IAlunaMarketSchema
+  apiRequestCount: number
+}
+
+export interface IValrMarketResponseSchema {
+  markets: IValrMarketSchema[]
+  apiRequestCount: number
+}
+
+export interface IValrCurrencyPairsResponseSchema {
+  currencyPairs: IValrCurrencyPairs[]
+  apiRequestCount: number
 }

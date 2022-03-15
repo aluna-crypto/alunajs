@@ -1,8 +1,15 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import {
   IMarketWithCurrencies,
   IValrCurrencyPairs,
+  IValrCurrencyPairsResponseSchema,
+  IValrMarketResponseSchema,
   IValrMarketSchema,
 } from '../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
@@ -13,62 +20,120 @@ import { ValrLog } from '../ValrLog'
 
 
 interface IValrMarketModule extends IAlunaMarketModule {
-  fetchMarkets (): Promise<IValrMarketSchema[]>
-  fetchCurrencyPairs (): Promise<IValrCurrencyPairs[]>
+  fetchMarkets (): Promise<IValrMarketResponseSchema>
+  fetchCurrencyPairs (): Promise<IValrCurrencyPairsResponseSchema>
 }
 
 export const ValrMarketModule: IValrMarketModule = class {
 
-  public static async listRaw (): Promise<IMarketWithCurrencies[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IMarketWithCurrencies>> {
 
     ValrLog.info('fetching Valr markets')
 
-    const rawMarkets = await this.fetchMarkets()
+    let apiRequestCount = 0
+
+    const {
+      markets: rawMarkets,
+      apiRequestCount: apiMarketCount,
+    } = await this.fetchMarkets()
+
+    apiRequestCount += 1
 
     ValrLog.info('fetching Valr currency pairs')
 
-    const rawCurrencyPairs = await this.fetchCurrencyPairs()
+    const {
+      currencyPairs: rawCurrencyPairs,
+      apiRequestCount: apiCurrencyPairCount,
+    } = await this.fetchCurrencyPairs()
 
-    const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
+    apiRequestCount += 1
+
+    const {
+      apiRequestCount: apiCurrencyPairParserCount,
+      rawMarketsWithCurrency,
+    } = ValrCurrencyPairsParser.parse({
       rawMarkets,
       rawCurrencyPairs,
     })
 
-    return rawMarketsWithCurrency
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiMarketCount
+      + apiCurrencyPairCount
+      + apiCurrencyPairParserCount
+      + apiRequestCount
+
+    return {
+      apiRequestCount: totalApiRequestCount,
+      rawMarkets: rawMarketsWithCurrency,
+    }
 
   }
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await ValrMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = ValrMarketModule.parseMany({ rawMarkets })
+    const {
+      apiRequestCount: listRawRequestCount,
+      rawMarkets,
+    } = await ValrMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyRequestCount,
+    } = ValrMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = listRawRequestCount
+      + parseManyRequestCount
+      + apiRequestCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public static parse (params: {
     rawMarket: IMarketWithCurrencies,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
-    const parsedMarket = ValrMarketParser.parse({ rawMarket })
+    const {
+      apiRequestCount,
+      market: parsedMarket,
+    } = ValrMarketParser.parse({ rawMarket })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: apiRequestCount + 1,
+    }
 
   }
 
   public static parseMany (params: {
     rawMarkets: IMarketWithCurrencies[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let parsedSymbolsCount = 0
+
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = ValrMarketParser.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount,
+      } = ValrMarketParser.parse({ rawMarket })
+
+      parsedSymbolsCount += apiRequestCount + 1
 
       return parsedMarket
 
@@ -76,27 +141,43 @@ export const ValrMarketModule: IValrMarketModule = class {
 
     ValrLog.info(`parsed ${parsedMarkets.length} markets for Valr`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: parsedSymbolsCount,
+    }
 
   }
 
-  public static async fetchMarkets (): Promise<IValrMarketSchema[]> {
+  public static async fetchMarkets (): Promise<IValrMarketResponseSchema> {
 
-    const markets = await ValrHttp.publicRequest<IValrMarketSchema[]>({
+    const {
+      data: markets,
+      apiRequestCount,
+    } = await ValrHttp.publicRequest<IValrMarketSchema[]>({
       url: 'https://api.valr.com/v1/public/marketsummary',
     })
 
-    return markets
+    return {
+      markets,
+      apiRequestCount,
+    }
 
   }
 
-  public static async fetchCurrencyPairs (): Promise<IValrCurrencyPairs[]> {
+  public static async fetchCurrencyPairs ()
+    : Promise<IValrCurrencyPairsResponseSchema> {
 
-    const currencyPairs = await ValrHttp.publicRequest<IValrCurrencyPairs[]>({
+    const {
+      data: currencyPairs,
+      apiRequestCount,
+    } = await ValrHttp.publicRequest<IValrCurrencyPairs[]>({
       url: 'https://api.valr.com/v1/public/pairs',
     })
 
-    return currencyPairs
+    return {
+      currencyPairs,
+      apiRequestCount,
+    }
 
   }
 
