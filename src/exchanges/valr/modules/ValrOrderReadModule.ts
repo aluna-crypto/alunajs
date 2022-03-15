@@ -4,9 +4,14 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { IValrCurrencyPairs } from '../schemas/IValrMarketSchema'
 import {
   IValrOrderGetSchema,
@@ -21,33 +26,60 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IValrOrderListSchema[]> {
+  public async listRaw (): Promise<IAlunaOrderListRawReturns> {
 
     ValrLog.info('fetching Valr open orders')
 
-    const rawOrders = await ValrHttp.privateRequest<IValrOrderListSchema[]>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await ValrHttp.privateRequest<IValrOrderListSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: 'https://api.valr.com/v1/orders/open',
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrders
+    return {
+      rawOrders,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = await this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawRequestCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyRequestCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + parseManyRequestCount
+      + listRawRequestCount
+
+    const response: IAlunaOrderListReturns = {
+      apiRequestCount: totalApiRequestCount,
+      orders: parsedOrders,
+    }
+
+    return response
 
   }
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IValrOrderGetSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -56,30 +88,58 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     ValrLog.info('fetching Valr order status')
 
-    const rawOrder = await ValrHttp.privateRequest<IValrOrderGetSchema>({
+    const {
+      data: rawOrder,
+      apiRequestCount,
+    } = await ValrHttp.privateRequest<IValrOrderGetSchema>({
       verb: AlunaHttpVerbEnum.GET,
       url: `https://api.valr.com/v1/orders/${symbolPair}/orderid/${id}`,
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrder
+    return {
+      apiRequestCount,
+      rawOrder,
+    }
 
   }
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = await this.parse({ rawOrder })
+    const {
+      apiRequestCount: getRawRequestCount,
+      rawOrder,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      apiRequestCount: parseRequestCount,
+      order: parsedOrder,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+    + parseRequestCount
+    + getRawRequestCount
+
+    const response: IAlunaOrderGetReturns = {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
+
+    return response
 
   }
 
   public async parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
     currencyPair?: IValrCurrencyPairs,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const {
       rawOrder,
@@ -91,10 +151,16 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     } = rawOrder
 
     let pair = currencyPair
+    let apiRequestCount = 0
 
     if (!pair) {
 
-      const pairs = await ValrMarketModule.fetchCurrencyPairs()
+      const {
+        currencyPairs: pairs,
+        apiRequestCount: fetchCurrencyPairsCount,
+      } = await ValrMarketModule.fetchCurrencyPairs()
+
+      apiRequestCount += fetchCurrencyPairsCount + 1
 
       pair = pairs.find((p) => p.symbol === orderCurrencyPair)
 
@@ -110,22 +176,41 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     }
 
-    const parsedOrder = ValrOrderParser.parse({
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseRequestCount,
+    } = ValrOrderParser.parse({
       rawOrder,
       currencyPair: pair,
     })
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseRequestCount
+
+    const response: IAlunaOrderParseReturns = {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
+
+    return response
 
   }
 
   public async parseMany (params: {
     rawOrders: IValrOrderListSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
 
-    const currencyPairs = await ValrMarketModule.fetchCurrencyPairs()
+    let apiRequestCount = 0
+
+    const {
+      currencyPairs,
+      apiRequestCount: fetchCurrencyPairsCount,
+    } = await ValrMarketModule.fetchCurrencyPairs()
+
+    apiRequestCount += 1
 
     const currencyPairsDictionary: { [symbol: string]: IValrCurrencyPairs } = {}
 
@@ -140,10 +225,15 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
         const currencyPair = currencyPairsDictionary[rawOrder.currencyPair]
 
-        const parsedOrder = await this.parse({
+        const {
+          order: parsedOrder,
+          apiRequestCount: parseCount,
+        } = await this.parse({
           rawOrder,
           currencyPair,
         })
+
+        apiRequestCount += parseCount + 1
 
         return parsedOrder
 
@@ -154,7 +244,14 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     ValrLog.info(`parsed ${parsedOrders.length} orders for Valr`)
 
-    return parsedOrders
+    const totalApiRequestCount = fetchCurrencyPairsCount + apiRequestCount
+
+    const response: IAlunaOrderParseManyReturns = {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
+
+    return response
 
   }
 

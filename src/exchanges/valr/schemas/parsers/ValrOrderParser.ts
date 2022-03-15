@@ -14,6 +14,7 @@ import { IValrCurrencyPairs } from '../IValrMarketSchema'
 import {
   IValrOrderGetSchema,
   IValrOrderListSchema,
+  IValrOrderParserReturns,
 } from '../IValrOrderSchema'
 
 
@@ -23,12 +24,14 @@ export class ValrOrderParser {
   static parse (params: {
     rawOrder: IValrOrderListSchema | IValrOrderGetSchema,
     currencyPair: IValrCurrencyPairs,
-  }): IAlunaOrderSchema {
+  }): IValrOrderParserReturns {
 
     const {
       rawOrder,
       currencyPair,
     } = params
+
+    let apiRequestCount = 0
 
     const {
       orderId,
@@ -89,12 +92,18 @@ export class ValrOrderParser {
       symbolMappings: Valr.settings.mappings,
     })
 
+    apiRequestCount += 1
+
     const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: quoteCurrency,
       symbolMappings: Valr.settings.mappings,
     })
 
+    apiRequestCount += 1
+
     const alnOrderType = ValrOrderTypeAdapter.translateToAluna({ from: type })
+
+    apiRequestCount += 1
 
     let rate: number | undefined
     let stopRate: number | undefined
@@ -119,6 +128,8 @@ export class ValrOrderParser {
     const amount = Number(originalQuantity)
 
     const alnOrderStatus = ValrStatusAdapter.translateToAluna({ from: status })
+
+    apiRequestCount += 1
 
     let filledAt: Date | undefined
     let canceledAt: Date | undefined
@@ -154,7 +165,14 @@ export class ValrOrderParser {
       meta: rawOrder,
     }
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const response = {
+      order: parsedOrder,
+      apiRequestCount,
+    }
+
+    return response
 
   }
 

@@ -9,12 +9,13 @@ import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 export interface IAlunaOrderReadModule extends IAlunaModule {
 
-  listRaw (params?: IAlunaOrderListParams): IAlunaOrderListRawReturns
-  list (params?: IAlunaOrderListParams): IAlunaOrderListReturns
-  getRaw (params: IAlunaOrderGetParams): IAlunaOrderGetRawReturns
-  get (params: IAlunaOrderGetParams): IAlunaOrderGetReturns
-  parseMany (params: IAlunaOrderParseManyParams): IAlunaOrderParseManyReturns
-  parse (params: IAlunaOrderParseParams): IAlunaOrderParseReturns
+  listRaw (params?: IAlunaOrderListParams): Promise<IAlunaOrderListRawReturns>
+  list (params?: IAlunaOrderListParams): Promise<IAlunaOrderListReturns>
+  getRaw (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetRawReturns>
+  get (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetReturns>
+  parseMany (params: IAlunaOrderParseManyParams)
+    : Promise<IAlunaOrderParseManyReturns>
+  parse (params: IAlunaOrderParseParams): Promise<IAlunaOrderParseReturns>
 
 }
 
