@@ -1,5 +1,10 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -15,36 +20,75 @@ import { BinanceSymbolModule } from './BinanceSymbolModule'
 
 export const BinanceMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IBinanceMarketWithCurrency[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IBinanceMarketWithCurrency>> {
 
     const { publicRequest } = BinanceHttp
 
+    let apiRequestCount = 0
+
     BinanceLog.info('fetching Binance markets')
 
-    const rawMarkets = await publicRequest<IBinanceMarketSchema[]>({
+    const {
+      data: rawMarkets,
+      apiRequestCount: requestCount,
+    } = await publicRequest<IBinanceMarketSchema[]>({
       url: `${PROD_BINANCE_URL}/api/v3/ticker/24hr`,
     })
 
-    const rawSymbols = await BinanceSymbolModule.listRaw()
+    const {
+      rawSymbols,
+      apiRequestCount: listRawRequestCount,
+    } = await BinanceSymbolModule.listRaw()
+
+    apiRequestCount += 1
 
     const rawMarketsWithCurrency = BinanceCurrencyMarketParser.parse({
       rawMarkets,
       rawSymbols,
     })
 
-    return rawMarketsWithCurrency
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawRequestCount
+      + requestCount
+
+    return {
+      rawMarkets: rawMarketsWithCurrency,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await BinanceMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = BinanceMarketModule.parseMany({ rawMarkets })
+    const {
+      rawMarkets,
+      apiRequestCount: listRawRequestCount,
+    } = await BinanceMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyRequestCount,
+    } = BinanceMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+        + listRawRequestCount
+        + parseManyRequestCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -52,13 +96,16 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
   public static parse (params: {
     rawMarket: IBinanceMarketWithCurrency,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
     const parsedMarket = BinanceMarketParser.parse({ rawMarket })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -66,13 +113,20 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
   public static parseMany (params: {
     rawMarkets: IBinanceMarketWithCurrency[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let apiRequestCount = 0
+
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = BinanceMarketParser.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseRequestCount,
+      } = this.parse({ rawMarket })
+
+      apiRequestCount += parseRequestCount + 1
 
       return parsedMarket
 
@@ -80,7 +134,10 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
     BinanceLog.info(`parsed ${parsedMarkets.length} markets for Binance`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 
