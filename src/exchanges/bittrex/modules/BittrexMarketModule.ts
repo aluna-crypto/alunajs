@@ -1,5 +1,10 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
@@ -15,20 +20,29 @@ import { BittrexTickerMarketParser } from '../schemas/parses/BittrexTickerMarket
 
 export const BittrexMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IBittrexMarketWithTicker[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IBittrexMarketWithTicker>> {
 
     const { publicRequest } = BittrexHttp
 
     BittrexLog.info('fetching Bittrex market summaries')
 
-    const rawMarketSummaries = await
+    let apiRequestCount = 0
+
+    const {
+      data: rawMarketSummaries,
+      apiRequestCount: summariesRequestCount,
+    } = await
     publicRequest<IBittrexMarketSummarySchema[]>({
       url: `${PROD_BITTREX_URL}/markets/summaries`,
     })
 
     BittrexLog.info('fetching Bittrex tickers')
 
-    const rawMarketTickers = await publicRequest<IBittrexMarketTickerSchema[]>({
+    const {
+      data: rawMarketTickers,
+      apiRequestCount: tickersRequestCount,
+    } = await publicRequest<IBittrexMarketTickerSchema[]>({
       url: `${PROD_BITTREX_URL}/markets/tickers`,
     })
 
@@ -37,19 +51,47 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
       rawMarketTickers,
     })
 
-    return rawMarketsWithTicker
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+    + tickersRequestCount
+    + summariesRequestCount
+
+    return {
+      rawMarkets: rawMarketsWithTicker,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await BittrexMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = BittrexMarketModule.parseMany({ rawMarkets })
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BittrexMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyCount,
+    } = BittrexMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = listRawCount
+      + parseManyCount
+      + apiRequestCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -57,13 +99,16 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
   public static parse (params: {
     rawMarket: IBittrexMarketWithTicker,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
     const parsedMarket = BittrexMarketParser.parse({ rawMarket })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -71,13 +116,20 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
   public static parseMany (params: {
     rawMarkets: IBittrexMarketWithTicker[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let apiRequestCount = 0
+
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = BittrexMarketParser.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseCount,
+      } = this.parse({ rawMarket })
+
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
@@ -85,7 +137,10 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     BittrexLog.info(`parsed ${parsedMarkets.length} markets for Bittrex`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 
