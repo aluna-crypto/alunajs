@@ -180,13 +180,13 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const { order, apiRequestCount: parseRequestCount } = await this.parse({
+    const { order, apiRequestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseRequestCount
+    const totalApiRequestCount = apiRequestCount + parseCount
 
     return {
       order,

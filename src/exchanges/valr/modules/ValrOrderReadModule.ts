@@ -52,21 +52,21 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const {
       rawOrders,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await this.listRaw()
 
     apiRequestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + parseManyRequestCount
-      + listRawRequestCount
+      + parseManyCount
+      + listRawCount
 
     const response: IAlunaOrderListReturns = {
       apiRequestCount: totalApiRequestCount,
@@ -117,14 +117,14 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     apiRequestCount += 1
 
     const {
-      apiRequestCount: parseRequestCount,
+      apiRequestCount: parseCount,
       order: parsedOrder,
     } = await this.parse({ rawOrder })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-    + parseRequestCount
+    + parseCount
     + getRawRequestCount
 
     const response: IAlunaOrderGetReturns = {
@@ -178,7 +178,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseRequestCount,
+      apiRequestCount: parseCount,
     } = ValrOrderParser.parse({
       rawOrder,
       currencyPair: pair,
@@ -186,7 +186,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseRequestCount
+    const totalApiRequestCount = apiRequestCount + parseCount
 
     const response: IAlunaOrderParseReturns = {
       order: parsedOrder,

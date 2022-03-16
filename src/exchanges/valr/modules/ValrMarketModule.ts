@@ -76,7 +76,7 @@ export const ValrMarketModule: IValrMarketModule = class {
     let apiRequestCount = 0
 
     const {
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
       rawMarkets,
     } = await ValrMarketModule.listRaw()
 
@@ -84,13 +84,13 @@ export const ValrMarketModule: IValrMarketModule = class {
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = ValrMarketModule.parseMany({ rawMarkets })
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = listRawRequestCount
-      + parseManyRequestCount
+    const totalApiRequestCount = listRawCount
+      + parseManyCount
       + apiRequestCount
 
     return {

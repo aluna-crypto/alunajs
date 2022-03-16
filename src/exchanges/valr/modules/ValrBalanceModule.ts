@@ -45,23 +45,23 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
     const {
       rawBalances,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await this.listRaw()
 
     apiRequestCount += 1
 
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
 
     apiRequestCount += 1
 
     ValrLog.info(`parsed ${parsedBalances.length} balances for Valr`)
 
-    const totalApiRequestCount = parseManyRequestCount
+    const totalApiRequestCount = parseManyCount
     + apiRequestCount
-    + listRawRequestCount
+    + listRawCount
 
     const response: IAlunaBalanceListReturns = {
       apiRequestCount: totalApiRequestCount,
@@ -120,10 +120,10 @@ export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModu
 
         const {
           balance: parsedBalance,
-          apiRequestCount: parseRequestCount,
+          apiRequestCount: parseCount,
         } = this.parse({ rawBalance })
 
-        apiRequestCount += parseRequestCount + 1
+        apiRequestCount += parseCount + 1
 
         accumulator.push(parsedBalance)
 

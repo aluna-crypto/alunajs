@@ -29,21 +29,21 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     const {
       rawSymbols,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await BinanceSymbolModule.listRaw()
 
     apiRequestCount += 1
 
     const {
       symbols: parsedSymbols,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = BinanceSymbolModule.parseMany({ rawSymbols })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + parseManyRequestCount
-      + listRawRequestCount
+      + parseManyCount
+      + listRawCount
 
     return {
       symbols: parsedSymbols,
@@ -139,10 +139,10 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
         const {
           symbol: parsedBaseSymbol,
-          apiRequestCount: parseRequestCount,
+          apiRequestCount: parseCount,
         } = this.parse({ rawSymbol: symbolPair })
 
-        apiRequestCount += parseRequestCount + 1
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[baseAsset] = parsedBaseSymbol
 
@@ -152,7 +152,7 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
         const {
           symbol: parsedQuoteSymbol,
-          apiRequestCount: parseRequestCount,
+          apiRequestCount: parseCount,
         } = this.parse({
           rawSymbol: {
             ...symbolPair,
@@ -160,7 +160,7 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
           },
         })
 
-        apiRequestCount += parseRequestCount + 1
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[quoteAsset] = parsedQuoteSymbol
 

@@ -49,21 +49,21 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const {
       rawOrders,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await this.listRaw()
 
     apiRequestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + listRawRequestCount
-      + parseManyRequestCount
+      + listRawCount
+      + parseManyCount
 
     return {
       orders: parsedOrders,
@@ -118,14 +118,14 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseRequestCount,
+      apiRequestCount: parseCount,
     } = await this.parse({ rawOrder })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
       + getRawRequestCount
-      + parseRequestCount
+      + parseCount
 
     return {
       order: parsedOrder,
@@ -149,7 +149,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
     // @TODO -> Move to parseMany()
     const {
       rawMarkets: symbols,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await BinanceMarketModule.listRaw()
 
     apiRequestCount += 1
@@ -163,7 +163,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = listRawRequestCount + apiRequestCount
+    const totalApiRequestCount = listRawCount + apiRequestCount
 
     return {
       order: parsedOrder,
@@ -187,10 +187,10 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
         const {
           order: parsedOrder,
-          apiRequestCount: parseRequestCount,
+          apiRequestCount: parseCount,
         } = await this.parse({ rawOrder })
 
-        apiRequestCount += parseRequestCount + 1
+        apiRequestCount += parseCount + 1
 
         return parsedOrder
 

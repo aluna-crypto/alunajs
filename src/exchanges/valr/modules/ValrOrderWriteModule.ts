@@ -340,13 +340,13 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseRequestCount,
+      apiRequestCount: parseCount,
     } = await this.parse({ rawOrder })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + parseRequestCount
+      + parseCount
       + getRawRequestCount
       + requestCount
 

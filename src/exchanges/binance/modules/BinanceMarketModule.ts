@@ -38,7 +38,7 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
     const {
       rawSymbols,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await BinanceSymbolModule.listRaw()
 
     apiRequestCount += 1
@@ -51,7 +51,7 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + listRawRequestCount
+      + listRawCount
       + requestCount
 
     return {
@@ -69,21 +69,21 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
     const {
       rawMarkets,
-      apiRequestCount: listRawRequestCount,
+      apiRequestCount: listRawCount,
     } = await BinanceMarketModule.listRaw()
 
     apiRequestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyRequestCount,
+      apiRequestCount: parseManyCount,
     } = BinanceMarketModule.parseMany({ rawMarkets })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-        + listRawRequestCount
-        + parseManyRequestCount
+        + listRawCount
+        + parseManyCount
 
     return {
       markets: parsedMarkets,
@@ -123,10 +123,10 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseRequestCount,
+        apiRequestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseRequestCount + 1
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
