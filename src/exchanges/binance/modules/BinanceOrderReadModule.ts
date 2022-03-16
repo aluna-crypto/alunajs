@@ -2,9 +2,14 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -16,29 +21,54 @@ import { BinanceMarketModule } from './BinanceMarketModule'
 
 export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IBinanceOrderSchema[]> {
+  public async listRaw (): Promise<IAlunaOrderListRawReturns> {
 
     BinanceLog.info('fetching Binance open orders')
 
-    const rawOrders = await BinanceHttp.privateRequest<IBinanceOrderSchema[]>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await BinanceHttp.privateRequest<IBinanceOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BINANCE_URL}/api/v3/openOrders`,
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrders
+    return {
+      rawOrders,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 1
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawRequestCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyRequestCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawRequestCount
+      + parseManyRequestCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -46,7 +76,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IBinanceOrderSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -55,26 +85,52 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     BinanceLog.info('fetching Binance order status')
 
-    const rawOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
+    const {
+      data: rawOrder,
+      apiRequestCount,
+    } = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BINANCE_URL}/api/v3/order`,
       keySecret: this.exchange.keySecret,
       query: `&orderId=${id}&symbol=${symbolPair}`,
     })
 
-    return rawOrder
+    return {
+      rawOrder,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = this.parse({ rawOrder })
+    const {
+      rawOrder,
+      apiRequestCount: getRawRequestCount,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseRequestCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + getRawRequestCount
+      + parseRequestCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -82,13 +138,21 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parse (params: {
     rawOrder: IBinanceOrderSchema,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const { rawOrder } = params
 
     const { symbol: currencyPair } = rawOrder
 
-    const symbols = await BinanceMarketModule.listRaw()
+    let apiRequestCount = 0
+
+    // @TODO -> Move to parseMany()
+    const {
+      rawMarkets: symbols,
+      apiRequestCount: listRawRequestCount,
+    } = await BinanceMarketModule.listRaw()
+
+    apiRequestCount += 1
 
     const symbolInfo = symbols.find((s) => s.symbol === currencyPair)
 
@@ -97,7 +161,14 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
       symbolInfo,
     })
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = listRawRequestCount + apiRequestCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -105,14 +176,21 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parseMany (params: {
     rawOrders: IBinanceOrderSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
+
+    let apiRequestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const {
+          order: parsedOrder,
+          apiRequestCount: parseRequestCount,
+        } = await this.parse({ rawOrder })
+
+        apiRequestCount += parseRequestCount + 1
 
         return parsedOrder
 
@@ -121,7 +199,10 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     BinanceLog.info(`parsed ${parsedOrders.length} orders for Binance`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 
