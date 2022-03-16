@@ -7,6 +7,7 @@ import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
+  IAlunaHttpResponseWithRequestCount,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
@@ -135,7 +136,8 @@ export const generateAuthSignature = (
 
 export const BinanceHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
+  static async publicRequest<T> (params: IAlunaHttpPublicParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
@@ -150,7 +152,10 @@ export const BinanceHttp: IAlunaHttp = class {
 
     if (AlunaCache.cache.has(cacheKey)) {
 
-      return AlunaCache.cache.get<T>(cacheKey)!
+      return {
+        data: AlunaCache.cache.get<T>(cacheKey)!,
+        apiRequestCount: 0,
+      }
 
     }
 
@@ -166,7 +171,10 @@ export const BinanceHttp: IAlunaHttp = class {
 
       AlunaCache.cache.set<T>(cacheKey, response.data)
 
-      return response.data
+      return {
+        data: response.data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 
@@ -178,7 +186,8 @@ export const BinanceHttp: IAlunaHttp = class {
 
 
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
+  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
@@ -217,7 +226,10 @@ export const BinanceHttp: IAlunaHttp = class {
 
       const response = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      return {
+        data: response.data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 
