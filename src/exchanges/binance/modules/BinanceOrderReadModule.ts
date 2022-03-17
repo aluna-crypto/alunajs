@@ -21,7 +21,8 @@ import { BinanceMarketModule } from './BinanceMarketModule'
 
 export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IAlunaOrderListRawReturns> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IBinanceOrderSchema>> {
 
     BinanceLog.info('fetching Binance open orders')
 
@@ -111,7 +112,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const {
       rawOrder,
-      apiRequestCount: getRawRequestCount,
+      apiRequestCount: getRawCount,
     } = await this.getRaw(params)
 
     apiRequestCount += 1
@@ -124,7 +125,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
-      + getRawRequestCount
+      + getRawCount
       + parseCount
 
     return {

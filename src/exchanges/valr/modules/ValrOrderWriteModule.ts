@@ -215,7 +215,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       rawOrder,
-      apiRequestCount: getRawRequestCount,
+      apiRequestCount: getRawCount,
     } = await this.getRaw({
       id,
       symbolPair,
@@ -277,7 +277,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     const totalApiRequestCount = apiRequestCount
       + cancelRequestCount
       + placeRequestCount
-      + getRawRequestCount
+      + getRawCount
 
     const response: IAlunaOrderEditReturns = {
       apiRequestCount: totalApiRequestCount,
@@ -319,7 +319,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       rawOrder,
-      apiRequestCount: getRawRequestCount,
+      apiRequestCount: getRawCount,
     } = await this.getRaw(params)
 
     apiRequestCount += 1
@@ -347,7 +347,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const totalApiRequestCount = apiRequestCount
       + parseCount
-      + getRawRequestCount
+      + getRawCount
       + requestCount
 
     const response: IAlunaOrderGetReturns = {

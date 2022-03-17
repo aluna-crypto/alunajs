@@ -26,7 +26,8 @@ import { ValrMarketModule } from './ValrMarketModule'
 
 export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IAlunaOrderListRawReturns> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IValrOrderListSchema>> {
 
     ValrLog.info('fetching Valr open orders')
 
@@ -110,7 +111,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     let apiRequestCount = 0
 
     const {
-      apiRequestCount: getRawRequestCount,
+      apiRequestCount: getRawCount,
       rawOrder,
     } = await this.getRaw(params)
 
@@ -125,7 +126,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const totalApiRequestCount = apiRequestCount
     + parseCount
-    + getRawRequestCount
+    + getRawCount
 
     const response: IAlunaOrderGetReturns = {
       order: parsedOrder,
