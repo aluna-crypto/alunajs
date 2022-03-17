@@ -2,9 +2,14 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
@@ -18,11 +23,17 @@ import { GateioOrderParser } from '../schemas/parsers/GateioOrderParser'
 
 export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IGateioOrderSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IGateioOrderSchema>> {
 
     GateioLog.info('fetching Gateio open orders')
 
-    const rawOrdersResponse = await GateioHttp
+    let apiRequestCount = 0
+
+    const {
+      data: rawOrdersResponse,
+      apiRequestCount: requestCount,
+    } = await GateioHttp
       .privateRequest<IGateioOrderListResponseSchema[]>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_GATEIO_URL}/spot/open_orders`,
@@ -33,25 +44,51 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
       rawOrdersResponse,
     })
 
-    return rawOrders
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + requestCount
+
+    return {
+      rawOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + parseManyCount
+      + listRawCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IGateioOrderSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -64,49 +101,85 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     GateioLog.info('fetching Gateio order')
 
-    const rawOrder = await GateioHttp.privateRequest<IGateioOrderSchema>({
+    const {
+      data: rawOrder,
+      apiRequestCount,
+    } = await GateioHttp.privateRequest<IGateioOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_GATEIO_URL}/spot/orders/${id}?${query.toString()}`,
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrder
+    return {
+      rawOrder,
+      apiRequestCount,
+    }
 
   }
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = this.parse({ rawOrder })
+    const {
+      rawOrder,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + getRawCount
+      + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async parse (params: {
     rawOrder: IGateioOrderSchema,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
 
     const { rawOrder } = params
 
     const parsedOrder = GateioOrderParser.parse({ rawOrder })
 
-    return parsedOrder
+    return {
+      order: parsedOrder,
+      apiRequestCount: 1,
+    }
 
   }
 
   public async parseMany (params: {
     rawOrders: IGateioOrderSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
+
+    let apiRequestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: any) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const {
+          order: parsedOrder,
+          apiRequestCount: parseCount,
+        } = await this.parse({ rawOrder })
+
+        apiRequestCount += parseCount + 1
 
         return parsedOrder
 
@@ -115,7 +188,10 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     GateioLog.info(`parsed ${parsedOrders.length} orders for Gateio`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 
