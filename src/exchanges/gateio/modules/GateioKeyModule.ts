@@ -1,6 +1,11 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -24,7 +29,7 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (params: {
     rawKey: IGateioKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     const { rawKey } = params
 
@@ -36,11 +41,14 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     Object.assign(alunaPermissions, rawKey)
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     GateioLog.info('fetching Gateio key permissions')
 
@@ -57,14 +65,18 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId: undefined,
     }
 
+    let apiRequestCount = 0
+
     try {
 
-      await GateioHttp
+      const { apiRequestCount: requestCount } = await GateioHttp
         .privateRequest<IGateioBalanceSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_GATEIO_URL}/spot/accounts`,
           keySecret,
         })
+
+      apiRequestCount += requestCount
 
       permissions.read = true
 
@@ -90,6 +102,9 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
         amount: '0',
         price: '0',
       }
+
+      // need to assign the apiRequestCount before because the request will fail
+      apiRequestCount += 1
 
       await GateioHttp
         .privateRequest<IGateioBalanceSchema>({
@@ -123,12 +138,17 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      const account = await GateioHttp
+      const {
+        data: account,
+        apiRequestCount: requestCount,
+      } = await GateioHttp
         .privateRequest<IGateioKeyAccountSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_GATEIO_URL}/wallet/fee`,
           keySecret,
         })
+
+      apiRequestCount += requestCount
 
       permissions.accountId = account.user_id.toString()
 
@@ -140,15 +160,23 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey: permissions })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({ rawKey: permissions })
 
-    return details
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IGateioKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     GateioLog.info('parsing Gateio key details')
 
@@ -160,13 +188,27 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId,
     } = rawKey
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       meta: rawKey,
       accountId,
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
     }
 
-    return this.details
+    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
