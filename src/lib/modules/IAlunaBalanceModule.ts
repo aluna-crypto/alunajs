@@ -10,7 +10,7 @@ export interface IAlunaBalanceModule extends IAlunaModule {
 
   /* eslint-disable max-len */
 
-  listRaw (): Promise<IAlunaBalanceListRawReturns>
+  listRaw (): Promise<IAlunaBalanceListRawReturns<T>>
   list (): Promise<IAlunaBalanceListReturns>
 
   parseMany (params: IAlunaBalanceParseManyParams): IAlunaBalanceParseManyReturns
@@ -52,8 +52,8 @@ export interface IAlunaBalanceParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaBalanceListRawReturns extends IAlunaApiRequestSchema {
-  rawBalances: any[]
+export interface IAlunaBalanceListRawReturns<T> extends IAlunaApiRequestSchema {
+  rawBalances: T[]
 
 }
 export interface IAlunaBalanceListReturns extends IAlunaApiRequestSchema {

@@ -19,7 +19,8 @@ import { ValrLog } from '../ValrLog'
 
 export class ValrBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IAlunaBalanceListRawReturns> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IValrBalanceSchema>> {
 
     ValrLog.info('fetching Valr balances')
 

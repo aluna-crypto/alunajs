@@ -23,7 +23,8 @@ import { IBinanceKeyAccountSchema } from '../schemas/IBinanceKeySchema'
 
 export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IAlunaBalanceListRawReturns> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema>> {
 
     BinanceLog.info('fetching Binance balances')
 

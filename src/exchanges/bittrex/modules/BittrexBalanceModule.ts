@@ -21,7 +21,7 @@ import { IBittrexBalanceSchema } from '../schemas/IBittrexBalanceSchema'
 export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
   public async listRaw ()
-    : Promise<IAlunaBalanceListRawReturns> {
+    : Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema>> {
 
     BittrexLog.info('fetching Bittrex balances')
 
