@@ -8,6 +8,7 @@ import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -88,7 +89,7 @@ describe('PoloniexOrderWriteModule', () => {
 
   })
 
-  it('should throw an request error when placing new order', async () => {
+  it('should throw a request error when placing new order', async () => {
 
     ImportMock.mockOther(
       poloniexOrderWriteModule,
@@ -143,6 +144,57 @@ describe('PoloniexOrderWriteModule', () => {
     expect(error.httpStatusCode).to.be.eq(500)
 
   })
+
+  it('should throw an insufficient balance error when placing new order',
+    async () => {
+
+      ImportMock.mockOther(
+        poloniexOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Not enough USDT.',
+      })
+
+      const requestMock = ImportMock.mockFunction(
+        PoloniexHttp,
+        'privateRequest',
+        Promise.reject(mockedError),
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      let result
+      let error
+
+      try {
+
+        result = await poloniexOrderWriteModule.place(placeOrderParams)
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(result).not.to.be.ok
+
+      expect(requestMock.callCount).to.be.eq(1)
+
+      expect(error.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error.message).to.be.eq('Not enough USDT.')
+
+    })
 
   it('should validate exchange specs when placing new orders', async () => {
 

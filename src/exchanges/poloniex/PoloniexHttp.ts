@@ -24,6 +24,10 @@ interface ISignedHashParams {
   body?: any
 }
 
+interface IPoloniexResponseWithError {
+  error: string
+}
+
 interface IPoloniexSignedHeaders {
     'Key': string
     'Sign': string
@@ -152,9 +156,19 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      const isError = ((data as unknown) as IPoloniexResponseWithError).error
+
+      if (isError) {
+
+        const error = new Error(isError)
+
+        throw handleRequestError(error)
+
+      }
+
+      return data
 
     } catch (error) {
 
