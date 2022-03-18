@@ -1,4 +1,10 @@
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Poloniex } from '../Poloniex'
@@ -15,37 +21,69 @@ import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParse
 
 export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
-  public static async listRaw (): Promise<IPoloniexSymbolWithCurrency[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IPoloniexSymbolWithCurrency>> {
 
     PoloniexLog.info('fetching Poloniex symbols')
 
     const query = new URLSearchParams()
 
+    let apiRequestCount = 0
+
     query.append('command', 'returnCurrencies')
 
-    const rawSymbols = await PoloniexHttp
+    const {
+      data: rawSymbols,
+      apiRequestCount: requestCount,
+    } = await PoloniexHttp
       .publicRequest<IPoloniexSymbolSchema>({
         url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
       })
+
+    apiRequestCount += requestCount
 
     const rawSymbolsWithCurrency = PoloniexCurrencyParser
       .parse<IPoloniexSymbolWithCurrency>({
         rawInfo: rawSymbols,
       })
 
-    return rawSymbolsWithCurrency
+    apiRequestCount += 1
+
+    return {
+      rawSymbols: rawSymbolsWithCurrency,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await PoloniexSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = PoloniexSymbolModule.parseMany({ rawSymbols })
+    const {
+      rawSymbols,
+      apiRequestCount: listRawCount,
+    } = await PoloniexSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = PoloniexSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+          + listRawCount
+          + parseManyCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -53,7 +91,7 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
   public static parse (params:{
     rawSymbol: IPoloniexSymbolWithCurrency,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
@@ -79,7 +117,10 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
       meta: rawSymbol,
     }
 
-    return parsedSymbol
+    return {
+      symbol: parsedSymbol,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -87,13 +128,20 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
   public static parseMany (params: {
     rawSymbols: IPoloniexSymbolWithCurrency[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
+    let apiRequestCount = 0
+
     const parsedSymbols = rawSymbols.map((rawSymbol) => {
 
-      const parsedSymbol = PoloniexSymbolModule.parse({ rawSymbol })
+      const {
+        apiRequestCount: parseCount,
+        symbol: parsedSymbol,
+      } = PoloniexSymbolModule.parse({ rawSymbol })
+
+      apiRequestCount += parseCount + 1
 
       return parsedSymbol
 
@@ -101,7 +149,10 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     PoloniexLog.info(`parsed ${parsedSymbols.length} symbols for Poloniex`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 
