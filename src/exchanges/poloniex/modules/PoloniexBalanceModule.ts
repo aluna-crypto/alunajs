@@ -1,6 +1,12 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
+  IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Poloniex } from '../Poloniex'
@@ -17,11 +23,14 @@ import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParse
 
 export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IPoloniexBalanceWithCurrency[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IPoloniexBalanceWithCurrency>> {
 
     PoloniexLog.info('fetching Poloniex balances')
 
     const { keySecret } = this.exchange
+
+    let apiRequestCount = 0
 
     const timestamp = new Date().getTime()
     const params = new URLSearchParams()
@@ -29,33 +38,63 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
     params.append('command', 'returnCompleteBalances')
     params.append('nonce', timestamp.toString())
 
-    const rawBalances = await PoloniexHttp
+    const {
+      data: rawBalances,
+      apiRequestCount: requestCount,
+    } = await PoloniexHttp
       .privateRequest<IPoloniexBalanceSchema>({
         keySecret,
         url: `${PROD_POLONIEX_URL}/tradingApi`,
         body: params,
       })
 
+    apiRequestCount += requestCount
+
     const rawBalancesWithCurrency = PoloniexCurrencyParser
       .parse<IPoloniexBalanceWithCurrency>({
         rawInfo: rawBalances,
       })
 
-    return rawBalancesWithCurrency
+    apiRequestCount += 1
+
+    return {
+      rawBalances: rawBalancesWithCurrency,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      apiRequestCount: listRawCount,
+      rawBalances,
+    } = await this.listRaw()
+
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     PoloniexLog.info(`parsed ${parsedBalances.length} balances for Poloniex`)
 
-    return parsedBalances
+    const totalApiRequestCount = apiRequestCount
+        + listRawCount
+        + parseManyCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -63,7 +102,7 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
   public parse (params: {
     rawBalance: IPoloniexBalanceWithCurrency,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
@@ -80,12 +119,17 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const total = parseFloat(available) + parseFloat(onOrders)
 
-    return {
+    const parsedBalance = {
       symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: parseFloat(available),
       total,
       meta: rawBalance,
+    }
+
+    return {
+      balance: parsedBalance,
+      apiRequestCount: 1,
     }
 
   }
@@ -94,9 +138,11 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
   public parseMany (params: {
     rawBalances: IPoloniexBalanceWithCurrency[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -110,7 +156,12 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
 
         if (total > 0) {
 
-          const parsedBalance = this.parse({ rawBalance })
+          const {
+            balance: parsedBalance,
+            apiRequestCount: parseCount,
+          } = this.parse({ rawBalance })
+
+          apiRequestCount += parseCount + 1
 
           accumulator.push(parsedBalance)
 
@@ -122,7 +173,10 @@ export class PoloniexBalanceModule extends AAlunaModule implements IAlunaBalance
       [],
     )
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 
