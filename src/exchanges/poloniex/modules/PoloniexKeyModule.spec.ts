@@ -39,16 +39,7 @@ describe('PoloniexKeyModule', () => {
       requestResponse,
     )
 
-    const badRequestErrorMock = new AlunaError({
-      code: 'any-code',
-      message: 'any-message',
-      httpStatusCode: 422,
-      metadata: {
-        code: 'BAD_REQUEST',
-      },
-    })
-
-    requestMock.onFirstCall().returns(Promise.reject(badRequestErrorMock))
+    requestMock.onFirstCall().returns({})
 
     const { permissions } = await poloniexKeyModule.fetchDetails()
 
@@ -61,7 +52,7 @@ describe('PoloniexKeyModule', () => {
   })
 
 
-  it('should ensure user has trade permissions', async () => {
+  it('should ensure user has read permissions', async () => {
 
     ImportMock.mockOther(
       poloniexKeyModule,
@@ -102,13 +93,13 @@ describe('PoloniexKeyModule', () => {
 
     const result = await poloniexKeyModule.fetchDetails()
 
-    expect(result.permissions.trade).not.to.be.ok
+    expect(result.permissions.read).not.to.be.ok
 
   })
 
 
 
-  it('should ensure user has trade permissions', async () => {
+  it('should ensure user has read permissions', async () => {
 
     ImportMock.mockOther(
       poloniexKeyModule,
@@ -214,8 +205,6 @@ describe('PoloniexKeyModule', () => {
 
     const key: IPoloniexKeySchema = {
       read: true,
-      trade: false,
-      withdraw: false,
     }
 
     const perm1 = poloniexKeyModule.parsePermissions({
@@ -223,7 +212,7 @@ describe('PoloniexKeyModule', () => {
     })
 
     expect(perm1.read).to.be.ok
-    expect(perm1.trade).not.to.be.ok
+    expect(perm1.trade).to.be.ok
     expect(perm1.withdraw).not.to.be.ok
 
   })

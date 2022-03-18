@@ -5,7 +5,6 @@ import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
 } from '../../../lib/schemas/IAlunaKeySchema'
-import { PoloniexOrderTimeInForceEnum } from '../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
@@ -26,7 +25,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read: false,
-      trade: false,
+      trade: true,
       withdraw: false,
     }
 
@@ -43,9 +42,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const { keySecret } = this.exchange
 
     const permissions: IPoloniexKeySchema = {
-      read: true,
-      trade: false,
-      withdraw: false,
+      read: false,
     }
 
     try {
@@ -53,11 +50,8 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       const timestamp = new Date().getTime()
       const body = new URLSearchParams()
 
-      body.append('command', 'sell')
-      body.append('currencyPair', 'BUSDBNB')
-      body.append('amount', '1')
-      body.append('rate', '9999999')
-      body.append(PoloniexOrderTimeInForceEnum.POST_ONLY, '1')
+      body.append('command', 'returnOpenOrders')
+      body.append('currencyPair', 'all')
       body.append('nonce', timestamp.toString())
 
       await PoloniexHttp
@@ -68,15 +62,13 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
           body,
         })
 
+      permissions.read = true
+
     } catch (error) {
 
       if (error.httpStatusCode === 403) {
 
-        permissions.trade = false
-
-      } else if (error.httpStatusCode === 422) {
-
-        permissions.trade = true
+        permissions.read = false
 
       } else {
 
