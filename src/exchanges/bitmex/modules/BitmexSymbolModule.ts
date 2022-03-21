@@ -3,7 +3,13 @@ import {
   values,
 } from 'lodash'
 
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Bitmex } from '../Bitmex'
@@ -16,29 +22,55 @@ import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 
 export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
-  public static async listRaw (): Promise<IBitmexSymbolsSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IBitmexSymbolsSchema>> {
 
     BitmexLog.info('fetching Bitmex symbols')
 
     const { publicRequest } = BitmexHttp
 
-    const rawSymbols = await publicRequest<IBitmexSymbolsSchema[]>({
+    const {
+      data: rawSymbols,
+      apiRequestCount,
+    } = await publicRequest<IBitmexSymbolsSchema[]>({
       url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
-    return rawSymbols
+    return {
+      rawSymbols,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await BitmexSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = BitmexSymbolModule.parseMany({ rawSymbols })
+    const {
+      rawSymbols,
+      apiRequestCount: listRawCount,
+    } = await BitmexSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = BitmexSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -46,7 +78,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
   public static parse (params:{
     rawSymbol: IBitmexSymbolsSchema,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
@@ -68,7 +100,10 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
       meta: rawSymbol,
     }
 
-    return parsedSymbol
+    return {
+      symbol: parsedSymbol,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -76,11 +111,13 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
   public static parseMany (params: {
     rawSymbols: IBitmexSymbolsSchema[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
     const parsedSymbolsDictionary: Record<string, IAlunaSymbolSchema> = {}
+
+    let apiRequestCount = 0
 
     each(rawSymbols, (rawSymbol) => {
 
@@ -91,18 +128,27 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDictionary[rootSymbol]) {
 
-        parsedSymbolsDictionary[rootSymbol] = this.parse({ rawSymbol })
+        const {
+          symbol,
+          apiRequestCount: parseCount,
+        } = this.parse({ rawSymbol })
+        apiRequestCount += parseCount + 1
+
+        parsedSymbolsDictionary[rootSymbol] = symbol
 
       }
 
       if (!parsedSymbolsDictionary[quoteCurrency]) {
 
-        parsedSymbolsDictionary[quoteCurrency] = this.parse({
+        const { symbol, apiRequestCount: parseCount } = this.parse({
           rawSymbol: {
             ...rawSymbol,
             rootSymbol: quoteCurrency,
           },
         })
+
+        apiRequestCount += parseCount + 1
+        parsedSymbolsDictionary[quoteCurrency] = symbol
 
       }
 
@@ -112,7 +158,10 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     BitmexLog.info(`parsed ${parsedSymbols.length} symbols for Bitmex`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 
