@@ -10,9 +10,13 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import {
   IAlunaBalanceGetTradableBalanceParams,
+  IAlunaBalanceGetTradableBalanceReturns,
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
   IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
 } from '../../../lib/modules/IAlunaBalanceModule'
-import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
@@ -25,36 +29,62 @@ import { BitmexMarketModule } from './BitmexMarketModule'
 
 export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IBitmexBalanceSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IBitmexBalanceSchema>> {
 
     BitmexLog.info('fetching BitMEX balances')
 
     const { privateRequest } = BitmexHttp
 
-    const rawBalances = await privateRequest<IBitmexBalanceSchema[]>({
+    const {
+      data: rawBalances,
+      apiRequestCount,
+    } = await privateRequest<IBitmexBalanceSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/user/margin`,
       body: { currency: 'all' },
       keySecret: this.exchange.keySecret,
     })
 
-    return rawBalances
+    return {
+      rawBalances,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      rawBalances,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedBalances
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+        + listRawCount
+        + parseManyCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parse (params: {
     rawBalance: IBitmexBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
@@ -62,21 +92,31 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
       rawBalance,
     })
 
-    return parsedBalance
+    return {
+      balance: parsedBalance,
+      apiRequestCount: 1,
+    }
 
   }
 
   public parseMany (params: {
     rawBalances: IBitmexBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
 
+    let apiRequestCount = 0
+
     const parsedBalances = map(rawBalances, (rawBalance) => {
 
-      const parsedBalance = this.parse({
+      const {
+        balance: parsedBalance,
+        apiRequestCount: parseCount,
+      } = this.parse({
         rawBalance,
       })
+
+      apiRequestCount += parseCount + 1
 
       return parsedBalance
 
@@ -84,23 +124,35 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     BitmexLog.info(`parsed ${parsedBalances.length} balances for BitMEX`)
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 
   public async getTradableBalance (
     params: IAlunaBalanceGetTradableBalanceParams,
-  ): Promise<number> {
+  ): Promise<IAlunaBalanceGetTradableBalanceReturns> {
 
     const { symbolPair } = params
 
+    let apiRequestCount = 0
+
     BitmexLog.info(`fetching Bitmex tradable balance for ${symbolPair}`)
 
-    const { settlCurrency } = await BitmexMarketModule.getRaw({
-      symbolPair,
+    const {
+      rawMarket: settlCurrency,
+      apiRequestCount: getRawCount,
+    } = await BitmexMarketModule.getRaw({
+      id: symbolPair,
     })
 
-    const balances = await this.list()
+    apiRequestCount += 1
+
+    const { balances, apiRequestCount: listCount } = await this.list()
+
+    apiRequestCount += 1
 
     // TODO: refact after implementing mappings
     const desiredAsset = filter(balances, ({ symbolId }) => {
@@ -130,9 +182,14 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     const { available } = desiredAsset[0]
 
-    const leverage = await this.exchange.position!.getLeverage!({
+    const {
+      leverage,
+      apiRequestCount: getLeverageCount,
+    } = await this.exchange.position!.getLeverage!({
       symbolPair,
     })
+
+    apiRequestCount += 1
 
     const computedLeverage = leverage === 0
       ? 1
@@ -142,7 +199,16 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
       .times(computedLeverage)
       .toNumber()
 
-    return tradableBalance
+    const totalApiRequestCount = apiRequestCount
+      + getRawCount
+      + listCount
+      + getLeverageCount
+
+
+    return {
+      tradableBalance,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
