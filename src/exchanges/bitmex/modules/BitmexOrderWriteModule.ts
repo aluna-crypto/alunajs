@@ -10,12 +10,14 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import {
@@ -46,21 +48,27 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
 
     const {
       type,
       account,
     } = params
 
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitmexLog.info('placing new order for Bitmex')
 
@@ -70,12 +78,18 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     try {
 
-      rawOrder = await privateRequest<IBitmexOrderSchema>({
+      const {
+        data: orderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.POST,
       })
+
+      rawOrder = orderResponse
+      apiRequestCount += requestCount
 
 
     } catch (error) {
@@ -86,27 +100,45 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     rawOrder = await this.getFreshOrder({ rawOrder })
 
-    const parsedOrder = await this.parse({ rawOrder })
+    apiRequestCount += 1
 
-    return parsedOrder
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
+  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns> {
 
     const {
       type,
       account,
     } = params
 
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitmexLog.info('editing order for Bitmex')
 
@@ -116,12 +148,18 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     try {
 
-      rawOrder = await privateRequest<IBitmexOrderSchema>({
+      const {
+        data: editOrderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.PUT,
       })
+
+      rawOrder = editOrderResponse
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -131,15 +169,27 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     rawOrder = await this.getFreshOrder({ rawOrder })
 
-    const parsedOrder = await this.parse({ rawOrder })
+    apiRequestCount += 1
 
-    return parsedOrder
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     const { id } = params
 
@@ -148,15 +198,25 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
     const { privateRequest } = BitmexHttp
 
     let rawOrder: IBitmexOrderResponse
+    let apiRequestCount = 0
 
     try {
 
-      [rawOrder] = await privateRequest<IBitmexOrderResponse[]>({
+      const {
+        data: cancelOrderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderResponse[]>({
         url: `${PROD_BITMEX_URL}/order`,
         body: { orderID: id },
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.DELETE,
       })
+
+      apiRequestCount += requestCount
+
+      const [rawOrderResp] = cancelOrderResponse
+
+      rawOrder = rawOrderResp
 
       if (rawOrder.error) {
 
@@ -175,7 +235,19 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     }
 
-    return this.parse({ rawOrder })
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -208,8 +280,8 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       from: side,
     })
 
-    const { instrument } = await BitmexMarketModule.get({
-      symbolPair,
+    const { order: { instrument } } = await BitmexMarketModule.get({
+      id: symbolPair,
     })
 
     const orderQty = BitmexOrderParser.translateAmountToOrderQty({
