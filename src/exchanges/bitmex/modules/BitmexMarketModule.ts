@@ -1,7 +1,15 @@
 import { map } from 'lodash'
 
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketGetParams,
+  IAlunaMarketGetRawReturns,
+  IAlunaMarketGetReturns,
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
@@ -14,59 +22,108 @@ import { BitmexSymbolModule } from './BitmexSymbolModule'
 export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
 
-  public static async listRaw (): Promise<IBitmexMarketsSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IBitmexMarketsSchema>> {
 
     BitmexLog.info('fetching Bitmex markets')
 
-    const rawMarkets = await BitmexSymbolModule.listRaw()
+    const { rawSymbols, apiRequestCount } = await BitmexSymbolModule.listRaw()
 
-    return rawMarkets
-
-  }
-
-  public static async list (): Promise<IAlunaMarketSchema[]> {
-
-    const rawMarkets = await BitmexMarketModule.listRaw()
-
-    const parsedMarkets = BitmexMarketModule.parseMany({ rawMarkets })
-
-    return parsedMarkets
+    return {
+      rawMarkets: rawSymbols,
+      apiRequestCount: apiRequestCount + 1,
+    }
 
   }
 
-  public static async getRaw (params: {
-    symbolPair: string,
-  }): Promise<IBitmexMarketsSchema> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const { symbolPair } = params
+    let apiRequestCount = 0
+
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BitmexMarketModule.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyCount,
+    } = BitmexMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
+
+  }
+
+  public static async getRaw (params: IAlunaMarketGetParams)
+    : Promise<IAlunaMarketGetRawReturns> {
+
+    const { id } = params
 
     const { publicRequest } = BitmexHttp
 
-    const [rawMarket] = await publicRequest<IBitmexMarketsSchema[]>({
-      url: `${PROD_BITMEX_URL}/instrument?symbol=${symbolPair}`,
+    const {
+      data,
+      apiRequestCount,
+    } = await publicRequest<IBitmexMarketsSchema[]>({
+      url: `${PROD_BITMEX_URL}/instrument?symbol=${id}`,
     })
 
-    return rawMarket
+    const [rawMarket] = data
+
+    return {
+      rawMarket,
+      apiRequestCount,
+    }
 
   }
 
-  public static async get (params: {
-      symbolPair: string,
-    }): Promise<IAlunaMarketSchema> {
+  public static async get (params: IAlunaMarketGetParams)
+    : Promise<IAlunaMarketGetReturns> {
 
-    const { symbolPair } = params
+    const { id } = params
 
-    const rawMarket = await this.getRaw({ symbolPair })
+    let apiRequestCount = 0
 
-    const parsedMarket = this.parse({ rawMarket })
+    const {
+      apiRequestCount: getRawCount,
+      rawMarket,
+    } = await this.getRaw({ id })
 
-    return parsedMarket
+    apiRequestCount += 1
+
+    const {
+      market: parsedMarket,
+      apiRequestCount: parseCount,
+    } = this.parse({ rawMarket })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+          + getRawCount
+          + parseCount
+
+    return {
+      market: parsedMarket,
+      apiRequestCount: totalApiRequestCount,
+    }
+
 
   }
 
   public static parse (params: {
     rawMarket: IBitmexMarketsSchema,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
@@ -74,19 +131,29 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
       rawMarket,
     })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
   public static parseMany (params: {
     rawMarkets: IBitmexMarketsSchema[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let apiRequestCount = 0
+
     const parsedMarkets = map(rawMarkets, (rawMarket) => {
 
-      const parsedMarket = this.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseCount,
+      } = this.parse({ rawMarket })
+
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
@@ -94,7 +161,10 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     BitmexLog.info(`parsed ${parsedMarkets.length} markets for Bitmex`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 

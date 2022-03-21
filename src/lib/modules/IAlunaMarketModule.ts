@@ -8,8 +8,8 @@ export interface IAlunaMarketModule {
   list (): Promise<IAlunaMarketListReturns>
   listRaw (): Promise<IAlunaMarketListRawReturns<T>>
 
-  get? (params: IAlunaMarketGetParams): IAlunaMarketGetReturns
-  getRaw? (params: IAlunaMarketGetParams): IAlunaMarketGetRawReturns
+  get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
+  getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns>
 
   parse (params: IAlunaMarketParseParams): IAlunaMarketParseReturns
   parseMany (params: IAlunaMarketParseManyParams): IAlunaMarketParseManyReturns
