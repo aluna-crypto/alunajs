@@ -3,6 +3,11 @@ import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 
 
 
+export interface IPoloniexOrderResponseReturns<T> {
+  apiRequestCount: number
+  order: T
+}
+
 export interface IPoloniexOrderInfo {
   orderNumber: string
   type: PoloniexOrderTypeEnum

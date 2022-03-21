@@ -3,9 +3,14 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
@@ -13,6 +18,7 @@ import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
 import {
   getOrderStatusResponse,
   IPoloniexOrderInfo,
+  IPoloniexOrderResponseReturns,
   IPoloniexOrderSchema,
   IPoloniexOrderStatusInfo,
   IPoloniexOrderWithCurrency,
@@ -25,7 +31,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
 
   private async getOrderStatus (orderNumber: string)
-    : Promise<IPoloniexOrderStatusInfo> {
+    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderStatusInfo>> {
 
     const timestamp = new Date().getTime()
     const statusParams = new URLSearchParams()
@@ -34,7 +40,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     statusParams.append('orderNumber', orderNumber)
     statusParams.append('nonce', timestamp.toString())
 
-    const { result } = await PoloniexHttp
+    const { data: { result }, apiRequestCount } = await PoloniexHttp
       .privateRequest<getOrderStatusResponse>(
         {
           url: `${PROD_POLONIEX_URL}/tradingApi`,
@@ -54,12 +60,15 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     }
 
-    return result[orderNumber]
+    return {
+      order: result[orderNumber],
+      apiRequestCount,
+    }
 
   }
 
   private async getOrderTrades (orderNumber: string)
-    : Promise<IPoloniexOrderInfo[]> {
+    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderInfo[]>> {
 
     const timestamp = new Date().getTime()
     const statusParams = new URLSearchParams()
@@ -68,7 +77,10 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     statusParams.append('orderNumber', orderNumber)
     statusParams.append('nonce', timestamp.toString())
 
-    const rawOrderTrades = await PoloniexHttp
+    const {
+      data: rawOrderTrades,
+      apiRequestCount,
+    } = await PoloniexHttp
       .privateRequest<IPoloniexOrderInfo[] | { error: string }>({
         url: `${PROD_POLONIEX_URL}/tradingApi`,
         keySecret: this.exchange.keySecret,
@@ -86,11 +98,15 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     }
 
-    return rawOrderTrades
+    return {
+      order: rawOrderTrades,
+      apiRequestCount,
+    }
 
   }
 
-  public async listRaw (): Promise<IPoloniexOrderWithCurrency[]> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IPoloniexOrderWithCurrency>> {
 
     PoloniexLog.info('fetching Poloniex open orders')
 
@@ -101,7 +117,10 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     params.append('currencyPair', 'all')
     params.append('nonce', timestamp.toString())
 
-    const rawOrders = await PoloniexHttp.privateRequest<IPoloniexOrderSchema>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await PoloniexHttp.privateRequest<IPoloniexOrderSchema>({
       url: `${PROD_POLONIEX_URL}/tradingApi`,
       keySecret: this.exchange.keySecret,
       body: params,
@@ -140,19 +159,41 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
     })
 
 
-    return rawOrdersWithCurrency
+    return {
+      rawOrders: rawOrdersWithCurrency,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -160,7 +201,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IPoloniexOrderStatusInfo> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -171,16 +212,29 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     let result
     let orderTrades: IPoloniexOrderInfo[] = []
+    let apiRequestCount = 0
 
     try {
 
-      result = await this.getOrderStatus(id)
+      const {
+        order: rawOrder,
+        apiRequestCount: getOrderStatusCount,
+      } = await this.getOrderStatus(id)
+
+      result = rawOrder
+      apiRequestCount += getOrderStatusCount + 1
 
     } catch (err) {
 
       try {
 
-        orderTrades = await this.getOrderTrades(id)
+        const {
+          order: orderTradesData,
+          apiRequestCount: getOrderTradesCount,
+        } = await this.getOrderTrades(id)
+
+        orderTrades = orderTradesData
+        apiRequestCount += getOrderTradesCount + 1
 
       } catch (err) {
 
@@ -213,7 +267,10 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
         orderNumber: id,
       }
 
-      return resultWithOrderNumber
+      return {
+        rawOrder: resultWithOrderNumber,
+        apiRequestCount,
+      }
 
     }
 
@@ -224,19 +281,42 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
       orderNumber: id,
     }
 
-    return rawOrderTradeWithStatus
+    return {
+      rawOrder: rawOrderTradeWithStatus,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = this.parse({ rawOrder })
+    const {
+      rawOrder,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + getRawCount
+      + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -244,13 +324,16 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   public async parse (params: {
     rawOrder: IPoloniexOrderWithCurrency | IPoloniexOrderStatusInfo,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const { rawOrder } = params
 
     const parsedOrder = PoloniexOrderParser.parse({ rawOrder })
 
-    return parsedOrder
+    return {
+      order: parsedOrder,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -258,14 +341,21 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
   public async parseMany (params: {
     rawOrders: IPoloniexOrderWithCurrency[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
+
+    let apiRequestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const {
+          order: parsedOrder,
+          apiRequestCount: parseCount,
+        } = await this.parse({ rawOrder })
+
+        apiRequestCount += parseCount + 1
 
         return parsedOrder
 
@@ -274,7 +364,10 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     PoloniexLog.info(`parsed ${parsedOrders.length} orders for Poloniex`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 
