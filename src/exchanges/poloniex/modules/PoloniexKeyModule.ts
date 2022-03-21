@@ -1,6 +1,11 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -20,7 +25,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (params: {
     rawKey: IPoloniexKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     const { rawKey } = params
 
@@ -32,11 +37,14 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     Object.assign(alunaPermissions, rawKey)
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     PoloniexLog.info('fetching Poloniex key permissions')
 
@@ -47,6 +55,8 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       trade: false,
       withdraw: false,
     }
+
+    let apiRequestCount = 0
 
     try {
 
@@ -73,10 +83,12 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       if (error.httpStatusCode === 403) {
 
         permissions.trade = false
+        apiRequestCount += 1
 
       } else if (error.httpStatusCode === 422) {
 
         permissions.trade = true
+        apiRequestCount += 1
 
       } else {
 
@@ -86,15 +98,23 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey: permissions })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({ rawKey: permissions })
 
-    return details
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IPoloniexKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     PoloniexLog.info('parsing Poloniex key details')
 
@@ -102,13 +122,28 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       meta: rawKey,
       accountId: undefined, // Poloniex doesn't give accountId
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
     }
 
-    return this.details
+
+    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
