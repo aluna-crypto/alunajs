@@ -6,12 +6,14 @@ import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorC
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexOrderSideAdapter } from '../enums/adapters/PoloniexOrderSideAdapter'
 import { PoloniexOrderTimeInForceEnum } from '../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
@@ -32,7 +34,7 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
 
     const {
       amount,
@@ -42,6 +44,8 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       type,
       account,
     } = params
+
+    let apiRequestCount = 0
 
     try {
 
@@ -106,6 +110,8 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       side,
     })
 
+    apiRequestCount += 1
+
     if (!rate) {
 
       throw new AlunaError({
@@ -132,12 +138,18 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     try {
 
-      placedOrder = await PoloniexHttp
+      const {
+        data: orderRequest,
+        apiRequestCount: requestCount,
+      } = await PoloniexHttp
         .privateRequest<IPoloniexOrderResponse>({
           url: `${PROD_POLONIEX_URL}/tradingApi`,
           body,
           keySecret: this.exchange.keySecret,
         })
+
+      apiRequestCount += requestCount
+      placedOrder = orderRequest
 
     } catch (err) {
 
@@ -150,20 +162,28 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     const { orderNumber, currencyPair } = placedOrder
 
-    const order = await this.get({
+    const {
+      order,
+      apiRequestCount: getCount,
+    } = await this.get({
       id: orderNumber,
       symbolPair: currencyPair,
     })
 
-    return order
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     PoloniexLog.info('canceling order for Poloniex')
 
@@ -172,10 +192,17 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     } = params
 
-    const parsedOrder = await this.get({
+    let apiRequestCount = 0
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: getCount,
+    } = await this.get({
       id,
       symbolPair,
     })
+
+    apiRequestCount += 1
 
     const timestamp = new Date().getTime()
     const body = new URLSearchParams()
@@ -186,14 +213,17 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     try {
 
-      await PoloniexHttp.privateRequest<IPoloniexOrderCanceledResponse>(
-        {
-          verb: AlunaHttpVerbEnum.POST,
-          url: `${PROD_POLONIEX_URL}/tradingApi`,
-          body,
-          keySecret: this.exchange.keySecret,
-        },
-      )
+      const { apiRequestCount: requestCount } = await PoloniexHttp
+        .privateRequest<IPoloniexOrderCanceledResponse>(
+          {
+            verb: AlunaHttpVerbEnum.POST,
+            url: `${PROD_POLONIEX_URL}/tradingApi`,
+            body,
+            keySecret: this.exchange.keySecret,
+          },
+        )
+
+      apiRequestCount += requestCount
 
     } catch (err) {
 
@@ -213,14 +243,19 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
     // Poloniex doesn't return canceled/closed orders
     parsedOrder.status = AlunaOrderStatusEnum.CANCELED
 
-    return parsedOrder
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
   public async edit (
     params: IAlunaOrderEditParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderEditReturns> {
 
 
     PoloniexLog.info('editing order for Poloniex')
@@ -235,12 +270,19 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     } = params
 
-    await this.cancel({
+    let apiRequestCount = 0
+
+    const { apiRequestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    const newOrder = await this.place({
+    apiRequestCount += 1
+
+    const {
+      order: newOrder,
+      apiRequestCount: placeCount,
+    } = await this.place({
       rate,
       side,
       type,
@@ -249,7 +291,16 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     })
 
-    return newOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + cancelCount
+      + placeCount
+
+    return {
+      order: newOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
