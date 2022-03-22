@@ -1,4 +1,10 @@
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
@@ -15,24 +21,39 @@ export interface IBitfinexParseSymbolParams {
   bitfinexCurrencyLabel: TBitfinexCurrencyLabel | undefined
 }
 
-
-
 export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
-  static currenciesPath = 'pub:list:currency'
-  static labelsPath = 'pub:map:currency:label'
+  static currenciesPath = 'pub:list:currency';
+  static labelsPath = 'pub:map:currency:label';
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await BitfinexSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = BitfinexSymbolModule.parseMany({ rawSymbols })
+    const {
+      rawSymbols,
+      apiRequestCount: listRawCount,
+    } = await BitfinexSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = BitfinexSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + listRawCount + parseManyCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  public static async listRaw (): Promise<IBitfinexSymbolSchema> {
+  public static async listRaw (): Promise<IAlunaSymbolListRawReturns<any>> {
 
     BitfinexLog.info('fetching Bitfinex symbols')
 
@@ -42,36 +63,42 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     const url = `${baseUrl}${this.currenciesPath},${this.labelsPath}`
 
-    const rawSymbols = publicRequest<IBitfinexSymbolSchema>({
+    const {
+      data: rawSymbols,
+      apiRequestCount: requestCount,
+    } = await publicRequest<IBitfinexSymbolSchema>({
       url,
     })
 
-    return rawSymbols
+    return {
+      rawSymbols,
+      apiRequestCount: requestCount,
+    }
 
   }
 
-  public static parse (params:{
+  public static parse (params: {
     rawSymbol: IBitfinexParseSymbolParams,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
     const parsedSymbol = BitfinexSymbolParser.parse(rawSymbol)
 
-    return parsedSymbol
+    return {
+      symbol: parsedSymbol,
+      apiRequestCount: 1,
+    }
 
   }
 
   public static parseMany (params: {
     rawSymbols: IBitfinexSymbolSchema,
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
-    const [
-      symbolsIds,
-      symbolsLabels,
-    ] = rawSymbols
+    const [symbolsIds, symbolsLabels] = rawSymbols
 
     const currencyLabelsDict: Record<string, TBitfinexCurrencyLabel> = {}
 
@@ -82,6 +109,8 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
       currencyLabelsDict[bitfinexSymbolId] = currencyLabel
 
     })
+
+    let apiRequestCount = 0
 
     const parsedSymbols = symbolsIds.reduce((acc, bitfinexCurrency) => {
 
@@ -97,7 +126,11 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
         bitfinexCurrencyLabel: currencyLabelsDict[bitfinexCurrency],
       }
 
-      const parsedSymbol = BitfinexSymbolModule.parse({ rawSymbol })
+      const { symbol: parsedSymbol, apiRequestCount: parseCount } = this.parse({
+        rawSymbol,
+      })
+
+      apiRequestCount += parseCount + 1
 
       acc.push(parsedSymbol)
 
@@ -107,7 +140,10 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     BitfinexLog.info(`parsed ${parsedSymbols.length} symbols for Bitfinex`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 
