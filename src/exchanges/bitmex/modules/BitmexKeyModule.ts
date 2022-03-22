@@ -9,7 +9,12 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -25,21 +30,28 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public details: IAlunaKeySchema
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     BitmexLog.info('fetching Bitmex key details')
 
     const { keySecret } = this.exchange
 
     let rawKey: IBitmexKeysSchema
+    let apiRequestCount = 0
 
     try {
 
-      rawKey = await BitmexHttp.privateRequest<IBitmexKeysSchema>({
+      const {
+        data: apiKeyResponse,
+        apiRequestCount: requestCount,
+      } = await BitmexHttp.privateRequest<IBitmexKeysSchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_BITMEX_URL}/apiKey`,
         keySecret,
       })
+
+      rawKey = apiKeyResponse
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -75,15 +87,25 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({ rawKey })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IBitmexKeysSchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     BitmexLog.info('parsing Bitmex key details')
 
@@ -103,19 +125,33 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const [{ userId }] = rawKey
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       accountId: userId.toString(),
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
       meta: rawKeysWithoutSecrets,
     }
 
-    return this.details
+    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parsePermissions (params: {
     rawKey: IBitmexKeysSchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     BitmexLog.info('parsing Bitmex key permissions')
 
@@ -138,7 +174,10 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    return parsedKey
+    return {
+      key: parsedKey,
+      apiRequestCount: 0,
+    }
 
   }
 
