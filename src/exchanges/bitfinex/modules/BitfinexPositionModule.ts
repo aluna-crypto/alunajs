@@ -6,8 +6,15 @@ import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusE
 import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionCloseParams,
+  IAlunaPositionCloseReturns,
   IAlunaPositionGetParams,
+  IAlunaPositionGetRawReturns,
+  IAlunaPositionGetReturns,
+  IAlunaPositionListRawReturns,
+  IAlunaPositionListReturns,
   IAlunaPositionModule,
+  IAlunaPositionParseManyReturns,
+  IAlunaPositionParseReturns,
 } from '../../../lib/modules/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
@@ -19,60 +26,113 @@ import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParse
 
 export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositionModule {
 
-  async list (): Promise<IAlunaPositionSchema[]> {
+  async list (): Promise<IAlunaPositionListReturns> {
 
-    const rawPositions = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedPositions = this.parseMany({ rawPositions })
+    const {
+      rawPositions,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedPositions
+    apiRequestCount += 1
+
+    const {
+      positions: parsedPositions,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawPositions })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      positions: parsedPositions,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  async listRaw (): Promise<IBitfinexPositionSchema[]> {
+  async listRaw (): Promise<IAlunaPositionListRawReturns> {
 
     const { privateRequest } = BitfinexHttp
 
-    const rawPositions = await privateRequest<IBitfinexPositionSchema[]>({
+    const {
+      data: rawPositions,
+      apiRequestCount,
+    } = await privateRequest<IBitfinexPositionSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions',
       keySecret: this.exchange.keySecret,
     })
 
-    return rawPositions
+    return {
+      rawPositions,
+      apiRequestCount,
+    }
 
   }
 
-  async get (params: IAlunaPositionGetParams): Promise<IAlunaPositionSchema> {
+  async get (params: IAlunaPositionGetParams)
+    : Promise<IAlunaPositionGetReturns> {
 
-    const rawPosition = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedPosition = this.parse({ rawPosition })
+    const {
+      rawPosition,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedPosition
+    apiRequestCount += 1
+
+    const {
+      position: parsedPosition,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawPosition })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+       + getRawCount
+       + parseCount
+
+    return {
+      position: parsedPosition,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async getRaw (
     params: IAlunaPositionGetParams,
-  ): Promise<IBitfinexPositionSchema> {
+  ): Promise<IAlunaPositionGetRawReturns> {
 
     const { id } = params
 
     const { privateRequest } = BitfinexHttp
 
-    const [rawPosition] = await privateRequest<Array<IBitfinexPositionSchema>>({
+    const {
+      data,
+      apiRequestCount,
+    } = await privateRequest<Array<IBitfinexPositionSchema>>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       body: { id: [Number(id)], limit: 1 },
       keySecret: this.exchange.keySecret,
     })
 
-    return rawPosition
+    const [rawPosition] = data
+
+    return {
+      rawPosition,
+      apiRequestCount,
+    }
 
   }
 
   async close (
     params: IAlunaPositionCloseParams,
-  ): Promise<IAlunaPositionSchema> {
+  ): Promise<IAlunaPositionCloseReturns> {
 
     const { id } = params
 
@@ -90,15 +150,24 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
+    let apiRequestCount = 0
+
     const { privateRequest } = BitfinexHttp
 
-    await privateRequest<void>({
+    const { apiRequestCount: requestCount } = await privateRequest<void>({
       url: 'https://api.bitfinex.com/v1/position/close',
       body: { position_id: Number(id) },
       keySecret: this.exchange.keySecret,
     })
 
-    const parsedPosition = await this.get({ id })
+    apiRequestCount += 1
+
+    const {
+      position: parsedPosition,
+      apiRequestCount: getCount,
+    } = await this.get({ id })
+
+    apiRequestCount += 1
 
     if (parsedPosition.status !== AlunaPositionStatusEnum.CLOSED) {
 
@@ -114,13 +183,20 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
-    return parsedPosition
+    const totalApiRequestCount = apiRequestCount
+      + getCount
+      + requestCount
+
+    return {
+      position: parsedPosition,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async parse (params: {
     rawPosition: IBitfinexPositionSchema,
-  }): Promise<IAlunaPositionSchema> {
+  }): Promise<IAlunaPositionParseReturns> {
 
     const { rawPosition } = params
 
@@ -128,17 +204,22 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
       rawPosition,
     })
 
-    return parsedPosition
+    return {
+      position: parsedPosition,
+      apiRequestCount: 1,
+    }
 
   }
 
   async parseMany (params: {
     rawPositions: IBitfinexPositionSchema[],
-  }): Promise<IAlunaPositionSchema[]> {
+  }): Promise<IAlunaPositionParseManyReturns> {
 
     const { rawPositions } = params
 
-    const parsedPositionsPromise: Promise<IAlunaPositionSchema>[] = []
+    const parsedPositionsPromise: IAlunaPositionSchema[] = []
+
+    let apiRequestCount = 0
 
     each(rawPositions, async (rawPosition) => {
 
@@ -149,7 +230,12 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
       }
 
-      const parsedPosition = this.parse({ rawPosition })
+      const {
+        position: parsedPosition,
+        apiRequestCount: parseCount,
+      } = await this.parse({ rawPosition })
+
+      apiRequestCount += parseCount + 1
 
       parsedPositionsPromise.push(parsedPosition)
 
@@ -157,7 +243,10 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const parsedPositions = await Promise.all(parsedPositionsPromise)
 
-    return parsedPositions
+    return {
+      positions: parsedPositions,
+      apiRequestCount,
+    }
 
   }
 
