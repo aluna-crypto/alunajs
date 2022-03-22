@@ -3,9 +3,14 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
@@ -15,34 +20,60 @@ import { BitfinexOrderParser } from '../schemas/parsers/BitfinexOrderParser'
 
 export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IBitfinexOrderSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IBitfinexOrderSchema>> {
 
     BitfinexLog.info('fetching Bitfinex open orders')
 
     const { privateRequest } = BitfinexHttp
 
-    const rawOrders = await privateRequest<IBitfinexOrderSchema[]>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await privateRequest<IBitfinexOrderSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/orders',
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrders
+    return {
+      rawOrders,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = await this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+            + listRawCount
+            + parseManyCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IBitfinexOrderSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id: stringId,
@@ -56,21 +87,34 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     const { privateRequest } = BitfinexHttp
 
     let response: IBitfinexOrderSchema[]
+    let apiRequestCount = 0
 
-    response = await privateRequest<IBitfinexOrderSchema[]>({
+    const {
+      data: getRawOrders,
+      apiRequestCount: requestCount,
+    } = await privateRequest<IBitfinexOrderSchema[]>({
       url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}`,
       keySecret: this.exchange.keySecret,
       body: { id: [id] },
     })
 
+    apiRequestCount += requestCount
+    response = getRawOrders
+
     // order do not exists or might not be 'open'
     if (!response.length) {
 
-      response = await privateRequest<IBitfinexOrderSchema[]>({
+      const {
+        data: getRawOrderHistory,
+        apiRequestCount: requestCount2,
+      } = await privateRequest<IBitfinexOrderSchema[]>({
         url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}/hist`,
         keySecret: this.exchange.keySecret,
         body: { id: [id] },
       })
+
+      response = getRawOrderHistory
+      apiRequestCount += requestCount2
 
       if (!response.length) {
 
@@ -90,23 +134,46 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const [rawOrder] = response
 
-    return rawOrder
+    return {
+      rawOrder,
+      apiRequestCount,
+    }
 
   }
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = await this.parse({ rawOrder })
+    const {
+      rawOrder,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+        + getRawCount
+        + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async parse (params: {
     rawOrder: IBitfinexOrderSchema,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const { rawOrder } = params
 
@@ -114,17 +181,22 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
       rawOrder,
     })
 
-    return parsedOrder
+    return {
+      order: parsedOrder,
+      apiRequestCount: 1,
+    }
 
   }
 
   public async parseMany (params: {
     rawOrders: IBitfinexOrderSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
 
-    const ordersPromises = rawOrders.reduce((acc, rawOrder) => {
+    let apiRequestCount = 0
+
+    const ordersPromises = rawOrders.reduce(async (acc, rawOrder) => {
 
       const [
         _id,
@@ -140,19 +212,27 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
       }
 
-      const parsedOrder = this.parse({ rawOrder })
+      const {
+        order: parsedOrder,
+        apiRequestCount: parseCount,
+      } = await this.parse({ rawOrder })
+
+      apiRequestCount += parseCount + 1
 
       acc.push(parsedOrder)
 
       return acc
 
-    }, [] as Array<Promise<IAlunaOrderSchema>>)
+    }, [] as any)
 
     const parsedOrders = await Promise.all(ordersPromises)
 
     BitfinexLog.info(`parsed ${parsedOrders.length} orders for Bitfinex`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 
