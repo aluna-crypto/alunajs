@@ -1,7 +1,12 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -19,7 +24,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public details: IAlunaKeySchema
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     BitfinexLog.info('fetching Bitfinex key details')
 
@@ -29,18 +34,31 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     let userInfoResponse: string[]
     let permissionsScope: IBitfinexPermissionsScope
+    let apiRequestCount = 0
 
     try {
 
-      permissionsScope = await privateRequest<IBitfinexPermissionsScope>({
+      const {
+        data: permissions,
+        apiRequestCount: permissionsCount,
+      } = await privateRequest<IBitfinexPermissionsScope>({
         url: 'https://api.bitfinex.com/v2/auth/r/permissions',
         keySecret,
       })
 
-      userInfoResponse = await privateRequest<string[]>({
+      permissionsScope = permissions
+      apiRequestCount += permissionsCount
+
+      const {
+        data: userInfo,
+        apiRequestCount: userInfoCount,
+      } = await privateRequest<string[]>({
         url: 'https://api.bitfinex.com/v2/auth/r/info/user',
         keySecret,
       })
+
+      userInfoResponse = userInfo
+      apiRequestCount += userInfoCount
 
     } catch (error) {
 
@@ -65,20 +83,30 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const [accountId] = userInfoResponse
 
-    const details = this.parseDetails({
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({
       rawKey: {
         accountId,
         permissionsScope,
       },
     })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IBitfinexKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     BitfinexLog.info('parsing Bitfinex key details')
 
@@ -88,19 +116,33 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { accountId } = rawKey
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       accountId,
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
       meta: rawKey,
     }
 
-    return this.details
+    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parsePermissions (params: {
     rawKey: IBitfinexKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     BitfinexLog.info('parsing Bitfinex key permissions')
 
@@ -130,7 +172,10 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       withdraw: canWithdraw,
     }
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
