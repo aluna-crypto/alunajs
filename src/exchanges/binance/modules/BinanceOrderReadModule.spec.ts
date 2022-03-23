@@ -49,10 +49,15 @@ describe('BinanceOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      binanceRawOrders,
+      { data: binanceRawOrders, apiRequestCount: 1 },
     )
 
-    const rawOrders = await binanceOrderReadModule.listRaw()
+    const {
+      rawOrders,
+      apiRequestCount,
+    } = await binanceOrderReadModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -111,16 +116,19 @@ describe('BinanceOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'listRaw',
-      ['raw-orders'],
+      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'parseMany',
-      binanceParsedOrders,
+      {
+        orders: binanceParsedOrders,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedOrders = await binanceOrderReadModule.list()
+    const { orders: parsedOrders } = await binanceOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -176,13 +184,13 @@ describe('BinanceOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      BINANCE_RAW_ORDER,
+      { data: BINANCE_RAW_ORDER, apiRequestCount: 1 },
     )
 
     const symbolPair = 'symbol'
     const id = 'id'
 
-    const rawOrder = await binanceOrderReadModule.getRaw({
+    const { rawOrder } = await binanceOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -205,13 +213,13 @@ describe('BinanceOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'getRaw',
-      'rawOrder',
+      { rawOrder: 'rawOrder', apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'parse',
-      BINANCE_PARSED_ORDER,
+      { order: BINANCE_PARSED_ORDER, apiRequestCount: 1 },
     )
 
     const params = {
@@ -219,7 +227,7 @@ describe('BinanceOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const parsedOrder = await binanceOrderReadModule.get(params)
+    const { order: parsedOrder } = await binanceOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -244,7 +252,7 @@ describe('BinanceOrderReadModule', () => {
     const marketListRawMock = ImportMock.mockFunction(
       BinanceMarketModule,
       'listRaw',
-      rawMarket,
+      { rawMarkets: rawMarket, apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -253,7 +261,9 @@ describe('BinanceOrderReadModule', () => {
       parsedOrder,
     )
 
-    const parseResponse = await binanceOrderReadModule.parse({ rawOrder })
+    const { order: parseResponse } = await binanceOrderReadModule.parse(
+      { rawOrder },
+    )
 
     expect(parseResponse.symbolPair).to.be.ok
     expect(parseResponse.baseSymbolId).to.be.ok
@@ -300,11 +310,16 @@ describe('BinanceOrderReadModule', () => {
 
       parseMock.onCall(index).returns(Promise.resolve(parsed))
 
-      listRawMock.onCall(index).returns(Promise.resolve(rawMarket))
+      listRawMock.onCall(index).returns(Promise.resolve({
+        rawMarkets: rawMarket,
+        apiRequestCount: 1,
+      }))
 
     })
 
-    const parsedManyResp = await binanceOrderReadModule.parseMany({ rawOrders })
+    const { orders: parsedManyResp } = await binanceOrderReadModule.parseMany(
+      { rawOrders },
+    )
 
     expect(parsedManyResp.length).to.be.eq(1)
     expect(parseMock.callCount).to.be.eq(1)

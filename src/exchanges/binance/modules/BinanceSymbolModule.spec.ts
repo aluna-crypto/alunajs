@@ -21,10 +21,14 @@ describe('BinanceSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'publicRequest',
-      Promise.resolve({ symbols: BINANCE_RAW_SYMBOLS }),
+      Promise.resolve({
+        data:
+        { symbols: BINANCE_RAW_SYMBOLS },
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawSymbols = await BinanceSymbolModule.listRaw()
+    const { rawSymbols } = await BinanceSymbolModule.listRaw()
 
     expect(rawSymbols.length).to.eq(4)
     expect(rawSymbols).to.deep.eq(BINANCE_RAW_SYMBOLS)
@@ -38,20 +42,26 @@ describe('BinanceSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceSymbolModule,
       'listRaw',
-      Promise.resolve(BINANCE_RAW_SYMBOLS),
+      Promise.resolve({
+        rawSymbols: BINANCE_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceSymbolModule,
       'parseMany',
-      BINANCE_PARSED_SYMBOLS,
+      {
+        symbols: BINANCE_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawSymbols = await BinanceSymbolModule.list()
+    const { symbols: parsedSymbols } = await BinanceSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(5)
-    expect(rawSymbols).to.deep.eq(BINANCE_PARSED_SYMBOLS)
+    expect(parsedSymbols.length).to.eq(5)
+    expect(parsedSymbols).to.deep.eq(BINANCE_PARSED_SYMBOLS)
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -75,7 +85,7 @@ describe('BinanceSymbolModule', () => {
       translatedSymbol,
     )
 
-    const parsedSymbol1 = BinanceSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = BinanceSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
@@ -86,7 +96,7 @@ describe('BinanceSymbolModule', () => {
 
     symbolMappingMock.returns(rawSymbol2.baseAsset)
 
-    const parsedSymbol2 = BinanceSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = BinanceSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -105,11 +115,11 @@ describe('BinanceSymbolModule', () => {
 
     each(BINANCE_PARSED_SYMBOLS, (parsed, i) => {
 
-      parseMock.onCall(i).returns(parsed)
+      parseMock.onCall(i).returns({ symbol: parsed, apiRequestCount: 1 })
 
     })
 
-    const parsedSymbols = BinanceSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = BinanceSymbolModule.parseMany({
       rawSymbols: BINANCE_RAW_SYMBOLS,
     })
 

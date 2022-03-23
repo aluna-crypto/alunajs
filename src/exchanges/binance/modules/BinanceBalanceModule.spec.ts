@@ -38,11 +38,14 @@ describe('BinanceBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { balances: BINANCE_RAW_BALANCES },
+      { data: { balances: BINANCE_RAW_BALANCES }, apiRequestCount: 1 },
     )
 
 
-    const rawBalances = await binanceBalanceModule.listRaw()
+    const {
+      rawBalances,
+      apiRequestCount,
+    } = await binanceBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -50,6 +53,8 @@ describe('BinanceBalanceModule', () => {
       url: `${PROD_BINANCE_URL}/api/v3/account`,
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok
+
+    expect(apiRequestCount).to.eq(1)
 
     expect(rawBalances.length).to.eq(4)
     expect(rawBalances).to.deep.eq(BINANCE_RAW_BALANCES)
@@ -79,17 +84,18 @@ describe('BinanceBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      { rawBalances: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'parseMany',
-      BINANCE_PARSED_BALANCES,
+      { balances: BINANCE_PARSED_BALANCES, apiRequestCount: 1 },
     )
 
-    const balances = await binanceBalanceModule.list()
+    const { balances, apiRequestCount } = await binanceBalanceModule.list()
 
+    expect(apiRequestCount).to.be.eq(4)
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -133,7 +139,7 @@ describe('BinanceBalanceModule', () => {
     const rawBalance1 = BINANCE_RAW_BALANCES[0]
     const rawBalance2 = BINANCE_RAW_BALANCES[1]
 
-    const parsedBalance1 = binanceBalanceModule.parse({
+    const { balance: parsedBalance1 } = binanceBalanceModule.parse({
       rawBalance: rawBalance1,
     })
 
@@ -160,7 +166,7 @@ describe('BinanceBalanceModule', () => {
     })
 
 
-    const parsedBalance2 = binanceBalanceModule.parse({
+    const { balance: parsedBalance2 } = binanceBalanceModule.parse({
       rawBalance: rawBalance2,
     })
 
@@ -193,17 +199,16 @@ describe('BinanceBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BINANCE_PARSED_BALANCES[0])
+      .returns({ balance: BINANCE_PARSED_BALANCES[0] })
       .onSecondCall()
-      .returns(BINANCE_PARSED_BALANCES[1])
+      .returns({ balance: BINANCE_PARSED_BALANCES[1] })
       .onThirdCall()
-      .returns(BINANCE_PARSED_BALANCES[2])
+      .returns({ balance: BINANCE_PARSED_BALANCES[2] })
 
 
-    const parsedBalances = binanceBalanceModule.parseMany({
+    const { balances: parsedBalances } = binanceBalanceModule.parseMany({
       rawBalances: BINANCE_RAW_BALANCES,
     })
-
 
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)

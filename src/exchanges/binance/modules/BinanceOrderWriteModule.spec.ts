@@ -14,8 +14,8 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
@@ -59,13 +59,19 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        data: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        order: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -88,8 +94,14 @@ describe('BinanceOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await binanceOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+      apiRequestCount,
+    } = await binanceOrderWriteModule
+      .place(placeOrderParams)
 
+
+    expect(apiRequestCount).to.be.eq(5)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -108,7 +120,7 @@ describe('BinanceOrderWriteModule', () => {
 
 
     // place short limit order
-    const placeResponse2 = await binanceOrderWriteModule.place({
+    const { order: placeResponse2 } = await binanceOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
       side: AlunaOrderSideEnum.SELL,
@@ -331,13 +343,13 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve({ data: placedOrder, apiRequestCount: 1 }),
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'parse',
-      placedOrder,
+      { order: placedOrder, apiRequestCount: 1 },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -358,7 +370,9 @@ describe('BinanceOrderWriteModule', () => {
 
 
     // place long market order
-    const placeResponse1 = await binanceOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await binanceOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -373,11 +387,11 @@ describe('BinanceOrderWriteModule', () => {
       rawOrder: placedOrder,
     })).to.be.ok
 
-    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
+    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0].order)
 
 
     // place short market order
-    const placeResponse2 = await binanceOrderWriteModule.place({
+    const { order: placeResponse2 } = await binanceOrderWriteModule.place({
       ...placeOrderParams,
       side: AlunaOrderSideEnum.SELL,
     })
@@ -431,7 +445,7 @@ describe('BinanceOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -486,16 +500,19 @@ describe('BinanceOrderWriteModule', () => {
     ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      canceledOrderResponse,
+      { data: canceledOrderResponse, apiRequestCount: 1 },
     )
 
     const getMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'get',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -505,7 +522,9 @@ describe('BinanceOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await binanceOrderWriteModule.cancel(cancelParams)
+      const { order } = await binanceOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -522,7 +541,7 @@ describe('BinanceOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(getMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(getMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
@@ -532,13 +551,16 @@ describe('BinanceOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({ apiRequestCount: 1 }),
     )
 
     const placeMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'place',
-      Promise.resolve(BINANCE_RAW_ORDER),
+      Promise.resolve({
+        order: BINANCE_RAW_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -551,7 +573,7 @@ describe('BinanceOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await binanceOrderWriteModule.edit(editOrderParams)
+    const { order: newOrder } = await binanceOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(BINANCE_RAW_ORDER)
 
