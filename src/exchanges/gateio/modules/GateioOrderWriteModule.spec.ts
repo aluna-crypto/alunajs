@@ -9,6 +9,7 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -222,6 +223,75 @@ describe('GateioOrderWriteModule', () => {
     expect(error.httpStatusCode).to.be.eq(500)
 
   })
+
+  it('should throw an insufficient balance error when placing new order',
+    async () => {
+
+      ImportMock.mockOther(
+        gateioOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Not enough balance',
+        metadata: {
+          label: 'BALANCE_NOT_ENOUGH',
+          message: 'Not enough balance',
+        },
+        httpStatusCode: 400,
+      })
+
+      const requestMock = ImportMock.mockFunction(
+        GateioHttp,
+        'privateRequest',
+        Promise.reject(mockedError),
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      const requestBody: IGateioOrderRequest = {
+        side: GateioSideEnum.BUY,
+        currency_pair: placeOrderParams.symbolPair,
+        amount: placeOrderParams.amount.toString(),
+        price: placeOrderParams.rate!.toString(),
+      }
+
+      let result
+      let error
+
+      try {
+
+        result = await gateioOrderWriteModule.place(placeOrderParams)
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(result).not.to.be.ok
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_GATEIO_URL}/spot/orders`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
+
+      expect(error.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error.message).to.be.eq('Not enough balance')
+      expect(error.httpStatusCode).to.be.eq(400)
+
+    })
 
   it('should validate exchange specs when placing new orders', async () => {
 

@@ -17,6 +17,19 @@ import { BinanceMarketModule } from './BinanceMarketModule'
 
 export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
+  private getSymbolInfo (
+    markets: IBinanceMarketWithCurrency[],
+    currencyPair: string,
+  ): IBinanceMarketWithCurrency {
+
+    return markets.find((market: IBinanceMarketWithCurrency) => {
+
+      return market.symbol === currencyPair
+
+    })!
+
+  }
+
   public async listRaw (): Promise<IBinanceOrderSchema[]> {
 
     BinanceLog.info('fetching Binance open orders')
@@ -73,7 +86,13 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const rawOrder = await this.getRaw(params)
 
-    const parsedOrder = this.parse({ rawOrder })
+    const { symbol: currencyPair } = rawOrder
+
+    const markets = await BinanceMarketModule.listRaw()
+
+    const symbolInfo = this.getSymbolInfo(markets, currencyPair)
+
+    const parsedOrder = this.parse({ rawOrder, symbolInfo })
 
     return parsedOrder
 
@@ -83,19 +102,10 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parse (params: {
     rawOrder: IBinanceOrderSchema,
+    symbolInfo: IBinanceMarketWithCurrency,
   }): Promise<IAlunaOrderSchema> {
 
-    const { rawOrder } = params
-
-    const { symbol: currencyPair } = rawOrder
-
-    const symbols = await BinanceMarketModule.listRaw()
-
-    const symbolInfo = symbols.find((s: IBinanceMarketWithCurrency) => {
-
-      return s.symbol === currencyPair
-
-    })
+    const { rawOrder, symbolInfo } = params
 
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
@@ -114,10 +124,24 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { rawOrders } = params
 
+    const hasOpenOrders = rawOrders.length > 0
+
+    if (!hasOpenOrders) {
+
+      return []
+
+    }
+
+    const markets = await BinanceMarketModule.listRaw()
+
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const { symbol: currencyPair } = rawOrder
+
+        const symbolInfo = this.getSymbolInfo(markets, currencyPair)
+
+        const parsedOrder = await this.parse({ rawOrder, symbolInfo })
 
         return parsedOrder
 

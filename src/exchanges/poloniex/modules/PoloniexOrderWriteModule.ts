@@ -3,6 +3,7 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -138,10 +139,20 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     } catch (err) {
 
-      throw new AlunaError({
+      const error = new AlunaError({
         ...err,
         code: AlunaOrderErrorCodes.PLACE_FAILED,
       })
+
+      const isInsufficientBalanceError = err.message.includes('Not enough')
+
+      if (isInsufficientBalanceError) {
+
+        error.code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
+      throw error
 
     }
 

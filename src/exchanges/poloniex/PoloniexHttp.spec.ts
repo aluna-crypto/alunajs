@@ -308,6 +308,60 @@ describe('PoloniexHttp', () => {
 
   })
 
+  it(
+    'should ensure request error is being handle'
+    + ' when the error is returned in a response',
+    async () => {
+
+      const errorMsg = 'Dummy error'
+
+      const formatRequestErrorSpy = Sinon.spy(
+        PoloniexHttpMod,
+        'handleRequestError',
+      )
+
+      mockAxiosRequest({
+        data: {
+          error: errorMsg,
+        },
+      })
+
+      ImportMock.mockFunction(
+        PoloniexHttpMod,
+        'generateAuthSignature',
+        dummySignedHeaders,
+      )
+
+      let result
+      let error
+
+      try {
+
+        result = await PoloniexHttp.privateRequest({
+          url: dummyUrl,
+          body: dummyBody,
+          keySecret: {} as IAlunaKeySecretSchema,
+        })
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(result).not.to.be.ok
+
+      expect(error.message).to.be.eq(errorMsg)
+
+      const calledArg2 = formatRequestErrorSpy.args[1][0]
+
+      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+      expect(calledArg2).to.be.ok
+      expect(calledArg2.message).to.be.eq(errorMsg)
+
+    },
+  )
+
 
   it('should generate signed auth header just fine with body', async () => {
 

@@ -2,6 +2,7 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -128,10 +129,23 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     } catch (err) {
 
-      throw new AlunaError({
+      const error = new AlunaError({
         ...err,
         code: AlunaOrderErrorCodes.PLACE_FAILED,
       })
+
+      const INSUFFICIENT_BALANCE_LABEL = 'BALANCE_NOT_ENOUGH'
+
+      const isInsufficientBalanceError = error.metadata.label
+        === INSUFFICIENT_BALANCE_LABEL
+
+      if (isInsufficientBalanceError) {
+
+        error.code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
+      throw error
 
     }
 

@@ -28,6 +28,7 @@ import {
   IBinanceOrderRequest,
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
+import { BinanceMarketModule } from './BinanceMarketModule'
 import { BinanceOrderReadModule } from './BinanceOrderReadModule'
 
 
@@ -163,8 +164,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
+    const rawMarkets = await BinanceMarketModule.listRaw()
+    const symbolInfo = rawMarkets.find((rM) => rM.symbol === placedOrder.symbol)
+
     const order = await this.parse({
       rawOrder: placedOrder,
+      symbolInfo,
     })
 
     return order

@@ -32,7 +32,9 @@ import {
   IBinanceOrderRequest,
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
+import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../test/fixtures/binanceMarket'
 import { BINANCE_RAW_ORDER } from '../test/fixtures/binanceOrder'
+import { BinanceMarketModule } from './BinanceMarketModule'
 import { BinanceOrderWriteModule } from './BinanceOrderWriteModule'
 
 
@@ -58,10 +60,20 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const rawOrder = BINANCE_RAW_ORDER
+    const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY
+    const symbolInfo = rawMarket.find((rM) => rM.symbol === rawOrder.symbol)!
+
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve(rawOrder),
+    )
+
+    const marketListRawMock = ImportMock.mockFunction(
+      BinanceMarketModule,
+      'listRaw',
+      rawMarket,
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -100,10 +112,12 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
+    expect(marketListRawMock.callCount).to.be.eq(1)
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(placedOrder)
@@ -134,7 +148,8 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
-      rawOrder: placeResponse2,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
@@ -295,10 +310,20 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const rawOrder = BINANCE_RAW_ORDER
+    const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY
+    const symbolInfo = rawMarket.find((rM) => rM.symbol === rawOrder.symbol)!
+
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      rawOrder,
+    )
+
+    const marketListRawMock = ImportMock.mockFunction(
+      BinanceMarketModule,
+      'listRaw',
+      rawMarket,
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -337,9 +362,12 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
+    expect(marketListRawMock.callCount).to.be.eq(1)
+
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
@@ -363,7 +391,8 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
