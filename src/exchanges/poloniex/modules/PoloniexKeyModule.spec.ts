@@ -1,9 +1,11 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { IPoloniexKeySchema } from '../schemas/IPoloniexKeySchema'
 import { PoloniexKeyModule } from './PoloniexKeyModule'
@@ -16,30 +18,13 @@ describe('PoloniexKeyModule', () => {
 
   it('should get permissions from Poloniex API key just fine', async () => {
 
-    ImportMock.mockOther(
-      poloniexKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
-
-    const mockRest: any = {} // mock requestResponse
-
-    const requestResponse: IPoloniexKeySchema = {
-      ...mockRest, // without accountId
-    }
+    mockExchangeModule({ module: poloniexKeyModule })
 
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      requestResponse,
+      Promise.resolve({}),
     )
-
-    requestMock.onFirstCall().returns({})
 
     const { permissions } = await poloniexKeyModule.fetchDetails()
 
@@ -51,24 +36,13 @@ describe('PoloniexKeyModule', () => {
 
   })
 
-
-
   it('should properly inform when api key or secret are wrong', async () => {
 
-    ImportMock.mockOther(
-      poloniexKeyModule,
-      'exchange',
-      {
-        keySecret: {
-          key: '',
-          secret: '',
-        },
-      } as IAlunaExchange,
-    )
+    mockExchangeModule({ module: poloniexKeyModule })
 
     const alunaErrorMock = new AlunaError({
       message: 'any-message',
-      httpStatusCode: 401,
+      httpStatusCode: 403,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
     })
 
@@ -78,29 +52,19 @@ describe('PoloniexKeyModule', () => {
       Promise.reject(alunaErrorMock),
     )
 
-    let result
-    let error
-
-    try {
-
-      result = await poloniexKeyModule.fetchDetails()
-
-    } catch (e) {
-
-      error = e
-
-    }
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => poloniexKeyModule.fetchDetails())
 
     expect(result).not.to.be.ok
 
     expect(error).to.be.ok
-    expect(error.message).to.be.eq('any-message')
-    expect(error.httpStatusCode).to.be.eq(401)
-    expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(error!.message).to.be.eq('Invalid API key/secret pair.')
+    expect(error!.httpStatusCode).to.be.eq(403)
+    expect(error!.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
 
   })
-
-
 
   it('should parse Poloniex permissions just fine', async () => {
 

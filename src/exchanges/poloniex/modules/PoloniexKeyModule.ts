@@ -1,5 +1,7 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
@@ -62,7 +64,19 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       permissions.read = true
 
-    } catch (error) {
+    } catch (err) {
+
+      const {
+        httpStatusCode,
+        metadata,
+      } = err
+
+      const error = new AlunaError({
+        code: AlunaKeyErrorCodes.INVALID,
+        message: 'Invalid API key/secret pair.',
+        httpStatusCode,
+        metadata,
+      })
 
       PoloniexLog.error(error)
 
