@@ -25,8 +25,6 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read: false,
-      trade: true,
-      withdraw: false,
     }
 
     Object.assign(alunaPermissions, rawKey)
@@ -66,15 +64,9 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      if (error.httpStatusCode === 403) {
+      PoloniexLog.error(error)
 
-        permissions.read = false
-
-      } else {
-
-        throw error
-
-      }
+      throw error
 
     }
 

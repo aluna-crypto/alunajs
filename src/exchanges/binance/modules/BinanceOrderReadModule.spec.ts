@@ -326,4 +326,30 @@ describe('BinanceOrderReadModule', () => {
 
   })
 
+  it('should return early if parseMany is called without open orders',
+    async () => {
+
+      const rawOrders: IBinanceOrderSchema[] = []
+
+      const parseMock = ImportMock.mockFunction(
+        BinanceOrderParser,
+        'parse',
+      )
+
+      const listRawMock = ImportMock.mockFunction(
+        BinanceMarketModule,
+        'listRaw',
+      )
+
+      const parsedManyResp = await binanceOrderReadModule.parseMany(
+        { rawOrders },
+      )
+
+      expect(parsedManyResp.length).to.be.eq(0)
+      expect(parseMock.callCount).to.be.eq(0)
+
+      expect(listRawMock.callCount).to.be.eq(0)
+
+    })
+
 })

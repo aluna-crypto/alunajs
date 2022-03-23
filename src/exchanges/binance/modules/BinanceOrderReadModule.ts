@@ -22,9 +22,9 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
     currencyPair: string,
   ): IBinanceMarketWithCurrency {
 
-    return markets.find((s: IBinanceMarketWithCurrency) => {
+    return markets.find((market: IBinanceMarketWithCurrency) => {
 
-      return s.symbol === currencyPair
+      return market.symbol === currencyPair
 
     })!
 
@@ -123,6 +123,14 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
   }): Promise<IAlunaOrderSchema[]> {
 
     const { rawOrders } = params
+
+    const hasOpenOrders = rawOrders.length > 0
+
+    if (!hasOpenOrders) {
+
+      return []
+
+    }
 
     const markets = await BinanceMarketModule.listRaw()
 
