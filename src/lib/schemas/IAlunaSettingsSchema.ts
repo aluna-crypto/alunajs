@@ -1,4 +1,6 @@
 export interface IAlunaSettingsSchema {
-  referralCode?: string
-  mappings: Record<string, string>
+  affiliateCode?: string
+  orderAnnotation?: string
+  proxyAgent?: any
+  mappings?: Record<string, string>
 }
