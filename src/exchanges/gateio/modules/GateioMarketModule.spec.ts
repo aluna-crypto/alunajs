@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
@@ -27,15 +26,18 @@ describe('GateioMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(Promise.resolve(GATEIO_RAW_MARKETS))
+      .onFirstCall().returns(Promise.resolve({
+        data: GATEIO_RAW_MARKETS,
+        apiRequestCount: 1,
+      }))
 
-    const response = await GateioMarketModule.listRaw()
+    const { rawMarkets } = await GateioMarketModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.firstCall.calledWith({ url: marketsURL })).to.be.ok
 
-    expect(response.length).to.eq(4)
-    expect(response).to.deep.eq(GATEIO_RAW_MARKETS)
+    expect(rawMarkets.length).to.eq(4)
+    expect(rawMarkets).to.deep.eq(GATEIO_RAW_MARKETS)
 
   })
 
@@ -48,16 +50,16 @@ describe('GateioMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       GateioMarketModule,
       'listRaw',
-      rawListMock,
+      { rawMarkets: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       GateioMarketModule,
       'parseMany',
-      GATEIO_PARSED_MARKETS,
+      { markets: GATEIO_PARSED_MARKETS, apiRequestCount: 1 },
     )
 
-    const parsedMarkets = await GateioMarketModule.list()
+    const { markets: parsedMarkets } = await GateioMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -85,7 +87,7 @@ describe('GateioMarketModule', () => {
 
     const rawMarketWithCurrency = GATEIO_RAW_MARKETS[0]
 
-    const market: IAlunaMarketSchema = GateioMarketModule.parse({
+    const { market } = GateioMarketModule.parse({
       rawMarket: rawMarketWithCurrency,
     })
 
@@ -148,15 +150,15 @@ describe('GateioMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(GATEIO_PARSED_MARKETS[0])
+      .returns({ market: GATEIO_PARSED_MARKETS[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(GATEIO_PARSED_MARKETS[1])
+      .returns({ market: GATEIO_PARSED_MARKETS[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(GATEIO_PARSED_MARKETS[2])
+      .returns({ market: GATEIO_PARSED_MARKETS[2], apiRequestCount: 1 })
 
 
-    const markets: IAlunaMarketSchema[] = GateioMarketModule.parseMany({
-      rawMarkets: GATEIO_RAW_MARKETS,
+    const { markets } = GateioMarketModule.parseMany({
+      rawMarkets: GATEIO_RAW_MARKETS.slice(0, 2),
     })
 
     markets.forEach((market, index) => {

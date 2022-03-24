@@ -24,7 +24,7 @@ describe('GateioHttp', () => {
 
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
 
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   const dummyQuery = 'dummy=dummy'
 
@@ -75,7 +75,7 @@ describe('GateioHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -153,7 +153,7 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -199,7 +199,7 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 

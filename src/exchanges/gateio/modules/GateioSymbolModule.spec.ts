@@ -20,10 +20,13 @@ describe('GateioSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'publicRequest',
-      Promise.resolve(GATEIO_RAW_SYMBOLS),
+      Promise.resolve({
+        data: GATEIO_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawSymbols = await GateioSymbolModule.listRaw()
+    const { rawSymbols } = await GateioSymbolModule.listRaw()
 
     expect(rawSymbols.length).to.eq(4)
     expect(rawSymbols).to.deep.eq(GATEIO_RAW_SYMBOLS)
@@ -56,25 +59,31 @@ describe('GateioSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       GateioSymbolModule,
       'listRaw',
-      Promise.resolve(GATEIO_RAW_SYMBOLS),
+      Promise.resolve({
+        rawSymbols: GATEIO_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       GateioSymbolModule,
       'parseMany',
-      GATEIO_PARSED_SYMBOLS,
+      {
+        symbols: GATEIO_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawSymbols = await GateioSymbolModule.list()
+    const { symbols: parsedSymbols } = await GateioSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(4)
-    expect(rawSymbols).to.deep.eq(GATEIO_PARSED_SYMBOLS)
+    expect(parsedSymbols.length).to.eq(4)
+    expect(parsedSymbols).to.deep.eq(GATEIO_PARSED_SYMBOLS)
 
     for (let index = 0; index < 4; index += 1) {
 
-      expect(rawSymbols[index].exchangeId).to.be.eq(Gateio.ID)
-      expect(rawSymbols[index].id).to.be.eq(GATEIO_PARSED_SYMBOLS[index].id)
+      expect(parsedSymbols[index].exchangeId).to.be.eq(Gateio.ID)
+      expect(parsedSymbols[index].id).to.be.eq(GATEIO_PARSED_SYMBOLS[index].id)
 
     }
 
@@ -100,7 +109,7 @@ describe('GateioSymbolModule', () => {
     const rawSymbol1 = GATEIO_RAW_SYMBOLS[1]
     const rawSymbol2 = GATEIO_RAW_SYMBOLS[2]
 
-    const parsedSymbol1 = GateioSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = GateioSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
@@ -111,7 +120,7 @@ describe('GateioSymbolModule', () => {
 
     alunaSymbolMappingMock.returns(rawSymbol2.currency)
 
-    const parsedSymbol2 = GateioSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = GateioSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -134,13 +143,13 @@ describe('GateioSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(GATEIO_PARSED_SYMBOLS[0])
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(GATEIO_PARSED_SYMBOLS[1])
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(GATEIO_PARSED_SYMBOLS[2])
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[2], apiRequestCount: 1 })
 
-    const parsedSymbols = GateioSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = GateioSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 

@@ -12,11 +12,10 @@ import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioSideEnum } from '../enums/GateioSideEnum'
 import { GateioHttp } from '../GateioHttp'
@@ -54,16 +53,27 @@ describe('GateioOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const response = {
+      data: placedOrder,
+      apiRequestCount: 1,
+    }
+
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      {
+        data: placedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      {
+        order: placedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -84,7 +94,9 @@ describe('GateioOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await gateioOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await gateioOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -104,7 +116,9 @@ describe('GateioOrderWriteModule', () => {
 
 
     // place short limit order
-    const placeResponse2 = await gateioOrderWriteModule.place({
+    const {
+      order: placeResponse2,
+    } = await gateioOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.LIMIT,
       side: AlunaOrderSideEnum.SELL,
@@ -270,7 +284,7 @@ describe('GateioOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -325,16 +339,24 @@ describe('GateioOrderWriteModule', () => {
     ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      canceledOrderResponse,
+      {
+        data: canceledOrderResponse,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'parse',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: {
+          status: AlunaOrderStatusEnum.CANCELED,
+        },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -344,7 +366,9 @@ describe('GateioOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await gateioOrderWriteModule.cancel(cancelParams)
+      const { order } = await gateioOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -360,7 +384,7 @@ describe('GateioOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
@@ -370,13 +394,18 @@ describe('GateioOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'place',
-      Promise.resolve(GATEIO_RAW_ORDER),
+      Promise.resolve({
+        order: GATEIO_RAW_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -389,7 +418,9 @@ describe('GateioOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await gateioOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await gateioOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(GATEIO_RAW_ORDER)
 

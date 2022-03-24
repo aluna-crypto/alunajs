@@ -35,11 +35,13 @@ describe('GateioBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      GATEIO_RAW_BALANCES,
+      { data: GATEIO_RAW_BALANCES, apiRequestCount: 1 },
     )
 
 
-    const rawBalances = await gateioBalanceModule.listRaw()
+    const { rawBalances, apiRequestCount } = await gateioBalanceModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -60,16 +62,16 @@ describe('GateioBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       GateioBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      { rawBalances: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       GateioBalanceModule.prototype,
       'parseMany',
-      GATEIO_PARSED_BALANCES,
+      { balances: GATEIO_PARSED_BALANCES, apiRequestCount: 1 },
     )
 
-    const balances = await gateioBalanceModule.list()
+    const { balances } = await gateioBalanceModule.list()
 
 
     expect(listRawMock.callCount).to.be.eq(1)
@@ -96,7 +98,7 @@ describe('GateioBalanceModule', () => {
     const rawBalance1 = GATEIO_RAW_BALANCES[0]
     const rawBalance2 = GATEIO_RAW_BALANCES[1]
 
-    const parsedBalance1 = gateioBalanceModule.parse({
+    const { balance: parsedBalance1 } = gateioBalanceModule.parse({
       rawBalance: rawBalance1,
     })
 
@@ -116,7 +118,7 @@ describe('GateioBalanceModule', () => {
 
     alunaSymbolMappingMock.returns(rawBalance2.currency)
 
-    const parsedBalance2 = gateioBalanceModule.parse({
+    const { balance: parsedBalance2 } = gateioBalanceModule.parse({
       rawBalance: rawBalance2,
     })
 
@@ -140,14 +142,14 @@ describe('GateioBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(GATEIO_PARSED_BALANCES[0])
+      .returns({ balance: GATEIO_PARSED_BALANCES[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(GATEIO_PARSED_BALANCES[1])
+      .returns({ balance: GATEIO_PARSED_BALANCES[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(GATEIO_PARSED_BALANCES[2])
+      .returns({ balance: GATEIO_PARSED_BALANCES[2], apiRequestCount: 1 })
 
 
-    const parsedBalances = gateioBalanceModule.parseMany({
+    const { balances: parsedBalances } = gateioBalanceModule.parseMany({
       rawBalances: GATEIO_RAW_BALANCES,
     })
 
