@@ -1,3 +1,5 @@
+import { assign } from 'lodash'
+
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
@@ -15,6 +17,7 @@ import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrd
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../utils/validation/validateParams'
 import { GateioOrderSideAdapter } from '../enums/adapters/GateioOrderSideAdapter'
+import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import {
@@ -112,6 +115,14 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       currency_pair: symbolPair,
       amount: amount.toString(),
       price: rate!.toString(),
+    }
+
+    const { orderAnnotation } = Gateio.settings
+
+    if (orderAnnotation) {
+
+      assign(body, { text: orderAnnotation })
+
     }
 
     GateioLog.info('placing new order for Gateio')

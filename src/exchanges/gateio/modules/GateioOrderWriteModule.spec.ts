@@ -23,6 +23,7 @@ import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeO
 import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioSideEnum } from '../enums/GateioSideEnum'
+import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import {
   GateioSpecs,
@@ -155,6 +156,84 @@ describe('GateioOrderWriteModule', () => {
     })
 
   })
+
+  it(
+    "should add 'Text' prop to body request if 'orderAnnotation' was informed",
+    async () => {
+
+      const orderAnnotation = 'Sent by Aluna.'
+
+      ImportMock.mockOther(
+        gateioOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      ImportMock.mockOther(
+        Gateio,
+        'settings',
+        {
+          orderAnnotation,
+        },
+      )
+
+      const { validateParamsMock } = mockValidateParams()
+
+      const requestMock = ImportMock.mockFunction(
+        GateioHttp,
+        'privateRequest',
+        Promise.resolve(placedOrder),
+      )
+
+      const parseMock = ImportMock.mockFunction(
+        gateioOrderWriteModule,
+        'parse',
+        Promise.resolve(placedOrder),
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      // place long limit order
+      const placeResponse = await gateioOrderWriteModule.place(placeOrderParams)
+
+      const expectedRequestBody: IGateioOrderRequest = {
+        side: GateioSideEnum.BUY,
+        currency_pair: placeOrderParams.symbolPair,
+        amount: placeOrderParams.amount.toString(),
+        price: placeOrderParams.rate!.toString(),
+        text: orderAnnotation,
+      }
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.args[0][0]).to.deep.eq({
+        url: `${PROD_GATEIO_URL}/spot/orders`,
+        body: expectedRequestBody,
+        keySecret,
+      })
+
+
+      expect(parseMock.callCount).to.be.eq(1)
+      expect(parseMock.calledWith({
+        rawOrder: placedOrder,
+      })).to.be.ok
+
+      expect(placeResponse).to.deep.eq(placedOrder)
+
+      expect(validateParamsMock.callCount).to.be.eq(1)
+      expect(validateParamsMock.args[0][0]).to.deep.eq({
+        params: placeOrderParams,
+        schema: placeOrderParamsSchema,
+      })
+
+    },
+  )
 
   it('should throw an request error when placing new order', async () => {
 
