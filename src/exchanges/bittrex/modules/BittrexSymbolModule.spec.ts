@@ -20,10 +20,15 @@ describe('BittrexSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'publicRequest',
-      Promise.resolve(BITTREX_RAW_SYMBOLS),
+      Promise.resolve({
+        data: BITTREX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawSymbols = await BittrexSymbolModule.listRaw()
+    const { rawSymbols, apiRequestCount } = await BittrexSymbolModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(1)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(BITTREX_RAW_SYMBOLS)
@@ -39,26 +44,32 @@ describe('BittrexSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BittrexSymbolModule,
       'listRaw',
-      Promise.resolve(BITTREX_RAW_SYMBOLS),
+      Promise.resolve({
+        rawSymbols: BITTREX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BittrexSymbolModule,
       'parseMany',
-      BITTREX_PARSED_SYMBOLS,
+      {
+        symbols: BITTREX_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawSymbols = await BittrexSymbolModule.list()
+    const { symbols: parsedSymbols } = await BittrexSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(3)
-    expect(rawSymbols).to.deep.eq(BITTREX_PARSED_SYMBOLS)
+    expect(parsedSymbols.length).to.eq(3)
+    expect(parsedSymbols).to.deep.eq(BITTREX_PARSED_SYMBOLS)
 
     for (let index = 0; index < 3; index += 1) {
 
-      expect(rawSymbols[index].exchangeId).to.be.eq(Bittrex.ID)
-      expect(rawSymbols[index].id).to.be.eq(BITTREX_PARSED_SYMBOLS[index].id)
-      expect(rawSymbols[index].name)
+      expect(parsedSymbols[index].exchangeId).to.be.eq(Bittrex.ID)
+      expect(parsedSymbols[index].id).to.be.eq(BITTREX_PARSED_SYMBOLS[index].id)
+      expect(parsedSymbols[index].name)
         .to.be.eq(BITTREX_PARSED_SYMBOLS[index].name)
 
     }
@@ -85,7 +96,7 @@ describe('BittrexSymbolModule', () => {
     const rawSymbol1 = BITTREX_RAW_SYMBOLS[1]
     const rawSymbol2 = BITTREX_RAW_SYMBOLS[2]
 
-    const parsedSymbol1 = BittrexSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = BittrexSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
@@ -101,7 +112,7 @@ describe('BittrexSymbolModule', () => {
 
     alunaSymbolMappingMock.returns(rawSymbol2.symbol)
 
-    const parsedSymbol2 = BittrexSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = BittrexSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -130,13 +141,13 @@ describe('BittrexSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BITTREX_PARSED_SYMBOLS[0])
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(BITTREX_PARSED_SYMBOLS[1])
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(BITTREX_PARSED_SYMBOLS[2])
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[2], apiRequestCount: 1 })
 
-    const parsedSymbols = BittrexSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = BittrexSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 

@@ -13,11 +13,10 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BittrexHttp } from '../BittrexHttp'
 import {
   BittrexSpecs,
@@ -60,13 +59,19 @@ describe('BittrexOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        data: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        order: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -89,7 +94,9 @@ describe('BittrexOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await bittrexOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await bittrexOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -109,7 +116,9 @@ describe('BittrexOrderWriteModule', () => {
 
 
     // place short limit order
-    const placeResponse2 = await bittrexOrderWriteModule.place({
+    const {
+      order: placeResponse2,
+    } = await bittrexOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
       side: AlunaOrderSideEnum.SELL,
@@ -277,7 +286,7 @@ describe('BittrexOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -327,16 +336,21 @@ describe('BittrexOrderWriteModule', () => {
     ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      canceledOrderResponse,
+      { data: canceledOrderResponse, apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'parse',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: {
+          status: AlunaOrderStatusEnum.CANCELED,
+        },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -346,7 +360,9 @@ describe('BittrexOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await bittrexOrderWriteModule.cancel(cancelParams)
+      const { order } = await bittrexOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -362,7 +378,7 @@ describe('BittrexOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
@@ -372,13 +388,18 @@ describe('BittrexOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'place',
-      Promise.resolve(BITTREX_RAW_LIMIT_ORDER),
+      Promise.resolve({
+        order: BITTREX_RAW_LIMIT_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -391,7 +412,9 @@ describe('BittrexOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await bittrexOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await bittrexOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(BITTREX_RAW_LIMIT_ORDER)
 

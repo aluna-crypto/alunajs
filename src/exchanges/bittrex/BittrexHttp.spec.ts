@@ -24,7 +24,7 @@ describe('BittrexHttp', () => {
 
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
 
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -73,7 +73,7 @@ describe('BittrexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -150,7 +150,7 @@ describe('BittrexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 

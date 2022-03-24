@@ -36,11 +36,10 @@ describe('BittrexBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      BITTREX_RAW_BALANCES,
+      { data: BITTREX_RAW_BALANCES, apiRequestCount: 1 },
     )
 
-
-    const rawBalances = await bittrexBalanceModule.listRaw()
+    const { rawBalances } = await bittrexBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -63,17 +62,18 @@ describe('BittrexBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BittrexBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      { rawBalances: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BittrexBalanceModule.prototype,
       'parseMany',
-      BITTREX_PARSED_BALANCES,
+      { balances: BITTREX_PARSED_BALANCES, apiRequestCount: 1 },
     )
 
-    const balances = await bittrexBalanceModule.list()
+    const { balances, apiRequestCount } = await bittrexBalanceModule.list()
 
+    expect(apiRequestCount).to.be.eq(4)
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -117,7 +117,7 @@ describe('BittrexBalanceModule', () => {
       returnSymbol: translatedSymbolId,
     })
 
-    const parsedBalance1 = bittrexBalanceModule.parse({
+    const { balance: parsedBalance1 } = bittrexBalanceModule.parse({
       rawBalance: rawBalance1,
     })
 
@@ -141,7 +141,7 @@ describe('BittrexBalanceModule', () => {
     })
 
 
-    const parsedBalance2 = bittrexBalanceModule.parse({
+    const { balance: parsedBalance2 } = bittrexBalanceModule.parse({
       rawBalance: rawBalance2,
     })
 
@@ -172,14 +172,14 @@ describe('BittrexBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BITTREX_PARSED_BALANCES[0])
+      .returns({ balance: BITTREX_PARSED_BALANCES[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(BITTREX_PARSED_BALANCES[1])
+      .returns({ balance: BITTREX_PARSED_BALANCES[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(BITTREX_PARSED_BALANCES[2])
+      .returns({ balance: BITTREX_PARSED_BALANCES[2], apiRequestCount: 1 })
 
 
-    const parsedBalances = bittrexBalanceModule.parseMany({
+    const { balances: parsedBalances } = bittrexBalanceModule.parseMany({
       rawBalances: BITTREX_RAW_BALANCES,
     })
 

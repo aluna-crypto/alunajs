@@ -38,7 +38,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     const badRequestErrorMock = new AlunaError({
@@ -51,7 +51,7 @@ describe('BittrexKeyModule', () => {
 
     requestMock.onSecondCall().returns(Promise.reject(badRequestErrorMock))
 
-    const { permissions } = await bittrexKeyModule.fetchDetails()
+    const { key: { permissions } } = await bittrexKeyModule.fetchDetails()
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok
@@ -94,7 +94,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     requestMock
@@ -156,7 +156,7 @@ describe('BittrexKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     requestMock1
@@ -164,9 +164,9 @@ describe('BittrexKeyModule', () => {
       .returns(Promise.reject(invalidPermissionsErrorMock))
 
 
-    const result = await bittrexKeyModule.fetchDetails()
+    const { key: { permissions } } = await bittrexKeyModule.fetchDetails()
 
-    expect(result.permissions.trade).not.to.be.ok
+    expect(permissions.trade).not.to.be.ok
 
   })
 
@@ -200,7 +200,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
@@ -257,8 +257,10 @@ describe('BittrexKeyModule', () => {
       Promise.reject(alunaErrorMock),
     )
 
-    requestMock.onFirstCall().returns(requestResponse)
-    requestMock.onSecondCall().returns(requestResponse)
+    const response = { data: requestResponse, apiRequestCount: 1 }
+
+    requestMock.onFirstCall().returns(response)
+    requestMock.onSecondCall().returns(response)
 
     let result
     let error
@@ -342,7 +344,7 @@ describe('BittrexKeyModule', () => {
       withdraw: false,
     }
 
-    const perm1 = bittrexKeyModule.parsePermissions({
+    const { key: perm1 } = bittrexKeyModule.parsePermissions({
       rawKey: key,
     })
 
