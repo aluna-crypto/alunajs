@@ -7,6 +7,7 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { GateioSpecs } from './GateioSpecs'
 import { GateioBalanceModule } from './modules/GateioBalanceModule'
 import { GateioKeyModule } from './modules/GateioKeyModule'
@@ -39,6 +40,16 @@ export const Gateio: IAlunaExchangeStatic = class extends AAlunaExchange impleme
     this.key = new GateioKeyModule({ exchange: this })
     this.balance = new GateioBalanceModule({ exchange: this })
     this.order = new GateioOrderWriteModule({ exchange: this })
+
+  }
+
+  public static validateSettings (
+    settings: IAlunaSettingsSchema,
+  ): boolean {
+
+    const valid = !settings.affiliateCode
+
+    return valid
 
   }
 

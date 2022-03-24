@@ -36,4 +36,14 @@ describe('Poloniex', () => {
 
   })
 
+  it('should properly validate Poloniex settings', async () => {
+
+    expect(Poloniex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Poloniex.validateSettings({ proxyAgent: {} })).to.be.ok
+
+    expect(Poloniex.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+    expect(Poloniex.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
+
+  })
+
 })

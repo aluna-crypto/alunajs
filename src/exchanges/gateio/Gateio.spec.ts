@@ -36,4 +36,14 @@ describe('Gateio', () => {
 
   })
 
+  it('should properly validate Gateio settings', async () => {
+
+    expect(Gateio.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Gateio.validateSettings({ proxyAgent: {} })).to.be.ok
+    expect(Gateio.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
+
+    expect(Gateio.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
+
+  })
+
 })
