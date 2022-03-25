@@ -66,7 +66,7 @@ interface ISignedHashParams {
 
 
 
-interface IBitmexRequestHeaders {
+export interface IBitmexRequestHeaders {
   'api-expires': string
   'api-key': string
   'api-signature': string
