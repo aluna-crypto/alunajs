@@ -30,7 +30,7 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IValrSignedHeaders {
+export interface IValrSignedHeaders {
   'X-VALR-API-KEY': string
   'X-VALR-SIGNATURE': string
   'X-VALR-TIMESTAMP': number
