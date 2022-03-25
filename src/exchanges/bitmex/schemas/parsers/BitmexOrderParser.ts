@@ -99,6 +99,7 @@ export class BitmexOrderParser {
 
     const computedTotal = BitmexOrderParser.computeOrderTotal({
       instrument,
+      orderQty,
       computedPrice,
       computedAmount,
     })
@@ -266,6 +267,7 @@ export class BitmexOrderParser {
   public static computeOrderTotal (params: {
     computedPrice: number,
     computedAmount: number,
+    orderQty: number,
     instrument: IAlunaInstrumentSchema,
   }) {
 
@@ -273,6 +275,7 @@ export class BitmexOrderParser {
       instrument,
       computedPrice,
       computedAmount,
+      orderQty,
     } = params
 
     const {
@@ -300,7 +303,7 @@ export class BitmexOrderParser {
 
     } else if (isInverse) {
 
-      computedTotal = computedAmount
+      computedTotal = orderQty
 
     } else {
 
