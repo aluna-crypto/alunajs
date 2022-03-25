@@ -1,4 +1,3 @@
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
@@ -64,7 +63,3 @@ export interface IValrOrderGetSchema {
 //   timeInForce: ValrOrderTimeInForceEnum
 // }
 
-export interface IValrOrderParserReturns {
-  order: IAlunaOrderSchema
-  apiRequestCount: number
-}

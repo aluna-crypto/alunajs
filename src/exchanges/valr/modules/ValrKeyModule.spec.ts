@@ -40,11 +40,18 @@ describe('ValrKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      requestResponse,
+      {
+        data: requestResponse,
+        apiRequestCount: 1,
+      },
     )
 
     // first
-    const { permissions: permissions1 } = await valrKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions1,
+      },
+    } = await valrKeyModule.fetchDetails()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
@@ -55,7 +62,11 @@ describe('ValrKeyModule', () => {
     // second
     requestResponse.permissions = [ValrApiKeyPermissions.VIEW_ACCESS]
 
-    const { permissions: permissions2 } = await valrKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions2,
+      },
+    } = await valrKeyModule.fetchDetails()
 
     expect(permissions2.read).to.be.ok
     expect(permissions2.trade).not.to.be.ok
@@ -69,7 +80,11 @@ describe('ValrKeyModule', () => {
       ValrApiKeyPermissions.TRADE,
     ]
 
-    const { permissions: permissions3 } = await valrKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions3,
+      },
+    } = await valrKeyModule.fetchDetails()
 
     expect(permissions3.read).to.be.ok
     expect(permissions3.trade).to.be.ok
@@ -84,7 +99,11 @@ describe('ValrKeyModule', () => {
       'NEW_ADDED_PERSSION' as ValrApiKeyPermissions,
     ]
 
-    const { permissions: permissions4 } = await valrKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions4,
+      },
+    } = await valrKeyModule.fetchDetails()
 
     expect(permissions4.read).to.be.ok
     expect(permissions4.trade).to.be.ok
@@ -99,7 +118,11 @@ describe('ValrKeyModule', () => {
       ValrApiKeyPermissions.WITHDRAW,
     ]
 
-    const { permissions: permissions5 } = await valrKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions5,
+      },
+    } = await valrKeyModule.fetchDetails()
 
     expect(permissions5.read).to.be.ok
     expect(permissions5.trade).to.be.ok
@@ -194,7 +217,7 @@ describe('ValrKeyModule', () => {
       addedAt: '2021-09-11T18:28:37.791401Z',
     }
 
-    const perm1 = valrKeyModule.parsePermissions({
+    const { key: perm1 } = valrKeyModule.parsePermissions({
       rawKey: key,
     })
 
@@ -204,7 +227,7 @@ describe('ValrKeyModule', () => {
 
     key.permissions = [ValrApiKeyPermissions.TRADE]
 
-    const perm2 = valrKeyModule.parsePermissions({
+    const { key: perm2 } = valrKeyModule.parsePermissions({
       rawKey: key,
     })
 

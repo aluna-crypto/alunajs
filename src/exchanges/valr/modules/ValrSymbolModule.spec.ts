@@ -80,7 +80,7 @@ describe('ValrSymbolModule', () => {
       apiRequestCount,
     } = await ValrSymbolModule.list()
 
-    expect(apiRequestCount).to.eq(3)
+    expect(apiRequestCount).to.eq(5)
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(VALR_PARSED_SYMBOLS)
 
@@ -178,7 +178,7 @@ describe('ValrSymbolModule', () => {
     }
 
     const parsedSymbolResp3 = {
-      symbol: VALR_PARSED_SYMBOLS[0],
+      symbol: VALR_PARSED_SYMBOLS[2],
       apiRequestCount: 1,
     }
 
@@ -190,7 +190,7 @@ describe('ValrSymbolModule', () => {
       .onThirdCall()
       .returns(parsedSymbolResp3)
 
-    const parsedSymbols = ValrSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = ValrSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 

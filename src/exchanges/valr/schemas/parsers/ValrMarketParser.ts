@@ -1,18 +1,15 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Valr } from '../../Valr'
-import {
-  IMarketWithCurrencies,
-  IValrMarketParserResponseSchema,
-} from '../IValrMarketSchema'
+import { IValrMarketWithCurrencies } from '../IValrMarketSchema'
 
 
 
 export class ValrMarketParser {
 
   static parse (params: {
-    rawMarket: IMarketWithCurrencies,
-  }): IValrMarketParserResponseSchema {
+    rawMarket: IValrMarketWithCurrencies,
+  }): IAlunaMarketSchema {
 
     const { rawMarket } = params
 
@@ -70,12 +67,7 @@ export class ValrMarketParser {
       meta: rawMarket,
     }
 
-    const response: IValrMarketParserResponseSchema = {
-      market: parsedMarket,
-      apiRequestCount,
-    }
-
-    return response
+    return parsedMarket
 
   }
 

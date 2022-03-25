@@ -20,7 +20,6 @@ import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTimeInForceEnum } from '../enums/ValrOrderTimeInForceEnum'
 import { ValrSideEnum } from '../enums/ValrSideEnum'
-import { IValrOrderGetSchema } from '../schemas/IValrOrderSchema'
 import { VALR_PARSED_OPEN_ORDERS } from '../test/fixtures/valrOrder'
 import { ValrHttp } from '../ValrHttp'
 import { ValrSpecs } from '../ValrSpecs'
@@ -79,7 +78,10 @@ describe('ValrOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      { id: placedOrderId },
+      {
+        data: { id: placedOrderId },
+        apiRequestCount: 1,
+      },
     )
 
     return {
@@ -95,7 +97,10 @@ describe('ValrOrderWriteModule', () => {
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      Promise.resolve(successfulPlacedOrder),
+      Promise.resolve({
+        order: successfulPlacedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const requestBody = {
@@ -108,7 +113,9 @@ describe('ValrOrderWriteModule', () => {
     }
 
     // place long limit order
-    const placeResponse1 = await valrOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await valrOrderWriteModule.place(placeOrderParams)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -126,7 +133,7 @@ describe('ValrOrderWriteModule', () => {
     expect(placeResponse1).to.deep.eq(successfulPlacedOrder)
 
     // place short limit order
-    const placeResponse2 = await valrOrderWriteModule.place({
+    const { order: placeResponse2 } = await valrOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
       side: AlunaOrderSideEnum.SELL,
@@ -197,7 +204,10 @@ describe('ValrOrderWriteModule', () => {
     const getMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      successfulPlacedOrder,
+      {
+        order: successfulPlacedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const marketOrderPlaceParams: IAlunaOrderPlaceParams = {
@@ -212,7 +222,7 @@ describe('ValrOrderWriteModule', () => {
     }
 
     // place long market order
-    const placeResponse1 = await valrOrderWriteModule.place(
+    const { order: placeResponse1 } = await valrOrderWriteModule.place(
       marketOrderPlaceParams,
     )
 
@@ -229,10 +239,10 @@ describe('ValrOrderWriteModule', () => {
       symbolPair: marketOrderPlaceParams.symbolPair,
     })).to.be.ok
 
-    expect(placeResponse1).to.deep.eq(getMock.returnValues[0])
+    expect(placeResponse1).to.deep.eq(getMock.returnValues[0].order)
 
     // place short market order
-    const placeResponse2 = await valrOrderWriteModule.place({
+    const { order: placeResponse2 } = await valrOrderWriteModule.place({
       ...marketOrderPlaceParams,
       side: AlunaOrderSideEnum.SELL,
     })
@@ -264,7 +274,10 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      failedPlacedOrder, // return failed response here
+      {
+        order: failedPlacedOrder,
+        apiRequestCount: 1,
+      }, // return failed response here
     )
 
     // try to place order
@@ -273,10 +286,12 @@ describe('ValrOrderWriteModule', () => {
 
     try {
 
-      placeResponse = await valrOrderWriteModule.place({
+      const { order } = await valrOrderWriteModule.place({
         ...placeOrderParams,
         type: AlunaOrderTypesEnum.MARKET,
       })
+
+      placeResponse = order
 
     } catch (err) {
 
@@ -300,7 +315,10 @@ describe('ValrOrderWriteModule', () => {
     ImportMock.mockFunction(
       valrOrderWriteModule,
       'get',
-      failedPlacedOrderNoBalance,
+      {
+        order: failedPlacedOrderNoBalance,
+        apiRequestCount: 1,
+      },
     )
 
     // try to place order
@@ -309,10 +327,12 @@ describe('ValrOrderWriteModule', () => {
 
     try {
 
-      placeResponse = await valrOrderWriteModule.place({
+      const { order } = await valrOrderWriteModule.place({
         ...placeOrderParams,
         type: AlunaOrderTypesEnum.MARKET,
       })
+
+      placeResponse = order
 
     } catch (err) {
 
@@ -338,19 +358,27 @@ describe('ValrOrderWriteModule', () => {
     const getRawMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'getRaw',
-      Promise.resolve(mockedOrderStatus),
+      Promise.resolve({
+        rawOrder: mockedOrderStatus,
+        apiRequestCount: 1,
+      }),
     )
 
     const cancelMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'place',
-      Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
+      Promise.resolve({
+        order: VALR_PARSED_OPEN_ORDERS[0],
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -363,7 +391,7 @@ describe('ValrOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await valrOrderWriteModule.edit(editOrderParams)
+    const { order: newOrder } = await valrOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(VALR_PARSED_OPEN_ORDERS[0])
 
@@ -414,19 +442,27 @@ describe('ValrOrderWriteModule', () => {
     const getRawMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'getRaw',
-      Promise.resolve(mockedOrderStatus),
+      Promise.resolve({
+        rawOrder: mockedOrderStatus,
+        apiRequestCount: 1,
+      }),
     )
 
     const cancelMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'place',
-      Promise.resolve(VALR_PARSED_OPEN_ORDERS[0]),
+      Promise.resolve({
+        order: VALR_PARSED_OPEN_ORDERS[0],
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -476,8 +512,11 @@ describe('ValrOrderWriteModule', () => {
       valrOrderWriteModule,
       'getRaw',
       {
-        orderStatusType: 'any-status-but-canceled' as ValrOrderStatusEnum,
-      } as IValrOrderGetSchema,
+        rawOrder: {
+          orderStatusType: 'any-status-but-canceled' as ValrOrderStatusEnum,
+        },
+        apiRequestCount: 1,
+      },
     )
 
     const cancelParams = {
@@ -527,14 +566,20 @@ describe('ValrOrderWriteModule', () => {
       valrOrderWriteModule,
       'getRaw',
       {
-        orderStatusType: ValrOrderStatusEnum.CANCELLED,
-      } as IValrOrderGetSchema,
+        rawOrder: {
+          orderStatusType: ValrOrderStatusEnum.CANCELLED,
+        },
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       valrOrderWriteModule,
       'parse',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: { status: AlunaOrderStatusEnum.CANCELED },
+        apiRequestCount: 1,
+      },
     )
 
     const cancelParams = {
@@ -547,7 +592,9 @@ describe('ValrOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await valrOrderWriteModule.cancel(cancelParams)
+      const { order } = await valrOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -559,11 +606,11 @@ describe('ValrOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: getRawMock.returnValues[0],
+      rawOrder: getRawMock.returnValues[0].rawOrder,
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })

@@ -6,11 +6,11 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../lib/modules/IAlunaMarketModule'
 import {
-  IMarketWithCurrencies,
   IValrCurrencyPairs,
   IValrCurrencyPairsResponseSchema,
   IValrMarketResponseSchema,
   IValrMarketSchema,
+  IValrMarketWithCurrencies,
 } from '../schemas/IValrMarketSchema'
 import { ValrCurrencyPairsParser } from '../schemas/parsers/ValrCurrencyPairsParser'
 import { ValrMarketParser } from '../schemas/parsers/ValrMarketParser'
@@ -27,7 +27,7 @@ interface IValrMarketModule extends IAlunaMarketModule {
 export const ValrMarketModule: IValrMarketModule = class {
 
   public static async listRaw ()
-    : Promise<IAlunaMarketListRawReturns<IMarketWithCurrencies>> {
+    : Promise<IAlunaMarketListRawReturns<IValrMarketWithCurrencies>> {
 
     ValrLog.info('fetching Valr markets')
 
@@ -49,10 +49,7 @@ export const ValrMarketModule: IValrMarketModule = class {
 
     apiRequestCount += 1
 
-    const {
-      apiRequestCount: apiCurrencyPairParserCount,
-      rawMarketsWithCurrency,
-    } = ValrCurrencyPairsParser.parse({
+    const rawMarketsWithCurrency = ValrCurrencyPairsParser.parse({
       rawMarkets,
       rawCurrencyPairs,
     })
@@ -61,7 +58,6 @@ export const ValrMarketModule: IValrMarketModule = class {
 
     const totalApiRequestCount = apiMarketCount
       + apiCurrencyPairCount
-      + apiCurrencyPairParserCount
       + apiRequestCount
 
     return {
@@ -101,39 +97,36 @@ export const ValrMarketModule: IValrMarketModule = class {
   }
 
   public static parse (params: {
-    rawMarket: IMarketWithCurrencies,
+    rawMarket: IValrMarketWithCurrencies,
   }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
-    const {
-      apiRequestCount,
-      market: parsedMarket,
-    } = ValrMarketParser.parse({ rawMarket })
+    const parsedMarket = ValrMarketParser.parse({ rawMarket })
 
     return {
       market: parsedMarket,
-      apiRequestCount: apiRequestCount + 1,
+      apiRequestCount: 1,
     }
 
   }
 
   public static parseMany (params: {
-    rawMarkets: IMarketWithCurrencies[],
+    rawMarkets: IValrMarketWithCurrencies[],
   }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
-    let parsedSymbolsCount = 0
+    let apiRequestCount = 0
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount,
-      } = ValrMarketParser.parse({ rawMarket })
+        apiRequestCount: parseCount,
+      } = this.parse({ rawMarket })
 
-      parsedSymbolsCount += apiRequestCount + 1
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
@@ -143,7 +136,7 @@ export const ValrMarketModule: IValrMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: parsedSymbolsCount,
+      apiRequestCount,
     }
 
   }

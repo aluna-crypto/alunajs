@@ -1,8 +1,8 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import {
-  IMarketWithCurrencies,
   IValrCurrencyPairs,
   IValrMarketSchema,
+  IValrMarketWithCurrencies,
 } from '../../schemas/IValrMarketSchema'
 
 
@@ -150,7 +150,7 @@ export const VALR_RAW_CURRENCY_PAIRS: IValrCurrencyPairs[] = [
   },
 ]
 
-export const VALR_RAW_MARKETS_WITH_CURRENCY: IMarketWithCurrencies[] = [
+export const VALR_RAW_MARKETS_WITH_CURRENCY: IValrMarketWithCurrencies[] = [
   {
     currencyPair: 'USDCETH',
     askPrice: '0.00039334',

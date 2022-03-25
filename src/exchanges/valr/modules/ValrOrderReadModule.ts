@@ -177,21 +177,16 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     }
 
-    const {
-      order: parsedOrder,
-      apiRequestCount: parseCount,
-    } = ValrOrderParser.parse({
+    const parsedOrder = ValrOrderParser.parse({
       rawOrder,
       currencyPair: pair,
     })
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseCount
-
     const response: IAlunaOrderParseReturns = {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      apiRequestCount,
     }
 
     return response

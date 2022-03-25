@@ -1,8 +1,7 @@
 import {
-  IMarketWithCurrencies,
   IValrCurrencyPairs,
-  IValrMarketCurrencyParserResponseSchema,
   IValrMarketSchema,
+  IValrMarketWithCurrencies,
 } from '../IValrMarketSchema'
 
 
@@ -12,7 +11,7 @@ export class ValrCurrencyPairsParser {
   static parse (params: {
     rawMarkets: IValrMarketSchema[],
     rawCurrencyPairs: IValrCurrencyPairs[],
-  }): IValrMarketCurrencyParserResponseSchema {
+  }): IValrMarketWithCurrencies[] {
 
     const {
       rawMarkets,
@@ -52,9 +51,9 @@ export class ValrCurrencyPairsParser {
 
       return cumulator
 
-    }, [] as IMarketWithCurrencies[])
+    }, [] as IValrMarketWithCurrencies[])
 
-    return { rawMarketsWithCurrency, apiRequestCount: 1 }
+    return rawMarketsWithCurrency
 
   }
 

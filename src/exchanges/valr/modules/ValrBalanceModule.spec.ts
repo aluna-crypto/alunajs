@@ -34,10 +34,13 @@ describe('ValrBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      VALR_RAW_BALANCES,
+      {
+        data: VALR_RAW_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const rawBalances = await valrBalanceModule.listRaw()
+    const { rawBalances } = await valrBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -76,16 +79,22 @@ describe('ValrBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      {
+        rawBalances: rawListMock,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'parseMany',
-      VALR_PARSED_BALANCES,
+      {
+        balances: VALR_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const balances = await valrBalanceModule.list()
+    const { balances } = await valrBalanceModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -126,7 +135,7 @@ describe('ValrBalanceModule', () => {
     const rawBalance1 = VALR_RAW_BALANCES[0]
     const rawBalance2 = VALR_RAW_BALANCES[1]
 
-    const parsedBalance1 = valrBalanceModule.parse({
+    const { balance: parsedBalance1 } = valrBalanceModule.parse({
       rawBalance: rawBalance1,
     })
 
@@ -146,7 +155,7 @@ describe('ValrBalanceModule', () => {
     })
 
 
-    const parsedBalance2 = valrBalanceModule.parse({
+    const { balance: parsedBalance2 } = valrBalanceModule.parse({
       rawBalance: rawBalance2,
     })
 
@@ -176,13 +185,22 @@ describe('ValrBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(VALR_PARSED_BALANCES[0])
+      .returns({
+        balance: VALR_PARSED_BALANCES[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(VALR_PARSED_BALANCES[1])
+      .returns({
+        balance: VALR_PARSED_BALANCES[1],
+        apiRequestCount: 1,
+      })
       .onThirdCall()
-      .returns(VALR_PARSED_BALANCES[2])
+      .returns({
+        balance: VALR_PARSED_BALANCES[2],
+        apiRequestCount: 1,
+      })
 
-    const parsedBalances = valrBalanceModule.parseMany({
+    const { balances: parsedBalances } = valrBalanceModule.parseMany({
       rawBalances: VALR_RAW_BALANCES,
     })
 
