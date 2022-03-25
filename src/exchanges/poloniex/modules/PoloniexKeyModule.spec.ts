@@ -36,7 +36,10 @@ describe('PoloniexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      requestResponse,
+      {
+        data: requestResponse,
+        apiRequestCount: 1,
+      },
     )
 
     const badRequestErrorMock = new AlunaError({
@@ -50,7 +53,7 @@ describe('PoloniexKeyModule', () => {
 
     requestMock.onFirstCall().returns(Promise.reject(badRequestErrorMock))
 
-    const { permissions } = await poloniexKeyModule.fetchDetails()
+    const { key: { permissions } } = await poloniexKeyModule.fetchDetails()
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok
@@ -92,7 +95,10 @@ describe('PoloniexKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      requestResponse,
+      {
+        data: requestResponse,
+        apiRequestCount: 1,
+      },
     )
 
     requestMock1
@@ -100,9 +106,9 @@ describe('PoloniexKeyModule', () => {
       .returns(Promise.reject(invalidPermissionsErrorMock))
 
 
-    const result = await poloniexKeyModule.fetchDetails()
+    const { key } = await poloniexKeyModule.fetchDetails()
 
-    expect(result.permissions.trade).not.to.be.ok
+    expect(key.permissions.trade).not.to.be.ok
 
   })
 
@@ -136,7 +142,10 @@ describe('PoloniexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      requestResponse,
+      {
+        data: requestResponse,
+        apiRequestCount: 1,
+      },
     )
 
     requestMock.onFirstCall().returns(Promise.reject(alunaErrorMock))
@@ -191,7 +200,9 @@ describe('PoloniexKeyModule', () => {
 
     try {
 
-      result = await poloniexKeyModule.fetchDetails()
+      const { key } = await poloniexKeyModule.fetchDetails()
+
+      result = key
 
     } catch (e) {
 
@@ -218,7 +229,7 @@ describe('PoloniexKeyModule', () => {
       withdraw: false,
     }
 
-    const perm1 = poloniexKeyModule.parsePermissions({
+    const { key: perm1 } = poloniexKeyModule.parsePermissions({
       rawKey: key,
     })
 

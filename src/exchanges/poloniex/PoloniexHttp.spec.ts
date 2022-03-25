@@ -26,7 +26,7 @@ describe('PoloniexHttp', () => {
     'Content-Type': 'application/x-www-form-urlencoded',
   }
 
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -78,7 +78,7 @@ describe('PoloniexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -160,7 +160,7 @@ describe('PoloniexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 

@@ -22,7 +22,10 @@ describe('PoloniexSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'publicRequest',
-      Promise.resolve(POLONIEX_RAW_SYMBOL),
+      Promise.resolve({
+        data: POLONIEX_RAW_SYMBOL,
+        apiRequestCount: 1,
+      }),
     )
 
     const parserMock = ImportMock.mockFunction(
@@ -31,7 +34,9 @@ describe('PoloniexSymbolModule', () => {
       POLONIEX_RAW_SYMBOLS_WITH_CURRENCY,
     )
 
-    const rawSymbols = await PoloniexSymbolModule.listRaw()
+    const { rawSymbols, apiRequestCount } = await PoloniexSymbolModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(2)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(POLONIEX_RAW_SYMBOLS_WITH_CURRENCY)
@@ -48,26 +53,32 @@ describe('PoloniexSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       PoloniexSymbolModule,
       'listRaw',
-      Promise.resolve(POLONIEX_RAW_SYMBOLS_WITH_CURRENCY),
+      Promise.resolve({
+        rawSymbols: POLONIEX_RAW_SYMBOLS_WITH_CURRENCY,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       PoloniexSymbolModule,
       'parseMany',
-      POLONIEX_PARSED_SYMBOLS,
+      {
+        symbols: POLONIEX_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawSymbols = await PoloniexSymbolModule.list()
+    const { symbols } = await PoloniexSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(3)
-    expect(rawSymbols).to.deep.eq(POLONIEX_PARSED_SYMBOLS)
+    expect(symbols.length).to.eq(3)
+    expect(symbols).to.deep.eq(POLONIEX_PARSED_SYMBOLS)
 
     for (let index = 0; index < 3; index += 1) {
 
-      expect(rawSymbols[index].exchangeId).to.be.eq(Poloniex.ID)
-      expect(rawSymbols[index].id).to.be.eq(POLONIEX_PARSED_SYMBOLS[index].id)
-      expect(rawSymbols[index].name)
+      expect(symbols[index].exchangeId).to.be.eq(Poloniex.ID)
+      expect(symbols[index].id).to.be.eq(POLONIEX_PARSED_SYMBOLS[index].id)
+      expect(symbols[index].name)
         .to.be.eq(POLONIEX_PARSED_SYMBOLS[index].name)
 
     }
@@ -94,7 +105,7 @@ describe('PoloniexSymbolModule', () => {
     const rawSymbol1 = POLONIEX_RAW_SYMBOLS_WITH_CURRENCY[1]
     const rawSymbol2 = POLONIEX_RAW_SYMBOLS_WITH_CURRENCY[2]
 
-    const parsedSymbol1 = PoloniexSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = PoloniexSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
@@ -111,7 +122,7 @@ describe('PoloniexSymbolModule', () => {
 
     alunaSymbolMappingMock.returns(rawSymbol2.currency)
 
-    const parsedSymbol2 = PoloniexSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = PoloniexSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -141,13 +152,22 @@ describe('PoloniexSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(POLONIEX_PARSED_SYMBOLS[0])
+      .returns({
+        symbol: POLONIEX_PARSED_SYMBOLS[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(POLONIEX_PARSED_SYMBOLS[1])
+      .returns({
+        symbol: POLONIEX_PARSED_SYMBOLS[1],
+        apiRequestCount: 1,
+      })
       .onThirdCall()
-      .returns(POLONIEX_PARSED_SYMBOLS[2])
+      .returns({
+        symbol: POLONIEX_PARSED_SYMBOLS[2],
+        apiRequestCount: 1,
+      })
 
-    const parsedSymbols = PoloniexSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = PoloniexSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],
     })
 

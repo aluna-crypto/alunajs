@@ -36,7 +36,10 @@ describe('PoloniexBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      POLONIEX_RAW_BALANCES,
+      {
+        data: POLONIEX_RAW_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
     const currencyParserMock = ImportMock.mockFunction(
@@ -46,7 +49,12 @@ describe('PoloniexBalanceModule', () => {
     )
 
 
-    const rawBalances = await poloniexBalanceModule.listRaw()
+    const {
+      rawBalances,
+      apiRequestCount,
+    } = await poloniexBalanceModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(2)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -69,16 +77,22 @@ describe('PoloniexBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       PoloniexBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      {
+        rawBalances: rawListMock,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       PoloniexBalanceModule.prototype,
       'parseMany',
-      POLONIEX_PARSED_BALANCES,
+      {
+        balances: POLONIEX_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const balances = await poloniexBalanceModule.list()
+    const { balances } = await poloniexBalanceModule.list()
 
 
     expect(listRawMock.callCount).to.be.eq(1)
@@ -118,7 +132,7 @@ describe('PoloniexBalanceModule', () => {
 
     const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
 
-    const parsedBalance1 = poloniexBalanceModule.parse({
+    const { balance: parsedBalance1 } = poloniexBalanceModule.parse({
       rawBalance: POLONIEX_RAW_BALANCES_WITH_CURRENCY[0],
     })
 
@@ -137,7 +151,7 @@ describe('PoloniexBalanceModule', () => {
 
     expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
 
-    const parsedBalance2 = poloniexBalanceModule.parse({
+    const { balance: parsedBalance2 } = poloniexBalanceModule.parse({
       rawBalance: POLONIEX_RAW_BALANCES_WITH_CURRENCY[1],
     })
 
@@ -169,12 +183,18 @@ describe('PoloniexBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(POLONIEX_PARSED_BALANCES[0])
+      .returns({
+        balance: POLONIEX_PARSED_BALANCES[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(POLONIEX_PARSED_BALANCES[1])
+      .returns({
+        balance: POLONIEX_PARSED_BALANCES[1],
+        apiRequestCount: 1,
+      })
 
 
-    const parsedBalances = poloniexBalanceModule.parseMany({
+    const { balances: parsedBalances } = poloniexBalanceModule.parseMany({
       rawBalances: POLONIEX_RAW_BALANCES_WITH_CURRENCY,
     })
 

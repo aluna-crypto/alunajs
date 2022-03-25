@@ -12,11 +12,10 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexSpecs } from '../PoloniexSpecs'
 import { POLONIEX_RAW_LIMIT_ORDER } from '../test/fixtures/poloniexOrder'
@@ -47,13 +46,19 @@ describe('PoloniexOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        data: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const getMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'get',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        order: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -66,7 +71,7 @@ describe('PoloniexOrderWriteModule', () => {
     }
 
     // place long limit order
-    const placeResponse1 = await poloniexOrderWriteModule
+    const { order: placeResponse1 } = await poloniexOrderWriteModule
       .place(placeOrderParams)
 
 
@@ -199,7 +204,10 @@ describe('PoloniexOrderWriteModule', () => {
     const getMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'get',
-      Promise.resolve(POLONIEX_RAW_LIMIT_ORDER),
+      Promise.resolve({
+        order: POLONIEX_RAW_LIMIT_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const requestMock = ImportMock.mockFunction(
@@ -208,7 +216,7 @@ describe('PoloniexOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -255,15 +263,22 @@ describe('PoloniexOrderWriteModule', () => {
     ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
+      {
+        data: {},
+        apiRequestCount: 1,
+      },
     )
 
     const getMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'get',
-      { status: AlunaOrderStatusEnum.OPEN } as IAlunaOrderSchema,
+      {
+        order: { status: AlunaOrderStatusEnum.OPEN },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -273,7 +288,9 @@ describe('PoloniexOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await poloniexOrderWriteModule.cancel(cancelParams)
+      const { order } = await poloniexOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -287,7 +304,7 @@ describe('PoloniexOrderWriteModule', () => {
     expect(getMock.calledWith(cancelParams)).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(getMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(getMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
@@ -297,13 +314,18 @@ describe('PoloniexOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       poloniexOrderWriteModule,
       'place',
-      Promise.resolve(POLONIEX_RAW_LIMIT_ORDER),
+      Promise.resolve({
+        order: POLONIEX_RAW_LIMIT_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -316,7 +338,9 @@ describe('PoloniexOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await poloniexOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await poloniexOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(POLONIEX_RAW_LIMIT_ORDER)
 
