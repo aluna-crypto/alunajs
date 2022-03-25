@@ -39,7 +39,7 @@ interface IBinanceSecureHeaders {
 
 
 
-interface IBinanceSignedSignature {
+export interface IBinanceSignedSignature {
   signature: string
   dataQueryString: string
   body: string
