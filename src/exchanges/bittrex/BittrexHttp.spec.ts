@@ -8,8 +8,14 @@ import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
+import { Bittrex } from './Bittrex'
 import * as BittrexHttpMod from './BittrexHttp'
 
 
@@ -18,20 +24,102 @@ describe('BittrexHttp', () => {
 
   const { BittrexHttp } = BittrexHttpMod
 
+  const {
+    publicRequest,
+    privateRequest,
+  } = BittrexHttp
+
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-
   const dummyBody = { dummy: 'dummy-body' }
-
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
+  const dummyResponse = { data: 'dummy-data' }
+  const dummyKeysecret: IAlunaKeySecretSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
 
-  const dummyData = { data: 'dummy-data' }
+  const mockDeps = (
+    params: {
+      requestResponse?: any,
+      getCache?: any,
+      hasCache?: boolean,
+      setCache?: boolean,
+      signedheaderResponse?: BittrexHttpMod.IBittrexSignedHeaders,
+      errorMsgRes?: string,
+      mockedExchangeSettings?: IAlunaSettingsSchema,
+    } = {},
+  ) => {
+
+    const {
+      requestResponse = {},
+      signedheaderResponse = dummySignedHeaders,
+      getCache = {},
+      hasCache = false,
+      setCache = false,
+      errorMsgRes = 'error',
+      mockedExchangeSettings = {},
+    } = params
+
+    const throwedError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: errorMsgRes,
+      httpStatusCode: 400,
+    })
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(requestResponse)
+
+    const exchangeMock = ImportMock.mockOther(
+      Bittrex,
+      'settings',
+      mockedExchangeSettings,
+    )
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BittrexHttpMod,
+      'generateAuthHeader',
+      signedheaderResponse,
+    )
+
+    const formatRequestErrorSpy = ImportMock.mockFunction(
+      BittrexHttpMod,
+      'handleRequestError',
+      throwedError,
+    )
+
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      get: getCache,
+      has: hasCache,
+      set: setCache,
+    })
+
+    return {
+      cache,
+      requestSpy,
+      hashCacheKey,
+      throwedError,
+      exchangeMock,
+      axiosCreateMock,
+      formatRequestErrorSpy,
+      generateAuthHeaderMock,
+    }
+
+  }
 
   it('should defaults the http verb to get on public requests', async () => {
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await BittrexHttp.publicRequest({
       // http verb not informed
@@ -56,7 +144,9 @@ describe('BittrexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await BittrexHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -73,7 +163,7 @@ describe('BittrexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyResponse.data)
 
   })
 
@@ -82,13 +172,10 @@ describe('BittrexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      BittrexHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await BittrexHttp.privateRequest({
       // http verb not informed
@@ -116,13 +203,10 @@ describe('BittrexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      BittrexHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await BittrexHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
@@ -150,7 +234,7 @@ describe('BittrexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyResponse.data)
 
   })
 
@@ -158,18 +242,12 @@ describe('BittrexHttp', () => {
 
     const message = 'Dummy error'
 
-    mockAxiosRequest(Promise.reject(new Error(message)))
-
-    const formatRequestErrorSpy = Sinon.spy(
-      BittrexHttpMod,
-      'handleRequestError',
-    )
-
-    ImportMock.mockFunction(
-      BittrexHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+    const {
+      formatRequestErrorSpy,
+    } = mockDeps({
+      requestResponse: Promise.reject(new Error(message)),
+      errorMsgRes: message,
+    })
 
     let result
     let error
@@ -414,12 +492,59 @@ describe('BittrexHttp', () => {
 
   })
 
+  it('should use proxy agent when available', async () => {
+
+    const proxyAgent = {} as any
+
+    const {
+      requestSpy,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+      mockedExchangeSettings: { proxyAgent },
+    })
+
+    const publicRes = await publicRequest({
+      url: dummyUrl,
+      body: dummyBody,
+    })
+
+    expect(publicRes).to.be.eq(dummyResponse.data)
+
+    expect(requestSpy.args[0]).to.deep.eq([
+      {
+        url: dummyUrl,
+        method: AlunaHttpVerbEnum.GET,
+        data: dummyBody,
+        httpsAgent: proxyAgent,
+      },
+    ])
+
+    const privateRes = await privateRequest({
+      url: dummyUrl,
+      body: dummyBody,
+      keySecret: dummyKeysecret,
+    })
+
+    expect(privateRes).to.be.eq(dummyResponse.data)
+
+    expect(requestSpy.args[1]).to.deep.eq([
+      {
+        url: dummyUrl,
+        method: AlunaHttpVerbEnum.POST,
+        data: dummyBody,
+        headers: dummySignedHeaders,
+        httpsAgent: proxyAgent,
+      },
+    ])
+
+  })
+
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyData)
+    mockAxiosRequest(dummyResponse)
 
     await validateCache({
-      cacheResult: dummyData,
+      cacheResult: dummyResponse,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {

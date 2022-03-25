@@ -31,7 +31,7 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IBittrexSignedHeaders {
+export interface IBittrexSignedHeaders {
     'Api-Key': string
     'Api-Timestamp': number
     'Api-Content-Hash': string
