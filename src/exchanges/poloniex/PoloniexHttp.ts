@@ -32,7 +32,7 @@ interface IPoloniexResponseWithError {
   error: string
 }
 
-interface IPoloniexSignedHeaders {
+export interface IPoloniexSignedHeaders {
     'Key': string
     'Sign': string
     'Content-Type': string
