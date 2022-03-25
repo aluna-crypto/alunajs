@@ -1,4 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+} from 'axios'
 import crypto from 'crypto'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -11,6 +14,7 @@ import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bitfinex } from './Bitfinex'
 
 
 
@@ -177,10 +181,13 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { proxyAgent } = Bitfinex.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {
@@ -214,11 +221,14 @@ export const BitfinexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { proxyAgent } = Bitfinex.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: signedHash.body,
       headers: signedHash.headers,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {

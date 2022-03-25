@@ -1,4 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+} from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
@@ -12,6 +15,7 @@ import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Gateio } from './Gateio'
 import { GateioLog } from './GateioLog'
 
 
@@ -129,10 +133,13 @@ export const GateioHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { proxyAgent } = Gateio.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {
@@ -171,11 +178,14 @@ export const GateioHttp: IAlunaHttp = class {
       query,
     })
 
-    const requestConfig = {
+    const { proxyAgent } = Gateio.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {

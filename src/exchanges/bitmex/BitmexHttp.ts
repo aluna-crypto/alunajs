@@ -1,4 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios, {
+  AxiosError,
+  AxiosRequestConfig,
+} from 'axios'
 import crypto from 'crypto'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -11,6 +14,7 @@ import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bitmex } from './Bitmex'
 
 
 
@@ -127,10 +131,13 @@ export const BitmexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { proxyAgent } = Bitmex.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {
@@ -165,11 +172,14 @@ export const BitmexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { proxyAgent } = Bitmex.settings
+
+    const requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
+      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
 
     try {
