@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { Agent } from 'https'
 
 import { Bitmex } from './Bitmex'
 import { BitmexSpecs } from './BitmexSpecs'
@@ -41,7 +42,7 @@ describe('Bitmex', () => {
   it('should properly validate Bitmex settings', async () => {
 
     expect(Bitmex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
-    expect(Bitmex.validateSettings({ proxyAgent: {} })).to.be.ok
+    expect(Bitmex.validateSettings({ proxyAgent: new Agent() })).to.be.ok
     expect(Bitmex.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
 
     expect(Bitmex.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok

@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { Agent } from 'https'
 
 import { Valr } from './Valr'
 
@@ -42,7 +43,7 @@ describe('Valr', () => {
   it('should properly validate Valr settings', async () => {
 
     expect(Valr.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
-    expect(Valr.validateSettings({ proxyAgent: {} })).to.be.ok
+    expect(Valr.validateSettings({ proxyAgent: new Agent() })).to.be.ok
 
     expect(Valr.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
     expect(Valr.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
