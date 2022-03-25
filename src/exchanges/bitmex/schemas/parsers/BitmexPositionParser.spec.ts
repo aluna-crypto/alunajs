@@ -181,6 +181,7 @@ describe('BitmexPositionParser', () => {
         instrument: mockedInstrument,
         computedPrice: avgCostPrice,
         computedAmount,
+        orderQty: Math.abs(currentQty),
       })
 
     })
