@@ -1,6 +1,10 @@
+import { Agent } from 'https'
+
+
+
 export interface IAlunaSettingsSchema {
   affiliateCode?: string
   orderAnnotation?: string
-  proxyAgent?: any
+  proxyAgent?: Agent
   mappings?: Record<string, string>
 }
