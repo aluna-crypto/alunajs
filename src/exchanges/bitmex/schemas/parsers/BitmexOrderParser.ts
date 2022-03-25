@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
-import { AlunaOrderTriggeredStatusEnum } from '../../../../lib/enums/AlunaOrderTriggerStatusEnum'
+import { AlunaOrderTriggerStatusEnum } from '../../../../lib/enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import {
@@ -61,9 +61,9 @@ export class BitmexOrderParser {
       from: ordType,
     })
 
-    const triggeredStatus = triggered === ''
-      ? AlunaOrderTriggeredStatusEnum.UNTRIGGERED
-      : AlunaOrderTriggeredStatusEnum.TRIGGERED
+    const triggerStatus = triggered === ''
+      ? AlunaOrderTriggerStatusEnum.UNTRIGGERED
+      : AlunaOrderTriggerStatusEnum.TRIGGERED
 
     let rate: number | undefined
     let stopRate: number | undefined
@@ -146,7 +146,7 @@ export class BitmexOrderParser {
       placedAt,
       filledAt,
       canceledAt,
-      triggeredStatus,
+      triggerStatus,
       meta: rawOrder,
     }
 
