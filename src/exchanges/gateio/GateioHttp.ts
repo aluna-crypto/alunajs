@@ -32,7 +32,7 @@ interface ISignedHashParams {
   query?: string
 }
 
-interface IGateioSignedHeaders {
+export interface IGateioSignedHeaders {
     'KEY': string
     'Timestamp': string
     'SIGN': string
