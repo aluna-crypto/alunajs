@@ -3,6 +3,7 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios'
 import crypto from 'crypto'
+import { assign } from 'lodash'
 import { URL } from 'url'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -133,13 +134,22 @@ export const GateioHttp: IAlunaHttp = class {
 
     }
 
-    const { proxyAgent } = Gateio.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Gateio.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
@@ -178,14 +188,23 @@ export const GateioHttp: IAlunaHttp = class {
       query,
     })
 
-    const { proxyAgent } = Gateio.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Gateio.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
