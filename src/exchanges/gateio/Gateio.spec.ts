@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { Agent } from 'https'
 
 import { Gateio } from './Gateio'
 
@@ -40,9 +39,15 @@ describe('Gateio', () => {
   it('should properly validate Gateio settings', async () => {
 
     expect(Gateio.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
-    expect(Gateio.validateSettings({ proxyAgent: new Agent() })).to.be.ok
-    expect(Gateio.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
+    expect(Gateio.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: 'http',
+      },
+    })).to.be.ok
 
+    expect(Gateio.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
     expect(Gateio.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
 
   })
