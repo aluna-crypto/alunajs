@@ -3,6 +3,7 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios'
 import crypto from 'crypto'
+import { assign } from 'lodash'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
@@ -115,13 +116,22 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     }
 
-    const { proxyAgent } = Poloniex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Poloniex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
@@ -154,14 +164,23 @@ export const PoloniexHttp: IAlunaHttp = class {
       body,
     })
 
-    const { proxyAgent } = Poloniex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Poloniex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
