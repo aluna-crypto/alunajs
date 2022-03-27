@@ -3,6 +3,7 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios'
 import crypto from 'crypto'
+import { assign } from 'lodash'
 import { URLSearchParams } from 'url'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -158,13 +159,22 @@ export const BinanceHttp: IAlunaHttp = class {
 
     }
 
-    const { proxyAgent } = Binance.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Binance.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
@@ -214,14 +224,24 @@ export const BinanceHttp: IAlunaHttp = class {
       'X-MBX-APIKEY': keySecret.key,
     }
 
-    const { proxyAgent } = Binance.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url: fullUrl,
       method: verb,
       headers,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
     }
+
+    const { proxySettings } = Binance.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
+    }
+
 
     try {
 
