@@ -3,6 +3,7 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios'
 import crypto from 'crypto'
+import { assign } from 'lodash'
 import { URL } from 'url'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -124,13 +125,22 @@ export const BittrexHttp: IAlunaHttp = class {
 
     }
 
-    const { proxyAgent } = Bittrex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Bittrex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
@@ -166,14 +176,23 @@ export const BittrexHttp: IAlunaHttp = class {
       url,
     })
 
-    const { proxyAgent } = Bittrex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Bittrex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
