@@ -3,6 +3,7 @@ import axios, {
   AxiosRequestConfig,
 } from 'axios'
 import crypto from 'crypto'
+import { assign } from 'lodash'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
@@ -15,6 +16,7 @@ import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Bitmex } from './Bitmex'
+import { BitmexLog } from './BitmexLog'
 
 
 
@@ -131,13 +133,22 @@ export const BitmexHttp: IAlunaHttp = class {
 
     }
 
-    const { proxyAgent } = Bitmex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Bitmex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
@@ -145,6 +156,8 @@ export const BitmexHttp: IAlunaHttp = class {
       const response = await axios.create().request<T>(requestConfig)
 
       AlunaCache.cache.set<T>(cacheKey, response.data)
+
+      BitmexLog.info(response)
 
       return response.data
 
@@ -172,14 +185,23 @@ export const BitmexHttp: IAlunaHttp = class {
       body,
     })
 
-    const { proxyAgent } = Bitmex.settings
-
-    const requestConfig: AxiosRequestConfig = {
+    let requestConfig: AxiosRequestConfig = {
       url,
       method: verb,
       data: body,
       headers: signedHash,
-      ...(proxyAgent ? { httpsAgent: proxyAgent } : {}),
+    }
+
+    const { proxySettings } = Bitmex.settings
+
+    if (proxySettings) {
+
+      const { agent, ...proxy } = proxySettings
+
+      requestConfig = proxy.protocol === 'https'
+        ? assign(requestConfig, { proxy, httpsAgent: agent })
+        : assign(requestConfig, { proxy, httpAgent: agent })
+
     }
 
     try {
