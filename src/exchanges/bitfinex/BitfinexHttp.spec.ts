@@ -1,6 +1,8 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
+import { Agent as HttpAgent } from 'http'
+import { Agent as HttpsAgent } from 'https'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -10,7 +12,10 @@ import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import {
+  IAlunaProxySchema,
+  IAlunaSettingsSchema,
+} from '../../lib/schemas/IAlunaSettingsSchema'
 import {
   mockAlunaCache,
   validateCache,
@@ -42,6 +47,23 @@ describe('BitfinexHttp', () => {
   const dummyKeysecret: IAlunaKeySecretSchema = {
     key: 'key',
     secret: 'secret',
+  }
+
+  const host = 'localhost'
+  const port = 3000
+
+  const httpProxySettings: IAlunaProxySchema = {
+    host,
+    port,
+    protocol: 'http',
+    agent: new HttpAgent({ keepAlive: true }),
+  }
+
+  const httpsProxySettings: IAlunaProxySchema = {
+    host,
+    port,
+    protocol: 'https',
+    agent: new HttpsAgent({ keepAlive: true }),
   }
 
   const mockDeps = (
@@ -469,20 +491,18 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it('should use proxy agent when available', async () => {
+  it("should use http proxy when it's available", async () => {
 
-    const proxyAgent = {} as any
-
-    const {
-      requestSpy,
-    } = mockDeps({
+    const { requestSpy } = mockDeps({
       requestResponse: Promise.resolve(dummyResponse),
-      mockedExchangeSettings: { proxyAgent },
+      mockedExchangeSettings: {
+        proxySettings: httpProxySettings,
+      },
     })
 
     const publicRes = await publicRequest({
       url: dummyUrl,
-      body: dummyBody,
+      body: dummyBody.body as any,
     })
 
     expect(publicRes).to.be.eq(dummyResponse.data)
@@ -491,14 +511,19 @@ describe('BitfinexHttp', () => {
       {
         url: dummyUrl,
         method: AlunaHttpVerbEnum.GET,
-        data: dummyBody,
-        httpsAgent: proxyAgent,
+        proxy: {
+          host: httpProxySettings.host,
+          port: httpProxySettings.port,
+          protocol: httpProxySettings.protocol,
+        },
+        httpAgent: httpProxySettings.agent,
+        data: dummyBody.body,
       },
     ])
 
     const privateRes = await privateRequest({
       url: dummyUrl,
-      body: dummyBody,
+      body: dummyBody.body as any,
       keySecret: dummyKeysecret,
     })
 
@@ -508,9 +533,69 @@ describe('BitfinexHttp', () => {
       {
         url: dummyUrl,
         method: AlunaHttpVerbEnum.POST,
-        data: dummyBody,
         headers: dummySignedHeaders,
-        httpsAgent: proxyAgent,
+        data: dummyBody,
+        proxy: {
+          host: httpProxySettings.host,
+          port: httpProxySettings.port,
+          protocol: httpProxySettings.protocol,
+        },
+        httpAgent: httpProxySettings.agent,
+      },
+    ])
+
+  })
+
+  it("should use https proxy when it's available", async () => {
+
+    const { requestSpy } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+      mockedExchangeSettings: {
+        proxySettings: httpsProxySettings,
+      },
+    })
+
+    const publicRes = await publicRequest({
+      url: dummyUrl,
+      body: dummyBody.body as any,
+    })
+
+    expect(publicRes).to.be.eq(dummyResponse.data)
+
+    expect(requestSpy.args[0]).to.deep.eq([
+      {
+        url: dummyUrl,
+        method: AlunaHttpVerbEnum.GET,
+        proxy: {
+          host: httpsProxySettings.host,
+          port: httpsProxySettings.port,
+          protocol: httpsProxySettings.protocol,
+        },
+        httpsAgent: httpsProxySettings.agent,
+        data: dummyBody.body,
+      },
+    ])
+
+    const privateRes = await privateRequest({
+      url: dummyUrl,
+      body: dummyBody.body as any,
+      keySecret: dummyKeysecret,
+    })
+
+    expect(privateRes).to.be.eq(dummyResponse.data)
+
+    expect(requestSpy.args[1]).to.deep.eq([
+      {
+        url: dummyUrl,
+        data: dummyBody,
+        method: AlunaHttpVerbEnum.POST,
+        headers: dummySignedHeaders,
+        proxy: {
+          host: httpsProxySettings.host,
+          port: httpsProxySettings.port,
+          protocol: httpsProxySettings.protocol,
+        },
+        httpsAgent: httpsProxySettings.agent,
       },
     ])
 
