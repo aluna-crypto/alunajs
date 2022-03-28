@@ -31,7 +31,7 @@ describe('BitfinexHttp', () => {
   const dummyBody: Record<any, string> = { dummy: 'dummy-body' }
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   const dummyKeysecret: IAlunaKeySecretSchema = {
     key: 'key',
@@ -86,7 +86,7 @@ describe('BitfinexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -180,7 +180,7 @@ describe('BitfinexHttp', () => {
       headers: signedHeaders.headers,
     }])
 
-    expect(responseData).to.deep.eq(dummyData.data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 

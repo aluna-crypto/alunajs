@@ -1,11 +1,7 @@
 import { expect } from 'chai'
-import {
-  map,
-  omit,
-} from 'lodash'
+import { omit } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
@@ -53,10 +49,13 @@ describe('BitfinexBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      BITFINEX_RAW_BALANCES,
+      {
+        data: BITFINEX_RAW_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const rawBalances = await bitfinexBalanceModule.listRaw()
+    const { rawBalances } = await bitfinexBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -78,12 +77,15 @@ describe('BitfinexBalanceModule', () => {
 
     BITFINEX_PARSED_BALANCES.forEach((parsed, i) => {
 
-      parseMock.onCall(i).returns(parsed)
+      parseMock.onCall(i).returns({
+        balance: parsed,
+        apiRequestCount: 1,
+      })
 
     })
 
 
-    const balances = bitfinexBalanceModule.parseMany({
+    const { balances } = bitfinexBalanceModule.parseMany({
       rawBalances: BITFINEX_RAW_BALANCES,
     })
 
@@ -118,7 +120,7 @@ describe('BitfinexBalanceModule', () => {
       BITFINEX_PARSED_BALANCES[0],
     )
 
-    const parsedBalance = bitfinexBalanceModule.parse({
+    const { balance: parsedBalance } = bitfinexBalanceModule.parse({
       rawBalance: BITFINEX_RAW_BALANCES[0],
     })
 
@@ -132,7 +134,7 @@ describe('BitfinexBalanceModule', () => {
     // new mocking
     balanceParserMock.returns(BITFINEX_PARSED_BALANCES[2])
 
-    const parsedBalance2 = bitfinexBalanceModule.parse({
+    const { balance: parsedBalance2 } = bitfinexBalanceModule.parse({
       rawBalance: BITFINEX_RAW_BALANCES[2],
     })
 
@@ -146,7 +148,7 @@ describe('BitfinexBalanceModule', () => {
     // new mocking
     balanceParserMock.returns(BITFINEX_PARSED_BALANCES[5])
 
-    const parsedBalance3 = bitfinexBalanceModule.parse({
+    const { balance: parsedBalance3 } = bitfinexBalanceModule.parse({
       rawBalance: BITFINEX_RAW_BALANCES[5],
     })
 
@@ -163,16 +165,22 @@ describe('BitfinexBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitfinexBalanceModule,
       'listRaw',
-      Promise.resolve(BITFINEX_RAW_BALANCES),
+      Promise.resolve({
+        rawBalances: BITFINEX_RAW_BALANCES,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitfinexBalanceModule,
       'parseMany',
-      BITFINEX_PARSED_BALANCES,
+      {
+        balances: BITFINEX_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedBalances = await bitfinexBalanceModule.list()
+    const { balances: parsedBalances } = await bitfinexBalanceModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -181,7 +189,7 @@ describe('BitfinexBalanceModule', () => {
       rawBalances: BITFINEX_RAW_BALANCES,
     })).to.be.ok
 
-    expect(parsedBalances).to.deep.eq(parseManyMock.returnValues[0])
+    expect(parsedBalances).to.deep.eq(parseManyMock.returnValues[0].balances)
 
   })
 
@@ -189,12 +197,15 @@ describe('BitfinexBalanceModule', () => {
 
     const { exchangeMock } = mockExchange()
 
-    const tradableBalace = 25.34
+    const tradableBalance = 25.34
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve([tradableBalace]),
+      Promise.resolve({
+        data: [tradableBalance],
+        apiRequestCount: 1,
+      }),
     )
 
     const params: IAlunaBalanceGetTradableBalanceParams = {
@@ -204,11 +215,13 @@ describe('BitfinexBalanceModule', () => {
       account: AlunaAccountEnum.MARGIN,
     }
 
-    let parsedBalances = await bitfinexBalanceModule.getTradableBalance(
+    const {
+      tradableBalance: parsedBalances1,
+    } = await bitfinexBalanceModule.getTradableBalance(
       params,
     )
 
-    expect(parsedBalances).to.be.eq(tradableBalace)
+    expect(parsedBalances1).to.be.eq(tradableBalance)
 
     const expectedBody = {
       dir: 1,
@@ -225,17 +238,22 @@ describe('BitfinexBalanceModule', () => {
     }).to.be.ok
 
     // SHORT
-    requestMock.returns(Promise.resolve([tradableBalace]))
+    requestMock.returns(Promise.resolve({
+      data: [tradableBalance],
+      apiRequestCount: 1,
+    }))
 
     params.side = AlunaOrderSideEnum.SELL
 
-    parsedBalances = await bitfinexBalanceModule.getTradableBalance(
+    const {
+      tradableBalance: parsedBalances2,
+    } = await bitfinexBalanceModule.getTradableBalance(
       params,
     )
 
     expectedBody.dir = -1
 
-    expect(parsedBalances).to.be.eq(tradableBalace)
+    expect(parsedBalances2).to.be.eq(tradableBalance)
 
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.args[1][0]).to.deep.eq({
@@ -252,10 +270,14 @@ describe('BitfinexBalanceModule', () => {
 
       mockExchange()
 
-      const { requestMock } = mockPrivateHttpRequest({
-        exchangeHttp: BitfinexHttp,
-        requestResponse: Promise.resolve([10]),
-      })
+      const requestMock = ImportMock.mockFunction(
+        BitfinexHttp,
+        'privateRequest',
+        Promise.resolve({
+          data: [10],
+          apiRequestCount: 1,
+        }),
+      )
 
       const params: IAlunaBalanceGetTradableBalanceParams = {
         side: AlunaOrderSideEnum.BUY,
@@ -266,7 +288,7 @@ describe('BitfinexBalanceModule', () => {
 
       const requiredParams = ['rate', 'account', 'side']
 
-      const expectPromises = map(requiredParams, async (param) => {
+      await Promise.all(requiredParams.map(async (param) => {
 
         let error
         let result
@@ -287,7 +309,7 @@ describe('BitfinexBalanceModule', () => {
 
         expect(result).not.to.be.ok
 
-        const msg = `${param} param is required to get Bitfinex tradable balance`
+        const msg = `'${param}' param is required to get Bitfinex tradable balance`
 
         expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
         expect(error.message).to.be.eq(msg)
@@ -295,9 +317,7 @@ describe('BitfinexBalanceModule', () => {
 
         expect(requestMock.callCount).to.be.eq(0)
 
-      })
-
-      await Promise.resolve(expectPromises)
+      }))
 
     },
   )

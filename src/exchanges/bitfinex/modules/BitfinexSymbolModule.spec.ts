@@ -24,10 +24,13 @@ describe('BitfinexSymbolModule', () => {
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'publicRequest',
-      Promise.resolve(BITFINEX_RAW_SYMBOLS),
+      Promise.resolve({
+        data: BITFINEX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawSymbols = await BitfinexSymbolModule.listRaw()
+    const { rawSymbols } = await BitfinexSymbolModule.listRaw()
 
     expect(rawSymbols.length).to.eq(BITFINEX_RAW_SYMBOLS.length)
     expect(rawSymbols).to.deep.eq(BITFINEX_RAW_SYMBOLS)
@@ -41,16 +44,22 @@ describe('BitfinexSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BitfinexSymbolModule,
       'listRaw',
-      Promise.resolve(BITFINEX_RAW_SYMBOLS),
+      Promise.resolve({
+        rawSymbols: BITFINEX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BitfinexSymbolModule,
       'parseMany',
-      BITFINEX_PARSED_SYMBOLS,
+      {
+        symbols: BITFINEX_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedSymbols = await BitfinexSymbolModule.list()
+    const { symbols: parsedSymbols } = await BitfinexSymbolModule.list()
 
     expect(parsedSymbols.length).to.eq(BITFINEX_PARSED_SYMBOLS.length)
     expect(parsedSymbols).to.deep.eq(BITFINEX_PARSED_SYMBOLS)
@@ -74,7 +83,10 @@ describe('BitfinexSymbolModule', () => {
       rawSymbols: BITFINEX_RAW_SYMBOLS,
     })).to.be.ok
 
-    expect(parseManyMock.returned(BITFINEX_PARSED_SYMBOLS)).to.be.ok
+    expect(parseManyMock.returned({
+      symbols: parsedSymbols,
+      apiRequestCount: 1,
+    })).to.be.ok
 
   })
 
@@ -91,7 +103,7 @@ describe('BitfinexSymbolModule', () => {
       bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
     }
 
-    const parsedSymbol1 = BitfinexSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = BitfinexSymbolModule.parse({
       rawSymbol,
     })
 
@@ -107,7 +119,7 @@ describe('BitfinexSymbolModule', () => {
       bitfinexCurrencyLabel: BITFINEX_CURRENCIES_LABELS[1],
     }
 
-    const parsedSymbol2 = BitfinexSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = BitfinexSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -126,11 +138,14 @@ describe('BitfinexSymbolModule', () => {
 
     BITFINEX_PARSED_SYMBOLS.forEach((parsed, index) => {
 
-      parseMock.onCall(index).returns(parsed)
+      parseMock.onCall(index).returns({
+        symbol: parsed,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedSymbols = BitfinexSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = BitfinexSymbolModule.parseMany({
       rawSymbols: BITFINEX_RAW_SYMBOLS,
     })
 

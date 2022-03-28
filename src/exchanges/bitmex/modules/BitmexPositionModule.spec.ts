@@ -36,10 +36,10 @@ describe('BitmexPositionModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(BITMEX_RAW_POSITIONS),
+      requestResponse: BITMEX_RAW_POSITIONS,
     })
 
-    const rawPositions = await bitmexPositionModule.listRaw()
+    const { rawPositions } = await bitmexPositionModule.listRaw()
 
     expect(rawPositions).to.deep.eq(BITMEX_RAW_POSITIONS)
     expect(requestMock.callCount).to.be.eq(1)
@@ -60,16 +60,22 @@ describe('BitmexPositionModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'listRaw',
-      Promise.resolve(mockedRawPositions),
+      Promise.resolve({
+        rawPositions: mockedRawPositions,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'parseMany',
-      mockedParsedPositions,
+      {
+        positions: mockedParsedPositions,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedPositions = await bitmexPositionModule.list()
+    const { positions: parsedPositions } = await bitmexPositionModule.list()
 
     expect(parsedPositions).to.deep.eq(mockedParsedPositions)
 
@@ -92,7 +98,10 @@ describe('BitmexPositionModule', () => {
     const bitmexMarketModuleMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'get',
-      Promise.resolve(parsedMarket),
+      Promise.resolve({
+        market: parsedMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const bitmexPositionParserMock = ImportMock.mockFunction(
@@ -101,7 +110,7 @@ describe('BitmexPositionModule', () => {
       parsedPosition,
     )
 
-    const parseResponse = await bitmexPositionModule.parse({
+    const { position: parseResponse } = await bitmexPositionModule.parse({
       rawPosition,
     })
 
@@ -109,7 +118,7 @@ describe('BitmexPositionModule', () => {
 
     expect(bitmexMarketModuleMock.callCount).to.be.eq(1)
     expect(bitmexMarketModuleMock.args[0][0]).to.deep.eq({
-      symbolPair: rawPosition.symbol,
+      id: rawPosition.symbol,
     })
 
     expect(bitmexPositionParserMock.callCount).to.be.eq(1)
@@ -133,7 +142,10 @@ describe('BitmexPositionModule', () => {
     const bitmexMarketModuleMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'get',
-      Promise.resolve(undefined),
+      Promise.resolve({
+        market: undefined,
+        apiRequestCount: 1,
+      }),
     )
 
     const bitmexPositionParserMock = ImportMock.mockFunction(
@@ -177,11 +189,16 @@ describe('BitmexPositionModule', () => {
 
     each(BITMEX_PARSED_POSITIONS, (parsed, i) => {
 
-      parseMock.onCall(i).returns(parsed)
+      parseMock.onCall(i).returns({
+        position: parsed,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedPositions = await bitmexPositionModule.parseMany({
+    const {
+      positions: parsedPositions,
+    } = await bitmexPositionModule.parseMany({
       rawPositions: BITMEX_RAW_POSITIONS,
     })
 
@@ -201,10 +218,10 @@ describe('BitmexPositionModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve([mockedRawPosition]),
+      requestResponse: [mockedRawPosition],
     })
 
-    const rawPosition = await bitmexPositionModule.getRaw({
+    const { rawPosition } = await bitmexPositionModule.getRaw({
       symbolPair: symbol,
     })
 
@@ -259,16 +276,22 @@ describe('BitmexPositionModule', () => {
     const getRawMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'getRaw',
-      Promise.resolve(rawPosition),
+      Promise.resolve({
+        rawPosition,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'parse',
-      Promise.resolve(parsedPosition),
+      Promise.resolve({
+        position: parsedPosition,
+        apiRequestCount: 1,
+      }),
     )
 
-    const getResponse = await bitmexPositionModule.get({
+    const { position: getResponse } = await bitmexPositionModule.get({
       symbolPair: symbol,
     })
 
@@ -301,10 +324,13 @@ describe('BitmexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'get',
-      Promise.resolve(mockedParsedPosition),
+      Promise.resolve({
+        position: mockedParsedPosition,
+        apiRequestCount: 1,
+      }),
     )
 
-    const closedPosition = await bitmexPositionModule.close({
+    const { position: closedPosition } = await bitmexPositionModule.close({
       symbolPair: symbol,
     })
 
@@ -362,12 +388,15 @@ describe('BitmexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitmexPositionModule,
       'getRaw',
-      Promise.resolve(crossPos),
+      Promise.resolve({
+        rawPosition: crossPos,
+        apiRequestCount: 1,
+      }),
     )
 
     const expectedLeverage1 = 0
 
-    const leverage1 = await bitmexPositionModule.getLeverage({
+    const { leverage: leverage1 } = await bitmexPositionModule.getLeverage({
       symbolPair: crossPos.symbol,
     })
 
@@ -381,11 +410,14 @@ describe('BitmexPositionModule', () => {
 
     const [leveragePos] = filter(BITMEX_RAW_POSITIONS, (p) => !p.crossMargin)
 
-    getMock.returns(Promise.resolve(leveragePos))
+    getMock.returns(Promise.resolve({
+      rawPosition: leveragePos,
+      apiRequestCount: 1,
+    }))
 
     const expectedLeverage2 = leveragePos.leverage
 
-    const leverage2 = await bitmexPositionModule.getLeverage({
+    const { leverage: leverage2 } = await bitmexPositionModule.getLeverage({
       symbolPair: leveragePos.symbol,
     })
 
@@ -414,10 +446,10 @@ describe('BitmexPositionModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(position),
+      requestResponse: position,
     })
 
-    const leverageRes = await bitmexPositionModule.setLeverage({
+    const { leverage: leverageRes } = await bitmexPositionModule.setLeverage({
       leverage,
       symbolPair: position.symbol,
     })

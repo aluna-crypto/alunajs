@@ -81,6 +81,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
+
     const [accountId] = userInfoResponse
 
     const {

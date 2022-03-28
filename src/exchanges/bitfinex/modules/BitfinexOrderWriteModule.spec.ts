@@ -12,8 +12,8 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
@@ -54,12 +54,17 @@ describe('BitfinexOrderWriteModule', () => {
 
   }
 
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (requestResponse: any, isReject = false) => {
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      requestResponse,
+      isReject
+        ? requestResponse
+        : {
+          data: requestResponse,
+          apiRequestCount: 1,
+        },
     )
 
     return { requestMock }
@@ -115,12 +120,15 @@ describe('BitfinexOrderWriteModule', () => {
 
     const { exchangeMock } = mockKeySecret()
 
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const parseMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'parse',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     return {
@@ -255,15 +263,18 @@ describe('BitfinexOrderWriteModule', () => {
 
               if (action === 'place') {
 
-                response = await bitfinexOrderWriteModule.place(params)
+                const { order } = await bitfinexOrderWriteModule.place(params)
 
+                response = order
 
               } else {
 
-                response = await bitfinexOrderWriteModule.edit({
+                const { order } = await bitfinexOrderWriteModule.edit({
                   ...params,
                   id,
                 })
+
+                response = order
 
               }
 
@@ -310,7 +321,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       const {
         requestMock,
-      } = mockRequest(Promise.resolve(placeOrderMockResponse))
+      } = mockRequest(placeOrderMockResponse)
 
       try {
 
@@ -358,7 +369,7 @@ describe('BitfinexOrderWriteModule', () => {
 
       const {
         requestMock,
-      } = mockRequest(Promise.resolve(placeOrderMockResponse))
+      } = mockRequest(placeOrderMockResponse)
       try {
 
         result = await bitfinexOrderWriteModule.edit({
@@ -403,6 +414,7 @@ describe('BitfinexOrderWriteModule', () => {
           message: errorMessage,
           httpStatusCode: 400,
         })),
+        true,
       )
 
       const params: IAlunaOrderPlaceParams = {
@@ -523,6 +535,7 @@ describe('BitfinexOrderWriteModule', () => {
         message: errorMessage,
         httpStatusCode: 400,
       })),
+      true,
     )
 
     const params: IAlunaOrderEditParams = {
@@ -784,20 +797,23 @@ describe('BitfinexOrderWriteModule', () => {
 
     const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({})
 
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const getMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'get',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id,
       symbolPair: 'tBTCETH',
     }
 
-    const canceledOrder = await bitfinexOrderWriteModule.cancel(params)
+    const { order: canceledOrder } = await bitfinexOrderWriteModule.cancel(params)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
@@ -829,18 +845,18 @@ describe('BitfinexOrderWriteModule', () => {
       text: errMsg,
     })
 
-    // const { requestMock } = mockRequest(
-
-    // )
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const getMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'get',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id: '10',
       symbolPair: 'tBTCETH',
     }

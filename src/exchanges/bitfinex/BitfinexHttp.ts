@@ -207,7 +207,8 @@ export const BitfinexHttp: IAlunaHttp = class {
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
+  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
@@ -231,9 +232,12 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      return {
+        data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 

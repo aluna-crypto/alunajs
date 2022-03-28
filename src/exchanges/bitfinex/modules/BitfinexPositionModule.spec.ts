@@ -46,12 +46,17 @@ describe('BitfinexPositionModule', () => {
   }
 
 
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (requestResponse: any, isReject = false) => {
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve(requestResponse),
+      isReject
+        ? requestResponse
+        : Promise.resolve({
+          data: requestResponse,
+          apiRequestCount: 1,
+        }),
     )
 
     return { requestMock }
@@ -83,7 +88,14 @@ describe('BitfinexPositionModule', () => {
 
     resonse.forEach((res, i) => {
 
-      parserMock.onCall(i).returns(Promise.resolve(res))
+      const response = mockBitfinexModule
+        ? Promise.resolve({
+          position: res,
+          apiRequestCount: 1,
+        })
+        : res
+
+      parserMock.onCall(i).returns(response)
 
     })
 
@@ -97,7 +109,7 @@ describe('BitfinexPositionModule', () => {
 
     const { requestMock } = mockRequest(BITFINEX_RAW_POSITIONS)
 
-    const rawPositions = await bitfinexPositionModule.listRaw()
+    const { rawPositions } = await bitfinexPositionModule.listRaw()
 
     expect(rawPositions).to.deep.eq(BITFINEX_RAW_POSITIONS)
     expect(requestMock.callCount).to.be.eq(1)
@@ -116,16 +128,22 @@ describe('BitfinexPositionModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'listRaw',
-      Promise.resolve(mockedRawPositions),
+      Promise.resolve({
+        rawPositions: mockedRawPositions,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'parseMany',
-      mockedParsedPositions,
+      {
+        positions: mockedParsedPositions,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedPositions = await bitfinexPositionModule.list()
+    const { positions: parsedPositions } = await bitfinexPositionModule.list()
 
     expect(parsedPositions).to.deep.eq(mockedParsedPositions)
 
@@ -154,7 +172,7 @@ describe('BitfinexPositionModule', () => {
 
       }
 
-      const parsedPosition = await bitfinexPositionModule.parse({
+      const { position: parsedPosition } = await bitfinexPositionModule.parse({
         rawPosition,
       })
 
@@ -176,9 +194,12 @@ describe('BitfinexPositionModule', () => {
 
     const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
+      true,
     )
 
-    const parsedPositions = await bitfinexPositionModule.parseMany({
+    const {
+      positions: parsedPositions,
+    } = await bitfinexPositionModule.parseMany({
       rawPositions: BITFINEX_RAW_POSITIONS,
     })
 
@@ -211,7 +232,7 @@ describe('BitfinexPositionModule', () => {
 
     const { requestMock } = mockRequest(mockedRawPosition)
 
-    const rawPosition = await bitfinexPositionModule.getRaw({
+    const { rawPosition } = await bitfinexPositionModule.getRaw({
       id,
     })
 
@@ -232,14 +253,17 @@ describe('BitfinexPositionModule', () => {
     const getRawMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'getRaw',
-      Promise.resolve(mockedRawPosition),
+      Promise.resolve({
+        rawPosition: mockedRawPosition,
+        apiRequestCount: 1,
+      }),
     )
 
     const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 
-    const parsedPosition = await bitfinexPositionModule.get({
+    const { position: parsedPosition } = await bitfinexPositionModule.get({
       id,
     })
 
@@ -268,10 +292,13 @@ describe('BitfinexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(mockedParsedPosition),
+      Promise.resolve({
+        position: mockedParsedPosition,
+        apiRequestCount: 1,
+      }),
     )
 
-    const closedPosition = await bitfinexPositionModule.close({
+    const { position: closedPosition } = await bitfinexPositionModule.close({
       id,
     })
 
@@ -301,7 +328,10 @@ describe('BitfinexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(BITFINEX_PARSED_POSITIONS[0]),
+      Promise.resolve({
+        position: BITFINEX_PARSED_POSITIONS[0],
+        apiRequestCount: 1,
+      }),
     )
 
     try {
@@ -339,7 +369,10 @@ describe('BitfinexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(BITFINEX_RAW_POSITIONS[0]),
+      Promise.resolve({
+        position: BITFINEX_RAW_POSITIONS[0],
+        apiRequestCount: 1,
+      }),
     )
 
     try {

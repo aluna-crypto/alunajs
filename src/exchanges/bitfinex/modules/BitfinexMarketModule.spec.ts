@@ -25,12 +25,18 @@ describe('BitfinexMarketModule', () => {
       'publicRequest',
     )
 
-    requestMock.onFirstCall().returns(Promise.resolve(BITFINEX_RAW_TICKERS))
-    requestMock.onSecondCall().returns(Promise.resolve([
-      BITFINEX_MARGIN_ENABLED_CURRENCIES,
-    ]))
+    requestMock.onFirstCall().returns(Promise.resolve({
+      data: BITFINEX_RAW_TICKERS,
+      apiRequestCount: 1,
+    }))
+    requestMock.onSecondCall().returns(Promise.resolve({
+      data: [
+        BITFINEX_MARGIN_ENABLED_CURRENCIES,
+      ],
+      apiRequestCount: 1,
+    }))
 
-    const rawMarkets = await BitfinexMarketModule.listRaw()
+    const { rawMarkets } = await BitfinexMarketModule.listRaw()
 
     expect(rawMarkets.length).to.eq(2)
 
@@ -76,7 +82,7 @@ describe('BitfinexMarketModule', () => {
       rawTicker: BITFINEX_RAW_TICKERS[0],
     }
 
-    const parsedMarket1 = BitfinexMarketModule.parse({ rawMarket })
+    const { market: parsedMarket1 } = BitfinexMarketModule.parse({ rawMarket })
 
     expect(BitfinexMarketParserMock.callCount).to.be.eq(1)
 
@@ -90,7 +96,7 @@ describe('BitfinexMarketModule', () => {
     // new mock
     BitfinexMarketParserMock.returns(BITFINEX_PARSED_MARKETS[1])
 
-    const parsedMarket2 = BitfinexMarketModule.parse({
+    const { market: parsedMarket2 } = BitfinexMarketModule.parse({
       rawMarket: {
         ...rawMarket,
         rawTicker: BITFINEX_RAW_TICKERS[1],
@@ -118,11 +124,14 @@ describe('BitfinexMarketModule', () => {
     // mocking 'parse' method calls
     BITFINEX_PARSED_MARKETS.forEach((parsed, i) => {
 
-      BitfinexMarketParserMock.onCall(i).returns(parsed)
+      BitfinexMarketParserMock.onCall(i).returns({
+        market: parsed,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedMarkets = BitfinexMarketModule.parseMany({
+    const { markets: parsedMarkets } = BitfinexMarketModule.parseMany({
       rawMarkets: BITFINEX_RAW_MARKETS,
     })
 
@@ -136,16 +145,22 @@ describe('BitfinexMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BitfinexMarketModule,
       'listRaw',
-      Promise.resolve(BITFINEX_RAW_MARKETS),
+      {
+        rawMarkets: BITFINEX_RAW_MARKETS,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BitfinexMarketModule,
       'parseMany',
-      BITFINEX_PARSED_MARKETS,
+      {
+        markets: BITFINEX_PARSED_MARKETS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedMarkets = await BitfinexMarketModule.list()
+    const { markets: parsedMarkets } = await BitfinexMarketModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
     expect(parseManyMock.callCount).to.be.eq(1)
@@ -154,7 +169,10 @@ describe('BitfinexMarketModule', () => {
       rawMarkets: BITFINEX_RAW_MARKETS,
     })).to.be.ok
 
-    expect(parseManyMock.returned(parsedMarkets)).to.be.ok
+    expect(parseManyMock.returned({
+      markets: parsedMarkets,
+      apiRequestCount: 1,
+    })).to.be.ok
 
   })
 

@@ -35,10 +35,10 @@ describe('BitmexBalanceModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(BITMEX_RAW_BALANCES),
+      requestResponse: BITMEX_RAW_BALANCES,
     })
 
-    const rawBalances = await bitmexBalanceModule.listRaw()
+    const { rawBalances } = await bitmexBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -58,16 +58,22 @@ describe('BitmexBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitmexBalanceModule,
       'listRaw',
-      BITMEX_RAW_BALANCES,
+      {
+        rawBalances: BITMEX_RAW_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitmexBalanceModule,
       'parseMany',
-      BITMEX_PARSED_BALANCES,
+      {
+        balances: BITMEX_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const balances = await bitmexBalanceModule.list()
+    const { balances } = await bitmexBalanceModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -95,7 +101,7 @@ describe('BitmexBalanceModule', () => {
 
     each(BITMEX_RAW_BALANCES, (rawBalance, i) => {
 
-      const parsedBalance = bitmexBalanceModule.parse({
+      const { balance: parsedBalance } = bitmexBalanceModule.parse({
         rawBalance,
       })
 
@@ -117,11 +123,14 @@ describe('BitmexBalanceModule', () => {
 
     each(BITMEX_PARSED_BALANCES, (parsedBalance, i) => {
 
-      parseMock.onCall(i).returns(parsedBalance)
+      parseMock.onCall(i).returns({
+        balance: parsedBalance,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedBalances = bitmexBalanceModule.parseMany({
+    const { balances: parsedBalances } = bitmexBalanceModule.parseMany({
       rawBalances: BITMEX_RAW_BALANCES,
     })
 
@@ -137,6 +146,8 @@ describe('BitmexBalanceModule', () => {
     const mockedBalance = BITMEX_PARSED_BALANCES[0]
     const mockedLeverage = 1
 
+    mockedBalance.symbolId = 'USDT'
+
     const [rawMarket] = filter(BITMEX_RAW_SYMBOLS, (s) => {
 
       return s.settlCurrency === 'XBt'
@@ -146,20 +157,29 @@ describe('BitmexBalanceModule', () => {
     const getRawMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'getRaw',
-      Promise.resolve(rawMarket),
+      Promise.resolve({
+        rawMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const listMock = ImportMock.mockFunction(
       bitmexBalanceModule,
       'list',
-      Promise.resolve([mockedBalance]),
+      Promise.resolve({
+        balances: [mockedBalance],
+        apiRequestCount: 1,
+      }),
     )
 
     mockExchangeModule({
       module: bitmexBalanceModule,
       overrides: {
         position: {
-          getLeverage: () => Promise.resolve(mockedLeverage),
+          getLeverage: () => Promise.resolve({
+            leverage: mockedLeverage,
+            apiRequestCount: 1,
+          }),
         } as any,
       },
     })
@@ -168,7 +188,9 @@ describe('BitmexBalanceModule', () => {
       .times(mockedLeverage)
       .toNumber()
 
-    const leverage = await bitmexBalanceModule.getTradableBalance({
+    const {
+      tradableBalance: leverage,
+    } = await bitmexBalanceModule.getTradableBalance({
       symbolPair,
     })
 
@@ -176,7 +198,7 @@ describe('BitmexBalanceModule', () => {
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(getRawMock.args[0][0]).to.deep.eq({
-      symbolPair,
+      id: symbolPair,
     })
 
     expect(listMock.callCount).to.be.eq(1)
@@ -198,27 +220,36 @@ describe('BitmexBalanceModule', () => {
     const getRawMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'getRaw',
-      Promise.resolve(rawMarket),
+      Promise.resolve({
+        rawMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const listMock = ImportMock.mockFunction(
       bitmexBalanceModule,
       'list',
-      Promise.resolve([mockedBalance]),
+      Promise.resolve({
+        balances: [mockedBalance],
+        apiRequestCount: 1,
+      }),
     )
 
     mockExchangeModule({
       module: bitmexBalanceModule,
       overrides: {
         position: {
-          getLeverage: () => Promise.resolve(mockedLeverage),
+          getLeverage: () => Promise.resolve({
+            leverage: mockedLeverage,
+            apiRequestCount: 1,
+          }),
         } as any,
       },
     })
 
     const expectedTradableBalance = mockedBalance.available
 
-    const tradableBalance = await bitmexBalanceModule.getTradableBalance({
+    const { tradableBalance } = await bitmexBalanceModule.getTradableBalance({
       symbolPair,
     })
 
@@ -226,7 +257,7 @@ describe('BitmexBalanceModule', () => {
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(getRawMock.args[0][0]).to.deep.eq({
-      symbolPair,
+      id: symbolPair,
     })
 
     expect(listMock.callCount).to.be.eq(1)
@@ -250,13 +281,19 @@ describe('BitmexBalanceModule', () => {
     const getRawMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'getRaw',
-      Promise.resolve(rawMarket),
+      Promise.resolve({
+        rawMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const listMock = ImportMock.mockFunction(
       bitmexBalanceModule,
       'list',
-      Promise.resolve([]),
+      Promise.resolve({
+        balances: [],
+        apiRequestCount: 1,
+      }),
     )
 
     mockExchangeModule({
@@ -290,7 +327,7 @@ describe('BitmexBalanceModule', () => {
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(getRawMock.args[0][0]).to.deep.eq({
-      symbolPair,
+      id: symbolPair,
     })
 
     expect(listMock.callCount).to.be.eq(1)

@@ -16,7 +16,6 @@ import {
   IAlunaPositionParseManyReturns,
   IAlunaPositionParseReturns,
 } from '../../../lib/modules/IAlunaPositionModule'
-import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexPositionSchema } from '../schemas/IBitfinexPositionSchema'
@@ -217,11 +216,11 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const { rawPositions } = params
 
-    const parsedPositionsPromise: IAlunaPositionSchema[] = []
+    const parsedPositionsPromise: IAlunaPositionParseReturns[] = []
 
     let apiRequestCount = 0
 
-    each(rawPositions, async (rawPosition) => {
+    each(rawPositions, (rawPosition) => {
 
       // skipping derivative positions for now
       if (/^(f)|(F0)/.test(rawPosition[0])) {
@@ -230,18 +229,31 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
       }
 
-      const {
-        position: parsedPosition,
-        apiRequestCount: parseCount,
-      } = await this.parse({ rawPosition })
+      const parsePositionResp = this.parse({ rawPosition })
 
-      apiRequestCount += parseCount + 1
+      apiRequestCount += 1
 
-      parsedPositionsPromise.push(parsedPosition)
+      parsedPositionsPromise.push(parsePositionResp as any)
 
     })
 
-    const parsedPositions = await Promise.all(parsedPositionsPromise)
+    const parsedPositions = await
+    Promise.all(parsedPositionsPromise).then((res) => {
+
+      return res.map((parsedPositionResp) => {
+
+        const {
+          position: parsedPosition,
+          apiRequestCount: parseCount,
+        } = parsedPositionResp
+
+        apiRequestCount += parseCount
+
+        return parsedPosition
+
+      })
+
+    })
 
     return {
       positions: parsedPositions,

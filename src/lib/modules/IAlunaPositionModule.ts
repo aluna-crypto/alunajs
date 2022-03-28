@@ -15,7 +15,7 @@ export interface IAlunaPositionModule extends IAlunaModule {
   close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionCloseReturns>
   parse (params: IAlunaPositionParseParams): Promise<IAlunaPositionParseReturns>
   parseMany (params: IAlunaPositionParseManyParams): Promise<IAlunaPositionParseManyReturns>
-  getLeverage (params: IAlunaPositionGetLeverageParams): Promise<IAlunaPositionGetLeverageReturns>
+  getLeverage? (params: IAlunaPositionGetLeverageParams): Promise<IAlunaPositionGetLeverageReturns>
   setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<IAlunaPositionSetLeverageReturns>
 
   /* eslint-enable max-len */

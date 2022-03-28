@@ -196,36 +196,47 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     let apiRequestCount = 0
 
-    const ordersPromises = rawOrders.reduce(async (acc, rawOrder) => {
+    const ordersPromises = rawOrders.reduce(
+      (acc, rawOrder) => {
 
-      const [
-        _id,
-        _gid,
-        _cid,
-        symbol,
-      ] = rawOrder
+        const [
+          _id,
+          _gid,
+          _cid,
+          symbol,
+        ] = rawOrder
 
-      // skipping 'funding' and 'derivatives' orders for now
-      if (/f|F0/.test(symbol)) {
+        // skipping 'funding' and 'derivatives' orders for now
+        if (/f|F0/.test(symbol)) {
+
+          return acc
+
+        }
+
+        const parseOrderResponse = this.parse({ rawOrder })
+
+        apiRequestCount += 1
+
+        acc.push(parseOrderResponse)
 
         return acc
 
-      }
+      }, [] as any[],
+    )
 
-      const {
-        order: parsedOrder,
-        apiRequestCount: parseCount,
-      } = await this.parse({ rawOrder })
+    const parsedOrders = await Promise.all(ordersPromises).then((res) => {
 
-      apiRequestCount += parseCount + 1
+      return res.map((parsedOrderResp) => {
 
-      acc.push(parsedOrder)
+        const { order, apiRequestCount: parseCount } = parsedOrderResp
 
-      return acc
+        apiRequestCount += parseCount
 
-    }, [] as any)
+        return order
 
-    const parsedOrders = await Promise.all(ordersPromises)
+      })
+
+    })
 
     BitfinexLog.info(`parsed ${parsedOrders.length} orders for Bitfinex`)
 

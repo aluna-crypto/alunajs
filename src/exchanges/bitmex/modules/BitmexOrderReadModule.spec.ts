@@ -35,10 +35,10 @@ describe('BitmexOrderReadModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(BITMEX_RAW_ORDERS),
+      requestResponse: BITMEX_RAW_ORDERS,
     })
 
-    const rawBalances = await bitmexOrderReadModule.listRaw()
+    const { rawOrders } = await bitmexOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
@@ -48,8 +48,8 @@ describe('BitmexOrderReadModule', () => {
       body: { filter: { open: true } },
     })
 
-    expect(rawBalances.length).to.be.eq(BITMEX_RAW_ORDERS.length)
-    expect(rawBalances).to.deep.eq(BITMEX_RAW_ORDERS)
+    expect(rawOrders.length).to.be.eq(BITMEX_RAW_ORDERS.length)
+    expect(rawOrders).to.deep.eq(BITMEX_RAW_ORDERS)
 
   })
 
@@ -62,16 +62,22 @@ describe('BitmexOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitmexOrderReadModule,
       'listRaw',
-      Promise.resolve(rawOrders),
+      Promise.resolve({
+        rawOrders,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitmexOrderReadModule,
       'parseMany',
-      BITMEX_PARSED_ORDERS,
+      {
+        orders: BITMEX_PARSED_ORDERS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedOrders = await bitmexOrderReadModule.list()
+    const { orders: parsedOrders } = await bitmexOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -95,13 +101,13 @@ describe('BitmexOrderReadModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve([rawOrder]),
+      requestResponse: [rawOrder],
     })
 
     const symbolPair = rawOrder.symbol
     const id = rawOrder.orderID
 
-    const orderResponse = await bitmexOrderReadModule.getRaw({
+    const { rawOrder: orderResponse } = await bitmexOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -129,7 +135,7 @@ describe('BitmexOrderReadModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve([]),
+      requestResponse: [],
     })
 
     const symbolPair = 'XBTBTC'
@@ -171,13 +177,19 @@ describe('BitmexOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       bitmexOrderReadModule,
       'getRaw',
-      rawOrder,
+      {
+        rawOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       bitmexOrderReadModule,
       'parse',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const params = {
@@ -185,7 +197,7 @@ describe('BitmexOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const orderResponse = await bitmexOrderReadModule.get(params)
+    const { order: orderResponse } = await bitmexOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -206,7 +218,10 @@ describe('BitmexOrderReadModule', () => {
     const bitmexMarketModule = ImportMock.mockFunction(
       BitmexMarketModule,
       'get',
-      Promise.resolve(parsedMarket),
+      Promise.resolve({
+        market: parsedMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const bitmexOrderParserMock = ImportMock.mockFunction(
@@ -222,12 +237,12 @@ describe('BitmexOrderReadModule', () => {
 
     const promises = map(BITMEX_RAW_ORDERS, async (rawOrder, i) => {
 
-      const orderResponse = await bitmexOrderReadModule.parse({
+      const { order: orderResponse } = await bitmexOrderReadModule.parse({
         rawOrder,
       })
 
       expect(bitmexMarketModule.args[i][0]).to.deep.eq({
-        symbolPair: rawOrder.symbol,
+        id: rawOrder.symbol,
       })
 
       expect(bitmexOrderParserMock.returned(orderResponse)).to.be.ok
@@ -251,7 +266,10 @@ describe('BitmexOrderReadModule', () => {
     const bitmexMarketModule = ImportMock.mockFunction(
       BitmexMarketModule,
       'get',
-      Promise.resolve(undefined),
+      Promise.resolve({
+        order: undefined,
+        apiRequestCount: 1,
+      }),
     )
 
     const bitmexOrderParserMock = ImportMock.mockFunction(
@@ -279,7 +297,7 @@ describe('BitmexOrderReadModule', () => {
 
     expect(bitmexMarketModule.callCount).to.be.eq(1)
     expect(bitmexMarketModule.args[0][0]).to.deep.eq({
-      symbolPair: rawOrder.symbol,
+      id: rawOrder.symbol,
     })
 
     expect(bitmexOrderParserMock.callCount).to.be.eq(0)
@@ -298,11 +316,16 @@ describe('BitmexOrderReadModule', () => {
 
     each(parsedOrders, (parsedOrder, i) => {
 
-      parseMock.onCall(i).returns(parsedOrder)
+      parseMock.onCall(i).returns({
+        order: parsedOrder,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parseOrderResponse = await bitmexOrderReadModule.parseMany({
+    const {
+      orders: parseOrderResponse,
+    } = await bitmexOrderReadModule.parseMany({
       rawOrders,
     })
 

@@ -24,10 +24,10 @@ describe('BitmexSymbolModule', () => {
 
     const { requestMock } = mockPublicHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(BITMEX_RAW_SYMBOLS),
+      requestResponse: BITMEX_RAW_SYMBOLS,
     })
 
-    const rawSymbols = await BitmexSymbolModule.listRaw()
+    const { rawSymbols } = await BitmexSymbolModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({
@@ -43,16 +43,22 @@ describe('BitmexSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BitmexSymbolModule,
       'listRaw',
-      BITMEX_RAW_SYMBOLS,
+      {
+        rawSymbols: BITMEX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BitmexSymbolModule,
       'parseMany',
-      BITMEX_PARSED_SYMBOLS,
+      {
+        symbols: BITMEX_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedSymbols = await BitmexSymbolModule.list()
+    const { symbols: parsedSymbols } = await BitmexSymbolModule.list()
 
     expect(parsedSymbols).to.be.eq(BITMEX_PARSED_SYMBOLS)
 
@@ -81,7 +87,7 @@ describe('BitmexSymbolModule', () => {
     } as IBitmexSymbolsSchema
 
 
-    const parsedSymbol1 = BitmexSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = BitmexSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
@@ -104,7 +110,7 @@ describe('BitmexSymbolModule', () => {
     } as IBitmexSymbolsSchema
 
 
-    const parsedSymbol2 = BitmexSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = BitmexSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
@@ -129,7 +135,7 @@ describe('BitmexSymbolModule', () => {
     alunaSymbolMappingMock.returns(rawSymbol3.rootSymbol)
 
 
-    const parsedSymbol3 = BitmexSymbolModule.parse({
+    const { symbol: parsedSymbol3 } = BitmexSymbolModule.parse({
       rawSymbol: rawSymbol3,
     })
 
@@ -156,12 +162,15 @@ describe('BitmexSymbolModule', () => {
 
     each(BITMEX_PARSED_SYMBOLS, (rawSymbol, i) => {
 
-      parseMock.onCall(i).returns(rawSymbol)
+      parseMock.onCall(i).returns({
+        symbol: rawSymbol,
+        apiRequestCount: 1,
+      })
 
     })
 
 
-    const parsedSymbols = BitmexSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = BitmexSymbolModule.parseMany({
       rawSymbols: BITMEX_RAW_SYMBOLS,
     })
 

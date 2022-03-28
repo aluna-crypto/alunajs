@@ -22,10 +22,13 @@ describe('BitmexMarketModule', () => {
     const bitmexSymbolModuleMock = ImportMock.mockFunction(
       BitmexSymbolModule,
       'listRaw',
-      Promise.resolve(BITMEX_RAW_SYMBOLS),
+      Promise.resolve({
+        rawSymbols: BITMEX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawMarkets = await BitmexMarketModule.listRaw()
+    const { rawMarkets } = await BitmexMarketModule.listRaw()
 
     expect(bitmexSymbolModuleMock.callCount).to.be.eq(1)
 
@@ -38,16 +41,22 @@ describe('BitmexMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'listRaw',
-      BITMEX_RAW_SYMBOLS,
+      {
+        rawMarkets: BITMEX_RAW_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'parseMany',
-      BITMEX_PARSED_MARKETS,
+      {
+        markets: BITMEX_PARSED_MARKETS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedMarkets = await BitmexMarketModule.list()
+    const { markets: parsedMarkets } = await BitmexMarketModule.list()
 
     expect(parsedMarkets).to.be.eq(BITMEX_PARSED_MARKETS)
 
@@ -68,10 +77,13 @@ describe('BitmexMarketModule', () => {
 
     const promises = map(BITMEX_RAW_SYMBOLS, async (rawMarket, i) => {
 
-      requestMock.onCall(i).returns([rawMarket])
+      requestMock.onCall(i).returns({
+        data: [rawMarket],
+        apiRequestCount: 1,
+      })
 
-      const returned = await BitmexMarketModule.getRaw!({
-        symbolPair: rawMarket.symbol,
+      const { rawMarket: returned } = await BitmexMarketModule.getRaw!({
+        id: rawMarket.symbol,
       })
 
       expect(returned).to.deep.eq(rawMarket)
@@ -92,22 +104,28 @@ describe('BitmexMarketModule', () => {
     const getRawMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'getRaw',
-      Promise.resolve(rawMarket),
+      Promise.resolve({
+        rawMarket,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'parse',
-      parsedMarket,
+      {
+        market: parsedMarket,
+        apiRequestCount: 1,
+      },
     )
 
-    const result = await BitmexMarketModule.get!({
-      symbolPair,
+    const { market } = await BitmexMarketModule.get!({
+      id: symbolPair,
     })
 
-    expect(result).to.be.eq(parsedMarket)
+    expect(market).to.be.eq(parsedMarket)
 
-    expect(getRawMock.args[0][0]).to.deep.eq({ symbolPair })
+    expect(getRawMock.args[0][0]).to.deep.eq({ id: symbolPair })
     expect(getRawMock.callCount).to.be.eq(1)
 
     expect(parseMock.args[0][0]).to.deep.eq({ rawMarket })
@@ -130,7 +148,7 @@ describe('BitmexMarketModule', () => {
 
     each(BITMEX_RAW_SYMBOLS, (rawMarket, i) => {
 
-      const parsedMarket = BitmexMarketModule.parse({
+      const { market: parsedMarket } = BitmexMarketModule.parse({
         rawMarket,
       })
 
@@ -150,13 +168,16 @@ describe('BitmexMarketModule', () => {
       'parse',
     )
 
-    each(BITMEX_PARSED_MARKETS, (rawMarket, i) => {
+    each(BITMEX_PARSED_MARKETS, (market, i) => {
 
-      parseMock.onCall(i).returns(rawMarket)
+      parseMock.onCall(i).returns({
+        market,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedMarkets = BitmexMarketModule.parseMany({
+    const { markets: parsedMarkets } = BitmexMarketModule.parseMany({
       rawMarkets: BITMEX_RAW_SYMBOLS,
     })
 

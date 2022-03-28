@@ -280,7 +280,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       from: side,
     })
 
-    const { order: { instrument } } = await BitmexMarketModule.get({
+    const { market: { instrument } } = await BitmexMarketModule.get({
       id: symbolPair,
     })
 
@@ -451,10 +451,14 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
         symbol,
       } = rawOrder
 
-      rawOrder = await this.getRaw({
+      const {
+        rawOrder: getRawOrderResponse,
+      } = await this.getRaw({
         id: orderID,
         symbolPair: symbol,
       })
+
+      rawOrder = getRawOrderResponse
 
     }
 
