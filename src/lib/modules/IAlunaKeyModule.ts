@@ -35,7 +35,7 @@ export interface IAlunaKeyParseDetailsReturns extends IAlunaApiRequestSchema {
 
 
 
-export interface IAlunaKeyParsePermissionsParams<T> {
+export interface IAlunaKeyParsePermissionsParams<T = any> {
   rawKey: T
 }
 

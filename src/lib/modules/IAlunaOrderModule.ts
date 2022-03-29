@@ -63,7 +63,7 @@ export interface IAlunaOrderListParams {
   openOrdersOnly: boolean
 }
 
-export interface IAlunaOrderListRawReturns<T> extends IAlunaApiRequestSchema {
+export interface IAlunaOrderListRawReturns<T = any> extends IAlunaApiRequestSchema {
   rawOrders: T[]
 }
 

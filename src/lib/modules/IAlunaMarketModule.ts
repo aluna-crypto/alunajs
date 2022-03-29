@@ -6,7 +6,7 @@ import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
 export interface IAlunaMarketModule {
 
   list (): Promise<IAlunaMarketListReturns>
-  listRaw (): Promise<IAlunaMarketListRawReturns<T>>
+  listRaw (): Promise<IAlunaMarketListRawReturns>
 
   get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
   getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns>
@@ -46,7 +46,7 @@ export interface IAlunaMarketParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaMarketListRawReturns<T> extends IAlunaApiRequestSchema {
+export interface IAlunaMarketListRawReturns<T = any> extends IAlunaApiRequestSchema {
   rawMarkets: T[]
 }
 export interface IAlunaMarketListReturns extends IAlunaApiRequestSchema {
