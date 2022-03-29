@@ -146,8 +146,6 @@ describe('BitmexBalanceModule', () => {
     const mockedBalance = BITMEX_PARSED_BALANCES[0]
     const mockedLeverage = 1
 
-    mockedBalance.symbolId = 'USDT'
-
     const [rawMarket] = filter(BITMEX_RAW_SYMBOLS, (s) => {
 
       return s.settlCurrency === 'XBt'

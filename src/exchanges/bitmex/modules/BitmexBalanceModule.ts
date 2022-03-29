@@ -142,7 +142,9 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
     BitmexLog.info(`fetching Bitmex tradable balance for ${symbolPair}`)
 
     const {
-      rawMarket: settlCurrency,
+      rawMarket: {
+        settlCurrency,
+      },
       apiRequestCount: getRawCount,
     } = await BitmexMarketModule.getRaw({
       id: symbolPair,
