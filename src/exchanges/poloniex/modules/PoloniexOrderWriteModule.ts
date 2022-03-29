@@ -3,7 +3,7 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderEditParams,
@@ -14,6 +14,9 @@ import {
   IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { PoloniexOrderSideAdapter } from '../enums/adapters/PoloniexOrderSideAdapter'
 import { PoloniexOrderTimeInForceEnum } from '../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
@@ -35,6 +38,11 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -112,23 +120,13 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     apiRequestCount += 1
 
-    if (!rate) {
-
-      throw new AlunaError({
-        message: 'A rate is required for limit orders',
-        code: AlunaGenericErrorCodes.PARAM_ERROR,
-        httpStatusCode: 401,
-      })
-
-    }
-
     const timestamp = new Date().getTime()
     const body = new URLSearchParams()
 
     body.append('command', translatedOrderType)
     body.append('currencyPair', symbolPair)
     body.append('amount', amount.toString())
-    body.append('rate', rate.toString())
+    body.append('rate', rate!.toString())
     body.append(PoloniexOrderTimeInForceEnum.POST_ONLY, '1')
     body.append('nonce', timestamp.toString())
 
@@ -153,10 +151,20 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     } catch (err) {
 
-      throw new AlunaError({
+      const error = new AlunaError({
         ...err,
         code: AlunaOrderErrorCodes.PLACE_FAILED,
       })
+
+      const isInsufficientBalanceError = err.message.includes('Not enough')
+
+      if (isInsufficientBalanceError) {
+
+        error.code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
+      throw error
 
     }
 
@@ -259,6 +267,10 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderEditReturns> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     PoloniexLog.info('editing order for Poloniex')
 

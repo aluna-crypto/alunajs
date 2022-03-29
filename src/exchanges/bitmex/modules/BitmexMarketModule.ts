@@ -1,5 +1,7 @@
 import { map } from 'lodash'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaMarketGetParams,
   IAlunaMarketGetRawReturns,
@@ -79,10 +81,21 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
       url: `${PROD_BITMEX_URL}/instrument?symbol=${id}`,
     })
 
-    const [rawMarket] = data
+    if (!data.length) {
+
+      const alunaError = new AlunaError({
+        code: AlunaGenericErrorCodes.NOT_FOUND,
+        message: `No market found for: ${id}`,
+      })
+
+      BitmexLog.error(alunaError)
+
+      throw alunaError
+
+    }
 
     return {
-      rawMarket,
+      rawMarket: data[0],
       apiRequestCount,
     }
 

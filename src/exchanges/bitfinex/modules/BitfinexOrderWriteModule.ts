@@ -5,7 +5,6 @@ import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -17,6 +16,9 @@ import {
   IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexSpecs } from '../BitfinexSpecs'
@@ -64,6 +66,11 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       type,
@@ -173,6 +180,11 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
   }
 
   async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns> {
+
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     const {
       type,
@@ -393,47 +405,27 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       side,
     })
 
-    const requiredParams: Record<string, any> = {}
-
     let price: undefined | string
     let priceAuxLimit: undefined | string
 
     switch (type) {
 
       case AlunaOrderTypesEnum.LIMIT:
-        requiredParams.rate = rate
-        price = rate?.toString()
+        price = rate!.toString()
         break
 
       case AlunaOrderTypesEnum.STOP_MARKET:
-        requiredParams.stopRate = stopRate
-        price = stopRate?.toString()
+        price = stopRate!.toString()
         break
 
       case AlunaOrderTypesEnum.STOP_LIMIT:
-        requiredParams.stopRate = stopRate
-        requiredParams.limitRate = limitRate
-        price = stopRate?.toString()
-        priceAuxLimit = limitRate?.toString()
+        price = stopRate!.toString()
+        priceAuxLimit = limitRate!.toString()
         break
 
       default:
 
     }
-
-    Object.entries(requiredParams).forEach(([key, value]) => {
-
-      if (!value) {
-
-        throw new AlunaError({
-          httpStatusCode: 422,
-          message: `'${key}' param is required to ${action} ${type} orders`,
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-        })
-
-      }
-
-    })
 
     const body = {
       amount: translatedAmount,

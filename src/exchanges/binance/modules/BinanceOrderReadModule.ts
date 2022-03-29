@@ -13,6 +13,7 @@ import {
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
+import { IBinanceMarketWithCurrency } from '../schemas/IBinanceMarketSchema'
 import { IBinanceOrderSchema } from '../schemas/IBinanceOrderSchema'
 import { BinanceOrderParser } from '../schemas/parses/BinanceOrderParser'
 import { BinanceMarketModule } from './BinanceMarketModule'
@@ -20,6 +21,19 @@ import { BinanceMarketModule } from './BinanceMarketModule'
 
 
 export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
+
+  private getSymbolInfo (
+    markets: IBinanceMarketWithCurrency[],
+    currencyPair: string,
+  ): IBinanceMarketWithCurrency {
+
+    return markets.find((market: IBinanceMarketWithCurrency) => {
+
+      return market.symbol === currencyPair
+
+    })!
+
+  }
 
   public async listRaw ()
     : Promise<IAlunaOrderListRawReturns<IBinanceOrderSchema>> {
@@ -117,16 +131,30 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     apiRequestCount += 1
 
+    const { symbol: currencyPair } = rawOrder
+
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BinanceMarketModule.listRaw()
+
+    apiRequestCount += 1
+
+    const symbolInfo = this.getSymbolInfo(rawMarkets, currencyPair)
+
+    apiRequestCount += 1
+
     const {
       order: parsedOrder,
       apiRequestCount: parseCount,
-    } = await this.parse({ rawOrder })
+    } = await this.parse({ rawOrder, symbolInfo })
 
     apiRequestCount += 1
 
     const totalApiRequestCount = apiRequestCount
       + getRawCount
       + parseCount
+      + listRawCount
 
     return {
       order: parsedOrder,
@@ -139,23 +167,12 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parse (params: {
     rawOrder: IBinanceOrderSchema,
+    symbolInfo: IBinanceMarketWithCurrency,
   }): Promise<IAlunaOrderParseReturns> {
 
-    const { rawOrder } = params
-
-    const { symbol: currencyPair } = rawOrder
+    const { rawOrder, symbolInfo } = params
 
     let apiRequestCount = 0
-
-    // @TODO -> Move to parseMany()
-    const {
-      rawMarkets: symbols,
-      apiRequestCount: listRawCount,
-    } = await BinanceMarketModule.listRaw()
-
-    apiRequestCount += 1
-
-    const symbolInfo = symbols.find((s) => s.symbol === currencyPair)
 
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
@@ -164,11 +181,9 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = listRawCount + apiRequestCount
-
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      apiRequestCount,
     }
 
   }
@@ -182,14 +197,35 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
     const { rawOrders } = params
 
     let apiRequestCount = 0
+    const hasOpenOrders = rawOrders.length > 0
+
+    if (!hasOpenOrders) {
+
+      return {
+        orders: [],
+        apiRequestCount,
+      }
+
+    }
+
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BinanceMarketModule.listRaw()
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
+        const { symbol: currencyPair } = rawOrder
+
+        const symbolInfo = this.getSymbolInfo(rawMarkets, currencyPair)
+
+        apiRequestCount += 1
+
         const {
           order: parsedOrder,
           apiRequestCount: parseCount,
-        } = await this.parse({ rawOrder })
+        } = await this.parse({ rawOrder, symbolInfo })
 
         apiRequestCount += parseCount + 1
 
@@ -200,9 +236,11 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     BinanceLog.info(`parsed ${parsedOrders.length} orders for Binance`)
 
+    const totalApiRequestCount = apiRequestCount + listRawCount
+
     return {
       orders: parsedOrders,
-      apiRequestCount,
+      apiRequestCount: totalApiRequestCount,
     }
 
   }

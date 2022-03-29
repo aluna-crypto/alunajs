@@ -524,12 +524,9 @@ describe('PoloniexOrderReadModule', () => {
 
     } catch (err) {
 
-      console.log('🚀 ~ file: PoloniexOrderReadModule.spec.ts ~ line 526 ~ it ~ err', err)
-
       error = err
 
     }
-    console.log('🚀 ~ file: PoloniexOrderReadModule.spec.ts ~ line 529 ~ it ~ error', error)
 
     expect(result).not.to.be.ok
 

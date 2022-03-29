@@ -19,6 +19,9 @@ import {
   IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -78,9 +81,12 @@ describe('BitmexOrderWriteModule', () => {
       },
     )
 
+    const { validateParamsMock } = mockValidateParams()
+
     return {
       parseMock,
       requestMock,
+      validateParamsMock,
       bitmexMarketModuleMock,
       translateAmountToOrderQtyMock,
     }
@@ -150,6 +156,7 @@ describe('BitmexOrderWriteModule', () => {
             const {
               parseMock,
               requestMock,
+              validateParamsMock,
               bitmexMarketModuleMock,
               translateAmountToOrderQtyMock,
             } = mockRequest(mockedOrderResponse)
@@ -181,6 +188,8 @@ describe('BitmexOrderWriteModule', () => {
               expectedHttpVerb = AlunaHttpVerbEnum.POST
 
             } else {
+
+              assign(params, { id })
 
               assign(mockedOrderResponse, {
                 id,
@@ -282,6 +291,24 @@ describe('BitmexOrderWriteModule', () => {
             expect(bitmexMarketModuleMock.args[0][0]).to.deep.eq({
               id: params.symbolPair,
             })
+
+            expect(validateParamsMock.callCount).to.be.eq(1)
+
+            if (action === 'place') {
+
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: placeOrderParamsSchema,
+              })
+
+            } else {
+
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: editOrderParamsSchema,
+              })
+
+            }
 
           })
 

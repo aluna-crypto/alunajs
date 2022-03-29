@@ -31,7 +31,7 @@ describe('PoloniexOrderParser', () => {
       rawOrder,
     })
 
-    const [baseCurrency, quoteCurrency] = rawOrder.currencyPair.split('_')
+    const [quoteCurrency, baseCurrency] = rawOrder.currencyPair.split('_')
 
     const rawOriginalQuantity = rawOrder.amount
     const rawPrice = rawOrder.rate

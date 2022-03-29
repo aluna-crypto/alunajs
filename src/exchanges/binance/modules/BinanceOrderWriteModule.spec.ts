@@ -10,7 +10,6 @@ import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -19,6 +18,7 @@ import {
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BinanceHttp } from '../BinanceHttp'
 import {
   BinanceSpecs,
@@ -32,7 +32,9 @@ import {
   IBinanceOrderRequest,
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
+import { BINANCE_RAW_MARKETS_WITH_CURRENCY } from '../test/fixtures/binanceMarket'
 import { BINANCE_RAW_ORDER } from '../test/fixtures/binanceOrder'
+import { BinanceMarketModule } from './BinanceMarketModule'
 import { BinanceOrderWriteModule } from './BinanceOrderWriteModule'
 
 
@@ -50,11 +52,17 @@ describe('BinanceOrderWriteModule', () => {
 
   it('should place a new Binance limit order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     ImportMock.mockOther(
       binanceOrderWriteModule,
       'exchange',
       { keySecret } as IAlunaExchange,
     )
+
+    const rawOrder = BINANCE_RAW_ORDER
+    const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY
+    const symbolInfo = rawMarket.find((rM) => rM.symbol === rawOrder.symbol)!
 
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
@@ -63,6 +71,15 @@ describe('BinanceOrderWriteModule', () => {
         data: placedOrder,
         apiRequestCount: 1,
       }),
+    )
+
+    const marketListRawMock = ImportMock.mockFunction(
+      BinanceMarketModule,
+      'listRaw',
+      {
+        rawMarkets: rawMarket,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -97,11 +114,10 @@ describe('BinanceOrderWriteModule', () => {
     const {
       order: placeResponse1,
       apiRequestCount,
-    } = await binanceOrderWriteModule
-      .place(placeOrderParams)
+    } = await binanceOrderWriteModule.place(placeOrderParams)
 
 
-    expect(apiRequestCount).to.be.eq(5)
+    expect(apiRequestCount).to.be.eq(6)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -110,11 +126,9 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
+    expect(marketListRawMock.callCount).to.be.eq(1)
 
     expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({
-      rawOrder: placedOrder,
-    })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(placedOrder)
 
@@ -125,6 +139,8 @@ describe('BinanceOrderWriteModule', () => {
       type: AlunaOrderTypesEnum.MARKET,
       side: AlunaOrderSideEnum.SELL,
     })
+
+    delete placeResponse2.rate
 
     const requestBody2: IBinanceOrderRequest = {
       side: BinanceSideEnum.SELL,
@@ -141,11 +157,10 @@ describe('BinanceOrderWriteModule', () => {
     })).to.be.ok
 
     expect(parseMock.callCount).to.be.eq(2)
-    expect(parseMock.calledWith({
-      rawOrder: placeResponse2,
-    })).to.be.ok
 
     expect(placeResponse2).to.deep.eq(placedOrder)
+
+    expect(validateParamsMock.callCount).to.be.eq(2)
 
   })
 
@@ -219,45 +234,6 @@ describe('BinanceOrderWriteModule', () => {
       expect(error.message)
         .to.be.eq('Account has insufficient balance for requested action.')
       expect(error.httpStatusCode).to.be.eq(400)
-
-    },
-  )
-
-  it(
-    'should throw an error if a new limit order is placed without rate',
-    async () => {
-
-      let error
-
-      ImportMock.mockOther(
-        binanceOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
-
-      const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: 0.001,
-        symbolPair: 'ETHZAR',
-        side: AlunaOrderSideEnum.BUY,
-        type: AlunaOrderTypesEnum.LIMIT,
-        account: AlunaAccountEnum.EXCHANGE,
-        // without rate
-      }
-
-      try {
-
-        await binanceOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
 
     },
   )
@@ -340,16 +316,29 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const rawOrder = BINANCE_RAW_ORDER
+    const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY
+    const symbolInfo = rawMarket.find((rM) => rM.symbol === rawOrder.symbol)!
+
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve({ data: placedOrder, apiRequestCount: 1 }),
+      Promise.resolve({ data: rawOrder, apiRequestCount: 1 }),
+    )
+
+    const marketListRawMock = ImportMock.mockFunction(
+      BinanceMarketModule,
+      'listRaw',
+      {
+        rawMarkets: rawMarket,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'parse',
-      { order: placedOrder, apiRequestCount: 1 },
+      { order: rawOrder, apiRequestCount: 1 },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -357,15 +346,17 @@ describe('BinanceOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'ETHZAR',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
     const requestBody: IBinanceOrderRequest = {
       side: BinanceSideEnum.BUY,
       symbol: placeOrderParams.symbolPair,
-      type: BinanceOrderTypeEnum.MARKET,
+      type: BinanceOrderTypeEnum.LIMIT,
       quantity: placeOrderParams.amount,
+      price: placeOrderParams.rate,
+      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
     }
 
 
@@ -382,9 +373,12 @@ describe('BinanceOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
+    expect(marketListRawMock.callCount).to.be.eq(1)
+
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
     expect(placeResponse1).to.deep.eq(parseMock.returnValues[0].order)
@@ -408,10 +402,11 @@ describe('BinanceOrderWriteModule', () => {
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
-      rawOrder: placedOrder,
+      rawOrder,
+      symbolInfo,
     })).to.be.ok
 
-    expect(placeResponse2).to.deep.eq(placedOrder)
+    expect(placeResponse2).to.deep.eq(rawOrder)
 
   })
 
@@ -569,7 +564,7 @@ describe('BinanceOrderWriteModule', () => {
       rate: 0,
       symbolPair: 'LTCBTC',
       side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.MARKET,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 

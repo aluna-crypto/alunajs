@@ -27,12 +27,13 @@
     "test:mocha:watch": "mocha --watch",
     "test:mocha:cover": "nyc mocha --bail",
     "test:mocha:cover:watch": "nyc mocha --watch",
-    "test:mocha:ci": "nyc mocha --bail --forbid-only"
+    "test:mocha:ci": "nyc mocha --bail --forbid-only --reporter dot"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.2",
     "fast-json-stable-stringify": "^2.1.0",
+    "joi": "^17.6.0",
     "js-sha512": "^0.8.0",
     "lodash": "^4.17.21",
     "node-cache": "^5.1.2",

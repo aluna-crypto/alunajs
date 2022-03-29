@@ -1,5 +1,7 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import {
   IAlunaKeyFetchDetailsReturns,
   IAlunaKeyModule,
@@ -10,7 +12,6 @@ import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
 } from '../../../lib/schemas/IAlunaKeySchema'
-import { PoloniexOrderTimeInForceEnum } from '../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PoloniexLog } from '../PoloniexLog'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
@@ -31,8 +32,6 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const alunaPermissions: IAlunaKeyPermissionSchema = {
       read: false,
-      trade: false,
-      withdraw: false,
     }
 
     Object.assign(alunaPermissions, rawKey)
@@ -51,23 +50,18 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const { keySecret } = this.exchange
 
     const permissions: IPoloniexKeySchema = {
-      read: true,
-      trade: false,
-      withdraw: false,
+      read: false,
     }
 
-    let apiRequestCount = 0
+    const apiRequestCount = 0
 
     try {
 
       const timestamp = new Date().getTime()
       const body = new URLSearchParams()
 
-      body.append('command', 'sell')
-      body.append('currencyPair', 'BUSDBNB')
-      body.append('amount', '1')
-      body.append('rate', '9999999')
-      body.append(PoloniexOrderTimeInForceEnum.POST_ONLY, '1')
+      body.append('command', 'returnOpenOrders')
+      body.append('currencyPair', 'all')
       body.append('nonce', timestamp.toString())
 
       await PoloniexHttp
@@ -78,23 +72,25 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
           body,
         })
 
-    } catch (error) {
+      permissions.read = true
 
-      if (error.httpStatusCode === 403) {
+    } catch (err) {
 
-        permissions.trade = false
-        apiRequestCount += 1
+      const {
+        httpStatusCode,
+        metadata,
+      } = err
 
-      } else if (error.httpStatusCode === 422) {
+      const error = new AlunaError({
+        code: AlunaKeyErrorCodes.INVALID,
+        message: 'Invalid API key/secret pair.',
+        httpStatusCode,
+        metadata,
+      })
 
-        permissions.trade = true
-        apiRequestCount += 1
+      PoloniexLog.error(error)
 
-      } else {
-
-        throw error
-
-      }
+      throw error
 
     }
 

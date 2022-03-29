@@ -2,6 +2,9 @@ import { each } from 'lodash'
 
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaPositionSideEnum } from '../../../lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
 import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
 import {
@@ -16,6 +19,7 @@ import {
   IAlunaPositionParseManyReturns,
   IAlunaPositionParseReturns,
 } from '../../../lib/modules/IAlunaPositionModule'
+import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { IBitfinexPositionSchema } from '../schemas/IBitfinexPositionSchema'
@@ -120,10 +124,22 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
       keySecret: this.exchange.keySecret,
     })
 
-    const [rawPosition] = data
+    if (!data.length) {
+
+      const error = new AlunaError({
+        code: AlunaPositionErrorCodes.NOT_FOUND,
+        message: 'Position not found',
+        httpStatusCode: 400,
+      })
+
+      BitfinexLog.error(error)
+
+      throw error
+
+    }
 
     return {
-      rawPosition,
+      rawPosition: data[0],
       apiRequestCount,
     }
 
@@ -151,29 +167,16 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     let apiRequestCount = 0
 
-    const { privateRequest } = BitfinexHttp
-
-    const { apiRequestCount: requestCount } = await privateRequest<void>({
-      url: 'https://api.bitfinex.com/v1/position/close',
-      body: { position_id: Number(id) },
-      keySecret: this.exchange.keySecret,
-    })
+    const { position, apiRequestCount: getCount } = await this.get({ id })
 
     apiRequestCount += 1
 
-    const {
-      position: parsedPosition,
-      apiRequestCount: getCount,
-    } = await this.get({ id })
-
-    apiRequestCount += 1
-
-    if (parsedPosition.status !== AlunaPositionStatusEnum.CLOSED) {
+    if (position.status === AlunaPositionStatusEnum.CLOSED) {
 
       const error = new AlunaError({
-        message: 'Position could not be closed',
-        code: AlunaPositionErrorCodes.COULD_NOT_BE_CLOSED,
-        httpStatusCode: 500,
+        code: AlunaPositionErrorCodes.ALREADY_CLOSED,
+        message: 'Position is already closed',
+        httpStatusCode: 400,
       })
 
       BitfinexLog.error(error)
@@ -182,12 +185,25 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
+    const {
+      apiRequestCount: placeMarketOrderCount,
+    } = await this.placeMarketOrderToClosePosition({ position })
+
+    apiRequestCount += 1
+
+    const closedPosition: IAlunaPositionSchema = {
+      ...position,
+      status: AlunaPositionStatusEnum.CLOSED,
+      closedAt: new Date(),
+    }
+
+
     const totalApiRequestCount = apiRequestCount
       + getCount
-      + requestCount
+      + placeMarketOrderCount
 
     return {
-      position: parsedPosition,
+      position: closedPosition,
       apiRequestCount: totalApiRequestCount,
     }
 
@@ -257,6 +273,37 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     return {
       positions: parsedPositions,
+      apiRequestCount,
+    }
+
+  }
+
+  private async placeMarketOrderToClosePosition (params: {
+    position: IAlunaPositionSchema,
+  }): Promise<{ apiRequestCount: number }> {
+
+    const {
+      position: {
+        symbolPair,
+        account,
+        amount,
+        side: positionSide,
+      },
+    } = params
+
+    const invertedOrderSide = positionSide === AlunaPositionSideEnum.LONG
+      ? AlunaOrderSideEnum.SELL
+      : AlunaOrderSideEnum.BUY
+
+    const { apiRequestCount } = await this.exchange.order.place({
+      account,
+      side: invertedOrderSide,
+      amount,
+      symbolPair,
+      type: AlunaOrderTypesEnum.MARKET,
+    })
+
+    return {
       apiRequestCount,
     }
 

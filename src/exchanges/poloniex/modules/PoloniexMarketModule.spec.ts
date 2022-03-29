@@ -1,13 +1,14 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { Poloniex } from '../Poloniex'
 import { PoloniexHttp } from '../PoloniexHttp'
 import { PROD_POLONIEX_URL } from '../PoloniexSpecs'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 import { PoloniexMarketParser } from '../schemas/parsers/PoloniexMarketParser'
 import {
   POLONIEX_PARSED_MARKETS,
+  POLONIEX_RAW_MARKET,
   POLONIEX_RAW_MARKETS_WITH_CURRENCY,
 } from '../test/fixtures/poloniexMarket'
 import { PoloniexMarketModule } from './PoloniexMarketModule'
@@ -19,50 +20,32 @@ describe('PoloniexMarketModule', () => {
 
   it('should list Poloniex raw markets just fine', async () => {
 
-    const mockRawMarkets = 'rawMarkets'
-
     const marketSummariesURL = `${PROD_POLONIEX_URL}/public?command=returnTicker`
 
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'publicRequest',
       Promise.resolve({
-        data: mockRawMarkets,
+        data: POLONIEX_RAW_MARKET,
         apiRequestCount: 1,
       }),
     )
-
-    const ticketMarketParserMock = ImportMock.mockFunction(
-      PoloniexCurrencyParser,
-      'parse',
-      POLONIEX_RAW_MARKETS_WITH_CURRENCY,
-    )
-
 
     const {
       rawMarkets,
       apiRequestCount,
     } = await PoloniexMarketModule.listRaw()
 
-
     expect(apiRequestCount).to.be.eq(2)
 
     expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.firstCall.calledWith(
+    expect(requestMock.calledWith(
       { url: marketSummariesURL },
     )).to.be.ok
 
-    expect(ticketMarketParserMock.callCount).to.be.eq(1)
-    expect(ticketMarketParserMock.calledWith({
-      rawInfo: mockRawMarkets,
-    })).to.be.ok
-
-    expect(rawMarkets.length).to.eq(3)
     expect(rawMarkets).to.deep.eq(POLONIEX_RAW_MARKETS_WITH_CURRENCY)
 
   })
-
-
 
   it('should list Poloniex parsed markets just fine', async () => {
 
@@ -99,8 +82,6 @@ describe('PoloniexMarketModule', () => {
     expect(parsedMarkets).to.deep.eq(POLONIEX_PARSED_MARKETS)
 
   })
-
-
 
   it('should parse a Poloniex market just fine', async () => {
 
@@ -165,8 +146,6 @@ describe('PoloniexMarketModule', () => {
 
   })
 
-
-
   it('should parse many Poloniex markets just fine', async () => {
 
     const parseMock = ImportMock.mockFunction(
@@ -196,18 +175,22 @@ describe('PoloniexMarketModule', () => {
       rawMarkets: POLONIEX_RAW_MARKETS_WITH_CURRENCY,
     })
 
-    markets.forEach((market, index) => {
+    expect(markets).to.deep.eq(POLONIEX_PARSED_MARKETS)
 
-      const {
-        baseSymbolId,
-        quoteSymbolId,
-        symbolPair,
-      } = POLONIEX_PARSED_MARKETS[index]
+    each(markets, (market, index) => {
 
-      expect(market.exchangeId).to.be.eq(Poloniex.ID)
-      expect(market.symbolPair).to.be.eq(symbolPair)
-      expect(market.baseSymbolId).to.be.eq(baseSymbolId)
-      expect(market.quoteSymbolId).to.be.eq(quoteSymbolId)
+      const rawMarket = POLONIEX_RAW_MARKET[market.symbolPair]
+
+      const [quoteCurrency, baseCurrency] = market.symbolPair.split('_')
+
+      expect(parseMock.args[index][0]).to.deep.eq({
+        rawMarket: {
+          currencyPair: market.symbolPair,
+          quoteCurrency,
+          baseCurrency,
+          ...rawMarket,
+        },
+      })
 
     })
 

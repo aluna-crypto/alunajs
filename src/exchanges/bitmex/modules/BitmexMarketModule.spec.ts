@@ -6,6 +6,7 @@ import {
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockPublicHttpRequest } from '../../../../test/helpers/http'
+import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
 import { BITMEX_PARSED_MARKETS } from '../test/bitmexMarkets'
@@ -91,6 +92,39 @@ describe('BitmexMarketModule', () => {
     })
 
     await Promise.all(promises)
+
+  })
+
+  it('should throw error if market is not found for symbol pair', async () => {
+
+    let error
+    let result
+
+    const { requestMock } = mockPublicHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.resolve([]),
+    })
+
+    const symbolPair = 'XBTAAA'
+
+    try {
+
+      result = await BitmexMarketModule.getRaw({
+        id: symbolPair,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error.code).to.be.eq(AlunaGenericErrorCodes.NOT_FOUND)
+    expect(error.message).to.be.eq(`No market found for: ${symbolPair}`)
+
+    expect(requestMock.callCount).to.be.eq(1)
 
   })
 

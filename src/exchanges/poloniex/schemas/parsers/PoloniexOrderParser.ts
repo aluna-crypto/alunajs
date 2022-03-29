@@ -33,7 +33,7 @@ export class PoloniexOrderParser {
       startingAmount,
     } = rawOrder
 
-    const [baseCurrency, quoteCurrency] = currencyPair.split('_')
+    const [quoteCurrency, baseCurrency] = currencyPair.split('_')
 
     const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: baseCurrency,

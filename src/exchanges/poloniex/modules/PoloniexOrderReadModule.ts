@@ -30,80 +30,6 @@ import { PoloniexOrderParser } from '../schemas/parsers/PoloniexOrderParser'
 export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
 
-  private async getOrderStatus (orderNumber: string)
-    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderStatusInfo>> {
-
-    const timestamp = new Date().getTime()
-    const statusParams = new URLSearchParams()
-
-    statusParams.append('command', 'returnOrderStatus')
-    statusParams.append('orderNumber', orderNumber)
-    statusParams.append('nonce', timestamp.toString())
-
-    const { data: { result }, apiRequestCount } = await PoloniexHttp
-      .privateRequest<getOrderStatusResponse>(
-        {
-          url: `${PROD_POLONIEX_URL}/tradingApi`,
-          keySecret: this.exchange.keySecret,
-          body: statusParams,
-        },
-      )
-
-    if (result.error) {
-
-      throw new AlunaError({
-        code: AlunaOrderErrorCodes.NOT_FOUND,
-        message: result.error as string,
-        httpStatusCode: 404,
-        metadata: result.error,
-      })
-
-    }
-
-    return {
-      order: result[orderNumber],
-      apiRequestCount,
-    }
-
-  }
-
-  private async getOrderTrades (orderNumber: string)
-    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderInfo[]>> {
-
-    const timestamp = new Date().getTime()
-    const statusParams = new URLSearchParams()
-
-    statusParams.append('command', 'returnOrderTrades')
-    statusParams.append('orderNumber', orderNumber)
-    statusParams.append('nonce', timestamp.toString())
-
-    const {
-      data: rawOrderTrades,
-      apiRequestCount,
-    } = await PoloniexHttp
-      .privateRequest<IPoloniexOrderInfo[] | { error: string }>({
-        url: `${PROD_POLONIEX_URL}/tradingApi`,
-        keySecret: this.exchange.keySecret,
-        body: statusParams,
-      })
-
-    if ('error' in rawOrderTrades) {
-
-      throw new AlunaError({
-        code: AlunaOrderErrorCodes.NOT_FOUND,
-        message: rawOrderTrades.error as string,
-        httpStatusCode: 404,
-        metadata: rawOrderTrades,
-      })
-
-    }
-
-    return {
-      order: rawOrderTrades,
-      apiRequestCount,
-    }
-
-  }
 
   public async listRaw ()
     : Promise<IAlunaOrderListRawReturns<IPoloniexOrderWithCurrency>> {
@@ -366,6 +292,82 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     return {
       orders: parsedOrders,
+      apiRequestCount,
+    }
+
+  }
+
+
+  private async getOrderStatus (orderNumber: string)
+    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderStatusInfo>> {
+
+    const timestamp = new Date().getTime()
+    const statusParams = new URLSearchParams()
+
+    statusParams.append('command', 'returnOrderStatus')
+    statusParams.append('orderNumber', orderNumber)
+    statusParams.append('nonce', timestamp.toString())
+
+    const { data: { result }, apiRequestCount } = await PoloniexHttp
+      .privateRequest<getOrderStatusResponse>(
+        {
+          url: `${PROD_POLONIEX_URL}/tradingApi`,
+          keySecret: this.exchange.keySecret,
+          body: statusParams,
+        },
+      )
+
+    if (result.error) {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: result.error as string,
+        httpStatusCode: 404,
+        metadata: result.error,
+      })
+
+    }
+
+    return {
+      order: result[orderNumber],
+      apiRequestCount,
+    }
+
+  }
+
+  private async getOrderTrades (orderNumber: string)
+    : Promise<IPoloniexOrderResponseReturns<IPoloniexOrderInfo[]>> {
+
+    const timestamp = new Date().getTime()
+    const statusParams = new URLSearchParams()
+
+    statusParams.append('command', 'returnOrderTrades')
+    statusParams.append('orderNumber', orderNumber)
+    statusParams.append('nonce', timestamp.toString())
+
+    const {
+      data: rawOrderTrades,
+      apiRequestCount,
+    } = await PoloniexHttp
+      .privateRequest<IPoloniexOrderInfo[] | { error: string }>({
+        url: `${PROD_POLONIEX_URL}/tradingApi`,
+        keySecret: this.exchange.keySecret,
+        body: statusParams,
+      })
+
+    if ('error' in rawOrderTrades) {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: rawOrderTrades.error as string,
+        httpStatusCode: 404,
+        metadata: rawOrderTrades,
+      })
+
+    }
+
+    return {
+      order: rawOrderTrades,
       apiRequestCount,
     }
 

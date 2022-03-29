@@ -1,4 +1,9 @@
 import {
+  forOwn,
+  map,
+} from 'lodash'
+
+import {
   IAlunaSymbolListRawReturns,
   IAlunaSymbolListReturns,
   IAlunaSymbolModule,
@@ -15,7 +20,6 @@ import {
   IPoloniexSymbolSchema,
   IPoloniexSymbolWithCurrency,
 } from '../schemas/IPoloniexSymbolSchema'
-import { PoloniexCurrencyParser } from '../schemas/parsers/PoloniexCurrencyParser'
 
 
 
@@ -42,10 +46,16 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     apiRequestCount += requestCount
 
-    const rawSymbolsWithCurrency = PoloniexCurrencyParser
-      .parse<IPoloniexSymbolWithCurrency>({
-        rawInfo: rawSymbols,
+    const rawSymbolsWithCurrency: IPoloniexSymbolWithCurrency[] = []
+
+    forOwn(rawSymbols, (value, key) => {
+
+      rawSymbolsWithCurrency.push({
+        currency: key,
+        ...value,
       })
+
+    })
 
     apiRequestCount += 1
 
@@ -134,7 +144,7 @@ export const PoloniexSymbolModule: IAlunaSymbolModule = class {
 
     let apiRequestCount = 0
 
-    const parsedSymbols = rawSymbols.map((rawSymbol) => {
+    const parsedSymbols = map(rawSymbols, (rawSymbol) => {
 
       const {
         apiRequestCount: parseCount,

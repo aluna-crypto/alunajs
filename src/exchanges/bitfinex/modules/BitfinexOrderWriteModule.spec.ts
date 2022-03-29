@@ -574,7 +574,7 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMessage = "'rate' param is required to place limit orders"
+    const errorMsg = '"rate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
@@ -596,11 +596,8 @@ describe('BitfinexOrderWriteModule', () => {
 
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(422)
+    expect(error.message).to.be.eq(errorMsg)
 
-
-    errorMessage = "'rate' param is required to edit limit orders"
 
     try {
 
@@ -617,8 +614,7 @@ describe('BitfinexOrderWriteModule', () => {
 
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(422)
+    expect(error.message).to.be.eq(errorMsg)
 
   })
 
@@ -629,7 +625,7 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'stopRate' param is required to place stop-market orders"
+    const errorMsg = '"stopRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
@@ -652,10 +648,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
 
-
-    errorMsg = "'stopRate' param is required to edit stop-market orders"
 
     try {
 
@@ -673,7 +666,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
@@ -684,7 +676,7 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'stopRate' param is required to place stop-limit orders"
+    const errorMsg = '"stopRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
@@ -708,10 +700,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
-
-
-    errorMsg = "'stopRate' param is required to edit stop-limit orders"
 
     try {
 
@@ -729,7 +717,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 
@@ -740,7 +727,7 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'limitRate' param is required to place stop-limit orders"
+    const errorMsg = '"limitRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
@@ -764,10 +751,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
 
-
-    errorMsg = "'limitRate' param is required to edit stop-limit orders"
 
     try {
 
@@ -785,7 +769,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(422)
 
   })
 

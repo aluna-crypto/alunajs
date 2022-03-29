@@ -4,7 +4,6 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderEditParams,
@@ -15,6 +14,9 @@ import {
   IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { ValrOrderSideAdapter } from '../enums/adapters/ValrOrderSideAdapter'
 import { ValrOrderTypeAdapter } from '../enums/adapters/ValrOrderTypeAdapter'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
@@ -37,6 +39,11 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -120,16 +127,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
-      if (!rate) {
-
-        throw new AlunaError({
-          httpStatusCode: 200,
-          message: 'Rate param is required for placing new limit orders',
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-        })
-
-      }
-
       Object.assign(body, {
         quantity: amount,
         price: rate,
@@ -177,7 +174,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       }
 
       throw new AlunaError({
-        httpStatusCode: 200,
         message: meta.failedReason,
         code,
       })
@@ -200,6 +196,11 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
   async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns> {
 
     ValrLog.info('editing order for Valr')
+
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     const {
       id,
@@ -246,7 +247,6 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     if (!isOrderOpen) {
 
       throw new AlunaError({
-        httpStatusCode: 200,
         message: 'Order is not open/active anymore',
         code: AlunaOrderErrorCodes.IS_NOT_OPEN,
       })

@@ -2,6 +2,7 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderEditParams,
@@ -12,6 +13,9 @@ import {
   IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { GateioOrderSideAdapter } from '../enums/adapters/GateioOrderSideAdapter'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
@@ -32,6 +36,12 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
   public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
+
 
     const {
       amount,
@@ -101,21 +111,11 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     }
 
-    if (!rate) {
-
-      throw new AlunaError({
-        message: 'A rate is required for limit orders',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-      })
-
-    }
-
     const body: IGateioOrderRequest = {
       side: GateioOrderSideAdapter.translateToGateio({ from: side }),
       currency_pair: symbolPair,
       amount: amount.toString(),
-      price: rate.toString(),
+      price: rate!.toString(),
     }
 
     apiRequestCount += 1
@@ -141,10 +141,23 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     } catch (err) {
 
-      throw new AlunaError({
+      const error = new AlunaError({
         ...err,
         code: AlunaOrderErrorCodes.PLACE_FAILED,
       })
+
+      const INSUFFICIENT_BALANCE_LABEL = 'BALANCE_NOT_ENOUGH'
+
+      const isInsufficientBalanceError = error.metadata.label
+        === INSUFFICIENT_BALANCE_LABEL
+
+      if (isInsufficientBalanceError) {
+
+        error.code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      }
+
+      throw error
 
     }
 
@@ -233,6 +246,11 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
   public async edit (
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderEditReturns> {
+
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     GateioLog.info('editing order for Gateio')
 
