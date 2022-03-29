@@ -129,6 +129,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } catch (err) {
 
+      const { message, metadata } = err
+
       let {
         code,
         httpStatusCode,
@@ -142,10 +144,10 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       }
 
       const error = new AlunaError({
-        message: err.message,
+        message,
         code,
         httpStatusCode,
-        metadata: err.metadata,
+        metadata,
       })
 
       BitfinexLog.error(error)
@@ -237,6 +239,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } catch (err) {
 
+      const { httpStatusCode, metadata } = err
 
       let {
         code,
@@ -257,8 +260,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       const error = new AlunaError({
         message,
         code,
-        metadata: err.metadata,
-        httpStatusCode: err.httpStatusCode,
+        metadata,
+        httpStatusCode,
       })
 
       BitfinexLog.error(error)

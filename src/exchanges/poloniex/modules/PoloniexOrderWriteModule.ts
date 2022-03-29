@@ -227,11 +227,13 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     } catch (err) {
 
+      const { httpStatusCode, metadata } = err
+
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
-        httpStatusCode: err.httpStatusCode,
+        httpStatusCode,
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
-        metadata: err.metadata,
+        metadata,
       })
 
       PoloniexLog.error(error)

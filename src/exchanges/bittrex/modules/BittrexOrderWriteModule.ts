@@ -221,11 +221,13 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     } catch (err) {
 
+      const { metadata, httpStatusCode } = err
+
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
-        httpStatusCode: err.httpStatusCode,
+        httpStatusCode,
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
-        metadata: err.metadata,
+        metadata,
       })
 
       BittrexLog.error(error)

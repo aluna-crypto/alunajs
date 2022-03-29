@@ -62,7 +62,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      const { message } = error
+      const { message, metadata } = error
       let { code, httpStatusCode } = error
 
       if (['apikey: invalid', 'apikey: digest invalid'].includes(message)) {
@@ -76,7 +76,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         code,
         message: error.message,
         httpStatusCode,
-        metadata: error,
+        metadata,
       })
 
     }

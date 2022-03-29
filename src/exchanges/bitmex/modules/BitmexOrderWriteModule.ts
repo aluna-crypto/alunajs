@@ -223,6 +223,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
         const error = new AlunaError({
           code: AlunaHttpErrorCodes.REQUEST_ERROR,
           message: rawOrder.error,
+          metadata: rawOrder,
         })
 
         this.handleError({ error })
@@ -472,6 +473,12 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     const { error } = params
 
+    const {
+      httpStatusCode,
+      message,
+      metadata,
+    } = error
+
     let {
       code,
     } = error
@@ -488,9 +495,9 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     const alunaError = new AlunaError({
       code,
-      message: error.message,
-      metadata: error.metadata,
-      httpStatusCode: error.httpStatusCode,
+      message,
+      metadata,
+      httpStatusCode,
     })
 
     BitmexLog.error(alunaError)

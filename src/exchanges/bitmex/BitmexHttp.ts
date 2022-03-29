@@ -37,6 +37,7 @@ export const bitmexRequestErrorHandler = (
       message: response?.data?.error?.message || message,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
+      metadata: response?.data,
     })
 
   } else {

@@ -242,7 +242,7 @@ export class PoloniexOrderReadModule extends AAlunaModule implements IAlunaOrder
           code: AlunaOrderErrorCodes.ORDER_CANCELLED,
           message: 'This order is already cancelled',
           httpStatusCode: 422,
-          metadata: err,
+          metadata: err.metadata,
         })
 
       }

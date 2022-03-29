@@ -51,7 +51,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      const { message } = error
+      const { message, metadata } = error
 
       let code: string
       let httpStatusCode: number
@@ -72,7 +72,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
         code,
         message,
         httpStatusCode,
-        metadata: error,
+        metadata,
       })
 
       throw alunaError

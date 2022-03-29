@@ -230,7 +230,7 @@ describe('PoloniexOrderReadModule', () => {
       },
     )
 
-    requestMock.onFirstCall().returns(Promise.reject())
+    requestMock.onFirstCall().returns(Promise.reject(new Error('')))
 
     const { currencyPair, orderNumber } = POLONIEX_RAW_LIMIT_ORDER
 
@@ -506,7 +506,7 @@ describe('PoloniexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'privateRequest',
-      Promise.reject(),
+      Promise.reject({}),
     )
 
     const id = 'order-id'
@@ -524,9 +524,12 @@ describe('PoloniexOrderReadModule', () => {
 
     } catch (err) {
 
+      console.log('🚀 ~ file: PoloniexOrderReadModule.spec.ts ~ line 526 ~ it ~ err', err)
+
       error = err
 
     }
+    console.log('🚀 ~ file: PoloniexOrderReadModule.spec.ts ~ line 529 ~ it ~ error', error)
 
     expect(result).not.to.be.ok
 
@@ -615,7 +618,7 @@ describe('PoloniexOrderReadModule', () => {
       'privateRequest',
     )
 
-    requestMock.onFirstCall().returns(Promise.reject())
+    requestMock.onFirstCall().returns(Promise.reject({}))
     requestMock.onSecondCall().returns({
       data: { error: 'Order trade not found' },
       apiRequestCount: 1,

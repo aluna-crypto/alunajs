@@ -140,6 +140,7 @@ export const handleRequestError = (param: AxiosError | Error): AlunaError => {
       message: response?.data?.[2] || message,
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       httpStatusCode: response?.status,
+      metadata: response?.data,
     })
 
   } else {
