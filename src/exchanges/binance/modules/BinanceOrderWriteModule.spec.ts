@@ -60,9 +60,7 @@ describe('BinanceOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
-    const rawOrder = BINANCE_RAW_ORDER
     const rawMarket = BINANCE_RAW_MARKETS_WITH_CURRENCY
-    const symbolInfo = rawMarket.find((rM) => rM.symbol === rawOrder.symbol)!
 
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
@@ -117,7 +115,7 @@ describe('BinanceOrderWriteModule', () => {
     } = await binanceOrderWriteModule.place(placeOrderParams)
 
 
-    expect(apiRequestCount).to.be.eq(6)
+    expect(apiRequestCount).to.be.eq(7)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -568,7 +566,9 @@ describe('BinanceOrderWriteModule', () => {
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const { order: newOrder } = await binanceOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await binanceOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(BINANCE_RAW_ORDER)
 

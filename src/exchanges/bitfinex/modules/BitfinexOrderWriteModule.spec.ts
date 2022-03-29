@@ -796,7 +796,9 @@ describe('BitfinexOrderWriteModule', () => {
       symbolPair: 'tBTCETH',
     }
 
-    const { order: canceledOrder } = await bitfinexOrderWriteModule.cancel(params)
+    const {
+      order: canceledOrder,
+    } = await bitfinexOrderWriteModule.cancel(params)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.args[0][0]).to.deep.eq({

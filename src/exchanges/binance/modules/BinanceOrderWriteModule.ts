@@ -194,7 +194,9 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     apiRequestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalApiRequestCount = apiRequestCount
+      + parseCount
+      + listRawCount
 
     return {
       order,

@@ -13,8 +13,6 @@ export class ValrMarketParser {
 
     const { rawMarket } = params
 
-    let apiRequestCount = 0
-
     const {
       askPrice,
       baseVolume,
@@ -33,14 +31,10 @@ export class ValrMarketParser {
       symbolMappings: Valr.settings.mappings,
     })
 
-    apiRequestCount += 1
-
     const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: quoteCurrency,
       symbolMappings: Valr.settings.mappings,
     })
-
-    apiRequestCount += 1
 
     const ticker = {
       high: parseFloat(highPrice),
