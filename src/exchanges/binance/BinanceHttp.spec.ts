@@ -1,8 +1,6 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
-import { Agent as HttpAgent } from 'http'
-import { Agent as HttpsAgent } from 'https'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -12,10 +10,8 @@ import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import {
-  IAlunaProxySchema,
-  IAlunaSettingsSchema,
-} from '../../lib/schemas/IAlunaSettingsSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
 import {
   mockAlunaCache,
   validateCache,
@@ -29,11 +25,6 @@ describe('BinanceHttp', () => {
 
   const { BinanceHttp } = BinanceHttpMod
 
-  const keySecret: IAlunaKeySecretSchema = {
-    key: 'key',
-    secret: 'secret',
-  }
-
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
   const dummyResponse = { data: 'dummy-response' }
@@ -46,23 +37,6 @@ describe('BinanceHttp', () => {
     signature: 'dummy',
     dataQueryString: 'dummy=dummy',
     body: '&dummy=dummy',
-  }
-
-  const host = 'localhost'
-  const port = 3000
-
-  const httpProxySettings: IAlunaProxySchema = {
-    host,
-    port,
-    protocol: 'http',
-    agent: new HttpAgent({ keepAlive: true }),
-  }
-
-  const httpsProxySettings: IAlunaProxySchema = {
-    host,
-    port,
-    protocol: 'https',
-    agent: new HttpsAgent({ keepAlive: true }),
   }
 
   const formattedQuery = new URLSearchParams(
@@ -92,6 +66,8 @@ describe('BinanceHttp', () => {
       errorMsgRes = 'error',
       mockedExchangeSettings = {},
     } = params
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const throwedError = new AlunaError({
       code: AlunaGenericErrorCodes.UNKNOWN,
@@ -140,6 +116,7 @@ describe('BinanceHttp', () => {
       axiosCreateMock,
       formatRequestErrorSpy,
       generateAuthHeaderMock,
+      assembleAxiosRequestMock,
     }
 
   }
@@ -581,130 +558,6 @@ describe('BinanceHttp', () => {
     expect(
       signedHash2.signature,
     ).to.deep.eq(digestSpy.returnValues[1])
-
-  })
-
-  it("should use http proxy when it's available", async () => {
-
-    const { requestSpy } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
-      mockedExchangeSettings: {
-        proxySettings: httpProxySettings,
-      },
-    })
-
-    const publicRes = await BinanceHttp.publicRequest({
-      url: dummyUrl,
-      body: dummySignedBody.body as any,
-    })
-
-    expect(publicRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[0]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.GET,
-        proxy: {
-          host: httpProxySettings.host,
-          port: httpProxySettings.port,
-          protocol: httpProxySettings.protocol,
-        },
-        httpAgent: httpProxySettings.agent,
-        data: dummySignedBody.body,
-      },
-    ])
-
-    const privateRes = await BinanceHttp.privateRequest({
-      url: dummyUrl,
-      body: dummySignedBody.body as any,
-      keySecret,
-    })
-
-    expect(privateRes).to.be.eq(dummyResponse.data)
-
-    const urlParams = new URLSearchParams(
-      `${dummySignedBody.dataQueryString}${dummySignedBody.body}`,
-    )
-
-    urlParams.append('signature', dummySignedBody.signature)
-
-    const fullUrl = `${dummyUrl}?${urlParams.toString()}`
-
-    expect(requestSpy.args[1]).to.deep.eq([
-      {
-        url: fullUrl,
-        method: AlunaHttpVerbEnum.POST,
-        headers: dummySignedHeaders,
-        proxy: {
-          host: httpProxySettings.host,
-          port: httpProxySettings.port,
-          protocol: httpProxySettings.protocol,
-        },
-        httpAgent: httpProxySettings.agent,
-      },
-    ])
-
-  })
-
-  it("should use https proxy when it's available", async () => {
-
-    const { requestSpy } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
-      mockedExchangeSettings: {
-        proxySettings: httpsProxySettings,
-      },
-    })
-
-    const publicRes = await BinanceHttp.publicRequest({
-      url: dummyUrl,
-      body: dummySignedBody.body as any,
-    })
-
-    expect(publicRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[0]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.GET,
-        proxy: {
-          host: httpsProxySettings.host,
-          port: httpsProxySettings.port,
-          protocol: httpsProxySettings.protocol,
-        },
-        httpsAgent: httpsProxySettings.agent,
-        data: dummySignedBody.body,
-      },
-    ])
-
-    const privateRes = await BinanceHttp.privateRequest({
-      url: dummyUrl,
-      body: dummySignedBody.body as any,
-      keySecret,
-    })
-
-    expect(privateRes).to.be.eq(dummyResponse.data)
-
-    const urlParams = new URLSearchParams(
-      `${dummySignedBody.dataQueryString}${dummySignedBody.body}`,
-    )
-
-    urlParams.append('signature', dummySignedBody.signature)
-
-    const fullUrl = `${dummyUrl}?${urlParams.toString()}`
-
-    expect(requestSpy.args[1]).to.deep.eq([
-      {
-        url: fullUrl,
-        method: AlunaHttpVerbEnum.POST,
-        headers: dummySignedHeaders,
-        proxy: {
-          host: httpsProxySettings.host,
-          port: httpsProxySettings.port,
-          protocol: httpsProxySettings.protocol,
-        },
-        httpsAgent: httpsProxySettings.agent,
-      },
-    ])
 
   })
 
