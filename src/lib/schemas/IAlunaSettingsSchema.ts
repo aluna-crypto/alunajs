@@ -15,6 +15,6 @@ export interface IAlunaSettingsSchema {
 export interface IAlunaProxySchema {
   host: string
   port: number
-  protocol: string
+  protocol?: string
   agent?: HttpAgent | HttpsAgent
 }
