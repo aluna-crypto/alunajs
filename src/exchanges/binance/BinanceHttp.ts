@@ -1,9 +1,5 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
-import { assign } from 'lodash'
 import { URLSearchParams } from 'url'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -15,6 +11,7 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Binance } from './Binance'
 import { BinanceLog } from './BinanceLog'
@@ -159,23 +156,12 @@ export const BinanceHttp: IAlunaHttp = class {
 
     }
 
-    let requestConfig: AxiosRequestConfig = {
-      url,
+    const { requestConfig } = assembleAxiosRequestConfig({
       method: verb,
+      url,
       data: body,
-    }
-
-    const { proxySettings } = Binance.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
+      proxySettings: Binance.settings.proxySettings,
+    })
 
     try {
 
@@ -224,24 +210,12 @@ export const BinanceHttp: IAlunaHttp = class {
       'X-MBX-APIKEY': keySecret.key,
     }
 
-    let requestConfig: AxiosRequestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url: fullUrl,
       method: verb,
       headers,
-    }
-
-    const { proxySettings } = Binance.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
-
+      proxySettings: Binance.settings.proxySettings,
+    })
 
     try {
 
