@@ -10,7 +10,9 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Poloniex } from './Poloniex'
 import { PoloniexLog } from './PoloniexLog'
 
 
@@ -28,7 +30,7 @@ interface IPoloniexResponseWithError {
   error: string
 }
 
-interface IPoloniexSignedHeaders {
+export interface IPoloniexSignedHeaders {
     'Key': string
     'Sign': string
     'Content-Type': string
@@ -111,11 +113,12 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 
@@ -147,12 +150,13 @@ export const PoloniexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 

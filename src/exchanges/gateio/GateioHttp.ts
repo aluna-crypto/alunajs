@@ -11,7 +11,9 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Gateio } from './Gateio'
 import { GateioLog } from './GateioLog'
 
 
@@ -28,7 +30,7 @@ interface ISignedHashParams {
   query?: string
 }
 
-interface IGateioSignedHeaders {
+export interface IGateioSignedHeaders {
     'KEY': string
     'Timestamp': string
     'SIGN': string
@@ -129,11 +131,12 @@ export const GateioHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Gateio.settings.proxySettings,
+    })
 
     try {
 
@@ -171,12 +174,13 @@ export const GateioHttp: IAlunaHttp = class {
       query,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Gateio.settings.proxySettings,
+    })
 
     try {
 

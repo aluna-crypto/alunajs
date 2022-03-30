@@ -10,7 +10,9 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bitfinex } from './Bitfinex'
 
 
 
@@ -177,11 +179,12 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Bitfinex.settings.proxySettings,
+    })
 
     try {
 
@@ -214,12 +217,13 @@ export const BitfinexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: signedHash.body,
       headers: signedHash.headers,
-    }
+      proxySettings: Bitfinex.settings.proxySettings,
+    })
 
     try {
 

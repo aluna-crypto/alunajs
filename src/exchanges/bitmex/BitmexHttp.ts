@@ -10,7 +10,10 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bitmex } from './Bitmex'
+import { BitmexLog } from './BitmexLog'
 
 
 
@@ -62,7 +65,7 @@ interface ISignedHashParams {
 
 
 
-interface IBitmexRequestHeaders {
+export interface IBitmexRequestHeaders {
   'api-expires': string
   'api-key': string
   'api-signature': string
@@ -127,17 +130,20 @@ export const BitmexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Bitmex.settings.proxySettings,
+    })
 
     try {
 
       const response = await axios.create().request<T>(requestConfig)
 
       AlunaCache.cache.set<T>(cacheKey, response.data)
+
+      BitmexLog.info(response)
 
       return response.data
 
@@ -165,12 +171,13 @@ export const BitmexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Bitmex.settings.proxySettings,
+    })
 
     try {
 

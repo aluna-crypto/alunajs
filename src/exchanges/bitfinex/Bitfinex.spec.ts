@@ -37,4 +37,20 @@ describe('Bitfinex', () => {
 
   })
 
+  it('should properly validate Bitfinex settings', async () => {
+
+    expect(Bitfinex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Bitfinex.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: 'http',
+      },
+    })).to.be.ok
+    expect(Bitfinex.validateSettings({ affiliateCode: 'xyz' })).to.be.ok
+    expect(Bitfinex.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+
+  })
+
+
 })

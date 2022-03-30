@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../enums/AlunaOrderStatusEnum'
-import { AlunaOrderTriggeredStatusEnum } from '../enums/AlunaOrderTriggerStatusEnum'
+import { AlunaOrderTriggerStatusEnum } from '../enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 import { IAlunaUICustomDisplaySchema } from './IAlunaUICustomDisplaySchema'
 
@@ -39,7 +39,7 @@ export interface IAlunaOrderSchema {
   status: AlunaOrderStatusEnum
   type: AlunaOrderTypesEnum
 
-  triggeredStatus?: AlunaOrderTriggeredStatusEnum
+  triggerStatus?: AlunaOrderTriggerStatusEnum
 
   placedAt: Date
   filledAt?: Date

@@ -33,9 +33,26 @@ describe('Bitmex', () => {
 
     expect(bitmex.key).to.be.ok
     expect(bitmex.balance).to.be.ok
-    // expect(bitmex.order).to.be.ok
-    // expect(bitmex.position).to.be.ok
+    expect(bitmex.order).to.be.ok
+    expect(bitmex.position).to.be.ok
 
   })
+
+  it('should properly validate Bitmex settings', async () => {
+
+    expect(Bitmex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Bitmex.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: 'http',
+      },
+    })).to.be.ok
+
+    expect(Bitmex.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
+    expect(Bitmex.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
+
+  })
+
 
 })
