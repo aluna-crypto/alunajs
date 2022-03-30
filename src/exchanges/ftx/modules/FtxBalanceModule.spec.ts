@@ -35,11 +35,16 @@ describe('FtxBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      { result: FTX_RAW_BALANCES },
+      {
+        data: {
+          result: FTX_RAW_BALANCES,
+        },
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawBalances = await ftxBalanceModule.listRaw()
+    const { rawBalances } = await ftxBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -62,16 +67,22 @@ describe('FtxBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       FtxBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      {
+        rawBalances: rawListMock,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       FtxBalanceModule.prototype,
       'parseMany',
-      FTX_PARSED_BALANCES,
+      {
+        balances: FTX_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const balances = await ftxBalanceModule.list()
+    const { balances } = await ftxBalanceModule.list()
 
 
     expect(listRawMock.callCount).to.be.eq(1)
@@ -91,7 +102,9 @@ describe('FtxBalanceModule', () => {
 
   it('should parse a single Ftx raw balance', () => {
 
-    const parsedBalance1 = ftxBalanceModule.parse({
+    const {
+      balance: parsedBalance1,
+    } = ftxBalanceModule.parse({
       rawBalance: FTX_RAW_BALANCES[0],
     })
 
@@ -107,7 +120,7 @@ describe('FtxBalanceModule', () => {
     expect(parsedBalance1.total).to.be.eq(total)
 
 
-    const parsedBalance2 = ftxBalanceModule.parse({
+    const { balance: parsedBalance2 } = ftxBalanceModule.parse({
       rawBalance: FTX_RAW_BALANCES[1],
     })
 
@@ -133,14 +146,23 @@ describe('FtxBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(FTX_PARSED_BALANCES[0])
+      .returns({
+        balance: FTX_PARSED_BALANCES[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(FTX_PARSED_BALANCES[1])
+      .returns({
+        balance: FTX_PARSED_BALANCES[1],
+        apiRequestCount: 1,
+      })
       .onThirdCall()
-      .returns(FTX_PARSED_BALANCES[2])
+      .returns({
+        balance: FTX_PARSED_BALANCES[2],
+        apiRequestCount: 1,
+      })
 
 
-    const parsedBalances = ftxBalanceModule.parseMany({
+    const { balances: parsedBalances } = ftxBalanceModule.parseMany({
       rawBalances: FTX_RAW_BALANCES,
     })
 

@@ -6,6 +6,7 @@ import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
+  IAlunaHttpResponseWithRequestCount,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
@@ -93,13 +94,16 @@ export const generateAuthSignature = (
 
 export const FtxHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
+  static async publicRequest<T> (params: IAlunaHttpPublicParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
       body,
       verb = AlunaHttpVerbEnum.GET,
     } = params
+
+    // @TODO -> Need to implement caching
 
     const requestConfig = {
       url,
@@ -109,9 +113,12 @@ export const FtxHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      return {
+        data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 
@@ -121,7 +128,8 @@ export const FtxHttp: IAlunaHttp = class {
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
+  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
@@ -146,9 +154,12 @@ export const FtxHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      return {
+        data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 

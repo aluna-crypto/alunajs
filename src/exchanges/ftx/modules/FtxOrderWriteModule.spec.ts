@@ -6,19 +6,18 @@ import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { FtxOrderTypeEnum } from '../enums/FtxOrderTypeEnum'
 import { FtxSideEnum } from '../enums/FtxSideEnum'
 import { FtxHttp } from '../FtxHttp'
@@ -56,20 +55,26 @@ describe('FtxOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      Promise.resolve({ result: placedOrder }),
+      Promise.resolve({
+        data: { result: placedOrder },
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       ftxOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        order: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -84,7 +89,9 @@ describe('FtxOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await ftxOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await ftxOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -104,10 +111,12 @@ describe('FtxOrderWriteModule', () => {
 
 
     // place short limit order
-    const placeResponse2 = await ftxOrderWriteModule.place({
+    const {
+      order: placeResponse2,
+    } = await ftxOrderWriteModule.place({
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     const requestBody2: IFtxOrderRequest = {
@@ -148,7 +157,7 @@ describe('FtxOrderWriteModule', () => {
       const placeOrderParams: IAlunaOrderPlaceParams = {
         amount: 0.001,
         symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
         // without rate
@@ -199,7 +208,7 @@ describe('FtxOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -253,20 +262,26 @@ describe('FtxOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      Promise.resolve({ result: placedOrder }),
+      Promise.resolve({
+        data: { result: placedOrder },
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       ftxOrderWriteModule,
       'parse',
-      placedOrder,
+      {
+        order: placedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: 0.001,
       rate: 0,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -281,7 +296,9 @@ describe('FtxOrderWriteModule', () => {
 
 
     // place long market order
-    const placeResponse1 = await ftxOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await ftxOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -296,13 +313,15 @@ describe('FtxOrderWriteModule', () => {
       rawOrder: placedOrder,
     })).to.be.ok
 
-    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
+    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0].order)
 
 
     // place short market order
-    const placeResponse2 = await ftxOrderWriteModule.place({
+    const {
+      order: placeResponse2,
+    } = await ftxOrderWriteModule.place({
       ...placeOrderParams,
-      side: AlunaSideEnum.SHORT,
+      side: AlunaOrderSideEnum.SELL,
     })
 
     expect(requestMock.callCount).to.be.eq(2)
@@ -662,7 +681,7 @@ describe('FtxOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -712,16 +731,22 @@ describe('FtxOrderWriteModule', () => {
     ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      canceledOrderResponse,
+      {
+        data: canceledOrderResponse,
+        apiRequestCount: 1,
+      },
     )
 
     const getMock = ImportMock.mockFunction(
       ftxOrderWriteModule,
       'get',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: { status: AlunaOrderStatusEnum.CANCELED },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -731,7 +756,9 @@ describe('FtxOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await ftxOrderWriteModule.cancel(cancelParams)
+      const { order } = await ftxOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -748,7 +775,7 @@ describe('FtxOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(getMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(getMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
@@ -758,13 +785,18 @@ describe('FtxOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       ftxOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       ftxOrderWriteModule,
       'place',
-      Promise.resolve(FTX_RAW_LIMIT_ORDER),
+      Promise.resolve({
+        order: FTX_RAW_LIMIT_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -772,12 +804,14 @@ describe('FtxOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.SELL,
       type: AlunaOrderTypesEnum.MARKET,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await ftxOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await ftxOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(FTX_RAW_LIMIT_ORDER)
 

@@ -1,5 +1,5 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { FtxSideEnum } from '../FtxSideEnum'
 
 
@@ -12,21 +12,21 @@ export class FtxSideAdapter {
 
 
 
-  static translateToAluna = buildAdapter<FtxSideEnum, AlunaSideEnum>({
+  static translateToAluna = buildAdapter<FtxSideEnum, AlunaOrderSideEnum>({
     errorMessagePrefix: FtxSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [FtxSideEnum.BUY]: AlunaSideEnum.LONG,
-      [FtxSideEnum.SELL]: AlunaSideEnum.SHORT,
+      [FtxSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+      [FtxSideEnum.SELL]: AlunaOrderSideEnum.SELL,
     },
   })
 
 
 
-  static translateToFtx = buildAdapter<AlunaSideEnum, FtxSideEnum>({
+  static translateToFtx = buildAdapter<AlunaOrderSideEnum, FtxSideEnum>({
     errorMessagePrefix: FtxSideAdapter.ERROR_MESSAGE_PREFIX,
     mappings: {
-      [AlunaSideEnum.LONG]: FtxSideEnum.BUY,
-      [AlunaSideEnum.SHORT]: FtxSideEnum.SELL,
+      [AlunaOrderSideEnum.BUY]: FtxSideEnum.BUY,
+      [AlunaOrderSideEnum.SELL]: FtxSideEnum.SELL,
     },
   })
 

@@ -19,10 +19,15 @@ describe('FtxSymbolModule', () => {
     const listRawMarketsMock = ImportMock.mockFunction(
       FtxMarketModule,
       'listRaw',
-      FTX_RAW_MARKETS,
+      {
+        rawMarkets: FTX_RAW_MARKETS,
+        apiRequestCount: 1,
+      },
     )
 
-    const rawSymbols = await FtxSymbolModule.listRaw()
+    const { rawSymbols, apiRequestCount } = await FtxSymbolModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(2)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(FTX_RAW_MARKETS)
@@ -38,20 +43,26 @@ describe('FtxSymbolModule', () => {
     const listRawMock = ImportMock.mockFunction(
       FtxSymbolModule,
       'listRaw',
-      Promise.resolve(FTX_RAW_MARKETS),
+      Promise.resolve({
+        rawSymbols: FTX_RAW_MARKETS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       FtxSymbolModule,
       'parseMany',
-      FTX_PARSED_SYMBOLS,
+      {
+        symbols: FTX_PARSED_SYMBOLS,
+        apiRequestCount: 1,
+      },
     )
 
 
-    const rawSymbols = await FtxSymbolModule.list()
+    const { symbols } = await FtxSymbolModule.list()
 
-    expect(rawSymbols.length).to.eq(4)
-    expect(rawSymbols).to.deep.eq(FTX_PARSED_SYMBOLS)
+    expect(symbols.length).to.eq(4)
+    expect(symbols).to.deep.eq(FTX_PARSED_SYMBOLS)
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -66,14 +77,14 @@ describe('FtxSymbolModule', () => {
 
   it('should parse a Ftx symbol just fine', async () => {
 
-    const parsedSymbol1 = FtxSymbolModule.parse({
+    const { symbol: parsedSymbol1 } = FtxSymbolModule.parse({
       rawSymbol: FTX_RAW_MARKETS[1],
     })
 
     expect(parsedSymbol1.exchangeId).to.be.eq(Ftx.ID)
     expect(parsedSymbol1.id).to.be.eq(FTX_RAW_MARKETS[1].baseCurrency)
 
-    const parsedSymbol2 = FtxSymbolModule.parse({
+    const { symbol: parsedSymbol2 } = FtxSymbolModule.parse({
       rawSymbol: FTX_RAW_MARKETS[2],
     })
 
@@ -100,11 +111,14 @@ describe('FtxSymbolModule', () => {
 
     each(FTX_PARSED_SYMBOLS, (parsed, i) => {
 
-      parseMock.onCall(i).returns(parsed)
+      parseMock.onCall(i).returns({
+        symbol: parsed,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedSymbols = FtxSymbolModule.parseMany({
+    const { symbols: parsedSymbols } = FtxSymbolModule.parseMany({
       rawSymbols: rawMarkets,
     })
 

@@ -1,6 +1,11 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -19,7 +24,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (params: {
     rawKey: IFtxKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     const { rawKey } = params
 
@@ -44,21 +49,28 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     FtxLog.info('fetching Ftx key permissionsa')
 
     let rawKey: IFtxKeySchema
+    let apiRequestCount = 0
 
     try {
 
       const { keySecret } = this.exchange
 
-      const { result } = await FtxHttp
+      const {
+        data: { result },
+        apiRequestCount: requestCount,
+      } = await FtxHttp
         .privateRequest<IFtxResponseSchema<IFtxKeySchema>>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_FTX_URL}/login_status`,
@@ -66,6 +78,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
         })
 
       rawKey = result
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -75,15 +88,25 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({ rawKey })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IFtxKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     FtxLog.info('parsing Ftx key details')
 
@@ -95,13 +118,27 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { accountIdentifier } = account
 
+    let apiRequestCount = 0
+
+    const {
+      key: permissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       accountId: accountIdentifier.toString(),
-      permissions: this.parsePermissions({ rawKey }),
+      permissions,
       meta: rawKey,
     }
 
-    return this.details
+    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

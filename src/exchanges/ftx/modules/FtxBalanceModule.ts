@@ -1,7 +1,13 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
+  IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { FtxHttp } from '../FtxHttp'
 import { FtxLog } from '../FtxLog'
@@ -13,34 +19,60 @@ import { IFtxResponseSchema } from '../schemas/IFtxSchema'
 
 export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IFtxBalanceSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IFtxBalanceSchema>> {
 
     FtxLog.info('fetching Ftx balances')
 
     const { keySecret } = this.exchange
 
-    const { result } = await FtxHttp
+    const {
+      data: { result },
+      apiRequestCount,
+    } = await FtxHttp
       .privateRequest<IFtxResponseSchema<IFtxBalanceSchema[]>>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_FTX_URL}/wallet/balances`,
         keySecret,
       })
 
-    return result
+    return {
+      rawBalances: result,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      rawBalances,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     FtxLog.info(`parsed ${parsedBalances.length} balances for Ftx`)
 
-    return parsedBalances
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -48,7 +80,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
   public parse (params: {
     rawBalance: IFtxBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
@@ -58,12 +90,17 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
       coin,
     } = rawBalance
 
-    return {
+    const parsedBalance: IAlunaBalanceSchema = {
       symbolId: coin,
       account: AlunaAccountEnum.EXCHANGE,
       available: free,
       total,
       meta: rawBalance,
+    }
+
+    return {
+      balance: parsedBalance,
+      apiRequestCount: 0,
     }
 
   }
@@ -72,9 +109,11 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
   public parseMany (params: {
     rawBalances: IFtxBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -85,7 +124,12 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
         if (total > 0) {
 
-          const parsedBalance = this.parse({ rawBalance })
+          const {
+            balance: parsedBalance,
+            apiRequestCount: parseCount,
+          } = this.parse({ rawBalance })
+
+          apiRequestCount += parseCount + 1
 
           accumulator.push(parsedBalance)
 
@@ -97,7 +141,10 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
       [],
     )
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 

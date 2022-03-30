@@ -3,7 +3,13 @@ import {
   values,
 } from 'lodash'
 
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { Ftx } from '../Ftx'
 import { FtxLog } from '../FtxLog'
@@ -14,25 +20,57 @@ import { FtxMarketModule } from './FtxMarketModule'
 
 export const FtxSymbolModule: IAlunaSymbolModule = class {
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await FtxSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = FtxSymbolModule.parseMany({ rawSymbols })
+    const {
+      rawSymbols,
+      apiRequestCount: listRawCount,
+    } = await FtxSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = FtxSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public static async listRaw (): Promise<IFtxMarketSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IFtxMarketSchema>> {
 
     FtxLog.info('fetching Ftx symbols')
 
-    const markets = await FtxMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    return markets
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await FtxMarketModule.listRaw()
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + listRawCount
+
+    return {
+      rawSymbols: rawMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -40,7 +78,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
   public static parse (params:{
     rawSymbol: IFtxMarketSchema,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
@@ -54,7 +92,10 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
       meta: rawSymbol,
     }
 
-    return parsedSymbol
+    return {
+      symbol: parsedSymbol,
+      apiRequestCount: 0,
+    }
 
   }
 
@@ -62,11 +103,13 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
   public static parseMany (params: {
     rawSymbols: IFtxMarketSchema[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
     const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
+
+    let apiRequestCount = 0
 
     each(rawSymbols, (symbolPair) => {
 
@@ -77,7 +120,12 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDict[baseCurrency]) {
 
-        const parsedBaseSymbol = this.parse({ rawSymbol: symbolPair })
+        const {
+          symbol: parsedBaseSymbol,
+          apiRequestCount: parseCount,
+        } = this.parse({ rawSymbol: symbolPair })
+
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[baseCurrency] = parsedBaseSymbol
 
@@ -85,12 +133,17 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDict[quoteCurrency]) {
 
-        const parsedQuoteSymbol = this.parse({
+        const {
+          symbol: parsedQuoteSymbol,
+          apiRequestCount: parseCount,
+        } = this.parse({
           rawSymbol: {
             ...symbolPair,
             baseCurrency: quoteCurrency,
           },
         })
+
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[quoteCurrency] = parsedQuoteSymbol
 
@@ -102,7 +155,10 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     FtxLog.info(`parsed ${parsedSymbols.length} symbols for Ftx`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 

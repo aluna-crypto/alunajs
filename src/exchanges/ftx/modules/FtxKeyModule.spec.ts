@@ -43,27 +43,34 @@ describe('FtxKeyModule', () => {
     )
 
     requestMock.onFirstCall().returns({
-      result: requestResponse,
+      data: { result: requestResponse },
+      apiRequestCount: 1,
     })
-    requestMock.onSecondCall().returns(
-      {
+    requestMock.onSecondCall().returns({
+      data: {
         result: {
           ...requestResponse,
           readOnly: false,
         },
       },
-    )
+      apiRequestCount: 1,
+    })
     requestMock.onThirdCall().returns({
-      result: {
-        ...requestResponse,
-        readOnly: false,
-        withdrawalEnabled: true,
+      data: {
+        result: {
+          ...requestResponse,
+          readOnly: false,
+          withdrawalEnabled: true,
+        },
       },
+      apiRequestCount: 1,
     })
 
     const {
-      permissions: permissions1,
-      accountId,
+      key: {
+        permissions: permissions1,
+        accountId,
+      },
     } = await ftxKeyModule.fetchDetails()
 
     expect(accountId).to.be.eq(
@@ -75,7 +82,11 @@ describe('FtxKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    const { permissions: permissions2 } = await ftxKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions2,
+      },
+    } = await ftxKeyModule.fetchDetails()
 
 
     expect(permissions2.read).to.be.ok
@@ -84,7 +95,11 @@ describe('FtxKeyModule', () => {
 
     expect(requestMock.callCount).to.be.eq(2)
 
-    const { permissions: permissions3 } = await ftxKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions3,
+      },
+    } = await ftxKeyModule.fetchDetails()
 
     expect(permissions3.read).to.be.ok
     expect(permissions3.trade).to.be.ok
@@ -153,7 +168,7 @@ describe('FtxKeyModule', () => {
       ...mockRest,
     }
 
-    const perm1 = ftxKeyModule.parsePermissions({
+    const { key: perm1 } = ftxKeyModule.parsePermissions({
       rawKey: key,
     })
 

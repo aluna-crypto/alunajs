@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { FtxSideEnum } from '../FtxSideEnum'
 import { FtxSideAdapter } from './FtxSideAdapter'
 
@@ -18,11 +18,11 @@ describe('FtxSideAdapter', () => {
 
       expect(FtxSideAdapter.translateToAluna({
         from: FtxSideEnum.BUY,
-      })).to.be.eq(AlunaSideEnum.LONG)
+      })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(FtxSideAdapter.translateToAluna({
         from: FtxSideEnum.SELL,
-      })).to.be.eq(AlunaSideEnum.SHORT)
+      })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
       let error
@@ -54,11 +54,11 @@ describe('FtxSideAdapter', () => {
     () => {
 
       expect(FtxSideAdapter.translateToFtx({
-        from: AlunaSideEnum.LONG,
+        from: AlunaOrderSideEnum.BUY,
       })).to.be.eq(FtxSideEnum.BUY)
 
       expect(FtxSideAdapter.translateToFtx({
-        from: AlunaSideEnum.SHORT,
+        from: AlunaOrderSideEnum.SELL,
       })).to.be.eq(FtxSideEnum.SELL)
 
       let result
@@ -67,7 +67,7 @@ describe('FtxSideAdapter', () => {
       try {
 
         result = FtxSideAdapter.translateToFtx({
-          from: notSupported as AlunaSideEnum,
+          from: notSupported as AlunaOrderSideEnum,
         })
 
       } catch (err) {

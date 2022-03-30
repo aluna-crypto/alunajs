@@ -5,12 +5,14 @@ import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorC
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { FtxOrderTypeAdapter } from '../enums/adapters/FtxOrderTypeAdapter'
 import { FtxSideAdapter } from '../enums/adapters/FtxSideAdapter'
 import { FtxOrderTypeEnum } from '../enums/FtxOrderTypeEnum'
@@ -33,7 +35,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
 
     const {
       amount,
@@ -43,6 +45,8 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       type,
       account,
     } = params
+
+    let apiRequestCount = 0
 
     try {
 
@@ -105,6 +109,8 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       from: type,
     })
 
+    apiRequestCount += 1
+
     const body: IFtxOrderRequest = {
       side: FtxSideAdapter.translateToFtx({ from: side }),
       market: symbolPair,
@@ -112,6 +118,8 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       type: translatedOrderType,
       price: null,
     }
+
+    apiRequestCount += 1
 
     if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
 
@@ -135,7 +143,12 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
     try {
 
-      const { result } = await FtxHttp
+      const {
+        data: {
+          result,
+        },
+        apiRequestCount: requestCount,
+      } = await FtxHttp
         .privateRequest<IFtxResponseSchema<IFtxOrderSchema>>({
           url: `${PROD_FTX_URL}/orders`,
           body,
@@ -143,6 +156,8 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
         })
 
       placedOrder = result
+      apiRequestCount += requestCount
+
 
     } catch (err) {
 
@@ -153,19 +168,26 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
     }
 
-    const order = await this.parse({
+    const { order, apiRequestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
-    return order
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     FtxLog.info('canceling order for Ftx')
 
@@ -174,16 +196,21 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     } = params
 
+    let apiRequestCount = 0
 
     try {
 
-      await FtxHttp.privateRequest<IFtxResponseSchema<string>>(
+      const {
+        apiRequestCount: requestCount,
+      } = await FtxHttp.privateRequest<IFtxResponseSchema<string>>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
           url: `${PROD_FTX_URL}/orders/${id}`,
           keySecret: this.exchange.keySecret,
         },
       )
+
+      apiRequestCount += requestCount
 
     } catch (err) {
 
@@ -200,19 +227,26 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
     }
 
-    const order = await this.get({
+    const { order, apiRequestCount: getCount } = await this.get({
       id,
       symbolPair,
     })
 
-    return order
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
   public async edit (
     params: IAlunaOrderEditParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderEditReturns> {
 
 
     FtxLog.info('editing order for Ftx')
@@ -227,12 +261,19 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     } = params
 
-    await this.cancel({
+    let apiRequestCount = 0
+
+    const { apiRequestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    const newOrder = await this.place({
+    apiRequestCount += 1
+
+    const {
+      order: newOrder,
+      apiRequestCount: placeCount,
+    } = await this.place({
       rate,
       side,
       type,
@@ -241,7 +282,16 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     })
 
-    return newOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + cancelCount
+      + placeCount
+
+    return {
+      order: newOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

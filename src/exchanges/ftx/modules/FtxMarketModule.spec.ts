@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Ftx } from '../Ftx'
 import { FtxHttp } from '../FtxHttp'
 import { PROD_FTX_URL } from '../FtxSpecs'
@@ -27,9 +26,13 @@ describe('FtxMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(Promise.resolve({ result: FTX_RAW_MARKETS }))
+      .onFirstCall()
+      .returns(Promise.resolve({
+        data: { result: FTX_RAW_MARKETS },
+        apiRequestCount: 1,
+      }))
 
-    const response = await FtxMarketModule.listRaw()
+    const { rawMarkets: response } = await FtxMarketModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.firstCall.calledWith({ url: marketsURL })).to.be.ok
@@ -48,16 +51,22 @@ describe('FtxMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       FtxMarketModule,
       'listRaw',
-      rawListMock,
+      {
+        rawMarkets: rawListMock,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       FtxMarketModule,
       'parseMany',
-      FTX_PARSED_MARKETS,
+      {
+        markets: FTX_PARSED_MARKETS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedMarkets = await FtxMarketModule.list()
+    const { markets: parsedMarkets } = await FtxMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -85,7 +94,7 @@ describe('FtxMarketModule', () => {
 
     const rawMarket = FTX_RAW_MARKETS[0]
 
-    const market: IAlunaMarketSchema = FtxMarketModule.parse({
+    const { market } = FtxMarketModule.parse({
       rawMarket,
     })
 
@@ -138,14 +147,23 @@ describe('FtxMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(FTX_PARSED_MARKETS[0])
+      .returns({
+        market: FTX_PARSED_MARKETS[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(FTX_PARSED_MARKETS[1])
+      .returns({
+        market: FTX_PARSED_MARKETS[1],
+        apiRequestCount: 1,
+      })
       .onThirdCall()
-      .returns(FTX_PARSED_MARKETS[2])
+      .returns({
+        market: FTX_PARSED_MARKETS[2],
+        apiRequestCount: 1,
+      })
 
 
-    const markets: IAlunaMarketSchema[] = FtxMarketModule.parseMany({
+    const { markets } = FtxMarketModule.parseMany({
       rawMarkets: FTX_RAW_MARKETS,
     })
 

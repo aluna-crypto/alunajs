@@ -33,7 +33,7 @@ describe('FtxHttp', () => {
 
   formattedQuery.append('signature', dummySignedBody.signature)
 
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   it('should defaults the http verb to get on public requests', async () => {
 
@@ -96,7 +96,7 @@ describe('FtxHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0])
 
   })
 
@@ -174,7 +174,7 @@ describe('FtxHttp', () => {
 
     expect(requestSpy.callCount).to.be.eq(1)
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(requestSpy.returnValues[0])
 
   })
 

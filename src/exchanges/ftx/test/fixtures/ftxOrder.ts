@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { FtxOrderStatusEnum } from '../../enums/FtxOrderStatusEnum'
 import { FtxOrderTypeEnum } from '../../enums/FtxOrderTypeEnum'
@@ -59,7 +59,7 @@ export const FTX_PARSED_ORDER: IAlunaOrderSchema = {
   baseSymbolId: 'BNB',
   quoteSymbolId: 'USD',
   account: AlunaAccountEnum.EXCHANGE,
-  side: AlunaSideEnum.LONG,
+  side: AlunaOrderSideEnum.BUY,
   status: AlunaOrderStatusEnum.OPEN,
   type: AlunaOrderTypesEnum.LIMIT,
   placedAt: new Date('2022-03-04T11:21:04.900Z'),

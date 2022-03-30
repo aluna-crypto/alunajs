@@ -19,23 +19,16 @@ describe('Ftx', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const ftx = new Ftx({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(ftx.keySecret.key).to.eq(key)
     expect(ftx.keySecret.secret).to.eq(secret)
-
-    expect(ftx.settings).to.be.ok
-    expect(ftx.settings?.referralCode).to.eq(referralCode)
 
     expect(ftx.key).to.be.ok
     expect(ftx.balance).to.be.ok

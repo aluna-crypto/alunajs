@@ -1,5 +1,10 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { FtxHttp } from '../FtxHttp'
 import { FtxLog } from '../FtxLog'
 import { PROD_FTX_URL } from '../FtxSpecs'
@@ -14,13 +19,17 @@ import { FtxMarketParser } from '../schemas/parsers/FtxMarketParser'
 
 export const FtxMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IFtxMarketSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IFtxMarketSchema>> {
 
     const { publicRequest } = FtxHttp
 
     FtxLog.info('fetching Ftx markets')
 
-    const { result } = await
+    const {
+      data: { result },
+      apiRequestCount,
+    } = await
     publicRequest<IFtxResponseSchema<IFtxMarketSchema[]>>({
       url: `${PROD_FTX_URL}/markets`,
     })
@@ -29,19 +38,41 @@ export const FtxMarketModule: IAlunaMarketModule = class {
       (market) => market.type === FtxMarketType.SPOT,
     )
 
-    return filteredSpotMarkets
+    return {
+      rawMarkets: filteredSpotMarkets,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await FtxMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = FtxMarketModule.parseMany({ rawMarkets })
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await FtxMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyCount,
+    } = FtxMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -49,13 +80,16 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
   public static parse (params: {
     rawMarket: IFtxMarketSchema,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
     const parsedMarket = FtxMarketParser.parse({ rawMarket })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -63,13 +97,20 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
   public static parseMany (params: {
     rawMarkets: IFtxMarketSchema[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let apiRequestCount = 0
+
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = FtxMarketParser.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseCount,
+      } = this.parse({ rawMarket })
+
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
@@ -77,7 +118,10 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     FtxLog.info(`parsed ${parsedMarkets.length} markets for Ftx`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 

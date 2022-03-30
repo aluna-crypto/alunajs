@@ -4,9 +4,9 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { FtxOrderStatusEnum } from '../enums/FtxOrderStatusEnum'
 import { FtxOrderTypeEnum } from '../enums/FtxOrderTypeEnum'
@@ -46,10 +46,13 @@ describe('FtxOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      { result: ftxRawOrders },
+      {
+        data: { result: ftxRawOrders },
+        apiRequestCount: 1,
+      },
     )
 
-    const rawOrders = await ftxOrderReadModule.listRaw()
+    const { rawOrders } = await ftxOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -106,16 +109,22 @@ describe('FtxOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       ftxOrderReadModule,
       'listRaw',
-      ['raw-orders'],
+      {
+        rawOrders: ['raw-orders'],
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       ftxOrderReadModule,
       'parseMany',
-      ftxParsedOrders,
+      {
+        orders: ftxParsedOrders,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedOrders = await ftxOrderReadModule.list()
+    const { orders: parsedOrders } = await ftxOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -173,13 +182,16 @@ describe('FtxOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       FtxHttp,
       'privateRequest',
-      { result: FTX_RAW_LIMIT_ORDER },
+      {
+        data: { result: FTX_RAW_LIMIT_ORDER },
+        apiRequestCount: 1,
+      },
     )
 
     const symbolPair = 'symbol'
     const id = 'id'
 
-    const rawOrder = await ftxOrderReadModule.getRaw({
+    const { rawOrder } = await ftxOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -204,13 +216,19 @@ describe('FtxOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       ftxOrderReadModule,
       'getRaw',
-      'rawOrder',
+      {
+        rawOrder: 'rawOrder',
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       ftxOrderReadModule,
       'parse',
-      FTX_PARSED_ORDER,
+      {
+        order: FTX_PARSED_ORDER,
+        apiRequestCount: 1,
+      },
     )
 
     const params = {
@@ -218,7 +236,7 @@ describe('FtxOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const parsedOrder = await ftxOrderReadModule.get(params)
+    const { order: parsedOrder } = await ftxOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -228,7 +246,7 @@ describe('FtxOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -246,7 +264,10 @@ describe('FtxOrderReadModule', () => {
     parseMock
       .onFirstCall().returns(FTX_PARSED_ORDER)
 
-    const parsedOrder1 = await ftxOrderReadModule.parse({ rawOrder })
+    const {
+      order: parsedOrder1,
+    } = await ftxOrderReadModule.parse({ rawOrder })
+
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder })).to.be.ok
@@ -264,7 +285,7 @@ describe('FtxOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -286,7 +307,9 @@ describe('FtxOrderReadModule', () => {
 
     })
 
-    const parsedManyResp = await ftxOrderReadModule.parseMany({ rawOrders })
+    const {
+      orders: parsedManyResp,
+    } = await ftxOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(1)
     expect(parseMock.callCount).to.be.eq(1)
