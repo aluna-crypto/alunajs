@@ -1,9 +1,5 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
-import { assign } from 'lodash'
 import { URL } from 'url'
 
 import { AlunaError } from '../../lib/core/AlunaError'
@@ -15,6 +11,7 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Bittrex } from './Bittrex'
 import { BittrexLog } from './BittrexLog'
@@ -125,23 +122,12 @@ export const BittrexHttp: IAlunaHttp = class {
 
     }
 
-    let requestConfig: AxiosRequestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
-
-    const { proxySettings } = Bittrex.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 
@@ -176,24 +162,13 @@ export const BittrexHttp: IAlunaHttp = class {
       url,
     })
 
-    let requestConfig: AxiosRequestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
-
-    const { proxySettings } = Bittrex.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 
