@@ -1,15 +1,15 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { IAlunaTickerSchema } from '../../../../lib/schemas/IAlunaTickerSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
 import { IBitfinexTicker } from '../IBitfinexMarketSchema'
-import { TBitfinexCurrencySym } from '../IBitfinexSymbolSchema'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
 export interface IBitfinexMarketParseParams {
   rawTicker: IBitfinexTicker
   enabledMarginMarketsDict: Record<string, string>
-  currencySymsDict: Record<string, TBitfinexCurrencySym>
 }
 
 
@@ -20,14 +20,16 @@ export class BitfinexMarketParser {
 
     const {
       rawTicker,
-      currencySymsDict,
       enabledMarginMarketsDict,
     } = params
 
     const [
       symbol,
-      bid,,
-      ask,,,
+      bid,
+      _bid_size,
+      ask,
+      _ask_size,
+      _daily_change,
       dailyChangeRelative,
       lastPrice,
       volume,
@@ -35,31 +37,22 @@ export class BitfinexMarketParser {
       low,
     ] = rawTicker
 
-    let baseSymbolId: string
-    let quoteSymbolId: string
+    let {
+      baseSymbolId,
+      quoteSymbolId,
+    } = BitfinexSymbolParser.splitSymbolPair({ symbolPair: symbol })
 
-    const spliter = symbol.indexOf(':')
+    const symbolMappings = Bitfinex.settings.mappings
 
-    if (spliter >= 0) {
+    baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseSymbolId,
+      symbolMappings,
+    })
 
-      baseSymbolId = symbol.slice(1, spliter)
-      quoteSymbolId = symbol.slice(spliter + 1)
-
-    } else {
-
-      baseSymbolId = symbol.slice(1, 4)
-      quoteSymbolId = symbol.slice(4)
-
-    }
-
-    baseSymbolId = currencySymsDict[baseSymbolId]
-      ? currencySymsDict[baseSymbolId][1].toUpperCase()
-      : baseSymbolId
-
-    quoteSymbolId = currencySymsDict[quoteSymbolId]
-      ? currencySymsDict[quoteSymbolId][1].toUpperCase()
-      : quoteSymbolId
-
+    quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteSymbolId,
+      symbolMappings,
+    })
     const ticker: IAlunaTickerSchema = {
       bid,
       ask,
@@ -76,20 +69,14 @@ export class BitfinexMarketParser {
 
     const parsedMarket: IAlunaMarketSchema = {
       exchangeId: Bitfinex.ID,
-
       symbolPair: symbol,
-
       baseSymbolId,
       quoteSymbolId,
-
       ticker,
-
       spotEnabled: true,
       marginEnabled,
       derivativesEnabled: false,
-
       leverageEnabled: false,
-
       meta: rawTicker,
     }
 

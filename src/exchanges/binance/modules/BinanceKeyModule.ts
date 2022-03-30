@@ -1,6 +1,11 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -21,7 +26,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (params: {
     rawKey: IBinanceKeyAccountSchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     const { rawKey } = params
 
@@ -53,26 +58,36 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     })
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     BinanceLog.info('fetching Binance key permissionsa')
 
     let rawKey: IBinanceKeyAccountSchema
+    let apiRequestCount = 0
 
     try {
 
       const { keySecret } = this.exchange
 
-      rawKey = await BinanceHttp
+      const {
+        data: keyInfo,
+        apiRequestCount: requestCount,
+      } = await BinanceHttp
         .privateRequest<IBinanceKeyAccountSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_BINANCE_URL}/api/v3/account`,
           keySecret,
         })
+
+      rawKey = keyInfo
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -82,15 +97,25 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsRequestCount,
+    } = this.parseDetails({ rawKey })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseDetailsRequestCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IBinanceKeyAccountSchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     BinanceLog.info('parsing Binance key details')
 
@@ -98,13 +123,27 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsRequestCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       meta: rawKey,
       accountId: undefined, //  binance doesn't give this
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
     }
 
-    return this.details
+    const totalApiRequestCount = apiRequestCount + parsePermissionsRequestCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

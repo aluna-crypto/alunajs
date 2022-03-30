@@ -5,9 +5,9 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { ValrOrderStatusEnum } from '../enums/ValrOrderStatusEnum'
 import { ValrOrderTypesEnum } from '../enums/ValrOrderTypesEnum'
@@ -49,16 +49,19 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      VALR_RAW_LIST_OPEN_ORDERS,
+      {
+        data: VALR_RAW_LIST_OPEN_ORDERS,
+        apiRequestCount: 1,
+      },
     )
 
-    const rawBalances = await valrOrderReadModule.listRaw()
+    const { rawOrders } = await valrOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
 
-    expect(rawBalances.length).to.be.eq(5)
+    expect(rawOrders.length).to.be.eq(5)
 
-    rawBalances.forEach((balance, index) => {
+    rawOrders.forEach((order, index) => {
 
       const {
         orderId,
@@ -77,20 +80,20 @@ describe('ValrOrderReadModule', () => {
         stopPrice,
       } = VALR_RAW_LIST_OPEN_ORDERS[index]
 
-      expect(balance.orderId).to.be.eq(orderId)
-      expect(balance.createdAt).to.be.eq(createdAt)
-      expect(balance.currencyPair).to.be.eq(currencyPair)
-      expect(balance.filledPercentage).to.be.eq(filledPercentage)
-      expect(balance.originalQuantity).to.be.eq(originalQuantity)
-      expect(balance.price).to.be.eq(price)
-      expect(balance.remainingQuantity).to.be.eq(remainingQuantity)
-      expect(balance.side).to.be.eq(side)
-      expect(balance.status).to.be.eq(status)
-      expect(balance.timeInForce).to.be.eq(timeInForce)
-      expect(balance.type).to.be.eq(type)
-      expect(balance.updatedAt).to.be.eq(updatedAt)
-      expect(balance.customerOrderId).to.be.eq(customerOrderId)
-      expect(balance.stopPrice).to.be.eq(stopPrice)
+      expect(order.orderId).to.be.eq(orderId)
+      expect(order.createdAt).to.be.eq(createdAt)
+      expect(order.currencyPair).to.be.eq(currencyPair)
+      expect(order.filledPercentage).to.be.eq(filledPercentage)
+      expect(order.originalQuantity).to.be.eq(originalQuantity)
+      expect(order.price).to.be.eq(price)
+      expect(order.remainingQuantity).to.be.eq(remainingQuantity)
+      expect(order.side).to.be.eq(side)
+      expect(order.status).to.be.eq(status)
+      expect(order.timeInForce).to.be.eq(timeInForce)
+      expect(order.type).to.be.eq(type)
+      expect(order.updatedAt).to.be.eq(updatedAt)
+      expect(order.customerOrderId).to.be.eq(customerOrderId)
+      expect(order.stopPrice).to.be.eq(stopPrice)
 
     })
 
@@ -101,16 +104,19 @@ describe('ValrOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'listRaw',
-      ['raw-orders'],
+      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'parseMany',
-      VALR_PARSED_OPEN_ORDERS,
+      {
+        orders: VALR_PARSED_OPEN_ORDERS,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedOrders = await valrOrderReadModule.list()
+    const { orders: parsedOrders } = await valrOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -174,13 +180,16 @@ describe('ValrOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      VALR_RAW_GET_ORDERS[0],
+      {
+        data: VALR_RAW_GET_ORDERS[0],
+        apiRequestCount: 1,
+      },
     )
 
     const symbolPair = 'symbol'
     const id = 'id'
 
-    const rawOrder = await valrOrderReadModule.getRaw({
+    const { rawOrder } = await valrOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -202,13 +211,19 @@ describe('ValrOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'getRaw',
-      'rawOrder',
+      {
+        rawOrder: 'rawOrder',
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'parse',
-      VALR_PARSED_OPEN_ORDERS[0],
+      {
+        order: VALR_PARSED_OPEN_ORDERS[0],
+        apiRequestCount: 1,
+      },
     )
 
     const params = {
@@ -216,7 +231,7 @@ describe('ValrOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const parsedOrder = await valrOrderReadModule.get(params)
+    const { order: parsedOrder } = await valrOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -226,7 +241,7 @@ describe('ValrOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -238,7 +253,10 @@ describe('ValrOrderReadModule', () => {
     const fetchCurrencyPairsMock = ImportMock.mockFunction(
       ValrMarketModule,
       'fetchCurrencyPairs',
-      Promise.resolve(VALR_RAW_CURRENCY_PAIRS),
+      Promise.resolve({
+        currencyPairs: VALR_RAW_CURRENCY_PAIRS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -247,10 +265,12 @@ describe('ValrOrderReadModule', () => {
     )
 
     parseMock
-      .onFirstCall().returns(VALR_PARSED_OPEN_ORDERS[0])
-      .onSecondCall().returns(VALR_PARSED_OPEN_ORDERS[1])
+      .onFirstCall()
+      .returns(VALR_PARSED_OPEN_ORDERS[0])
+      .onSecondCall()
+      .returns(VALR_PARSED_OPEN_ORDERS[1])
 
-    const parsedOrder1 = await valrOrderReadModule.parse({
+    const { order: parsedOrder1 } = await valrOrderReadModule.parse({
       rawOrder: rawOrder1,
       currencyPair: VALR_RAW_CURRENCY_PAIRS[1],
     })
@@ -272,9 +292,9 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
-    const parsedOrder2 = await valrOrderReadModule.parse({
+    const { order: parsedOrder2 } = await valrOrderReadModule.parse({
       rawOrder: rawOrder2,
     })
 
@@ -291,7 +311,7 @@ describe('ValrOrderReadModule', () => {
     expect(parsedOrder2.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder2.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder2.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder2.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -308,7 +328,10 @@ describe('ValrOrderReadModule', () => {
     const fetchCurrencyPairsMock = ImportMock.mockFunction(
       ValrMarketModule,
       'fetchCurrencyPairs',
-      Promise.resolve(VALR_RAW_CURRENCY_PAIRS),
+      Promise.resolve({
+        currencyPairs: VALR_RAW_CURRENCY_PAIRS,
+        apiRequestCount: 1,
+      }),
     )
 
     parsedOrders.forEach((parsed, index) => {
@@ -317,7 +340,9 @@ describe('ValrOrderReadModule', () => {
 
     })
 
-    const parsedManyResp = await valrOrderReadModule.parseMany({ rawOrders })
+    const {
+      orders: parsedManyResp,
+    } = await valrOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(5)
     expect(parseMock.callCount).to.be.eq(5)
@@ -340,7 +365,10 @@ describe('ValrOrderReadModule', () => {
     const fetchCurrencyPairsMock = ImportMock.mockFunction(
       ValrMarketModule,
       'fetchCurrencyPairs',
-      Promise.resolve([]),
+      Promise.resolve({
+        currencyPairs: [],
+        apiRequestCount: 1,
+      }),
     )
 
     let result
@@ -350,9 +378,11 @@ describe('ValrOrderReadModule', () => {
 
     try {
 
-      result = await valrOrderReadModule.parse({
+      const { order } = await valrOrderReadModule.parse({
         rawOrder,
       })
+
+      result = order
 
     } catch (err) {
 

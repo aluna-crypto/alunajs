@@ -1,4 +1,5 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bittrex } from '../../Bittrex'
 import { IBittrexMarketWithTicker } from '../IBittrexMarketSchema'
 
@@ -26,6 +27,15 @@ export class BittrexMarketParser {
       percentChange,
     } = rawMarket
 
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrencySymbol,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrencySymbol,
+      symbolMappings: Bittrex.settings.mappings,
+    })
 
     const ticker = {
       high: parseFloat(high),
@@ -42,8 +52,8 @@ export class BittrexMarketParser {
     return {
       exchangeId: Bittrex.ID,
       symbolPair: symbol,
-      baseSymbolId: baseCurrencySymbol,
-      quoteSymbolId: quoteCurrencySymbol,
+      baseSymbolId,
+      quoteSymbolId,
       ticker,
       spotEnabled: true,
       marginEnabled: false,

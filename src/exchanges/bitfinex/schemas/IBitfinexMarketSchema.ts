@@ -1,14 +1,9 @@
-import { IBitfinexCurrencySyms } from './IBitfinexSymbolSchema'
-
-
-
 export interface IBitfinexMarketSchema extends TBitfinexMarket {}
 
 
 type TBitfinexMarket = [
   IBitfinexTicker[],
   IBitfinexMarginEnabledCurrencies,
-  IBitfinexCurrencySyms,
 ]
 
 

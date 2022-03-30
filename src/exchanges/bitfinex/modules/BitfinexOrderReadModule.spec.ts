@@ -25,7 +25,7 @@ describe('BitfinexOrderReadModule', () => {
     secret: '',
   }
 
-  const mockKeySecret = () => {
+  const mockExchange = () => {
 
     const exchangeMock = ImportMock.mockOther(
       bitfinexOrderReadModule,
@@ -39,15 +39,18 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex raw orders just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve(BITFINEX_RAW_ORDERS),
+      Promise.resolve({
+        data: BITFINEX_RAW_ORDERS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawOrders = await bitfinexOrderReadModule.listRaw()
+    const { rawOrders } = await bitfinexOrderReadModule.listRaw()
 
     expect(rawOrders).to.deep.eq(BITFINEX_RAW_ORDERS)
     expect(requestMock.callCount).to.be.eq(1)
@@ -60,23 +63,30 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly list Bitfinex parsed orders just fine', async () => {
 
-    mockKeySecret()
+    mockExchange()
 
     const listRawMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
       'listRaw',
-      Promise.resolve(BITFINEX_RAW_ORDERS),
+      Promise.resolve({
+        rawOrders: BITFINEX_RAW_ORDERS,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
       'parseMany',
-      Promise.resolve(BITFINEX_PARSED_ORDERS),
+      Promise.resolve({
+        orders: BITFINEX_PARSED_ORDERS,
+        apiRequestCount: 1,
+      }),
     )
 
-    const rawOrders = await bitfinexOrderReadModule.list()
+    const { orders: parsedOrders } = await bitfinexOrderReadModule.list()
 
-    expect(rawOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
+
+    expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -89,20 +99,23 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get a Bitfinex raw open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0][0]
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve([returnedRawOrder]),
+      Promise.resolve({
+        data: [returnedRawOrder],
+        apiRequestCount: 1,
+      }),
     )
 
     const symbolPair = 'symbol'
     const id = '666'
 
-    const rawOrder = await bitfinexOrderReadModule.getRaw({
+    const { rawOrder } = await bitfinexOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -119,7 +132,7 @@ describe('BitfinexOrderReadModule', () => {
 
   it('should properly get Bitfinex raw not open order just fine', async () => {
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchange()
 
     const returnedRawOrder = BITFINEX_RAW_ORDERS[0]
 
@@ -130,14 +143,20 @@ describe('BitfinexOrderReadModule', () => {
 
     requestMock
       .onFirstCall()
-      .returns(Promise.resolve([]))
+      .returns(Promise.resolve({
+        data: [],
+        apiRequestCount: 1,
+      }))
       .onSecondCall()
-      .returns(Promise.resolve([returnedRawOrder]))
+      .returns(Promise.resolve({
+        data: [returnedRawOrder],
+        apiRequestCount: 1,
+      }))
 
     const symbolPair = 'symbol'
     const id = '666'
 
-    const rawOrder = await bitfinexOrderReadModule.getRaw({
+    const { rawOrder } = await bitfinexOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -157,12 +176,15 @@ describe('BitfinexOrderReadModule', () => {
     let error = {} as AlunaError
     let result
 
-    mockKeySecret()
+    mockExchange()
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve([]),
+      Promise.resolve({
+        data: [],
+        apiRequestCount: 1,
+      }),
     )
 
     const symbolPair = 'symbol'
@@ -202,13 +224,19 @@ describe('BitfinexOrderReadModule', () => {
     const getRawMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
       'getRaw',
-      Promise.resolve(returnedRawOrder),
+      Promise.resolve({
+        rawOrder: returnedRawOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const parserMock = ImportMock.mockFunction(
       bitfinexOrderReadModule,
       'parse',
-      Promise.resolve(returnedParsedOrder),
+      Promise.resolve({
+        order: returnedParsedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const symbolPair = 'symbol'
@@ -219,7 +247,7 @@ describe('BitfinexOrderReadModule', () => {
       id,
     }
 
-    const parsedOrder = await bitfinexOrderReadModule.get(params)
+    const { order: parsedOrder } = await bitfinexOrderReadModule.get(params)
 
     expect(getRawMock.callCount).to.be.eq(1)
     expect(getRawMock.calledWithExactly(params)).to.be.ok
@@ -241,22 +269,27 @@ describe('BitfinexOrderReadModule', () => {
 
     BITFINEX_PARSED_ORDERS.forEach((rawOrder, i) => {
 
-      parseMock.onCall(i).returns(rawOrder)
+      parseMock.onCall(i).returns({
+        order: rawOrder,
+        apiRequestCount: 1,
+      })
 
     })
 
-    const parsedOrder = await bitfinexOrderReadModule.parseMany({
+    const { orders: parsedOrders } = await bitfinexOrderReadModule.parseMany({
       rawOrders: BITFINEX_RAW_ORDERS,
     })
 
-    expect(parsedOrder).to.deep.eq(BITFINEX_PARSED_ORDERS)
+    expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
 
     // skipping 'derivatives' and 'funding' symbols
     expect(parseMock.callCount).to.be.eq(BITFINEX_RAW_ORDERS.length - 2)
 
   })
 
-  it('should properly a parse Bitfinex raw order just fine', async () => {
+  it('should parse a Bitfinex raw order just fine', async () => {
+
+    mockExchange()
 
     const parseMock = ImportMock.mockFunction(
       BitfinexOrderParser,
@@ -276,14 +309,14 @@ describe('BitfinexOrderReadModule', () => {
 
       return bitfinexOrderReadModule.parse({
         rawOrder,
-      })
+      }).then((res) => res.order)
 
     })
 
     const parsedOrders = await Promise.all(promises)
 
     expect(parsedOrders).to.deep.eq(BITFINEX_PARSED_ORDERS)
-    expect(parseMock.callCount).deep.eq(parsedOrders.length)
+    expect(parseMock.callCount).to.be.eq(parsedOrders.length)
 
   })
 

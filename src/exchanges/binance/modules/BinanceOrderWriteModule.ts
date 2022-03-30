@@ -3,29 +3,34 @@ import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import {
   BinanceSpecs,
   PROD_BINANCE_URL,
 } from '../BinanceSpecs'
+import { BinanceOrderSideAdapter } from '../enums/adapters/BinanceOrderSideAdapter'
 import { BinanceOrderTypeAdapter } from '../enums/adapters/BinanceOrderTypeAdapter'
-import { BinanceSideAdapter } from '../enums/adapters/BinanceSideAdapter'
 import { BinanceOrderTimeInForceEnum } from '../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 import {
   IBinanceOrderRequest,
   IBinanceOrderSchema,
 } from '../schemas/IBinanceOrderSchema'
+import { BinanceMarketModule } from './BinanceMarketModule'
 import { BinanceOrderReadModule } from './BinanceOrderReadModule'
 
 
@@ -34,7 +39,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -44,6 +54,8 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       type,
       account,
     } = params
+
+    let apiRequestCount = 0
 
     try {
 
@@ -106,24 +118,18 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       from: type,
     })
 
+    apiRequestCount += 1
+
     const body: IBinanceOrderRequest = {
-      side: BinanceSideAdapter.translateToBinance({ from: side }),
+      side: BinanceOrderSideAdapter.translateToBinance({ from: side }),
       symbol: symbolPair,
       type: translatedOrderType,
       quantity: amount,
     }
 
+    apiRequestCount += 1
+
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
-
-      if (!rate) {
-
-        throw new AlunaError({
-          message: 'A rate is required for limit orders',
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-          httpStatusCode: 401,
-        })
-
-      }
 
       Object.assign(body, {
         price: rate,
@@ -138,12 +144,18 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     try {
 
-      placedOrder = await BinanceHttp
+      const {
+        data: createdOrder,
+        apiRequestCount: requestCount,
+      } = await BinanceHttp
         .privateRequest<IBinanceOrderSchema>({
           url: `${PROD_BINANCE_URL}/api/v3/order`,
           body,
           keySecret: this.exchange.keySecret,
         })
+
+      placedOrder = createdOrder
+      apiRequestCount += requestCount
 
     } catch (err) {
 
@@ -166,19 +178,38 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const order = await this.parse({
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BinanceMarketModule.listRaw()
+
+    apiRequestCount += 1
+
+    const symbolInfo = rawMarkets.find((rM) => rM.symbol === placedOrder.symbol)
+
+    const { order, apiRequestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
+      symbolInfo,
     })
 
-    return order
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + parseCount
+      + listRawCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     BinanceLog.info('canceling order for Binance')
 
@@ -186,6 +217,8 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       id,
       symbolPair,
     } = params
+
+    let apiRequestCount = 0
 
     const body = {
       orderId: id,
@@ -196,7 +229,10 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     try {
 
-      canceledOrder = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
+      const {
+        data: canceledOrderResponse,
+        apiRequestCount: requestCount,
+      } = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
           url: `${PROD_BINANCE_URL}/api/v3/order`,
@@ -204,6 +240,9 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
           body,
         },
       )
+
+      canceledOrder = canceledOrderResponse
+      apiRequestCount += requestCount
 
     } catch (err) {
 
@@ -220,20 +259,31 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const order = await this.get({
+    const { apiRequestCount: getRequestCount, order } = await this.get({
       id: canceledOrder.orderId.toString(),
       symbolPair: canceledOrder.symbol,
     })
 
-    return order
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + getRequestCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
   public async edit (
     params: IAlunaOrderEditParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderEditReturns> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     BinanceLog.info('editing order for Binance')
 
@@ -247,12 +297,19 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbolPair,
     } = params
 
-    await this.cancel({
+    let apiRequestCount = 0
+
+    const { apiRequestCount: cancelRequestCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    const newOrder = await this.place({
+    apiRequestCount += 1
+
+    const {
+      order: newOrder,
+      apiRequestCount: placeRequestCount,
+    } = await this.place({
       rate,
       side,
       type,
@@ -261,7 +318,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbolPair,
     })
 
-    return newOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + placeRequestCount
+      + cancelRequestCount
+
+    return {
+      order: newOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

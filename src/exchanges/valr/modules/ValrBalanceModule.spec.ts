@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import {
   VALR_PARSED_BALANCES,
   VALR_RAW_BALANCES,
@@ -33,10 +34,13 @@ describe('ValrBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       ValrHttp,
       'privateRequest',
-      VALR_RAW_BALANCES,
+      {
+        data: VALR_RAW_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const rawBalances = await valrBalanceModule.listRaw()
+    const { rawBalances } = await valrBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -75,16 +79,22 @@ describe('ValrBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      {
+        rawBalances: rawListMock,
+        apiRequestCount: 1,
+      },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       ValrBalanceModule.prototype,
       'parseMany',
-      VALR_PARSED_BALANCES,
+      {
+        balances: VALR_PARSED_BALANCES,
+        apiRequestCount: 1,
+      },
     )
 
-    const balances = await valrBalanceModule.list()
+    const { balances } = await valrBalanceModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -116,31 +126,53 @@ describe('ValrBalanceModule', () => {
 
   it('should parse a single Valr raw balance', () => {
 
-    const parsedBalance1 = valrBalanceModule.parse({
-      rawBalance: VALR_RAW_BALANCES[0],
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
+    alunaSymbolMappingMock.returns(translateSymbolId)
+
+    const rawBalance1 = VALR_RAW_BALANCES[0]
+    const rawBalance2 = VALR_RAW_BALANCES[1]
+
+    const { balance: parsedBalance1 } = valrBalanceModule.parse({
+      rawBalance: rawBalance1,
     })
 
-    const { currency } = VALR_RAW_BALANCES[0]
-    const available = parseFloat(VALR_RAW_BALANCES[0].available)
-    const total = parseFloat(VALR_RAW_BALANCES[0].total)
+    const { currency } = rawBalance1
+    const available = parseFloat(rawBalance1.available)
+    const total = parseFloat(rawBalance1.total)
 
-    expect(parsedBalance1.symbolId).to.be.eq(currency)
+    expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
-    const parsedBalance2 = valrBalanceModule.parse({
-      rawBalance: VALR_RAW_BALANCES[1],
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: currency,
+      symbolMappings: {},
     })
 
-    const currency2 = VALR_RAW_BALANCES[1].currency
-    const available2 = parseFloat(VALR_RAW_BALANCES[1].available)
-    const total2 = parseFloat(VALR_RAW_BALANCES[1].total)
+
+    const { balance: parsedBalance2 } = valrBalanceModule.parse({
+      rawBalance: rawBalance2,
+    })
+
+    const currency2 = rawBalance2.currency
+    const available2 = parseFloat(rawBalance2.available)
+    const total2 = parseFloat(rawBalance2.total)
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: currency2,
+      symbolMappings: {},
+    })
 
   })
 
@@ -153,13 +185,22 @@ describe('ValrBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(VALR_PARSED_BALANCES[0])
+      .returns({
+        balance: VALR_PARSED_BALANCES[0],
+        apiRequestCount: 1,
+      })
       .onSecondCall()
-      .returns(VALR_PARSED_BALANCES[1])
+      .returns({
+        balance: VALR_PARSED_BALANCES[1],
+        apiRequestCount: 1,
+      })
       .onThirdCall()
-      .returns(VALR_PARSED_BALANCES[2])
+      .returns({
+        balance: VALR_PARSED_BALANCES[2],
+        apiRequestCount: 1,
+      })
 
-    const parsedBalances = valrBalanceModule.parseMany({
+    const { balances: parsedBalances } = valrBalanceModule.parseMany({
       rawBalances: VALR_RAW_BALANCES,
     })
 

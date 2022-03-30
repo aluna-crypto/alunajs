@@ -7,7 +7,6 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { ValrBalanceModule } from './modules/ValrBalanceModule'
 import { ValrKeyModule } from './modules/ValrKeyModule'
 import { ValrMarketModule } from './modules/ValrMarketModule'
@@ -34,7 +33,6 @@ export const Valr: IAlunaExchangeStatic = class extends AAlunaExchange implement
   constructor (
     params: {
       keySecret: IAlunaKeySecretSchema,
-      settings?: IAlunaSettingsSchema,
     },
   ) {
 

@@ -3,8 +3,15 @@ import {
   values,
 } from 'lodash'
 
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
@@ -16,29 +23,55 @@ import { IBinanceSymbolSchema } from '../schemas/IBinanceSymbolSchema'
 
 export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await BinanceSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = BinanceSymbolModule.parseMany({ rawSymbols })
+    const {
+      rawSymbols,
+      apiRequestCount: listRawCount,
+    } = await BinanceSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = BinanceSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + parseManyCount
+      + listRawCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public static async listRaw (): Promise<IBinanceSymbolSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IBinanceSymbolSchema>> {
 
     BinanceLog.info('fetching Binance symbols')
 
     const { publicRequest } = BinanceHttp
 
-    const { symbols } = await publicRequest<IBinanceInfoSchema>({
+    const {
+      data: { symbols },
+      apiRequestCount,
+    } = await publicRequest<IBinanceInfoSchema>({
       url: `${PROD_BINANCE_URL}/api/v3/exchangeInfo`,
     })
 
-    return symbols
+    return {
+      rawSymbols: symbols,
+      apiRequestCount,
+    }
 
   }
 
@@ -46,21 +79,40 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
   public static parse (params:{
     rawSymbol: IBinanceSymbolSchema,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
+
+    let apiRequestCount = 0
 
     const {
       baseAsset,
     } = rawSymbol
 
-    const parsedSymbol = {
-      id: baseAsset,
+    const symbolMappings = Binance.settings.mappings
+
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseAsset,
+      symbolMappings,
+    })
+
+    apiRequestCount += 1
+
+    const alias = id !== baseAsset
+      ? baseAsset
+      : undefined
+
+    const parsedSymbol: IAlunaSymbolSchema = {
+      id,
       exchangeId: Binance.ID,
+      alias,
       meta: rawSymbol,
     }
 
-    return parsedSymbol
+    return {
+      apiRequestCount,
+      symbol: parsedSymbol,
+    }
 
   }
 
@@ -68,9 +120,11 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
   public static parseMany (params: {
     rawSymbols: IBinanceSymbolSchema[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
+
+    let apiRequestCount = 0
 
     const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
@@ -83,7 +137,12 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDict[baseAsset]) {
 
-        const parsedBaseSymbol = this.parse({ rawSymbol: symbolPair })
+        const {
+          symbol: parsedBaseSymbol,
+          apiRequestCount: parseCount,
+        } = this.parse({ rawSymbol: symbolPair })
+
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[baseAsset] = parsedBaseSymbol
 
@@ -91,12 +150,17 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDict[quoteAsset]) {
 
-        const parsedQuoteSymbol = this.parse({
+        const {
+          symbol: parsedQuoteSymbol,
+          apiRequestCount: parseCount,
+        } = this.parse({
           rawSymbol: {
             ...symbolPair,
             baseAsset: symbolPair.quoteAsset,
           },
         })
+
+        apiRequestCount += parseCount + 1
 
         parsedSymbolsDict[quoteAsset] = parsedQuoteSymbol
 
@@ -108,7 +172,10 @@ export const BinanceSymbolModule: IAlunaSymbolModule = class {
 
     BinanceLog.info(`parsed ${parsedSymbols.length} symbols for Binance`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 

@@ -1,4 +1,10 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
@@ -6,7 +12,6 @@ import {
   IBitfinexMarketSchema,
   IBitfinexTicker,
 } from '../schemas/IBitfinexMarketSchema'
-import { TBitfinexCurrencySym } from '../schemas/IBitfinexSymbolSchema'
 import {
   BitfinexMarketParser,
   IBitfinexMarketParseParams,
@@ -18,74 +23,106 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
   static enabledMarginMarketsPath = 'pub:list:pair:margin'
 
-  public static async listRaw (): Promise<IBitfinexMarketSchema> {
+  public static async listRaw (): Promise<IAlunaMarketListRawReturns<any>> {
 
     BitfinexLog.info('fetching Bitfinex markets')
 
     const { publicRequest } = BitfinexHttp
 
-    const rawMarkets = await publicRequest<IBitfinexTicker[]>({
+    const apiRequestCount = 0
+
+    const {
+      data: rawMarkets,
+      apiRequestCount: marketsRequestCount,
+    } = await publicRequest<IBitfinexTicker[]>({
       url: 'https://api-pub.bitfinex.com/v2/tickers?symbols=ALL',
     })
 
     const baseUrl = 'https://api-pub.bitfinex.com/v2/conf/'
 
     const url = `${baseUrl}${this.enabledMarginMarketsPath}`
-      .concat(',pub:map:currency:sym')
 
-    const [
-      enabledMarginMarkets,
-      symCurrencies,
-    ] = await publicRequest<[string[], TBitfinexCurrencySym[]]>({
+    const {
+      data,
+      apiRequestCount: enabledMarginMarketsRequestCount,
+    } = await publicRequest<[string[]]>({
       url,
     })
+
+    const totalApiRequestCount = apiRequestCount
+      + marketsRequestCount
+      + enabledMarginMarketsRequestCount
+
+    const [enabledMarginMarkets] = data
 
     const output: IBitfinexMarketSchema = [
       rawMarkets,
       enabledMarginMarkets,
-      symCurrencies,
     ]
 
-    return output
+    return {
+      rawMarkets: output,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await BitfinexMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = BitfinexMarketModule.parseMany({ rawMarkets })
+    const {
+      rawMarkets,
+      apiRequestCount: listRawCount,
+    } = await BitfinexMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      markets: parsedMarkets,
+      apiRequestCount: parseManyCount,
+    } = BitfinexMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public static parse (params: {
     rawMarket: IBitfinexMarketParseParams,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
     const parsedMarket = BitfinexMarketParser.parse(rawMarket)
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
   public static parseMany (params: {
     rawMarkets: IBitfinexMarketSchema,
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
     const [
       rawBitfinexTickers,
       enabledMarginMarkets,
-      currencySyms,
     ] = rawMarkets
 
     const enabledMarginMarketsDict: Record<string, string> = {}
-    const currencySymsDict: Record<string, TBitfinexCurrencySym> = {}
 
     enabledMarginMarkets.forEach((market) => {
 
@@ -93,13 +130,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     })
 
-    currencySyms.forEach((currencySym) => {
-
-      const [bitfinexSymbolId] = currencySym
-
-      currencySymsDict[bitfinexSymbolId] = currencySym
-
-    })
+    let apiRequestCount = 0
 
     const parsedMarkets = rawBitfinexTickers.reduce((acc, ticker) => {
 
@@ -114,13 +145,17 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
       const rawMarket: IBitfinexMarketParseParams = {
         rawTicker: ticker,
-        currencySymsDict,
         enabledMarginMarketsDict,
       }
 
-      const parsedMarket = BitfinexMarketModule.parse({
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseCount,
+      } = this.parse({
         rawMarket,
       })
+
+      apiRequestCount += parseCount + 1
 
       acc.push(parsedMarket)
 
@@ -130,7 +165,10 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     BitfinexLog.info(`parsed ${parsedMarkets.length} markets for Bitfinex`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 

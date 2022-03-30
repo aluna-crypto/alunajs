@@ -42,21 +42,29 @@ describe('BinanceKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
-    const { permissions: permissions1 } = await binanceKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions: permissions1,
+      }, apiRequestCount,
+    } = await binanceKeyModule.fetchDetails()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
     expect(permissions1.withdraw).not.to.be.ok
+
+    expect(apiRequestCount).to.be.eq(3)
 
     expect(requestMock.callCount).to.be.eq(1)
 
 
     requestResponse.permissions = [BinanceApiKeyPermissions.SPOT]
 
-    const { permissions: permissions2 } = await binanceKeyModule.fetchDetails()
+    const {
+      key: { permissions: permissions2 },
+    } = await binanceKeyModule.fetchDetails()
 
 
     expect(permissions2.read).to.be.ok
@@ -129,7 +137,7 @@ describe('BinanceKeyModule', () => {
       ...mockRest,
     }
 
-    const perm1 = binanceKeyModule.parsePermissions({
+    const { key: perm1 } = binanceKeyModule.parsePermissions({
       rawKey: key,
     })
 
@@ -157,7 +165,7 @@ describe('BinanceKeyModule', () => {
       ...mockRest,
     }
 
-    const perm1 = binanceKeyModule.parsePermissions({
+    const { key: perm1 } = binanceKeyModule.parsePermissions({
       rawKey: key,
     })
 

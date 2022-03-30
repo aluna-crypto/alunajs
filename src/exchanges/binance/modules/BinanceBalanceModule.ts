@@ -1,8 +1,18 @@
+import BigNumber from 'bignumber.js'
+
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
+  IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -13,34 +23,62 @@ import { IBinanceKeyAccountSchema } from '../schemas/IBinanceKeySchema'
 
 export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IBinanceBalanceSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema>> {
 
     BinanceLog.info('fetching Binance balances')
 
     const { keySecret } = this.exchange
 
-    const rawAccountInfo = await BinanceHttp
+    const {
+      data: rawAccountInfo,
+      apiRequestCount,
+    } = await BinanceHttp
       .privateRequest<IBinanceKeyAccountSchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_BINANCE_URL}/api/v3/account`,
         keySecret,
       })
 
-    return rawAccountInfo.balances
+    const { balances } = rawAccountInfo
+
+    return {
+      rawBalances: balances,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      apiRequestCount: listRawCount,
+      rawBalances,
+    } = await this.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     BinanceLog.info(`parsed ${parsedBalances.length} balances for Binance`)
 
-    return parsedBalances
+    const totalApiRequestCount = apiRequestCount
+      + parseManyCount
+      + listRawCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -48,7 +86,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public parse (params: {
     rawBalance: IBinanceBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
@@ -58,12 +96,29 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
       locked,
     } = rawBalance
 
-    return {
-      symbolId: asset,
+    const symbolMappings = Binance.settings.mappings
+
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: asset,
+      symbolMappings,
+    })
+
+    const available = Number(free)
+    const total = new BigNumber(available)
+      .plus(Number(locked))
+      .toNumber()
+
+    const parsedBalance = {
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      available: Number(free),
-      total: Number(free) + Number(locked),
+      available,
+      total,
       meta: rawBalance,
+    }
+
+    return {
+      balance: parsedBalance,
+      apiRequestCount: 1,
     }
 
   }
@@ -72,9 +127,11 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public parseMany (params: {
     rawBalances: IBinanceBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -88,7 +145,12 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
         if (total > 0) {
 
-          const parsedBalance = this.parse({ rawBalance })
+          const {
+            balance: parsedBalance,
+            apiRequestCount: parseCount,
+          } = this.parse({ rawBalance })
+
+          apiRequestCount += parseCount + 1
 
           accumulator.push(parsedBalance)
 
@@ -100,7 +162,10 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
       [],
     )
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 

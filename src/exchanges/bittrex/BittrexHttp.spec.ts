@@ -1,19 +1,22 @@
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
+import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import * as BittrexHttp from './BittrexHttp'
+import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import * as BittrexHttpMod from './BittrexHttp'
 
 
 
 describe('BittrexHttp', () => {
 
-  const { BittrexHttp: bittrexHttp } = BittrexHttp
+  const { BittrexHttp } = BittrexHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
 
@@ -21,27 +24,22 @@ describe('BittrexHttp', () => {
 
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
 
-  const dummyData = { data: 'dummy-data' }
+  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
 
   it('should defaults the http verb to get on public requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    await bittrexHttp.publicRequest({
+    await BittrexHttp.publicRequest({
       // http verb not informed
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
 
@@ -55,23 +53,18 @@ describe('BittrexHttp', () => {
 
   it('should execute public request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await bittrexHttp.publicRequest({
+    const responseData = await BittrexHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
       url: dummyUrl,
       body: dummyBody,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
@@ -80,35 +73,30 @@ describe('BittrexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
   it('should defaults the http verb to post on private requests', async () => {
 
-    const requestSpy = Sinon.spy(async () => ({ data: 'dummy-data' }))
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      BittrexHttp,
+      BittrexHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosCreate = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    await bittrexHttp.privateRequest({
+    await BittrexHttp.privateRequest({
       // http verb not informed
       keySecret: {} as IAlunaKeySecretSchema,
       url: 'http://dummy.com',
     })
 
-    expect(axiosCreate.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
@@ -125,30 +113,25 @@ describe('BittrexHttp', () => {
 
   it('should execute private request just fine', async () => {
 
-    const requestSpy = Sinon.spy(() => dummyData)
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(dummyData)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
-      BittrexHttp,
+      BittrexHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
 
-    const axiosMock = ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    const responseData = await bittrexHttp.privateRequest({
+    const responseData = await BittrexHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
 
-    expect(axiosMock.callCount).to.be.eq(1)
+    expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
     expect(generateAuthHeaderMock.calledWith({
@@ -167,7 +150,7 @@ describe('BittrexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(requestSpy.returnValues[0].data)
+    expect(responseData).to.deep.eq(dummyData)
 
   })
 
@@ -175,27 +158,15 @@ describe('BittrexHttp', () => {
 
     const message = 'Dummy error'
 
+    mockAxiosRequest(Promise.reject(new Error(message)))
+
     const formatRequestErrorSpy = Sinon.spy(
-      BittrexHttp,
+      BittrexHttpMod,
       'handleRequestError',
     )
 
-    const requestSpy = Sinon.spy(() => {
-
-      throw new Error(message)
-
-    })
-
     ImportMock.mockFunction(
-      axios,
-      'create',
-      {
-        request: requestSpy,
-      },
-    )
-
-    ImportMock.mockFunction(
-      BittrexHttp,
+      BittrexHttpMod,
       'generateAuthHeader',
       dummySignedHeaders,
     )
@@ -205,7 +176,7 @@ describe('BittrexHttp', () => {
 
     try {
 
-      result = await bittrexHttp.publicRequest({
+      result = await BittrexHttp.publicRequest({
         url: dummyUrl,
       })
 
@@ -226,7 +197,7 @@ describe('BittrexHttp', () => {
 
     try {
 
-      result = await bittrexHttp.privateRequest({
+      result = await BittrexHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: {} as IAlunaKeySecretSchema,
@@ -264,7 +235,7 @@ describe('BittrexHttp', () => {
       },
     }
 
-    const error1 = BittrexHttp.handleRequestError(axiosError1 as AxiosError)
+    const error1 = BittrexHttpMod.handleRequestError(axiosError1 as AxiosError)
 
     expect(error1 instanceof AlunaError).to.be.ok
     expect(error1.message).to.be.eq(dummyError)
@@ -278,7 +249,7 @@ describe('BittrexHttp', () => {
       },
     }
 
-    const error2 = BittrexHttp.handleRequestError(axiosError2 as AxiosError)
+    const error2 = BittrexHttpMod.handleRequestError(axiosError2 as AxiosError)
 
     expect(error2 instanceof AlunaError).to.be.ok
     expect(
@@ -290,7 +261,7 @@ describe('BittrexHttp', () => {
       isAxiosError: true,
     }
 
-    const error3 = BittrexHttp.handleRequestError(axiosError3 as AxiosError)
+    const error3 = BittrexHttpMod.handleRequestError(axiosError3 as AxiosError)
 
     expect(error3 instanceof AlunaError).to.be.ok
     expect(
@@ -302,7 +273,7 @@ describe('BittrexHttp', () => {
       message: dummyError,
     }
 
-    const error4 = BittrexHttp.handleRequestError(error as Error)
+    const error4 = BittrexHttpMod.handleRequestError(error as Error)
 
     expect(error4 instanceof AlunaError).to.be.ok
     expect(error4.message).to.be.eq(dummyError)
@@ -310,7 +281,7 @@ describe('BittrexHttp', () => {
 
     const unknown = {}
 
-    const error5 = BittrexHttp.handleRequestError(unknown as any)
+    const error5 = BittrexHttpMod.handleRequestError(unknown as any)
 
     expect(error5 instanceof AlunaError).to.be.ok
     expect(
@@ -371,7 +342,7 @@ describe('BittrexHttp', () => {
       contentHash,
     ].join('')
 
-    const signedHash = BittrexHttp.generateAuthHeader({
+    const signedHash = BittrexHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -413,7 +384,7 @@ describe('BittrexHttp', () => {
     expect(signedHash['Api-Timestamp']).to.deep.eq(timestampMock)
     expect(signedHash['Api-Signature']).to.deep.eq(signedHeader)
 
-    const signedHash2 = BittrexHttp.generateAuthHeader({
+    const signedHash2 = BittrexHttpMod.generateAuthHeader({
       keySecret,
       path,
       verb,
@@ -441,7 +412,27 @@ describe('BittrexHttp', () => {
     ).to.deep.eq(keySecret.key)
     expect(signedHash2['Api-Timestamp']).to.deep.eq(timestampMock)
 
-    Sinon.restore()
+  })
+
+  it('should validate cache usage', async () => {
+
+    mockAxiosRequest(dummyData)
+
+    await validateCache({
+      cacheResult: dummyData,
+      callMethod: async () => {
+
+        const params: IAlunaHttpPublicParams = {
+          url: dummyUrl,
+          body: dummyBody,
+          verb: AlunaHttpVerbEnum.GET,
+        }
+
+        await BittrexHttp.publicRequest(params)
+
+      },
+
+    })
 
   })
 

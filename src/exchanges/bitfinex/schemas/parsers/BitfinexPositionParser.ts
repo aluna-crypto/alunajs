@@ -1,10 +1,12 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
 import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bitfinex } from '../../Bitfinex'
-import { BitfinexSideAdapter } from '../../enums/adapters/BitfinexSideAdapter'
+import { BitfinexPositionSideAdapter } from '../../enums/adapters/BitfinexPositionSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../enums/BitfinexPositionStatusEnum'
 import { IBitfinexPositionSchema } from '../IBitfinexPositionSchema'
+import { BitfinexSymbolParser } from './BitfinexSymbolParser'
 
 
 
@@ -39,29 +41,28 @@ export class BitfinexPositionParser {
       meta,
     ] = rawPosition
 
+    let {
+      baseSymbolId,
+      quoteSymbolId,
+    } = BitfinexSymbolParser.splitSymbolPair({ symbolPair: symbol })
 
-    let baseSymbolId: string
-    let quoteSymbolId: string
+    const symbolMappings = Bitfinex.settings.mappings
 
-    const spliter = symbol.indexOf(':')
+    baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseSymbolId,
+      symbolMappings,
+    })
 
-    if (spliter >= 0) {
-
-      baseSymbolId = symbol.slice(1, spliter)
-      quoteSymbolId = symbol.slice(spliter + 1)
-
-    } else {
-
-      baseSymbolId = symbol.slice(1, 4)
-      quoteSymbolId = symbol.slice(4)
-
-    }
+    quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteSymbolId,
+      symbolMappings,
+    })
 
     const computedStatus = status === BitfinexPositionStatusEnum.ACTIVE
       ? AlunaPositionStatusEnum.OPEN
       : AlunaPositionStatusEnum.CLOSED
 
-    const side = BitfinexSideAdapter.translateToAluna({
+    const side = BitfinexPositionSideAdapter.translateToAluna({
       amount,
     })
 

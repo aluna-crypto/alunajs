@@ -1,3 +1,4 @@
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { Log } from '../../src/lib/Log'
@@ -11,5 +12,6 @@ Log.setSettings({
 beforeEach(() => {
 
   ImportMock.restore()
+  Sinon.restore()
 
 })

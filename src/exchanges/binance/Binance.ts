@@ -7,7 +7,6 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BinanceSpecs } from './BinanceSpecs'
 import { BinanceBalanceModule } from './modules/BinanceBalanceModule'
 import { BinanceKeyModule } from './modules/BinanceKeyModule'
@@ -33,7 +32,6 @@ export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implem
 
     constructor (params: {
       keySecret: IAlunaKeySecretSchema,
-      settings?: IAlunaSettingsSchema,
     }) {
 
       super(params)

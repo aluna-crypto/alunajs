@@ -5,21 +5,25 @@ import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaAdaptersErrorCodes } from '../../../lib/errors/AlunaAdaptersErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import { BitfinexOrderReadModule } from './BitfinexOrderReadModule'
 
@@ -52,7 +56,7 @@ type TBitfinexEditCancelOrderResponse = [
 
 
 interface IPlaceOrEditOrderParams extends IAlunaOrderPlaceParams {
-  id?: string | number
+  id?: string
 }
 
 
@@ -61,22 +65,33 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       type,
       account,
     } = params
 
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = this.assembleBodyRequest({
       action: 'place',
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitfinexLog.info('placing new order for Bitfinex')
 
@@ -86,11 +101,16 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     try {
 
-      const response = await privateRequest<TBitfinexPlaceOrderResponse>({
+      const {
+        data: response,
+        apiRequestCount: requestCount,
+      } = await privateRequest<TBitfinexPlaceOrderResponse>({
         url: 'https://api.bitfinex.com/v2/auth/w/order/submit',
         body,
         keySecret: this.exchange.keySecret,
       })
+
+      apiRequestCount += requestCount
 
       const [
         _mts,
@@ -116,6 +136,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } catch (err) {
 
+      const { message, metadata } = err
+
       let {
         code,
         httpStatusCode,
@@ -129,10 +151,10 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       }
 
       const error = new AlunaError({
-        message: err.message,
+        message,
         code,
         httpStatusCode,
-        metadata: err.metadata,
+        metadata,
       })
 
       BitfinexLog.error(error)
@@ -141,28 +163,49 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     }
 
-    const parsedOrder = await this.parse({ rawOrder })
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
+  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns> {
+
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     const {
       type,
       account,
     } = params
 
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = this.assembleBodyRequest({
       action: 'edit',
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitfinexLog.info('editing order for Bitfinex')
 
@@ -172,11 +215,16 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     try {
 
-      const response = await privateRequest<TBitfinexEditCancelOrderResponse>({
+      const {
+        data: response,
+        apiRequestCount: requestCount,
+      } = await privateRequest<TBitfinexEditCancelOrderResponse>({
         url: 'https://api.bitfinex.com/v2/auth/w/order/update',
         body,
         keySecret: this.exchange.keySecret,
       })
+
+      apiRequestCount += requestCount
 
       const [
         _mts,
@@ -203,6 +251,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } catch (err) {
 
+      const { httpStatusCode, metadata } = err
 
       let {
         code,
@@ -223,8 +272,8 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       const error = new AlunaError({
         message,
         code,
-        metadata: err.metadata,
-        httpStatusCode: err.httpStatusCode,
+        metadata,
+        httpStatusCode,
       })
 
       BitfinexLog.error(error)
@@ -233,13 +282,23 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     }
 
-    return this.parse({ rawOrder })
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     const { id } = params
 
@@ -247,13 +306,20 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     const { privateRequest } = BitfinexHttp
 
+    let apiRequestCount = 0
+
     try {
 
-      const response = await privateRequest<TBitfinexPlaceOrderResponse>({
+      const {
+        data: response,
+        apiRequestCount: requestCount,
+      } = await privateRequest<TBitfinexPlaceOrderResponse>({
         url: 'https://api.bitfinex.com/v2/auth/w/order/cancel',
-        body: { id },
+        body: { id: Number(id) },
         keySecret: this.exchange.keySecret,
       })
+
+      apiRequestCount += requestCount
 
       const [
         _mts,
@@ -290,7 +356,19 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     }
 
-    return this.get(params)
+    const {
+      order: parsedOrder,
+      apiRequestCount: getCount,
+    } = await this.get(params)
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -322,12 +400,10 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
       from: type,
     })
 
-    const translatedAmount = BitfinexSideAdapter.translateToBitfinex({
+    const translatedAmount = BitfinexOrderSideAdapter.translateToBitfinex({
       amount: Number(amount),
       side,
     })
-
-    const requiredParams: Record<string, any> = {}
 
     let price: undefined | string
     let priceAuxLimit: undefined | string
@@ -335,39 +411,21 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
     switch (type) {
 
       case AlunaOrderTypesEnum.LIMIT:
-        requiredParams.rate = rate
-        price = rate?.toString()
+        price = rate!.toString()
         break
 
       case AlunaOrderTypesEnum.STOP_MARKET:
-        requiredParams.stopRate = stopRate
-        price = stopRate?.toString()
+        price = stopRate!.toString()
         break
 
       case AlunaOrderTypesEnum.STOP_LIMIT:
-        requiredParams.stopRate = stopRate
-        requiredParams.limitRate = limitRate
-        price = stopRate?.toString()
-        priceAuxLimit = limitRate?.toString()
+        price = stopRate!.toString()
+        priceAuxLimit = limitRate!.toString()
         break
 
       default:
 
     }
-
-    Object.entries(requiredParams).forEach(([key, value]) => {
-
-      if (!value) {
-
-        throw new AlunaError({
-          httpStatusCode: 200,
-          message: `'${key}' param is required to ${action} ${type} orders`,
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-        })
-
-      }
-
-    })
 
     const body = {
       amount: translatedAmount,
@@ -384,7 +442,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     } else {
 
-      Object.assign(body, { id })
+      Object.assign(body, { id: Number(id) })
 
     }
 

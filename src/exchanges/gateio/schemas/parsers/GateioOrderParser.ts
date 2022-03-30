@@ -1,8 +1,9 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
+import { GateioOrderSideAdapter } from '../../enums/adapters/GateioOrderSideAdapter'
 import { GateioOrderTypeAdapter } from '../../enums/adapters/GateioOrderTypeAdapter'
-import { GateioSideAdapter } from '../../enums/adapters/GateioSideAdapter'
 import { GateioStatusAdapter } from '../../enums/adapters/GateioStatusAdapter'
 import { Gateio } from '../../Gateio'
 import { IGateioOrderSchema } from '../IGateioOrderSchema'
@@ -32,14 +33,22 @@ export class GateioOrderParser {
       left,
     } = rawOrder
 
-    const amount = parseFloat(quantity)
-    const leftToFill = parseFloat(left)
-    const rate = parseFloat(price)
+    const amount = Number(quantity)
+    const leftToFill = Number(left)
+    const rate = Number(price)
     const total = amount * rate
-    const splittedMarketSymbol = currency_pair.split('_')
-    const baseSymbolId = splittedMarketSymbol[0]
-    const quoteSymbolId = splittedMarketSymbol[1]
     const createdAt = new Date(create_time_ms)
+    const [baseCurrency, quoteCurrency] = currency_pair.split('_')
+
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Gateio.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Gateio.settings.mappings,
+    })
 
     const orderStatus = GateioStatusAdapter.translateToAluna(
       { from: status, leftToFill, amount },
@@ -70,7 +79,7 @@ export class GateioOrderParser {
       baseSymbolId,
       quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      side: GateioSideAdapter.translateToAluna({ from: side }),
+      side: GateioOrderSideAdapter.translateToAluna({ from: side }),
       status: orderStatus,
       type: GateioOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),

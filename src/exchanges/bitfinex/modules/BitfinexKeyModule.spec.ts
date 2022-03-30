@@ -5,10 +5,8 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import {
-  IAlunaKeyPermissionSchema,
-  IAlunaKeySchema,
-} from '../../../lib/schemas/IAlunaKeySchema'
+import { IAlunaKeyFetchDetailsReturns } from '../../../lib/modules/IAlunaKeyModule'
+import { IAlunaKeyPermissionSchema } from '../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { IBitfinexPermissionsScope } from '../schemas/IBitfinexKeySchema'
 import {
@@ -46,19 +44,31 @@ describe('alunaPermissions', () => {
     const resquestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve(BITFINEX_RAW_KEY),
+      Promise.resolve({
+        data: BITFINEX_RAW_KEY,
+        apiRequestCount: 1,
+      }),
     )
 
-    resquestMock.onFirstCall().returns(BITFINEX_RAW_KEY)
-    resquestMock.onSecondCall().returns(['userId'])
+    resquestMock.onFirstCall().returns({
+      data: BITFINEX_RAW_KEY,
+      apiRequestCount: 1,
+    })
+    resquestMock.onSecondCall().returns({
+      data: ['userId'],
+      apiRequestCount: 1,
+    })
 
     const parseDetailsMock = ImportMock.mockFunction(
       bitfinexKeyModule,
       'parseDetails',
-      Promise.resolve(BITFINEX_PARSED_KEY),
+      {
+        key: BITFINEX_PARSED_KEY,
+        apiRequestCount: 1,
+      },
     )
 
-    const keyDetails = await bitfinexKeyModule.fetchDetails()
+    const { key: keyDetails } = await bitfinexKeyModule.fetchDetails()
 
     expect(resquestMock.callCount).to.be.eq(2)
     expect(parseDetailsMock.callCount).to.be.eq(1)
@@ -72,7 +82,7 @@ describe('alunaPermissions', () => {
     mockKeySecret()
 
     let error: AlunaError | undefined
-    let result: IAlunaKeySchema | undefined
+    let result: IAlunaKeyFetchDetailsReturns | undefined
     const errMsg = 'Something went wrong'
 
     const resquestMock = ImportMock.mockFunction(
@@ -111,7 +121,7 @@ describe('alunaPermissions', () => {
     const error2 = 'apikey: digest invalid'
 
     let error: AlunaError | undefined
-    let result: IAlunaKeySchema | undefined
+    let result: IAlunaKeyFetchDetailsReturns | undefined
 
     const resquestMock = ImportMock.mockFunction(
       BitfinexHttp,
@@ -173,10 +183,13 @@ describe('alunaPermissions', () => {
     const parsePermissionsMock = ImportMock.mockFunction(
       bitfinexKeyModule,
       'parsePermissions',
-      BITFINEX_PARSED_KEY.permissions,
+      {
+        key: BITFINEX_PARSED_KEY.permissions,
+        apiRequestCount: 1,
+      },
     )
 
-    const alunaKey = bitfinexKeyModule.parseDetails({
+    const { key: alunaKey } = bitfinexKeyModule.parseDetails({
       rawKey: BITFINEX_RAW_KEY,
     })
 
@@ -199,9 +212,12 @@ describe('alunaPermissions', () => {
       ['withdraw', 1, 1],
     ]
 
-    parsePermissionsMock.returns(newAlunaPermissions)
+    parsePermissionsMock.returns({
+      key: newAlunaPermissions,
+      apiRequestCount: 1,
+    })
 
-    const alunaKey2 = bitfinexKeyModule.parseDetails({
+    const { key: alunaKey2 } = bitfinexKeyModule.parseDetails({
       rawKey: {
         accountId,
         permissionsScope: newPermissionsScope,
@@ -227,16 +243,15 @@ describe('alunaPermissions', () => {
     const accountId = 'userId'
 
     let permissionsScope: IBitfinexPermissionsScope = BITFINEX_PERMISSIONS_SCOPE
-    let alunaPermissions: IAlunaKeyPermissionSchema
 
-    alunaPermissions = bitfinexKeyModule.parsePermissions({
+    const { key: alunaPermissions1 } = bitfinexKeyModule.parsePermissions({
       rawKey: {
         accountId,
         permissionsScope,
       },
     })
 
-    expect(alunaPermissions).to.deep.eq(BITFINEX_PARSED_KEY.permissions)
+    expect(alunaPermissions1).to.deep.eq(BITFINEX_PARSED_KEY.permissions)
 
 
     // new mocking
@@ -249,14 +264,14 @@ describe('alunaPermissions', () => {
       ['withdraw', 0, 1], // can withdraw
     ]
 
-    alunaPermissions = bitfinexKeyModule.parsePermissions({
+    const { key: alunaPermissions2 } = bitfinexKeyModule.parsePermissions({
       rawKey: {
         accountId,
         permissionsScope,
       },
     })
 
-    expect(alunaPermissions).to.deep.eq({
+    expect(alunaPermissions2).to.deep.eq({
       read: true,
       trade: false,
       withdraw: true,
@@ -272,13 +287,13 @@ describe('alunaPermissions', () => {
       ['withdraw', 0, 0], // cannot withdraw
     ]
 
-    alunaPermissions = bitfinexKeyModule.parsePermissions({
+    const { key: alunaPermissions3 } = bitfinexKeyModule.parsePermissions({
       rawKey: {
         accountId,
         permissionsScope,
       },
     })
-    expect(alunaPermissions).to.deep.eq({
+    expect(alunaPermissions3).to.deep.eq({
       read: false,
       trade: true,
       withdraw: false,
@@ -294,14 +309,14 @@ describe('alunaPermissions', () => {
       ['withdraw', 0, 0], // cannot withdraw
     ]
 
-    alunaPermissions = bitfinexKeyModule.parsePermissions({
+    const { key: alunaPermissions4 } = bitfinexKeyModule.parsePermissions({
       rawKey: {
         accountId,
         permissionsScope,
       },
     })
 
-    expect(alunaPermissions).to.deep.eq({
+    expect(alunaPermissions4).to.deep.eq({
       read: false,
       trade: false,
       withdraw: false,

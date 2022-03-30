@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
+import { BittrexOrderSideAdapter } from '../../enums/adapters/BittrexOrderSideAdapter'
 import { BittrexOrderTypeAdapter } from '../../enums/adapters/BittrexOrderTypeAdapter'
-import { BittrexSideAdapter } from '../../enums/adapters/BittrexSideAdapter'
 import { BittrexStatusAdapter } from '../../enums/adapters/BittrexStatusAdapter'
 import {
   BITTREX_RAW_LIMIT_ORDER,
@@ -17,6 +18,12 @@ describe('BittrexOrderParser', () => {
 
   it('should parse limit Bittrex order just fine', async () => {
 
+    const translatedSymbolId = 'ETH'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping({
+      returnSymbol: translatedSymbolId,
+    })
+
     const rawOrder: IBittrexOrderSchema = BITTREX_RAW_LIMIT_ORDER
 
     const parsedOrder = BittrexOrderParser.parse({
@@ -29,9 +36,12 @@ describe('BittrexOrderParser', () => {
     const rawType = rawOrder.type
     const rawFillQty = rawOrder.fillQuantity
     const rawStatus = rawOrder.status
+    const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
 
     expect(parsedOrder.id).to.be.eq(rawOrder.id)
     expect(parsedOrder.symbolPair).to.be.eq(rawOrder.marketSymbol)
+    expect(parsedOrder.baseSymbolId).to.be.eq(translatedSymbolId)
+    expect(parsedOrder.quoteSymbolId).to.be.eq(translatedSymbolId)
     expect(parsedOrder.total).to.be.eq(
       parseFloat(rawOriginalQuantity) * parseFloat(rawPrice),
     )
@@ -40,7 +50,7 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(BittrexOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(BittrexStatusAdapter.translateToAluna(
         {
@@ -53,6 +63,16 @@ describe('BittrexOrderParser', () => {
       .to.be.eq(BittrexOrderTypeAdapter.translateToAluna({ from: rawType }))
     expect(parsedOrder.placedAt.getTime())
       .to.be.eq(new Date(rawOrder.createdAt).getTime())
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: {},
+    })
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: {},
+    })
 
   })
 
@@ -83,7 +103,7 @@ describe('BittrexOrderParser', () => {
     expect(parsedOrder.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
 
     expect(parsedOrder.side)
-      .to.be.eq(BittrexSideAdapter.translateToAluna({ from: rawSide }))
+      .to.be.eq(BittrexOrderSideAdapter.translateToAluna({ from: rawSide }))
     expect(parsedOrder.status)
       .to.be.eq(BittrexStatusAdapter.translateToAluna(
         { fillQuantity: rawFillQty, quantity: rawQty, from: rawStatus },

@@ -7,9 +7,14 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
@@ -21,36 +26,62 @@ import { BitmexMarketModule } from './BitmexMarketModule'
 
 export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IBitmexOrderSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IBitmexOrderSchema>> {
 
     BitmexLog.info('fetching Bitmex open orders')
 
     const { privateRequest } = BitmexHttp
 
-    const rawOrders = await privateRequest<IBitmexOrderSchema[]>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/order`,
       keySecret: this.exchange.keySecret,
       body: { filter: { open: true } },
     })
 
-    return rawOrders
+    return {
+      rawOrders,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = await this.parseMany({ rawOrders })
+    const {
+      rawOrders,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IBitmexOrderSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -58,14 +89,17 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     BitmexLog.info('fetching Bitmex order status')
 
-    const orderRes = await BitmexHttp.privateRequest<IBitmexOrderSchema[]>({
+    const {
+      data: orderResponse,
+      apiRequestCount,
+    } = await BitmexHttp.privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/order`,
       keySecret: this.exchange.keySecret,
       body: { filter: { orderID: id } },
     })
 
-    if (!orderRes.length) {
+    if (!orderResponse.length) {
 
       const alunaError = new AlunaError({
         code: AlunaOrderErrorCodes.NOT_FOUND,
@@ -78,23 +112,46 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     }
 
-    return orderRes[0]
+    return {
+      rawOrder: orderResponse[0],
+      apiRequestCount,
+    }
 
   }
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+    : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = await this.parse({ rawOrder })
+    const {
+      rawOrder,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+        + getRawCount
+        + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async parse (params: {
     rawOrder: IBitmexOrderSchema,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const {
       rawOrder,
@@ -102,9 +159,16 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const { symbol } = rawOrder
 
-    const parsedMarket = await BitmexMarketModule.get({
-      symbolPair: symbol,
+    let apiRequestCount = 0
+
+    const {
+      market: parsedMarket,
+      apiRequestCount: getCount,
+    } = await BitmexMarketModule.get({
+      id: symbol,
     })
+
+    apiRequestCount += 1
 
     if (!parsedMarket) {
 
@@ -133,21 +197,35 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
       instrument: instrument!,
     })
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async parseMany (params: {
     rawOrders: IBitmexOrderSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
 
+    let apiRequestCount = 0
+
     const promises = map(rawOrders, async (rawOrder) => {
 
-      const parsedOrder = await this.parse({
+      const {
+        order: parsedOrder,
+        apiRequestCount: parseCount,
+      } = await this.parse({
         rawOrder,
       })
+
+      apiRequestCount += parseCount + 1
 
       return parsedOrder
 
@@ -157,7 +235,10 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     BitmexLog.info(`parsed ${parsedOrders.length} orders for Bitmex`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 

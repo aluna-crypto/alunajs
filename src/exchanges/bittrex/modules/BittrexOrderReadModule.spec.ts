@@ -4,9 +4,9 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
@@ -46,10 +46,15 @@ describe('BittrexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      bittrexRawOrders,
+      { data: bittrexRawOrders, apiRequestCount: 1 },
     )
 
-    const rawOrders = await bittrexOrderReadModule.listRaw()
+    const {
+      rawOrders,
+      apiRequestCount,
+    } = await bittrexOrderReadModule.listRaw()
+
+    expect(apiRequestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -109,16 +114,16 @@ describe('BittrexOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'listRaw',
-      ['raw-orders'],
+      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'parseMany',
-      bittrexParsedOrders,
+      { orders: bittrexParsedOrders, apiRequestCount: 1 },
     )
 
-    const parsedOrders = await bittrexOrderReadModule.list()
+    const { orders: parsedOrders } = await bittrexOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -176,13 +181,13 @@ describe('BittrexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      BITTREX_RAW_LIMIT_ORDER,
+      { data: BITTREX_RAW_LIMIT_ORDER, apiRequestCount: 1 },
     )
 
     const symbolPair = 'symbol'
     const id = 'id'
 
-    const rawOrder = await bittrexOrderReadModule.getRaw({
+    const { rawOrder } = await bittrexOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -207,13 +212,13 @@ describe('BittrexOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'getRaw',
-      'rawOrder',
+      { rawOrder: 'rawOrder', apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'parse',
-      BITTREX_PARSED_ORDER,
+      { order: BITTREX_PARSED_ORDER, apiRequestCount: 1 },
     )
 
     const params = {
@@ -221,7 +226,7 @@ describe('BittrexOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const parsedOrder = await bittrexOrderReadModule.get(params)
+    const { order: parsedOrder } = await bittrexOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -231,7 +236,7 @@ describe('BittrexOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -244,13 +249,12 @@ describe('BittrexOrderReadModule', () => {
     const parseMock = ImportMock.mockFunction(
       BittrexOrderParser,
       'parse',
+      BITTREX_PARSED_ORDER,
     )
 
-
-    parseMock
-      .onFirstCall().returns(BITTREX_PARSED_ORDER)
-
-    const parsedOrder1 = await bittrexOrderReadModule.parse({ rawOrder })
+    const {
+      order: parsedOrder1,
+    } = await bittrexOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder })).to.be.ok
@@ -268,7 +272,7 @@ describe('BittrexOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.LONG)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.BUY)
 
   })
 
@@ -286,11 +290,15 @@ describe('BittrexOrderReadModule', () => {
 
     parsedOrders.forEach((parsed, index) => {
 
-      parseMock.onCall(index).returns(Promise.resolve(parsed))
+      parseMock
+        .onCall(index)
+        .returns(Promise.resolve(parsed))
 
     })
 
-    const parsedManyResp = await bittrexOrderReadModule.parseMany({ rawOrders })
+    const {
+      orders: parsedManyResp,
+    } = await bittrexOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(1)
     expect(parseMock.callCount).to.be.eq(1)

@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -37,10 +36,16 @@ describe('BinanceMarketModule', () => {
     )
 
     binanceSymbolModuleMock
-      .onFirstCall().returns(Promise.resolve(rawSymbolsPairs))
+      .onFirstCall().returns(Promise.resolve({
+        rawSymbols: rawSymbolsPairs,
+        apiRequestCount: 1,
+      }))
 
     requestMock
-      .onFirstCall().returns(Promise.resolve(rawMarkets))
+      .onFirstCall().returns(Promise.resolve({
+        data: rawMarkets,
+        apiRequestCount: 1,
+      }))
 
 
     const currecyMarketParserMock = ImportMock.mockFunction(
@@ -50,8 +55,12 @@ describe('BinanceMarketModule', () => {
     )
 
 
-    const response = await BinanceMarketModule.listRaw()
+    const {
+      rawMarkets: response,
+      apiRequestCount,
+    } = await BinanceMarketModule.listRaw()
 
+    expect(apiRequestCount).to.be.eq(4)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(binanceSymbolModuleMock.callCount).to.be.eq(1)
@@ -78,16 +87,16 @@ describe('BinanceMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceMarketModule,
       'listRaw',
-      rawListMock,
+      { rawMarkets: rawListMock, apiRequestCount: 0 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceMarketModule,
       'parseMany',
-      BINANCE_PARSED_MARKET,
+      { markets: BINANCE_PARSED_MARKET, apiRequestCount: 0 },
     )
 
-    const parsedMarkets = await BinanceMarketModule.list()
+    const { markets: parsedMarkets } = await BinanceMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -115,7 +124,7 @@ describe('BinanceMarketModule', () => {
 
     const rawMarketWithCurrency = BINANCE_RAW_MARKETS_WITH_CURRENCY[0]
 
-    const market: IAlunaMarketSchema = BinanceMarketModule.parse({
+    const { market } = BinanceMarketModule.parse({
       rawMarket: rawMarketWithCurrency,
     })
 
@@ -177,14 +186,13 @@ describe('BinanceMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BINANCE_PARSED_MARKET[0])
+      .returns({ market: BINANCE_PARSED_MARKET[0], apiRequestCount: 0 })
       .onSecondCall()
-      .returns(BINANCE_PARSED_MARKET[1])
+      .returns({ market: BINANCE_PARSED_MARKET[1], apiRequestCount: 0 })
       .onThirdCall()
-      .returns(BINANCE_PARSED_MARKET[2])
+      .returns({ market: BINANCE_PARSED_MARKET[2], apiRequestCount: 0 })
 
-
-    const markets: IAlunaMarketSchema[] = BinanceMarketModule.parseMany({
+    const { markets } = BinanceMarketModule.parseMany({
       rawMarkets: BINANCE_RAW_MARKETS_WITH_CURRENCY,
     })
 

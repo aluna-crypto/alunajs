@@ -19,23 +19,16 @@ describe('Bittrex', () => {
 
     const key = 'asdf'
     const secret = 'qwer'
-    const referralCode = 'xyz'
 
     const bittrex = new Bittrex({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(bittrex.keySecret.key).to.eq(key)
     expect(bittrex.keySecret.secret).to.eq(secret)
-
-    expect(bittrex.settings).to.be.ok
-    expect(bittrex.settings?.referralCode).to.eq(referralCode)
 
     expect(bittrex.key).to.be.ok
     expect(bittrex.balance).to.be.ok

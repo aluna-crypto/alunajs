@@ -6,12 +6,20 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaPositionCloseParams,
+  IAlunaPositionCloseReturns,
   IAlunaPositionGetLeverageParams,
+  IAlunaPositionGetLeverageReturns,
   IAlunaPositionGetParams,
+  IAlunaPositionGetRawReturns,
+  IAlunaPositionGetReturns,
+  IAlunaPositionListRawReturns,
+  IAlunaPositionListReturns,
   IAlunaPositionModule,
+  IAlunaPositionParseManyReturns,
+  IAlunaPositionParseReturns,
   IAlunaPositionSetLeverageParams,
+  IAlunaPositionSetLeverageReturns,
 } from '../../../lib/modules/IAlunaPositionModule'
-import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
@@ -24,44 +32,91 @@ import { BitmexMarketModule } from './BitmexMarketModule'
 
 export class BitmexPositionModule extends AAlunaModule implements Required<IAlunaPositionModule> {
 
-  async list (): Promise<any[]> {
+  async list (): Promise<IAlunaPositionListReturns> {
 
-    const rawPositions = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedPositions = this.parseMany({ rawPositions })
+    const {
+      rawPositions,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
 
-    return parsedPositions
+    apiRequestCount += 1
+
+    const {
+      positions: parsedPositions,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawPositions })
+
+    apiRequestCount += 1
+
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      positions: parsedPositions,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  async listRaw (): Promise<any[]> {
+  async listRaw ()
+    : Promise<IAlunaPositionListRawReturns> {
 
     const { privateRequest } = BitmexHttp
 
-    const rawPositions = await privateRequest<any[]>({
+    const {
+      data: rawPositions,
+      apiRequestCount,
+    } = await privateRequest<IBitmexPositionSchema[]>({
       url: `${PROD_BITMEX_URL}/position`,
       keySecret: this.exchange.keySecret,
       verb: AlunaHttpVerbEnum.GET,
       body: { filter: { isOpen: true } },
     })
 
-    return rawPositions
+    return {
+      rawPositions,
+      apiRequestCount,
+    }
 
   }
 
-  async get (params: IAlunaPositionGetParams): Promise<IAlunaPositionSchema> {
+  async get (params: IAlunaPositionGetParams)
+    : Promise<IAlunaPositionGetReturns> {
 
-    const rawPosition = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedPosition = await this.parse({ rawPosition })
+    const {
+      rawPosition,
+      apiRequestCount: getRawCount,
+    } = await this.getRaw(params)
 
-    return parsedPosition
+    apiRequestCount += 1
+
+    const {
+      position: parsedPosition,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawPosition })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+          + getRawCount
+          + parseCount
+
+    return {
+      position: parsedPosition,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async getRaw (
     params: IAlunaPositionGetParams,
-  ): Promise<IBitmexPositionSchema> {
+  ): Promise<IAlunaPositionGetRawReturns> {
 
     const {
       symbolPair,
@@ -83,20 +138,28 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { privateRequest } = BitmexHttp
 
-    const [rawPosition] = await privateRequest<Array<IBitmexPositionSchema>>({
+    const {
+      data,
+      apiRequestCount,
+    } = await privateRequest<Array<IBitmexPositionSchema>>({
       url: `${PROD_BITMEX_URL}/position`,
       body: { filter: { symbol: symbolPair } },
       keySecret: this.exchange.keySecret,
       verb: AlunaHttpVerbEnum.GET,
     })
 
-    return rawPosition
+    const [rawPosition] = data
+
+    return {
+      rawPosition,
+      apiRequestCount,
+    }
 
   }
 
   async close (
     params: IAlunaPositionCloseParams,
-  ): Promise<IAlunaPositionSchema> {
+  ): Promise<IAlunaPositionCloseReturns> {
 
     const { symbolPair } = params
 
@@ -116,31 +179,56 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { privateRequest } = BitmexHttp
 
-    await privateRequest<IBitmexOrderSchema>({
+    let apiRequestCount = 0
+
+    const {
+      apiRequestCount: requestCount,
+    } = await privateRequest<IBitmexOrderSchema>({
       url: `${PROD_BITMEX_URL}/order`,
       body: { execInst: 'Close', symbol: symbolPair },
       keySecret: this.exchange.keySecret,
     })
 
-    const parsedPosition = await this.get({
+    apiRequestCount += 1
+
+    const {
+      position: parsedPosition,
+      apiRequestCount: getCount,
+    } = await this.get({
       symbolPair,
     })
 
-    return parsedPosition
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + requestCount
+      + getCount
+
+    return {
+      position: parsedPosition,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async parse (params: {
     rawPosition: IBitmexPositionSchema,
-  }): Promise<IAlunaPositionSchema> {
+  }): Promise<IAlunaPositionParseReturns> {
 
     const { rawPosition } = params
 
     const { symbol } = rawPosition
 
-    const parsedMarket = await BitmexMarketModule.get({
-      symbolPair: symbol,
+    let apiRequestCount = 0
+
+    const {
+      market: parsedMarket,
+      apiRequestCount: getCount,
+    } = await BitmexMarketModule.get({
+      id: symbol,
     })
+
+    apiRequestCount += 1
 
     if (!parsedMarket) {
 
@@ -169,21 +257,35 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
       instrument: instrument!,
     })
 
-    return parsedPosition
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + getCount
+
+    return {
+      position: parsedPosition,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async parseMany (params: {
     rawPositions: any[],
-  }): Promise<IAlunaPositionSchema[]> {
+  }): Promise<IAlunaPositionParseManyReturns> {
 
     const { rawPositions } = params
 
+    let apiRequestCount = 0
+
     const promises = map(rawPositions, async (rawPosition) => {
 
-      const parsedPosition = await this.parse({
+      const {
+        position: parsedPosition,
+        apiRequestCount: parseCount,
+      } = await this.parse({
         rawPosition,
       })
+
+      apiRequestCount += parseCount + 1
 
       return parsedPosition
 
@@ -193,32 +295,47 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     BitmexLog.info(`parsed ${parsedPositions.length} for Bitmex`)
 
-    return parsedPositions
+    return {
+      positions: parsedPositions,
+      apiRequestCount,
+    }
 
   }
 
   async getLeverage (
     params: IAlunaPositionGetLeverageParams,
-  ): Promise<number> {
+  ): Promise<IAlunaPositionGetLeverageReturns> {
 
     const { symbolPair } = params
 
+    let apiRequestCount = 0
+
     const {
-      leverage,
-      crossMargin,
+      rawPosition: {
+        leverage,
+        crossMargin,
+      },
+      apiRequestCount: getRawCount,
     } = await this.getRaw({ symbolPair })
+
+    apiRequestCount += 1
 
     const computedLeverage = crossMargin
       ? 0
       : leverage
 
-    return computedLeverage
+    const totalApiRequestCount = apiRequestCount + getRawCount
+
+    return {
+      leverage: computedLeverage,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   async setLeverage (
     params: IAlunaPositionSetLeverageParams,
-  ): Promise<number> {
+  ): Promise<IAlunaPositionSetLeverageReturns> {
 
     const {
       leverage,
@@ -228,14 +345,20 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
     const { privateRequest } = BitmexHttp
 
     const {
-      leverage: settedLeverage,
+      data: {
+        leverage: settedLeverage,
+      },
+      apiRequestCount,
     } = await privateRequest<IBitmexPositionSchema>({
       url: `${PROD_BITMEX_URL}/position/leverage`,
       body: { symbol: symbolPair, leverage },
       keySecret: this.exchange.keySecret,
     })
 
-    return settedLeverage
+    return {
+      leverage: settedLeverage,
+      apiRequestCount,
+    }
 
   }
 

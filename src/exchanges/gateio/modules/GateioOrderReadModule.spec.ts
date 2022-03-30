@@ -4,9 +4,9 @@ import { ImportMock } from 'ts-mock-imports'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioOrderTypeEnum } from '../enums/GateioOrderTypeEnum'
@@ -46,14 +46,17 @@ describe('GateioOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      [
-        {
-          orders: gateioRawOrders,
-        },
-      ],
+      {
+        data: [
+          {
+            orders: gateioRawOrders,
+          },
+        ],
+        apiRequestCount: 1,
+      },
     )
 
-    const rawOrders = await gateioOrderReadModule.listRaw()
+    const { rawOrders } = await gateioOrderReadModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -128,16 +131,16 @@ describe('GateioOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'listRaw',
-      ['raw-orders'],
+      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'parseMany',
-      gateioParsedOrders,
+      { orders: gateioParsedOrders, apiRequestCount: 1 },
     )
 
-    const parsedOrders = await gateioOrderReadModule.list()
+    const { orders: parsedOrders } = await gateioOrderReadModule.list()
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -195,13 +198,13 @@ describe('GateioOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      GATEIO_RAW_ORDER,
+      { data: GATEIO_RAW_ORDER, apiRequestCount: 1 },
     )
 
     const symbolPair = 'symbol'
     const id = 'id'
 
-    const rawOrder = await gateioOrderReadModule.getRaw({
+    const { rawOrder } = await gateioOrderReadModule.getRaw({
       id,
       symbolPair,
     })
@@ -229,13 +232,13 @@ describe('GateioOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'getRaw',
-      'rawOrder',
+      { rawOrder: 'rawOrder', apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'parse',
-      GATEIO_PARSED_ORDER,
+      { order: GATEIO_PARSED_ORDER, apiRequestCount: 1 },
     )
 
     const params = {
@@ -243,7 +246,7 @@ describe('GateioOrderReadModule', () => {
       symbolPair: 'symbolPair',
     }
 
-    const parsedOrder = await gateioOrderReadModule.get(params)
+    const { order: parsedOrder } = await gateioOrderReadModule.get(params)
 
     expect(rawOrderMock.callCount).to.be.eq(1)
     expect(rawOrderMock.calledWith(params)).to.be.ok
@@ -253,7 +256,7 @@ describe('GateioOrderReadModule', () => {
 
     expect(parsedOrder.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder.side).to.be.eq(AlunaSideEnum.SHORT)
+    expect(parsedOrder.side).to.be.eq(AlunaOrderSideEnum.SELL)
 
   })
 
@@ -271,7 +274,9 @@ describe('GateioOrderReadModule', () => {
     parseMock
       .onFirstCall().returns(GATEIO_PARSED_ORDER)
 
-    const parsedOrder1 = await gateioOrderReadModule.parse({ rawOrder })
+    const {
+      order: parsedOrder1,
+    } = await gateioOrderReadModule.parse({ rawOrder })
 
     expect(parseMock.callCount).to.be.eq(1)
     expect(parseMock.calledWith({ rawOrder })).to.be.ok
@@ -289,7 +294,7 @@ describe('GateioOrderReadModule', () => {
     expect(parsedOrder1.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
     expect(parsedOrder1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedOrder1.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(parsedOrder1.side).to.be.eq(AlunaSideEnum.SHORT)
+    expect(parsedOrder1.side).to.be.eq(AlunaOrderSideEnum.SELL)
 
   })
 
@@ -311,7 +316,9 @@ describe('GateioOrderReadModule', () => {
 
     })
 
-    const parsedManyResp = await gateioOrderReadModule.parseMany({ rawOrders })
+    const {
+      orders: parsedManyResp,
+    } = await gateioOrderReadModule.parseMany({ rawOrders })
 
     expect(parsedManyResp.length).to.be.eq(1)
     expect(parseMock.callCount).to.be.eq(1)

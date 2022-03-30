@@ -25,7 +25,17 @@ export interface IValrCurrencyPairs {
   baseDecimalPlaces: string
 }
 
-export interface IMarketWithCurrencies extends IValrMarketSchema {
+export interface IValrMarketWithCurrencies extends IValrMarketSchema {
   baseCurrency: string
   quoteCurrency: string
+}
+
+export interface IValrMarketResponseSchema {
+  markets: IValrMarketSchema[]
+  apiRequestCount: number
+}
+
+export interface IValrCurrencyPairsResponseSchema {
+  currencyPairs: IValrCurrencyPairs[]
+  apiRequestCount: number
 }

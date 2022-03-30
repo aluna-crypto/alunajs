@@ -1,28 +1,29 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { GateioOrderStatusEnum } from '../enums/GateioOrderStatusEnum'
 import { GateioSideEnum } from '../enums/GateioSideEnum'
 import { GateioHttp } from '../GateioHttp'
 import {
-  exchangeOrderTypes as gateioExchangeOrderTypes,
   GateioSpecs,
   PROD_GATEIO_URL,
 } from '../GateioSpecs'
@@ -56,23 +57,31 @@ describe('GateioOrderWriteModule', () => {
       { keySecret } as IAlunaExchange,
     )
 
+    const { validateParamsMock } = mockValidateParams()
+
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      {
+        data: placedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      {
+        order: placedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -86,15 +95,17 @@ describe('GateioOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await gateioOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await gateioOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWith({
+    expect(requestMock.args[0][0]).to.deep.eq({
       url: `${PROD_GATEIO_URL}/spot/orders`,
       body: requestBody,
       keySecret,
-    })).to.be.ok
+    })
 
 
     expect(parseMock.callCount).to.be.eq(1)
@@ -104,13 +115,26 @@ describe('GateioOrderWriteModule', () => {
 
     expect(placeResponse1).to.deep.eq(placedOrder)
 
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: placeOrderParams,
+      schema: placeOrderParamsSchema,
+    })
+
 
     // place short limit order
-    const placeResponse2 = await gateioOrderWriteModule.place({
-      ...placeOrderParams,
+    const placeOrderParams2: IAlunaOrderPlaceParams = {
+      amount: 0.001,
+      rate: 10000,
+      symbolPair: 'ETHZAR',
+      side: AlunaOrderSideEnum.SELL,
       type: AlunaOrderTypesEnum.LIMIT,
-      side: AlunaSideEnum.SHORT,
-    })
+      account: AlunaAccountEnum.EXCHANGE,
+    }
+
+    const {
+      order: placeResponse2,
+    } = await gateioOrderWriteModule.place(placeOrderParams2)
 
     const requestBody2: IGateioOrderRequest = {
       side: GateioSideEnum.SELL,
@@ -120,11 +144,11 @@ describe('GateioOrderWriteModule', () => {
     }
 
     expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.calledWith({
+    expect(requestMock.args[1][0]).to.deep.eq({
       url: `${PROD_GATEIO_URL}/spot/orders`,
       body: requestBody2,
       keySecret,
-    })).to.be.ok
+    })
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
@@ -133,46 +157,13 @@ describe('GateioOrderWriteModule', () => {
 
     expect(placeResponse2).to.deep.eq(placedOrder)
 
-  })
-
-  it('should throw an error if a new limit order is placed without rate',
-    async () => {
-
-      ImportMock.mockOther(
-        gateioOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
-
-      const placeOrderParams: IAlunaOrderPlaceParams = {
-        amount: 0.001,
-        symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
-        type: AlunaOrderTypesEnum.LIMIT,
-        account: AlunaAccountEnum.EXCHANGE,
-        // without rate
-      }
-
-      let result
-      let error
-
-      try {
-
-        result = await gateioOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
-
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(validateParamsMock.args[1][0]).to.deep.eq({
+      params: placeOrderParams2,
+      schema: placeOrderParamsSchema,
     })
+
+  })
 
   it('should throw an request error when placing new order', async () => {
 
@@ -202,7 +193,7 @@ describe('GateioOrderWriteModule', () => {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -242,318 +233,83 @@ describe('GateioOrderWriteModule', () => {
 
   })
 
+  it('should throw an insufficient balance error when placing new order',
+    async () => {
 
+      ImportMock.mockOther(
+        gateioOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
 
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not found`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given account is supported', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Not enough balance',
+        metadata: {
+          label: 'BALANCE_NOT_ENOUGH',
+          message: 'Not enough balance',
         },
-      ],
-    )
+        httpStatusCode: 400,
+      })
 
-    const account = AlunaAccountEnum.EXCHANGE
+      const requestMock = ImportMock.mockFunction(
+        GateioHttp,
+        'privateRequest',
+        Promise.reject(mockedError),
+      )
 
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given account is implemented', async () => {
-
-    ImportMock.mockOther(
-      GateioSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    const limitOrderType = gateioExchangeOrderTypes[0]
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        limitOrderType,
-      ],
-    )
-
-    const type = 'unsupported-type'
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
+      }
 
-    } catch (err) {
+      const requestBody: IGateioOrderRequest = {
+        side: GateioSideEnum.BUY,
+        currency_pair: placeOrderParams.symbolPair,
+        amount: placeOrderParams.amount.toString(),
+        price: placeOrderParams.rate!.toString(),
+      }
 
-      error = err
+      let result
+      let error
 
-    }
+      try {
 
-    expect(result).not.to.be.ok
+        result = await gateioOrderWriteModule.place(placeOrderParams)
 
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
+      } catch (err) {
 
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+        error = err
 
-  })
+      }
 
+      expect(result).not.to.be.ok
 
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_GATEIO_URL}/spot/orders`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
 
-  it('should ensure given order type is supported', async () => {
+      expect(error.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error.message).to.be.eq('Not enough balance')
+      expect(error.httpStatusCode).to.be.eq(400)
 
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
+    })
 
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
+  it('should validate exchange specs when placing new orders', async () => {
 
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: GateioSpecs,
+      orderWriteModule: gateioOrderWriteModule,
+    })
 
   })
-
-
-
-  it('should ensure given order type is implemented', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for Gateio`
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type has write mode', async () => {
-
-    const accountIndex = GateioSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      GateioSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    let result
-    let error
-
-    try {
-
-      result = await gateioOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(`Order type '${type}' is in read mode`)
-
-  })
-
-
 
   it('should ensure an order was canceled', async () => {
 
@@ -576,7 +332,7 @@ describe('GateioOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -631,16 +387,24 @@ describe('GateioOrderWriteModule', () => {
     ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      canceledOrderResponse,
+      {
+        data: canceledOrderResponse,
+        apiRequestCount: 1,
+      },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'parse',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: {
+          status: AlunaOrderStatusEnum.CANCELED,
+        },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -650,7 +414,9 @@ describe('GateioOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await gateioOrderWriteModule.cancel(cancelParams)
+      const { order } = await gateioOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -666,23 +432,30 @@ describe('GateioOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
 
   it('should edit a gateio order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     const cancelMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       gateioOrderWriteModule,
       'place',
-      Promise.resolve(GATEIO_RAW_ORDER),
+      Promise.resolve({
+        order: GATEIO_RAW_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -690,17 +463,25 @@ describe('GateioOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
-      type: AlunaOrderTypesEnum.MARKET,
+      side: AlunaOrderSideEnum.BUY,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await gateioOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await gateioOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(GATEIO_RAW_ORDER)
 
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: editOrderParams,
+      schema: editOrderParamsSchema,
+    })
 
   })
 

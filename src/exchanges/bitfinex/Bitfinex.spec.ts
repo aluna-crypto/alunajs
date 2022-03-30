@@ -19,30 +19,21 @@ describe('Bitfinex', () => {
 
     const key = 'key'
     const secret = 'secret'
-    const referralCode = 'myReferral'
 
     const bitfinex = new Bitfinex({
       keySecret: {
         key,
         secret,
       },
-      settings: {
-        referralCode,
-      },
     })
 
     expect(bitfinex.keySecret.key).to.eq(key)
     expect(bitfinex.keySecret.secret).to.eq(secret)
 
-    expect(bitfinex.settings).to.be.ok
-    expect(bitfinex.settings?.referralCode).to.eq(referralCode)
-
     expect(bitfinex.key).to.be.ok
     expect(bitfinex.balance).to.be.ok
     expect(bitfinex.order).to.be.ok
     expect(bitfinex.position).to.be.ok
-
-    // expect(bitfinex.position).not.to.be.ok
 
   })
 

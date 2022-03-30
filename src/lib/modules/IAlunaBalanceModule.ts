@@ -1,29 +1,78 @@
 import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
-import { AlunaSideEnum } from '../enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
+import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
 import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
-
-
-
-export interface IAlunaBalanceGetTradableBalanceParams {
-  symbolPair: string
-  account?: AlunaAccountEnum
-  side?: AlunaSideEnum
-  rate?: number
-}
 
 
 
 export interface IAlunaBalanceModule extends IAlunaModule {
 
-  list (): Promise<IAlunaBalanceSchema[]>
-  listRaw (): Promise<any[]>
+  /* eslint-disable max-len */
 
-  parse (params: { rawBalance: any }): IAlunaBalanceSchema
-  parseMany (params: { rawBalances: any[] }): IAlunaBalanceSchema[]
+  listRaw (): Promise<IAlunaBalanceListRawReturns>
+  list (): Promise<IAlunaBalanceListReturns>
 
-  getTradableBalance? (
-    params: IAlunaBalanceGetTradableBalanceParams
-  ): Promise<number>
+  parseMany (params: IAlunaBalanceParseManyParams): IAlunaBalanceParseManyReturns
+  parse (params: IAlunaBalanceParseParams): IAlunaBalanceParseReturns
 
+  getTradableBalance? (params: IAlunaBalanceGetTradableBalanceParams): Promise<IAlunaBalanceGetTradableBalanceReturns>
+
+  /* eslint-enable max-len */
+
+}
+
+
+
+/**
+ * Parse
+ */
+
+export interface IAlunaBalanceParseParams {
+  rawBalance: any
+}
+
+export interface IAlunaBalanceParseReturns extends IAlunaApiRequestSchema {
+  balance: IAlunaBalanceSchema
+}
+
+
+
+export interface IAlunaBalanceParseManyParams {
+  rawBalances: any[]
+}
+
+export interface IAlunaBalanceParseManyReturns extends IAlunaApiRequestSchema {
+  balances: IAlunaBalanceSchema[]
+}
+
+
+
+/**
+ * List
+ */
+
+export interface IAlunaBalanceListRawReturns<T = any> extends IAlunaApiRequestSchema {
+  rawBalances: T[]
+
+}
+export interface IAlunaBalanceListReturns extends IAlunaApiRequestSchema {
+  balances: IAlunaBalanceSchema[]
+}
+
+
+
+/**
+ * Get Tradable Balance
+ */
+
+export interface IAlunaBalanceGetTradableBalanceParams {
+  symbolPair: string
+  account?: AlunaAccountEnum
+  side?: AlunaOrderSideEnum
+  rate?: number
+}
+
+export interface IAlunaBalanceGetTradableBalanceReturns extends IAlunaApiRequestSchema {
+  tradableBalance: number
 }

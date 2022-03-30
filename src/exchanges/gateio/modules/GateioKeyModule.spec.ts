@@ -36,7 +36,7 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     const invalidCurrencyErrorMock = new AlunaError({
@@ -48,18 +48,26 @@ describe('GateioKeyModule', () => {
     })
 
     const keyAccountResponse = {
-      user_id: 1234,
+      data: {
+        user_id: 1234,
+      },
+      apiRequestCount: 1,
     }
 
     requestMock.onSecondCall().returns(Promise.reject(invalidCurrencyErrorMock))
     requestMock.onThirdCall().returns(Promise.resolve(keyAccountResponse))
 
-    const { permissions, accountId } = await gateioKeyModule.fetchDetails()
+    const {
+      key: {
+        permissions,
+        accountId,
+      },
+    } = await gateioKeyModule.fetchDetails()
 
     expect(permissions.read).to.be.ok
     expect(permissions.trade).to.be.ok
     expect(permissions.withdraw).not.to.be.ok
-    expect(accountId).to.be.eq(keyAccountResponse.user_id.toString())
+    expect(accountId).to.be.eq(keyAccountResponse.data.user_id.toString())
 
     expect(requestMock.callCount).to.be.eq(3)
 
@@ -98,7 +106,7 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     requestMock
@@ -157,14 +165,15 @@ describe('GateioKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     const keyAccountResponse = {
-      user_id: 1234,
+      data: {
+        user_id: 1234,
+        apiRequestCount: 1,
+      },
     }
-
-
 
     requestMock1
       .onSecondCall()
@@ -172,9 +181,9 @@ describe('GateioKeyModule', () => {
     requestMock1.onThirdCall().returns(Promise.resolve(keyAccountResponse))
 
 
-    const result = await gateioKeyModule.fetchDetails()
+    const { key: { permissions } } = await gateioKeyModule.fetchDetails()
 
-    expect(result.permissions.trade).not.to.be.ok
+    expect(permissions.trade).not.to.be.ok
 
   })
 
@@ -220,11 +229,14 @@ describe('GateioKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     const keyAccountResponse = {
-      user_id: 1234,
+      data: {
+        user_id: 1234,
+      },
+      apiRequestCount: 1,
     }
 
     requestMock1
@@ -236,10 +248,10 @@ describe('GateioKeyModule', () => {
     requestMock1.onThirdCall().returns(Promise.resolve(keyAccountResponse))
 
 
-    const result = await gateioKeyModule.fetchDetails()
+    const { key: { permissions } } = await gateioKeyModule.fetchDetails()
 
-    expect(result.permissions.read).not.to.be.ok
-    expect(result.permissions.trade).not.to.be.ok
+    expect(permissions.read).not.to.be.ok
+    expect(permissions.trade).not.to.be.ok
 
   })
 
@@ -268,12 +280,13 @@ describe('GateioKeyModule', () => {
 
     const requestResponse: IGateioKeySchema = {
       ...mockRest, // without accountId
+      user_id: '123',
     }
 
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      requestResponse,
+      { data: requestResponse, apiRequestCount: 1 },
     )
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
@@ -376,7 +389,10 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      Promise.resolve(requestResponse),
+      Promise.resolve({
+        data: requestResponse,
+        apiRequestCount: 1,
+      }),
     )
 
     requestMock.onThirdCall().returns(Promise.reject(alunaErrorMock))
@@ -415,7 +431,7 @@ describe('GateioKeyModule', () => {
       accountId: undefined,
     }
 
-    const perm1 = gateioKeyModule.parsePermissions({
+    const { key: perm1 } = gateioKeyModule.parsePermissions({
       rawKey: key,
     })
 

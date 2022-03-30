@@ -1,9 +1,10 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Bittrex } from '../../Bittrex'
+import { BittrexOrderSideAdapter } from '../../enums/adapters/BittrexOrderSideAdapter'
 import { BittrexOrderTypeAdapter } from '../../enums/adapters/BittrexOrderTypeAdapter'
-import { BittrexSideAdapter } from '../../enums/adapters/BittrexSideAdapter'
 import { BittrexStatusAdapter } from '../../enums/adapters/BittrexStatusAdapter'
 import { BittrexOrderStatusEnum } from '../../enums/BittrexOrderStatusEnum'
 import { IBittrexOrderSchema } from '../IBittrexOrderSchema'
@@ -34,6 +35,18 @@ export class BittrexOrderParser {
       proceeds,
     } = rawOrder
 
+    const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
+
+    const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
+    const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
     let rate: number | undefined
 
     if (limit) {
@@ -48,9 +61,6 @@ export class BittrexOrderParser {
 
     const amount = parseFloat(quantity)
     const total = rate ? amount * rate : amount
-    const splittedMarketSymbol = rawOrder.marketSymbol.split('-')
-    const baseSymbolId = splittedMarketSymbol[0]
-    const quoteSymbolId = splittedMarketSymbol[1]
 
     const orderStatus = BittrexStatusAdapter.translateToAluna({
       fillQuantity,
@@ -87,7 +97,7 @@ export class BittrexOrderParser {
       baseSymbolId,
       quoteSymbolId,
       account: AlunaAccountEnum.EXCHANGE,
-      side: BittrexSideAdapter.translateToAluna({ from: direction }),
+      side: BittrexOrderSideAdapter.translateToAluna({ from: direction }),
       status: orderStatus,
       type: BittrexOrderTypeAdapter.translateToAluna({ from: orderType }),
       placedAt: new Date(createdAt),

@@ -58,14 +58,29 @@ export const BitfinexSpecs: IAlunaExchangeSchema = {
   name: 'Bitfinex',
   signupUrl: 'https://www.bitfinex.com/sign-up/',
   connectApiUrl: 'https://setting.bitfinex.com/api#new-key',
+
+  /**
+   * https://docs.bitfinex.com/docs/requirements-and-limitations
+   *
+   * Bitfinex API access is rate limited. For the REST API, an IP address can
+   * be rate limited if it has sent too many requests per minute. The current
+   * rate limit is between 10 and 90 requests per minute, depending on the
+   * specific REST API endpoint (i.e. /ticker). If an IP address is rate
+   * limited, the IP is blocked for 60 seconds and cannot make any requests
+   * during that time. If your IP address is rate limited, the API will return
+   * the JSON response {“error”: “ERR_RATE_LIMIT”}”.
+   */
   rateLimitingPerMinute: {
     // double check rate limits later
-    perApiKey: 10,
-    perIp: 5,
+    perApiKey: -1,
+    perIp: 70,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
+  },
+  features: {
+    offersPositionId: true,
   },
   accounts: [
     {

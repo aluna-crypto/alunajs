@@ -20,7 +20,6 @@ export interface IAlunaExchange {
 
   // basics
   keySecret: IAlunaKeySecretSchema
-  settings?: IAlunaSettingsSchema
 
   // private modules
   key: IAlunaKeyModule
@@ -45,10 +44,15 @@ export interface IAlunaExchangeStatic {
   Symbol: IAlunaSymbolModule
   Market: IAlunaMarketModule
 
+  settings: IAlunaSettingsSchema
+
   // constructor must match the one of AAlunaExchange
   new (params: {
     keySecret: IAlunaKeySecretSchema,
-    settings?: IAlunaSettingsSchema,
   }): IAlunaExchange
+
+  setSettings (params: {
+    settings: IAlunaSettingsSchema,
+  }): void
 
 }

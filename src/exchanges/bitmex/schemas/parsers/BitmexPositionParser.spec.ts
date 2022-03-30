@@ -5,9 +5,9 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaInstrumentSchema } from '../../../../lib/schemas/IAlunaInstrumentSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
+import { BitmexPositionSideAdapter } from '../../enums/adapters/BitmexPositionSideAdapter'
 import { BitmexSettlementCurrencyEnum } from '../../enums/BitmexSettlementCurrencyEnum'
 import { BITMEX_RAW_POSITIONS } from '../../test/bitmexPositions'
 import { IBitmexPositionSchema } from '../IBitmexPositionSchema'
@@ -27,17 +27,24 @@ describe('BitmexPositionParser', () => {
   it('should properly parse Bitmex positions', () => {
 
     const expectedUICustonDisplay = {} as IAlunaUICustomDisplaySchema
-    const expectedBaseSymbolId = 'XBT'
-    const expectedQuoteSymbolId = 'USD'
+    const baseSymbolId = 'XBT'
+    const quoteSymbolId = 'USD'
     const computedAmount = 10
     const computedTotal = 20
 
-    const mockedDate = Date.now()
+    const dateNow = Date.now()
+    const mockedDate = new Date(dateNow)
 
-    ImportMock.mockFunction(
-      global.Date,
-      'now',
-      mockedDate,
+    function fakeDateConstructor () {
+
+      return mockedDate
+
+    }
+
+    ImportMock.mockOther(
+      global,
+      'Date',
+      fakeDateConstructor as any,
     )
 
     const assembleUiCustomDisplayMock = ImportMock.mockFunction(
@@ -115,9 +122,9 @@ describe('BitmexPositionParser', () => {
 
       const expectedPlPercentage = unrealisedRoePcnt
 
-      const expectedSide = homeNotional > 0
-        ? AlunaSideEnum.LONG
-        : AlunaSideEnum.SHORT
+      const expectedSide = BitmexPositionSideAdapter.translateToAluna({
+        homeNotional,
+      })
 
       const expectedLeverage = crossMargin
         ? undefined
@@ -127,14 +134,14 @@ describe('BitmexPositionParser', () => {
 
       const parsedPosition = parse({
         instrument: mockedInstrument,
-        baseSymbolId: expectedBaseSymbolId,
-        quoteSymbolId: expectedQuoteSymbolId,
+        baseSymbolId,
+        quoteSymbolId,
         rawPosition,
       })
 
       expect(parsedPosition.symbolPair).to.be.eq(symbol)
-      expect(parsedPosition.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedPosition.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedPosition.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedPosition.quoteSymbolId).to.be.eq(quoteSymbolId)
       expect(parsedPosition.account).to.be.eq(AlunaAccountEnum.DERIVATIVES)
       expect(parsedPosition.amount).to.be.eq(computedAmount)
       expect(parsedPosition.total).to.be.eq(computedTotal)

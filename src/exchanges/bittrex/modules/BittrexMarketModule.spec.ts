@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
 import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
@@ -32,9 +31,17 @@ describe('BittrexMarketModule', () => {
     )
 
     requestMock
-      .onFirstCall().returns(Promise.resolve(rawMarketSummaries))
+      .onFirstCall()
+      .returns(Promise.resolve({
+        data: rawMarketSummaries,
+        apiRequestCount: 1,
+      }))
     requestMock
-      .onSecondCall().returns(Promise.resolve(rawMarketTickers))
+      .onSecondCall()
+      .returns(Promise.resolve({
+        data: rawMarketTickers,
+        apiRequestCount: 1,
+      }))
 
 
     const ticketMarketParserMock = ImportMock.mockFunction(
@@ -44,8 +51,13 @@ describe('BittrexMarketModule', () => {
     )
 
 
-    const response = await BittrexMarketModule.listRaw()
+    const {
+      rawMarkets: response,
+      apiRequestCount,
+    } = await BittrexMarketModule.listRaw()
 
+
+    expect(apiRequestCount).to.be.eq(3)
 
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.firstCall.calledWith(
@@ -75,16 +87,16 @@ describe('BittrexMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BittrexMarketModule,
       'listRaw',
-      rawListMock,
+      { rawMarkets: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BittrexMarketModule,
       'parseMany',
-      BITTREX_PARSED_MARKETS,
+      { markets: BITTREX_PARSED_MARKETS, apiRequestCount: 1 },
     )
 
-    const parsedMarkets = await BittrexMarketModule.list()
+    const { markets: parsedMarkets } = await BittrexMarketModule.list()
 
     expect(listRawMock.callCount).to.eq(1)
 
@@ -112,7 +124,7 @@ describe('BittrexMarketModule', () => {
 
     const rawMarketWithTicker = BITTREX_RAW_MARKETS_WITH_TICKER[0]
 
-    const market: IAlunaMarketSchema = BittrexMarketModule.parse({
+    const { market } = BittrexMarketModule.parse({
       rawMarket: rawMarketWithTicker,
     })
 
@@ -174,14 +186,14 @@ describe('BittrexMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BITTREX_PARSED_MARKETS[0])
+      .returns({ market: BITTREX_PARSED_MARKETS[0], apiRequestCount: 1 })
       .onSecondCall()
-      .returns(BITTREX_PARSED_MARKETS[1])
+      .returns({ market: BITTREX_PARSED_MARKETS[1], apiRequestCount: 1 })
       .onThirdCall()
-      .returns(BITTREX_PARSED_MARKETS[2])
+      .returns({ market: BITTREX_PARSED_MARKETS[2], apiRequestCount: 1 })
 
 
-    const markets: IAlunaMarketSchema[] = BittrexMarketModule.parseMany({
+    const { markets } = BittrexMarketModule.parseMany({
       rawMarkets: BITTREX_RAW_MARKETS_WITH_TICKER,
     })
 

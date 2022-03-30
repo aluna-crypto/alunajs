@@ -1,8 +1,16 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaBalanceModule } from '../../../lib/modules/IAlunaBalanceModule'
+import {
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
+  IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
+} from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
@@ -12,34 +20,54 @@ import { IBittrexBalanceSchema } from '../schemas/IBittrexBalanceSchema'
 
 export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IBittrexBalanceSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema>> {
 
     BittrexLog.info('fetching Bittrex balances')
 
     const { keySecret } = this.exchange
 
-    const rawAccountInfo = await BittrexHttp
+    const { data: rawAccountInfo, apiRequestCount } = await BittrexHttp
       .privateRequest<IBittrexBalanceSchema[]>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_BITTREX_URL}/balances`,
         keySecret,
       })
 
-    return rawAccountInfo
+    return {
+      apiRequestCount,
+      rawBalances: rawAccountInfo,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const { rawBalances, apiRequestCount: listRawCount } = await this.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     BittrexLog.info(`parsed ${parsedBalances.length} balances for Bittrex`)
 
-    return parsedBalances
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -47,22 +75,32 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public parse (params: {
     rawBalance: IBittrexBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
     const {
+      total,
       available,
       currencySymbol,
-      total,
     } = rawBalance
 
-    return {
-      symbolId: currencySymbol,
+    const symbolId = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currencySymbol,
+      symbolMappings: Bittrex.settings.mappings,
+    })
+
+    const balance = {
+      symbolId,
       account: AlunaAccountEnum.EXCHANGE,
       available: Number(available),
       total: Number(total),
       meta: rawBalance,
+    }
+
+    return {
+      balance,
+      apiRequestCount: 1,
     }
 
   }
@@ -71,9 +109,11 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public parseMany (params: {
     rawBalances: IBittrexBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -86,7 +126,12 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
         if (total > 0) {
 
-          const parsedBalance = this.parse({ rawBalance })
+          const {
+            balance: parsedBalance,
+            apiRequestCount: parseCount,
+          } = this.parse({ rawBalance })
+
+          apiRequestCount += parseCount + 1
 
           accumulator.push(parsedBalance)
 
@@ -98,7 +143,10 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
       [],
     )
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 

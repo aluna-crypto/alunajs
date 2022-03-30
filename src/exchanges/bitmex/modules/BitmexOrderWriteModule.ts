@@ -10,20 +10,25 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import {
   BitmexSpecs,
   PROD_BITMEX_URL,
 } from '../BitmexSpecs'
+import { BitmexOrderSideAdapter } from '../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../enums/adapters/BitmexSideAdapter'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { IBitmexOrderSchema } from '../schemas/IBitmexOrderSchema'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
@@ -46,21 +51,32 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams<IAlunaOrderPlaceParams>({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       type,
       account,
     } = params
 
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitmexLog.info('placing new order for Bitmex')
 
@@ -70,12 +86,18 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     try {
 
-      rawOrder = await privateRequest<IBitmexOrderSchema>({
+      const {
+        data: orderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.POST,
       })
+
+      rawOrder = orderResponse
+      apiRequestCount += requestCount
 
 
     } catch (error) {
@@ -86,27 +108,50 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     rawOrder = await this.getFreshOrder({ rawOrder })
 
-    const parsedOrder = await this.parse({ rawOrder })
+    apiRequestCount += 1
 
-    return parsedOrder
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
-  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderSchema> {
+  async edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns> {
 
     const {
       type,
       account,
     } = params
 
+    validateParams<IAlunaOrderPlaceParams>({
+      params,
+      schema: editOrderParamsSchema,
+    })
+
+    let apiRequestCount = 0
+
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
+    apiRequestCount += 1
+
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
+
+    apiRequestCount += 1
 
     BitmexLog.info('editing order for Bitmex')
 
@@ -116,12 +161,18 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     try {
 
-      rawOrder = await privateRequest<IBitmexOrderSchema>({
+      const {
+        data: editOrderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.PUT,
       })
+
+      rawOrder = editOrderResponse
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -131,15 +182,27 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     rawOrder = await this.getFreshOrder({ rawOrder })
 
-    const parsedOrder = await this.parse({ rawOrder })
+    apiRequestCount += 1
 
-    return parsedOrder
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     const { id } = params
 
@@ -148,21 +211,32 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
     const { privateRequest } = BitmexHttp
 
     let rawOrder: IBitmexOrderResponse
+    let apiRequestCount = 0
 
     try {
 
-      [rawOrder] = await privateRequest<IBitmexOrderResponse[]>({
+      const {
+        data: cancelOrderResponse,
+        apiRequestCount: requestCount,
+      } = await privateRequest<IBitmexOrderResponse[]>({
         url: `${PROD_BITMEX_URL}/order`,
         body: { orderID: id },
         keySecret: this.exchange.keySecret,
         verb: AlunaHttpVerbEnum.DELETE,
       })
 
+      apiRequestCount += requestCount
+
+      const [rawOrderResp] = cancelOrderResponse
+
+      rawOrder = rawOrderResp
+
       if (rawOrder.error) {
 
         const error = new AlunaError({
           code: AlunaHttpErrorCodes.REQUEST_ERROR,
           message: rawOrder.error,
+          metadata: rawOrder,
         })
 
         this.handleError({ error })
@@ -175,7 +249,19 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     }
 
-    return this.parse({ rawOrder })
+    const {
+      order: parsedOrder,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -204,12 +290,12 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       from: type,
     })
 
-    const translatedSide = BitmexSideAdapter.translateToBitmex({
+    const translatedSide = BitmexOrderSideAdapter.translateToBitmex({
       from: side,
     })
 
-    const { instrument } = await BitmexMarketModule.get({
-      symbolPair,
+    const { market: { instrument } } = await BitmexMarketModule.get({
+      id: symbolPair,
     })
 
     const orderQty = BitmexOrderParser.translateAmountToOrderQty({
@@ -379,10 +465,14 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
         symbol,
       } = rawOrder
 
-      rawOrder = await this.getRaw({
+      const {
+        rawOrder: getRawOrderResponse,
+      } = await this.getRaw({
         id: orderID,
         symbolPair: symbol,
       })
+
+      rawOrder = getRawOrderResponse
 
     }
 
@@ -395,6 +485,12 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
   }): never {
 
     const { error } = params
+
+    const {
+      httpStatusCode,
+      message,
+      metadata,
+    } = error
 
     let {
       code,
@@ -412,9 +508,9 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     const alunaError = new AlunaError({
       code,
-      message: error.message,
-      metadata: error.metadata,
-      httpStatusCode: error.httpStatusCode,
+      message,
+      metadata,
+      httpStatusCode,
     })
 
     BitmexLog.error(alunaError)

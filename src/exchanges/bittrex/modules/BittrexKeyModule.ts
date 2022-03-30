@@ -1,6 +1,11 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeyModule } from '../../../lib/modules/IAlunaKeyModule'
+import {
+  IAlunaKeyFetchDetailsReturns,
+  IAlunaKeyModule,
+  IAlunaKeyParseDetailsReturns,
+  IAlunaKeyParsePermissionsReturns,
+} from '../../../lib/modules/IAlunaKeyModule'
 import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
@@ -22,7 +27,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
   public parsePermissions (params: {
     rawKey: IBittrexKeySchema,
-  }): IAlunaKeyPermissionSchema {
+  }): IAlunaKeyParsePermissionsReturns {
 
     const { rawKey } = params
 
@@ -36,11 +41,14 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     Object.assign(alunaPermissions, rawKey)
 
-    return alunaPermissions
+    return {
+      key: alunaPermissions,
+      apiRequestCount: 0,
+    }
 
   }
 
-  public async fetchDetails (): Promise<IAlunaKeySchema> {
+  public async fetchDetails (): Promise<IAlunaKeyFetchDetailsReturns> {
 
     BittrexLog.info('fetching Bittrex key permissions')
 
@@ -48,6 +56,8 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const BAD_REQUEST_MESSAGE = 'BAD_REQUEST'
 
     const { keySecret } = this.exchange
+
+    let apiRequestCount = 0
 
     const permissions: IBittrexKeySchema = {
       read: false,
@@ -57,7 +67,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      await BittrexHttp
+      const { apiRequestCount: requestCount } = await BittrexHttp
         .privateRequest<IBittrexBalanceSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_BITTREX_URL}/balances`,
@@ -65,6 +75,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         })
 
       permissions.read = true
+      apiRequestCount += requestCount
 
     } catch (error) {
 
@@ -90,6 +101,9 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
         useAwards: false,
       }
+
+      // need to assign the apiRequestCount before because the request will fail
+      apiRequestCount += 1
 
       await BittrexHttp
         .privateRequest<IBittrexBalanceSchema>({
@@ -119,12 +133,14 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      const account = await BittrexHttp
+      const { data: account, apiRequestCount: requestCount } = await BittrexHttp
         .privateRequest<IBittrexKeySchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_BITTREX_URL}/account`,
           keySecret,
         })
+
+      apiRequestCount += requestCount
 
       permissions.accountId = account.accountId
 
@@ -136,15 +152,25 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     }
 
-    const details = this.parseDetails({ rawKey: permissions })
+    const {
+      key: details,
+      apiRequestCount: parseDetailsCount,
+    } = this.parseDetails({ rawKey: permissions })
 
-    return details
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+
+    return {
+      key: details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parseDetails (params: {
     rawKey: IBittrexKeySchema,
-  }): IAlunaKeySchema {
+  }): IAlunaKeyParseDetailsReturns {
 
     BittrexLog.info('parsing Bittrex key details')
 
@@ -156,13 +182,27 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId,
     } = rawKey
 
+    let apiRequestCount = 0
+
+    const {
+      key: parsedPermissions,
+      apiRequestCount: parsePermissionsCount,
+    } = this.parsePermissions({ rawKey })
+
+    apiRequestCount += 1
+
     this.details = {
       meta: rawKey,
       accountId,
-      permissions: this.parsePermissions({ rawKey }),
+      permissions: parsedPermissions,
     }
 
-    return this.details
+    const totalApiRequestCount = parsePermissionsCount + apiRequestCount
+
+    return {
+      key: this.details,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

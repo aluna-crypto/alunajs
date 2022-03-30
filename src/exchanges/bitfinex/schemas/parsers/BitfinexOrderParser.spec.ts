@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { Bitfinex } from '../../Bitfinex'
 import { BitfinexAccountsAdapter } from '../../enums/adapters/BitfinexAccountsAdapter'
 import { BitfinexOrderStatusAdapter } from '../../enums/adapters/BitfinexOrderStatusAdapter'
@@ -18,6 +18,25 @@ describe('BitfinexOrderParser', () => {
 
     BITFINEX_RAW_ORDERS.forEach((rawOrder) => {
 
+      let baseSymbolId: string
+      let quoteSymbolId: string
+
+      const rawSymbolPair = rawOrder[3]
+
+      const spliter = rawSymbolPair.indexOf(':')
+
+      if (spliter >= 0) {
+
+        baseSymbolId = rawSymbolPair.slice(1, spliter)
+        quoteSymbolId = rawSymbolPair.slice(spliter + 1)
+
+      } else {
+
+        baseSymbolId = rawSymbolPair.slice(1, 4)
+        quoteSymbolId = rawSymbolPair.slice(4)
+
+      }
+
       const parsedOrder = BitfinexOrderParser.parse({
         rawOrder,
       })
@@ -26,7 +45,7 @@ describe('BitfinexOrderParser', () => {
         id,
         _gid,
         _cid,
-        symbolPair,
+        _symbolPair,
         mtsCreate,
         mtsUpdate,
         _amount,
@@ -45,25 +64,10 @@ describe('BitfinexOrderParser', () => {
         priceAuxLimit,
       ] = rawOrder
 
-      let expectedBaseSymbolId: string
-      let expectedQuoteSymbolId: string
       let expectedRate
       let expectedStopRate
       let expectedLimitRate
 
-      const spliter = symbolPair.indexOf(':')
-
-      if (spliter >= 0) {
-
-        expectedBaseSymbolId = symbolPair.slice(1, spliter)
-        expectedQuoteSymbolId = symbolPair.slice(spliter + 1)
-
-      } else {
-
-        expectedBaseSymbolId = symbolPair.slice(1, 4)
-        expectedQuoteSymbolId = symbolPair.slice(4)
-
-      }
 
       const expectedStatus = BitfinexOrderStatusAdapter.translateToAluna({
         from: orderStatus,
@@ -78,8 +82,8 @@ describe('BitfinexOrderParser', () => {
       })
 
       const expectedSide = amountOrig > 0
-        ? AlunaSideEnum.LONG
-        : AlunaSideEnum.SHORT
+        ? AlunaOrderSideEnum.BUY
+        : AlunaOrderSideEnum.SELL
 
       const fixedPrice = price || priceAvg
       let computedPrice = fixedPrice
@@ -114,11 +118,11 @@ describe('BitfinexOrderParser', () => {
       }
 
       expect(parsedOrder.id).to.be.eq(id)
-      expect(parsedOrder.symbolPair).to.be.eq(symbolPair)
+      expect(parsedOrder.symbolPair).to.be.eq(rawSymbolPair)
 
       expect(parsedOrder.exchangeId).to.be.eq(Bitfinex.ID)
-      expect(parsedOrder.baseSymbolId).to.be.eq(expectedBaseSymbolId)
-      expect(parsedOrder.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
+      expect(parsedOrder.baseSymbolId).to.be.eq(baseSymbolId)
+      expect(parsedOrder.quoteSymbolId).to.be.eq(quoteSymbolId)
 
       expect(parsedOrder.amount).to.be.eq(Math.abs(amountOrig))
       expect(parsedOrder.total).to.be.eq(computedPrice * parsedOrder.amount)

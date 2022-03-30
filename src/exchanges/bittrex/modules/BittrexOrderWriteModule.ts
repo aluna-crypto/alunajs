@@ -2,23 +2,29 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderEditReturns,
+  IAlunaOrderGetParams,
+  IAlunaOrderGetReturns,
   IAlunaOrderPlaceParams,
+  IAlunaOrderPlaceReturns,
   IAlunaOrderWriteModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import {
   BittrexSpecs,
   PROD_BITTREX_URL,
 } from '../BittrexSpecs'
+import { BittrexOrderSideAdapter } from '../enums/adapters/BittrexOrderSideAdapter'
 import { BittrexOrderTypeAdapter } from '../enums/adapters/BittrexOrderTypeAdapter'
-import { BittrexSideAdapter } from '../enums/adapters/BittrexSideAdapter'
 import { BittrexOrderTimeInForceEnum } from '../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../enums/BittrexOrderTypeEnum'
 import {
@@ -33,7 +39,12 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
   public async place (
     params: IAlunaOrderPlaceParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderPlaceReturns> {
+
+    validateParams({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
     const {
       amount,
@@ -43,6 +54,8 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       type,
       account,
     } = params
+
+    let apiRequestCount = 0
 
     try {
 
@@ -105,24 +118,18 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       from: type,
     })
 
+    apiRequestCount += 1
+
     const body: IBittrexOrderRequest = {
-      direction: BittrexSideAdapter.translateToBittrex({ from: side }),
+      direction: BittrexOrderSideAdapter.translateToBittrex({ from: side }),
       marketSymbol: symbolPair,
       type: translatedOrderType,
       quantity: Number(amount),
     }
 
+    apiRequestCount += 1
+
     if (translatedOrderType === BittrexOrderTypeEnum.LIMIT) {
-
-      if (!rate) {
-
-        throw new AlunaError({
-          message: 'A rate is required for limit orders',
-          code: AlunaGenericErrorCodes.PARAM_ERROR,
-          httpStatusCode: 401,
-        })
-
-      }
 
       Object.assign(body, {
         limit: Number(rate),
@@ -143,35 +150,78 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     try {
 
-      placedOrder = await BittrexHttp
+      const {
+        apiRequestCount: requestCount,
+        data: orderResponse,
+      } = await BittrexHttp
         .privateRequest<IBittrexOrderSchema>({
           url: `${PROD_BITTREX_URL}/orders`,
           body,
           keySecret: this.exchange.keySecret,
         })
 
+      placedOrder = orderResponse
+      apiRequestCount += requestCount
+
     } catch (err) {
+
+      let {
+        code,
+        message,
+      } = err
+
+      const { metadata } = err
+
+      if (metadata.code === 'INSUFFICIENT_FUNDS') {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+        message = 'Account has insufficient balance for requested action.'
+
+      } else if (metadata.code === 'DUST_TRADE_DISALLOWED_MIN_VALUE') {
+
+        code = AlunaGenericErrorCodes.UNKNOWN
+
+        message = 'The amount of quote currency involved in a transaction '
+          .concat('would be less than the minimum limit of 10K satoshis')
+
+      } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
+
+        code = AlunaOrderErrorCodes.PLACE_FAILED
+
+        message = 'The trade was smaller than the min trade size quantity for '
+          .concat('the market')
+
+      }
 
       throw new AlunaError({
         ...err,
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        code,
+        message,
       })
 
     }
 
-    const order = await this.parse({
+    const { order, apiRequestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
-    return order
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
   public async cancel (
-    params: IAlunaOrderCancelParams,
-  ): Promise<IAlunaOrderSchema> {
+    params: IAlunaOrderGetParams,
+  ): Promise<IAlunaOrderGetReturns> {
 
     BittrexLog.info('canceling order for Bittrex')
 
@@ -180,10 +230,14 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
     } = params
 
     let canceledOrder: IBittrexOrderSchema
+    let apiRequestCount = 0
 
     try {
 
-      canceledOrder = await BittrexHttp.privateRequest<IBittrexOrderSchema>(
+      const {
+        data: cancelOrderResponse,
+        apiRequestCount: requestCount,
+      } = await BittrexHttp.privateRequest<IBittrexOrderSchema>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
           url: `${PROD_BITTREX_URL}/orders/${id}`,
@@ -191,13 +245,18 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
         },
       )
 
+      canceledOrder = cancelOrderResponse
+      apiRequestCount += requestCount
+
     } catch (err) {
+
+      const { metadata, httpStatusCode } = err
 
       const error = new AlunaError({
         message: 'Something went wrong, order not canceled',
-        httpStatusCode: err.httpStatusCode,
+        httpStatusCode,
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
-        metadata: err.metadata,
+        metadata,
       })
 
       BittrexLog.error(error)
@@ -206,17 +265,31 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     }
 
-    const parsedOrder = this.parse({ rawOrder: canceledOrder })
+    const {
+      order,
+      apiRequestCount: parseCount,
+    } = await this.parse({ rawOrder: canceledOrder })
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount + parseCount
+
+    return {
+      order,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
   public async edit (
     params: IAlunaOrderEditParams,
-  ): Promise<IAlunaOrderSchema> {
+  ): Promise<IAlunaOrderEditReturns> {
 
+    validateParams({
+      params,
+      schema: editOrderParamsSchema,
+    })
 
     BittrexLog.info('editing order for Bittrex')
 
@@ -230,12 +303,19 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       symbolPair,
     } = params
 
-    await this.cancel({
+    let apiRequestCount = 0
+
+    const { apiRequestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    const newOrder = await this.place({
+    apiRequestCount += 1
+
+    const {
+      order: newOrder,
+      apiRequestCount: placeCount,
+    } = await this.place({
       rate,
       side,
       type,
@@ -244,7 +324,16 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       symbolPair,
     })
 
-    return newOrder
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + cancelCount
+      + placeCount
+
+    return {
+      order: newOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 

@@ -2,9 +2,14 @@ import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
+  IAlunaOrderGetRawReturns,
+  IAlunaOrderGetReturns,
+  IAlunaOrderListRawReturns,
+  IAlunaOrderListReturns,
+  IAlunaOrderParseManyReturns,
+  IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
@@ -15,29 +20,55 @@ import { BittrexOrderParser } from '../schemas/parses/BittrexOrderParser'
 
 export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderReadModule {
 
-  public async listRaw (): Promise<IBittrexOrderSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaOrderListRawReturns<IBittrexOrderSchema>> {
 
     BittrexLog.info('fetching Bittrex open orders')
 
-    const rawOrders = await BittrexHttp.privateRequest<IBittrexOrderSchema[]>({
+    const {
+      data: rawOrders,
+      apiRequestCount,
+    } = await BittrexHttp.privateRequest<IBittrexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITTREX_URL}/orders/open`,
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrders
+    return {
+      rawOrders,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async list (): Promise<IAlunaOrderSchema[]> {
+  public async list (): Promise<IAlunaOrderListReturns> {
 
-    const rawOrders = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedOrders = this.parseMany({ rawOrders })
+    const {
+      apiRequestCount: listRawCount,
+      rawOrders,
+    } = await this.listRaw()
 
-    return parsedOrders
+    apiRequestCount += 1
+
+    const {
+      orders: parsedOrders,
+      apiRequestCount: parseManyCount,
+    } = await this.parseMany({ rawOrders })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      orders: parsedOrders,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -45,7 +76,7 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async getRaw (
     params: IAlunaOrderGetParams,
-  ): Promise<IBittrexOrderSchema> {
+  ): Promise<IAlunaOrderGetRawReturns> {
 
     const {
       id,
@@ -53,25 +84,51 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     BittrexLog.info('fetching Bittrex order status')
 
-    const rawOrder = await BittrexHttp.privateRequest<IBittrexOrderSchema>({
+    const {
+      data: rawOrder,
+      apiRequestCount,
+    } = await BittrexHttp.privateRequest<IBittrexOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITTREX_URL}/orders/${id}`,
       keySecret: this.exchange.keySecret,
     })
 
-    return rawOrder
+    return {
+      rawOrder,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public async get (params: IAlunaOrderGetParams): Promise<IAlunaOrderSchema> {
+  public async get (params: IAlunaOrderGetParams)
+  : Promise<IAlunaOrderGetReturns> {
 
-    const rawOrder = await this.getRaw(params)
+    let apiRequestCount = 0
 
-    const parsedOrder = this.parse({ rawOrder })
+    const {
+      apiRequestCount: getRawCount,
+      rawOrder,
+    } = await this.getRaw(params)
 
-    return parsedOrder
+    apiRequestCount += 1
+
+    const {
+      apiRequestCount: parseCount,
+      order: parsedOrder,
+    } = await this.parse({ rawOrder })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + getRawCount
+      + parseCount
+
+    return {
+      order: parsedOrder,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -79,13 +136,16 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parse (params: {
     rawOrder: IBittrexOrderSchema,
-  }): Promise<IAlunaOrderSchema> {
+  }): Promise<IAlunaOrderParseReturns> {
 
     const { rawOrder } = params
 
     const parsedOrder = BittrexOrderParser.parse({ rawOrder })
 
-    return parsedOrder
+    return {
+      order: parsedOrder,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -93,14 +153,21 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async parseMany (params: {
     rawOrders: IBittrexOrderSchema[],
-  }): Promise<IAlunaOrderSchema[]> {
+  }): Promise<IAlunaOrderParseManyReturns> {
 
     const { rawOrders } = params
+
+    let apiRequestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: any) => {
 
-        const parsedOrder = await this.parse({ rawOrder })
+        const {
+          apiRequestCount: parseCount,
+          order: parsedOrder,
+        } = await this.parse({ rawOrder })
+
+        apiRequestCount += parseCount + 1
 
         return parsedOrder
 
@@ -109,7 +176,10 @@ export class BittrexOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     BittrexLog.info(`parsed ${parsedOrders.length} orders for Bittrex`)
 
-    return parsedOrders
+    return {
+      orders: parsedOrders,
+      apiRequestCount,
+    }
 
   }
 

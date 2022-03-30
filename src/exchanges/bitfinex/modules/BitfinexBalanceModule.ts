@@ -1,64 +1,105 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import {
   IAlunaBalanceGetTradableBalanceParams,
+  IAlunaBalanceGetTradableBalanceReturns,
+  IAlunaBalanceListRawReturns,
+  IAlunaBalanceListReturns,
   IAlunaBalanceModule,
+  IAlunaBalanceParseManyReturns,
+  IAlunaBalanceParseReturns,
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { validateParams } from '../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
+import { BitfinexAccountsAdapter } from '../enums/adapters/BitfinexAccountsAdapter'
 import { BitfinexAccountsEnum } from '../enums/BitfinexAccountsEnum'
 import { IBitfinexBalanceSchema } from '../schemas/IBitfinexBalanceSchema'
-import { BitfinexBalanceParser } from '../schemas/parsers/BitifnexBalanceParser'
+import { BitfinexBalanceParser } from '../schemas/parsers/BitfnexBalanceParser'
+import { bitfinexGetTradableBalanceParamsSchema } from '../validation/bitfinexTradableBalanceParamsSchema'
 
 
 
 export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalanceModule {
 
-  public async listRaw (): Promise<IBitfinexBalanceSchema[]> {
+  public async listRaw ()
+    : Promise<IAlunaBalanceListRawReturns<IBitfinexBalanceSchema>> {
 
     BitfinexLog.info('fetching Bitfinex balances')
 
     const { privateRequest } = BitfinexHttp
 
-    const rawBalances = await privateRequest<IBitfinexBalanceSchema[]>({
+    const {
+      data: rawBalances,
+      apiRequestCount,
+    } = await privateRequest<IBitfinexBalanceSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/wallets',
       keySecret: this.exchange.keySecret,
     })
 
-    return rawBalances
+    return {
+      rawBalances,
+      apiRequestCount,
+    }
 
   }
 
-  public async list (): Promise<IAlunaBalanceSchema[]> {
+  public async list (): Promise<IAlunaBalanceListReturns> {
 
-    const rawBalances = await this.listRaw()
+    let apiRequestCount = 0
 
-    const parsedBalances = this.parseMany({ rawBalances })
+    const {
+      rawBalances,
+      apiRequestCount: listRawCount,
+    } = await this.listRaw()
+
+    apiRequestCount += 1
+
+    const {
+      balances: parsedBalances,
+      apiRequestCount: parseManyCount,
+    } = this.parseMany({ rawBalances })
+
+    apiRequestCount += 1
 
     BitfinexLog.info(`parsed ${parsedBalances.length} balances for Bitfinex`)
 
-    return parsedBalances
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      balances: parsedBalances,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
   public parse (params: {
     rawBalance: IBitfinexBalanceSchema,
-  }): IAlunaBalanceSchema {
+  }): IAlunaBalanceParseReturns {
 
     const { rawBalance } = params
 
-    const parsedBalance = BitfinexBalanceParser.parse({ rawBalance })
+    const parsedBalance = BitfinexBalanceParser.parse({
+      rawBalance,
+    })
 
-    return parsedBalance
+    return {
+      balance: parsedBalance,
+      apiRequestCount: 1,
+    }
 
   }
 
   public parseMany (params: {
     rawBalances: IBitfinexBalanceSchema[],
-  }): IAlunaBalanceSchema[] {
+  }): IAlunaBalanceParseManyReturns {
 
     const { rawBalances } = params
+
+    let apiRequestCount = 0
 
     const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
 
@@ -71,7 +112,12 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
       }
 
-      const parsedBalance = this.parse({ rawBalance })
+      const {
+        balance: parsedBalance,
+        apiRequestCount: parseCount,
+      } = this.parse({ rawBalance })
+
+      apiRequestCount += parseCount + 1
 
       accumulator.push(parsedBalance)
 
@@ -81,46 +127,67 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     BitfinexLog.info(`parsed ${parsedBalances.length} Bitfinex balances`)
 
-    return parsedBalances
+    return {
+      balances: parsedBalances,
+      apiRequestCount,
+    }
 
   }
 
   public async getTradableBalance (
     params: IAlunaBalanceGetTradableBalanceParams,
-  ): Promise<number> {
+  ): Promise<IAlunaBalanceGetTradableBalanceReturns> {
 
-    // TODO: Validate params and throw errors accordingly
+    validateParams({
+      params,
+      schema: bitfinexGetTradableBalanceParamsSchema,
+    })
 
     const {
       rate,
       side,
+      account,
       symbolPair,
     } = params
+
+    let apiRequestCount = 0
+
+    const translatedAccount = BitfinexAccountsAdapter.translateToBitfinex({
+      from: account!,
+    })
+
+    apiRequestCount += 1
 
     BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbolPair}`)
 
     const { privateRequest } = BitfinexHttp
 
-    const dir = side === AlunaSideEnum.LONG
+    const dir = side === AlunaOrderSideEnum.BUY
       ? 1
       : -1
 
-    const [tradableBalance] = await privateRequest<[number]>({
+    const {
+      data,
+      apiRequestCount: requestCount,
+    } = await privateRequest<[number]>({
       url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
       keySecret: this.exchange.keySecret,
       body: {
         dir,
         symbol: symbolPair,
-
-        // TODO: Remove "!" after validating params above
         rate: rate!.toString(),
-
-        // TODO: Consider using `account` property from params
-        type: BitfinexAccountsEnum.MARGIN,
+        type: translatedAccount,
       },
     })
 
-    return tradableBalance
+    apiRequestCount += requestCount
+
+    const [tradableBalance] = data
+
+    return {
+      tradableBalance,
+      apiRequestCount,
+    }
 
   }
 

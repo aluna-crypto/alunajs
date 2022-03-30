@@ -1,7 +1,7 @@
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../../lib/enums/AlunaSideEnum'
 import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { BittrexOrderStatusEnum } from '../../enums/BittrexOrderStatusEnum'
 import { BittrexOrderTimeInForceEnum } from '../../enums/BittrexOrderTimeInForceEnum'
@@ -67,7 +67,7 @@ export const BITTREX_PARSED_ORDER: IAlunaOrderSchema = {
   baseSymbolId: 'USDT',
   quoteSymbolId: 'USD',
   account: AlunaAccountEnum.EXCHANGE,
-  side: AlunaSideEnum.LONG,
+  side: AlunaOrderSideEnum.BUY,
   status: AlunaOrderStatusEnum.OPEN,
   type: AlunaOrderTypesEnum.LIMIT,
   placedAt: new Date('2015-12-11T06:31:40.633Z'),

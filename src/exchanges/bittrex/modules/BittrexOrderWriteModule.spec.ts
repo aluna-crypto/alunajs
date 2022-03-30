@@ -1,28 +1,32 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import { IAlunaExchangeOrderOptionsSchema } from '../../../lib/schemas/IAlunaExchangeSchema'
-import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BittrexHttp } from '../BittrexHttp'
 import {
   BittrexSpecs,
-  exchangeOrderTypes as bittrexExchangeOrderTypes,
   PROD_BITTREX_URL,
 } from '../BittrexSpecs'
 import { BittrexOrderStatusEnum } from '../enums/BittrexOrderStatusEnum'
@@ -53,6 +57,8 @@ describe('BittrexOrderWriteModule', () => {
 
   it('should place a new Bittrex limit order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     ImportMock.mockOther(
       bittrexOrderWriteModule,
       'exchange',
@@ -62,20 +68,26 @@ describe('BittrexOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        data: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'parse',
-      Promise.resolve(placedOrder),
+      Promise.resolve({
+        order: placedOrder,
+        apiRequestCount: 1,
+      }),
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -91,7 +103,9 @@ describe('BittrexOrderWriteModule', () => {
 
 
     // place long limit order
-    const placeResponse1 = await bittrexOrderWriteModule.place(placeOrderParams)
+    const {
+      order: placeResponse1,
+    } = await bittrexOrderWriteModule.place(placeOrderParams)
 
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -109,13 +123,21 @@ describe('BittrexOrderWriteModule', () => {
 
     expect(placeResponse1).to.deep.eq(placedOrder)
 
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: placeOrderParams,
+      schema: placeOrderParamsSchema,
+    })
 
     // place short limit order
-    const placeResponse2 = await bittrexOrderWriteModule.place({
-      ...placeOrderParams,
+
+    const placeOrderParams2: IAlunaOrderPlaceParams = {
+      amount: 0.001,
+      symbolPair: 'ETHZAR',
+      side: AlunaOrderSideEnum.SELL,
       type: AlunaOrderTypesEnum.MARKET,
-      side: AlunaSideEnum.SHORT,
-    })
+      account: AlunaAccountEnum.EXCHANGE,
+    }
 
     const requestBody2: IBittrexOrderRequest = {
       direction: BittrexSideEnum.SELL,
@@ -125,12 +147,18 @@ describe('BittrexOrderWriteModule', () => {
       timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
     }
 
+    const {
+      order: placeResponse2,
+    } = await bittrexOrderWriteModule.place(
+      placeOrderParams2,
+    )
+
     expect(requestMock.callCount).to.be.eq(2)
-    expect(requestMock.calledWith({
+    expect(requestMock.args[1][0]).to.deep.eq({
       url: `${PROD_BITTREX_URL}/orders`,
       body: requestBody2,
       keySecret,
-    })).to.be.ok
+    })
 
     expect(parseMock.callCount).to.be.eq(2)
     expect(parseMock.calledWith({
@@ -139,76 +167,174 @@ describe('BittrexOrderWriteModule', () => {
 
     expect(placeResponse2).to.deep.eq(placedOrder)
 
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(validateParamsMock.args[1][0]).to.deep.eq({
+      params: placeOrderParams2,
+      schema: placeOrderParamsSchema,
+    })
+
   })
 
-  it('should throw an error if a new limit order is placed without rate',
+  it(
+    'should throw error code and message for insufficient balance',
     async () => {
 
-      ImportMock.mockOther(
-        bittrexOrderWriteModule,
-        'exchange',
-      { keySecret } as IAlunaExchange,
-      )
+      mockExchangeModule({ module: bittrexOrderWriteModule })
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Something went wrong.',
+        metadata: {
+          code: 'INSUFFICIENT_FUNDS',
+        },
+        httpStatusCode: 500,
+      })
+
+
+      const {
+        requestMock,
+      } = mockPrivateHttpRequest({
+        exchangeHttp: BittrexHttp,
+        requestResponse: Promise.reject(mockedError),
+        isReject: true,
+      })
 
       const placeOrderParams: IAlunaOrderPlaceParams = {
         amount: 0.001,
+        rate: 10000,
         symbolPair: 'ETHZAR',
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
         account: AlunaAccountEnum.EXCHANGE,
-        // without rate
       }
 
-      let result
-      let error
-
-      try {
-
-        result = await bittrexOrderWriteModule.place(placeOrderParams)
-
-      } catch (err) {
-
-        error = err
-
+      const requestBody: IBittrexOrderRequest = {
+        direction: BittrexSideEnum.BUY,
+        marketSymbol: placeOrderParams.symbolPair,
+        quantity: Number(placeOrderParams.amount),
+        limit: Number(placeOrderParams.rate),
+        type: BittrexOrderTypeEnum.LIMIT,
+        timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
       }
+
+      const {
+        error,
+        result,
+      } = await executeAndCatch(async () => bittrexOrderWriteModule.place(
+        placeOrderParams,
+      ))
 
       expect(result).not.to.be.ok
-      expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-      expect(error.message)
-        .to.be.eq('A rate is required for limit orders')
-      expect(error.httpStatusCode).to.be.eq(401)
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_BITTREX_URL}/orders`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
 
-    })
+      const msg = 'Account has insufficient balance for requested action.'
 
-  it('should throw an request error when placing new order', async () => {
+      expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error!.message).to.be.eq(msg)
+      expect(error!.httpStatusCode).to.be.eq(mockedError.httpStatusCode)
 
-    ImportMock.mockOther(
-      bittrexOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
+    },
+  )
+
+  it(
+    'should throw error code and message for minimum trade requirement not met',
+    async () => {
+
+      mockExchangeModule({ module: bittrexOrderWriteModule })
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: 'Something went wrong.',
+        metadata: {
+          code: 'MIN_TRADE_REQUIREMENT_NOT_MET',
+        },
+        httpStatusCode: 422,
+      })
+
+
+      const {
+        requestMock,
+      } = mockPrivateHttpRequest({
+        exchangeHttp: BittrexHttp,
+        requestResponse: Promise.reject(mockedError),
+        isReject: true,
+      })
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      const requestBody: IBittrexOrderRequest = {
+        direction: BittrexSideEnum.BUY,
+        marketSymbol: placeOrderParams.symbolPair,
+        quantity: Number(placeOrderParams.amount),
+        limit: Number(placeOrderParams.rate),
+        type: BittrexOrderTypeEnum.LIMIT,
+        timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      }
+
+      const {
+        error,
+        result,
+      } = await executeAndCatch(async () => bittrexOrderWriteModule.place(
+        placeOrderParams,
+      ))
+
+      expect(result).not.to.be.ok
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_BITTREX_URL}/orders`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
+
+      const msg = 'The trade was smaller than the min trade size quantity for '
+        .concat('the market')
+
+      expect(error!.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
+      expect(error!.message).to.be.eq(msg)
+      expect(error!.httpStatusCode).to.be.eq(mockedError.httpStatusCode)
+
+    },
+  )
+
+  it('should throw error code and message for unknown error', async () => {
+
+    mockExchangeModule({ module: bittrexOrderWriteModule })
 
     const mockedError: AlunaError = new AlunaError({
       code: 'request-error',
       message: 'Something went wrong.',
       metadata: {
-        code: -1000,
-        msg: 'Something went wrong.',
+        code: 'DUST_TRADE_DISALLOWED_MIN_VALUE',
       },
-      httpStatusCode: 500,
+      httpStatusCode: 400,
     })
 
-    const requestMock = ImportMock.mockFunction(
-      BittrexHttp,
-      'privateRequest',
-      Promise.reject(mockedError),
-    )
+
+    const {
+      requestMock,
+    } = mockPrivateHttpRequest({
+      exchangeHttp: BittrexHttp,
+      requestResponse: Promise.reject(mockedError),
+      isReject: true,
+    })
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
       amount: 0.001,
       rate: 10000,
       symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
@@ -222,20 +348,11 @@ describe('BittrexOrderWriteModule', () => {
       timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
     }
 
-    let result
-    let error
+    let res = await executeAndCatch(async () => bittrexOrderWriteModule.place(
+      placeOrderParams,
+    ))
 
-    try {
-
-      result = await bittrexOrderWriteModule.place(placeOrderParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
+    expect(res.result).not.to.be.ok
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
       url: `${PROD_BITTREX_URL}/orders`,
@@ -243,76 +360,30 @@ describe('BittrexOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-    expect(error.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
-    expect(error.message).to.be.eq('Something went wrong.')
-    expect(error.httpStatusCode).to.be.eq(500)
+    let msg = 'The amount of quote currency involved in a transaction '
+      .concat('would be less than the minimum limit of 10K satoshis')
 
-  })
+    expect(res.error!.code).to.be.eq(AlunaGenericErrorCodes.UNKNOWN)
+    expect(res.error!.message).to.be.eq(msg)
+    expect(res.error!.httpStatusCode).to.be.eq(mockedError.httpStatusCode)
 
 
-
-  it('should place a new Bittrex market order just fine', async () => {
-
-    ImportMock.mockOther(
-      bittrexOrderWriteModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
+    requestMock.returns(
+      Promise.reject(new AlunaError({
+        code: 'request-error',
+        message: 'Something went wrong.',
+        metadata: {
+          code: 'unknown',
+        },
+        httpStatusCode: 400,
+      })),
     )
 
-    const requestMock = ImportMock.mockFunction(
-      BittrexHttp,
-      'privateRequest',
-      Promise.resolve(placedOrder),
-    )
+    res = await executeAndCatch(async () => bittrexOrderWriteModule.place(
+      placeOrderParams,
+    ))
 
-    const parseMock = ImportMock.mockFunction(
-      bittrexOrderWriteModule,
-      'parse',
-      placedOrder,
-    )
-
-    const placeOrderParams: IAlunaOrderPlaceParams = {
-      amount: 0.001,
-      rate: 0,
-      symbolPair: 'ETHZAR',
-      side: AlunaSideEnum.SHORT,
-      type: AlunaOrderTypesEnum.MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
-    }
-
-    const requestBody: IBittrexOrderRequest = {
-      direction: BittrexSideEnum.SELL,
-      marketSymbol: placeOrderParams.symbolPair,
-      type: BittrexOrderTypeEnum.MARKET,
-      timeInForce: BittrexOrderTimeInForceEnum.FILL_OR_KILL,
-      quantity: Number(placeOrderParams.amount),
-    }
-
-
-    // place long market order
-    const placeResponse1 = await bittrexOrderWriteModule.place(placeOrderParams)
-
-
-    expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWith({
-      url: `${PROD_BITTREX_URL}/orders`,
-      body: requestBody,
-      keySecret,
-    })).to.be.ok
-
-    expect(parseMock.callCount).to.be.eq(1)
-    expect(parseMock.calledWith({
-      rawOrder: placedOrder,
-    })).to.be.ok
-
-    expect(placeResponse1).to.deep.eq(parseMock.returnValues[0])
-
-
-    // place short market order
-    const placeResponse2 = await bittrexOrderWriteModule.place({
-      ...placeOrderParams,
-    })
-
+    expect(res.result).not.to.be.ok
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.calledWith({
       url: `${PROD_BITTREX_URL}/orders`,
@@ -320,314 +391,22 @@ describe('BittrexOrderWriteModule', () => {
       keySecret,
     })).to.be.ok
 
-    expect(parseMock.callCount).to.be.eq(2)
-    expect(parseMock.calledWith({
-      rawOrder: placedOrder,
-    })).to.be.ok
+    msg = 'Something went wrong.'
 
-    expect(placeResponse2).to.deep.eq(placedOrder)
-
-  })
-
-
-
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    ImportMock.mockOther(
-      BittrexSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not found`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    expect(res.error!.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+    expect(res.error!.message).to.be.eq(msg)
+    expect(res.error!.httpStatusCode).to.be.eq(mockedError.httpStatusCode)
 
   })
 
+  it('should validate exchange specs when placing new orders', async () => {
 
-
-  it('should ensure given account is supported', async () => {
-
-    ImportMock.mockOther(
-      BittrexSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for Bittrex`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: BittrexSpecs,
+      orderWriteModule: bittrexOrderWriteModule,
+    })
 
   })
-
-
-
-  it('should ensure given account is implemented', async () => {
-
-    ImportMock.mockOther(
-      BittrexSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for Bittrex`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    const accountIndex = BittrexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    const limitOrderType = bittrexExchangeOrderTypes[0]
-
-    ImportMock.mockOther(
-      BittrexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        limitOrderType,
-      ],
-    )
-
-    const type = 'unsupported-type'
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is supported', async () => {
-
-    const accountIndex = BittrexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BittrexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type is implemented', async () => {
-
-    const accountIndex = BittrexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BittrexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for Bittrex`
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(msg)
-
-  })
-
-
-
-  it('should ensure given order type has write mode', async () => {
-
-    const accountIndex = BittrexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BittrexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-    let result
-    let error
-
-    try {
-
-      result = await bittrexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(`Order type '${type}' is in read mode`)
-
-  })
-
-
 
   it('should ensure an order was canceled', async () => {
 
@@ -650,7 +429,7 @@ describe('BittrexOrderWriteModule', () => {
       Promise.reject(mockedError),
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -700,16 +479,21 @@ describe('BittrexOrderWriteModule', () => {
     ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      canceledOrderResponse,
+      { data: canceledOrderResponse, apiRequestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'parse',
-      { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
+      {
+        order: {
+          status: AlunaOrderStatusEnum.CANCELED,
+        },
+        apiRequestCount: 1,
+      },
     )
 
-    const cancelParams: IAlunaOrderCancelParams = {
+    const cancelParams: IAlunaOrderGetParams = {
       id: 'order-id',
       symbolPair: 'symbol-pair',
     }
@@ -719,7 +503,9 @@ describe('BittrexOrderWriteModule', () => {
 
     try {
 
-      canceledOrder = await bittrexOrderWriteModule.cancel(cancelParams)
+      const { order } = await bittrexOrderWriteModule.cancel(cancelParams)
+
+      canceledOrder = order
 
     } catch (err) {
 
@@ -735,23 +521,30 @@ describe('BittrexOrderWriteModule', () => {
     })).to.be.ok
 
     expect(canceledOrder).to.be.ok
-    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0])
+    expect(canceledOrder).to.deep.eq(parseMock.returnValues[0].order)
     expect(canceledOrder?.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
 
   it('should edit a bittrex order just fine', async () => {
 
+    const { validateParamsMock } = mockValidateParams()
+
     const cancelMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'cancel',
-      Promise.resolve(true),
+      Promise.resolve({
+        apiRequestCount: 1,
+      }),
     )
 
     const placeMock = ImportMock.mockFunction(
       bittrexOrderWriteModule,
       'place',
-      Promise.resolve(BITTREX_RAW_LIMIT_ORDER),
+      Promise.resolve({
+        order: BITTREX_RAW_LIMIT_ORDER,
+        apiRequestCount: 1,
+      }),
     )
 
     const editOrderParams: IAlunaOrderEditParams = {
@@ -759,17 +552,25 @@ describe('BittrexOrderWriteModule', () => {
       amount: 0.001,
       rate: 0,
       symbolPair: 'LTCBTC',
-      side: AlunaSideEnum.LONG,
-      type: AlunaOrderTypesEnum.MARKET,
+      side: AlunaOrderSideEnum.BUY,
+      type: AlunaOrderTypesEnum.LIMIT,
       account: AlunaAccountEnum.EXCHANGE,
     }
 
-    const newOrder = await bittrexOrderWriteModule.edit(editOrderParams)
+    const {
+      order: newOrder,
+    } = await bittrexOrderWriteModule.edit(editOrderParams)
 
     expect(newOrder).to.deep.eq(BITTREX_RAW_LIMIT_ORDER)
 
     expect(cancelMock.callCount).to.be.eq(1)
     expect(placeMock.callCount).to.be.eq(1)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.args[0][0]).to.deep.eq({
+      params: editOrderParams,
+      schema: editOrderParamsSchema,
+    })
 
   })
 

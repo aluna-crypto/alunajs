@@ -1,9 +1,11 @@
+import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BinanceHttp } from '../BinanceHttp'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
 import {
@@ -36,11 +38,14 @@ describe('BinanceBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { balances: BINANCE_RAW_BALANCES },
+      { data: { balances: BINANCE_RAW_BALANCES }, apiRequestCount: 1 },
     )
 
 
-    const rawBalances = await binanceBalanceModule.listRaw()
+    const {
+      rawBalances,
+      apiRequestCount,
+    } = await binanceBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -48,6 +53,8 @@ describe('BinanceBalanceModule', () => {
       url: `${PROD_BINANCE_URL}/api/v3/account`,
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok
+
+    expect(apiRequestCount).to.eq(1)
 
     expect(rawBalances.length).to.eq(4)
     expect(rawBalances).to.deep.eq(BINANCE_RAW_BALANCES)
@@ -77,17 +84,18 @@ describe('BinanceBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'listRaw',
-      rawListMock,
+      { rawBalances: rawListMock, apiRequestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'parseMany',
-      BINANCE_PARSED_BALANCES,
+      { balances: BINANCE_PARSED_BALANCES, apiRequestCount: 1 },
     )
 
-    const balances = await binanceBalanceModule.list()
+    const { balances, apiRequestCount } = await binanceBalanceModule.list()
 
+    expect(apiRequestCount).to.be.eq(4)
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -122,38 +130,61 @@ describe('BinanceBalanceModule', () => {
 
   it('should parse a single Binance raw balance', () => {
 
-    const parsedBalance1 = binanceBalanceModule.parse({
-      rawBalance: BINANCE_RAW_BALANCES[0],
+    const translateSymbolId = 'BTC'
+
+    const { alunaSymbolMappingMock } = mockAlunaSymbolMapping()
+
+    alunaSymbolMappingMock.returns(translateSymbolId)
+
+    const rawBalance1 = BINANCE_RAW_BALANCES[0]
+    const rawBalance2 = BINANCE_RAW_BALANCES[1]
+
+    const { balance: parsedBalance1 } = binanceBalanceModule.parse({
+      rawBalance: rawBalance1,
     })
 
     const {
       asset,
       free,
       locked,
-    } = BINANCE_RAW_BALANCES[0]
+    } = rawBalance1
 
-    const available = parseFloat(free)
-    const total = parseFloat(free) + parseFloat(locked)
+    const available = Number(free)
+    const total = new BigNumber(available)
+      .plus(Number(locked))
+      .toNumber()
 
-    expect(parsedBalance1.symbolId).to.be.eq(asset)
+    expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
-
-    const parsedBalance2 = binanceBalanceModule.parse({
-      rawBalance: BINANCE_RAW_BALANCES[1],
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(1)
+    expect(alunaSymbolMappingMock.args[0][0]).to.deep.eq({
+      exchangeSymbolId: asset,
+      symbolMappings: {},
     })
 
-    const currency2 = BINANCE_RAW_BALANCES[1].asset
-    const available2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
-    const total2 = parseFloat(BINANCE_RAW_BALANCES[1].free)
-      + parseFloat(BINANCE_RAW_BALANCES[1].locked)
+
+    const { balance: parsedBalance2 } = binanceBalanceModule.parse({
+      rawBalance: rawBalance2,
+    })
+
+    const available2 = Number(rawBalance2.free)
+    const total2 = new BigNumber(available2)
+      .plus(Number(rawBalance2.locked))
+      .toNumber()
 
     expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
-    expect(parsedBalance2.symbolId).to.be.eq(currency2)
+    expect(parsedBalance2.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
+
+    expect(alunaSymbolMappingMock.callCount).to.be.eq(2)
+    expect(alunaSymbolMappingMock.args[1][0]).to.deep.eq({
+      exchangeSymbolId: rawBalance2.asset,
+      symbolMappings: {},
+    })
 
   })
 
@@ -168,17 +199,16 @@ describe('BinanceBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns(BINANCE_PARSED_BALANCES[0])
+      .returns({ balance: BINANCE_PARSED_BALANCES[0] })
       .onSecondCall()
-      .returns(BINANCE_PARSED_BALANCES[1])
+      .returns({ balance: BINANCE_PARSED_BALANCES[1] })
       .onThirdCall()
-      .returns(BINANCE_PARSED_BALANCES[2])
+      .returns({ balance: BINANCE_PARSED_BALANCES[2] })
 
 
-    const parsedBalances = binanceBalanceModule.parseMany({
+    const { balances: parsedBalances } = binanceBalanceModule.parseMany({
       rawBalances: BINANCE_RAW_BALANCES,
     })
-
 
     expect(parseMock.callCount).to.be.eq(3)
     expect(parsedBalances.length).to.be.eq(3)

@@ -7,12 +7,17 @@ import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
+  IAlunaHttpResponseWithRequestCount,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { BittrexLog } from './BittrexLog'
 
+
+
+export const BITTREX_HTTP_CACHE_KEY_PREFIX = 'BittrexHttp.publicRequest'
 
 
 interface ISignedHashParams {
@@ -97,13 +102,28 @@ export const generateAuthHeader = (
 
 export const BittrexHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams): Promise<T> {
+  static async publicRequest<T> (params: IAlunaHttpPublicParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
       body,
       verb = AlunaHttpVerbEnum.GET,
     } = params
+
+    const cacheKey = AlunaCache.hashCacheKey({
+      args: params,
+      prefix: BITTREX_HTTP_CACHE_KEY_PREFIX,
+    })
+
+    if (AlunaCache.cache.has(cacheKey)) {
+
+      return {
+        data: AlunaCache.cache.get<T>(cacheKey)!,
+        apiRequestCount: 0,
+      }
+
+    }
 
     const requestConfig = {
       url,
@@ -115,7 +135,12 @@ export const BittrexHttp: IAlunaHttp = class {
 
       const response = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      AlunaCache.cache.set<T>(cacheKey, response.data)
+
+      return {
+        data: response.data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 
@@ -125,7 +150,8 @@ export const BittrexHttp: IAlunaHttp = class {
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams): Promise<T> {
+  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
+    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
 
     const {
       url,
@@ -151,9 +177,12 @@ export const BittrexHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      return response.data
+      return {
+        data,
+        apiRequestCount: 1,
+      }
 
     } catch (error) {
 

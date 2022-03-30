@@ -1,5 +1,11 @@
-import { IAlunaSymbolModule } from '../../../lib/modules/IAlunaSymbolModule'
-import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
+import {
+  IAlunaSymbolListRawReturns,
+  IAlunaSymbolListReturns,
+  IAlunaSymbolModule,
+  IAlunaSymbolParseManyReturns,
+  IAlunaSymbolParseReturns,
+} from '../../../lib/modules/IAlunaSymbolModule'
+import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { Gateio } from '../Gateio'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
@@ -10,28 +16,51 @@ import { IGateioSymbolSchema } from '../schemas/IGateioSymbolSchema'
 
 export const GateioSymbolModule: IAlunaSymbolModule = class {
 
-  public static async list (): Promise<IAlunaSymbolSchema[]> {
+  public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    const rawSymbols = await GateioSymbolModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedSymbols = GateioSymbolModule.parseMany({ rawSymbols })
+    const {
+      apiRequestCount: listRawCount,
+      rawSymbols,
+    } = await GateioSymbolModule.listRaw()
 
-    return parsedSymbols
+    apiRequestCount += 1
+
+    const {
+      symbols: parsedSymbols,
+      apiRequestCount: parseManyCount,
+    } = GateioSymbolModule.parseMany({ rawSymbols })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
 
 
-  public static async listRaw (): Promise<IGateioSymbolSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaSymbolListRawReturns<IGateioSymbolSchema>> {
 
     GateioLog.info('fetching Gateio symbols')
 
-    const rawSymbols = await GateioHttp
+    const { data: rawSymbols, apiRequestCount } = await GateioHttp
       .publicRequest<IGateioSymbolSchema[]>({
         url: `${PROD_GATEIO_URL}/spot/currencies`,
       })
 
-    return rawSymbols
+    return {
+      rawSymbols,
+      apiRequestCount,
+    }
 
   }
 
@@ -39,7 +68,7 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
   public static parse (params:{
     rawSymbol: IGateioSymbolSchema,
-  }): IAlunaSymbolSchema {
+  }): IAlunaSymbolParseReturns {
 
     const { rawSymbol } = params
 
@@ -47,13 +76,26 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
       currency,
     } = rawSymbol
 
+    const id = AlunaSymbolMapping.translateSymbolId({
+      exchangeSymbolId: currency,
+      symbolMappings: Gateio.settings.mappings,
+    })
+
+    const alias = id !== currency
+      ? currency
+      : undefined
+
     const parsedSymbol = {
-      id: currency,
+      id,
       exchangeId: Gateio.ID,
+      alias,
       meta: rawSymbol,
     }
 
-    return parsedSymbol
+    return {
+      symbol: parsedSymbol,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -61,13 +103,20 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
   public static parseMany (params: {
     rawSymbols: IGateioSymbolSchema[],
-  }): IAlunaSymbolSchema[] {
+  }): IAlunaSymbolParseManyReturns {
 
     const { rawSymbols } = params
 
+    let apiRequestCount = 0
+
     const parsedSymbols = rawSymbols.map((rawSymbol) => {
 
-      const parsedSymbol = GateioSymbolModule.parse({ rawSymbol })
+      const {
+        symbol: parsedSymbol,
+        apiRequestCount: parseCount,
+      } = GateioSymbolModule.parse({ rawSymbol })
+
+      apiRequestCount += parseCount + 1
 
       return parsedSymbol
 
@@ -75,7 +124,10 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     GateioLog.info(`parsed ${parsedSymbols.length} symbols for Gateio`)
 
-    return parsedSymbols
+    return {
+      symbols: parsedSymbols,
+      apiRequestCount,
+    }
 
   }
 

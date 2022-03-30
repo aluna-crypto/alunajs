@@ -11,8 +11,8 @@ import {
 } from '../../../../lib/schemas/IAlunaOrderSchema'
 import { IAlunaUICustomDisplaySchema } from '../../../../lib/schemas/IAlunaUICustomDisplaySchema'
 import { BitmexSpecs } from '../../BitmexSpecs'
+import { BitmexOrderSideAdapter } from '../../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../../enums/adapters/BitmexSideAdapter'
 import { BitmexStatusAdapter } from '../../enums/adapters/BitmexStatusAdapter'
 import { BitmexOrderTypeEnum } from '../../enums/BitmexOrderTypeEnum'
 import { IBitmexOrderSchema } from '../IBitmexOrderSchema'
@@ -30,9 +30,9 @@ export class BitmexOrderParser {
 
     const {
       rawOrder,
+      instrument,
       baseSymbolId,
       quoteSymbolId,
-      instrument,
     } = params
 
     const {
@@ -53,7 +53,7 @@ export class BitmexOrderParser {
       from: ordStatus,
     })
 
-    const computedSide = BitmexSideAdapter.translateToAluna({
+    const computedSide = BitmexOrderSideAdapter.translateToAluna({
       from: side,
     })
 

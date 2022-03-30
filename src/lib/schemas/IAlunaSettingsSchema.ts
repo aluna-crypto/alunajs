@@ -1,6 +1,4 @@
 export interface IAlunaSettingsSchema {
   referralCode?: string
-  mappings?: {
-    [key: string]: string,
-  }
+  mappings: Record<string, string>
 }

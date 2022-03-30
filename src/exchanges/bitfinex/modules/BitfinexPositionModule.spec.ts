@@ -1,15 +1,19 @@
 import { expect } from 'chai'
-import { map } from 'lodash'
-import Sinon from 'sinon'
 import {
-  ImportMock,
-  OtherManager,
-} from 'ts-mock-imports'
+  filter,
+  map,
+} from 'lodash'
+import Sinon from 'sinon'
+import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
+import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaPositionSideEnum } from '../../../lib/enums/AlunaPositionSideEnum'
+import { AlunaPositionStatusEnum } from '../../../lib/enums/AlunaPositionStatusEnum'
 import { AlunaPositionErrorCodes } from '../../../lib/errors/AlunaPositionErrorCodes'
-import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaPositionSchema } from '../../../lib/schemas/IAlunaPositionSchema'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexPositionParser } from '../schemas/parsers/BitfinexPositionParser'
 import {
@@ -24,36 +28,19 @@ describe('BitfinexPositionModule', () => {
 
   const bitfinexPositionModule = BitfinexPositionModule.prototype
 
-  let exchangeMock: OtherManager<IAlunaExchange>
-
   const id = '666'
 
-  const keySecret: IAlunaKeySecretSchema = {
-    key: '',
-    secret: '',
-  }
-
-  const mockKeySecret = () => {
-
-    exchangeMock = ImportMock.mockOther(
-      bitfinexPositionModule,
-      'exchange',
-      { keySecret } as IAlunaExchange,
-    )
-
-    return { exchangeMock }
-
-  }
-
-  beforeEach(mockKeySecret)
-
-
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (requestResponse: any, isReject = false) => {
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      Promise.resolve(requestResponse),
+      isReject
+        ? requestResponse
+        : Promise.resolve({
+          data: requestResponse,
+          apiRequestCount: 1,
+        }),
     )
 
     return { requestMock }
@@ -85,7 +72,14 @@ describe('BitfinexPositionModule', () => {
 
     resonse.forEach((res, i) => {
 
-      parserMock.onCall(i).returns(Promise.resolve(res))
+      const response = mockBitfinexModule
+        ? Promise.resolve({
+          position: res,
+          apiRequestCount: 1,
+        })
+        : res
+
+      parserMock.onCall(i).returns(response)
 
     })
 
@@ -95,9 +89,13 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly list Bitfinex raw positions', async () => {
 
+    const {
+      exchangeMock,
+    } = mockExchangeModule({ module: bitfinexPositionModule })
+
     const { requestMock } = mockRequest(BITFINEX_RAW_POSITIONS)
 
-    const rawPositions = await bitfinexPositionModule.listRaw()
+    const { rawPositions } = await bitfinexPositionModule.listRaw()
 
     expect(rawPositions).to.deep.eq(BITFINEX_RAW_POSITIONS)
     expect(requestMock.callCount).to.be.eq(1)
@@ -116,16 +114,22 @@ describe('BitfinexPositionModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'listRaw',
-      Promise.resolve(mockedRawPositions),
+      Promise.resolve({
+        rawPositions: mockedRawPositions,
+        apiRequestCount: 1,
+      }),
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'parseMany',
-      mockedParsedPositions,
+      {
+        positions: mockedParsedPositions,
+        apiRequestCount: 1,
+      },
     )
 
-    const parsedPositions = await bitfinexPositionModule.list()
+    const { positions: parsedPositions } = await bitfinexPositionModule.list()
 
     expect(parsedPositions).to.deep.eq(mockedParsedPositions)
 
@@ -154,7 +158,7 @@ describe('BitfinexPositionModule', () => {
 
       }
 
-      const parsedPosition = await bitfinexPositionModule.parse({
+      const { position: parsedPosition } = await bitfinexPositionModule.parse({
         rawPosition,
       })
 
@@ -176,9 +180,12 @@ describe('BitfinexPositionModule', () => {
 
     const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
+      true,
     )
 
-    const parsedPositions = await bitfinexPositionModule.parseMany({
+    const {
+      positions: parsedPositions,
+    } = await bitfinexPositionModule.parseMany({
       rawPositions: BITFINEX_RAW_POSITIONS,
     })
 
@@ -205,15 +212,48 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly get a Bitfinex raw position', async () => {
 
+    const { exchangeMock } = mockExchangeModule({
+      module: bitfinexPositionModule,
+    })
+
     const mockedRawPosition = [BITFINEX_RAW_POSITIONS[0]]
 
     const { requestMock } = mockRequest(mockedRawPosition)
 
-    const rawPosition = await bitfinexPositionModule.getRaw({
+    const { rawPosition } = await bitfinexPositionModule.getRaw({
       id,
     })
 
     expect(rawPosition).to.deep.eq(mockedRawPosition[0])
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.calledWithExactly({
+      url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
+      keySecret: exchangeMock.getValue().keySecret,
+      body: { id: [Number(id)], limit: 1 },
+    })).to.be.ok
+
+  })
+
+  it('should throw error if position is not found', async () => {
+
+    const { exchangeMock } = mockExchangeModule({
+      module: bitfinexPositionModule,
+    })
+
+    const { requestMock } = mockRequest(Promise.resolve([]))
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(async () => bitfinexPositionModule.getRaw({
+      id,
+    }))
+
+    expect(result).not.to.be.ok
+
+    expect(error!.code).to.be.eq(AlunaPositionErrorCodes.NOT_FOUND)
+    expect(error!.message).to.be.eq('Position not found')
+
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWithExactly({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
@@ -230,14 +270,17 @@ describe('BitfinexPositionModule', () => {
     const getRawMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'getRaw',
-      Promise.resolve(mockedRawPosition),
+      Promise.resolve({
+        rawPosition: mockedRawPosition,
+        apiRequestCount: 1,
+      }),
     )
 
     const { parserMock } = mockBitfinexPositionParser(
       BITFINEX_PARSED_POSITIONS,
     )
 
-    const parsedPosition = await bitfinexPositionModule.get({
+    const { position: parsedPosition } = await bitfinexPositionModule.get({
       id,
     })
 
@@ -257,33 +300,106 @@ describe('BitfinexPositionModule', () => {
 
   it('should properly close Bitfinex position', async () => {
 
-    const mockedParsedPosition = BITFINEX_PARSED_POSITIONS[1]
+    const mockedDate = new Date()
 
-    const { requestMock } = mockRequest(true)
+    ImportMock.mockFunction(
+      global,
+      'Date',
+      mockedDate,
+    )
+
+    const placeSpy = Sinon.spy(async () => Promise.resolve({
+      apiRequestCount: 1,
+    }))
+
+    const openMockedPositions = filter(BITFINEX_PARSED_POSITIONS, (p) => {
+
+      return p.status === AlunaPositionStatusEnum.OPEN
+
+    })
+
+    mockExchangeModule({
+      module: bitfinexPositionModule,
+      overrides: {
+        order: {
+          place: placeSpy,
+        } as any,
+      },
+    })
+
+    const mockedParsedPosition1 = openMockedPositions[0]
 
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(mockedParsedPosition),
+      Promise.resolve({
+        position: mockedParsedPosition1,
+        apiRequestCount: 1,
+      }),
     )
 
-    const closedPosition = await bitfinexPositionModule.close({
+    const { position: closedPosition } = await bitfinexPositionModule.close({
       id,
     })
-
-    expect(requestMock.callCount).to.be.eq(1)
-    expect(requestMock.calledWithExactly({
-      url: 'https://api.bitfinex.com/v1/position/close',
-      body: { position_id: Number(id) },
-      keySecret: exchangeMock.getValue().keySecret,
-    })).to.be.ok
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.args[0][0]).to.deep.eq({
       id,
     })
 
-    expect(mockedParsedPosition).to.deep.eq(closedPosition)
+    const side = mockedParsedPosition1.side === AlunaPositionSideEnum.LONG
+      ? AlunaOrderSideEnum.SELL
+      : AlunaOrderSideEnum.BUY
+
+    expect(placeSpy.callCount).to.be.eq(1)
+    expect(placeSpy.args[0]).to.deep.eq([{
+      account: mockedParsedPosition1.account,
+      amount: mockedParsedPosition1.amount,
+      symbolPair: mockedParsedPosition1.symbolPair,
+      type: AlunaOrderTypesEnum.MARKET,
+      side,
+    }])
+
+    expect(closedPosition).to.deep.eq({
+      ...mockedParsedPosition1,
+      status: AlunaPositionStatusEnum.CLOSED,
+      closedAt: mockedDate,
+    })
+
+    const mockedParsedPosition2 = openMockedPositions[1]
+
+    getMock.returns(Promise.resolve({
+      position: mockedParsedPosition2,
+      apiRequestCount: 1,
+    }))
+
+    const { position: closedPosition2 } = await bitfinexPositionModule.close({
+      id,
+    })
+
+    expect(getMock.callCount).to.be.eq(2)
+    expect(getMock.args[1][0]).to.deep.eq({
+      id,
+    })
+
+    const side2 = mockedParsedPosition2.side === AlunaPositionSideEnum.LONG
+      ? AlunaOrderSideEnum.SELL
+      : AlunaOrderSideEnum.BUY
+
+    expect(placeSpy.callCount).to.be.eq(2)
+    expect(placeSpy.args[1]).to.deep.eq([{
+      account: mockedParsedPosition2.account,
+      amount: mockedParsedPosition2.amount,
+      symbolPair: mockedParsedPosition2.symbolPair,
+      type: AlunaOrderTypesEnum.MARKET,
+      side: side2,
+    }])
+
+    expect(closedPosition2).to.deep.eq({
+      ...mockedParsedPosition2,
+      status: AlunaPositionStatusEnum.CLOSED,
+      closedAt: mockedDate,
+    })
 
   })
 
@@ -297,7 +413,10 @@ describe('BitfinexPositionModule', () => {
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(BITFINEX_PARSED_POSITIONS[0]),
+      Promise.resolve({
+        position: BITFINEX_PARSED_POSITIONS[0],
+        apiRequestCount: 1,
+      }),
     )
 
     try {
@@ -323,17 +442,20 @@ describe('BitfinexPositionModule', () => {
 
   })
 
-  it('should return error if position could not be closed', async () => {
+  it('should return error if position is already closed', async () => {
+
+    mockExchangeModule({ module: bitfinexPositionModule })
 
     let error
     let result
 
-    const { requestMock } = mockRequest(true)
-
     const getMock = ImportMock.mockFunction(
       bitfinexPositionModule,
       'get',
-      Promise.resolve(BITFINEX_RAW_POSITIONS[0]),
+      Promise.resolve({
+        position: BITFINEX_PARSED_POSITIONS[1],
+        apiRequestCount: 1,
+      }),
     )
 
     try {
@@ -350,14 +472,16 @@ describe('BitfinexPositionModule', () => {
 
     expect(result).not.to.be.ok
 
-    const errMsg = 'Position could not be closed'
+    const errMsg = 'Position is already closed'
 
-    expect(error.code).to.be.eq(AlunaPositionErrorCodes.COULD_NOT_BE_CLOSED)
+    expect(error.code).to.be.eq(AlunaPositionErrorCodes.ALREADY_CLOSED)
     expect(error.message).to.be.eq(errMsg)
-    expect(error.httpStatusCode).to.be.eq(500)
+    expect(error.httpStatusCode).to.be.eq(400)
 
-    expect(requestMock.callCount).to.be.eq(1)
     expect(getMock.callCount).to.be.eq(1)
+    expect(getMock.args[0][0]).to.deep.eq({
+      id,
+    })
 
   })
 

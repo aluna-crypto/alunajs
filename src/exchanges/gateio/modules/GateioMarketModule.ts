@@ -1,5 +1,10 @@
-import { IAlunaMarketModule } from '../../../lib/modules/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../lib/schemas/IAlunaMarketSchema'
+import {
+  IAlunaMarketListRawReturns,
+  IAlunaMarketListReturns,
+  IAlunaMarketModule,
+  IAlunaMarketParseManyReturns,
+  IAlunaMarketParseReturns,
+} from '../../../lib/modules/IAlunaMarketModule'
 import { GateioHttp } from '../GateioHttp'
 import { GateioLog } from '../GateioLog'
 import { PROD_GATEIO_URL } from '../GateioSpecs'
@@ -10,29 +15,55 @@ import { GateioMarketParser } from '../schemas/parsers/GateioMarketParser'
 
 export const GateioMarketModule: IAlunaMarketModule = class {
 
-  public static async listRaw (): Promise<IGateioMarketSchema[]> {
+  public static async listRaw ()
+    : Promise<IAlunaMarketListRawReturns<IGateioMarketSchema>> {
 
     const { publicRequest } = GateioHttp
 
     GateioLog.info('fetching Gateio markets')
 
-    const rawMarkets = await publicRequest<IGateioMarketSchema[]>({
+    const {
+      data: rawMarkets,
+      apiRequestCount,
+    } = await publicRequest<IGateioMarketSchema[]>({
       url: `${PROD_GATEIO_URL}/spot/tickers`,
     })
 
-    return rawMarkets
+    return {
+      rawMarkets,
+      apiRequestCount,
+    }
 
   }
 
 
 
-  public static async list (): Promise<IAlunaMarketSchema[]> {
+  public static async list (): Promise<IAlunaMarketListReturns> {
 
-    const rawMarkets = await GateioMarketModule.listRaw()
+    let apiRequestCount = 0
 
-    const parsedMarkets = GateioMarketModule.parseMany({ rawMarkets })
+    const {
+      apiRequestCount: listRawCount,
+      rawMarkets,
+    } = await GateioMarketModule.listRaw()
 
-    return parsedMarkets
+    apiRequestCount += 1
+
+    const {
+      apiRequestCount: parseManyCount,
+      markets: parsedMarkets,
+    } = GateioMarketModule.parseMany({ rawMarkets })
+
+    apiRequestCount += 1
+
+    const totalApiRequestCount = apiRequestCount
+      + listRawCount
+      + parseManyCount
+
+    return {
+      markets: parsedMarkets,
+      apiRequestCount: totalApiRequestCount,
+    }
 
   }
 
@@ -40,13 +71,16 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
   public static parse (params: {
     rawMarket: IGateioMarketSchema,
-  }): IAlunaMarketSchema {
+  }): IAlunaMarketParseReturns {
 
     const { rawMarket } = params
 
     const parsedMarket = GateioMarketParser.parse({ rawMarket })
 
-    return parsedMarket
+    return {
+      market: parsedMarket,
+      apiRequestCount: 1,
+    }
 
   }
 
@@ -54,13 +88,20 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
   public static parseMany (params: {
     rawMarkets: IGateioMarketSchema[],
-  }): IAlunaMarketSchema[] {
+  }): IAlunaMarketParseManyReturns {
 
     const { rawMarkets } = params
 
+    let apiRequestCount = 0
+
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
-      const parsedMarket = GateioMarketParser.parse({ rawMarket })
+      const {
+        market: parsedMarket,
+        apiRequestCount: parseCount,
+      } = this.parse({ rawMarket })
+
+      apiRequestCount += parseCount + 1
 
       return parsedMarket
 
@@ -68,7 +109,10 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     GateioLog.info(`parsed ${parsedMarkets.length} markets for Gateio`)
 
-    return parsedMarkets
+    return {
+      markets: parsedMarkets,
+      apiRequestCount,
+    }
 
   }
 

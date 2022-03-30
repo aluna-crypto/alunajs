@@ -1,30 +1,26 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
-import {
-  IAlunaExchangeAccountSpecsSchema,
-  IAlunaExchangeOrderOptionsSchema,
-} from '../../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
+import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
 import { BitfinexOrderTypeAdapter } from '../enums/adapters/BitfinexOrderTypeAdapter'
-import { BitfinexSideAdapter } from '../enums/adapters/BitfinexSideAdapter'
 import { IBitfinexOrderSchema } from '../schemas/IBitfinexOrderSchema'
 import {
   BITFINEX_PARSED_ORDERS,
@@ -58,12 +54,17 @@ describe('BitfinexOrderWriteModule', () => {
 
   }
 
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (requestResponse: any, isReject = false) => {
 
     const requestMock = ImportMock.mockFunction(
       BitfinexHttp,
       'privateRequest',
-      requestResponse,
+      isReject
+        ? requestResponse
+        : {
+          data: requestResponse,
+          apiRequestCount: 1,
+        },
     )
 
     return { requestMock }
@@ -119,12 +120,15 @@ describe('BitfinexOrderWriteModule', () => {
 
     const { exchangeMock } = mockKeySecret()
 
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const parseMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'parse',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
     return {
@@ -159,7 +163,7 @@ describe('BitfinexOrderWriteModule', () => {
     AlunaOrderTypesEnum.STOP_MARKET,
   ]
 
-  const sides = Object.values(AlunaSideEnum)
+  const sides = Object.values(AlunaOrderSideEnum)
 
   const promises = actions.map(async (action) => {
 
@@ -193,10 +197,11 @@ describe('BitfinexOrderWriteModule', () => {
                 symbolPair,
               }
 
-              const expectedAmount = BitfinexSideAdapter.translateToBitfinex({
-                amount,
-                side,
-              })
+              const expectedAmount = BitfinexOrderSideAdapter
+                .translateToBitfinex({
+                  amount,
+                  side,
+                })
 
               const expectedType = BitfinexOrderTypeAdapter
                 .translateToBitfinex({
@@ -219,7 +224,7 @@ describe('BitfinexOrderWriteModule', () => {
 
               } else {
 
-                expectedRequestBody.id = id
+                expectedRequestBody.id = Number(id)
 
                 expectedUrl = 'https://api.bitfinex.com/v2/auth/w/order/update'
 
@@ -258,15 +263,18 @@ describe('BitfinexOrderWriteModule', () => {
 
               if (action === 'place') {
 
-                response = await bitfinexOrderWriteModule.place(params)
+                const { order } = await bitfinexOrderWriteModule.place(params)
 
+                response = order
 
               } else {
 
-                response = await bitfinexOrderWriteModule.edit({
+                const { order } = await bitfinexOrderWriteModule.edit({
                   ...params,
                   id,
                 })
+
+                response = order
 
               }
 
@@ -313,14 +321,14 @@ describe('BitfinexOrderWriteModule', () => {
 
       const {
         requestMock,
-      } = mockRequest(Promise.resolve(placeOrderMockResponse))
+      } = mockRequest(placeOrderMockResponse)
 
       try {
 
         result = await bitfinexOrderWriteModule.place({
           account: AlunaAccountEnum.EXCHANGE,
           amount: 10,
-          side: AlunaSideEnum.LONG,
+          side: AlunaOrderSideEnum.BUY,
           symbolPair: 'tETHBTC',
           type: AlunaOrderTypesEnum.LIMIT,
           rate: 50,
@@ -361,13 +369,13 @@ describe('BitfinexOrderWriteModule', () => {
 
       const {
         requestMock,
-      } = mockRequest(Promise.resolve(placeOrderMockResponse))
+      } = mockRequest(placeOrderMockResponse)
       try {
 
         result = await bitfinexOrderWriteModule.edit({
           account: AlunaAccountEnum.EXCHANGE,
           amount: 10,
-          side: AlunaSideEnum.LONG,
+          side: AlunaOrderSideEnum.BUY,
           symbolPair: 'tETHBTC',
           type: AlunaOrderTypesEnum.LIMIT,
           rate: 50,
@@ -406,12 +414,13 @@ describe('BitfinexOrderWriteModule', () => {
           message: errorMessage,
           httpStatusCode: 400,
         })),
+        true,
       )
 
       const params: IAlunaOrderPlaceParams = {
         account: AlunaAccountEnum.EXCHANGE,
         amount: 10,
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         symbolPair: 'tETHBTC',
         type: AlunaOrderTypesEnum.LIMIT,
         rate: 50,
@@ -526,12 +535,13 @@ describe('BitfinexOrderWriteModule', () => {
         message: errorMessage,
         httpStatusCode: 400,
       })),
+      true,
     )
 
     const params: IAlunaOrderEditParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair: 'tETHBTC',
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 50,
@@ -564,12 +574,12 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMessage = "'rate' param is required to place limit orders"
+    const errorMsg = '"rate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
     }
@@ -586,11 +596,8 @@ describe('BitfinexOrderWriteModule', () => {
 
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.message).to.be.eq(errorMsg)
 
-
-    errorMessage = "'rate' param is required to edit limit orders"
 
     try {
 
@@ -607,8 +614,7 @@ describe('BitfinexOrderWriteModule', () => {
 
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(error.message).to.be.eq(errorMessage)
-    expect(error.httpStatusCode).to.be.eq(200)
+    expect(error.message).to.be.eq(errorMsg)
 
   })
 
@@ -619,12 +625,12 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'stopRate' param is required to place stop-market orders"
+    const errorMsg = '"stopRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_MARKET,
     }
@@ -642,10 +648,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
 
-
-    errorMsg = "'stopRate' param is required to edit stop-market orders"
 
     try {
 
@@ -663,7 +666,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
 
   })
 
@@ -674,12 +676,12 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'stopRate' param is required to place stop-limit orders"
+    const errorMsg = '"stopRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       limitRate: 10,
@@ -698,10 +700,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
-
-
-    errorMsg = "'stopRate' param is required to edit stop-limit orders"
 
     try {
 
@@ -719,7 +717,6 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
 
   })
 
@@ -730,12 +727,12 @@ describe('BitfinexOrderWriteModule', () => {
     let result
     let error
 
-    let errorMsg = "'limitRate' param is required to place stop-limit orders"
+    const errorMsg = '"limitRate" is required'
 
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.EXCHANGE,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       stopRate: 10,
@@ -754,10 +751,7 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
 
-
-    errorMsg = "'limitRate' param is required to edit stop-limit orders"
 
     try {
 
@@ -775,34 +769,43 @@ describe('BitfinexOrderWriteModule', () => {
     expect(result).not.to.be.ok
     expect(error.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(error.message).to.be.eq(errorMsg)
-    expect(error.httpStatusCode).to.be.eq(200)
 
   })
 
   it('should properly cancel Bitfinex orders', async () => {
 
-    mockKeySecret()
+    const { exchangeMock } = mockKeySecret()
 
     const parsedOrder = BITFINEX_PARSED_ORDERS[0]
 
     const { placeOrderMockResponse } = getMockedBitfinexOrderResponse({})
 
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const getMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'get',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
-    const params: IAlunaOrderCancelParams = {
-      id: '10',
+    const params: IAlunaOrderGetParams = {
+      id,
       symbolPair: 'tBTCETH',
     }
 
-    const canceledOrder = await bitfinexOrderWriteModule.cancel(params)
+    const {
+      order: canceledOrder,
+    } = await bitfinexOrderWriteModule.cancel(params)
 
     expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.args[0][0]).to.deep.eq({
+      url: 'https://api.bitfinex.com/v2/auth/w/order/cancel',
+      body: { id: Number(id) },
+      keySecret: exchangeMock.getValue().keySecret,
+    })
 
     expect(getMock.callCount).to.be.eq(1)
     expect(getMock.args[0][0]).to.deep.eq(params)
@@ -827,18 +830,18 @@ describe('BitfinexOrderWriteModule', () => {
       text: errMsg,
     })
 
-    // const { requestMock } = mockRequest(
-
-    // )
-    const { requestMock } = mockRequest(Promise.resolve(placeOrderMockResponse))
+    const { requestMock } = mockRequest(placeOrderMockResponse)
 
     const getMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
       'get',
-      parsedOrder,
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id: '10',
       symbolPair: 'tBTCETH',
     }
@@ -892,338 +895,12 @@ describe('BitfinexOrderWriteModule', () => {
 
   })
 
-  it('should ensure given account is one of AlunaAccountEnum', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      BitfinexSpecs,
-      'accounts',
-      [],
-    )
-
-    const account = 'nonexistent'
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account,
-      } as unknown as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not found`
-
-    expect(error).to.be.ok
-
-    const { message } = error as AlunaError
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account is supported', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      BitfinexSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: false,
-          implemented: true,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account is implemented', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      BitfinexSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: false,
-          orderTypes: [],
-        },
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given account has orderTypes property', async () => {
-
-    let error
-
-    ImportMock.mockOther(
-      BitfinexSpecs,
-      'accounts',
-      [
-        {
-          type: AlunaAccountEnum.EXCHANGE,
-          supported: true,
-          implemented: true,
-          // missing orderTypes property
-        } as IAlunaExchangeAccountSpecsSchema,
-      ],
-    )
-
-    const account = AlunaAccountEnum.EXCHANGE
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Account type '${account}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure account orderTypes has given order type', async () => {
-
-    let error
-
-    const accountIndex = BitfinexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BitfinexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = 'unsupported-type'
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type: type as AlunaOrderTypesEnum,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type is supported', async () => {
-
-    let error
-
-    const accountIndex = BitfinexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BitfinexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: false,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type is implemented', async () => {
-
-    let error
-
-    const accountIndex = BitfinexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BitfinexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: false,
-          mode: AlunaFeaturesModeEnum.WRITE,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    const msg = `Order type '${type}' not supported/implemented for ${BitfinexSpecs.name}`
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(msg)
-
-  })
-
-  it('should ensure given order type has write mode', async () => {
-
-    let error
-
-    const accountIndex = BitfinexSpecs.accounts.findIndex(
-      (e) => e.type === AlunaAccountEnum.EXCHANGE,
-    )
-
-    ImportMock.mockOther(
-      BitfinexSpecs.accounts[accountIndex],
-      'orderTypes',
-      [
-        {
-          type: AlunaOrderTypesEnum.LIMIT,
-          supported: true,
-          implemented: true,
-          mode: AlunaFeaturesModeEnum.READ,
-          options: {} as IAlunaExchangeOrderOptionsSchema,
-        },
-      ],
-    )
-
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    try {
-
-      await bitfinexOrderWriteModule.place({
-        account: AlunaAccountEnum.EXCHANGE,
-        type,
-      } as IAlunaOrderPlaceParams)
-
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error).to.be.ok
-
-    const { message } = error
-    expect(message).to.be.eq(`Order type '${type}' is in read mode`)
+  it('should validate exchange specs when placing new orders', async () => {
+
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: BitfinexSpecs,
+      orderWriteModule: bitfinexOrderWriteModule,
+    })
 
   })
 

@@ -8,24 +8,27 @@ import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/o
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaSideEnum } from '../../../lib/enums/AlunaSideEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
-  IAlunaOrderCancelParams,
   IAlunaOrderEditParams,
+  IAlunaOrderGetParams,
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
+import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
+import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
   PROD_BITMEX_URL,
 } from '../BitmexSpecs'
+import { BitmexOrderSideAdapter } from '../enums/adapters/BitmexOrderSideAdapter'
 import { BitmexOrderTypeAdapter } from '../enums/adapters/BitmexOrderTypeAdapter'
-import { BitmexSideAdapter } from '../enums/adapters/BitmexSideAdapter'
 import { BitmexOrderTypeEnum } from '../enums/BitmexOrderTypeEnum'
 import { BitmexOrderParser } from '../schemas/parsers/BitmexOrderParser'
 import {
@@ -46,17 +49,21 @@ describe('BitmexOrderWriteModule', () => {
   const symbolPair = 'XBTUSD'
   const id = '666'
 
-  const mockRequest = (requestResponse: any) => {
+  const mockRequest = (requestResponse: any, isReject = false) => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
       requestResponse,
+      isReject,
     })
 
     const bitmexMarketModuleMock = ImportMock.mockFunction(
       BitmexMarketModule,
       'get',
-      Promise.resolve({ instrument: {} }),
+      {
+        market: { instrument: {} },
+        apiRequestCount: 1,
+      },
     )
 
     const translateAmountToOrderQtyMock = ImportMock.mockFunction(
@@ -68,12 +75,18 @@ describe('BitmexOrderWriteModule', () => {
     const parseMock = ImportMock.mockFunction(
       bitmexOrderWriteModule,
       'parse',
-      Promise.resolve(parsedOrder),
+      {
+        order: parsedOrder,
+        apiRequestCount: 1,
+      },
     )
+
+    const { validateParamsMock } = mockValidateParams()
 
     return {
       parseMock,
       requestMock,
+      validateParamsMock,
       bitmexMarketModuleMock,
       translateAmountToOrderQtyMock,
     }
@@ -96,7 +109,7 @@ describe('BitmexOrderWriteModule', () => {
     AlunaOrderTypesEnum.STOP_MARKET,
   ]
 
-  const sides = Object.values(AlunaSideEnum)
+  const sides = Object.values(AlunaOrderSideEnum)
 
   const promises = actions.map(async (action) => {
 
@@ -126,7 +139,7 @@ describe('BitmexOrderWriteModule', () => {
               symbolPair,
             }
 
-            const expectedSide = BitmexSideAdapter.translateToBitmex({
+            const expectedSide = BitmexOrderSideAdapter.translateToBitmex({
               from: side,
             })
 
@@ -143,6 +156,7 @@ describe('BitmexOrderWriteModule', () => {
             const {
               parseMock,
               requestMock,
+              validateParamsMock,
               bitmexMarketModuleMock,
               translateAmountToOrderQtyMock,
             } = mockRequest(mockedOrderResponse)
@@ -150,7 +164,10 @@ describe('BitmexOrderWriteModule', () => {
             const getRawMock = ImportMock.mockFunction(
               bitmexOrderWriteModule,
               'getRaw',
-              Promise.resolve(mockedOrderResponse),
+              {
+                rawOrder: mockedOrderResponse,
+                apiRequestCount: 1,
+              },
             )
 
             const expectedRequestBody: Record<string, any> = {
@@ -171,6 +188,8 @@ describe('BitmexOrderWriteModule', () => {
               expectedHttpVerb = AlunaHttpVerbEnum.POST
 
             } else {
+
+              assign(params, { id })
 
               assign(mockedOrderResponse, {
                 id,
@@ -213,15 +232,18 @@ describe('BitmexOrderWriteModule', () => {
 
             if (action === 'place') {
 
-              response = await bitmexOrderWriteModule.place(params)
+              const { order } = await bitmexOrderWriteModule.place(params)
 
+              response = order
 
             } else {
 
-              response = await bitmexOrderWriteModule.edit({
+              const { order } = await bitmexOrderWriteModule.edit({
                 ...params,
                 id,
               })
+
+              response = order
 
             }
 
@@ -267,8 +289,26 @@ describe('BitmexOrderWriteModule', () => {
 
             expect(bitmexMarketModuleMock.callCount).to.be.eq(1)
             expect(bitmexMarketModuleMock.args[0][0]).to.deep.eq({
-              symbolPair: params.symbolPair,
+              id: params.symbolPair,
             })
+
+            expect(validateParamsMock.callCount).to.be.eq(1)
+
+            if (action === 'place') {
+
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: placeOrderParamsSchema,
+              })
+
+            } else {
+
+              expect(validateParamsMock.args[0][0]).to.deep.eq({
+                params,
+                schema: editOrderParamsSchema,
+              })
+
+            }
 
           })
 
@@ -301,12 +341,13 @@ describe('BitmexOrderWriteModule', () => {
           message: errorMessage,
           httpStatusCode: 400,
         })),
+        true,
       )
 
       const params: IAlunaOrderPlaceParams = {
         account: AlunaAccountEnum.DERIVATIVES,
         amount: 10,
-        side: AlunaSideEnum.LONG,
+        side: AlunaOrderSideEnum.BUY,
         symbolPair,
         type: AlunaOrderTypesEnum.LIMIT,
         rate: 50,
@@ -373,6 +414,7 @@ describe('BitmexOrderWriteModule', () => {
         message: errorMessage,
         httpStatusCode: 400,
       })),
+      true,
     )
 
     let result
@@ -381,7 +423,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderEditParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 50,
@@ -429,7 +471,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.LIMIT,
     }
@@ -494,7 +536,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_MARKET,
     }
@@ -559,7 +601,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       limitRate: 10,
@@ -625,7 +667,7 @@ describe('BitmexOrderWriteModule', () => {
     const params: IAlunaOrderPlaceParams = {
       account: AlunaAccountEnum.DERIVATIVES,
       amount: 10,
-      side: AlunaSideEnum.LONG,
+      side: AlunaOrderSideEnum.BUY,
       symbolPair,
       type: AlunaOrderTypesEnum.STOP_LIMIT,
       stopRate: 10,
@@ -682,14 +724,14 @@ describe('BitmexOrderWriteModule', () => {
       requestMock,
       bitmexMarketModuleMock,
       translateAmountToOrderQtyMock,
-    } = mockRequest(Promise.resolve([rawOrder]))
+    } = mockRequest([rawOrder])
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id,
       symbolPair,
     }
 
-    const canceledOrder = await bitmexOrderWriteModule.cancel(params)
+    const { order: canceledOrder } = await bitmexOrderWriteModule.cancel(params)
 
     expect(canceledOrder).to.deep.eq(parsedOrder)
 
@@ -714,9 +756,9 @@ describe('BitmexOrderWriteModule', () => {
       requestMock,
       bitmexMarketModuleMock,
       translateAmountToOrderQtyMock,
-    } = mockRequest(Promise.resolve([{ error: errMsg }]))
+    } = mockRequest([{ error: errMsg }])
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id,
       symbolPair,
     }
@@ -762,9 +804,9 @@ describe('BitmexOrderWriteModule', () => {
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: 'Sever is down',
       httpStatusCode: 400,
-    })))
+    })), true)
 
-    const params: IAlunaOrderCancelParams = {
+    const params: IAlunaOrderGetParams = {
       id,
       symbolPair,
     }
@@ -792,7 +834,7 @@ describe('BitmexOrderWriteModule', () => {
 
   })
 
-  it('should test exchange specs when placing new orders', async () => {
+  it('should validate exchange specs when placing new orders', async () => {
 
     await testExchangeSpecsForOrderWriteModule({
       exchangeSpecs: BitmexSpecs,

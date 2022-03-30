@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { map } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../src/lib/core/AlunaError'
@@ -13,6 +14,17 @@ import {
   IAlunaExchangeOrderOptionsSchema,
   IAlunaExchangeSchema,
 } from '../../../src/lib/schemas/IAlunaExchangeSchema'
+import { mockValidateParams } from '../../../src/utils/validation/validateParams.mock'
+
+
+
+const runBeforeEach = () => {
+
+  ImportMock.restore()
+
+  mockValidateParams()
+
+}
 
 
 
@@ -32,6 +44,7 @@ const accountIsOneOfExchangeAccounts = async (params: {
     'accounts',
     [],
   )
+
   const account = 'nonexistent'
 
   try {
@@ -52,8 +65,6 @@ const accountIsOneOfExchangeAccounts = async (params: {
 
   const { message } = error as AlunaError
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -105,8 +116,6 @@ const accountIsSupported = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -157,8 +166,6 @@ const accountIsImplemented = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -175,22 +182,15 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
 
   let error
 
-  const supportedAccountIndex = exchangeSpecs.accounts.findIndex((acc) => {
-
-    return acc.supported && acc.implemented
-
-  })
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[supportedAccountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
-        supported: false,
+        type: AlunaAccountEnum.DERIVATIVES,
+        supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [],
       },
     ],
   )
@@ -217,8 +217,6 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -235,20 +233,23 @@ const orderTypeIsSupported = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
-        supported: false,
+        type: AlunaAccountEnum.DERIVATIVES,
+        supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: false,
+            implemented: false,
+            mode: AlunaFeaturesModeEnum.WRITE,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
@@ -274,8 +275,6 @@ const orderTypeIsSupported = async (params: {
 
   const { message } = error
   expect(message).to.be.eq(msg)
-
-  ImportMock.restore()
 
 }
 
@@ -293,23 +292,27 @@ const orderTypeIsImplemented = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
+        type: AlunaAccountEnum.DERIVATIVES,
         supported: true,
-        implemented: false,
-        mode: AlunaFeaturesModeEnum.WRITE,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        implemented: true,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: true,
+            implemented: false,
+            mode: AlunaFeaturesModeEnum.WRITE,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
+
 
   const type = AlunaOrderTypesEnum.LIMIT
 
@@ -333,8 +336,6 @@ const orderTypeIsImplemented = async (params: {
   const { message } = error
   expect(message).to.be.eq(msg)
 
-  ImportMock.restore()
-
 }
 
 
@@ -351,20 +352,23 @@ const orderTypeIsInWriteMode = async (params: {
 
   let error
 
-  const accountIndex = exchangeSpecs.accounts.findIndex(
-    (e) => e.type === AlunaAccountEnum.DERIVATIVES,
-  )
-
   ImportMock.mockOther(
-    exchangeSpecs.accounts[accountIndex],
-    'orderTypes',
+    exchangeSpecs,
+    'accounts',
     [
       {
-        type: AlunaOrderTypesEnum.LIMIT,
+        type: AlunaAccountEnum.DERIVATIVES,
         supported: true,
         implemented: true,
-        mode: AlunaFeaturesModeEnum.READ,
-        options: {} as IAlunaExchangeOrderOptionsSchema,
+        orderTypes: [
+          {
+            type: AlunaOrderTypesEnum.LIMIT,
+            supported: true,
+            implemented: true,
+            mode: AlunaFeaturesModeEnum.READ,
+            options: {} as IAlunaExchangeOrderOptionsSchema,
+          },
+        ],
       },
     ],
   )
@@ -389,8 +393,6 @@ const orderTypeIsInWriteMode = async (params: {
   const { message } = error
   expect(message).to.be.eq(`Order type '${type}' is in read mode`)
 
-  ImportMock.restore()
-
 }
 
 
@@ -400,12 +402,25 @@ export const testExchangeSpecsForOrderWriteModule = async (params: {
   exchangeSpecs: IAlunaExchangeSchema,
 }) => {
 
-  await accountIsOneOfExchangeAccounts(params)
-  await accountIsSupported(params)
-  await accountIsImplemented(params)
-  await orderTypeIsOneOfAccountOrderTypes(params)
-  await orderTypeIsSupported(params)
-  await orderTypeIsImplemented(params)
-  await orderTypeIsInWriteMode(params)
+  const callbacks = [
+    accountIsOneOfExchangeAccounts,
+    accountIsSupported,
+    accountIsImplemented,
+    orderTypeIsOneOfAccountOrderTypes,
+    orderTypeIsSupported,
+    orderTypeIsImplemented,
+    orderTypeIsInWriteMode,
+  ]
+
+  const callbackPromises = map(callbacks, async (callback) => {
+
+    runBeforeEach()
+
+    await callback(params)
+
+  })
+
+  await Promise.all(callbackPromises)
+
 
 }

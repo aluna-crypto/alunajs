@@ -64,13 +64,13 @@ describe('BitmexKeyModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.resolve(rawKey),
+      requestResponse: rawKey,
     })
 
     const expectedAccountId = userId.toString()
 
     // first
-    const parsedKey1 = await bitmexKeyModule.fetchDetails()
+    const { key: parsedKey1 } = await bitmexKeyModule.fetchDetails()
 
     const expectedMeta1 = map(rawKey, (k) => omit(k, 'secret'))
 
@@ -86,7 +86,7 @@ describe('BitmexKeyModule', () => {
     // second
     rawKey[0].permissions = ['orderRead']
 
-    const parsedKey2 = await bitmexKeyModule.fetchDetails()
+    const { key: parsedKey2 } = await bitmexKeyModule.fetchDetails()
 
     const expectedMeta2 = map(rawKey, (k) => omit(k, 'secret'))
 
@@ -104,7 +104,7 @@ describe('BitmexKeyModule', () => {
     rawKey[0].permissions = ['order']
 
 
-    const parsedKey3 = await bitmexKeyModule.fetchDetails()
+    const { key: parsedKey3 } = await bitmexKeyModule.fetchDetails()
 
     const expectedMeta3 = map(rawKey, (k) => omit(k, 'secret'))
 
@@ -122,7 +122,7 @@ describe('BitmexKeyModule', () => {
     rawKey[0].permissions = ['withdraw', 'order']
 
 
-    const parsedKey4 = await bitmexKeyModule.fetchDetails()
+    const { key: parsedKey4 } = await bitmexKeyModule.fetchDetails()
 
     const expectedMeta4 = map(rawKey, (k) => omit(k, 'secret'))
 
@@ -153,6 +153,7 @@ describe('BitmexKeyModule', () => {
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
       requestResponse: Promise.reject(mockedError),
+      isReject: true,
     })
 
     let error: AlunaError | undefined
@@ -248,7 +249,7 @@ describe('BitmexKeyModule', () => {
       },
     ]
 
-    const perm1 = bitmexKeyModule.parsePermissions({
+    const { key: perm1 } = bitmexKeyModule.parsePermissions({
       rawKey,
     })
 
@@ -259,7 +260,7 @@ describe('BitmexKeyModule', () => {
     // new mocking
     rawKey[0].permissions = ['orderRead']
 
-    const perm2 = bitmexKeyModule.parsePermissions({
+    const { key: perm2 } = bitmexKeyModule.parsePermissions({
       rawKey,
     })
 
@@ -271,7 +272,7 @@ describe('BitmexKeyModule', () => {
     // new mocking
     rawKey[0].permissions = []
 
-    const perm3 = bitmexKeyModule.parsePermissions({
+    const { key: perm3 } = bitmexKeyModule.parsePermissions({
       rawKey,
     })
 
@@ -283,7 +284,7 @@ describe('BitmexKeyModule', () => {
     // new mocking
     rawKey[0].permissions = ['withdraw']
 
-    const perm4 = bitmexKeyModule.parsePermissions({
+    const { key: perm4 } = bitmexKeyModule.parsePermissions({
       rawKey,
     })
 
