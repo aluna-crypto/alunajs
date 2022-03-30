@@ -1,8 +1,6 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
-import { Agent as HttpAgent } from 'http'
-import { Agent as HttpsAgent } from 'https'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -12,10 +10,8 @@ import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import {
-  IAlunaProxySchema,
-  IAlunaSettingsSchema,
-} from '../../lib/schemas/IAlunaSettingsSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
 import {
   mockAlunaCache,
   validateCache,
@@ -29,37 +25,11 @@ describe('GateioHttp', () => {
 
   const { GateioHttp } = GateioHttpMod
 
-  const {
-    publicRequest,
-    privateRequest,
-  } = GateioHttp
-
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
   const dummyResponse = { data: 'dummy-data' }
   const dummyQuery = 'dummy=dummy'
-  const dummyKeysecret: IAlunaKeySecretSchema = {
-    key: 'key',
-    secret: 'secret',
-  }
-
-  const host = 'localhost'
-  const port = 3000
-
-  const httpProxySettings: IAlunaProxySchema = {
-    host,
-    port,
-    protocol: 'http',
-    agent: new HttpAgent({ keepAlive: true }),
-  }
-
-  const httpsProxySettings: IAlunaProxySchema = {
-    host,
-    port,
-    protocol: 'https',
-    agent: new HttpsAgent({ keepAlive: true }),
-  }
 
   const mockDeps = (
     params: {
@@ -88,6 +58,8 @@ describe('GateioHttp', () => {
       message: errorMsgRes,
       httpStatusCode: 400,
     })
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const {
       requestSpy,
@@ -131,6 +103,7 @@ describe('GateioHttp', () => {
       axiosCreateMock,
       formatRequestErrorSpy,
       generateAuthHeaderMock,
+      assembleAxiosRequestMock,
     }
 
   }
@@ -552,116 +525,6 @@ describe('GateioHttp', () => {
       signedHash2.KEY,
     ).to.deep.eq(keySecret.key)
     expect(Number(signedHash2.Timestamp) * 1000).to.deep.eq(timestampMock)
-
-  })
-
-  it("should use http proxy when it's available", async () => {
-
-    const { requestSpy } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
-      mockedExchangeSettings: {
-        proxySettings: httpProxySettings,
-      },
-    })
-
-    const publicRes = await publicRequest({
-      url: dummyUrl,
-      body: dummyBody as any,
-    })
-
-    expect(publicRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[0]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.GET,
-        proxy: {
-          host: httpProxySettings.host,
-          port: httpProxySettings.port,
-          protocol: httpProxySettings.protocol,
-        },
-        httpAgent: httpProxySettings.agent,
-        data: dummyBody,
-      },
-    ])
-
-    const privateRes = await privateRequest({
-      url: dummyUrl,
-      body: dummyBody as any,
-      keySecret: dummyKeysecret,
-    })
-
-    expect(privateRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[1]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.POST,
-        headers: dummySignedHeaders,
-        data: dummyBody,
-        proxy: {
-          host: httpProxySettings.host,
-          port: httpProxySettings.port,
-          protocol: httpProxySettings.protocol,
-        },
-        httpAgent: httpProxySettings.agent,
-      },
-    ])
-
-  })
-
-  it("should use https proxy when it's available", async () => {
-
-    const { requestSpy } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
-      mockedExchangeSettings: {
-        proxySettings: httpsProxySettings,
-      },
-    })
-
-    const publicRes = await publicRequest({
-      url: dummyUrl,
-      body: dummyBody as any,
-    })
-
-    expect(publicRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[0]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.GET,
-        proxy: {
-          host: httpsProxySettings.host,
-          port: httpsProxySettings.port,
-          protocol: httpsProxySettings.protocol,
-        },
-        httpsAgent: httpsProxySettings.agent,
-        data: dummyBody,
-      },
-    ])
-
-    const privateRes = await privateRequest({
-      url: dummyUrl,
-      body: dummyBody as any,
-      keySecret: dummyKeysecret,
-    })
-
-    expect(privateRes).to.be.eq(dummyResponse.data)
-
-    expect(requestSpy.args[1]).to.deep.eq([
-      {
-        url: dummyUrl,
-        method: AlunaHttpVerbEnum.POST,
-        headers: dummySignedHeaders,
-        data: dummyBody,
-        proxy: {
-          host: httpsProxySettings.host,
-          port: httpsProxySettings.port,
-          protocol: httpsProxySettings.protocol,
-        },
-        httpsAgent: httpsProxySettings.agent,
-      },
-    ])
 
   })
 
