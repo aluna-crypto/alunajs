@@ -1,9 +1,5 @@
-import axios, {
-  AxiosError,
-  AxiosRequestConfig,
-} from 'axios'
+import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
-import { assign } from 'lodash'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import {
@@ -14,6 +10,7 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Poloniex } from './Poloniex'
 import { PoloniexLog } from './PoloniexLog'
@@ -116,23 +113,12 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     }
 
-    let requestConfig: AxiosRequestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
-
-    const { proxySettings } = Poloniex.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 
@@ -164,24 +150,13 @@ export const PoloniexHttp: IAlunaHttp = class {
       body,
     })
 
-    let requestConfig: AxiosRequestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
-
-    const { proxySettings } = Poloniex.settings
-
-    if (proxySettings) {
-
-      const { agent, ...proxy } = proxySettings
-
-      requestConfig = proxy.protocol === 'https'
-        ? assign(requestConfig, { proxy, httpsAgent: agent })
-        : assign(requestConfig, { proxy, httpAgent: agent })
-
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 
