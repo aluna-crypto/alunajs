@@ -32,7 +32,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const {
       data: rawBalances,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitfinexBalanceSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/wallets',
       keySecret: this.exchange.keySecret,
@@ -40,38 +40,34 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     return {
       rawBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawBalances,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
-
-    apiRequestCount += 1
 
     BitfinexLog.info(`parsed ${parsedBalances.length} balances for Bitfinex`)
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       balances: parsedBalances,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -88,7 +84,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     return {
       balance: parsedBalance,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -99,7 +95,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const { rawBalances } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedBalances = rawBalances.reduce((accumulator, rawBalance) => {
 
@@ -114,10 +110,10 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
       const {
         balance: parsedBalance,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawBalance })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       accumulator.push(parsedBalance)
 
@@ -129,7 +125,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     return {
       balances: parsedBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -150,13 +146,9 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
-
     const translatedAccount = BitfinexAccountsAdapter.translateToBitfinex({
       from: account!,
     })
-
-    apiRequestCount += 1
 
     BitfinexLog.info(`fetching Bitfinex tradable balance for ${symbolPair}`)
 
@@ -168,7 +160,7 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
 
     const {
       data,
-      apiRequestCount: requestCount,
+      requestCount,
     } = await privateRequest<[number]>({
       url: 'https://api.bitfinex.com/v2/auth/calc/order/avail',
       keySecret: this.exchange.keySecret,
@@ -180,13 +172,11 @@ export class BitfinexBalanceModule extends AAlunaModule implements IAlunaBalance
       },
     })
 
-    apiRequestCount += requestCount
-
     const [tradableBalance] = data
 
     return {
       tradableBalance,
-      apiRequestCount,
+      requestCount,
     }
 
   }

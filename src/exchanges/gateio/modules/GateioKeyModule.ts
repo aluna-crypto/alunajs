@@ -43,7 +43,7 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -65,18 +65,20 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId: undefined,
     }
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
-      const { apiRequestCount: requestCount } = await GateioHttp
+      const {
+        requestCount: privateRequestCount,
+      } = await GateioHttp
         .privateRequest<IGateioBalanceSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_GATEIO_URL}/spot/accounts`,
           keySecret,
         })
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
       permissions.read = true
 
@@ -103,8 +105,8 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
         price: '0',
       }
 
-      // need to assign the apiRequestCount before because the request will fail
-      apiRequestCount += 1
+      // need to assign the requestCount before because the request will fail
+      requestCount += 1
 
       await GateioHttp
         .privateRequest<IGateioBalanceSchema>({
@@ -140,7 +142,7 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       const {
         data: account,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await GateioHttp
         .privateRequest<IGateioKeyAccountSchema>({
           verb: AlunaHttpVerbEnum.GET,
@@ -148,7 +150,7 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
           keySecret,
         })
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
       permissions.accountId = account.user_id.toString()
 
@@ -162,14 +164,14 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey: permissions })
 
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -188,14 +190,12 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId,
     } = rawKey
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       meta: rawKey,
@@ -203,11 +203,11 @@ export class GateioKeyModule extends AAlunaModule implements IAlunaKeyModule {
       permissions: parsedPermissions,
     }
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+    const totalRequestCount = requestCount + parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

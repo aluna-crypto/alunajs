@@ -63,7 +63,7 @@ describe('BitfinexOrderWriteModule', () => {
         ? requestResponse
         : {
           data: requestResponse,
-          apiRequestCount: 1,
+          requestCount: 1,
         },
     )
 
@@ -127,7 +127,7 @@ describe('BitfinexOrderWriteModule', () => {
       'parse',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -787,7 +787,7 @@ describe('BitfinexOrderWriteModule', () => {
       'get',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -837,7 +837,7 @@ describe('BitfinexOrderWriteModule', () => {
       'get',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 

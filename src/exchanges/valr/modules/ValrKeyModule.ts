@@ -33,13 +33,13 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const { keySecret } = this.exchange
 
     let rawKey: IValrKeySchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
         data: rawKeyInfo,
-        apiRequestCount: requestApiCount,
+        requestCount: requestApiCount,
       } = await ValrHttp.privateRequest<IValrKeySchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: 'https://api.valr.com/v1/account/api-keys/current',
@@ -47,7 +47,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       })
 
       rawKey = rawKeyInfo
-      apiRequestCount += requestApiCount
+      requestCount += requestApiCount
 
     } catch (error) {
 
@@ -81,17 +81,15 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsRequestCount,
+      requestCount: parseDetailsRequestCount,
     } = this.parseDetails({ rawKey })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + parseDetailsRequestCount
 
     const response: IAlunaKeyFetchDetailsReturns = {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
     return response
@@ -110,7 +108,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: permissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
 
     this.details = {
@@ -119,11 +117,11 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
       permissions,
     }
 
-    const totalApiRequestCount = parsePermissionsCount + 1
+    const totalRequestCount = parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -170,7 +168,7 @@ export class ValrKeyModule extends AAlunaModule implements IAlunaKeyModule {
     })
 
     const response: IAlunaKeyParsePermissionsReturns = {
-      apiRequestCount: 0,
+      requestCount: 0,
       key: alunaPermissions,
     }
 

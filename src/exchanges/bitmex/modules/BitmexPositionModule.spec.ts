@@ -62,7 +62,7 @@ describe('BitmexPositionModule', () => {
       'listRaw',
       Promise.resolve({
         rawPositions: mockedRawPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -71,7 +71,7 @@ describe('BitmexPositionModule', () => {
       'parseMany',
       {
         positions: mockedParsedPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -100,7 +100,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         market: parsedMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -144,7 +144,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         market: undefined,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -191,7 +191,7 @@ describe('BitmexPositionModule', () => {
 
       parseMock.onCall(i).returns({
         position: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })
@@ -278,7 +278,7 @@ describe('BitmexPositionModule', () => {
       'getRaw',
       Promise.resolve({
         rawPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -287,7 +287,7 @@ describe('BitmexPositionModule', () => {
       'parse',
       Promise.resolve({
         position: parsedPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -326,7 +326,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         position: mockedParsedPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -390,7 +390,7 @@ describe('BitmexPositionModule', () => {
       'getRaw',
       Promise.resolve({
         rawPosition: crossPos,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -412,7 +412,7 @@ describe('BitmexPositionModule', () => {
 
     getMock.returns(Promise.resolve({
       rawPosition: leveragePos,
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     const expectedLeverage2 = leveragePos.leverage

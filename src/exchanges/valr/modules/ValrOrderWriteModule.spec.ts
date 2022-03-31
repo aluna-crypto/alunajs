@@ -82,7 +82,7 @@ describe('ValrOrderWriteModule', () => {
       'privateRequest',
       {
         data: { id: placedOrderId },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -103,7 +103,7 @@ describe('ValrOrderWriteModule', () => {
       'get',
       Promise.resolve({
         order: successfulPlacedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -181,7 +181,7 @@ describe('ValrOrderWriteModule', () => {
       'get',
       {
         order: successfulPlacedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -252,7 +252,7 @@ describe('ValrOrderWriteModule', () => {
       'get',
       {
         order: failedPlacedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }, // return failed response here
     )
 
@@ -294,7 +294,7 @@ describe('ValrOrderWriteModule', () => {
       'get',
       {
         order: failedPlacedOrderNoBalance,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -340,7 +340,7 @@ describe('ValrOrderWriteModule', () => {
       'getRaw',
       Promise.resolve({
         rawOrder: mockedOrderStatus,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -348,7 +348,7 @@ describe('ValrOrderWriteModule', () => {
       valrOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -357,7 +357,7 @@ describe('ValrOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: VALR_PARSED_OPEN_ORDERS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -444,7 +444,7 @@ describe('ValrOrderWriteModule', () => {
       'getRaw',
       Promise.resolve({
         rawOrder: mockedOrderStatus,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -452,7 +452,7 @@ describe('ValrOrderWriteModule', () => {
       valrOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -461,7 +461,7 @@ describe('ValrOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: VALR_PARSED_OPEN_ORDERS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -515,7 +515,7 @@ describe('ValrOrderWriteModule', () => {
         rawOrder: {
           orderStatusType: 'any-status-but-canceled' as ValrOrderStatusEnum,
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -569,7 +569,7 @@ describe('ValrOrderWriteModule', () => {
         rawOrder: {
           orderStatusType: ValrOrderStatusEnum.CANCELLED,
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -578,7 +578,7 @@ describe('ValrOrderWriteModule', () => {
       'parse',
       {
         order: { status: AlunaOrderStatusEnum.CANCELED },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 

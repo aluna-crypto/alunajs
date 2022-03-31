@@ -24,7 +24,7 @@ describe('BinanceSymbolModule', () => {
       Promise.resolve({
         data:
         { symbols: BINANCE_RAW_SYMBOLS },
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -44,7 +44,7 @@ describe('BinanceSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: BINANCE_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -53,7 +53,7 @@ describe('BinanceSymbolModule', () => {
       'parseMany',
       {
         symbols: BINANCE_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -115,7 +115,7 @@ describe('BinanceSymbolModule', () => {
 
     each(BINANCE_PARSED_SYMBOLS, (parsed, i) => {
 
-      parseMock.onCall(i).returns({ symbol: parsed, apiRequestCount: 1 })
+      parseMock.onCall(i).returns({ symbol: parsed, requestCount: 1 })
 
     })
 

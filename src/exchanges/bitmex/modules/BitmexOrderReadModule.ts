@@ -35,7 +35,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const {
       data: rawOrders,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/order`,
@@ -45,36 +45,32 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       rawOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrders,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       orders: parsedOrders,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -91,7 +87,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const {
       data: orderResponse,
-      apiRequestCount,
+      requestCount,
     } = await BitmexHttp.privateRequest<IBitmexOrderSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/order`,
@@ -114,7 +110,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       rawOrder: orderResponse[0],
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -122,29 +118,25 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
   public async get (params: IAlunaOrderGetParams)
     : Promise<IAlunaOrderGetReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
         + getRawCount
         + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -159,16 +151,14 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const { symbol } = rawOrder
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       market: parsedMarket,
-      apiRequestCount: getCount,
+      requestCount: getCount,
     } = await BitmexMarketModule.get({
       id: symbol,
     })
-
-    apiRequestCount += 1
 
     if (!parsedMarket) {
 
@@ -197,13 +187,11 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
       instrument: instrument!,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + getCount
+    const totalRequestCount = requestCount + getCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -214,18 +202,18 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const { rawOrders } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const promises = map(rawOrders, async (rawOrder) => {
 
       const {
         order: parsedOrder,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = await this.parse({
         rawOrder,
       })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedOrder
 
@@ -237,7 +225,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       orders: parsedOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }

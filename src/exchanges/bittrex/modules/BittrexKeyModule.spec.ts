@@ -38,7 +38,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     const badRequestErrorMock = new AlunaError({
@@ -94,7 +94,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     requestMock
@@ -156,7 +156,7 @@ describe('BittrexKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     requestMock1
@@ -200,7 +200,7 @@ describe('BittrexKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
@@ -257,7 +257,7 @@ describe('BittrexKeyModule', () => {
       Promise.reject(alunaErrorMock),
     )
 
-    const response = { data: requestResponse, apiRequestCount: 1 }
+    const response = { data: requestResponse, requestCount: 1 }
 
     requestMock.onFirstCall().returns(response)
     requestMock.onSecondCall().returns(response)

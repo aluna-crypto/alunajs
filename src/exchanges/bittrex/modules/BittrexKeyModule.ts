@@ -43,7 +43,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -57,7 +57,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { keySecret } = this.exchange
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const permissions: IBittrexKeySchema = {
       read: false,
@@ -67,7 +67,9 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      const { apiRequestCount: requestCount } = await BittrexHttp
+      const {
+        requestCount: privateRequestCount,
+      } = await BittrexHttp
         .privateRequest<IBittrexBalanceSchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_BITTREX_URL}/balances`,
@@ -75,7 +77,7 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         })
 
       permissions.read = true
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (error) {
 
@@ -102,8 +104,8 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
         useAwards: false,
       }
 
-      // need to assign the apiRequestCount before because the request will fail
-      apiRequestCount += 1
+      // need to assign the requestCount before because the request will fail
+      requestCount += 1
 
       await BittrexHttp
         .privateRequest<IBittrexBalanceSchema>({
@@ -133,14 +135,17 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     try {
 
-      const { data: account, apiRequestCount: requestCount } = await BittrexHttp
+      const {
+        data: account,
+        requestCount: privateRequestCount,
+      } = await BittrexHttp
         .privateRequest<IBittrexKeySchema>({
           verb: AlunaHttpVerbEnum.GET,
           url: `${PROD_BITTREX_URL}/account`,
           keySecret,
         })
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
       permissions.accountId = account.accountId
 
@@ -154,16 +159,14 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey: permissions })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -182,14 +185,12 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       accountId,
     } = rawKey
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       meta: rawKey,
@@ -197,11 +198,11 @@ export class BittrexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       permissions: parsedPermissions,
     }
 
-    const totalApiRequestCount = parsePermissionsCount + apiRequestCount
+    const totalRequestCount = parsePermissionsCount + requestCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

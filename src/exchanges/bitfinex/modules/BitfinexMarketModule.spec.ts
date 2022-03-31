@@ -27,13 +27,13 @@ describe('BitfinexMarketModule', () => {
 
     requestMock.onFirstCall().returns(Promise.resolve({
       data: BITFINEX_RAW_TICKERS,
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
     requestMock.onSecondCall().returns(Promise.resolve({
       data: [
         BITFINEX_MARGIN_ENABLED_CURRENCIES,
       ],
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     const { rawMarkets } = await BitfinexMarketModule.listRaw()
@@ -126,7 +126,7 @@ describe('BitfinexMarketModule', () => {
 
       BitfinexMarketParserMock.onCall(i).returns({
         market: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })
@@ -147,7 +147,7 @@ describe('BitfinexMarketModule', () => {
       'listRaw',
       {
         rawMarkets: BITFINEX_RAW_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -156,7 +156,7 @@ describe('BitfinexMarketModule', () => {
       'parseMany',
       {
         markets: BITFINEX_PARSED_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -171,7 +171,7 @@ describe('BitfinexMarketModule', () => {
 
     expect(parseManyMock.returned({
       markets: parsedMarkets,
-      apiRequestCount: 1,
+      requestCount: 1,
     })).to.be.ok
 
   })

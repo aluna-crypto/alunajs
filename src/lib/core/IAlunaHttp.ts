@@ -22,14 +22,14 @@ export interface IAlunaHttpPrivateParams extends IAlunaHttpPublicParams {
   keySecret: IAlunaKeySecretSchema
 }
 
-export interface IAlunaHttpResponseWithRequestCount<T> {
+export interface IAlunaHttpResponse<T> {
   data: T
-  apiRequestCount: number
+  requestCount: number
 }
 
 export interface IAlunaHttp {
   publicRequest<T>(params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>>
+    : Promise<IAlunaHttpResponse<T>>
   privateRequest<T>(params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>>
+    : Promise<IAlunaHttpResponse<T>>
 }

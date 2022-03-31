@@ -52,7 +52,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -118,8 +118,6 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       price: rate!.toString(),
     }
 
-    apiRequestCount += 1
-
     GateioLog.info('placing new order for Gateio')
 
     let placedOrder: IGateioOrderSchema
@@ -127,7 +125,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
     try {
 
       const {
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
         data: orderResponse,
       } = await GateioHttp
         .privateRequest<IGateioOrderSchema>({
@@ -137,7 +135,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
         })
 
       placedOrder = orderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -161,15 +159,15 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     }
 
-    const { order, apiRequestCount: parseCount } = await this.parse({
+    const { order, requestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -188,7 +186,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
     } = params
 
     let canceledOrder: IGateioOrderSchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const query = new URLSearchParams()
 
@@ -198,7 +196,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
       const {
         data: cancelOrderResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await GateioHttp.privateRequest<IGateioOrderSchema>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
@@ -208,7 +206,7 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       )
 
       canceledOrder = cancelOrderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -229,14 +227,14 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
 
     const {
       order,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder: canceledOrder })
 
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -264,16 +262,14 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { apiRequestCount: cancelCount } = await this.cancel({
+    const { requestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const { order: newOrder, apiRequestCount: placeCount } = await this.place({
+    const { order: newOrder, requestCount: placeCount } = await this.place({
       rate,
       side,
       type,
@@ -282,15 +278,13 @@ export class GateioOrderWriteModule extends GateioOrderReadModule implements IAl
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + cancelCount
       + placeCount
 
     return {
       order: newOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

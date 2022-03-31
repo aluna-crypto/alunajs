@@ -34,13 +34,13 @@ describe('BittrexMarketModule', () => {
       .onFirstCall()
       .returns(Promise.resolve({
         data: rawMarketSummaries,
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
     requestMock
       .onSecondCall()
       .returns(Promise.resolve({
         data: rawMarketTickers,
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
 
@@ -53,11 +53,11 @@ describe('BittrexMarketModule', () => {
 
     const {
       rawMarkets: response,
-      apiRequestCount,
+      requestCount,
     } = await BittrexMarketModule.listRaw()
 
 
-    expect(apiRequestCount).to.be.eq(3)
+    expect(requestCount).to.be.eq(2)
 
     expect(requestMock.callCount).to.be.eq(2)
     expect(requestMock.firstCall.calledWith(
@@ -87,13 +87,13 @@ describe('BittrexMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BittrexMarketModule,
       'listRaw',
-      { rawMarkets: rawListMock, apiRequestCount: 1 },
+      { rawMarkets: rawListMock, requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BittrexMarketModule,
       'parseMany',
-      { markets: BITTREX_PARSED_MARKETS, apiRequestCount: 1 },
+      { markets: BITTREX_PARSED_MARKETS, requestCount: 1 },
     )
 
     const { markets: parsedMarkets } = await BittrexMarketModule.list()
@@ -186,11 +186,11 @@ describe('BittrexMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ market: BITTREX_PARSED_MARKETS[0], apiRequestCount: 1 })
+      .returns({ market: BITTREX_PARSED_MARKETS[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ market: BITTREX_PARSED_MARKETS[1], apiRequestCount: 1 })
+      .returns({ market: BITTREX_PARSED_MARKETS[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ market: BITTREX_PARSED_MARKETS[2], apiRequestCount: 1 })
+      .returns({ market: BITTREX_PARSED_MARKETS[2], requestCount: 1 })
 
 
     const { markets } = BittrexMarketModule.parseMany({

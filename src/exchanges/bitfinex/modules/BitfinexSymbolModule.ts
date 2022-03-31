@@ -28,27 +28,23 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawSymbols,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BitfinexSymbolModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       symbols: parsedSymbols,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BitfinexSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + listRawCount + parseManyCount
+    const totalRequestCount = requestCount + listRawCount + parseManyCount
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -65,14 +61,14 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     const {
       data: rawSymbols,
-      apiRequestCount: requestCount,
+      requestCount,
     } = await publicRequest<IBitfinexSymbolSchema>({
       url,
     })
 
     return {
       rawSymbols,
-      apiRequestCount: requestCount,
+      requestCount,
     }
 
   }
@@ -87,7 +83,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbol: parsedSymbol,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -110,7 +106,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     })
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedSymbols = symbolsIds.reduce((acc, bitfinexCurrency) => {
 
@@ -126,11 +122,11 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
         bitfinexCurrencyLabel: currencyLabelsDict[bitfinexCurrency],
       }
 
-      const { symbol: parsedSymbol, apiRequestCount: parseCount } = this.parse({
+      const { symbol: parsedSymbol, requestCount: parseCount } = this.parse({
         rawSymbol,
       })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       acc.push(parsedSymbol)
 
@@ -142,7 +138,7 @@ export const BitfinexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }

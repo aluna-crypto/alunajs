@@ -45,7 +45,7 @@ describe('BitmexSymbolModule', () => {
       'listRaw',
       {
         rawSymbols: BITMEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -54,7 +54,7 @@ describe('BitmexSymbolModule', () => {
       'parseMany',
       {
         symbols: BITMEX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -164,7 +164,7 @@ describe('BitmexSymbolModule', () => {
 
       parseMock.onCall(i).returns({
         symbol: rawSymbol,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

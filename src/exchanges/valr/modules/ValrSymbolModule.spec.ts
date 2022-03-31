@@ -18,7 +18,7 @@ describe('ValrSymbolModule', () => {
 
     const requestResponse = {
       data: VALR_RAW_SYMBOLS,
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     const requestMock = ImportMock.mockFunction(
@@ -27,9 +27,9 @@ describe('ValrSymbolModule', () => {
       requestResponse,
     )
 
-    const { apiRequestCount, rawSymbols } = await ValrSymbolModule.listRaw()
+    const { requestCount, rawSymbols } = await ValrSymbolModule.listRaw()
 
-    expect(apiRequestCount).to.eq(1)
+    expect(requestCount).to.eq(1)
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(VALR_RAW_SYMBOLS)
 
@@ -55,7 +55,7 @@ describe('ValrSymbolModule', () => {
 
     const listRawResponse = {
       rawSymbols: mockedRawSymbols,
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     const listRawMock = ImportMock.mockFunction(
@@ -66,7 +66,7 @@ describe('ValrSymbolModule', () => {
 
     const parseManyResponse = {
       symbols: VALR_PARSED_SYMBOLS,
-      apiRequestCount: 3,
+      requestCount: 3,
     }
 
     const parseManyMock = ImportMock.mockFunction(
@@ -77,10 +77,10 @@ describe('ValrSymbolModule', () => {
 
     const {
       symbols: rawSymbols,
-      apiRequestCount,
+      requestCount,
     } = await ValrSymbolModule.list()
 
-    expect(apiRequestCount).to.eq(5)
+    expect(requestCount).to.eq(4)
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(VALR_PARSED_SYMBOLS)
 
@@ -118,12 +118,12 @@ describe('ValrSymbolModule', () => {
 
     const {
       symbol: parsedSymbol1,
-      apiRequestCount: apiRequestCount1,
+      requestCount: requestCount1,
     } = ValrSymbolModule.parse({
       rawSymbol: rawSymbol1,
     })
 
-    expect(apiRequestCount1).to.be.eq(1)
+    expect(requestCount1).to.be.eq(0)
     expect(parsedSymbol1.exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbol1.id).to.be.eq(expectedSymbol)
     expect(parsedSymbol1.name).to.be.eq(rawSymbol1.longName)
@@ -139,12 +139,12 @@ describe('ValrSymbolModule', () => {
 
     const {
       symbol: parsedSymbol2,
-      apiRequestCount: apiRequestCount2,
+      requestCount: requestCount2,
     } = ValrSymbolModule.parse({
       rawSymbol: rawSymbol2,
     })
 
-    expect(apiRequestCount2).to.be.eq(1)
+    expect(requestCount2).to.be.eq(0)
     expect(parsedSymbol2.exchangeId).to.be.eq(Valr.ID)
     expect(parsedSymbol2.id).to.be.eq(expectedSymbol)
     expect(parsedSymbol2.name).to.be.eq(rawSymbol2.longName)
@@ -169,17 +169,17 @@ describe('ValrSymbolModule', () => {
 
     const parsedSymbolResp1 = {
       symbol: VALR_PARSED_SYMBOLS[0],
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     const parsedSymbolResp2 = {
       symbol: VALR_PARSED_SYMBOLS[1],
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     const parsedSymbolResp3 = {
       symbol: VALR_PARSED_SYMBOLS[2],
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     parseMock

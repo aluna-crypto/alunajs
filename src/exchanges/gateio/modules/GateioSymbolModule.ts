@@ -18,29 +18,25 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
       rawSymbols,
     } = await GateioSymbolModule.listRaw()
 
-    apiRequestCount += 1
-
     const {
       symbols: parsedSymbols,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = GateioSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -52,14 +48,14 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     GateioLog.info('fetching Gateio symbols')
 
-    const { data: rawSymbols, apiRequestCount } = await GateioHttp
+    const { data: rawSymbols, requestCount } = await GateioHttp
       .publicRequest<IGateioSymbolSchema[]>({
         url: `${PROD_GATEIO_URL}/spot/currencies`,
       })
 
     return {
       rawSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -94,7 +90,7 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbol: parsedSymbol,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -107,16 +103,16 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbols } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedSymbols = rawSymbols.map((rawSymbol) => {
 
       const {
         symbol: parsedSymbol,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = GateioSymbolModule.parse({ rawSymbol })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedSymbol
 
@@ -126,7 +122,7 @@ export const GateioSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }

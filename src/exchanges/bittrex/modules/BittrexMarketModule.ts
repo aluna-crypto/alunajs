@@ -27,11 +27,11 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     BittrexLog.info('fetching Bittrex market summaries')
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       data: rawMarketSummaries,
-      apiRequestCount: summariesRequestCount,
+      requestCount: summariesRequestCount,
     } = await
     publicRequest<IBittrexMarketSummarySchema[]>({
       url: `${PROD_BITTREX_URL}/markets/summaries`,
@@ -41,7 +41,7 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     const {
       data: rawMarketTickers,
-      apiRequestCount: tickersRequestCount,
+      requestCount: tickersRequestCount,
     } = await publicRequest<IBittrexMarketTickerSchema[]>({
       url: `${PROD_BITTREX_URL}/markets/tickers`,
     })
@@ -51,15 +51,13 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
       rawMarketTickers,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
     + tickersRequestCount
     + summariesRequestCount
 
     return {
       rawMarkets: rawMarketsWithTicker,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -68,29 +66,25 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BittrexMarketModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BittrexMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = listRawCount
+    const totalRequestCount = listRawCount
       + parseManyCount
-      + apiRequestCount
+      + requestCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -107,7 +101,7 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -120,16 +114,16 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     const { rawMarkets } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedMarket
 
@@ -139,7 +133,7 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

@@ -62,7 +62,7 @@ describe('BitmexOrderWriteModule', () => {
       'get',
       {
         market: { instrument: {} },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -77,7 +77,7 @@ describe('BitmexOrderWriteModule', () => {
       'parse',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -166,7 +166,7 @@ describe('BitmexOrderWriteModule', () => {
               'getRaw',
               {
                 rawOrder: mockedOrderResponse,
-                apiRequestCount: 1,
+                requestCount: 1,
               },
             )
 

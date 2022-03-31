@@ -25,7 +25,7 @@ export const mockPublicHttpRequest = (params: {
       ? requestResponse
       : Promise.resolve({
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
   )
 
@@ -54,7 +54,7 @@ export const mockPrivateHttpRequest = (params: {
       ? requestResponse
       : Promise.resolve({
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
   )
 

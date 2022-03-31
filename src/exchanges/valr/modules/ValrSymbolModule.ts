@@ -18,26 +18,24 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
     const {
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
       rawSymbols,
     } = await ValrSymbolModule.listRaw()
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       symbols,
-      apiRequestCount: parseManyApiRequestCount,
+      requestCount: parseManyrequestCount,
     } = ValrSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = listRawCount
-    + parseManyApiRequestCount
-    + apiRequestCount
+    const totalRequestCount = listRawCount
+    + parseManyrequestCount
+    + requestCount
 
     return {
       symbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -47,14 +45,14 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     ValrLog.info('fetching Valr symbols')
 
-    const { data: rawSymbols, apiRequestCount } = await ValrHttp
+    const { data: rawSymbols, requestCount } = await ValrHttp
       .publicRequest<IValrSymbolSchema[]>({
         url: 'https://api.valr.com/v1/public/currencies',
       })
 
     return {
       rawSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -93,7 +91,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     const response: IAlunaSymbolParseReturns = {
       symbol,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
     return response
@@ -112,10 +110,10 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
       const {
         symbol: parsedSymbol,
-        apiRequestCount,
+        requestCount,
       } = ValrSymbolModule.parse({ rawSymbol })
 
-      parsedSymbolsCount += apiRequestCount + 1
+      parsedSymbolsCount += requestCount
 
       return parsedSymbol
 
@@ -125,7 +123,7 @@ export const ValrSymbolModule: IAlunaSymbolModule = class {
 
     const response: IAlunaSymbolParseManyReturns = {
       symbols: parsedSymbols,
-      apiRequestCount: parsedSymbolsCount,
+      requestCount: parsedSymbolsCount,
     }
 
     return response

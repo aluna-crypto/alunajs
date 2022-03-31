@@ -35,13 +35,13 @@ describe('GateioBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: GATEIO_RAW_BALANCES, apiRequestCount: 1 },
+      { data: GATEIO_RAW_BALANCES, requestCount: 1 },
     )
 
 
-    const { rawBalances, apiRequestCount } = await gateioBalanceModule.listRaw()
+    const { rawBalances, requestCount } = await gateioBalanceModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(1)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -62,13 +62,13 @@ describe('GateioBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       GateioBalanceModule.prototype,
       'listRaw',
-      { rawBalances: rawListMock, apiRequestCount: 1 },
+      { rawBalances: rawListMock, requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       GateioBalanceModule.prototype,
       'parseMany',
-      { balances: GATEIO_PARSED_BALANCES, apiRequestCount: 1 },
+      { balances: GATEIO_PARSED_BALANCES, requestCount: 1 },
     )
 
     const { balances } = await gateioBalanceModule.list()
@@ -142,11 +142,11 @@ describe('GateioBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ balance: GATEIO_PARSED_BALANCES[0], apiRequestCount: 1 })
+      .returns({ balance: GATEIO_PARSED_BALANCES[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ balance: GATEIO_PARSED_BALANCES[1], apiRequestCount: 1 })
+      .returns({ balance: GATEIO_PARSED_BALANCES[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ balance: GATEIO_PARSED_BALANCES[2], apiRequestCount: 1 })
+      .returns({ balance: GATEIO_PARSED_BALANCES[2], requestCount: 1 })
 
 
     const { balances: parsedBalances } = gateioBalanceModule.parseMany({

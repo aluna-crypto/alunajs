@@ -22,7 +22,7 @@ describe('GateioSymbolModule', () => {
       'publicRequest',
       Promise.resolve({
         data: GATEIO_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -61,7 +61,7 @@ describe('GateioSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: GATEIO_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -70,7 +70,7 @@ describe('GateioSymbolModule', () => {
       'parseMany',
       {
         symbols: GATEIO_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -143,11 +143,11 @@ describe('GateioSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ symbol: GATEIO_PARSED_SYMBOLS[0], apiRequestCount: 1 })
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ symbol: GATEIO_PARSED_SYMBOLS[1], apiRequestCount: 1 })
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ symbol: GATEIO_PARSED_SYMBOLS[2], apiRequestCount: 1 })
+      .returns({ symbol: GATEIO_PARSED_SYMBOLS[2], requestCount: 1 })
 
     const { symbols: parsedSymbols } = GateioSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],

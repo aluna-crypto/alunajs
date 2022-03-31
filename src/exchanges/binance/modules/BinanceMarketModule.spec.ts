@@ -38,13 +38,13 @@ describe('BinanceMarketModule', () => {
     binanceSymbolModuleMock
       .onFirstCall().returns(Promise.resolve({
         rawSymbols: rawSymbolsPairs,
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
     requestMock
       .onFirstCall().returns(Promise.resolve({
         data: rawMarkets,
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
 
@@ -57,10 +57,10 @@ describe('BinanceMarketModule', () => {
 
     const {
       rawMarkets: response,
-      apiRequestCount,
+      requestCount,
     } = await BinanceMarketModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(4)
+    expect(requestCount).to.be.eq(2)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(binanceSymbolModuleMock.callCount).to.be.eq(1)
@@ -87,13 +87,13 @@ describe('BinanceMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceMarketModule,
       'listRaw',
-      { rawMarkets: rawListMock, apiRequestCount: 0 },
+      { rawMarkets: rawListMock, requestCount: 0 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceMarketModule,
       'parseMany',
-      { markets: BINANCE_PARSED_MARKET, apiRequestCount: 0 },
+      { markets: BINANCE_PARSED_MARKET, requestCount: 0 },
     )
 
     const { markets: parsedMarkets } = await BinanceMarketModule.list()
@@ -186,11 +186,11 @@ describe('BinanceMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ market: BINANCE_PARSED_MARKET[0], apiRequestCount: 0 })
+      .returns({ market: BINANCE_PARSED_MARKET[0], requestCount: 0 })
       .onSecondCall()
-      .returns({ market: BINANCE_PARSED_MARKET[1], apiRequestCount: 0 })
+      .returns({ market: BINANCE_PARSED_MARKET[1], requestCount: 0 })
       .onThirdCall()
-      .returns({ market: BINANCE_PARSED_MARKET[2], apiRequestCount: 0 })
+      .returns({ market: BINANCE_PARSED_MARKET[2], requestCount: 0 })
 
     const { markets } = BinanceMarketModule.parseMany({
       rawMarkets: BINANCE_RAW_MARKETS_WITH_CURRENCY,

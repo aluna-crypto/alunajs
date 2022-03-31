@@ -64,7 +64,7 @@ describe('BitmexOrderReadModule', () => {
       'listRaw',
       Promise.resolve({
         rawOrders,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -73,7 +73,7 @@ describe('BitmexOrderReadModule', () => {
       'parseMany',
       {
         orders: BITMEX_PARSED_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -179,7 +179,7 @@ describe('BitmexOrderReadModule', () => {
       'getRaw',
       {
         rawOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -188,7 +188,7 @@ describe('BitmexOrderReadModule', () => {
       'parse',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -220,7 +220,7 @@ describe('BitmexOrderReadModule', () => {
       'get',
       Promise.resolve({
         market: parsedMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -268,7 +268,7 @@ describe('BitmexOrderReadModule', () => {
       'get',
       Promise.resolve({
         order: undefined,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -318,7 +318,7 @@ describe('BitmexOrderReadModule', () => {
 
       parseMock.onCall(i).returns({
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

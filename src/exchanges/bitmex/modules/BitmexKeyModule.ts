@@ -37,13 +37,13 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
     const { keySecret } = this.exchange
 
     let rawKey: IBitmexKeysSchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
         data: apiKeyResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await BitmexHttp.privateRequest<IBitmexKeysSchema>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_BITMEX_URL}/apiKey`,
@@ -51,7 +51,7 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       })
 
       rawKey = apiKeyResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (error) {
 
@@ -89,16 +89,14 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -125,14 +123,12 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const [{ userId }] = rawKey
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       accountId: userId.toString(),
@@ -140,11 +136,11 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       meta: rawKeysWithoutSecrets,
     }
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+    const totalRequestCount = requestCount + parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -176,7 +172,7 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: parsedKey,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }

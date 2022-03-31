@@ -22,13 +22,13 @@ describe('BittrexSymbolModule', () => {
       'publicRequest',
       Promise.resolve({
         data: BITTREX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
-    const { rawSymbols, apiRequestCount } = await BittrexSymbolModule.listRaw()
+    const { rawSymbols, requestCount } = await BittrexSymbolModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(1)
+    expect(requestCount).to.be.eq(1)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(BITTREX_RAW_SYMBOLS)
@@ -46,7 +46,7 @@ describe('BittrexSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: BITTREX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -55,7 +55,7 @@ describe('BittrexSymbolModule', () => {
       'parseMany',
       {
         symbols: BITTREX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -141,11 +141,11 @@ describe('BittrexSymbolModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ symbol: BITTREX_PARSED_SYMBOLS[0], apiRequestCount: 1 })
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ symbol: BITTREX_PARSED_SYMBOLS[1], apiRequestCount: 1 })
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ symbol: BITTREX_PARSED_SYMBOLS[2], apiRequestCount: 1 })
+      .returns({ symbol: BITTREX_PARSED_SYMBOLS[2], requestCount: 1 })
 
     const { symbols: parsedSymbols } = BittrexSymbolModule.parseMany({
       rawSymbols: [rawSymbol, rawSymbol, rawSymbol],

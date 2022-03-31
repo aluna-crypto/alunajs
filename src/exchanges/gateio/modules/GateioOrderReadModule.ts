@@ -28,11 +28,11 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     GateioLog.info('fetching Gateio open orders')
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       data: rawOrdersResponse,
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await GateioHttp
       .privateRequest<IGateioOrderListResponseSchema[]>({
         verb: AlunaHttpVerbEnum.GET,
@@ -44,13 +44,12 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
       rawOrdersResponse,
     })
 
-    apiRequestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + requestCount
+    const totalRequestCount = requestCount + privateRequestCount
 
     return {
       rawOrders,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -59,29 +58,25 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrders,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + parseManyCount
       + listRawCount
 
     return {
       orders: parsedOrders,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -103,7 +98,7 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const {
       data: rawOrder,
-      apiRequestCount,
+      requestCount,
     } = await GateioHttp.privateRequest<IGateioOrderSchema>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_GATEIO_URL}/spot/orders/${id}?${query.toString()}`,
@@ -112,7 +107,7 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       rawOrder,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -120,29 +115,25 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
   public async get (params: IAlunaOrderGetParams)
     : Promise<IAlunaOrderGetReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + getRawCount
       + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -158,7 +149,7 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       order: parsedOrder,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -169,17 +160,17 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     const { rawOrders } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: any) => {
 
         const {
           order: parsedOrder,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = await this.parse({ rawOrder })
 
-        apiRequestCount += parseCount + 1
+        requestCount += parseCount
 
         return parsedOrder
 
@@ -190,7 +181,7 @@ export class GateioOrderReadModule extends AAlunaModule implements IAlunaOrderRe
 
     return {
       orders: parsedOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }

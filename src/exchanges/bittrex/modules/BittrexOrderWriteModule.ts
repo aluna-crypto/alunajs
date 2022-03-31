@@ -55,7 +55,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -118,16 +118,12 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       from: type,
     })
 
-    apiRequestCount += 1
-
     const body: IBittrexOrderRequest = {
       direction: BittrexOrderSideAdapter.translateToBittrex({ from: side }),
       marketSymbol: symbolPair,
       type: translatedOrderType,
       quantity: Number(amount),
     }
-
-    apiRequestCount += 1
 
     if (translatedOrderType === BittrexOrderTypeEnum.LIMIT) {
 
@@ -151,7 +147,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
     try {
 
       const {
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
         data: orderResponse,
       } = await BittrexHttp
         .privateRequest<IBittrexOrderSchema>({
@@ -161,7 +157,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
         })
 
       placedOrder = orderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -202,17 +198,15 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     }
 
-    const { order, apiRequestCount: parseCount } = await this.parse({
+    const { order, requestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -230,13 +224,13 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
     } = params
 
     let canceledOrder: IBittrexOrderSchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
         data: cancelOrderResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await BittrexHttp.privateRequest<IBittrexOrderSchema>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
@@ -246,7 +240,7 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       )
 
       canceledOrder = cancelOrderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -267,16 +261,14 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
 
     const {
       order,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder: canceledOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -303,18 +295,16 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { apiRequestCount: cancelCount } = await this.cancel({
+    const { requestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
-
     const {
       order: newOrder,
-      apiRequestCount: placeCount,
+      requestCount: placeCount,
     } = await this.place({
       rate,
       side,
@@ -324,15 +314,13 @@ export class BittrexOrderWriteModule extends BittrexOrderReadModule implements I
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + cancelCount
       + placeCount
 
     return {
       order: newOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

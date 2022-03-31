@@ -24,7 +24,7 @@ describe('GateioHttp', () => {
 
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
 
-  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
+  const dummyData = { data: 'dummy-data', requestCount: 1 }
 
   const dummyQuery = 'dummy=dummy'
 

@@ -1,3 +1,3 @@
 export interface IAlunaApiRequestSchema {
-  apiRequestCount: number
+  requestCount: number
 }

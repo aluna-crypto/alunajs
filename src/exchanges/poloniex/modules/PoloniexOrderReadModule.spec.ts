@@ -57,11 +57,11 @@ describe('PoloniexOrderReadModule', () => {
 
     requestMock.onFirstCall().returns({
       data: poloniexRawOrder,
-      apiRequestCount: 1,
+      requestCount: 1,
     })
     requestMock.onSecondCall().returns({
       data: poloniexRawOrderStatus,
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const { rawOrders } = await poloniexOrderReadModule.listRaw()
@@ -112,13 +112,13 @@ describe('PoloniexOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       poloniexOrderReadModule,
       'listRaw',
-      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
+      { rawOrders: ['raw-orders'], requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       poloniexOrderReadModule,
       'parseMany',
-      { orders: poloniexParsedOrders, apiRequestCount: 1 },
+      { orders: poloniexParsedOrders, requestCount: 1 },
     )
 
     const { orders: parsedOrders } = await poloniexOrderReadModule.list()
@@ -187,7 +187,7 @@ describe('PoloniexOrderReadModule', () => {
             [orderNumber]: POLONIEX_RAW_LIMIT_ORDER,
           },
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -226,7 +226,7 @@ describe('PoloniexOrderReadModule', () => {
       'privateRequest',
       {
         data: [POLONIEX_RAW_LIMIT_ORDER],
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -275,7 +275,7 @@ describe('PoloniexOrderReadModule', () => {
         result:
           { [orderNumber]: POLONIEX_RAW_LIMIT_ORDER },
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
 
@@ -335,13 +335,13 @@ describe('PoloniexOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       poloniexOrderReadModule,
       'getRaw',
-      { rawOrder: 'rawOrder', apiRequestCount: 1 },
+      { rawOrder: 'rawOrder', requestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       poloniexOrderReadModule,
       'parse',
-      { order: POLONIEX_PARSED_ORDER, apiRequestCount: 1 },
+      { order: POLONIEX_PARSED_ORDER, requestCount: 1 },
     )
 
     const params = {
@@ -564,11 +564,11 @@ describe('PoloniexOrderReadModule', () => {
           error: 'Order status not found',
         },
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
     requestMock.onSecondCall().returns({
       data: {},
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const id = 'order-id'
@@ -620,7 +620,7 @@ describe('PoloniexOrderReadModule', () => {
       .returns(Promise.reject(new Error('')))
     requestMock.onSecondCall().returns({
       data: { error: 'Order trade not found' },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const id = 'order-id'

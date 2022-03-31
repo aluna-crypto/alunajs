@@ -22,13 +22,13 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
 
     BittrexLog.info('fetching Bittrex symbols')
 
-    const { data: rawSymbols, apiRequestCount } = await BittrexHttp
+    const { data: rawSymbols, requestCount } = await BittrexHttp
       .publicRequest<IBittrexSymbolSchema[]>({
         url: `${PROD_BITTREX_URL}/currencies`,
       })
 
     return {
-      apiRequestCount,
+      requestCount,
       rawSymbols,
     }
 
@@ -38,29 +38,25 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawSymbols,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BittrexSymbolModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       symbols,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BittrexSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
         + listRawCount
         + parseManyCount
 
     return {
       symbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -78,14 +74,12 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
       name,
     } = rawSymbol
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const id = AlunaSymbolMapping.translateSymbolId({
       exchangeSymbolId: symbol,
       symbolMappings: Bittrex.settings.mappings,
     })
-
-    apiRequestCount += 1
 
     const alias = id !== symbol
       ? symbol
@@ -101,7 +95,7 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbol: parsedSymbol,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -114,16 +108,16 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
 
     const { rawSymbols } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedSymbols = rawSymbols.map((rawSymbol) => {
 
       const {
         symbol,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = BittrexSymbolModule.parse({ rawSymbol })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return symbol
 
@@ -133,7 +127,7 @@ export const BittrexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }

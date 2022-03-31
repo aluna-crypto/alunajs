@@ -7,7 +7,7 @@ import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-  IAlunaHttpResponseWithRequestCount,
+  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
@@ -95,8 +95,9 @@ export const generateAuthHeader = (
 
 export const ValrHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async publicRequest<T> (
+    params: IAlunaHttpPublicParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -113,7 +114,7 @@ export const ValrHttp: IAlunaHttp = class {
 
       return {
         data: AlunaCache.cache.get<T>(cacheKey)!,
-        apiRequestCount: 0,
+        requestCount: 0,
       }
 
     }
@@ -132,7 +133,7 @@ export const ValrHttp: IAlunaHttp = class {
 
       return {
         data: response.data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
@@ -144,7 +145,7 @@ export const ValrHttp: IAlunaHttp = class {
   }
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+    : Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -175,7 +176,7 @@ export const ValrHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {

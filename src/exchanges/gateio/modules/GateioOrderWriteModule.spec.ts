@@ -64,7 +64,7 @@ describe('GateioOrderWriteModule', () => {
       'privateRequest',
       {
         data: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -73,7 +73,7 @@ describe('GateioOrderWriteModule', () => {
       'parse',
       {
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -389,7 +389,7 @@ describe('GateioOrderWriteModule', () => {
       'privateRequest',
       {
         data: canceledOrderResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -400,7 +400,7 @@ describe('GateioOrderWriteModule', () => {
         order: {
           status: AlunaOrderStatusEnum.CANCELED,
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -445,7 +445,7 @@ describe('GateioOrderWriteModule', () => {
       gateioOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -454,7 +454,7 @@ describe('GateioOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: GATEIO_RAW_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

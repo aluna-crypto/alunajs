@@ -52,7 +52,7 @@ describe('GateioOrderReadModule', () => {
             orders: gateioRawOrders,
           },
         ],
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -131,13 +131,13 @@ describe('GateioOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'listRaw',
-      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
+      { rawOrders: ['raw-orders'], requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'parseMany',
-      { orders: gateioParsedOrders, apiRequestCount: 1 },
+      { orders: gateioParsedOrders, requestCount: 1 },
     )
 
     const { orders: parsedOrders } = await gateioOrderReadModule.list()
@@ -198,7 +198,7 @@ describe('GateioOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: GATEIO_RAW_ORDER, apiRequestCount: 1 },
+      { data: GATEIO_RAW_ORDER, requestCount: 1 },
     )
 
     const symbolPair = 'symbol'
@@ -232,13 +232,13 @@ describe('GateioOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'getRaw',
-      { rawOrder: 'rawOrder', apiRequestCount: 1 },
+      { rawOrder: 'rawOrder', requestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       gateioOrderReadModule,
       'parse',
-      { order: GATEIO_PARSED_ORDER, apiRequestCount: 1 },
+      { order: GATEIO_PARSED_ORDER, requestCount: 1 },
     )
 
     const params = {

@@ -38,13 +38,13 @@ describe('BinanceBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { data: { balances: BINANCE_RAW_BALANCES }, apiRequestCount: 1 },
+      { data: { balances: BINANCE_RAW_BALANCES }, requestCount: 1 },
     )
 
 
     const {
       rawBalances,
-      apiRequestCount,
+      requestCount,
     } = await binanceBalanceModule.listRaw()
 
     expect(requestMock.callCount).to.be.eq(1)
@@ -54,7 +54,7 @@ describe('BinanceBalanceModule', () => {
       keySecret: exchangeMock.getValue().keySecret,
     })).to.be.ok
 
-    expect(apiRequestCount).to.eq(1)
+    expect(requestCount).to.eq(1)
 
     expect(rawBalances.length).to.eq(4)
     expect(rawBalances).to.deep.eq(BINANCE_RAW_BALANCES)
@@ -84,18 +84,18 @@ describe('BinanceBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'listRaw',
-      { rawBalances: rawListMock, apiRequestCount: 1 },
+      { rawBalances: rawListMock, requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BinanceBalanceModule.prototype,
       'parseMany',
-      { balances: BINANCE_PARSED_BALANCES, apiRequestCount: 1 },
+      { balances: BINANCE_PARSED_BALANCES, requestCount: 1 },
     )
 
-    const { balances, apiRequestCount } = await binanceBalanceModule.list()
+    const { balances, requestCount } = await binanceBalanceModule.list()
 
-    expect(apiRequestCount).to.be.eq(4)
+    expect(requestCount).to.be.eq(2)
 
     expect(listRawMock.callCount).to.be.eq(1)
 

@@ -42,7 +42,7 @@ describe('ValrKeyModule', () => {
       'privateRequest',
       {
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 

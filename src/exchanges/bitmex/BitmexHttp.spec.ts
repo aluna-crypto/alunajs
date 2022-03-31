@@ -36,7 +36,7 @@ describe('BitmexHttp', () => {
     'api-signature': 'signature',
   }
 
-  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
+  const dummyData = { data: 'dummy-data', requestCount: 1 }
 
 
   it('should defaults the http verb to get on public requests', async () => {

@@ -24,13 +24,13 @@ describe('PoloniexSymbolModule', () => {
       'publicRequest',
       Promise.resolve({
         data: POLONIEX_RAW_SYMBOL,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
-    const { rawSymbols, apiRequestCount } = await PoloniexSymbolModule.listRaw()
+    const { rawSymbols, requestCount } = await PoloniexSymbolModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(1)
 
     expect(rawSymbols).to.deep.eq(POLONIEX_RAW_SYMBOLS_WITH_CURRENCY)
 
@@ -45,7 +45,7 @@ describe('PoloniexSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: POLONIEX_RAW_SYMBOL,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -54,7 +54,7 @@ describe('PoloniexSymbolModule', () => {
       'parseMany',
       {
         symbols: POLONIEX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -128,17 +128,17 @@ describe('PoloniexSymbolModule', () => {
       .onFirstCall()
       .returns({
         symbol: POLONIEX_PARSED_SYMBOLS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         symbol: POLONIEX_PARSED_SYMBOLS[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         symbol: POLONIEX_PARSED_SYMBOLS[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     const { symbols: parsedSymbols } = PoloniexSymbolModule.parseMany({

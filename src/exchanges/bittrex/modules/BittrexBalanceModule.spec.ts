@@ -36,7 +36,7 @@ describe('BittrexBalanceModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: BITTREX_RAW_BALANCES, apiRequestCount: 1 },
+      { data: BITTREX_RAW_BALANCES, requestCount: 1 },
     )
 
     const { rawBalances } = await bittrexBalanceModule.listRaw()
@@ -62,18 +62,18 @@ describe('BittrexBalanceModule', () => {
     const listRawMock = ImportMock.mockFunction(
       BittrexBalanceModule.prototype,
       'listRaw',
-      { rawBalances: rawListMock, apiRequestCount: 1 },
+      { rawBalances: rawListMock, requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       BittrexBalanceModule.prototype,
       'parseMany',
-      { balances: BITTREX_PARSED_BALANCES, apiRequestCount: 1 },
+      { balances: BITTREX_PARSED_BALANCES, requestCount: 1 },
     )
 
-    const { balances, apiRequestCount } = await bittrexBalanceModule.list()
+    const { balances, requestCount } = await bittrexBalanceModule.list()
 
-    expect(apiRequestCount).to.be.eq(4)
+    expect(requestCount).to.be.eq(2)
 
     expect(listRawMock.callCount).to.be.eq(1)
 
@@ -172,11 +172,11 @@ describe('BittrexBalanceModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ balance: BITTREX_PARSED_BALANCES[0], apiRequestCount: 1 })
+      .returns({ balance: BITTREX_PARSED_BALANCES[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ balance: BITTREX_PARSED_BALANCES[1], apiRequestCount: 1 })
+      .returns({ balance: BITTREX_PARSED_BALANCES[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ balance: BITTREX_PARSED_BALANCES[2], apiRequestCount: 1 })
+      .returns({ balance: BITTREX_PARSED_BALANCES[2], requestCount: 1 })
 
 
     const { balances: parsedBalances } = bittrexBalanceModule.parseMany({
