@@ -19,6 +19,7 @@ import {
 import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../utils/validation/validateParams'
+import { Bitfinex } from '../Bitfinex'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexLog } from '../BitfinexLog'
 import { BitfinexSpecs } from '../BitfinexSpecs'
@@ -423,9 +424,12 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
 
     if (action === 'place') {
 
+      const { affiliateCode } = Bitfinex.settings
+
       Object.assign(body, {
         symbol: symbolPair,
         type: translatedOrderType,
+        ...(affiliateCode ? { meta: { aff_code: affiliateCode } } : {}),
       })
 
     } else {

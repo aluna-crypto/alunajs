@@ -8,8 +8,15 @@ import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
+import { Valr } from './Valr'
 import * as ValrHttpMod from './ValrHttp'
 
 
@@ -19,19 +26,95 @@ describe('ValrHttp', () => {
   const { ValrHttp } = ValrHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-
   const dummyBody = { dummy: 'dummy-body' }
-
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
+  const dummyResponse = { data: 'dummy-data', requestCount: 1 }
 
-  const dummyData = { data: 'dummy-data', requestCount: 1 }
+  const mockDeps = (
+    params: {
+      requestResponse?: any,
+      getCache?: any,
+      hasCache?: boolean,
+      setCache?: boolean,
+      signedheaderResponse?: ValrHttpMod.IValrSignedHeaders,
+      errorMsgRes?: string,
+      mockedExchangeSettings?: IAlunaSettingsSchema,
+    } = {},
+  ) => {
+
+    const {
+      requestResponse = {},
+      signedheaderResponse = dummySignedHeaders,
+      getCache = {},
+      hasCache = false,
+      setCache = false,
+      errorMsgRes = 'error',
+      mockedExchangeSettings = {},
+    } = params
+
+    const throwedError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: errorMsgRes,
+      httpStatusCode: 400,
+    })
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(requestResponse)
+
+    const exchangeMock = ImportMock.mockOther(
+      Valr,
+      'settings',
+      mockedExchangeSettings,
+    )
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      ValrHttpMod,
+      'generateAuthHeader',
+      signedheaderResponse,
+    )
+
+    const formatRequestErrorSpy = ImportMock.mockFunction(
+      ValrHttpMod,
+      'handleRequestError',
+      throwedError,
+    )
+
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      get: getCache,
+      has: hasCache,
+      set: setCache,
+    })
+
+    return {
+      cache,
+      requestSpy,
+      hashCacheKey,
+      throwedError,
+      exchangeMock,
+      axiosCreateMock,
+      formatRequestErrorSpy,
+      generateAuthHeaderMock,
+      assembleAxiosRequestMock,
+    }
+
+  }
 
   it('should defaults the http verb to get on public requests', async () => {
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await ValrHttp.publicRequest({
       // http verb not informed
@@ -56,7 +139,9 @@ describe('ValrHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await ValrHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -73,7 +158,7 @@ describe('ValrHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -82,13 +167,10 @@ describe('ValrHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      ValrHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await ValrHttp.privateRequest({
       // http verb not informed
@@ -116,13 +198,10 @@ describe('ValrHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      ValrHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await ValrHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
@@ -149,7 +228,7 @@ describe('ValrHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -159,18 +238,12 @@ describe('ValrHttp', () => {
 
     const message = 'Dummy error'
 
-    mockAxiosRequest(Promise.reject(new Error(message)))
-
-    const formatRequestErrorSpy = Sinon.spy(
-      ValrHttpMod,
-      'handleRequestError',
-    )
-
-    ImportMock.mockFunction(
-      ValrHttpMod,
-      'generateAuthHeader',
-      dummySignedHeaders,
-    )
+    const {
+      formatRequestErrorSpy,
+    } = mockDeps({
+      requestResponse: Promise.reject(new Error(message)),
+      errorMsgRes: message,
+    })
 
     try {
 
@@ -379,10 +452,10 @@ describe('ValrHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyData)
+    mockAxiosRequest(dummyResponse)
 
     await validateCache({
-      cacheResult: dummyData,
+      cacheResult: dummyResponse,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {

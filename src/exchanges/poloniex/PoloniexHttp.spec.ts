@@ -8,8 +8,15 @@ import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
+import { Poloniex } from './Poloniex'
 import * as PoloniexHttpMod from './PoloniexHttp'
 
 
@@ -19,21 +26,99 @@ describe('PoloniexHttp', () => {
   const { PoloniexHttp } = PoloniexHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-
   const dummyBody = new URLSearchParams('dummy=dummy-body')
+  const dummyResponse = { data: 'dummy-data', requestCount: 1 }
 
   const dummySignedHeaders = {
     'Content-Type': 'application/x-www-form-urlencoded',
   }
 
-  const dummyData = { data: 'dummy-data', requestCount: 1 }
+  const mockDeps = (
+    params: {
+      requestResponse?: any,
+      getCache?: any,
+      hasCache?: boolean,
+      setCache?: boolean,
+      signedheaderResponse?: PoloniexHttpMod.IPoloniexSignedHeaders,
+      errorMsgRes?: string,
+      mockedExchangeSettings?: IAlunaSettingsSchema,
+    } = {},
+  ) => {
+
+    const {
+      requestResponse = {},
+      signedheaderResponse = dummySignedHeaders,
+      getCache = {},
+      hasCache = false,
+      setCache = false,
+      errorMsgRes = 'error',
+      mockedExchangeSettings = {},
+    } = params
+
+    const throwedError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: errorMsgRes,
+      httpStatusCode: 400,
+    })
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(requestResponse)
+
+    const exchangeMock = ImportMock.mockOther(
+      Poloniex,
+      'settings',
+      mockedExchangeSettings,
+    )
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      PoloniexHttpMod,
+      'generateAuthSignature',
+      signedheaderResponse,
+    )
+
+    const formatRequestErrorSpy = ImportMock.mockFunction(
+      PoloniexHttpMod,
+      'handleRequestError',
+      throwedError,
+    )
+
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      get: getCache,
+      has: hasCache,
+      set: setCache,
+    })
+
+    return {
+      cache,
+      requestSpy,
+      hashCacheKey,
+      throwedError,
+      exchangeMock,
+      axiosCreateMock,
+      formatRequestErrorSpy,
+      generateAuthHeaderMock,
+      assembleAxiosRequestMock,
+    }
+
+  }
+
 
   it('should defaults the http verb to get on public requests', async () => {
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await PoloniexHttp.publicRequest({
       // http verb not informed
@@ -60,7 +145,9 @@ describe('PoloniexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await PoloniexHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -78,7 +165,7 @@ describe('PoloniexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -90,13 +177,10 @@ describe('PoloniexHttp', () => {
       const {
         requestSpy,
         axiosCreateMock,
-      } = mockAxiosRequest(dummyData)
-
-      const generateAuthHeaderMock = ImportMock.mockFunction(
-        PoloniexHttpMod,
-        'generateAuthSignature',
-        dummySignedHeaders,
-      )
+        generateAuthHeaderMock,
+      } = mockDeps({
+        requestResponse: Promise.resolve(dummyResponse),
+      })
 
       await PoloniexHttp.privateRequest({
       // http verb not informed
@@ -128,13 +212,10 @@ describe('PoloniexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      PoloniexHttpMod,
-      'generateAuthSignature',
-      dummySignedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await PoloniexHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
@@ -142,7 +223,6 @@ describe('PoloniexHttp', () => {
       body: dummyBody,
       keySecret: {} as IAlunaKeySecretSchema,
     })
-
 
     expect(axiosCreateMock.callCount).to.be.eq(1)
 
@@ -160,7 +240,7 @@ describe('PoloniexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -168,18 +248,12 @@ describe('PoloniexHttp', () => {
 
     const errorMsg = 'Dummy error'
 
-    const formatRequestErrorSpy = Sinon.spy(
-      PoloniexHttpMod,
-      'handleRequestError',
-    )
-
-    mockAxiosRequest(Promise.reject(new Error(errorMsg)))
-
-    ImportMock.mockFunction(
-      PoloniexHttpMod,
-      'generateAuthSignature',
-      dummySignedHeaders,
-    )
+    const {
+      formatRequestErrorSpy,
+    } = mockDeps({
+      requestResponse: Promise.reject(new Error(errorMsg)),
+      errorMsgRes: errorMsg,
+    })
 
     let result
     let error
@@ -308,59 +382,49 @@ describe('PoloniexHttp', () => {
 
   })
 
-  it(
-    'should ensure request error is being handle'
-    + ' when the error is returned in a response',
-    async () => {
+  it('should ensure error inside response is being handle', async () => {
 
-      const errorMsg = 'Dummy error'
+    const errorMsg = 'Dummy error'
 
-      const formatRequestErrorSpy = Sinon.spy(
-        PoloniexHttpMod,
-        'handleRequestError',
-      )
-
-      mockAxiosRequest({
+    const {
+      formatRequestErrorSpy,
+    } = mockDeps({
+      requestResponse: Promise.resolve({
         data: {
           error: errorMsg,
         },
+      }),
+      errorMsgRes: errorMsg,
+    })
+
+    let result
+    let error
+
+    try {
+
+      result = await PoloniexHttp.privateRequest({
+        url: dummyUrl,
+        body: dummyBody,
+        keySecret: {} as IAlunaKeySecretSchema,
       })
 
-      ImportMock.mockFunction(
-        PoloniexHttpMod,
-        'generateAuthSignature',
-        dummySignedHeaders,
-      )
+    } catch (err) {
 
-      let result
-      let error
+      error = err
 
-      try {
+    }
 
-        result = await PoloniexHttp.privateRequest({
-          url: dummyUrl,
-          body: dummyBody,
-          keySecret: {} as IAlunaKeySecretSchema,
-        })
+    expect(result).not.to.be.ok
 
-      } catch (err) {
+    expect(error.message).to.be.eq(errorMsg)
 
-        error = err
+    const calledArg2 = formatRequestErrorSpy.args[1][0]
 
-      }
+    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
+    expect(calledArg2).to.be.ok
+    expect(calledArg2.message).to.be.eq(errorMsg)
 
-      expect(result).not.to.be.ok
-
-      expect(error.message).to.be.eq(errorMsg)
-
-      const calledArg2 = formatRequestErrorSpy.args[1][0]
-
-      expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-      expect(calledArg2).to.be.ok
-      expect(calledArg2.message).to.be.eq(errorMsg)
-
-    },
-  )
+  })
 
 
   it('should generate signed auth header just fine with body', async () => {
@@ -412,10 +476,10 @@ describe('PoloniexHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyData)
+    mockAxiosRequest(dummyResponse)
 
     await validateCache({
-      cacheResult: dummyData,
+      cacheResult: dummyResponse,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {

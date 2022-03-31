@@ -12,7 +12,9 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bittrex } from './Bittrex'
 import { BittrexLog } from './BittrexLog'
 
 
@@ -28,7 +30,7 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IBittrexSignedHeaders {
+export interface IBittrexSignedHeaders {
     'Api-Key': string
     'Api-Timestamp': number
     'Api-Content-Hash': string
@@ -126,11 +128,12 @@ export const BittrexHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 
@@ -169,12 +172,13 @@ export const BittrexHttp: IAlunaHttp = class {
       url,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 

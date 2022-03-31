@@ -21,6 +21,7 @@ import {
 import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../utils/validation/validateParams'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import {
@@ -328,11 +329,13 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     })
 
+    const { orderAnnotation } = Bitmex.settings
+
     const body = {
       orderQty,
       ...(price ? { price } : {}),
       ...(stopPx ? { stopPx } : {}),
-      text: 'Sent by Aluna',
+      ...(orderAnnotation ? { text: orderAnnotation } : {}),
     }
 
     if (action === 'place') {

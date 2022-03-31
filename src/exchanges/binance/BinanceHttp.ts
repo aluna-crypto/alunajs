@@ -12,7 +12,9 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Binance } from './Binance'
 import { BinanceLog } from './BinanceLog'
 
 
@@ -36,7 +38,7 @@ interface IBinanceSecureHeaders {
 
 
 
-interface IBinanceSignedSignature {
+export interface IBinanceSignedSignature {
   signature: string
   dataQueryString: string
   body: string
@@ -160,11 +162,12 @@ export const BinanceHttp: IAlunaHttp = class {
 
     }
 
-    const requestConfig = {
-      url,
+    const { requestConfig } = assembleAxiosRequestConfig({
       method: verb,
+      url,
       data: body,
-    }
+      proxySettings: Binance.settings.proxySettings,
+    })
 
     try {
 
@@ -218,11 +221,12 @@ export const BinanceHttp: IAlunaHttp = class {
       'X-MBX-APIKEY': keySecret.key,
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url: fullUrl,
       method: verb,
       headers,
-    }
+      proxySettings: Binance.settings.proxySettings,
+    })
 
     try {
 

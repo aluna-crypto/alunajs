@@ -44,4 +44,5 @@ export interface IGateioOrderRequest {
   side: GateioSideEnum
   amount: string
   price: string
+  text?: string
 }

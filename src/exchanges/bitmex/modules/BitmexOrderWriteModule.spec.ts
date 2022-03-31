@@ -22,6 +22,7 @@ import {
 import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -48,6 +49,7 @@ describe('BitmexOrderWriteModule', () => {
   const parsedOrder = BITMEX_PARSED_ORDERS[0]
   const symbolPair = 'XBTUSD'
   const id = '666'
+  const orderAnnotation = 'Sent by aluna'
 
   const mockRequest = (requestResponse: any, isReject = false) => {
 
@@ -113,7 +115,7 @@ describe('BitmexOrderWriteModule', () => {
 
   const promises = actions.map(async (action) => {
 
-    return orderTypes.map(async (type) => {
+    return orderTypes.map(async (type, index) => {
 
       return sides.map(async (side) => {
 
@@ -172,7 +174,21 @@ describe('BitmexOrderWriteModule', () => {
 
             const expectedRequestBody: Record<string, any> = {
               orderQty: 1,
-              text: 'Sent by Aluna',
+            }
+
+            if (index % 2 === 0) {
+
+              ImportMock.mockOther(
+                Bitmex,
+                'settings',
+                {
+                  mappings: {},
+                  orderAnnotation,
+                },
+              )
+
+              expectedRequestBody.text = orderAnnotation
+
             }
 
             let expectedHttpVerb: AlunaHttpVerbEnum
@@ -220,7 +236,6 @@ describe('BitmexOrderWriteModule', () => {
                 params.limitRate = randomLimitRate
                 expectedRequestBody.stopPx = randomStopRate
                 expectedRequestBody.price = randomLimitRate
-
                 break
 
               default:

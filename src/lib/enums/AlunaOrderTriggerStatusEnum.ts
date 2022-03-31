@@ -1,4 +1,4 @@
-export enum AlunaOrderTriggeredStatusEnum {
+export enum AlunaOrderTriggerStatusEnum {
   TRIGGERED = 'triggered',
   UNTRIGGERED = 'untriggered',
 }

@@ -73,6 +73,7 @@ describe('BitmexOrderParser', () => {
         price,
         transactTime,
         timestamp,
+        orderQty,
       } = rawOrder
 
       const expectedComputedStatus = BitmexStatusAdapter.translateToAluna({
@@ -177,6 +178,7 @@ describe('BitmexOrderParser', () => {
         instrument: mockedInstrument,
         computedPrice: expectedComputedPrice,
         computedAmount,
+        orderQty,
       })
 
     })
@@ -268,6 +270,7 @@ describe('BitmexOrderParser', () => {
 
   it("should properly compute order 'total' [INVERSE INSTRUMENT]", () => {
 
+    const orderQty = 10
     const computedPrice = 32000
     const computedAmount = 10
 
@@ -279,12 +282,13 @@ describe('BitmexOrderParser', () => {
     } as IAlunaInstrumentSchema
 
 
-    const expectedTotal = computedAmount
+    const expectedTotal = orderQty
 
     const computedTotal = computeOrderTotal({
       computedPrice,
       computedAmount,
       instrument,
+      orderQty,
     })
 
     expect(computedTotal).to.be.eq(expectedTotal)
@@ -293,6 +297,7 @@ describe('BitmexOrderParser', () => {
 
   it("should properly compute order 'total' [QUANTO INSTRUMENT]", () => {
 
+    const orderQty = 100
     const computedPrice = 200
     const computedAmount = 290
 
@@ -317,6 +322,7 @@ describe('BitmexOrderParser', () => {
 
     const computedTotal = computeOrderTotal({
       computedPrice,
+      orderQty,
       computedAmount,
       instrument,
     })
@@ -329,6 +335,7 @@ describe('BitmexOrderParser', () => {
     "should properly compute order 'total' [NOR QUANTO/INVERSE INSTRUMENT]",
     () => {
 
+      const orderQty = 200
       const computedPrice = 200
       const computedAmount = 290
 
@@ -347,6 +354,7 @@ describe('BitmexOrderParser', () => {
         computedPrice,
         computedAmount,
         instrument,
+        orderQty,
       })
 
       expect(computedTotal).to.be.eq(expectedTotal)

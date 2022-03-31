@@ -8,8 +8,15 @@ import { mockAxiosRequest } from '../../../test/helpers/http'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
+import { Binance } from './Binance'
 import * as BinanceHttpMod from './BinanceHttp'
 
 
@@ -19,11 +26,13 @@ describe('BinanceHttp', () => {
   const { BinanceHttp } = BinanceHttpMod
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-
   const dummyBody = { dummy: 'dummy-body' }
-
-  const dummySignedHeaders = { 'X-MBX-APIKEY': undefined }
-
+  const dummyResponse = { data: 'dummy-response', requestCount: 1 }
+  const dummyKeysecret: IAlunaKeySecretSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
+  const dummySignedHeaders = { 'X-MBX-APIKEY': dummyKeysecret.key }
   const dummySignedBody = {
     signature: 'dummy',
     dataQueryString: 'dummy=dummy',
@@ -36,14 +45,90 @@ describe('BinanceHttp', () => {
 
   formattedQuery.append('signature', dummySignedBody.signature)
 
-  const dummyData = { data: 'dummy-data', requestCount: 1 }
+  const mockDeps = (
+    params: {
+      requestResponse?: any,
+      getCache?: any,
+      hasCache?: boolean,
+      setCache?: boolean,
+      signedheaderResponse?: BinanceHttpMod.IBinanceSignedSignature,
+      errorMsgRes?: string,
+      mockedExchangeSettings?: IAlunaSettingsSchema,
+    } = {},
+  ) => {
+
+    const {
+      requestResponse = {},
+      signedheaderResponse = dummySignedBody,
+      getCache = {},
+      hasCache = false,
+      setCache = false,
+      errorMsgRes = 'error',
+      mockedExchangeSettings = {},
+    } = params
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
+
+    const throwedError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: errorMsgRes,
+      httpStatusCode: 400,
+    })
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest(requestResponse)
+
+    const exchangeMock = ImportMock.mockOther(
+      Binance,
+      'settings',
+      mockedExchangeSettings,
+    )
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BinanceHttpMod,
+      'generateAuthSignature',
+      signedheaderResponse,
+    )
+
+    const formatRequestErrorSpy = ImportMock.mockFunction(
+      BinanceHttpMod,
+      'handleRequestError',
+      throwedError,
+    )
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      get: getCache,
+      has: hasCache,
+      set: setCache,
+    })
+
+    return {
+      cache,
+      requestSpy,
+      hashCacheKey,
+      throwedError,
+      exchangeMock,
+      axiosCreateMock,
+      formatRequestErrorSpy,
+      generateAuthHeaderMock,
+      assembleAxiosRequestMock,
+    }
+
+  }
 
   it('should defaults the http verb to get on public requests', async () => {
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     await BinanceHttp.publicRequest({
       // http verb not informed
@@ -68,7 +153,9 @@ describe('BinanceHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: Promise.resolve(dummyResponse),
+    })
 
     const responseData = await BinanceHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -85,7 +172,7 @@ describe('BinanceHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -104,17 +191,14 @@ describe('BinanceHttp', () => {
       const {
         requestSpy,
         axiosCreateMock,
-      } = mockAxiosRequest(dummyData)
-
-      const generateAuthHeaderMock = ImportMock.mockFunction(
-        BinanceHttpMod,
-        'generateAuthSignature',
-        dummySignedBody,
-      )
+        generateAuthHeaderMock,
+      } = mockDeps({
+        requestResponse: Promise.resolve(dummyResponse),
+      })
 
       await BinanceHttp.privateRequest({
       // http verb not informed
-        keySecret: {} as IAlunaKeySecretSchema,
+        keySecret: dummyKeysecret,
         url: 'http://dummy.com',
       })
 
@@ -138,7 +222,7 @@ describe('BinanceHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockAxiosRequest(dummyResponse)
 
     const generateAuthHeaderMock = ImportMock.mockFunction(
       BinanceHttpMod,
@@ -150,7 +234,7 @@ describe('BinanceHttp', () => {
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
-      keySecret: {} as IAlunaKeySecretSchema,
+      keySecret: dummyKeysecret,
     })
 
     expect(axiosCreateMock.callCount).to.be.eq(1)
@@ -159,7 +243,7 @@ describe('BinanceHttp', () => {
     expect(generateAuthHeaderMock.calledWith({
       verb: AlunaHttpVerbEnum.POST,
       body: dummyBody,
-      keySecret: {},
+      keySecret: dummyKeysecret,
       query: undefined,
     })).to.be.ok
 
@@ -170,7 +254,7 @@ describe('BinanceHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq(dummyResponse)
 
   })
 
@@ -178,18 +262,12 @@ describe('BinanceHttp', () => {
 
     const errorMsg = 'Dummy error'
 
-    mockAxiosRequest(Promise.reject(new Error(errorMsg)))
-
-    const formatRequestErrorSpy = Sinon.spy(
-      BinanceHttpMod,
-      'handleRequestError',
-    )
-
-    ImportMock.mockFunction(
-      BinanceHttpMod,
-      'generateAuthSignature',
-      dummySignedHeaders,
-    )
+    const {
+      formatRequestErrorSpy,
+    } = mockDeps({
+      requestResponse: Promise.reject(new Error(errorMsg)),
+      errorMsgRes: errorMsg,
+    })
 
     let result
     let error
@@ -221,7 +299,7 @@ describe('BinanceHttp', () => {
       result = await BinanceHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
-        keySecret: {} as IAlunaKeySecretSchema,
+        keySecret: dummyKeysecret,
       })
 
     } catch (err) {
@@ -485,10 +563,10 @@ describe('BinanceHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyData)
+    mockAxiosRequest(dummyResponse)
 
     await validateCache({
-      cacheResult: dummyData,
+      cacheResult: dummyResponse,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {

@@ -132,7 +132,7 @@ describe('Aluna', () => {
     "should properly set Exchange settings when 'new' method is called",
     async () => {
 
-      const referralCode = '123'
+      const affiliateCode = '123'
       const mappings = { XBT: 'BTC' }
 
       const exchangesArr = values(Aluna.exchanges)
@@ -143,7 +143,7 @@ describe('Aluna', () => {
       }
 
       const settings: IAlunaSettingsSchema = {
-        referralCode,
+        affiliateCode,
         mappings,
       }
 
@@ -158,7 +158,7 @@ describe('Aluna', () => {
         expect(exchange.keySecret).to.be.eq(keySecret)
 
         expect(Exchange.settings.mappings).to.deep.eq(mappings)
-        expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+        expect(Exchange.settings.affiliateCode).to.be.eq(affiliateCode)
 
         // Set static prop 'settings' to default value on static Exchange
         Exchange.setSettings({
@@ -176,13 +176,13 @@ describe('Aluna', () => {
     "should properly set Exchange settings when 'static' method is called",
     async () => {
 
-      const referralCode = '123'
+      const affiliateCode = '123'
       const mappings = { XBT: 'BTC' }
 
       const exchangesArr = values(Aluna.exchanges)
 
       const settings: IAlunaSettingsSchema = {
-        referralCode,
+        affiliateCode,
         mappings,
       }
 
@@ -194,7 +194,7 @@ describe('Aluna', () => {
         })
 
         expect(Exchange.settings.mappings).to.deep.eq(mappings)
-        expect(Exchange.settings.referralCode).to.be.eq(referralCode)
+        expect(Exchange.settings.affiliateCode).to.be.eq(affiliateCode)
 
         // Set static prop 'settings' to default value on static Exchange
         Exchange.setSettings({

@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import { mockExchangeModule } from '../../../../test/helpers/exchange'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
@@ -17,6 +19,7 @@ import {
   IAlunaOrderPlaceParams,
 } from '../../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../../lib/schemas/IAlunaKeySecretSchema'
+import { Bitfinex } from '../Bitfinex'
 import { BitfinexHttp } from '../BitfinexHttp'
 import { BitfinexSpecs } from '../BitfinexSpecs'
 import { BitfinexOrderSideAdapter } from '../enums/adapters/BitfinexOrderSideAdapter'
@@ -33,6 +36,8 @@ import { BitfinexOrderWriteModule } from './BitfinexOrderWriteModule'
 describe('BitfinexOrderWriteModule', () => {
 
   const bitfinexOrderWriteModule = BitfinexOrderWriteModule.prototype
+
+  const affiliateCode = 'XYZ'
 
   const keySecret: IAlunaKeySecretSchema = {
     key: '',
@@ -107,6 +112,7 @@ describe('BitfinexOrderWriteModule', () => {
 
   const mockEditOrPlaceSuccess = (
     action: 'place' | 'edit',
+    mockNumber: number,
   ) => {
 
     const rawOrder = BITFINEX_RAW_ORDERS[0]
@@ -118,9 +124,27 @@ describe('BitfinexOrderWriteModule', () => {
       rawOrder,
     })
 
-    const { exchangeMock } = mockKeySecret()
+    const { exchangeMock } = mockExchangeModule({
+      module: bitfinexOrderWriteModule,
+    })
 
-    const { requestMock } = mockRequest(placeOrderMockResponse)
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitfinexHttp,
+      requestResponse: placeOrderMockResponse,
+    })
+
+    if (mockNumber % 2 === 0) {
+
+      ImportMock.mockOther(
+        Bitfinex,
+        'settings',
+        {
+          mappings: {},
+          affiliateCode,
+        },
+      )
+
+    }
 
     const parseMock = ImportMock.mockFunction(
       bitfinexOrderWriteModule,
@@ -165,7 +189,7 @@ describe('BitfinexOrderWriteModule', () => {
 
   const sides = Object.values(AlunaOrderSideEnum)
 
-  const promises = actions.map(async (action) => {
+  const promises = actions.map(async (action, index) => {
 
     return accounts.map(async (account) => {
 
@@ -182,7 +206,7 @@ describe('BitfinexOrderWriteModule', () => {
                 parseMock,
                 requestMock,
                 parsedOrder,
-              } = mockEditOrPlaceSuccess(action)
+              } = mockEditOrPlaceSuccess(action, index)
 
               const amount = (Math.random() * 100) + 1
               const randomRate = (Math.random() * 10) + 1
@@ -219,6 +243,10 @@ describe('BitfinexOrderWriteModule', () => {
 
                 expectedRequestBody.type = expectedType
                 expectedRequestBody.symbol = symbolPair
+
+                expectedRequestBody.meta = index % 2 === 0
+                  ? { aff_code: affiliateCode }
+                  : undefined
 
                 expectedUrl = 'https://api.bitfinex.com/v2/auth/w/order/submit'
 
@@ -319,9 +347,10 @@ describe('BitfinexOrderWriteModule', () => {
         text,
       })
 
-      const {
-        requestMock,
-      } = mockRequest(placeOrderMockResponse)
+      const { requestMock } = mockPrivateHttpRequest({
+        exchangeHttp: BitfinexHttp,
+        requestResponse: placeOrderMockResponse,
+      })
 
       try {
 
@@ -367,9 +396,11 @@ describe('BitfinexOrderWriteModule', () => {
         text,
       })
 
-      const {
-        requestMock,
-      } = mockRequest(placeOrderMockResponse)
+      const { requestMock } = mockPrivateHttpRequest({
+        exchangeHttp: BitfinexHttp,
+        requestResponse: placeOrderMockResponse,
+      })
+
       try {
 
         result = await bitfinexOrderWriteModule.edit({
@@ -408,14 +439,15 @@ describe('BitfinexOrderWriteModule', () => {
 
       let errorMessage = 'Not enough exchange balance for'
 
-      const { requestMock } = mockRequest(
-        Promise.reject(new AlunaError({
+      const { requestMock } = mockPrivateHttpRequest({
+        exchangeHttp: BitfinexHttp,
+        requestResponse: Promise.reject(new AlunaError({
           code: AlunaHttpErrorCodes.REQUEST_ERROR,
           message: errorMessage,
           httpStatusCode: 400,
         })),
-        true,
-      )
+        isReject: true,
+      })
 
       const params: IAlunaOrderPlaceParams = {
         account: AlunaAccountEnum.EXCHANGE,
@@ -529,14 +561,15 @@ describe('BitfinexOrderWriteModule', () => {
 
     const errorMessage = 'order: invalid'
 
-    const { requestMock } = mockRequest(
-      Promise.reject(new AlunaError({
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitfinexHttp,
+      requestResponse: Promise.reject(new AlunaError({
         code: AlunaHttpErrorCodes.REQUEST_ERROR,
         message: errorMessage,
         httpStatusCode: 400,
       })),
-      true,
-    )
+      isReject: true,
+    })
 
     const params: IAlunaOrderEditParams = {
       account: AlunaAccountEnum.EXCHANGE,
