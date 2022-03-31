@@ -54,8 +54,8 @@ export interface IAlunaBalanceParseManyReturns extends IAlunaApiRequestSchema {
 
 export interface IAlunaBalanceListRawReturns<T = any> extends IAlunaApiRequestSchema {
   rawBalances: T[]
-
 }
+
 export interface IAlunaBalanceListReturns extends IAlunaApiRequestSchema {
   balances: IAlunaBalanceSchema[]
 }

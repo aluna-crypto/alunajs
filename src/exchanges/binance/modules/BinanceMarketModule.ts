@@ -74,8 +74,8 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
     } = BinanceMarketModule.parseMany({ rawMarkets })
 
     const totalRequestCount = requestCount
-        + listRawCount
-        + parseManyCount
+      + listRawCount
+      + parseManyCount
 
     return {
       markets: parsedMarkets,

@@ -224,14 +224,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       const {
         data: canceledOrderResponse,
         requestCount: privateRequestCount,
-      } = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
-        {
-          verb: AlunaHttpVerbEnum.DELETE,
-          url: `${PROD_BINANCE_URL}/api/v3/order`,
-          keySecret: this.exchange.keySecret,
-          body,
-        },
-      )
+      } = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
+        verb: AlunaHttpVerbEnum.DELETE,
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        keySecret: this.exchange.keySecret,
+        body,
+      })
 
       canceledOrder = canceledOrderResponse
       requestCount += privateRequestCount
