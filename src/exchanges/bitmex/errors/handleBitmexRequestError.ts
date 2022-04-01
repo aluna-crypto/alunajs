@@ -32,9 +32,9 @@ export const handleBitmexRequestError = (
 
   const { error } = params
 
-  let errorMessage: string | undefined
-  let httpStatusCode = 400
   let metadata = error
+  let errorMessage: string | undefined
+  let httpStatusCode: number | undefined
 
   if ((error as AxiosError).isAxiosError) {
 
