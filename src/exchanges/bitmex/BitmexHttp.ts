@@ -1,7 +1,6 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -9,52 +8,16 @@ import {
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Bitmex } from './Bitmex'
 import { BitmexLog } from './BitmexLog'
+import { handleBitmexRequestError } from './errors/handleBitmexRequestError'
 
 
 
 export const BITMEX_HTTP_CACHE_KEY_PREFIX = 'BitmexHttp.publicRequest'
-
-
-
-export const bitmexRequestErrorHandler = (
-  param: AxiosError | Error,
-): AlunaError => {
-
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.error?.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  return error
-
-}
 
 
 
@@ -159,7 +122,7 @@ export const BitmexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw bitmexRequestErrorHandler(error)
+      throw handleBitmexRequestError({ error })
 
     }
 
@@ -202,7 +165,7 @@ export const BitmexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw bitmexRequestErrorHandler(error)
+      throw handleBitmexRequestError({ error })
 
     }
 
