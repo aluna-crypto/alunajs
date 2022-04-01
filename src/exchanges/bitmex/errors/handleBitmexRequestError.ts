@@ -15,7 +15,8 @@ export const bitmexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
 
 
 export const bitmexDownErrorPatterns: Array<RegExp | string> = [
-  // Add Bitmex exchange down errors
+  'downtime in progress',
+  'down for maintenance',
 ]
 
 
@@ -42,7 +43,7 @@ export const handleBitmexRequestError = (
 
     errorMessage = response?.data?.error?.message
 
-    httpStatusCode = response?.status || httpStatusCode
+    httpStatusCode = response?.status
 
     metadata = response?.data || metadata
 
