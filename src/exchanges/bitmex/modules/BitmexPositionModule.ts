@@ -349,7 +349,6 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
       let {
         code,
         message,
-        metadata,
         httpStatusCode,
       } = err
 
@@ -360,8 +359,6 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
         message = `Cannot set leverage for ${symbolPair} because of `
           .concat('insufficient balance')
 
-        metadata = err.metadata
-
         httpStatusCode = 400
 
       }
@@ -369,8 +366,8 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
       const alunaError = new AlunaError({
         code,
         message,
-        metadata,
         httpStatusCode,
+        metadata: err.metadata,
       })
 
       BitmexLog.error(alunaError)
