@@ -7,8 +7,12 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
 import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { BitmexHttp } from '../BitmexHttp'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexPositionParser } from '../schemas/parsers/BitmexPositionParser'
@@ -462,6 +466,51 @@ describe('BitmexPositionModule', () => {
       body: { symbol: position.symbol, leverage },
       keySecret: exchangeMock.getValue().keySecret,
     })
+
+  })
+
+  it('should throw error if infuccient balance to set leverage', async () => {
+
+    mockExchangeModule({
+      module: bitmexPositionModule,
+    })
+
+    const throwedError = new AlunaError({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: 'Account has zero XBt margin balance',
+      httpStatusCode: 404,
+      metadata: {
+        error: 'Account has zero XBt margin balance',
+      },
+    })
+
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.reject(throwedError),
+      isReject: true,
+    })
+
+    const symbolPair = 'XBTUSD'
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => bitmexPositionModule.setLeverage({
+      leverage: 10,
+      symbolPair,
+    }))
+
+    expect(result).not.to.be.ok
+
+    const message = `Cannot set leverage for ${symbolPair} because of `
+      .concat('insufficient balance')
+
+    expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.message).to.be.eq(message)
+    expect(error!.metadata).to.deep.eq(throwedError.metadata)
+
+    expect(requestMock.callCount).to.be.eq(1)
 
   })
 
