@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
@@ -16,14 +15,16 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
 import { Bitfinex } from './Bitfinex'
 import * as BitfinexHttpMod from './BitfinexHttp'
+import * as handleBitfinexRequestErrorMod from './errors/handleBitfinexRequestError'
 
 
 
 describe('BitfinexHttp', () => {
 
-  const { BitfinexHttp, handleRequestError } = BitfinexHttpMod
+  const { BitfinexHttp } = BitfinexHttpMod
 
   const { publicRequest, privateRequest } = BitfinexHttp
 
@@ -92,9 +93,9 @@ describe('BitfinexHttp', () => {
       signedheaderResponse,
     )
 
-    const formatRequestErrorSpy = ImportMock.mockFunction(
-      BitfinexHttpMod,
-      'handleRequestError',
+    const handleRequestErrorSpy = ImportMock.mockFunction(
+      handleBitfinexRequestErrorMod,
+      'handleBitfinexRequestError',
       throwedError,
     )
 
@@ -114,7 +115,7 @@ describe('BitfinexHttp', () => {
       throwedError,
       exchangeMock,
       axiosCreateMock,
-      formatRequestErrorSpy,
+      handleRequestErrorSpy,
       assembleAxiosRequestMock,
       generateAuthHeaderMock,
     }
@@ -178,41 +179,47 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it("should call 'handleRequestError' if public request throws", async () => {
+  it(
+    "should call 'handleBitfinexRequestError' if public request throws",
+    async () => {
 
-    const errMsg = 'exchange offline'
+      const errMsg = 'exchange offline'
 
-    const {
-      throwedError,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(errMsg)),
-      errorMsgRes: errMsg,
-    })
+      const jsError = new Error(errMsg)
 
-    let error
+      const {
+        handleRequestErrorSpy,
+        throwedError,
+      } = mockDeps({
+        requestResponse: Promise.reject(jsError),
+        errorMsgRes: errMsg,
+      })
 
-    const url = 'dummyUrl1'
+      const url = 'dummyUrl1'
 
-    try {
-
-      await publicRequest({
+      const {
+        error,
+        result,
+      } = await executeAndCatch(() => publicRequest({
         verb: AlunaHttpVerbEnum.GET,
         url,
         body: dummyBody,
+      }))
+
+      expect(result).not.to.be.ok
+
+      expect(error!.message).to.be.eq(errMsg)
+      expect(error!.code).to.be.eq(throwedError.code)
+      expect(error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(throwedError.metadata)
+
+      expect(handleRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: jsError,
       })
 
-    } catch (e) {
-
-      error = e
-
-    }
-
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(errMsg)
-    expect(error.code).to.be.eq(throwedError.code)
-    expect(error.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-
-  })
+    },
+  )
 
 
   it('should execute private request just fine', async () => {
@@ -254,42 +261,46 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it("should call 'handleRequestError' if private request throws", async () => {
+  it(
+    "should call 'handleBitfinexRequestError' if private request throws",
+    async () => {
 
-    const errMsg = 'exchange offline'
+      const errMsg = 'exchange offline'
 
-    const {
-      formatRequestErrorSpy,
-      throwedError,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(errMsg)),
-      errorMsgRes: errMsg,
-    })
+      const jsError = new Error(errMsg)
 
-    let error
-
-    try {
-
-      await privateRequest({
-        url: dummyUrl,
-        keySecret: dummyKeysecret,
+      const {
+        handleRequestErrorSpy,
+        throwedError,
+      } = mockDeps({
+        requestResponse: Promise.reject(jsError),
+        errorMsgRes: errMsg,
       })
 
+      const url = 'dummyUrl1'
 
-    } catch (e) {
+      const {
+        error,
+        result,
+      } = await executeAndCatch(() => privateRequest({
+        url,
+        keySecret: dummyKeysecret,
+      }))
 
-      error = e
+      expect(result).not.to.be.ok
 
-    }
+      expect(error!.message).to.be.eq(errMsg)
+      expect(error!.code).to.be.eq(throwedError.code)
+      expect(error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(throwedError.metadata)
 
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(errMsg)
-    expect(error.code).to.be.eq(throwedError.code)
-    expect(error.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(handleRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: jsError,
+      })
 
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-
-  })
+    },
+  )
 
   it('should generate signed auth header for V1 API just fine', async () => {
 
@@ -390,86 +401,6 @@ describe('BitfinexHttp', () => {
     expect(headers['bfx-signature']).to.be.eq(expectedSig)
 
     expect(body).to.deep.eq(dummyBody)
-
-  })
-
-  it('should ensure request error is being handle', async () => {
-
-    const dummyErrorMsg = 'exchange is offline'
-
-    let error: AlunaError
-
-    let axiosThrowedError: any = {
-      isAxiosError: true,
-      response: {
-        request: {
-          path: 'v1/getPositions',
-        },
-        data: { message: dummyErrorMsg },
-      },
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {
-      isAxiosError: true,
-      response: {
-        status: 401,
-        data: ['error', 10010, dummyErrorMsg],
-      },
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(401)
-
-    axiosThrowedError.response.data = []
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(401)
-
-    axiosThrowedError = {
-      isAxiosError: true,
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {
-      message: dummyErrorMsg,
-    }
-
-    error = handleRequestError(axiosThrowedError as Error)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {}
-
-    error = handleRequestError(axiosThrowedError as any)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(400)
 
   })
 
