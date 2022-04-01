@@ -10,6 +10,7 @@ import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { executeAndCatch } from '../../../utils/executeAndCatch'
@@ -471,11 +472,9 @@ describe('BitmexPositionModule', () => {
 
   it('should throw error if infuccient balance to set leverage', async () => {
 
-    mockExchangeModule({
-      module: bitmexPositionModule,
-    })
+    mockExchangeModule({ module: bitmexPositionModule })
 
-    const throwedError = new AlunaError({
+    const throwedError1 = new AlunaError({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: 'Account has zero XBt margin balance',
       httpStatusCode: 404,
@@ -486,19 +485,21 @@ describe('BitmexPositionModule', () => {
 
     const { requestMock } = mockPrivateHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: Promise.reject(throwedError),
+      requestResponse: Promise.reject(throwedError1),
       isReject: true,
     })
 
     const symbolPair = 'XBTUSD'
 
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => bitmexPositionModule.setLeverage({
+    const res = await executeAndCatch(() => bitmexPositionModule.setLeverage({
       leverage: 10,
       symbolPair,
     }))
+
+    const {
+      result,
+      error,
+    } = res
 
     expect(result).not.to.be.ok
 
@@ -508,9 +509,40 @@ describe('BitmexPositionModule', () => {
     expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error!.httpStatusCode).to.be.eq(400)
     expect(error!.message).to.be.eq(message)
-    expect(error!.metadata).to.deep.eq(throwedError.metadata)
+    expect(error!.metadata).to.deep.eq(throwedError1.metadata)
 
     expect(requestMock.callCount).to.be.eq(1)
+
+
+    const throwedError2 = new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN,
+      message: 'Exchange is down',
+      httpStatusCode: 500,
+      metadata: {
+        error: 'Exchange is offline.',
+      },
+    })
+
+    requestMock.returns(Promise.reject(throwedError2))
+
+    const res2 = await executeAndCatch(() => bitmexPositionModule.setLeverage({
+      leverage: 10,
+      symbolPair,
+    }))
+
+    const {
+      result: result2,
+      error: error2,
+    } = res2
+
+    expect(result2).not.to.be.ok
+
+    expect(error2!.code).to.be.eq(throwedError2.code)
+    expect(error2!.httpStatusCode).to.be.eq(throwedError2.httpStatusCode)
+    expect(error2!.message).to.be.eq(throwedError2.message)
+    expect(error2!.metadata).to.deep.eq(throwedError2.metadata)
+
+    expect(requestMock.callCount).to.be.eq(2)
 
   })
 
