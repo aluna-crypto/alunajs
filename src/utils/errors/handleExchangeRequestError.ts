@@ -10,7 +10,7 @@ import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 export interface IHandleExchangeRequestErrorParams {
   metadata: any
   errorMessage?: string
-  httpStatusCode: number
+  httpStatusCode?: number
   exchangeDownErrorPatterns: Array<string | RegExp>
   exchangeKeyInvalidErrorPatterns: Array<string | RegExp>
 }
@@ -29,37 +29,39 @@ export const handleExchangeRequestError = (
 
   const {
     metadata,
-    errorMessage,
-    httpStatusCode,
+    httpStatusCode = 400,
     exchangeDownErrorPatterns,
     exchangeKeyInvalidErrorPatterns,
   } = params
 
+  let {
+    errorMessage = 'Error while trying to execute Axios request',
+  } = params
+
 
   let code = AlunaHttpErrorCodes.REQUEST_ERROR
-  let message = errorMessage || 'Error while trying to execute Axios request'
 
   const keyInvalid = testRegexPatterns({
-    message,
+    message: errorMessage,
     patterns: exchangeKeyInvalidErrorPatterns,
   })
 
   if (keyInvalid) {
 
     code = AlunaKeyErrorCodes.INVALID
-    message = 'Api key/secret is invalid'
+    errorMessage = 'Api key/secret is invalid'
 
   } else {
 
     const exchangeDown = testRegexPatterns({
-      message,
+      message: errorMessage,
       patterns: exchangeDownErrorPatterns,
     })
 
     if (exchangeDown) {
 
       code = AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN
-      message = 'Exchange is down'
+      errorMessage = 'Exchange is down'
 
     }
 
@@ -67,8 +69,8 @@ export const handleExchangeRequestError = (
 
   const alunaError = new AlunaError({
     code,
-    message,
     httpStatusCode,
+    message: errorMessage,
     metadata,
   })
 
