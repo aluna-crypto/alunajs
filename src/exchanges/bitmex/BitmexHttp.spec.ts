@@ -250,7 +250,7 @@ describe('BitmexHttp', () => {
   })
 
   it(
-    "should ensure 'bitmexRequestErrorHandler' is call on resquest error",
+    "should ensure 'handleBitmexRequestError' is call on resquest error",
     async () => {
 
       let error
