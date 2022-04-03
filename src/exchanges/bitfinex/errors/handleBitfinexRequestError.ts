@@ -43,7 +43,7 @@ export const handleBitfinexRequestError = (
 
     httpStatusCode = response?.status
 
-    metadata = response || metadata
+    metadata = response?.data || metadata
 
 
     if (response?.request?.path.match(new RegExp(/v1/))) {
