@@ -1,6 +1,18 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
+import {
+  each,
+  filter,
+  random,
+} from 'lodash'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
+import {
+  EXCHANGE_DOWN_ERROR_MESSAGE,
+  EXCHANGE_INVALID_KEY_ERROR_MESSAGE,
+} from '../../../utils/errors/handleExchangeRequestError'
 import { mockHandleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError.mock'
 import {
   bitmexDownErrorPatterns,
@@ -131,5 +143,111 @@ describe('handleBitmexRequestError', () => {
     })
 
   })
+
+  it(
+    'should ensure Bitmex invalid api patterns work as expected',
+    async () => {
+
+      let alunaError: AlunaError
+
+      const error = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            error: {
+              message: '',
+            },
+          },
+        },
+      } as AxiosError
+
+
+      // Testing all string patterns
+      const message = 'Lorem Ipsum is simply dummy text of the printing'
+
+      const strPatters = filter(bitmexInvalidApiKeyErrorPatterns, (p) => {
+
+        return !(p instanceof RegExp)
+
+      })
+
+      each(strPatters, (pattern) => {
+
+        const insertPos = random(0, message.length - 1)
+
+        const msgWithInjectedPattern = message.slice(0, insertPos)
+          .concat(pattern as string)
+          .concat(message.slice(insertPos))
+
+        error.response!.data!.error!.message = msgWithInjectedPattern
+
+        alunaError = handleBitmexRequestError({ error })
+
+        expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+        expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
+        expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
+        expect(alunaError.metadata).to.be.eq(error.response!.data)
+
+      })
+
+    },
+  )
+
+  it(
+    'should ensure Bitmex exchange down patterns work as expected',
+    async () => {
+
+      let alunaError: AlunaError
+
+      const error = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            error: {
+              message: '',
+            },
+          },
+        },
+      } as AxiosError
+
+
+      // Testing all string patterns
+      const message = 'Lorem Ipsum is simply dummy text of the printing'
+
+      const strPatters = filter(bitmexDownErrorPatterns, (p) => {
+
+        return !(p instanceof RegExp)
+
+      })
+
+      each(strPatters, (pattern) => {
+
+        const insertPos = random(0, message.length - 1)
+
+        const msgWithInjectedPattern = message.slice(0, insertPos)
+          .concat(pattern as string)
+          .concat(message.slice(insertPos))
+
+        error.response!.data!.error!.message = msgWithInjectedPattern
+
+        alunaError = handleBitmexRequestError({ error })
+
+        const {
+          code,
+          metadata,
+          httpStatusCode,
+        } = alunaError
+
+        expect(code).to.be.eq(AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN)
+        expect(alunaError.message).to.be.eq(EXCHANGE_DOWN_ERROR_MESSAGE)
+        expect(httpStatusCode).to.be.eq(error.response!.status)
+        expect(metadata).to.be.eq(error.response!.data)
+
+      })
+
+    },
+  )
 
 })
