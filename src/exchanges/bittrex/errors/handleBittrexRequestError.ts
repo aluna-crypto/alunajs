@@ -37,7 +37,7 @@ export const handleBittrexRequestError = (
 
     const { response } = error as AxiosError
 
-    errorMessage = response?.data?.message
+    errorMessage = response?.data?.code
 
     httpStatusCode = response?.status
 
