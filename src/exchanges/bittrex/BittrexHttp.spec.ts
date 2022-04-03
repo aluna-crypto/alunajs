@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
@@ -16,8 +15,10 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
 import { Bittrex } from './Bittrex'
 import * as BittrexHttpMod from './BittrexHttp'
+import * as handleBittrexRequestErrorMod from './errors/handleBittrexRequestError'
 
 
 
@@ -77,9 +78,9 @@ describe('BittrexHttp', () => {
       signedheaderResponse,
     )
 
-    const formatRequestErrorSpy = ImportMock.mockFunction(
-      BittrexHttpMod,
-      'handleRequestError',
+    const handleBittrexRequestErrorSpy = ImportMock.mockFunction(
+      handleBittrexRequestErrorMod,
+      'handleBittrexRequestError',
       throwedError,
     )
 
@@ -100,7 +101,7 @@ describe('BittrexHttp', () => {
       throwedError,
       exchangeMock,
       axiosCreateMock,
-      formatRequestErrorSpy,
+      handleBittrexRequestErrorSpy,
       generateAuthHeaderMock,
       assembleAxiosRequestMock,
     }
@@ -233,136 +234,62 @@ describe('BittrexHttp', () => {
 
   })
 
-  it('should ensure formatRequestError is call on resquest error', async () => {
+  it(
+    "should ensure 'handleBittrexRequestErrorSpy' is called on resquest error",
+    async () => {
 
-    const message = 'Dummy error'
+      const errMsg = 'Dummy error'
 
-    const {
-      formatRequestErrorSpy,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(message)),
-      errorMsgRes: message,
-    })
+      const jsError = new Error(errMsg)
 
-    let result
-    let error
-
-    try {
-
-      result = await BittrexHttp.publicRequest({
-        url: dummyUrl,
+      const {
+        throwedError,
+        handleBittrexRequestErrorSpy,
+      } = mockDeps({
+        requestResponse: Promise.reject(jsError),
+        errorMsgRes: errMsg,
       })
 
-    } catch (err) {
+      let res = await executeAndCatch(() => BittrexHttp.publicRequest({
+        url: dummyUrl,
+      }))
 
-      error = err
+      expect(res.result).not.to.be.ok
 
-    }
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(throwedError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
 
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(message)
+      expect(handleBittrexRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleBittrexRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: jsError,
+      })
 
-    const calledArg = formatRequestErrorSpy.args[0][0]
 
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-    expect(calledArg).to.be.ok
-    expect(calledArg.message).to.be.eq(message)
-
-    try {
-
-      result = await BittrexHttp.privateRequest({
+      res = await executeAndCatch(() => BittrexHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
-        keySecret: {} as IAlunaKeySecretSchema,
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      }))
+
+      expect(res.result).not.to.be.ok
+
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(throwedError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+
+      expect(handleBittrexRequestErrorSpy.callCount).to.be.eq(2)
+      expect(handleBittrexRequestErrorSpy.args[1][0]).to.deep.eq({
+        error: jsError,
       })
 
-    } catch (err) {
-
-      error = err
-
-
-    }
-
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(message)
-
-    const calledArg2 = formatRequestErrorSpy.args[1][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-    expect(calledArg2).to.be.ok
-    expect(calledArg2.message).to.be.eq(message)
-
-  })
-
-  it('should ensure request error is being handle', async () => {
-
-    const dummyError = 'dummy-error'
-
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          message: dummyError,
-        },
-      },
-    }
-
-    const error1 = BittrexHttpMod.handleRequestError(axiosError1 as AxiosError)
-
-    expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.message).to.be.eq(dummyError)
-    expect(error1.httpStatusCode).to.be.eq(400)
-
-    const axiosError2 = {
-      isAxiosError: true,
-      response: {
-        data: {
-        },
-      },
-    }
-
-    const error2 = BittrexHttpMod.handleRequestError(axiosError2 as AxiosError)
-
-    expect(error2 instanceof AlunaError).to.be.ok
-    expect(
-      error2.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.httpStatusCode).to.be.eq(400)
-
-    const axiosError3 = {
-      isAxiosError: true,
-    }
-
-    const error3 = BittrexHttpMod.handleRequestError(axiosError3 as AxiosError)
-
-    expect(error3 instanceof AlunaError).to.be.ok
-    expect(
-      error3.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.httpStatusCode).to.be.eq(400)
-
-    const error = {
-      message: dummyError,
-    }
-
-    const error4 = BittrexHttpMod.handleRequestError(error as Error)
-
-    expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.message).to.be.eq(dummyError)
-    expect(error4.httpStatusCode).to.be.eq(400)
-
-    const unknown = {}
-
-    const error5 = BittrexHttpMod.handleRequestError(unknown as any)
-
-    expect(error5 instanceof AlunaError).to.be.ok
-    expect(
-      error5.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.httpStatusCode).to.be.eq(400)
-
-  })
+    },
+  )
 
   it('should generate signed auth header just fine', async () => {
 
