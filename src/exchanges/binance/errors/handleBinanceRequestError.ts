@@ -6,7 +6,7 @@ import { handleExchangeRequestError } from '../../../utils/errors/handleExchange
 
 
 export const binanceInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
-  /Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi,
+  new RegExp(/Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi),
 ]
 
 
