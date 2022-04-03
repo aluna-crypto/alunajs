@@ -7,6 +7,11 @@ import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 
 
 
+export const EXCHANGE_INVALID_KEY_ERROR_MESSAGE = 'Api key/secret is invalid.'
+export const EXCHANGE_DOWN_ERROR_MESSAGE = 'Exchange is down.'
+
+
+
 export interface IHandleExchangeRequestErrorParams {
   metadata: any
   errorMessage?: string
@@ -49,7 +54,7 @@ export const handleExchangeRequestError = (
   if (keyInvalid) {
 
     code = AlunaKeyErrorCodes.INVALID
-    errorMessage = 'Api key/secret is invalid'
+    errorMessage = EXCHANGE_INVALID_KEY_ERROR_MESSAGE
 
   } else {
 
@@ -61,7 +66,7 @@ export const handleExchangeRequestError = (
     if (exchangeDown) {
 
       code = AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN
-      errorMessage = 'Exchange is down'
+      errorMessage = EXCHANGE_DOWN_ERROR_MESSAGE
 
     }
 

@@ -4,6 +4,8 @@ import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCode
 import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import {
+  EXCHANGE_DOWN_ERROR_MESSAGE,
+  EXCHANGE_INVALID_KEY_ERROR_MESSAGE,
   handleExchangeRequestError,
   testRegexPatterns,
 } from './handleExchangeRequestError'
@@ -36,10 +38,8 @@ describe('handleExchangeRequestError', () => {
       exchangeKeyInvalidErrorPatterns,
     })
 
-    const msg = 'Api key/secret is invalid'
-
     expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
-    expect(alunaError.message).to.be.eq(msg)
+    expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
     expect(alunaError.httpStatusCode).to.be.eq(httpStatusCode)
     expect(alunaError.metadata).to.deep.eq(metadata)
 
@@ -75,10 +75,8 @@ describe('handleExchangeRequestError', () => {
       exchangeKeyInvalidErrorPatterns: [],
     })
 
-    const msg = 'Exchange is down'
-
     expect(alunaError.code).to.be.eq(AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN)
-    expect(alunaError.message).to.be.eq(msg)
+    expect(alunaError.message).to.be.eq(EXCHANGE_DOWN_ERROR_MESSAGE)
     expect(alunaError.httpStatusCode).to.be.eq(400)
     expect(alunaError.metadata).to.deep.eq(metadata)
 
