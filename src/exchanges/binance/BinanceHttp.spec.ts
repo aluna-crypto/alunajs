@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
@@ -16,8 +15,10 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
 import { Binance } from './Binance'
 import * as BinanceHttpMod from './BinanceHttp'
+import * as handleBinanceRequestErrorMod from './errors/handleBinanceRequestError'
 
 
 
@@ -92,9 +93,9 @@ describe('BinanceHttp', () => {
       signedheaderResponse,
     )
 
-    const formatRequestErrorSpy = ImportMock.mockFunction(
-      BinanceHttpMod,
-      'handleRequestError',
+    const handleRequestErrorSpy = ImportMock.mockFunction(
+      handleBinanceRequestErrorMod,
+      'handleBinanceRequestError',
       throwedError,
     )
 
@@ -114,7 +115,7 @@ describe('BinanceHttp', () => {
       throwedError,
       exchangeMock,
       axiosCreateMock,
-      formatRequestErrorSpy,
+      handleRequestErrorSpy,
       generateAuthHeaderMock,
       assembleAxiosRequestMock,
     }
@@ -258,141 +259,59 @@ describe('BinanceHttp', () => {
 
   })
 
-  it('should ensure formatRequestError is call on request error', async () => {
+  it(
+    'should ensure handleBinanceRequestError is call on request error',
+    async () => {
 
-    const errorMsg = 'Dummy error'
+      const errMsg = 'Dummy error'
 
-    const {
-      formatRequestErrorSpy,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(errorMsg)),
-      errorMsgRes: errorMsg,
-    })
+      const jsError = new Error(errMsg)
 
-    let result
-    let error
-
-    try {
-
-      result = await BinanceHttp.publicRequest({
-        url: dummyUrl,
+      const {
+        throwedError,
+        handleRequestErrorSpy,
+      } = mockDeps({
+        requestResponse: Promise.reject(jsError),
+        errorMsgRes: errMsg,
       })
 
-    } catch (err) {
+      let res = await executeAndCatch(() => BinanceHttp.publicRequest({
+        url: dummyUrl,
+      }))
 
-      error = err
+      expect(res.result).not.to.be.ok
 
-    }
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(throwedError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
 
-    expect(result).not.to.be.ok
+      expect(handleRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: jsError,
+      })
 
-    expect(error.message).to.be.eq(errorMsg)
 
-    const calledArg1 = formatRequestErrorSpy.args[0][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-    expect(calledArg1).to.be.ok
-    expect(calledArg1.message).to.be.eq(errorMsg)
-
-    try {
-
-      result = await BinanceHttp.privateRequest({
+      res = await executeAndCatch(() => BinanceHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
         keySecret: dummyKeysecret,
+      }))
+
+      expect(res.result).not.to.be.ok
+
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(throwedError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+
+      expect(handleRequestErrorSpy.callCount).to.be.eq(2)
+      expect(handleRequestErrorSpy.args[1][0]).to.deep.eq({
+        error: jsError,
       })
 
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    expect(error.message).to.be.eq(errorMsg)
-
-    const calledArg2 = formatRequestErrorSpy.args[1][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-    expect(calledArg2).to.be.ok
-    expect(calledArg2.message).to.be.eq(errorMsg)
-
-  })
-
-  it('should ensure request error is being handle', async () => {
-
-    const dummyError = 'dummy-error'
-
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          msg: dummyError,
-        },
-      },
-    }
-
-    const error1 = BinanceHttpMod.handleRequestError(axiosError1 as AxiosError)
-
-    expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.message).to.be.eq(dummyError)
-    expect(error1.httpStatusCode).to.be.eq(400)
-
-
-    const axiosError2 = {
-      isAxiosError: true,
-      response: {
-        data: {
-        },
-      },
-    }
-
-    const error2 = BinanceHttpMod.handleRequestError(axiosError2 as AxiosError)
-
-    expect(error2 instanceof AlunaError).to.be.ok
-    expect(
-      error2.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.httpStatusCode).to.be.eq(400)
-
-
-    const axiosError3 = {
-      isAxiosError: true,
-    }
-
-    const error3 = BinanceHttpMod.handleRequestError(axiosError3 as AxiosError)
-
-    expect(error3 instanceof AlunaError).to.be.ok
-    expect(
-      error3.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.httpStatusCode).to.be.eq(400)
-
-
-    const error = {
-      message: dummyError,
-    }
-
-    const error4 = BinanceHttpMod.handleRequestError(error as Error)
-
-    expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.message).to.be.eq(dummyError)
-    expect(error4.httpStatusCode).to.be.eq(400)
-
-
-    const unknown = {}
-
-    const error5 = BinanceHttpMod.handleRequestError(unknown as any)
-
-    expect(error5 instanceof AlunaError).to.be.ok
-    expect(
-      error5.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.httpStatusCode).to.be.eq(400)
-
-  })
+    },
+  )
 
   it('should generate signed auth header just fine with body', async () => {
 
