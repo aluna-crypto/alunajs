@@ -26,7 +26,7 @@ describe('handleBittexRequestError', () => {
       response: {
         status: 400,
         data: {
-          message: dummyError,
+          code: dummyError,
         },
       },
     } as AxiosError
@@ -35,7 +35,7 @@ describe('handleBittexRequestError', () => {
 
     expect(handleExchangeRequestErrorMock.args[0][0]).to.deep.eq({
       metadata: axiosError1.response!.data,
-      errorMessage: axiosError1.response!.data!.message,
+      errorMessage: axiosError1.response!.data!.code,
       httpStatusCode: axiosError1.response!.status,
       exchangeDownErrorPatterns: bittrexDownErrorPatterns,
       exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
@@ -113,79 +113,6 @@ describe('handleBittexRequestError', () => {
 
     expect(alunaError instanceof AlunaError).to.be.ok
 
-    // it('should ensure request error is being handle', async () => {
-
-    //   const dummyError = 'dummy-error'
-
-    //   const axiosError1 = {
-    //     isAxiosError: true,
-    //     response: {
-    //       status: 400,
-    //       data: {
-    //         message: dummyError,
-    //       },
-    //     },
-    //   }
-
-    //   const error1 = BittrexHttpMod.handleRequ
-    // estError(axiosError1 as AxiosError)
-
-    //   expect(error1 instanceof AlunaError).to.be.ok
-    //   expect(error1.message).to.be.eq(dummyError)
-    //   expect(error1.httpStatusCode).to.be.eq(400)
-
-    //   const axiosError2 = {
-    //     isAxiosError: true,
-    //     response: {
-    //       data: {
-    //       },
-    //     },
-    //   }
-
-    //   const error2 = BittrexHttpMod.handleRequestE
-    // rror(axiosError2 as AxiosError)
-
-    //   expect(error2 instanceof AlunaError).to.be.ok
-    //   expect(
-    //     error2.message,
-    //   ).to.be.eq('Error while trying to execute Axios request')
-    //   expect(error2.httpStatusCode).to.be.eq(400)
-
-    //   const axiosError3 = {
-    //     isAxiosError: true,
-    //   }
-
-    //   const error3 = BittrexHttpMod.handleRequ
-    // estError(axiosError3 as AxiosError)
-
-    //   expect(error3 instanceof AlunaError).to.be.ok
-    //   expect(
-    //     error3.message,
-    //   ).to.be.eq('Error while trying to execute Axios request')
-    //   expect(error3.httpStatusCode).to.be.eq(400)
-
-    //   const error = {
-    //     message: dummyError,
-    //   }
-
-    //   const error4 = BittrexHttpMod.handleRequestError(error as Error)
-
-    //   expect(error4 instanceof AlunaError).to.be.ok
-    //   expect(error4.message).to.be.eq(dummyError)
-    //   expect(error4.httpStatusCode).to.be.eq(400)
-
-    //   const unknown = {}
-
-    //   const error5 = BittrexHttpMod.handleRequestError(unknown as any)
-
-    //   expect(error5 instanceof AlunaError).to.be.ok
-    //   expect(
-    //     error5.message,
-    //   ).to.be.eq('Error while trying to execute Axios request')
-    //   expect(error5.httpStatusCode).to.be.eq(400)
-
-    // })
-
   })
 
   it(
@@ -197,7 +124,7 @@ describe('handleBittexRequestError', () => {
         response: {
           status: 401,
           data: {
-            message: 'Lorem Ipsum is simply dummy INVALID_SIGNATURE',
+            code: 'Lorem Ipsum is simply dummy INVALID_SIGNATURE',
           },
         },
       } as AxiosError
@@ -210,7 +137,7 @@ describe('handleBittexRequestError', () => {
       expect(alunaError.metadata).to.be.eq(error.response!.data)
 
 
-      error.response!.data!.message = 'APIKEY_INVALID Lorem Ipsum is simply'
+      error.response!.data!.code = 'APIKEY_INVALID Lorem Ipsum is simply'
       error.response!.status = 400
 
       alunaError = handleBittrexRequestError({ error })
