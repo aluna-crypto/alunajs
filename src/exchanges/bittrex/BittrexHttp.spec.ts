@@ -3,11 +3,11 @@ import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -29,42 +29,40 @@ describe('BittrexHttp', () => {
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
-  const dummyResponse = { data: 'dummy-data', requestCount: 1 }
+  const dummyData = 'dummy-data'
 
   const mockDeps = (
     params: {
       requestResponse?: any,
+      requestError?: AlunaError | Error,
       getCache?: any,
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: BittrexHttpMod.IBittrexSignedHeaders,
-      errorMsgRes?: string,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
 
     const {
       requestResponse = {},
+      requestError,
       signedheaderResponse = dummySignedHeaders,
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
       mockedExchangeSettings = {},
     } = params
 
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      responseData: requestResponse,
+      error: requestError,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Bittrex,
@@ -81,9 +79,8 @@ describe('BittrexHttp', () => {
     const handleBittrexRequestErrorSpy = ImportMock.mockFunction(
       handleBittrexRequestErrorMod,
       'handleBittrexRequestError',
-      throwedError,
+      requestError,
     )
-
 
     const {
       cache,
@@ -98,7 +95,6 @@ describe('BittrexHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
       handleBittrexRequestErrorSpy,
@@ -114,7 +110,7 @@ describe('BittrexHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyData,
     })
 
     await BittrexHttp.publicRequest({
@@ -141,7 +137,7 @@ describe('BittrexHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyData,
     })
 
     const responseData = await BittrexHttp.publicRequest({
@@ -159,7 +155,10 @@ describe('BittrexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyData,
+      requestCount: 1,
+    })
 
   })
 
@@ -170,7 +169,7 @@ describe('BittrexHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyData,
     })
 
     await BittrexHttp.privateRequest({
@@ -201,7 +200,7 @@ describe('BittrexHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyData,
     })
 
     const responseData = await BittrexHttp.privateRequest({
@@ -230,7 +229,10 @@ describe('BittrexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyData,
+      requestCount: 1,
+    })
 
   })
 
@@ -240,14 +242,17 @@ describe('BittrexHttp', () => {
 
       const errMsg = 'Dummy error'
 
-      const jsError = new Error(errMsg)
+      const alunaError = new AlunaError({
+        message: errMsg,
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        httpStatusCode: 500,
+        metadata: { error: errMsg },
+      })
 
       const {
-        throwedError,
         handleBittrexRequestErrorSpy,
       } = mockDeps({
-        requestResponse: Promise.reject(jsError),
-        errorMsgRes: errMsg,
+        requestError: alunaError,
       })
 
       let res = await executeAndCatch(() => BittrexHttp.publicRequest({
@@ -257,13 +262,13 @@ describe('BittrexHttp', () => {
       expect(res.result).not.to.be.ok
 
       expect(res.error!.message).to.be.eq(errMsg)
-      expect(res.error!.code).to.be.eq(throwedError.code)
-      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleBittrexRequestErrorSpy.callCount).to.be.eq(1)
       expect(handleBittrexRequestErrorSpy.args[0][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
 
@@ -279,13 +284,13 @@ describe('BittrexHttp', () => {
       expect(res.result).not.to.be.ok
 
       expect(res.error!.message).to.be.eq(errMsg)
-      expect(res.error!.code).to.be.eq(throwedError.code)
-      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleBittrexRequestErrorSpy.callCount).to.be.eq(2)
       expect(handleBittrexRequestErrorSpy.args[1][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
     },
@@ -416,10 +421,10 @@ describe('BittrexHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyData })
 
     await validateCache({
-      cacheResult: dummyResponse,
+      cacheResult: dummyData,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {
