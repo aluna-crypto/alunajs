@@ -8,6 +8,7 @@ import { handleExchangeRequestError } from '../../../utils/errors/handleExchange
 export const valrInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
   'API-key is invalid',
   'API key or secret is invalid',
+  'Request has an invalid signature',
 ]
 
 
