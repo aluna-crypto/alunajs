@@ -3,11 +3,11 @@ import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -15,6 +15,7 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
 import { Bitmex } from './Bitmex'
 import * as BitmexHttpMod from './BitmexHttp'
 import * as handleBitmexRequestErrorMod from './errors/handleBitmexRequestError'
@@ -32,7 +33,7 @@ describe('BitmexHttp', () => {
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { ids: ['id'] }
-  const dummyResponse = { data: 'dummy-response', requestCount: 1 }
+  const dummyResponse = 'dummy-response'
 
   const dummySignedHeaders: BitmexHttpMod.IBitmexRequestHeaders = {
     'api-expires': 'expires',
@@ -47,7 +48,7 @@ describe('BitmexHttp', () => {
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: BitmexHttpMod.IBitmexRequestHeaders,
-      errorMsgRes?: string,
+      requestError?: AlunaError,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
@@ -58,22 +59,19 @@ describe('BitmexHttp', () => {
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
+      requestError,
       mockedExchangeSettings = {},
     } = params
-
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      responseData: requestResponse,
+      error: requestError,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Bitmex,
@@ -90,7 +88,7 @@ describe('BitmexHttp', () => {
     const handleRequestErrorSpy = ImportMock.mockFunction(
       handleBitmexRequestErrorMod,
       'handleBitmexRequestError',
-      throwedError,
+      requestError,
     )
 
 
@@ -107,7 +105,6 @@ describe('BitmexHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
       handleRequestErrorSpy,
@@ -125,7 +122,7 @@ describe('BitmexHttp', () => {
         requestSpy,
         axiosCreateMock,
       } = mockDeps({
-        requestResponse: Promise.resolve(dummyResponse),
+        requestResponse: dummyResponse,
       })
 
       await publicRequest({
@@ -153,7 +150,7 @@ describe('BitmexHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const responseData = await publicRequest({
@@ -171,7 +168,10 @@ describe('BitmexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -184,7 +184,7 @@ describe('BitmexHttp', () => {
         axiosCreateMock,
         generateAuthHeaderMock,
       } = mockDeps({
-        requestResponse: Promise.resolve(dummyResponse),
+        requestResponse: dummyResponse,
       })
 
 
@@ -217,7 +217,7 @@ describe('BitmexHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const responseData = await privateRequest({
@@ -245,7 +245,10 @@ describe('BitmexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -257,59 +260,56 @@ describe('BitmexHttp', () => {
 
       const message = 'Dummy error'
 
-      const throwedError = new Error(message)
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message,
+        httpStatusCode: 500,
+        metadata: { error: message },
+      })
 
       const {
         handleRequestErrorSpy,
       } = mockDeps({
-        requestResponse: Promise.reject(throwedError),
-        errorMsgRes: message,
+        requestError: alunaError,
       })
 
-      try {
+      let res = await executeAndCatch(() => publicRequest({
+        url: dummyUrl,
+      }))
 
-        await publicRequest({
-          url: dummyUrl,
-        })
+      expect(res.result).not.to.be.ok
 
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(error.message).to.be.eq(message)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.message).to.be.eq(alunaError.message)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       const calledArg1 = handleRequestErrorSpy.args[0][0]
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(1)
       expect(calledArg1).to.be.ok
       expect(calledArg1).to.deep.eq({
-        error: throwedError,
+        error: alunaError,
       })
 
-      try {
 
-        await privateRequest({
-          url: dummyUrl,
-          body: dummyBody,
-          keySecret: {} as IAlunaKeySecretSchema,
-        })
+      res = await executeAndCatch(() => privateRequest({
+        url: dummyUrl,
+        body: dummyBody,
+        keySecret: {} as IAlunaKeySecretSchema,
+      }))
 
-      } catch (err) {
-
-        error = err
-
-      }
-
-      expect(error.message).to.be.eq(message)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.message).to.be.eq(alunaError.message)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       const calledArg2 = handleRequestErrorSpy.args[1][0]
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(2)
       expect(calledArg2).to.be.ok
       expect(calledArg2).to.deep.eq({
-        error: throwedError,
+        error: alunaError,
       })
 
     },
@@ -405,7 +405,7 @@ describe('BitmexHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
       cacheResult: dummyResponse,
