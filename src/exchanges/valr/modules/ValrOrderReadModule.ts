@@ -12,6 +12,7 @@ import {
   IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { IValrCurrencyPairs } from '../schemas/IValrMarketSchema'
 import {
   IValrOrderGetSchema,
@@ -134,19 +135,13 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     currencyPair?: IValrCurrencyPairs,
   }): Promise<IAlunaOrderParseReturns> {
 
-    const {
-      rawOrder,
-      currencyPair,
-    } = params
+    const { rawOrder } = params
 
-    const {
-      currencyPair: orderCurrencyPair,
-    } = rawOrder
+    let { currencyPair } = params
 
-    let pair = currencyPair
     let requestCount = 0
 
-    if (!pair) {
+    if (!currencyPair) {
 
       const {
         currencyPairs: pairs,
@@ -155,13 +150,13 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
       requestCount += fetchCurrencyPairsCount
 
-      pair = pairs.find((p) => p.symbol === orderCurrencyPair)
+      currencyPair = pairs.find((p) => p.symbol === rawOrder.currencyPair)
 
-      if (!pair) {
+      if (!currencyPair) {
 
         throw new AlunaError({
           httpStatusCode: 200,
-          message: `No symbol pair found for ${orderCurrencyPair}`,
+          message: `No symbol pair found for ${rawOrder.currencyPair}`,
           code: AlunaGenericErrorCodes.PARSER_ERROR,
         })
 
@@ -171,7 +166,7 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
 
     const parsedOrder = ValrOrderParser.parse({
       rawOrder,
-      currencyPair: pair,
+      currencyPair,
     })
 
     const response: IAlunaOrderParseReturns = {
@@ -190,49 +185,54 @@ export class ValrOrderReadModule extends AAlunaModule implements IAlunaOrderRead
     const { rawOrders } = params
 
     let requestCount = 0
+    let parsedOrders: IAlunaOrderSchema[] = []
 
-    const {
-      currencyPairs,
-      requestCount: fetchCurrencyPairsCount,
-    } = await ValrMarketModule.fetchCurrencyPairs()
+    if (rawOrders.length) {
 
-    const currencyPairsDictionary: { [symbol: string]: IValrCurrencyPairs } = {}
+      const {
+        currencyPairs,
+        requestCount: fetchCurrencyPairsCount,
+      } = await ValrMarketModule.fetchCurrencyPairs()
 
-    currencyPairs.forEach((pair) => {
+      requestCount += fetchCurrencyPairsCount
 
-      currencyPairsDictionary[pair.symbol] = pair
+      const currencyPairsDictionary: Record<string, IValrCurrencyPairs> = {}
 
-    })
+      currencyPairs.forEach((pair) => {
 
-    const parsedOrdersPromises = rawOrders.map(
-      async (rawOrder: IValrOrderListSchema) => {
+        currencyPairsDictionary[pair.symbol] = pair
 
-        const currencyPair = currencyPairsDictionary[rawOrder.currencyPair]
+      })
 
-        const {
-          order: parsedOrder,
-          requestCount: parseCount,
-        } = await this.parse({
-          rawOrder,
-          currencyPair,
-        })
+      const parsedOrdersPromises = rawOrders.map(
+        async (rawOrder: IValrOrderListSchema) => {
 
-        requestCount += parseCount
+          const currencyPair = currencyPairsDictionary[rawOrder.currencyPair]
 
-        return parsedOrder
+          const {
+            order: parsedOrder,
+            requestCount: parseCount,
+          } = await this.parse({
+            rawOrder,
+            currencyPair,
+          })
 
-      },
-    )
+          requestCount += parseCount
 
-    const parsedOrders = await Promise.all(parsedOrdersPromises)
+          return parsedOrder
+
+        },
+      )
+
+      parsedOrders = await Promise.all(parsedOrdersPromises)
+
+    }
 
     ValrLog.info(`parsed ${parsedOrders.length} orders for Valr`)
 
-    const totalRequestCount = fetchCurrencyPairsCount + requestCount
-
     const response: IAlunaOrderParseManyReturns = {
       orders: parsedOrders,
-      requestCount: totalRequestCount,
+      requestCount,
     }
 
     return response
