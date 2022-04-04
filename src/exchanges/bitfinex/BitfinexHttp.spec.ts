@@ -3,11 +3,11 @@ import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -30,7 +30,7 @@ describe('BitfinexHttp', () => {
 
   const dummyBody: Record<any, string> = { dummy: 'dummy-body' }
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-  const dummyResponse = { data: 'dummy-response', requestCount: 1 }
+  const dummyResponse = 'dummy-response'
   const dummySignedHeaders: BitfinexHttpMod.IBitfinexSignedV2Headers = {
     'Content-Type': 'dummy-content',
     'bfx-nonce': 'dummy-key',
@@ -49,11 +49,11 @@ describe('BitfinexHttp', () => {
   const mockDeps = (
     params: {
       requestResponse?: any,
+      requestError?: AlunaError | Error,
       getCache?: any,
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: BitfinexHttpMod.IGenerateAuthHeaderReturns,
-      errorMsgRes?: string,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
@@ -64,22 +64,19 @@ describe('BitfinexHttp', () => {
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
+      requestError,
       mockedExchangeSettings = {},
     } = params
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
-
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      error: requestError,
+      responseData: requestResponse,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Bitfinex,
@@ -96,7 +93,7 @@ describe('BitfinexHttp', () => {
     const handleRequestErrorSpy = ImportMock.mockFunction(
       handleBitfinexRequestErrorMod,
       'handleBitfinexRequestError',
-      throwedError,
+      requestError,
     )
 
     const {
@@ -112,7 +109,6 @@ describe('BitfinexHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
       handleRequestErrorSpy,
@@ -128,7 +124,7 @@ describe('BitfinexHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await publicRequest({
@@ -156,7 +152,7 @@ describe('BitfinexHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
 
@@ -175,7 +171,10 @@ describe('BitfinexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -185,14 +184,17 @@ describe('BitfinexHttp', () => {
 
       const errMsg = 'exchange offline'
 
-      const jsError = new Error(errMsg)
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+        httpStatusCode: 401,
+        metadata: { anything: errMsg },
+      })
 
       const {
         handleRequestErrorSpy,
-        throwedError,
       } = mockDeps({
-        requestResponse: Promise.reject(jsError),
-        errorMsgRes: errMsg,
+        requestError: alunaError,
       })
 
       const url = 'dummyUrl1'
@@ -209,13 +211,13 @@ describe('BitfinexHttp', () => {
       expect(result).not.to.be.ok
 
       expect(error!.message).to.be.eq(errMsg)
-      expect(error!.code).to.be.eq(throwedError.code)
-      expect(error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(error!.metadata).to.be.eq(throwedError.metadata)
+      expect(error!.code).to.be.eq(alunaError.code)
+      expect(error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(1)
       expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
     },
@@ -229,7 +231,7 @@ describe('BitfinexHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const url = 'dummyUrl2'
@@ -257,7 +259,10 @@ describe('BitfinexHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -267,14 +272,17 @@ describe('BitfinexHttp', () => {
 
       const errMsg = 'exchange offline'
 
-      const jsError = new Error(errMsg)
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+        httpStatusCode: 500,
+        metadata: { error: errMsg },
+      })
 
       const {
         handleRequestErrorSpy,
-        throwedError,
       } = mockDeps({
-        requestResponse: Promise.reject(jsError),
-        errorMsgRes: errMsg,
+        requestError: alunaError,
       })
 
       const url = 'dummyUrl1'
@@ -290,13 +298,13 @@ describe('BitfinexHttp', () => {
       expect(result).not.to.be.ok
 
       expect(error!.message).to.be.eq(errMsg)
-      expect(error!.code).to.be.eq(throwedError.code)
-      expect(error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(error!.metadata).to.be.eq(throwedError.metadata)
+      expect(error!.code).to.be.eq(alunaError.code)
+      expect(error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(1)
       expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
     },
@@ -406,7 +414,7 @@ describe('BitfinexHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
       cacheResult: dummyResponse,
