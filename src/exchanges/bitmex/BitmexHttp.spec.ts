@@ -256,8 +256,6 @@ describe('BitmexHttp', () => {
     "should ensure 'handleBitmexRequestError' is call on resquest error",
     async () => {
 
-      let error
-
       const message = 'Dummy error'
 
       const alunaError = new AlunaError({
