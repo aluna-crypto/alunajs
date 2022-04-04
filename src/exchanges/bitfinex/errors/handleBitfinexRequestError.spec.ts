@@ -203,6 +203,26 @@ describe('handleBitfinexRequestError', () => {
       expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
       expect(alunaError.metadata).to.be.eq(error.response!.data)
 
+
+      error.response!.data![2] = 'Lorem Ipsum is simply apikey: invalid'
+
+      alunaError = handleBitfinexRequestError({ error })
+
+      expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+      expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
+      expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
+      expect(alunaError.metadata).to.be.eq(error.response!.data)
+
+
+      error.response!.data![2] = 'Lorem Ipsum is simply apikey: digest invalid'
+
+      alunaError = handleBitfinexRequestError({ error })
+
+      expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
+      expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
+      expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
+      expect(alunaError.metadata).to.be.eq(error.response!.data)
+
     },
   )
 

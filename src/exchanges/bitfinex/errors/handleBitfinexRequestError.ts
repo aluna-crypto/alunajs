@@ -6,7 +6,8 @@ import { handleExchangeRequestError } from '../../../utils/errors/handleExchange
 
 
 export const bitfinexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
-  new RegExp(/(Invalid X-BFX-SIGNATURE|X-BFX-APIKEY)/mi),
+  /(Invalid X-BFX-SIGNATURE|X-BFX-APIKEY)/mi,
+  /apikey: (invalid|digest invalid)/mi,
   'AuthenticationError',
   'Could not find a key matching the given X-BFX-APIKEY',
   'accept the margin trading terms and conditions',
