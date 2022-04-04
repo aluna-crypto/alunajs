@@ -28,8 +28,6 @@ export interface IAlunaHttpResponse<T> {
 }
 
 export interface IAlunaHttp {
-  publicRequest<T>(params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponse<T>>
-  privateRequest<T>(params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponse<T>>
+  publicRequest<T>(params: IAlunaHttpPublicParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
+  privateRequest<T>(params: IAlunaHttpPrivateParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
 }

@@ -42,12 +42,8 @@ export interface IPoloniexOrderStatusSchema {
 }
 
 
-export interface IPoloniexOrderErrorSchema {
-  error: string
-}
-
 export interface IPoloniexOrderErrorResultSchema {
-  result: IPoloniexOrderErrorSchema
+  result: { error: string }
 }
 
 export interface IPoloniexOrderResponse {
