@@ -5,7 +5,7 @@ import {
 } from 'lodash'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'

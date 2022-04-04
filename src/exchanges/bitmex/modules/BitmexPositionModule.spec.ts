@@ -6,7 +6,7 @@ import {
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'

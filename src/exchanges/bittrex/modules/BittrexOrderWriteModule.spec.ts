@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
