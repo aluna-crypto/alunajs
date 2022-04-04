@@ -3,11 +3,11 @@ import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -28,7 +28,7 @@ describe('BinanceHttp', () => {
 
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
-  const dummyResponse = { data: 'dummy-response', requestCount: 1 }
+  const dummyResponse = 'dummy-response'
   const dummyKeysecret: IAlunaKeySecretSchema = {
     key: 'key',
     secret: 'secret',
@@ -49,11 +49,11 @@ describe('BinanceHttp', () => {
   const mockDeps = (
     params: {
       requestResponse?: any,
+      requestError?: AlunaError | Error,
       getCache?: any,
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: BinanceHttpMod.IBinanceSignedSignature,
-      errorMsgRes?: string,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
@@ -64,22 +64,19 @@ describe('BinanceHttp', () => {
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
+      requestError,
       mockedExchangeSettings = {},
     } = params
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
-
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      error: requestError,
+      responseData: requestResponse,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Binance,
@@ -96,7 +93,7 @@ describe('BinanceHttp', () => {
     const handleRequestErrorSpy = ImportMock.mockFunction(
       handleBinanceRequestErrorMod,
       'handleBinanceRequestError',
-      throwedError,
+      requestError,
     )
 
     const {
@@ -112,7 +109,6 @@ describe('BinanceHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
       handleRequestErrorSpy,
@@ -128,7 +124,7 @@ describe('BinanceHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await BinanceHttp.publicRequest({
@@ -155,7 +151,7 @@ describe('BinanceHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const responseData = await BinanceHttp.publicRequest({
@@ -173,7 +169,10 @@ describe('BinanceHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -194,7 +193,7 @@ describe('BinanceHttp', () => {
         axiosCreateMock,
         generateAuthHeaderMock,
       } = mockDeps({
-        requestResponse: Promise.resolve(dummyResponse),
+        requestResponse: dummyResponse,
       })
 
       await BinanceHttp.privateRequest({
@@ -223,13 +222,11 @@ describe('BinanceHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyResponse)
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      BinanceHttpMod,
-      'generateAuthSignature',
-      dummySignedBody,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: dummyResponse,
+      signedheaderResponse: dummySignedBody,
+    })
 
     const responseData = await BinanceHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
@@ -255,7 +252,10 @@ describe('BinanceHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -265,14 +265,17 @@ describe('BinanceHttp', () => {
 
       const errMsg = 'Dummy error'
 
-      const jsError = new Error(errMsg)
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+        httpStatusCode: 401,
+        metadata: { error: errMsg },
+      })
 
       const {
-        throwedError,
         handleRequestErrorSpy,
       } = mockDeps({
-        requestResponse: Promise.reject(jsError),
-        errorMsgRes: errMsg,
+        requestError: alunaError,
       })
 
       let res = await executeAndCatch(() => BinanceHttp.publicRequest({
@@ -282,13 +285,13 @@ describe('BinanceHttp', () => {
       expect(res.result).not.to.be.ok
 
       expect(res.error!.message).to.be.eq(errMsg)
-      expect(res.error!.code).to.be.eq(throwedError.code)
-      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(1)
       expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
 
@@ -301,13 +304,13 @@ describe('BinanceHttp', () => {
       expect(res.result).not.to.be.ok
 
       expect(res.error!.message).to.be.eq(errMsg)
-      expect(res.error!.code).to.be.eq(throwedError.code)
-      expect(res.error!.httpStatusCode).to.be.eq(throwedError.httpStatusCode)
-      expect(res.error!.metadata).to.be.eq(throwedError.metadata)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
       expect(handleRequestErrorSpy.callCount).to.be.eq(2)
       expect(handleRequestErrorSpy.args[1][0]).to.deep.eq({
-        error: jsError,
+        error: alunaError,
       })
 
     },
@@ -482,7 +485,7 @@ describe('BinanceHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
       cacheResult: dummyResponse,
