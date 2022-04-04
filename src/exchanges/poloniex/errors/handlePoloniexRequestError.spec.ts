@@ -18,7 +18,7 @@ import {
 
 
 
-describe('handleBittexRequestError', () => {
+describe('handlePoloniexRequestError', () => {
 
   it('should ensure request error is being handle', async () => {
 
@@ -146,7 +146,7 @@ describe('handleBittexRequestError', () => {
   })
 
   it(
-    'should ensure Bittrex invalid api patterns work as expected',
+    'should ensure Poloniex invalid api patterns work as expected',
     async () => {
 
 

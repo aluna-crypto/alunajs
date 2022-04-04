@@ -13,7 +13,7 @@ import {
 
 
 
-describe('handleBittexRequestError', () => {
+describe('handleGateioRequestError', () => {
 
   it('should ensure request error is being handle', async () => {
 
@@ -116,7 +116,7 @@ describe('handleBittexRequestError', () => {
   })
 
   it(
-    'should ensure Bittrex invalid api patterns work as expected',
+    'should ensure Gateio invalid api patterns work as expected',
     async () => {
 
       const error = {
