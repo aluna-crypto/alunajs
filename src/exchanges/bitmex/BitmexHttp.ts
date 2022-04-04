@@ -12,7 +12,6 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Bitmex } from './Bitmex'
-import { BitmexLog } from './BitmexLog'
 import { handleBitmexRequestError } from './errors/handleBitmexRequestError'
 
 
@@ -112,8 +111,6 @@ export const BitmexHttp: IAlunaHttp = class {
       const { data } = await axios.create().request<T>(requestConfig)
 
       AlunaCache.cache.set<T>(cacheKey, data)
-
-      BitmexLog.info(data)
 
       return {
         data,

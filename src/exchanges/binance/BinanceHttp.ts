@@ -133,12 +133,12 @@ export const BinanceHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, response.data)
+      AlunaCache.cache.set<T>(cacheKey, data)
 
       return {
-        data: response.data,
+        data,
         requestCount: 1,
       }
 
@@ -192,10 +192,10 @@ export const BinanceHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
       return {
-        data: response.data,
+        data,
         requestCount: 1,
       }
 
