@@ -55,11 +55,15 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     } catch (error) {
 
-      const { message } = error
+      const {
+        message,
+        metadata,
+      } = error
 
-      let code: string
-      let httpStatusCode: number
-      let metadata: undefined
+      let {
+        code,
+        httpStatusCode,
+      } = error
 
       if (message === 'Invalid API Key.') {
 
@@ -70,7 +74,6 @@ export class BitmexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
         code = AlunaHttpErrorCodes.REQUEST_ERROR
         httpStatusCode = 500
-        metadata = error.metadata
 
       }
 
