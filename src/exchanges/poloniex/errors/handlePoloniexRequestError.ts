@@ -1,12 +1,14 @@
 import { AxiosError } from 'axios'
+import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { handleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const poloniexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
-  new RegExp(/Invalid API key\/secret pair|Permission denied/mi),
+export const poloniexInvalidKeyPatterns: Array<RegExp | string> = [
+  /Invalid API key\/secret pair|Permission denied/mi,
   'Trading has ended for Poloniex US customers',
   'this account is frozen for trading',
   'needs further verification',
@@ -17,6 +19,18 @@ export const poloniexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
 export const poloniexDownErrorPatterns: Array<RegExp | string> = [
   // Add poloniex exchange down errors
 ]
+
+
+
+export const isPoloniexKeyInvalid = (errorMessage: string) => {
+
+  return some(poloniexInvalidKeyPatterns, (pattern) => {
+
+    return new RegExp(pattern).test(errorMessage)
+
+  })
+
+}
 
 
 
@@ -33,27 +47,38 @@ export const handlePoloniexRequestError = (
   const { error } = params
 
   let metadata: any = error
-  let errorMessage: string | undefined
-  let httpStatusCode: number | undefined
+
+  let code = AlunaHttpErrorCodes.REQUEST_ERROR
+  let message = 'Error while executing request.'
+  let httpStatusCode = 500
 
   if ((error as AxiosError).isAxiosError) {
 
     const { response } = error as AxiosError
 
-    errorMessage = response?.data?.error || response?.data?.result?.error
+    message = response?.data?.error || response?.data?.result?.error || message
 
-    httpStatusCode = response?.status
+    httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else {
+
+    message = error.message || message
+
   }
 
-  const { alunaError } = handleExchangeRequestError({
+  if (isPoloniexKeyInvalid(message)) {
+
+    code = AlunaKeyErrorCodes.INVALID
+
+  }
+
+  const alunaError = new AlunaError({
+    code,
     metadata,
-    errorMessage,
+    message,
     httpStatusCode,
-    exchangeDownErrorPatterns: poloniexDownErrorPatterns,
-    exchangeKeyInvalidErrorPatterns: poloniexInvalidApiKeyErrorPatterns,
   })
 
   return alunaError
