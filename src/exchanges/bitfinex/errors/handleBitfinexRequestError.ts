@@ -1,11 +1,13 @@
-import { AxiosError } from 'axios'
+import { AxiosError as handleBitfinexMod } from 'axios'
+import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { handleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const bitfinexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
+export const bitfinexInvalidKeyPatterns: Array<RegExp | string> = [
   /(Invalid X-BFX-SIGNATURE|X-BFX-APIKEY)/mi,
   /apikey: (invalid|digest invalid)/mi,
   'AuthenticationError',
@@ -15,15 +17,30 @@ export const bitfinexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
 ]
 
 
-
 export const bitfinexDownErrorPatterns: Array<RegExp | string> = [
   // Add Bitfinex exchange down errors
 ]
 
 
 
+export const isBitfinexKeyInvalid = (errorMessage: string) => {
+
+  return some(bitfinexInvalidKeyPatterns, (pattern) => {
+
+    const regex = pattern instanceof RegExp
+      ? pattern
+      : new RegExp(pattern)
+
+    return regex.test(errorMessage)
+
+  })
+
+}
+
+
+
 export interface IHandleBitfinexRequestErrorsParams {
-  error: AxiosError | Error
+  error: handleBitfinexMod | Error
 }
 
 
@@ -35,36 +52,39 @@ export const handleBitfinexRequestError = (
   const { error } = params
 
   let metadata: any = error
-  let errorMessage: string | undefined
-  let httpStatusCode: number | undefined
 
-  if ((error as AxiosError).isAxiosError) {
+  let code = AlunaHttpErrorCodes.REQUEST_ERROR
+  let message = 'Error while executing request.'
+  let httpStatusCode = 500
 
-    const { response } = error as AxiosError
+  if ((error as handleBitfinexMod).isAxiosError) {
 
-    httpStatusCode = response?.status
+    const { response } = error as handleBitfinexMod
+
+    httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+    message = response?.data?.[2] || message
 
-    if (response?.request?.path.match(new RegExp(/v1/))) {
+  } else {
 
-      errorMessage = response.data.message
-
-    } else {
-
-      errorMessage = response?.data?.[2]
-
-    }
+    message = error.message || message
 
   }
 
-  const { alunaError } = handleExchangeRequestError({
-    metadata,
-    errorMessage,
+  if (isBitfinexKeyInvalid(message)) {
+
+    code = AlunaKeyErrorCodes.INVALID
+
+
+  }
+
+  const alunaError = new AlunaError({
+    code,
+    message,
     httpStatusCode,
-    exchangeDownErrorPatterns: bitfinexDownErrorPatterns,
-    exchangeKeyInvalidErrorPatterns: bitfinexInvalidApiKeyErrorPatterns,
+    metadata,
   })
 
   return alunaError
