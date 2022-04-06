@@ -82,6 +82,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
       const alunaError = new AlunaError({
         code: AlunaGenericErrorCodes.NOT_FOUND,
         message: `No market found for: ${id}`,
+        metadata: data,
       })
 
       BitmexLog.error(alunaError)

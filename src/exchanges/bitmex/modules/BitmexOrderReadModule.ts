@@ -100,6 +100,7 @@ export class BitmexOrderReadModule extends AAlunaModule implements IAlunaOrderRe
       const alunaError = new AlunaError({
         code: AlunaOrderErrorCodes.NOT_FOUND,
         message: `Order not found for id: ${id}`,
+        metadata: orderResponse,
       })
 
       BitmexLog.error(alunaError)
