@@ -1,11 +1,13 @@
 import { AxiosError } from 'axios'
+import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { handleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const valrInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
+export const valrInvalidKeyPatterns: Array<string> = [
   'API-key is invalid',
   'API key or secret is invalid',
   'Request has an invalid signature',
@@ -13,9 +15,21 @@ export const valrInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
 
 
 
-export const valrDownErrorPatterns: Array<RegExp | string> = [
+export const valrDownPatterns: Array<RegExp | string> = [
   // Add valr exchange down errors
 ]
+
+
+
+export const isValrKeyInvalid = (errorMessage: string) => {
+
+  return some(valrInvalidKeyPatterns, (pattern) => {
+
+    return new RegExp(pattern).test(errorMessage)
+
+  })
+
+}
 
 
 
@@ -32,27 +46,38 @@ export const handleValrRequestError = (
   const { error } = params
 
   let metadata: any = error
-  let errorMessage: string | undefined
-  let httpStatusCode: number | undefined
+
+  let code = AlunaHttpErrorCodes.REQUEST_ERROR
+  let message = 'Error while executing request.'
+  let httpStatusCode = 500
 
   if ((error as AxiosError).isAxiosError) {
 
     const { response } = error as AxiosError
 
-    errorMessage = response?.data?.message
+    message = response?.data?.message || message
 
-    httpStatusCode = response?.status
+    httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else {
+
+    message = error.message || message
+
   }
 
-  const { alunaError } = handleExchangeRequestError({
+  if (isValrKeyInvalid(message)) {
+
+    code = AlunaKeyErrorCodes.INVALID
+
+  }
+
+  const alunaError = new AlunaError({
+    code,
     metadata,
-    errorMessage,
+    message,
     httpStatusCode,
-    exchangeDownErrorPatterns: valrDownErrorPatterns,
-    exchangeKeyInvalidErrorPatterns: valrInvalidApiKeyErrorPatterns,
   })
 
   return alunaError
