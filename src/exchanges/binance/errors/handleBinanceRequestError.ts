@@ -1,19 +1,32 @@
 import { AxiosError } from 'axios'
+import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { handleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const binanceInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
-  new RegExp(/Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi),
+export const binanceInvalidKeyPatterns: Array<RegExp> = [
+  /Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi,
 ]
-
 
 
 export const binanceDownErrorPatterns: Array<RegExp | string> = [
   // Add binance exchange down errors
 ]
+
+
+
+export const isBinanceKeyInvalid = (errorMessage: string) => {
+
+  return some(binanceInvalidKeyPatterns, (pattern) => {
+
+    return pattern.test(errorMessage)
+
+  })
+
+}
 
 
 
@@ -30,27 +43,38 @@ export const handleBinanceRequestError = (
   const { error } = params
 
   let metadata: any = error
-  let errorMessage: string | undefined
-  let httpStatusCode: number | undefined
+
+  let code = AlunaHttpErrorCodes.REQUEST_ERROR
+  let message = 'Error while executing request.'
+  let httpStatusCode = 500
 
   if ((error as AxiosError).isAxiosError) {
 
     const { response } = error as AxiosError
 
-    errorMessage = response?.data?.msg
+    message = response?.data?.msg || message
 
-    httpStatusCode = response?.status
+    httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else {
+
+    message = error.message || message
+
   }
 
-  const { alunaError } = handleExchangeRequestError({
-    metadata,
-    errorMessage,
+  if (isBinanceKeyInvalid(message)) {
+
+    code = AlunaKeyErrorCodes.INVALID
+
+  }
+
+  const alunaError = new AlunaError({
+    code,
+    message,
     httpStatusCode,
-    exchangeDownErrorPatterns: binanceDownErrorPatterns,
-    exchangeKeyInvalidErrorPatterns: binanceInvalidApiKeyErrorPatterns,
+    metadata,
   })
 
   return alunaError
