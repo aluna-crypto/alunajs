@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from 'axios'
 import { assign } from 'lodash'
 
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaProxySchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
@@ -32,16 +33,29 @@ export const assembleAxiosRequestConfig = (
       host,
       port,
       agent,
-      protocol = 'http:',
     } = proxySettings
 
+    let {
+      protocol = AlunaProtocolsEnum.HTTP,
+    } = proxySettings
+
+    const isMissingColon = !/:$/.test(protocol)
+
+    if (isMissingColon) {
+
+      protocol = protocol.concat(':') as AlunaProtocolsEnum
+
+    }
+
     assign(requestConfig, {
-      host,
-      port,
-      protocol,
+      proxy: {
+        host,
+        port,
+        protocol,
+      },
     })
 
-    if (protocol === 'http:') {
+    if (protocol === AlunaProtocolsEnum.HTTP) {
 
       assign<AxiosRequestConfig, AxiosRequestConfig>(requestConfig, {
         httpAgent: agent,
