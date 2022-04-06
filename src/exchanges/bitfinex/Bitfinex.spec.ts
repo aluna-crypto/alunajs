@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Bitfinex } from './Bitfinex'
 
 
@@ -44,7 +45,7 @@ describe('Bitfinex', () => {
       proxySettings: {
         host: 'host',
         port: 9999,
-        protocol: 'http',
+        protocol: AlunaProtocolsEnum.HTTP,
       },
     })).to.be.ok
     expect(Bitfinex.validateSettings({ affiliateCode: 'xyz' })).to.be.ok
