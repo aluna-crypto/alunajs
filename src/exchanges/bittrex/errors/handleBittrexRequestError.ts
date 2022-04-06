@@ -1,11 +1,13 @@
 import { AxiosError } from 'axios'
+import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
-import { handleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const bittrexInvalidApiKeyErrorPatterns: Array<RegExp | string> = [
+export const bittrexInvalidKeyPatterns: Array<RegExp> = [
   new RegExp(/INVALID_SIGNATURE|APIKEY_INVALID/mi),
 ]
 
@@ -15,6 +17,16 @@ export const bittrexDownErrorPatterns: Array<RegExp | string> = [
   // Add bittrex exchange down errors
 ]
 
+
+export const isBittrexKeyInvalid = (errorMessage: string) => {
+
+  return some(bittrexInvalidKeyPatterns, (pattern) => {
+
+    return pattern.test(errorMessage)
+
+  })
+
+}
 
 
 export interface IHandleBittrexRequestErrorsParams {
@@ -30,27 +42,39 @@ export const handleBittrexRequestError = (
   const { error } = params
 
   let metadata: any = error
-  let errorMessage: string | undefined
-  let httpStatusCode: number | undefined
+
+  let code = AlunaHttpErrorCodes.REQUEST_ERROR
+  let message = 'Error while executing request.'
+  let httpStatusCode = 500
 
   if ((error as AxiosError).isAxiosError) {
 
     const { response } = error as AxiosError
 
-    errorMessage = response?.data?.code
+    message = response?.data?.code || message
 
-    httpStatusCode = response?.status
+    httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else {
+
+    message = error.message || message
+
   }
 
-  const { alunaError } = handleExchangeRequestError({
+
+  if (isBittrexKeyInvalid(message)) {
+
+    code = AlunaKeyErrorCodes.INVALID
+
+  }
+
+  const alunaError = new AlunaError({
     metadata,
-    errorMessage,
+    message,
     httpStatusCode,
-    exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-    exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
+    code,
   })
 
   return alunaError
