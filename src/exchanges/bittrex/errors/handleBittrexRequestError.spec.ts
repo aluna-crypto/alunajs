@@ -1,23 +1,79 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
-import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import { EXCHANGE_INVALID_KEY_ERROR_MESSAGE } from '../../../utils/errors/handleExchangeRequestError'
-import { mockHandleExchangeRequestError } from '../../../utils/errors/handleExchangeRequestError.mock'
-import {
-  bittrexDownErrorPatterns,
-  bittrexInvalidApiKeyErrorPatterns,
-  handleBittrexRequestError,
-} from './handleBittrexRequestError'
+import * as handleBittrexMod from './handleBittrexRequestError'
 
 
 
 describe('handleBittexRequestError', () => {
 
-  it('should ensure request error is being handle', async () => {
+  const {
+    isBittrexKeyInvalid,
+    handleBittrexRequestError,
+  } = handleBittrexMod
 
-    const { handleExchangeRequestErrorMock } = mockHandleExchangeRequestError()
+  const requestMessage = 'Error while executing request.'
+
+  const mockDeps = (
+    params: {
+      isInvalid: boolean,
+    } = {
+      isInvalid: false,
+    },
+  ) => {
+
+    const {
+      isInvalid,
+    } = params
+
+    const isBittrexKeyInvalidMock = ImportMock.mockFunction(
+      handleBittrexMod,
+      'isBittrexKeyInvalid',
+      isInvalid,
+    )
+
+    return {
+      isBittrexKeyInvalidMock,
+    }
+
+  }
+
+  it('should return Bittrex key invalid error when applicable', async () => {
+
+    const { isBittrexKeyInvalidMock } = mockDeps({ isInvalid: true })
+
+    const dummyError = 'Key is invalid'
+
+    const axiosError1 = {
+      isAxiosError: true,
+      response: {
+        status: 400,
+        data: {
+          code: dummyError,
+        },
+      },
+    } as AxiosError
+
+    const alunaError = handleBittrexRequestError({ error: axiosError1 })
+
+    expect(isBittrexKeyInvalidMock.callCount).to.be.eq(1)
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: dummyError,
+      httpStatusCode: axiosError1.response!.status,
+      metadata: axiosError1.response!.data,
+    })
+
+    expect(isBittrexKeyInvalidMock.callCount).to.be.eq(1)
+    expect(isBittrexKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
+
+  })
+
+  it('should ensure Bittrex request error is being handle', async () => {
 
     const dummyError = 'dummy-error'
 
@@ -33,15 +89,13 @@ describe('handleBittexRequestError', () => {
 
     let alunaError = handleBittrexRequestError({ error: axiosError1 })
 
-    expect(handleExchangeRequestErrorMock.args[0][0]).to.deep.eq({
-      metadata: axiosError1.response!.data,
-      errorMessage: axiosError1.response!.data!.code,
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: dummyError,
       httpStatusCode: axiosError1.response!.status,
-      exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-      exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
+      metadata: axiosError1.response!.data,
     })
 
-    expect(alunaError instanceof AlunaError).to.be.ok
 
     const axiosError2 = {
       isAxiosError: true,
@@ -54,15 +108,12 @@ describe('handleBittexRequestError', () => {
 
     alunaError = handleBittrexRequestError({ error: axiosError2 })
 
-    expect(handleExchangeRequestErrorMock.args[1][0]).to.deep.eq({
-      metadata: axiosError2.response!.data,
-      errorMessage: undefined,
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: requestMessage,
       httpStatusCode: axiosError2.response!.status,
-      exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-      exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
+      metadata: axiosError2.response!.data,
     })
-
-    expect(alunaError instanceof AlunaError).to.be.ok
 
 
     const axiosError3 = {
@@ -71,16 +122,12 @@ describe('handleBittexRequestError', () => {
 
     alunaError = handleBittrexRequestError({ error: axiosError3 })
 
-    expect(handleExchangeRequestErrorMock.args[2][0]).to.deep.eq({
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: requestMessage,
+      httpStatusCode: 500,
       metadata: axiosError3,
-      errorMessage: undefined,
-      httpStatusCode: undefined,
-      exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-      exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
     })
-
-    expect(alunaError instanceof AlunaError).to.be.ok
-
 
     const error = {
       message: dummyError,
@@ -88,30 +135,24 @@ describe('handleBittexRequestError', () => {
 
     alunaError = handleBittrexRequestError({ error })
 
-    expect(handleExchangeRequestErrorMock.args[3][0]).to.deep.eq({
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: error.message,
+      httpStatusCode: 500,
       metadata: error,
-      errorMessage: undefined,
-      httpStatusCode: undefined,
-      exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-      exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
     })
-
-    expect(alunaError instanceof AlunaError).to.be.ok
 
 
     const unknown = {} as any
 
     alunaError = handleBittrexRequestError({ error: unknown })
 
-    expect(handleExchangeRequestErrorMock.args[4][0]).to.deep.eq({
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: requestMessage,
+      httpStatusCode: 500,
       metadata: unknown,
-      errorMessage: undefined,
-      httpStatusCode: undefined,
-      exchangeDownErrorPatterns: bittrexDownErrorPatterns,
-      exchangeKeyInvalidErrorPatterns: bittrexInvalidApiKeyErrorPatterns,
     })
-
-    expect(alunaError instanceof AlunaError).to.be.ok
 
   })
 
@@ -119,33 +160,11 @@ describe('handleBittexRequestError', () => {
     'should ensure Bittrex invalid api patterns work as expected',
     async () => {
 
-      const error = {
-        isAxiosError: true,
-        response: {
-          status: 401,
-          data: {
-            code: 'Lorem Ipsum is simply dummy INVALID_SIGNATURE',
-          },
-        },
-      } as AxiosError
+      let message = 'Lorem Ipsum is simply dummy INVALID_SIGNATURE'
+      expect(isBittrexKeyInvalid(message)).to.be.ok
 
-      let alunaError = handleBittrexRequestError({ error })
-
-      expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
-      expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
-      expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
-      expect(alunaError.metadata).to.be.eq(error.response!.data)
-
-
-      error.response!.data!.code = 'APIKEY_INVALID Lorem Ipsum is simply'
-      error.response!.status = 400
-
-      alunaError = handleBittrexRequestError({ error })
-
-      expect(alunaError.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
-      expect(alunaError.message).to.be.eq(EXCHANGE_INVALID_KEY_ERROR_MESSAGE)
-      expect(alunaError.httpStatusCode).to.be.eq(error.response!.status)
-      expect(alunaError.metadata).to.be.eq(error.response!.data)
+      message = 'APIKEY_INVALID Lorem Ipsum is simply'
+      expect(isBittrexKeyInvalid(message)).to.be.ok
 
     },
   )
