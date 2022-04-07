@@ -1,14 +1,13 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -16,6 +15,8 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
+import * as handleValrRequestErrorMod from './errors/handleValrRequestError'
 import { Valr } from './Valr'
 import * as ValrHttpMod from './ValrHttp'
 
@@ -28,7 +29,7 @@ describe('ValrHttp', () => {
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
-  const dummyResponse = { data: 'dummy-data', requestCount: 1 }
+  const dummyResponse = 'dummy-data'
 
   const mockDeps = (
     params: {
@@ -37,33 +38,30 @@ describe('ValrHttp', () => {
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: ValrHttpMod.IValrSignedHeaders,
-      errorMsgRes?: string,
+      requestError?: AlunaError | Error,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
 
     const {
       requestResponse = {},
+      requestError,
       signedheaderResponse = dummySignedHeaders,
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
       mockedExchangeSettings = {},
     } = params
-
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      responseData: requestResponse,
+      error: requestError,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Valr,
@@ -77,10 +75,10 @@ describe('ValrHttp', () => {
       signedheaderResponse,
     )
 
-    const formatRequestErrorSpy = ImportMock.mockFunction(
-      ValrHttpMod,
-      'handleRequestError',
-      throwedError,
+    const handleValrRequestErrorMock = ImportMock.mockFunction(
+      handleValrRequestErrorMod,
+      'handleValrRequestError',
+      requestError,
     )
 
 
@@ -97,12 +95,11 @@ describe('ValrHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
-      formatRequestErrorSpy,
       generateAuthHeaderMock,
       assembleAxiosRequestMock,
+      handleValrRequestErrorMock,
     }
 
   }
@@ -113,7 +110,7 @@ describe('ValrHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await ValrHttp.publicRequest({
@@ -140,7 +137,7 @@ describe('ValrHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const responseData = await ValrHttp.publicRequest({
@@ -158,7 +155,10 @@ describe('ValrHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -169,7 +169,7 @@ describe('ValrHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await ValrHttp.privateRequest({
@@ -200,7 +200,7 @@ describe('ValrHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const responseData = await ValrHttp.privateRequest({
@@ -228,136 +228,72 @@ describe('ValrHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
-
-  })
-
-  it('should ensure formatRequestError is call on resquest error', async () => {
-
-    let error
-
-    const message = 'Dummy error'
-
-    const {
-      formatRequestErrorSpy,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(message)),
-      errorMsgRes: message,
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
     })
 
-    try {
+  })
 
-      await ValrHttp.publicRequest({
-        url: dummyUrl,
+  it(
+    "should ensure 'handleBittrexRequestErrorSpy' is call on resquest error",
+    async () => {
+
+      const errMsg = 'Dummy error'
+
+      const alunaError = new AlunaError({
+        message: errMsg,
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        httpStatusCode: 500,
+        metadata: { error: errMsg },
       })
 
-    } catch (err) {
+      const {
+        handleValrRequestErrorMock,
+      } = mockDeps({
+        requestError: alunaError,
+      })
 
-      error = err
+      let res = await executeAndCatch(() => ValrHttp.publicRequest({
+        url: dummyUrl,
+      }))
 
-    }
+      expect(res.result).not.to.be.ok
 
-    expect(error.message).to.be.eq(message)
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
-    const calledArg1 = formatRequestErrorSpy.args[0][0]
+      expect(handleValrRequestErrorMock.callCount).to.be.eq(1)
+      expect(handleValrRequestErrorMock.args[0][0]).to.deep.eq({
+        error: alunaError,
+      })
 
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-    expect(calledArg1).to.be.ok
-    expect(calledArg1.message).to.be.eq(message)
 
-    try {
-
-      await ValrHttp.privateRequest({
+      res = await executeAndCatch(() => ValrHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
-        keySecret: {} as IAlunaKeySecretSchema,
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      }))
+
+      expect(res.result).not.to.be.ok
+
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
+
+      expect(handleValrRequestErrorMock.callCount).to.be.eq(2)
+      expect(handleValrRequestErrorMock.args[1][0]).to.deep.eq({
+        error: alunaError,
       })
 
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(error.message).to.be.eq(message)
-
-    const calledArg2 = formatRequestErrorSpy.args[1][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-    expect(calledArg2).to.be.ok
-    expect(calledArg2.message).to.be.eq(message)
-
-  })
-
-  it('should ensure request error is being handle', async () => {
-
-    const dummyError = 'dummy-error'
-
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          message: dummyError,
-        },
-      },
-    }
-
-    const error1 = ValrHttpMod.handleRequestError(axiosError1 as AxiosError)
-
-    expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.message).to.be.eq(dummyError)
-    expect(error1.httpStatusCode).to.be.eq(400)
-
-    const axiosError2 = {
-      isAxiosError: true,
-      response: {
-        data: {
-        },
-      },
-    }
-
-    const error2 = ValrHttpMod.handleRequestError(axiosError2 as AxiosError)
-
-    expect(error2 instanceof AlunaError).to.be.ok
-    expect(
-      error2.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.httpStatusCode).to.be.eq(400)
-
-    const axiosError3 = {
-      isAxiosError: true,
-    }
-
-    const error3 = ValrHttpMod.handleRequestError(axiosError3 as AxiosError)
-
-    expect(error3 instanceof AlunaError).to.be.ok
-    expect(
-      error3.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.httpStatusCode).to.be.eq(400)
-
-    const error = {
-      message: dummyError,
-    }
-
-    const error4 = ValrHttpMod.handleRequestError(error as Error)
-
-    expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.message).to.be.eq(dummyError)
-    expect(error4.httpStatusCode).to.be.eq(400)
-
-    const unknown = {}
-
-    const error5 = ValrHttpMod.handleRequestError(unknown as any)
-
-    expect(error5 instanceof AlunaError).to.be.ok
-    expect(
-      error5.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.httpStatusCode).to.be.eq(400)
-
-  })
+    },
+  )
 
   it('should generate signed auth header just fine', async () => {
 
@@ -452,7 +388,7 @@ describe('ValrHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
       cacheResult: dummyResponse,

@@ -122,6 +122,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
         code: AlunaPositionErrorCodes.NOT_FOUND,
         message: 'Position not found',
         httpStatusCode: 400,
+        metadata: data,
       })
 
       BitfinexLog.error(error)
@@ -167,6 +168,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
         code: AlunaPositionErrorCodes.ALREADY_CLOSED,
         message: 'Position is already closed',
         httpStatusCode: 400,
+        metadata: position,
       })
 
       BitfinexLog.error(error)

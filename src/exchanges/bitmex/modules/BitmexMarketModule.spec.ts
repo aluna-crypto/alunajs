@@ -5,7 +5,7 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPublicHttpRequest } from '../../../../test/helpers/http'
+import { mockPublicHttpRequest } from '../../../../test/helpers/http/axios'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'

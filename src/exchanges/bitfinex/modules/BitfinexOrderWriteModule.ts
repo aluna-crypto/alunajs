@@ -125,6 +125,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
         throw new AlunaError({
           code: AlunaOrderErrorCodes.PLACE_FAILED,
           message: text,
+          metadata: response,
         })
 
       }
@@ -233,6 +234,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
         throw new AlunaError({
           code: AlunaHttpErrorCodes.REQUEST_ERROR,
           message: text,
+          metadata: response,
         })
 
       }
@@ -328,6 +330,7 @@ export class BitfinexOrderWriteModule extends BitfinexOrderReadModule implements
         throw new AlunaError({
           code: AlunaOrderErrorCodes.CANCEL_FAILED,
           message: text,
+          metadata: response,
         })
 
       }

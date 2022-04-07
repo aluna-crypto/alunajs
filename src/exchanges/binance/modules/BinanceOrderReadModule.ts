@@ -10,6 +10,7 @@ import {
   IAlunaOrderParseReturns,
   IAlunaOrderReadModule,
 } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderSchema } from '../../../lib/schemas/IAlunaOrderSchema'
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
@@ -60,29 +61,25 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let requestCount = 1
+    let requestCount = 0
 
     const {
       rawOrders,
       requestCount: listRawCount,
     } = await this.listRaw()
 
-    requestCount += 1
+    requestCount += listRawCount
 
     const {
       orders: parsedOrders,
       requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    requestCount += 1
-
-    const totalRequestCount = requestCount
-      + listRawCount
-      + parseManyCount
+    requestCount += parseManyCount
 
     return {
       orders: parsedOrders,
-      requestCount: totalRequestCount,
+      requestCount,
     }
 
   }
@@ -122,7 +119,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
   public async get (params: IAlunaOrderGetParams)
     : Promise<IAlunaOrderGetReturns> {
 
-    const requestCount = 0
+    let requestCount = 0
 
     const {
       rawOrder,
@@ -131,10 +128,14 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { symbol: currencyPair } = rawOrder
 
+    requestCount += getRawCount
+
     const {
       rawMarkets,
       requestCount: listRawCount,
     } = await BinanceMarketModule.listRaw()
+
+    requestCount += listRawCount
 
     const symbolInfo = this.getSymbolInfo(rawMarkets, currencyPair)
 
@@ -143,14 +144,11 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
       requestCount: parseCount,
     } = await this.parse({ rawOrder, symbolInfo })
 
-    const totalRequestCount = requestCount
-      + getRawCount
-      + parseCount
-      + listRawCount
+    requestCount += parseCount
 
     return {
       order: parsedOrder,
-      requestCount: totalRequestCount,
+      requestCount,
     }
 
   }
@@ -164,8 +162,6 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     const { rawOrder, symbolInfo } = params
 
-    const requestCount = 0
-
     const parsedOrder = BinanceOrderParser.parse({
       rawOrder,
       symbolInfo,
@@ -173,7 +169,7 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
     return {
       order: parsedOrder,
-      requestCount,
+      requestCount: 0,
     }
 
   }
@@ -187,24 +183,20 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
     const { rawOrders } = params
 
     let requestCount = 0
+    let parsedOrders: IAlunaOrderSchema[] = []
+
     const hasOpenOrders = rawOrders.length > 0
 
-    if (!hasOpenOrders) {
+    if (hasOpenOrders) {
 
-      return {
-        orders: [],
-        requestCount,
-      }
+      const {
+        rawMarkets,
+        requestCount: listRawCount,
+      } = await BinanceMarketModule.listRaw()
 
-    }
+      requestCount += listRawCount
 
-    const {
-      rawMarkets,
-      requestCount: listRawCount,
-    } = await BinanceMarketModule.listRaw()
-
-    const parsedOrders = await Promise.all(
-      rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
+      const promises = rawOrders.map(async (rawOrder: IBinanceOrderSchema) => {
 
         const { symbol: currencyPair } = rawOrder
 
@@ -219,17 +211,20 @@ export class BinanceOrderReadModule extends AAlunaModule implements IAlunaOrderR
 
         return parsedOrder
 
-      }),
-    )
+      })
+
+      parsedOrders = await Promise.all(promises)
+
+    }
 
     BinanceLog.info(`parsed ${parsedOrders.length} orders for Binance`)
 
-    const totalRequestCount = requestCount + listRawCount
-
-    return {
+    const response: IAlunaOrderParseManyReturns = {
       orders: parsedOrders,
-      requestCount: totalRequestCount,
+      requestCount,
     }
+
+    return response
 
   }
 

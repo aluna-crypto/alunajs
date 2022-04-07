@@ -1,7 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -9,12 +8,11 @@ import {
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { handlePoloniexRequestError } from './errors/handlePoloniexRequestError'
 import { Poloniex } from './Poloniex'
-import { PoloniexLog } from './PoloniexLog'
 
 
 
@@ -27,9 +25,7 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IPoloniexResponseWithError {
-  error: string
-}
+
 
 export interface IPoloniexSignedHeaders {
     'Key': string
@@ -37,39 +33,7 @@ export interface IPoloniexSignedHeaders {
     'Content-Type': string
 }
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  PoloniexLog.error(error)
-
-  return error
-
-}
 
 export const generateAuthSignature = (
   params: ISignedHashParams,
@@ -139,7 +103,7 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handlePoloniexRequestError({ error })
 
     }
 
@@ -171,26 +135,27 @@ export const PoloniexHttp: IAlunaHttp = class {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const response = await axios.create().request<T>(requestConfig)
 
-      const isError = ((data as unknown) as IPoloniexResponseWithError).error
+      if ((response.data as any).success === 0) {
 
-      if (isError) {
+        const error = {
+          isAxiosError: true,
+          response,
+        } as AxiosError
 
-        const error = new Error(isError)
-
-        throw handleRequestError(error)
+        throw error
 
       }
 
       return {
-        data,
+        data: response.data,
         requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handlePoloniexRequestError({ error })
 
     }
 

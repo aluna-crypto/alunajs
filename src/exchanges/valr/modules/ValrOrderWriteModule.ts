@@ -316,6 +316,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         httpStatusCode: 500,
         message: 'Something went wrong, order not canceled',
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        metadata: rawOrder,
       })
 
       ValrLog.error(error)

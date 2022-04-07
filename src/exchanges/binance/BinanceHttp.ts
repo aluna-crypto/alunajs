@@ -1,8 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 import { URLSearchParams } from 'url'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -10,12 +9,11 @@ import {
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Binance } from './Binance'
-import { BinanceLog } from './BinanceLog'
+import { handleBinanceRequestError } from './errors/handleBinanceRequestError'
 
 
 
@@ -61,42 +59,6 @@ export const formatBodyToBinance = (body: Record<string, any>): string => {
   const bodyStringified = `&${formattedBody.toString()}`
 
   return bodyStringified
-
-}
-
-
-
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
-
-  let error: AlunaError
-
-  const errorMsg = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.msg || errorMsg,
-      httpStatusCode: response?.status,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || errorMsg,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  BinanceLog.error(error)
-
-  return error
 
 }
 
@@ -171,18 +133,18 @@ export const BinanceHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, response.data)
+      AlunaCache.cache.set<T>(cacheKey, data)
 
       return {
-        data: response.data,
+        data,
         requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBinanceRequestError({ error })
 
     }
 
@@ -230,16 +192,16 @@ export const BinanceHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
       return {
-        data: response.data,
+        data,
         requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBinanceRequestError({ error })
 
     }
 

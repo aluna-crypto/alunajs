@@ -1,8 +1,7 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -10,12 +9,11 @@ import {
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { handleValrRequestError } from './errors/handleValrRequestError'
 import { Valr } from './Valr'
-import { ValrLog } from './ValrLog'
 
 
 
@@ -35,39 +33,7 @@ export interface IValrSignedHeaders {
   'X-VALR-TIMESTAMP': number
 }
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  ValrLog.error(error)
-
-  return error
-
-}
 
 export const generateAuthHeader = (
   params: ISignedHashParams,
@@ -94,6 +60,8 @@ export const generateAuthHeader = (
   }
 
 }
+
+
 
 export const ValrHttp: IAlunaHttp = class {
 
@@ -130,18 +98,18 @@ export const ValrHttp: IAlunaHttp = class {
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, response.data)
+      AlunaCache.cache.set<T>(cacheKey, data)
 
       return {
-        data: response.data,
+        data,
         requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleValrRequestError({ error })
 
     }
 
@@ -185,7 +153,7 @@ export const ValrHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleValrRequestError({ error })
 
     }
 

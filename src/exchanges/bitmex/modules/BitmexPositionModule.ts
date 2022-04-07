@@ -3,6 +3,7 @@ import { map } from 'lodash'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaPositionCloseParams,
@@ -325,20 +326,54 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { privateRequest } = BitmexHttp
 
-    const {
-      data: {
-        leverage: settedLeverage,
-      },
-      requestCount,
-    } = await privateRequest<IBitmexPositionSchema>({
-      url: `${PROD_BITMEX_URL}/position/leverage`,
-      body: { symbol: symbolPair, leverage },
-      keySecret: this.exchange.keySecret,
-    })
+    try {
 
-    return {
-      leverage: settedLeverage,
-      requestCount,
+      const {
+        requestCount,
+        data: {
+          leverage: settedLeverage,
+        },
+      } = await privateRequest<IBitmexPositionSchema>({
+        url: `${PROD_BITMEX_URL}/position/leverage`,
+        body: { symbol: symbolPair, leverage },
+        keySecret: this.exchange.keySecret,
+      })
+
+      return {
+        requestCount,
+        leverage: settedLeverage,
+      }
+
+    } catch (err) {
+
+      let {
+        code,
+        message,
+        httpStatusCode,
+      } = err
+
+      if (/(?=.*Account has zero)(?=.*margin balance).+/g.test(err.message)) {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+        message = `Cannot set leverage for ${symbolPair} because of `
+          .concat('insufficient balance')
+
+        httpStatusCode = 400
+
+      }
+
+      const alunaError = new AlunaError({
+        code,
+        message,
+        httpStatusCode,
+        metadata: err.metadata,
+      })
+
+      BitmexLog.error(alunaError)
+
+      throw alunaError
+
     }
 
   }

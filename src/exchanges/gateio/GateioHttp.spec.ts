@@ -1,14 +1,13 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
@@ -16,6 +15,8 @@ import {
   mockAlunaCache,
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
+import * as handleGateioRequestErrorMod from './errors/handleGateioRequestError'
 import { Gateio } from './Gateio'
 import * as GateioHttpMod from './GateioHttp'
 
@@ -28,17 +29,17 @@ describe('GateioHttp', () => {
   const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
   const dummyBody = { dummy: 'dummy-body' }
   const dummySignedHeaders = { 'X-DUMMY': 'dummy' }
-  const dummyResponse = { data: 'dummy-data', requestCount: 1 }
+  const dummyResponse = 'dummy-data'
   const dummyQuery = 'dummy=dummy'
 
   const mockDeps = (
     params: {
       requestResponse?: any,
+      resquestError?: AlunaError | Error,
       getCache?: any,
       hasCache?: boolean,
       setCache?: boolean,
       signedheaderResponse?: GateioHttpMod.IGateioSignedHeaders,
-      errorMsgRes?: string,
       mockedExchangeSettings?: IAlunaSettingsSchema,
     } = {},
   ) => {
@@ -49,22 +50,19 @@ describe('GateioHttp', () => {
       getCache = {},
       hasCache = false,
       setCache = false,
-      errorMsgRes = 'error',
+      resquestError,
       mockedExchangeSettings = {},
     } = params
-
-    const throwedError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: errorMsgRes,
-      httpStatusCode: 400,
-    })
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(requestResponse)
+    } = mockAxiosRequest({
+      responseData: requestResponse,
+      error: resquestError,
+    })
 
     const exchangeMock = ImportMock.mockOther(
       Gateio,
@@ -78,12 +76,11 @@ describe('GateioHttp', () => {
       signedheaderResponse,
     )
 
-    const formatRequestErrorSpy = ImportMock.mockFunction(
-      GateioHttpMod,
-      'handleRequestError',
-      throwedError,
+    const handleGateioRequestErrorMock = ImportMock.mockFunction(
+      handleGateioRequestErrorMod,
+      'handleGateioRequestError',
+      resquestError,
     )
-
 
     const {
       cache,
@@ -98,12 +95,11 @@ describe('GateioHttp', () => {
       cache,
       requestSpy,
       hashCacheKey,
-      throwedError,
       exchangeMock,
       axiosCreateMock,
-      formatRequestErrorSpy,
       generateAuthHeaderMock,
       assembleAxiosRequestMock,
+      handleGateioRequestErrorMock,
     }
 
   }
@@ -114,7 +110,7 @@ describe('GateioHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await GateioHttp.publicRequest({
@@ -141,10 +137,10 @@ describe('GateioHttp', () => {
       requestSpy,
       axiosCreateMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
-    const responseData = await GateioHttp.publicRequest({
+    const requestResponse = await GateioHttp.publicRequest({
       verb: AlunaHttpVerbEnum.GET,
       url: dummyUrl,
       body: dummyBody,
@@ -159,7 +155,10 @@ describe('GateioHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(requestResponse).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -170,7 +169,7 @@ describe('GateioHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     await GateioHttp.privateRequest({
@@ -201,10 +200,10 @@ describe('GateioHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
-    const responseData = await GateioHttp.privateRequest({
+    const requestResponse = await GateioHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,
       body: dummyBody,
@@ -231,7 +230,10 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
+    expect(requestResponse).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
@@ -242,7 +244,7 @@ describe('GateioHttp', () => {
       axiosCreateMock,
       generateAuthHeaderMock,
     } = mockDeps({
-      requestResponse: Promise.resolve(dummyResponse),
+      requestResponse: dummyResponse,
     })
 
     const urlWithQuery = `${dummyUrl}?${dummyQuery}`
@@ -274,140 +276,72 @@ describe('GateioHttp', () => {
       headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyResponse)
-
-  })
-
-  it('should ensure formatRequestError is call on resquest error', async () => {
-
-    const message = 'Dummy error'
-
-    const {
-      formatRequestErrorSpy,
-    } = mockDeps({
-      requestResponse: Promise.reject(new Error(message)),
-      errorMsgRes: message,
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
     })
 
-    let result
-    let error
+  })
 
-    try {
+  it(
+    "should ensure 'handleGateioRequestError' is call on resquest error",
+    async () => {
 
-      result = await GateioHttp.publicRequest({
-        url: dummyUrl,
+      const errMsg = 'Dummy error'
+
+      const alunaError = new AlunaError({
+        message: errMsg,
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        httpStatusCode: 500,
+        metadata: { error: errMsg },
       })
 
-    } catch (err) {
+      const {
+        handleGateioRequestErrorMock,
+      } = mockDeps({
+        resquestError: alunaError,
+      })
 
-      error = err
+      let res = await executeAndCatch(() => GateioHttp.publicRequest({
+        url: dummyUrl,
+      }))
 
-    }
+      expect(res.result).not.to.be.ok
 
-    expect(result).not.to.be.ok
-    expect(error.message).to.be.eq(message)
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
 
-    const calledArg = formatRequestErrorSpy.args[0][0]
+      expect(handleGateioRequestErrorMock.callCount).to.be.eq(1)
+      expect(handleGateioRequestErrorMock.args[0][0]).to.deep.eq({
+        error: alunaError,
+      })
 
-    expect(formatRequestErrorSpy.callCount).to.be.eq(1)
-    expect(calledArg).to.be.ok
-    expect(calledArg.message).to.be.eq(message)
 
-    try {
-
-      result = await GateioHttp.privateRequest({
+      res = await executeAndCatch(() => GateioHttp.privateRequest({
         url: dummyUrl,
         body: dummyBody,
-        keySecret: {} as IAlunaKeySecretSchema,
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      }))
+
+      expect(res.result).not.to.be.ok
+
+      expect(res.error!.message).to.be.eq(errMsg)
+      expect(res.error!.code).to.be.eq(alunaError.code)
+      expect(res.error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(res.error!.metadata).to.be.eq(alunaError.metadata)
+
+      expect(handleGateioRequestErrorMock.callCount).to.be.eq(2)
+      expect(handleGateioRequestErrorMock.args[1][0]).to.deep.eq({
+        error: alunaError,
       })
 
-    } catch (err) {
-
-      error = err
-
-    }
-
-    expect(result).not.to.be.ok
-
-    expect(error.message).to.be.eq(message)
-
-    const calledArg2 = formatRequestErrorSpy.args[1][0]
-
-    expect(formatRequestErrorSpy.callCount).to.be.eq(2)
-    expect(calledArg2).to.be.ok
-    expect(calledArg2.message).to.be.eq(message)
-
-  })
-
-  it('should ensure request error is being handle', async () => {
-
-    const dummyError = 'dummy-error'
-
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          message: dummyError,
-        },
-      },
-    }
-
-    const error1 = GateioHttpMod.handleRequestError(axiosError1 as AxiosError)
-
-    expect(error1 instanceof AlunaError).to.be.ok
-    expect(error1.message).to.be.eq(dummyError)
-    expect(error1.httpStatusCode).to.be.eq(400)
-
-    const axiosError2 = {
-      isAxiosError: true,
-      response: {
-        data: {
-        },
-      },
-    }
-
-    const error2 = GateioHttpMod.handleRequestError(axiosError2 as AxiosError)
-
-    expect(error2 instanceof AlunaError).to.be.ok
-    expect(
-      error2.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error2.httpStatusCode).to.be.eq(400)
-
-    const axiosError3 = {
-      isAxiosError: true,
-    }
-
-    const error3 = GateioHttpMod.handleRequestError(axiosError3 as AxiosError)
-
-    expect(error3 instanceof AlunaError).to.be.ok
-    expect(
-      error3.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error3.httpStatusCode).to.be.eq(400)
-
-    const error = {
-      message: dummyError,
-    }
-
-    const error4 = GateioHttpMod.handleRequestError(error as Error)
-
-    expect(error4 instanceof AlunaError).to.be.ok
-    expect(error4.message).to.be.eq(dummyError)
-    expect(error4.httpStatusCode).to.be.eq(400)
-
-    const unknown = {}
-
-    const error5 = GateioHttpMod.handleRequestError(unknown as any)
-
-    expect(error5 instanceof AlunaError).to.be.ok
-    expect(
-      error5.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error5.httpStatusCode).to.be.eq(400)
-
-  })
+    },
+  )
 
   it('should generate signed auth header just fine', async () => {
 
@@ -530,7 +464,7 @@ describe('GateioHttp', () => {
 
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyResponse)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
       cacheResult: dummyResponse,

@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Gateio } from './Gateio'
 
 
@@ -43,7 +44,7 @@ describe('Gateio', () => {
       proxySettings: {
         host: 'host',
         port: 9999,
-        protocol: 'http',
+        protocol: AlunaProtocolsEnum.HTTP,
       },
     })).to.be.ok
 

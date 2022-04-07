@@ -360,6 +360,38 @@ describe('ValrOrderReadModule', () => {
 
   })
 
+  it(
+    'should only try to parse orders if rawOrders has at least one item',
+    async () => {
+
+      const rawOrders: IValrOrderListSchema[] = []
+
+      const parseMock = ImportMock.mockFunction(
+        ValrOrderParser,
+        'parse',
+      )
+
+      const fetchCurrencyPairsMock = ImportMock.mockFunction(
+        ValrMarketModule,
+        'fetchCurrencyPairs',
+        Promise.resolve({
+          currencyPairs: VALR_RAW_CURRENCY_PAIRS,
+          requestCount: 1,
+        }),
+      )
+
+      const {
+        orders: parsedManyResp,
+      } = await valrOrderReadModule.parseMany({ rawOrders })
+
+      expect(parsedManyResp.length).to.be.eq(0)
+      expect(parseMock.callCount).to.be.eq(0)
+
+      expect(fetchCurrencyPairsMock.callCount).to.be.eq(0)
+
+    },
+  )
+
   it('should throw error if pair symbol is not found', async () => {
 
     const fetchCurrencyPairsMock = ImportMock.mockFunction(

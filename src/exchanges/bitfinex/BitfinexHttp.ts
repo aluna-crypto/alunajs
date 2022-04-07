@@ -1,7 +1,6 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
@@ -9,11 +8,11 @@ import {
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { Bitfinex } from './Bitfinex'
+import { handleBitfinexRequestError } from './errors/handleBitfinexRequestError'
 
 
 
@@ -120,46 +119,6 @@ export const generateAuthHeader = (
 
 
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
-
-  let error: AlunaError
-
-  let message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    if (response?.request?.path.match(new RegExp(/v1/))) {
-
-      message = response.data.message
-
-    }
-
-    error = new AlunaError({
-      message: response?.data?.[2] || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  return error
-
-}
-
-
-
 export const BitfinexHttp: IAlunaHttp = class {
 
   static async publicRequest<T> (
@@ -206,7 +165,7 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBitfinexRequestError({ error })
 
     }
 
@@ -248,7 +207,7 @@ export const BitfinexHttp: IAlunaHttp = class {
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBitfinexRequestError({ error })
 
     }
 

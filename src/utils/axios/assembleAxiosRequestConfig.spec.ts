@@ -3,6 +3,7 @@ import { Agent as HttpAgent } from 'http'
 import { Agent as HttpsAgent } from 'https'
 
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaProxySchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleAxiosRequestConfig } from './assembleAxiosRequestConfig'
 
@@ -30,7 +31,7 @@ describe('assembleAxiosRequestConfig', () => {
   const proxySettings2: IAlunaProxySchema = {
     host: '0.0.0.0',
     port: 9999,
-    protocol: 'https:',
+    protocol: AlunaProtocolsEnum.HTTPS,
     agent: new HttpsAgent(),
   }
 
@@ -88,9 +89,11 @@ describe('assembleAxiosRequestConfig', () => {
     expect(requestConfig).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.PATCH,
-      host: proxySettings1.host,
-      port: proxySettings1.port,
-      protocol: 'http:',
+      proxy: {
+        host: proxySettings1.host,
+        port: proxySettings1.port,
+        protocol: 'http:',
+      },
       httpAgent: proxySettings1.agent,
     })
 
@@ -109,9 +112,59 @@ describe('assembleAxiosRequestConfig', () => {
     expect(requestConfig).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.PATCH,
-      host: proxySettings2.host,
-      port: proxySettings2.port,
-      protocol: proxySettings2.protocol,
+      proxy: {
+        host: proxySettings2.host,
+        port: proxySettings2.port,
+        protocol: proxySettings2.protocol,
+      },
+      httpsAgent: proxySettings2.agent,
+    })
+
+  })
+
+  it('should add missing colon at the end of the protocol', () => {
+
+    let res = assembleAxiosRequestConfig({
+      method: AlunaHttpVerbEnum.GET,
+      url,
+      proxySettings: {
+        ...proxySettings1,
+        protocol: 'http' as AlunaProtocolsEnum,
+      },
+    })
+
+    expect(res.requestConfig.method).to.be.eq(AlunaHttpVerbEnum.GET)
+    expect(res.requestConfig.url).to.be.eq(url)
+    expect(res.requestConfig).to.deep.eq({
+      url,
+      method: AlunaHttpVerbEnum.GET,
+      proxy: {
+        host: proxySettings1.host,
+        port: proxySettings1.port,
+        protocol: 'http:',
+      },
+      httpAgent: proxySettings1.agent,
+    })
+
+    res = assembleAxiosRequestConfig({
+      method: AlunaHttpVerbEnum.GET,
+      url,
+      proxySettings: {
+        ...proxySettings2,
+        protocol: 'https' as AlunaProtocolsEnum,
+      },
+    })
+
+    expect(res.requestConfig.method).to.be.eq(AlunaHttpVerbEnum.GET)
+    expect(res.requestConfig.url).to.be.eq(url)
+    expect(res.requestConfig).to.deep.eq({
+      url,
+      method: AlunaHttpVerbEnum.GET,
+      proxy: {
+        host: proxySettings2.host,
+        port: proxySettings2.port,
+        protocol: 'https:',
+      },
       httpsAgent: proxySettings2.agent,
     })
 

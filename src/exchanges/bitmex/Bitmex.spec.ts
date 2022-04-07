@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Bitmex } from './Bitmex'
 import { BitmexSpecs } from './BitmexSpecs'
 
@@ -45,7 +46,7 @@ describe('Bitmex', () => {
       proxySettings: {
         host: 'host',
         port: 9999,
-        protocol: 'http',
+        protocol: AlunaProtocolsEnum.HTTP,
       },
     })).to.be.ok
 
