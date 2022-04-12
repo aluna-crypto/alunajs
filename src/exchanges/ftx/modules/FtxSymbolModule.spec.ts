@@ -21,13 +21,13 @@ describe('FtxSymbolModule', () => {
       'listRaw',
       {
         rawMarkets: FTX_RAW_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
-    const { rawSymbols, apiRequestCount } = await FtxSymbolModule.listRaw()
+    const { rawSymbols, requestCount } = await FtxSymbolModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(2)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(FTX_RAW_MARKETS)
@@ -45,7 +45,7 @@ describe('FtxSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: FTX_RAW_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -54,7 +54,7 @@ describe('FtxSymbolModule', () => {
       'parseMany',
       {
         symbols: FTX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -113,7 +113,7 @@ describe('FtxSymbolModule', () => {
 
       parseMock.onCall(i).returns({
         symbol: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

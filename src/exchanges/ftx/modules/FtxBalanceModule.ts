@@ -28,7 +28,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     const {
       data: { result },
-      apiRequestCount,
+      requestCount,
     } = await FtxHttp
       .privateRequest<IFtxResponseSchema<IFtxBalanceSchema[]>>({
         verb: AlunaHttpVerbEnum.GET,
@@ -38,7 +38,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     return {
       rawBalances: result,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -47,31 +47,31 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       rawBalances,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
 
-    apiRequestCount += 1
+    requestCount += 1
 
     FtxLog.info(`parsed ${parsedBalances.length} balances for Ftx`)
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       balances: parsedBalances,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -100,7 +100,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     return {
       balance: parsedBalance,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -113,7 +113,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     const { rawBalances } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -126,10 +126,10 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
           const {
             balance: parsedBalance,
-            apiRequestCount: parseCount,
+            requestCount: parseCount,
           } = this.parse({ rawBalance })
 
-          apiRequestCount += parseCount + 1
+          requestCount += parseCount + 1
 
           accumulator.push(parsedBalance)
 
@@ -143,7 +143,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     return {
       balances: parsedBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }

@@ -39,7 +39,7 @@ describe('FtxBalanceModule', () => {
         data: {
           result: FTX_RAW_BALANCES,
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -69,7 +69,7 @@ describe('FtxBalanceModule', () => {
       'listRaw',
       {
         rawBalances: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -78,7 +78,7 @@ describe('FtxBalanceModule', () => {
       'parseMany',
       {
         balances: FTX_PARSED_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -148,17 +148,17 @@ describe('FtxBalanceModule', () => {
       .onFirstCall()
       .returns({
         balance: FTX_PARSED_BALANCES[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         balance: FTX_PARSED_BALANCES[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         balance: FTX_PARSED_BALANCES[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
 

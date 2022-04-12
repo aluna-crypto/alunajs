@@ -44,7 +44,7 @@ describe('FtxKeyModule', () => {
 
     requestMock.onFirstCall().returns({
       data: { result: requestResponse },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
     requestMock.onSecondCall().returns({
       data: {
@@ -53,7 +53,7 @@ describe('FtxKeyModule', () => {
           readOnly: false,
         },
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
     requestMock.onThirdCall().returns({
       data: {
@@ -63,7 +63,7 @@ describe('FtxKeyModule', () => {
           withdrawalEnabled: true,
         },
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const {

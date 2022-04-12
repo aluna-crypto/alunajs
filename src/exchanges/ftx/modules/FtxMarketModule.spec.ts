@@ -29,7 +29,7 @@ describe('FtxMarketModule', () => {
       .onFirstCall()
       .returns(Promise.resolve({
         data: { result: FTX_RAW_MARKETS },
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
     const { rawMarkets: response } = await FtxMarketModule.listRaw()
@@ -53,7 +53,7 @@ describe('FtxMarketModule', () => {
       'listRaw',
       {
         rawMarkets: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -62,7 +62,7 @@ describe('FtxMarketModule', () => {
       'parseMany',
       {
         markets: FTX_PARSED_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -149,17 +149,17 @@ describe('FtxMarketModule', () => {
       .onFirstCall()
       .returns({
         market: FTX_PARSED_MARKETS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         market: FTX_PARSED_MARKETS[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         market: FTX_PARSED_MARKETS[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
 

@@ -22,29 +22,29 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       rawSymbols,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await FtxSymbolModule.listRaw()
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const {
       symbols: parsedSymbols,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = FtxSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -56,20 +56,20 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     FtxLog.info('fetching Ftx symbols')
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await FtxMarketModule.listRaw()
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + listRawCount
+    const totalRequestCount = requestCount + listRawCount
 
     return {
       rawSymbols: rawMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -94,7 +94,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbol: parsedSymbol,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -109,7 +109,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     each(rawSymbols, (symbolPair) => {
 
@@ -122,10 +122,10 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
         const {
           symbol: parsedBaseSymbol,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = this.parse({ rawSymbol: symbolPair })
 
-        apiRequestCount += parseCount + 1
+        requestCount += parseCount + 1
 
         parsedSymbolsDict[baseCurrency] = parsedBaseSymbol
 
@@ -135,7 +135,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
         const {
           symbol: parsedQuoteSymbol,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = this.parse({
           rawSymbol: {
             ...symbolPair,
@@ -143,7 +143,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
           },
         })
 
-        apiRequestCount += parseCount + 1
+        requestCount += parseCount + 1
 
         parsedSymbolsDict[quoteCurrency] = parsedQuoteSymbol
 
@@ -157,7 +157,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }

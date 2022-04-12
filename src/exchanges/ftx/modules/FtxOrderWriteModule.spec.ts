@@ -57,7 +57,7 @@ describe('FtxOrderWriteModule', () => {
       'privateRequest',
       Promise.resolve({
         data: { result: placedOrder },
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -66,7 +66,7 @@ describe('FtxOrderWriteModule', () => {
       'parse',
       Promise.resolve({
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -264,7 +264,7 @@ describe('FtxOrderWriteModule', () => {
       'privateRequest',
       Promise.resolve({
         data: { result: placedOrder },
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -273,7 +273,7 @@ describe('FtxOrderWriteModule', () => {
       'parse',
       {
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -733,7 +733,7 @@ describe('FtxOrderWriteModule', () => {
       'privateRequest',
       {
         data: canceledOrderResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -742,7 +742,7 @@ describe('FtxOrderWriteModule', () => {
       'get',
       {
         order: { status: AlunaOrderStatusEnum.CANCELED },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -786,7 +786,7 @@ describe('FtxOrderWriteModule', () => {
       ftxOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -795,7 +795,7 @@ describe('FtxOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: FTX_RAW_LIMIT_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

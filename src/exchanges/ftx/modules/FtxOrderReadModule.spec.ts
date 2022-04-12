@@ -48,7 +48,7 @@ describe('FtxOrderReadModule', () => {
       'privateRequest',
       {
         data: { result: ftxRawOrders },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -111,7 +111,7 @@ describe('FtxOrderReadModule', () => {
       'listRaw',
       {
         rawOrders: ['raw-orders'],
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -120,7 +120,7 @@ describe('FtxOrderReadModule', () => {
       'parseMany',
       {
         orders: ftxParsedOrders,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -184,7 +184,7 @@ describe('FtxOrderReadModule', () => {
       'privateRequest',
       {
         data: { result: FTX_RAW_LIMIT_ORDER },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -218,7 +218,7 @@ describe('FtxOrderReadModule', () => {
       'getRaw',
       {
         rawOrder: 'rawOrder',
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -227,7 +227,7 @@ describe('FtxOrderReadModule', () => {
       'parse',
       {
         order: FTX_PARSED_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 

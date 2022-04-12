@@ -28,7 +28,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     const {
       data: { result },
-      apiRequestCount,
+      requestCount,
     } = await FtxHttp
       .privateRequest<IFtxResponseSchema<IFtxOrderSchema[]>>({
         verb: AlunaHttpVerbEnum.GET,
@@ -38,7 +38,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     return {
       rawOrders: result,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -47,29 +47,29 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       rawOrders,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       orders: parsedOrders,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -88,7 +88,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     const {
       data: { result },
-      apiRequestCount,
+      requestCount,
     } = await FtxHttp
       .privateRequest<IFtxResponseSchema<IFtxOrderSchema>>({
         verb: AlunaHttpVerbEnum.GET,
@@ -98,7 +98,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     return {
       rawOrder: result,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -108,25 +108,25 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
   public async get (params: IAlunaOrderGetParams)
     : Promise<IAlunaOrderGetReturns> {
 
-    const apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + getRawCount
       + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
 
@@ -144,7 +144,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     return {
       order: parsedOrder,
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
   }
@@ -157,17 +157,17 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     const { rawOrders } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedOrders = await Promise.all(
       rawOrders.map(async (rawOrder: IFtxOrderSchema) => {
 
         const {
           order: parsedOrder,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = await this.parse({ rawOrder })
 
-        apiRequestCount += parseCount + 1
+        requestCount += parseCount + 1
 
         return parsedOrder
 
@@ -178,7 +178,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     return {
       orders: parsedOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }

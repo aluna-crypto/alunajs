@@ -1,17 +1,22 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-  IAlunaHttpResponseWithRequestCount,
+  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { FtxLog } from './FtxLog'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
+import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { handleFtxRequestError } from './errors/handleFtxRequestError'
+import { Ftx } from './Ftx'
+
+
+
+export const FTX_HTTP_CACHE_KEY_PREFIX = 'FtxHttp.publicRequest'
 
 
 
@@ -22,44 +27,10 @@ interface ISignedHashParams {
   path: string
 }
 
-interface IFtxSignedHeaders {
+export interface IFtxSignedHeaders {
   'FTX-KEY': string
   'FTX-TS': number
   'FTX-SIGN': string
-}
-
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
-
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.error || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  FtxLog.error(error)
-
-  return error
-
 }
 
 export const generateAuthSignature = (
@@ -94,8 +65,9 @@ export const generateAuthSignature = (
 
 export const FtxHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async publicRequest<T> (
+    params: IAlunaHttpPublicParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -103,33 +75,51 @@ export const FtxHttp: IAlunaHttp = class {
       verb = AlunaHttpVerbEnum.GET,
     } = params
 
-    // @TODO -> Need to implement caching
+    const cacheKey = AlunaCache.hashCacheKey({
+      args: params,
+      prefix: FTX_HTTP_CACHE_KEY_PREFIX,
+    })
 
-    const requestConfig = {
-      url,
-      method: verb,
-      data: body,
+    if (AlunaCache.cache.has(cacheKey)) {
+
+      return {
+        data: AlunaCache.cache.get<T>(cacheKey)!,
+        requestCount: 0,
+      }
+
     }
+
+    const { requestConfig } = assembleAxiosRequestConfig({
+      method: verb,
+      url,
+      data: body,
+      proxySettings: Ftx.settings.proxySettings,
+    })
 
     try {
 
       const { data } = await axios.create().request<T>(requestConfig)
 
+      AlunaCache.cache.set<T>(cacheKey, data)
+
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleFtxRequestError({
+        error,
+      })
 
     }
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async privateRequest<T> (
+    params: IAlunaHttpPrivateParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -145,12 +135,13 @@ export const FtxHttp: IAlunaHttp = class {
       path: new URL(url).pathname,
     })
 
-    const requestConfig = {
+
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
-      data: body,
       headers: signedHash,
-    }
+      proxySettings: Ftx.settings.proxySettings,
+    })
 
     try {
 
@@ -158,12 +149,14 @@ export const FtxHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleFtxRequestError({
+        error,
+      })
 
     }
 

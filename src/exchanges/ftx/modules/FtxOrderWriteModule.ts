@@ -46,7 +46,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -109,7 +109,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       from: type,
     })
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const body: IFtxOrderRequest = {
       side: FtxSideAdapter.translateToFtx({ from: side }),
@@ -119,7 +119,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       price: null,
     }
 
-    apiRequestCount += 1
+    requestCount += 1
 
     if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
 
@@ -147,7 +147,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
         data: {
           result,
         },
-        apiRequestCount: requestCount,
+        requestCount: apiRequestCount,
       } = await FtxHttp
         .privateRequest<IFtxResponseSchema<IFtxOrderSchema>>({
           url: `${PROD_FTX_URL}/orders`,
@@ -156,7 +156,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
         })
 
       placedOrder = result
-      apiRequestCount += requestCount
+      requestCount += apiRequestCount
 
 
     } catch (err) {
@@ -168,17 +168,17 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
     }
 
-    const { order, apiRequestCount: parseCount } = await this.parse({
+    const { order, requestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -196,12 +196,12 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
-        apiRequestCount: requestCount,
+        requestCount: apiRequestCount,
       } = await FtxHttp.privateRequest<IFtxResponseSchema<string>>(
         {
           verb: AlunaHttpVerbEnum.DELETE,
@@ -210,7 +210,7 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
         },
       )
 
-      apiRequestCount += requestCount
+      requestCount += apiRequestCount
 
     } catch (err) {
 
@@ -227,18 +227,18 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
 
     }
 
-    const { order, apiRequestCount: getCount } = await this.get({
+    const { order, requestCount: getCount } = await this.get({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + getCount
+    const totalRequestCount = requestCount + getCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -261,18 +261,18 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
-    const { apiRequestCount: cancelCount } = await this.cancel({
+    const { requestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const {
       order: newOrder,
-      apiRequestCount: placeCount,
+      requestCount: placeCount,
     } = await this.place({
       rate,
       side,
@@ -282,15 +282,15 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + cancelCount
       + placeCount
 
     return {
       order: newOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

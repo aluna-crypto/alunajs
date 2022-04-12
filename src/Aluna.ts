@@ -67,7 +67,8 @@ export class Aluna extends Exchanges {
         break
 
       case this.Ftx.ID:
-        return new this.Ftx(subParams)
+        Exchange = this.Ftx
+        break
 
       default: {
 
@@ -140,7 +141,8 @@ export class Aluna extends Exchanges {
         break
 
       case this.Ftx.ID:
-        return this.Ftx
+        Exchange = this.Ftx
+        break
 
       default: {
 

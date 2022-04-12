@@ -51,7 +51,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -61,7 +61,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
     FtxLog.info('fetching Ftx key permissionsa')
 
     let rawKey: IFtxKeySchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -69,7 +69,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       const {
         data: { result },
-        apiRequestCount: requestCount,
+        requestCount: apiRequestCount,
       } = await FtxHttp
         .privateRequest<IFtxResponseSchema<IFtxKeySchema>>({
           verb: AlunaHttpVerbEnum.GET,
@@ -78,7 +78,7 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
         })
 
       rawKey = result
-      apiRequestCount += requestCount
+      requestCount += apiRequestCount
 
     } catch (error) {
 
@@ -90,16 +90,16 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -118,14 +118,14 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { accountIdentifier } = account
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       key: permissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
 
-    apiRequestCount += 1
+    requestCount += 1
 
     this.details = {
       accountId: accountIdentifier.toString(),
@@ -133,11 +133,11 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
       meta: rawKey,
     }
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+    const totalRequestCount = requestCount + parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

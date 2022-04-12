@@ -28,7 +28,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     const {
       data: { result },
-      apiRequestCount,
+      requestCount,
     } = await
     publicRequest<IFtxResponseSchema<IFtxMarketSchema[]>>({
       url: `${PROD_FTX_URL}/markets`,
@@ -40,7 +40,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     return {
       rawMarkets: filteredSpotMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -49,29 +49,29 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await FtxMarketModule.listRaw()
 
-    apiRequestCount += 1
+    requestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = FtxMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
+    requestCount += 1
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -88,7 +88,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
   }
@@ -101,16 +101,16 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     const { rawMarkets } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount + 1
 
       return parsedMarket
 
@@ -120,7 +120,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

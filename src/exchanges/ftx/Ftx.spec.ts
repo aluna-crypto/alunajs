@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Ftx } from './Ftx'
 
 
@@ -33,6 +34,22 @@ describe('Ftx', () => {
     expect(ftx.key).to.be.ok
     expect(ftx.balance).to.be.ok
     expect(ftx.order).to.be.ok
+
+  })
+
+  it('should properly validate Ftx settings', async () => {
+
+    expect(Ftx.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Ftx.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Ftx.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+    expect(Ftx.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
 
   })
 
