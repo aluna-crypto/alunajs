@@ -1,18 +1,18 @@
 import axios, { AxiosError } from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-  IAlunaHttpResponseWithRequestCount,
+  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { PoloniexLog } from './PoloniexLog'
+import { handlePoloniexRequestError } from './errors/handlePoloniexRequestError'
+import { Poloniex } from './Poloniex'
 
 
 
@@ -25,49 +25,15 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IPoloniexResponseWithError {
-  error: string
-}
 
-interface IPoloniexSignedHeaders {
+
+export interface IPoloniexSignedHeaders {
     'Key': string
     'Sign': string
     'Content-Type': string
 }
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  PoloniexLog.error(error)
-
-  return error
-
-}
 
 export const generateAuthSignature = (
   params: ISignedHashParams,
@@ -93,8 +59,9 @@ export const generateAuthSignature = (
 
 export const PoloniexHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async publicRequest<T> (
+    params: IAlunaHttpPublicParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -111,16 +78,17 @@ export const PoloniexHttp: IAlunaHttp = class {
 
       return {
         data: AlunaCache.cache.get<T>(cacheKey)!,
-        apiRequestCount: 0,
+        requestCount: 0,
       }
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 
@@ -130,19 +98,20 @@ export const PoloniexHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handlePoloniexRequestError({ error })
 
     }
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async privateRequest<T> (
+    params: IAlunaHttpPrivateParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -156,35 +125,37 @@ export const PoloniexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Poloniex.settings.proxySettings,
+    })
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const response = await axios.create().request<T>(requestConfig)
 
-      const isError = ((data as unknown) as IPoloniexResponseWithError).error
+      if ((response.data as any).success === 0) {
 
-      if (isError) {
+        const error = {
+          isAxiosError: true,
+          response,
+        } as AxiosError
 
-        const error = new Error(isError)
-
-        throw handleRequestError(error)
+        throw error
 
       }
 
       return {
-        data,
-        apiRequestCount: 1,
+        data: response.data,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handlePoloniexRequestError({ error })
 
     }
 

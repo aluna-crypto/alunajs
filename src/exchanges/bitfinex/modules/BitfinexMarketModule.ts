@@ -29,11 +29,11 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     const { publicRequest } = BitfinexHttp
 
-    const apiRequestCount = 0
+    const requestCount = 0
 
     const {
       data: rawMarkets,
-      apiRequestCount: marketsRequestCount,
+      requestCount: marketsRequestCount,
     } = await publicRequest<IBitfinexTicker[]>({
       url: 'https://api-pub.bitfinex.com/v2/tickers?symbols=ALL',
     })
@@ -44,12 +44,12 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     const {
       data,
-      apiRequestCount: enabledMarginMarketsRequestCount,
+      requestCount: enabledMarginMarketsRequestCount,
     } = await publicRequest<[string[]]>({
       url,
     })
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + marketsRequestCount
       + enabledMarginMarketsRequestCount
 
@@ -62,36 +62,32 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     return {
       rawMarkets: output,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BitfinexMarketModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BitfinexMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -106,7 +102,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -130,7 +126,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     })
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = rawBitfinexTickers.reduce((acc, ticker) => {
 
@@ -150,12 +146,12 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({
         rawMarket,
       })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       acc.push(parsedMarket)
 
@@ -167,7 +163,7 @@ export const BitfinexMarketModule: IAlunaMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

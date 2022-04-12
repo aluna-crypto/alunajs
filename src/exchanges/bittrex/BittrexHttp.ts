@@ -1,19 +1,19 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 import { URL } from 'url'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-  IAlunaHttpResponseWithRequestCount,
+  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { BittrexLog } from './BittrexLog'
+import { Bittrex } from './Bittrex'
+import { handleBittrexRequestError } from './errors/handleBittrexRequestError'
 
 
 
@@ -28,46 +28,14 @@ interface ISignedHashParams {
   body?: any
 }
 
-interface IBittrexSignedHeaders {
+export interface IBittrexSignedHeaders {
     'Api-Key': string
     'Api-Timestamp': number
     'Api-Content-Hash': string
     'Api-Signature': string
 }
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
 
-  let error: AlunaError
-
-  const message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    error = new AlunaError({
-      message: response?.data?.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  BittrexLog.error(error)
-
-  return error
-
-}
 
 export const generateAuthHeader = (
   params: ISignedHashParams,
@@ -102,8 +70,9 @@ export const generateAuthHeader = (
 
 export const BittrexHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async publicRequest<T> (
+    params: IAlunaHttpPublicParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -120,38 +89,39 @@ export const BittrexHttp: IAlunaHttp = class {
 
       return {
         data: AlunaCache.cache.get<T>(cacheKey)!,
-        apiRequestCount: 0,
+        requestCount: 0,
       }
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 
-      const response = await axios.create().request<T>(requestConfig)
+      const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, response.data)
+      AlunaCache.cache.set<T>(cacheKey, data)
 
       return {
-        data: response.data,
-        apiRequestCount: 1,
+        data,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBittrexRequestError({ error })
 
     }
 
   }
 
   static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+    : Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -168,12 +138,13 @@ export const BittrexHttp: IAlunaHttp = class {
       url,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-    }
+      proxySettings: Bittrex.settings.proxySettings,
+    })
 
     try {
 
@@ -181,12 +152,12 @@ export const BittrexHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBittrexRequestError({ error })
 
     }
 

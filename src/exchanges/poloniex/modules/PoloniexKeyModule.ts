@@ -38,7 +38,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -53,7 +53,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       read: false,
     }
 
-    const apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -64,7 +64,9 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       body.append('currencyPair', 'all')
       body.append('nonce', timestamp.toString())
 
-      await PoloniexHttp
+      const {
+        requestCount: privateRequestCount,
+      } = await PoloniexHttp
         .privateRequest<IPoloniexBalanceSchema>({
           verb: AlunaHttpVerbEnum.POST,
           url: `${PROD_POLONIEX_URL}/tradingApi`,
@@ -72,6 +74,7 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
           body,
         })
 
+      requestCount += privateRequestCount
       permissions.read = true
 
     } catch (err) {
@@ -96,14 +99,14 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey: permissions })
 
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -118,14 +121,12 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       meta: rawKey,
@@ -134,11 +135,11 @@ export class PoloniexKeyModule extends AAlunaModule implements IAlunaKeyModule {
     }
 
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+    const totalRequestCount = requestCount + parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

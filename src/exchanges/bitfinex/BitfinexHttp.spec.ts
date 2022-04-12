@@ -1,41 +1,121 @@
-import { AxiosError } from 'axios'
 import { expect } from 'chai'
 import crypto from 'crypto'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http'
+import { mockAxiosRequest } from '../../../test/helpers/http/axios'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
+import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { validateCache } from '../../utils/cache/AlunaCache.mock'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
+import { executeAndCatch } from '../../utils/executeAndCatch'
+import { Bitfinex } from './Bitfinex'
 import * as BitfinexHttpMod from './BitfinexHttp'
+import * as handleBitfinexRequestErrorMod from './errors/handleBitfinexRequestError'
 
 
 
 describe('BitfinexHttp', () => {
 
-  const { BitfinexHttp, handleRequestError } = BitfinexHttpMod
+  const { BitfinexHttp } = BitfinexHttpMod
 
   const { publicRequest, privateRequest } = BitfinexHttp
 
-  const dummyV2Headers: BitfinexHttpMod.IBitfinexSignedV2Headers = {
+  const dummyBody: Record<any, string> = { dummy: 'dummy-body' }
+  const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
+  const dummyResponse = 'dummy-response'
+  const dummySignedHeaders: BitfinexHttpMod.IBitfinexSignedV2Headers = {
     'Content-Type': 'dummy-content',
     'bfx-nonce': 'dummy-key',
     'bfx-apikey': 'dummy-payload',
     'bfx-signature': 'dummy-sig',
   }
-
-  const dummyBody: Record<any, string> = { dummy: 'dummy-body' }
-
-  const dummyUrl = 'http://dummy.com/path/XXXDUMMY/dummy'
-  const dummyData = { data: 'dummy-data', apiRequestCount: 1 }
-
+  const signedAuth: BitfinexHttpMod.IGenerateAuthHeaderReturns = {
+    headers: dummySignedHeaders,
+    body: dummyBody,
+  }
   const dummyKeysecret: IAlunaKeySecretSchema = {
     key: 'key',
     secret: 'secret',
+  }
+
+  const mockDeps = (
+    params: {
+      requestResponse?: any,
+      requestError?: AlunaError | Error,
+      getCache?: any,
+      hasCache?: boolean,
+      setCache?: boolean,
+      signedheaderResponse?: BitfinexHttpMod.IGenerateAuthHeaderReturns,
+      mockedExchangeSettings?: IAlunaSettingsSchema,
+    } = {},
+  ) => {
+
+    const {
+      requestResponse = {},
+      signedheaderResponse = signedAuth,
+      getCache = {},
+      hasCache = false,
+      setCache = false,
+      requestError,
+      mockedExchangeSettings = {},
+    } = params
+
+    const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+    } = mockAxiosRequest({
+      error: requestError,
+      responseData: requestResponse,
+    })
+
+    const exchangeMock = ImportMock.mockOther(
+      Bitfinex,
+      'settings',
+      mockedExchangeSettings,
+    )
+
+    const generateAuthHeaderMock = ImportMock.mockFunction(
+      BitfinexHttpMod,
+      'generateAuthHeader',
+      signedheaderResponse,
+    )
+
+    const handleRequestErrorSpy = ImportMock.mockFunction(
+      handleBitfinexRequestErrorMod,
+      'handleBitfinexRequestError',
+      requestError,
+    )
+
+    const {
+      cache,
+      hashCacheKey,
+    } = mockAlunaCache({
+      get: getCache,
+      has: hasCache,
+      set: setCache,
+    })
+
+    return {
+      cache,
+      requestSpy,
+      hashCacheKey,
+      exchangeMock,
+      axiosCreateMock,
+      handleRequestErrorSpy,
+      assembleAxiosRequestMock,
+      generateAuthHeaderMock,
+    }
+
   }
 
   it('should defaults the http verb to get on public requests', async () => {
@@ -43,7 +123,9 @@ describe('BitfinexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: dummyResponse,
+    })
 
     await publicRequest({
       // http verb not informed
@@ -69,7 +151,10 @@ describe('BitfinexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
+    } = mockDeps({
+      requestResponse: dummyResponse,
+    })
+
 
     const responseData = await publicRequest({
       verb: AlunaHttpVerbEnum.GET,
@@ -86,55 +171,57 @@ describe('BitfinexHttp', () => {
       data: dummyBody,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
-  it("should call 'handleRequestError' if public request throws", async () => {
+  it(
+    "should call 'handleBitfinexRequestError' if public request throws",
+    async () => {
 
-    const errMsg = 'exchange offline'
-    const throwedError = new Error(errMsg)
-    const code = AlunaKeyErrorCodes.INVALID
-    const httpStatusCode = 401
+      const errMsg = 'exchange offline'
 
-    mockAxiosRequest(Promise.reject(throwedError))
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
+        message: errMsg,
+        httpStatusCode: 401,
+        metadata: { anything: errMsg },
+      })
 
-    ImportMock.mockOther(
-      BitfinexHttpMod,
-      'handleRequestError',
-      (error: Error) => new AlunaError({
-        code,
-        message: error.message,
-        metadata: error,
-        httpStatusCode,
-      }),
-    )
+      const {
+        handleRequestErrorSpy,
+      } = mockDeps({
+        requestError: alunaError,
+      })
 
-    let error
+      const url = 'dummyUrl1'
 
-    const url = 'dummyUrl1'
-
-    try {
-
-      await publicRequest({
+      const {
+        error,
+        result,
+      } = await executeAndCatch(() => publicRequest({
         verb: AlunaHttpVerbEnum.GET,
         url,
         body: dummyBody,
+      }))
+
+      expect(result).not.to.be.ok
+
+      expect(error!.message).to.be.eq(errMsg)
+      expect(error!.code).to.be.eq(alunaError.code)
+      expect(error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(alunaError.metadata)
+
+      expect(handleRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: alunaError,
       })
 
-    } catch (e) {
-
-      error = e
-
-    }
-
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(errMsg)
-    expect(error.code).to.be.eq(code)
-    expect(error.httpStatusCode).to.be.eq(httpStatusCode)
-    expect(error.metadata).to.deep.eq(throwedError)
-
-  })
+    },
+  )
 
 
   it('should execute private request just fine', async () => {
@@ -142,18 +229,10 @@ describe('BitfinexHttp', () => {
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest(dummyData)
-
-    const signedHeaders: BitfinexHttpMod.IGenerateAuthHeaderReturns = {
-      body: dummyBody,
-      headers: dummyV2Headers,
-    }
-
-    const generateAuthHeaderMock = ImportMock.mockFunction(
-      BitfinexHttpMod,
-      'generateAuthHeader',
-      signedHeaders,
-    )
+      generateAuthHeaderMock,
+    } = mockDeps({
+      requestResponse: dummyResponse,
+    })
 
     const url = 'dummyUrl2'
 
@@ -176,59 +255,60 @@ describe('BitfinexHttp', () => {
     expect(requestSpy.args[0]).to.deep.eq([{
       url,
       method: AlunaHttpVerbEnum.POST,
-      data: signedHeaders.body,
-      headers: signedHeaders.headers,
+      data: dummyBody,
+      headers: dummySignedHeaders,
     }])
 
-    expect(responseData).to.deep.eq(dummyData)
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
 
   })
 
-  it("should call 'handleRequestError' if private request throws", async () => {
+  it(
+    "should call 'handleBitfinexRequestError' if private request throws",
+    async () => {
 
-    const errMsg = 'exchange offline'
-    const throwedError = new Error(errMsg)
-    const code = AlunaKeyErrorCodes.INVALID
-    const httpStatusCode = 500
+      const errMsg = 'exchange offline'
 
-    mockAxiosRequest(Promise.reject(throwedError))
-
-    const handleRequestErrorMock = ImportMock.mockFunction(
-      BitfinexHttpMod,
-      'handleRequestError',
-      new AlunaError({
-        code,
+      const alunaError = new AlunaError({
+        code: AlunaHttpErrorCodes.REQUEST_ERROR,
         message: errMsg,
-        metadata: errMsg,
-        httpStatusCode,
-      }),
-    )
-
-    let error
-
-    try {
-
-      await privateRequest({
-        url: dummyUrl,
-        keySecret: dummyKeysecret,
+        httpStatusCode: 500,
+        metadata: { error: errMsg },
       })
 
+      const {
+        handleRequestErrorSpy,
+      } = mockDeps({
+        requestError: alunaError,
+      })
 
-    } catch (e) {
+      const url = 'dummyUrl1'
 
-      error = e
+      const {
+        error,
+        result,
+      } = await executeAndCatch(() => privateRequest({
+        url,
+        keySecret: dummyKeysecret,
+      }))
 
-    }
+      expect(result).not.to.be.ok
 
-    expect(error).to.be.ok
-    expect(error.message).to.be.eq(errMsg)
-    expect(error.code).to.be.eq(code)
-    expect(error.httpStatusCode).to.be.eq(httpStatusCode)
+      expect(error!.message).to.be.eq(errMsg)
+      expect(error!.code).to.be.eq(alunaError.code)
+      expect(error!.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+      expect(error!.metadata).to.be.eq(alunaError.metadata)
 
-    expect(handleRequestErrorMock.callCount).to.be.eq(1)
-    expect(handleRequestErrorMock.args[0][0]).to.deep.eq(throwedError).to.be.ok
+      expect(handleRequestErrorSpy.callCount).to.be.eq(1)
+      expect(handleRequestErrorSpy.args[0][0]).to.deep.eq({
+        error: alunaError,
+      })
 
-  })
+    },
+  )
 
   it('should generate signed auth header for V1 API just fine', async () => {
 
@@ -332,92 +412,12 @@ describe('BitfinexHttp', () => {
 
   })
 
-  it('should ensure request error is being handle', async () => {
-
-    const dummyErrorMsg = 'exchange is offline'
-
-    let error: AlunaError
-
-    let axiosThrowedError: any = {
-      isAxiosError: true,
-      response: {
-        request: {
-          path: 'v1/getPositions',
-        },
-        data: { message: dummyErrorMsg },
-      },
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {
-      isAxiosError: true,
-      response: {
-        status: 401,
-        data: ['error', 10010, dummyErrorMsg],
-      },
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(401)
-
-    axiosThrowedError.response.data = []
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(401)
-
-    axiosThrowedError = {
-      isAxiosError: true,
-    }
-
-    error = handleRequestError(axiosThrowedError as AxiosError)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {
-      message: dummyErrorMsg,
-    }
-
-    error = handleRequestError(axiosThrowedError as Error)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message).to.be.eq(dummyErrorMsg)
-    expect(error.httpStatusCode).to.be.eq(400)
-
-    axiosThrowedError = {}
-
-    error = handleRequestError(axiosThrowedError as any)
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(
-      error.message,
-    ).to.be.eq('Error while trying to execute Axios request')
-    expect(error.httpStatusCode).to.be.eq(400)
-
-  })
-
   it('should validate cache usage', async () => {
 
-    mockAxiosRequest(dummyData)
+    mockAxiosRequest({ responseData: dummyResponse })
 
     await validateCache({
-      cacheResult: dummyData,
+      cacheResult: dummyResponse,
       callMethod: async () => {
 
         const params: IAlunaHttpPublicParams = {

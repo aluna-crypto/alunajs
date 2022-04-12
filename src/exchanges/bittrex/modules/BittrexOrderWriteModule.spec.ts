@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
@@ -70,7 +70,7 @@ describe('BittrexOrderWriteModule', () => {
       'privateRequest',
       Promise.resolve({
         data: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -79,7 +79,7 @@ describe('BittrexOrderWriteModule', () => {
       'parse',
       Promise.resolve({
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -479,7 +479,7 @@ describe('BittrexOrderWriteModule', () => {
     ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: canceledOrderResponse, apiRequestCount: 1 },
+      { data: canceledOrderResponse, requestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
@@ -489,7 +489,7 @@ describe('BittrexOrderWriteModule', () => {
         order: {
           status: AlunaOrderStatusEnum.CANCELED,
         },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -534,7 +534,7 @@ describe('BittrexOrderWriteModule', () => {
       bittrexOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -543,7 +543,7 @@ describe('BittrexOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: BITTREX_RAW_LIMIT_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

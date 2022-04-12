@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Poloniex } from './Poloniex'
 
 
@@ -33,6 +34,22 @@ describe('Poloniex', () => {
     expect(poloniex.key).to.be.ok
     expect(poloniex.balance).to.be.ok
     expect(poloniex.order).to.be.ok
+
+  })
+
+  it('should properly validate Poloniex settings', async () => {
+
+    expect(Poloniex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Poloniex.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Poloniex.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+    expect(Poloniex.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
 
   })
 

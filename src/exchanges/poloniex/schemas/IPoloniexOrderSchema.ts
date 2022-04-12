@@ -4,7 +4,7 @@ import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 
 
 export interface IPoloniexOrderResponseReturns<T> {
-  apiRequestCount: number
+  requestCount: number
   order: T
 }
 
@@ -42,12 +42,8 @@ export interface IPoloniexOrderStatusSchema {
 }
 
 
-export interface IPoloniexOrderErrorSchema {
-  error: string
-}
-
 export interface IPoloniexOrderErrorResultSchema {
-  result: IPoloniexOrderErrorSchema
+  result: { error: string }
 }
 
 export interface IPoloniexOrderResponse {

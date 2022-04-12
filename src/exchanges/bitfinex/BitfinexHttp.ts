@@ -1,17 +1,18 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
-  IAlunaHttpResponseWithRequestCount,
+  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
+import { Bitfinex } from './Bitfinex'
+import { handleBitfinexRequestError } from './errors/handleBitfinexRequestError'
 
 
 
@@ -118,50 +119,11 @@ export const generateAuthHeader = (
 
 
 
-export const handleRequestError = (param: AxiosError | Error): AlunaError => {
-
-  let error: AlunaError
-
-  let message = 'Error while trying to execute Axios request'
-
-  if ((param as AxiosError).isAxiosError) {
-
-    const {
-      response,
-    } = param as AxiosError
-
-    if (response?.request?.path.match(new RegExp(/v1/))) {
-
-      message = response.data.message
-
-    }
-
-    error = new AlunaError({
-      message: response?.data?.[2] || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      httpStatusCode: response?.status,
-      metadata: response?.data,
-    })
-
-  } else {
-
-    error = new AlunaError({
-      message: param.message || message,
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-    })
-
-  }
-
-  return error
-
-}
-
-
-
 export const BitfinexHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (params: IAlunaHttpPublicParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async publicRequest<T> (
+    params: IAlunaHttpPublicParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -178,16 +140,17 @@ export const BitfinexHttp: IAlunaHttp = class {
 
       return {
         data: AlunaCache.cache.get<T>(cacheKey)!,
-        apiRequestCount: 0,
+        requestCount: 0,
       }
 
     }
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: body,
-    }
+      proxySettings: Bitfinex.settings.proxySettings,
+    })
 
     try {
 
@@ -197,19 +160,20 @@ export const BitfinexHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBitfinexRequestError({ error })
 
     }
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponseWithRequestCount<T>> {
+  static async privateRequest<T> (
+    params: IAlunaHttpPrivateParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
     const {
       url,
@@ -224,12 +188,13 @@ export const BitfinexHttp: IAlunaHttp = class {
       body,
     })
 
-    const requestConfig = {
+    const { requestConfig } = assembleAxiosRequestConfig({
       url,
       method: verb,
       data: signedHash.body,
       headers: signedHash.headers,
-    }
+      proxySettings: Bitfinex.settings.proxySettings,
+    })
 
     try {
 
@@ -237,12 +202,12 @@ export const BitfinexHttp: IAlunaHttp = class {
 
       return {
         data,
-        apiRequestCount: 1,
+        requestCount: 1,
       }
 
     } catch (error) {
 
-      throw handleRequestError(error)
+      throw handleBitfinexRequestError({ error })
 
     }
 

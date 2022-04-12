@@ -3,7 +3,7 @@ import { assign } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { testExchangeSpecsForOrderWriteModule } from '../../../../test/helpers/orders'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
@@ -22,6 +22,7 @@ import {
 import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { mockValidateParams } from '../../../utils/validation/validateParams.mock'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import {
   BitmexSpecs,
@@ -48,6 +49,7 @@ describe('BitmexOrderWriteModule', () => {
   const parsedOrder = BITMEX_PARSED_ORDERS[0]
   const symbolPair = 'XBTUSD'
   const id = '666'
+  const orderAnnotation = 'Sent by aluna'
 
   const mockRequest = (requestResponse: any, isReject = false) => {
 
@@ -62,7 +64,7 @@ describe('BitmexOrderWriteModule', () => {
       'get',
       {
         market: { instrument: {} },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -77,7 +79,7 @@ describe('BitmexOrderWriteModule', () => {
       'parse',
       {
         order: parsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -113,7 +115,7 @@ describe('BitmexOrderWriteModule', () => {
 
   const promises = actions.map(async (action) => {
 
-    return orderTypes.map(async (type) => {
+    return orderTypes.map(async (type, index) => {
 
       return sides.map(async (side) => {
 
@@ -166,13 +168,27 @@ describe('BitmexOrderWriteModule', () => {
               'getRaw',
               {
                 rawOrder: mockedOrderResponse,
-                apiRequestCount: 1,
+                requestCount: 1,
               },
             )
 
             const expectedRequestBody: Record<string, any> = {
               orderQty: 1,
-              text: 'Sent by Aluna',
+            }
+
+            if (index % 2 === 0) {
+
+              ImportMock.mockOther(
+                Bitmex,
+                'settings',
+                {
+                  mappings: {},
+                  orderAnnotation,
+                },
+              )
+
+              expectedRequestBody.text = orderAnnotation
+
             }
 
             let expectedHttpVerb: AlunaHttpVerbEnum
@@ -220,7 +236,6 @@ describe('BitmexOrderWriteModule', () => {
                 params.limitRate = randomLimitRate
                 expectedRequestBody.stopPx = randomStopRate
                 expectedRequestBody.price = randomLimitRate
-
                 break
 
               default:

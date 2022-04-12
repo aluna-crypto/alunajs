@@ -6,9 +6,14 @@ import {
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { BitmexHttp } from '../BitmexHttp'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
 import { BitmexPositionParser } from '../schemas/parsers/BitmexPositionParser'
@@ -62,7 +67,7 @@ describe('BitmexPositionModule', () => {
       'listRaw',
       Promise.resolve({
         rawPositions: mockedRawPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -71,7 +76,7 @@ describe('BitmexPositionModule', () => {
       'parseMany',
       {
         positions: mockedParsedPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -100,7 +105,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         market: parsedMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -144,7 +149,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         market: undefined,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -191,7 +196,7 @@ describe('BitmexPositionModule', () => {
 
       parseMock.onCall(i).returns({
         position: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })
@@ -278,7 +283,7 @@ describe('BitmexPositionModule', () => {
       'getRaw',
       Promise.resolve({
         rawPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -287,7 +292,7 @@ describe('BitmexPositionModule', () => {
       'parse',
       Promise.resolve({
         position: parsedPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -326,7 +331,7 @@ describe('BitmexPositionModule', () => {
       'get',
       Promise.resolve({
         position: mockedParsedPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -390,7 +395,7 @@ describe('BitmexPositionModule', () => {
       'getRaw',
       Promise.resolve({
         rawPosition: crossPos,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -412,7 +417,7 @@ describe('BitmexPositionModule', () => {
 
     getMock.returns(Promise.resolve({
       rawPosition: leveragePos,
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     const expectedLeverage2 = leveragePos.leverage
@@ -462,6 +467,82 @@ describe('BitmexPositionModule', () => {
       body: { symbol: position.symbol, leverage },
       keySecret: exchangeMock.getValue().keySecret,
     })
+
+  })
+
+  it('should throw error if infuccient balance to set leverage', async () => {
+
+    mockExchangeModule({ module: bitmexPositionModule })
+
+    const throwedError1 = new AlunaError({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: 'Account has zero XBt margin balance',
+      httpStatusCode: 404,
+      metadata: {
+        error: 'Account has zero XBt margin balance',
+      },
+    })
+
+    const { requestMock } = mockPrivateHttpRequest({
+      exchangeHttp: BitmexHttp,
+      requestResponse: Promise.reject(throwedError1),
+      isReject: true,
+    })
+
+    const symbolPair = 'XBTUSD'
+
+    const res = await executeAndCatch(() => bitmexPositionModule.setLeverage({
+      leverage: 10,
+      symbolPair,
+    }))
+
+    const {
+      result,
+      error,
+    } = res
+
+    expect(result).not.to.be.ok
+
+    const message = `Cannot set leverage for ${symbolPair} because of `
+      .concat('insufficient balance')
+
+    expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.message).to.be.eq(message)
+    expect(error!.metadata).to.deep.eq(throwedError1.metadata)
+
+    expect(requestMock.callCount).to.be.eq(1)
+
+
+    const throwedError2 = new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN,
+      message: 'Exchange is down',
+      httpStatusCode: 500,
+      metadata: {
+        error: 'Exchange is offline.',
+      },
+    })
+
+    requestMock.returns(Promise.reject(throwedError2))
+
+    const res2 = await executeAndCatch(() => bitmexPositionModule.setLeverage({
+      leverage: 10,
+      symbolPair,
+    }))
+
+    const {
+      result: result2,
+      error: error2,
+    } = res2
+
+    expect(result2).not.to.be.ok
+
+    expect(error2!.code).to.be.eq(throwedError2.code)
+    expect(error2!.httpStatusCode).to.be.eq(throwedError2.httpStatusCode)
+    expect(error2!.message).to.be.eq(throwedError2.message)
+    expect(error2!.metadata).to.deep.eq(throwedError2.metadata)
+
+    expect(requestMock.callCount).to.be.eq(2)
 
   })
 

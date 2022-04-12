@@ -42,20 +42,20 @@ describe('BinanceKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     const {
       key: {
         permissions: permissions1,
-      }, apiRequestCount,
+      }, requestCount,
     } = await binanceKeyModule.fetchDetails()
 
     expect(permissions1.read).not.to.be.ok
     expect(permissions1.trade).not.to.be.ok
     expect(permissions1.withdraw).not.to.be.ok
 
-    expect(apiRequestCount).to.be.eq(3)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 

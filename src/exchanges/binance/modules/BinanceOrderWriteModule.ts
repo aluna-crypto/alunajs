@@ -55,7 +55,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -118,16 +118,12 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       from: type,
     })
 
-    apiRequestCount += 1
-
     const body: IBinanceOrderRequest = {
       side: BinanceOrderSideAdapter.translateToBinance({ from: side }),
       symbol: symbolPair,
       type: translatedOrderType,
       quantity: amount,
     }
-
-    apiRequestCount += 1
 
     if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
@@ -146,7 +142,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
       const {
         data: createdOrder,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await BinanceHttp
         .privateRequest<IBinanceOrderSchema>({
           url: `${PROD_BINANCE_URL}/api/v3/order`,
@@ -155,7 +151,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
         })
 
       placedOrder = createdOrder
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -180,27 +176,23 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BinanceMarketModule.listRaw()
-
-    apiRequestCount += 1
 
     const symbolInfo = rawMarkets.find((rM) => rM.symbol === placedOrder.symbol)
 
-    const { order, apiRequestCount: parseCount } = await this.parse({
+    const { order, requestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
       symbolInfo,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + parseCount
       + listRawCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -218,7 +210,7 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const body = {
       orderId: id,
@@ -231,18 +223,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
       const {
         data: canceledOrderResponse,
-        apiRequestCount: requestCount,
-      } = await BinanceHttp.privateRequest<IBinanceOrderSchema>(
-        {
-          verb: AlunaHttpVerbEnum.DELETE,
-          url: `${PROD_BINANCE_URL}/api/v3/order`,
-          keySecret: this.exchange.keySecret,
-          body,
-        },
-      )
+        requestCount: privateRequestCount,
+      } = await BinanceHttp.privateRequest<IBinanceOrderSchema>({
+        verb: AlunaHttpVerbEnum.DELETE,
+        url: `${PROD_BINANCE_URL}/api/v3/order`,
+        keySecret: this.exchange.keySecret,
+        body,
+      })
 
       canceledOrder = canceledOrderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -259,18 +249,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
 
     }
 
-    const { apiRequestCount: getRequestCount, order } = await this.get({
+    const { requestCount: getRequestCount, order } = await this.get({
       id: canceledOrder.orderId.toString(),
       symbolPair: canceledOrder.symbol,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + getRequestCount
+    const totalRequestCount = requestCount + getRequestCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -297,18 +285,16 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { apiRequestCount: cancelRequestCount } = await this.cancel({
+    const { requestCount: cancelRequestCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
-
     const {
       order: newOrder,
-      apiRequestCount: placeRequestCount,
+      requestCount: placeRequestCount,
     } = await this.place({
       rate,
       side,
@@ -318,15 +304,13 @@ export class BinanceOrderWriteModule extends BinanceOrderReadModule implements I
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + placeRequestCount
       + cancelRequestCount
 
     return {
       order: newOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

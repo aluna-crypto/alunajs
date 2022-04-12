@@ -49,15 +49,15 @@ describe('BinanceOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { data: binanceRawOrders, apiRequestCount: 1 },
+      { data: binanceRawOrders, requestCount: 1 },
     )
 
     const {
       rawOrders,
-      apiRequestCount,
+      requestCount,
     } = await binanceOrderReadModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(1)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -116,7 +116,7 @@ describe('BinanceOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'listRaw',
-      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
+      { rawOrders: ['raw-orders'], requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
@@ -124,7 +124,7 @@ describe('BinanceOrderReadModule', () => {
       'parseMany',
       {
         orders: binanceParsedOrders,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -184,7 +184,7 @@ describe('BinanceOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { data: BINANCE_RAW_ORDER, apiRequestCount: 1 },
+      { data: BINANCE_RAW_ORDER, requestCount: 1 },
     )
 
     const symbolPair = 'symbol'
@@ -217,7 +217,7 @@ describe('BinanceOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'getRaw',
-      { rawOrder, apiRequestCount: 1 },
+      { rawOrder, requestCount: 1 },
     )
 
     const marketListRawMock = ImportMock.mockFunction(
@@ -225,14 +225,14 @@ describe('BinanceOrderReadModule', () => {
       'listRaw',
       {
         rawMarkets: rawMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderReadModule,
       'parse',
-      { order: BINANCE_PARSED_ORDER, apiRequestCount: 1 },
+      { order: BINANCE_PARSED_ORDER, requestCount: 1 },
     )
 
     const params = {
@@ -312,7 +312,7 @@ describe('BinanceOrderReadModule', () => {
       'listRaw',
       Promise.resolve({
         rawMarkets: rawMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

@@ -46,17 +46,17 @@ describe('alunaPermissions', () => {
       'privateRequest',
       Promise.resolve({
         data: BITFINEX_RAW_KEY,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
     resquestMock.onFirstCall().returns({
       data: BITFINEX_RAW_KEY,
-      apiRequestCount: 1,
+      requestCount: 1,
     })
     resquestMock.onSecondCall().returns({
       data: ['userId'],
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const parseDetailsMock = ImportMock.mockFunction(
@@ -64,7 +64,7 @@ describe('alunaPermissions', () => {
       'parseDetails',
       {
         key: BITFINEX_PARSED_KEY,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -185,7 +185,7 @@ describe('alunaPermissions', () => {
       'parsePermissions',
       {
         key: BITFINEX_PARSED_KEY.permissions,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -214,7 +214,7 @@ describe('alunaPermissions', () => {
 
     parsePermissionsMock.returns({
       key: newAlunaPermissions,
-      apiRequestCount: 1,
+      requestCount: 1,
     })
 
     const { key: alunaKey2 } = bitfinexKeyModule.parseDetails({

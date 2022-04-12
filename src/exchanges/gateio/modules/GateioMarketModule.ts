@@ -24,14 +24,14 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     const {
       data: rawMarkets,
-      apiRequestCount,
+      requestCount,
     } = await publicRequest<IGateioMarketSchema[]>({
       url: `${PROD_GATEIO_URL}/spot/tickers`,
     })
 
     return {
       rawMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -40,29 +40,25 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
       rawMarkets,
     } = await GateioMarketModule.listRaw()
 
-    apiRequestCount += 1
-
     const {
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
       markets: parsedMarkets,
     } = GateioMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -79,7 +75,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -92,16 +88,16 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     const { rawMarkets } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = rawMarkets.map((rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedMarket
 
@@ -111,7 +107,7 @@ export const GateioMarketModule: IAlunaMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

@@ -3,6 +3,7 @@ import { map } from 'lodash'
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaPositionCloseParams,
@@ -34,30 +35,25 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
   async list (): Promise<IAlunaPositionListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawPositions,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       positions: parsedPositions,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawPositions })
 
-    apiRequestCount += 1
-
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       positions: parsedPositions,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -69,7 +65,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const {
       data: rawPositions,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitmexPositionSchema[]>({
       url: `${PROD_BITMEX_URL}/position`,
       keySecret: this.exchange.keySecret,
@@ -79,7 +75,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     return {
       rawPositions,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -87,29 +83,25 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
   async get (params: IAlunaPositionGetParams)
     : Promise<IAlunaPositionGetReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawPosition,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     const {
       position: parsedPosition,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawPosition })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
           + getRawCount
           + parseCount
 
     return {
       position: parsedPosition,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -140,7 +132,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const {
       data,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<Array<IBitmexPositionSchema>>({
       url: `${PROD_BITMEX_URL}/position`,
       body: { filter: { symbol: symbolPair } },
@@ -152,7 +144,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     return {
       rawPosition,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -179,34 +171,30 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { privateRequest } = BitmexHttp
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await privateRequest<IBitmexOrderSchema>({
       url: `${PROD_BITMEX_URL}/order`,
       body: { execInst: 'Close', symbol: symbolPair },
       keySecret: this.exchange.keySecret,
     })
 
-    apiRequestCount += 1
-
     const {
       position: parsedPosition,
-      apiRequestCount: getCount,
+      requestCount: getCount,
     } = await this.get({
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
-      + requestCount
+    const totalRequestCount = requestCount
+      + privateRequestCount
       + getCount
 
     return {
       position: parsedPosition,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -219,16 +207,14 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { symbol } = rawPosition
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       market: parsedMarket,
-      apiRequestCount: getCount,
+      requestCount: getCount,
     } = await BitmexMarketModule.get({
       id: symbol,
     })
-
-    apiRequestCount += 1
 
     if (!parsedMarket) {
 
@@ -257,13 +243,11 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
       instrument: instrument!,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + getCount
+    const totalRequestCount = requestCount + getCount
 
     return {
       position: parsedPosition,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -274,18 +258,18 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { rawPositions } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const promises = map(rawPositions, async (rawPosition) => {
 
       const {
         position: parsedPosition,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = await this.parse({
         rawPosition,
       })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedPosition
 
@@ -297,7 +281,7 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     return {
       positions: parsedPositions,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -308,27 +292,25 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { symbolPair } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawPosition: {
         leverage,
         crossMargin,
       },
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw({ symbolPair })
-
-    apiRequestCount += 1
 
     const computedLeverage = crossMargin
       ? 0
       : leverage
 
-    const totalApiRequestCount = apiRequestCount + getRawCount
+    const totalRequestCount = requestCount + getRawCount
 
     return {
       leverage: computedLeverage,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -344,20 +326,54 @@ export class BitmexPositionModule extends AAlunaModule implements Required<IAlun
 
     const { privateRequest } = BitmexHttp
 
-    const {
-      data: {
-        leverage: settedLeverage,
-      },
-      apiRequestCount,
-    } = await privateRequest<IBitmexPositionSchema>({
-      url: `${PROD_BITMEX_URL}/position/leverage`,
-      body: { symbol: symbolPair, leverage },
-      keySecret: this.exchange.keySecret,
-    })
+    try {
 
-    return {
-      leverage: settedLeverage,
-      apiRequestCount,
+      const {
+        requestCount,
+        data: {
+          leverage: settedLeverage,
+        },
+      } = await privateRequest<IBitmexPositionSchema>({
+        url: `${PROD_BITMEX_URL}/position/leverage`,
+        body: { symbol: symbolPair, leverage },
+        keySecret: this.exchange.keySecret,
+      })
+
+      return {
+        requestCount,
+        leverage: settedLeverage,
+      }
+
+    } catch (err) {
+
+      let {
+        code,
+        message,
+        httpStatusCode,
+      } = err
+
+      if (/(?=.*Account has zero)(?=.*margin balance).+/g.test(err.message)) {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+        message = `Cannot set leverage for ${symbolPair} because of `
+          .concat('insufficient balance')
+
+        httpStatusCode = 400
+
+      }
+
+      const alunaError = new AlunaError({
+        code,
+        message,
+        httpStatusCode,
+        metadata: err.metadata,
+      })
+
+      BitmexLog.error(alunaError)
+
+      throw alunaError
+
     }
 
   }

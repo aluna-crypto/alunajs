@@ -25,7 +25,7 @@ export const mockPublicHttpRequest = (params: {
       ? requestResponse
       : Promise.resolve({
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
   )
 
@@ -54,7 +54,7 @@ export const mockPrivateHttpRequest = (params: {
       ? requestResponse
       : Promise.resolve({
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
   )
 
@@ -64,9 +64,31 @@ export const mockPrivateHttpRequest = (params: {
 
 
 
-export const mockAxiosRequest = (response?: any) => {
+export const mockAxiosRequest = (
+  params: {
+    responseData?: any,
+    error?: any,
+  } = { responseData: {} },
+) => {
 
-  const requestSpy = Sinon.spy(async () => response || {})
+  const {
+    error,
+    responseData,
+  } = params
+
+  let response: any
+
+  if (error) {
+
+    response = async () => Promise.reject(error)
+
+  } else {
+
+    response = async () => Promise.resolve({ data: responseData })
+
+  }
+
+  const requestSpy = Sinon.spy(response)
 
   const axiosCreateMock = ImportMock.mockFunction(
     axios,

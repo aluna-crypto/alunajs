@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Bittrex } from './Bittrex'
 
 
@@ -35,5 +36,22 @@ describe('Bittrex', () => {
     expect(bittrex.order).to.be.ok
 
   })
+
+  it('should properly validate Bittrex settings', async () => {
+
+    expect(Bittrex.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Bittrex.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Bittrex.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
+    expect(Bittrex.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+
+  })
+
 
 })

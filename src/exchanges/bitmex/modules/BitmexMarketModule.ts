@@ -29,40 +29,36 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     BitmexLog.info('fetching Bitmex markets')
 
-    const { rawSymbols, apiRequestCount } = await BitmexSymbolModule.listRaw()
+    const { rawSymbols, requestCount } = await BitmexSymbolModule.listRaw()
 
     return {
       rawMarkets: rawSymbols,
-      apiRequestCount: apiRequestCount + 1,
+      requestCount,
     }
 
   }
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BitmexMarketModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BitmexMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -76,7 +72,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     const {
       data,
-      apiRequestCount,
+      requestCount,
     } = await publicRequest<IBitmexMarketsSchema[]>({
       url: `${PROD_BITMEX_URL}/instrument?symbol=${id}`,
     })
@@ -86,6 +82,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
       const alunaError = new AlunaError({
         code: AlunaGenericErrorCodes.NOT_FOUND,
         message: `No market found for: ${id}`,
+        metadata: data,
       })
 
       BitmexLog.error(alunaError)
@@ -96,7 +93,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     return {
       rawMarket: data[0],
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -106,29 +103,25 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     const { id } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
       rawMarket,
     } = await this.getRaw({ id })
 
-    apiRequestCount += 1
-
     const {
       market: parsedMarket,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = this.parse({ rawMarket })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
           + getRawCount
           + parseCount
 
     return {
       market: parsedMarket,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
 
@@ -146,7 +139,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -157,16 +150,16 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     const { rawMarkets } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = map(rawMarkets, (rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedMarket
 
@@ -176,7 +169,7 @@ export const BitmexMarketModule: Required<IAlunaMarketModule> = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

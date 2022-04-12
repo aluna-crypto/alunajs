@@ -55,4 +55,6 @@ export interface IAlunaExchangeStatic {
     settings: IAlunaSettingsSchema,
   }): void
 
+  validateSettings (params: IAlunaSettingsSchema): boolean
+
 }

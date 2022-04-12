@@ -36,7 +36,7 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     const invalidCurrencyErrorMock = new AlunaError({
@@ -51,7 +51,7 @@ describe('GateioKeyModule', () => {
       data: {
         user_id: 1234,
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     requestMock.onSecondCall().returns(Promise.reject(invalidCurrencyErrorMock))
@@ -106,7 +106,7 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     requestMock
@@ -165,13 +165,13 @@ describe('GateioKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     const keyAccountResponse = {
       data: {
         user_id: 1234,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     }
 
@@ -229,14 +229,14 @@ describe('GateioKeyModule', () => {
     const requestMock1 = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     const keyAccountResponse = {
       data: {
         user_id: 1234,
       },
-      apiRequestCount: 1,
+      requestCount: 1,
     }
 
     requestMock1
@@ -286,7 +286,7 @@ describe('GateioKeyModule', () => {
     const requestMock = ImportMock.mockFunction(
       GateioHttp,
       'privateRequest',
-      { data: requestResponse, apiRequestCount: 1 },
+      { data: requestResponse, requestCount: 1 },
     )
 
     requestMock.onSecondCall().returns(Promise.reject(alunaErrorMock))
@@ -391,7 +391,7 @@ describe('GateioKeyModule', () => {
       'privateRequest',
       Promise.resolve({
         data: requestResponse,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

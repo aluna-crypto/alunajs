@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPublicHttpRequest } from '../../../../test/helpers/http'
+import { mockPublicHttpRequest } from '../../../../test/helpers/http/axios'
 import { mockAlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping.mock'
 import { BitmexHttp } from '../BitmexHttp'
 import {
@@ -45,7 +45,7 @@ describe('BitmexSymbolModule', () => {
       'listRaw',
       {
         rawSymbols: BITMEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -54,7 +54,7 @@ describe('BitmexSymbolModule', () => {
       'parseMany',
       {
         symbols: BITMEX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -164,7 +164,7 @@ describe('BitmexSymbolModule', () => {
 
       parseMock.onCall(i).returns({
         symbol: rawSymbol,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

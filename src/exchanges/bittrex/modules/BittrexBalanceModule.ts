@@ -27,7 +27,7 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { keySecret } = this.exchange
 
-    const { data: rawAccountInfo, apiRequestCount } = await BittrexHttp
+    const { data: rawAccountInfo, requestCount } = await BittrexHttp
       .privateRequest<IBittrexBalanceSchema[]>({
         verb: AlunaHttpVerbEnum.GET,
         url: `${PROD_BITTREX_URL}/balances`,
@@ -35,7 +35,7 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
       })
 
     return {
-      apiRequestCount,
+      requestCount,
       rawBalances: rawAccountInfo,
     }
 
@@ -45,28 +45,24 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { rawBalances, apiRequestCount: listRawCount } = await this.listRaw()
-
-    apiRequestCount += 1
+    const { rawBalances, requestCount: listRawCount } = await this.listRaw()
 
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
-
-    apiRequestCount += 1
 
     BittrexLog.info(`parsed ${parsedBalances.length} balances for Bittrex`)
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       balances: parsedBalances,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -100,7 +96,7 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     return {
       balance,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -113,7 +109,7 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { rawBalances } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -128,10 +124,10 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
           const {
             balance: parsedBalance,
-            apiRequestCount: parseCount,
+            requestCount: parseCount,
           } = this.parse({ rawBalance })
 
-          apiRequestCount += parseCount + 1
+          requestCount += parseCount
 
           accumulator.push(parsedBalance)
 
@@ -145,7 +141,7 @@ export class BittrexBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     return {
       balances: parsedBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }

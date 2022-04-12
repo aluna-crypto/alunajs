@@ -32,7 +32,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const {
       data: rawAccountInfo,
-      apiRequestCount,
+      requestCount,
     } = await BinanceHttp
       .privateRequest<IBinanceKeyAccountSchema>({
         verb: AlunaHttpVerbEnum.GET,
@@ -44,7 +44,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     return {
       rawBalances: balances,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -53,31 +53,27 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
       rawBalances,
     } = await this.listRaw()
 
-    apiRequestCount += 1
-
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
-
-    apiRequestCount += 1
 
     BinanceLog.info(`parsed ${parsedBalances.length} balances for Binance`)
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + parseManyCount
       + listRawCount
 
     return {
       balances: parsedBalances,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -118,7 +114,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     return {
       balance: parsedBalance,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -131,7 +127,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     const { rawBalances } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedBalances = rawBalances.reduce<IAlunaBalanceSchema[]>(
       (accumulator, rawBalance) => {
@@ -147,10 +143,10 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
           const {
             balance: parsedBalance,
-            apiRequestCount: parseCount,
+            requestCount: parseCount,
           } = this.parse({ rawBalance })
 
-          apiRequestCount += parseCount + 1
+          requestCount += parseCount
 
           accumulator.push(parsedBalance)
 
@@ -164,7 +160,7 @@ export class BinanceBalanceModule extends AAlunaModule implements IAlunaBalanceM
 
     return {
       balances: parsedBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }

@@ -31,29 +31,25 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
   async list (): Promise<IAlunaPositionListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawPositions,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       positions: parsedPositions,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawPositions })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       positions: parsedPositions,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -64,7 +60,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const {
       data: rawPositions,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitfinexPositionSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions',
       keySecret: this.exchange.keySecret,
@@ -72,7 +68,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     return {
       rawPositions,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -80,29 +76,25 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
   async get (params: IAlunaPositionGetParams)
     : Promise<IAlunaPositionGetReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawPosition,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     const {
       position: parsedPosition,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawPosition })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
        + getRawCount
        + parseCount
 
     return {
       position: parsedPosition,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -117,7 +109,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const {
       data,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<Array<IBitfinexPositionSchema>>({
       url: 'https://api.bitfinex.com/v2/auth/r/positions/audit',
       body: { id: [Number(id)], limit: 1 },
@@ -130,6 +122,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
         code: AlunaPositionErrorCodes.NOT_FOUND,
         message: 'Position not found',
         httpStatusCode: 400,
+        metadata: data,
       })
 
       BitfinexLog.error(error)
@@ -140,7 +133,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     return {
       rawPosition: data[0],
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -165,11 +158,9 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     }
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { position, apiRequestCount: getCount } = await this.get({ id })
-
-    apiRequestCount += 1
+    const { position, requestCount: getCount } = await this.get({ id })
 
     if (position.status === AlunaPositionStatusEnum.CLOSED) {
 
@@ -177,6 +168,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
         code: AlunaPositionErrorCodes.ALREADY_CLOSED,
         message: 'Position is already closed',
         httpStatusCode: 400,
+        metadata: position,
       })
 
       BitfinexLog.error(error)
@@ -186,10 +178,8 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     }
 
     const {
-      apiRequestCount: placeMarketOrderCount,
+      requestCount: placeMarketOrderCount,
     } = await this.placeMarketOrderToClosePosition({ position })
-
-    apiRequestCount += 1
 
     const closedPosition: IAlunaPositionSchema = {
       ...position,
@@ -198,13 +188,13 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     }
 
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + getCount
       + placeMarketOrderCount
 
     return {
       position: closedPosition,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -221,7 +211,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     return {
       position: parsedPosition,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -234,7 +224,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     const parsedPositionsPromise: IAlunaPositionParseReturns[] = []
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     each(rawPositions, (rawPosition) => {
 
@@ -247,7 +237,6 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
       const parsePositionResp = this.parse({ rawPosition })
 
-      apiRequestCount += 1
 
       parsedPositionsPromise.push(parsePositionResp as any)
 
@@ -260,10 +249,10 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
         const {
           position: parsedPosition,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = parsedPositionResp
 
-        apiRequestCount += parseCount
+        requestCount += parseCount
 
         return parsedPosition
 
@@ -273,14 +262,14 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
 
     return {
       positions: parsedPositions,
-      apiRequestCount,
+      requestCount,
     }
 
   }
 
   private async placeMarketOrderToClosePosition (params: {
     position: IAlunaPositionSchema,
-  }): Promise<{ apiRequestCount: number }> {
+  }): Promise<{ requestCount: number }> {
 
     const {
       position: {
@@ -295,7 +284,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
       ? AlunaOrderSideEnum.SELL
       : AlunaOrderSideEnum.BUY
 
-    const { apiRequestCount } = await this.exchange.order.place({
+    const { requestCount } = await this.exchange.order.place({
       account,
       side: invertedOrderSide,
       amount,
@@ -304,7 +293,7 @@ export class BitfinexPositionModule extends AAlunaModule implements IAlunaPositi
     })
 
     return {
-      apiRequestCount,
+      requestCount,
     }
 
   }

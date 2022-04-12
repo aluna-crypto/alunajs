@@ -36,7 +36,7 @@ describe('ValrBalanceModule', () => {
       'privateRequest',
       {
         data: VALR_RAW_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -81,7 +81,7 @@ describe('ValrBalanceModule', () => {
       'listRaw',
       {
         rawBalances: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -90,7 +90,7 @@ describe('ValrBalanceModule', () => {
       'parseMany',
       {
         balances: VALR_PARSED_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -187,17 +187,17 @@ describe('ValrBalanceModule', () => {
       .onFirstCall()
       .returns({
         balance: VALR_PARSED_BALANCES[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         balance: VALR_PARSED_BALANCES[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         balance: VALR_PARSED_BALANCES[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     const { balances: parsedBalances } = valrBalanceModule.parseMany({

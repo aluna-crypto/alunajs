@@ -51,7 +51,7 @@ describe('BitfinexBalanceModule', () => {
       'privateRequest',
       {
         data: BITFINEX_RAW_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -79,7 +79,7 @@ describe('BitfinexBalanceModule', () => {
 
       parseMock.onCall(i).returns({
         balance: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })
@@ -167,7 +167,7 @@ describe('BitfinexBalanceModule', () => {
       'listRaw',
       Promise.resolve({
         rawBalances: BITFINEX_RAW_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -176,7 +176,7 @@ describe('BitfinexBalanceModule', () => {
       'parseMany',
       {
         balances: BITFINEX_PARSED_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -206,7 +206,7 @@ describe('BitfinexBalanceModule', () => {
       'privateRequest',
       Promise.resolve({
         data: [tradableBalance],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -249,7 +249,7 @@ describe('BitfinexBalanceModule', () => {
     // SHORT
     requestMock.returns(Promise.resolve({
       data: [tradableBalance],
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     params.side = AlunaOrderSideEnum.SELL

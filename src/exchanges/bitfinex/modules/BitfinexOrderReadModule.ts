@@ -29,7 +29,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const {
       data: rawOrders,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitfinexOrderSchema[]>({
       url: 'https://api.bitfinex.com/v2/auth/r/orders',
       keySecret: this.exchange.keySecret,
@@ -37,36 +37,32 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     return {
       rawOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrders,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       orders: parsedOrders,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
             + listRawCount
             + parseManyCount
 
     return {
       orders: parsedOrders,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -87,18 +83,18 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
     const { privateRequest } = BitfinexHttp
 
     let response: IBitfinexOrderSchema[]
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       data: getRawOrders,
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await privateRequest<IBitfinexOrderSchema[]>({
       url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}`,
       keySecret: this.exchange.keySecret,
       body: { id: [id] },
     })
 
-    apiRequestCount += requestCount
+    requestCount += privateRequestCount
     response = getRawOrders
 
     // order do not exists or might not be 'open'
@@ -106,7 +102,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
       const {
         data: getRawOrderHistory,
-        apiRequestCount: requestCount2,
+        requestCount: requestCount2,
       } = await privateRequest<IBitfinexOrderSchema[]>({
         url: `https://api.bitfinex.com/v2/auth/r/orders/${symbolPair}/hist`,
         keySecret: this.exchange.keySecret,
@@ -114,7 +110,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
       })
 
       response = getRawOrderHistory
-      apiRequestCount += requestCount2
+      requestCount += requestCount2
 
       if (!response.length) {
 
@@ -136,7 +132,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     return {
       rawOrder,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -144,29 +140,25 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
   public async get (params: IAlunaOrderGetParams)
     : Promise<IAlunaOrderGetReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
         + getRawCount
         + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -183,7 +175,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     return {
       order: parsedOrder,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -194,7 +186,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     const { rawOrders } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const ordersPromises = rawOrders.reduce(
       (acc, rawOrder) => {
@@ -215,7 +207,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
         const parseOrderResponse = this.parse({ rawOrder })
 
-        apiRequestCount += 1
+
 
         acc.push(parseOrderResponse)
 
@@ -228,9 +220,9 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
       return res.map((parsedOrderResp) => {
 
-        const { order, apiRequestCount: parseCount } = parsedOrderResp
+        const { order, requestCount: parseCount } = parsedOrderResp
 
-        apiRequestCount += parseCount
+        requestCount += parseCount
 
         return order
 
@@ -242,7 +234,7 @@ export class BitfinexOrderReadModule extends AAlunaModule implements IAlunaOrder
 
     return {
       orders: parsedOrders,
-      apiRequestCount,
+      requestCount,
     }
 
   }

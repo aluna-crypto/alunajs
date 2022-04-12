@@ -23,6 +23,7 @@ export const validateParams = <T>(
       httpStatusCode: 400,
       message: error.message,
       code: AlunaGenericErrorCodes.PARAM_ERROR,
+      metadata: error,
     })
 
   }

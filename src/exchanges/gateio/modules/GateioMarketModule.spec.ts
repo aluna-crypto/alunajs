@@ -28,7 +28,7 @@ describe('GateioMarketModule', () => {
     requestMock
       .onFirstCall().returns(Promise.resolve({
         data: GATEIO_RAW_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
     const { rawMarkets } = await GateioMarketModule.listRaw()
@@ -50,13 +50,13 @@ describe('GateioMarketModule', () => {
     const listRawMock = ImportMock.mockFunction(
       GateioMarketModule,
       'listRaw',
-      { rawMarkets: rawListMock, apiRequestCount: 1 },
+      { rawMarkets: rawListMock, requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       GateioMarketModule,
       'parseMany',
-      { markets: GATEIO_PARSED_MARKETS, apiRequestCount: 1 },
+      { markets: GATEIO_PARSED_MARKETS, requestCount: 1 },
     )
 
     const { markets: parsedMarkets } = await GateioMarketModule.list()
@@ -150,11 +150,11 @@ describe('GateioMarketModule', () => {
 
     parseMock
       .onFirstCall()
-      .returns({ market: GATEIO_PARSED_MARKETS[0], apiRequestCount: 1 })
+      .returns({ market: GATEIO_PARSED_MARKETS[0], requestCount: 1 })
       .onSecondCall()
-      .returns({ market: GATEIO_PARSED_MARKETS[1], apiRequestCount: 1 })
+      .returns({ market: GATEIO_PARSED_MARKETS[1], requestCount: 1 })
       .onThirdCall()
-      .returns({ market: GATEIO_PARSED_MARKETS[2], apiRequestCount: 1 })
+      .returns({ market: GATEIO_PARSED_MARKETS[2], requestCount: 1 })
 
 
     const { markets } = GateioMarketModule.parseMany({

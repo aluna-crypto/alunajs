@@ -26,7 +26,7 @@ describe('BitfinexSymbolModule', () => {
       'publicRequest',
       Promise.resolve({
         data: BITFINEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -46,7 +46,7 @@ describe('BitfinexSymbolModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: BITFINEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -55,7 +55,7 @@ describe('BitfinexSymbolModule', () => {
       'parseMany',
       {
         symbols: BITFINEX_PARSED_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -85,7 +85,7 @@ describe('BitfinexSymbolModule', () => {
 
     expect(parseManyMock.returned({
       symbols: parsedSymbols,
-      apiRequestCount: 1,
+      requestCount: 1,
     })).to.be.ok
 
   })
@@ -140,7 +140,7 @@ describe('BitfinexSymbolModule', () => {
 
       parseMock.onCall(index).returns({
         symbol: parsed,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

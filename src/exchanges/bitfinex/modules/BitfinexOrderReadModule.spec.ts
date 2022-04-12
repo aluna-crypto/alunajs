@@ -46,7 +46,7 @@ describe('BitfinexOrderReadModule', () => {
       'privateRequest',
       Promise.resolve({
         data: BITFINEX_RAW_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -70,7 +70,7 @@ describe('BitfinexOrderReadModule', () => {
       'listRaw',
       Promise.resolve({
         rawOrders: BITFINEX_RAW_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -79,7 +79,7 @@ describe('BitfinexOrderReadModule', () => {
       'parseMany',
       Promise.resolve({
         orders: BITFINEX_PARSED_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -108,7 +108,7 @@ describe('BitfinexOrderReadModule', () => {
       'privateRequest',
       Promise.resolve({
         data: [returnedRawOrder],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -145,12 +145,12 @@ describe('BitfinexOrderReadModule', () => {
       .onFirstCall()
       .returns(Promise.resolve({
         data: [],
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
       .onSecondCall()
       .returns(Promise.resolve({
         data: [returnedRawOrder],
-        apiRequestCount: 1,
+        requestCount: 1,
       }))
 
     const symbolPair = 'symbol'
@@ -183,7 +183,7 @@ describe('BitfinexOrderReadModule', () => {
       'privateRequest',
       Promise.resolve({
         data: [],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -226,7 +226,7 @@ describe('BitfinexOrderReadModule', () => {
       'getRaw',
       Promise.resolve({
         rawOrder: returnedRawOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -235,7 +235,7 @@ describe('BitfinexOrderReadModule', () => {
       'parse',
       Promise.resolve({
         order: returnedParsedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -271,7 +271,7 @@ describe('BitfinexOrderReadModule', () => {
 
       parseMock.onCall(i).returns({
         order: rawOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

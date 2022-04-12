@@ -27,7 +27,7 @@ describe('ValrMarketModule', () => {
       'fetchMarkets',
       Promise.resolve({
         markets: mockRawMarkets,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -36,7 +36,7 @@ describe('ValrMarketModule', () => {
       'fetchCurrencyPairs',
       Promise.resolve({
         currencyPairs: mockRawCurrencyPairs,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -101,7 +101,7 @@ describe('ValrMarketModule', () => {
       'publicRequest',
       {
         data: VALR_RAW_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -123,7 +123,7 @@ describe('ValrMarketModule', () => {
       'publicRequest',
       {
         data: VALR_RAW_CURRENCY_PAIRS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -149,7 +149,7 @@ describe('ValrMarketModule', () => {
       'listRaw',
       {
         rawMarkets: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -158,7 +158,7 @@ describe('ValrMarketModule', () => {
       'parseMany',
       {
         markets: VALR_PARSED_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -263,17 +263,17 @@ describe('ValrMarketModule', () => {
       .onFirstCall()
       .returns({
         market: VALR_PARSED_MARKETS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         market: VALR_PARSED_MARKETS[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         market: VALR_PARSED_MARKETS[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     const { markets } = ValrMarketModule.parseMany({

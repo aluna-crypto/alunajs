@@ -46,15 +46,15 @@ describe('BittrexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: bittrexRawOrders, apiRequestCount: 1 },
+      { data: bittrexRawOrders, requestCount: 1 },
     )
 
     const {
       rawOrders,
-      apiRequestCount,
+      requestCount,
     } = await bittrexOrderReadModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(1)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -114,13 +114,13 @@ describe('BittrexOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'listRaw',
-      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
+      { rawOrders: ['raw-orders'], requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'parseMany',
-      { orders: bittrexParsedOrders, apiRequestCount: 1 },
+      { orders: bittrexParsedOrders, requestCount: 1 },
     )
 
     const { orders: parsedOrders } = await bittrexOrderReadModule.list()
@@ -181,7 +181,7 @@ describe('BittrexOrderReadModule', () => {
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
       'privateRequest',
-      { data: BITTREX_RAW_LIMIT_ORDER, apiRequestCount: 1 },
+      { data: BITTREX_RAW_LIMIT_ORDER, requestCount: 1 },
     )
 
     const symbolPair = 'symbol'
@@ -212,13 +212,13 @@ describe('BittrexOrderReadModule', () => {
     const rawOrderMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'getRaw',
-      { rawOrder: 'rawOrder', apiRequestCount: 1 },
+      { rawOrder: 'rawOrder', requestCount: 1 },
     )
 
     const parseMock = ImportMock.mockFunction(
       bittrexOrderReadModule,
       'parse',
-      { order: BITTREX_PARSED_ORDER, apiRequestCount: 1 },
+      { order: BITTREX_PARSED_ORDER, requestCount: 1 },
     )
 
     const params = {

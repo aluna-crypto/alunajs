@@ -39,7 +39,7 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     const {
       data: rawBalances,
-      apiRequestCount,
+      requestCount,
     } = await privateRequest<IBitmexBalanceSchema[]>({
       verb: AlunaHttpVerbEnum.GET,
       url: `${PROD_BITMEX_URL}/user/margin`,
@@ -49,36 +49,32 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     return {
       rawBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawBalances,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await this.listRaw()
-
-    apiRequestCount += 1
 
     const {
       balances: parsedBalances,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
         + listRawCount
         + parseManyCount
 
     return {
       balances: parsedBalances,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -95,7 +91,7 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     return {
       balance: parsedBalance,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -106,18 +102,18 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     const { rawBalances } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedBalances = map(rawBalances, (rawBalance) => {
 
       const {
         balance: parsedBalance,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({
         rawBalance,
       })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedBalance
 
@@ -127,7 +123,7 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     return {
       balances: parsedBalances,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -143,15 +139,13 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     const { symbolPair } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     BitmexLog.info(`fetching Bitmex tradable balance for ${symbolPair}`)
 
-    const { market, apiRequestCount: getCount } = await BitmexMarketModule.get({
+    const { market, requestCount: getCount } = await BitmexMarketModule.get({
       id: symbolPair,
     })
-
-    apiRequestCount += 1
 
     const { instrument } = market
 
@@ -162,11 +156,7 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
       symbolMappings: Bitmex.settings.mappings,
     })
 
-    apiRequestCount += 1
-
     const { balances } = await this.list()
-
-    apiRequestCount += 1
 
     const desiredAsset = find(balances, ({ symbolId }) => {
 
@@ -174,15 +164,15 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     })
 
-    let totalApiRequestCount = 0
+    let totalRequestCount = 0
 
     if (!desiredAsset) {
 
-      totalApiRequestCount = apiRequestCount + getCount
+      totalRequestCount = requestCount + getCount
 
       return {
         tradableBalance: 0,
-        apiRequestCount: totalApiRequestCount,
+        requestCount: totalRequestCount,
       }
 
     }
@@ -191,12 +181,10 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
 
     const {
       leverage,
-      apiRequestCount: getLeverageCount,
+      requestCount: getLeverageCount,
     } = await this.exchange.position!.getLeverage!({
       symbolPair,
     })
-
-    apiRequestCount += 1
 
     const computedLeverage = leverage === 0
       ? 1
@@ -207,13 +195,13 @@ export class BitmexBalanceModule extends AAlunaModule implements IAlunaBalanceMo
       .toNumber()
 
 
-    totalApiRequestCount = apiRequestCount
+    totalRequestCount = requestCount
       + getCount
       + getLeverageCount
 
     return {
       tradableBalance,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

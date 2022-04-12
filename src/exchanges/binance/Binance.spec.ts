@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Binance } from './Binance'
 
 
@@ -41,6 +42,20 @@ describe('Binance', () => {
 
   })
 
+  it('should properly validate Binance settings', async () => {
 
+    expect(Binance.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Binance.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Binance.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+    expect(Binance.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
+
+  })
 
 })

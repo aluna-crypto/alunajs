@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockExchangeModule } from '../../../../test/helpers/exchange'
-import { mockPrivateHttpRequest } from '../../../../test/helpers/http'
+import { mockPrivateHttpRequest } from '../../../../test/helpers/http/axios'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { executeAndCatch } from '../../../utils/executeAndCatch'
@@ -59,7 +59,7 @@ describe('BitmexBalanceModule', () => {
       'listRaw',
       {
         rawBalances: BITMEX_RAW_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -68,7 +68,7 @@ describe('BitmexBalanceModule', () => {
       'parseMany',
       {
         balances: BITMEX_PARSED_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -124,7 +124,7 @@ describe('BitmexBalanceModule', () => {
 
       parseMock.onCall(i).returns({
         balance: parsedBalance,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })
@@ -152,7 +152,7 @@ describe('BitmexBalanceModule', () => {
       'get',
       Promise.resolve({
         market,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -161,7 +161,7 @@ describe('BitmexBalanceModule', () => {
       'list',
       Promise.resolve({
         balances: [mockedBalance],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -177,7 +177,7 @@ describe('BitmexBalanceModule', () => {
         position: {
           getLeverage: () => Promise.resolve({
             leverage: mockedLeverage,
-            apiRequestCount: 1,
+            requestCount: 1,
           }),
         } as any,
       },
@@ -213,7 +213,7 @@ describe('BitmexBalanceModule', () => {
         position: {
           getLeverage: () => Promise.resolve({
             leverage: mockedLeverage2,
-            apiRequestCount: 1,
+            requestCount: 1,
           }),
         } as any,
       },
@@ -253,7 +253,7 @@ describe('BitmexBalanceModule', () => {
         'get',
         Promise.resolve({
           market,
-          apiRequestCount: 1,
+          requestCount: 1,
         }),
       )
 
@@ -262,7 +262,7 @@ describe('BitmexBalanceModule', () => {
         'list',
         Promise.resolve({
           balances: [],
-          apiRequestCount: 1,
+          requestCount: 1,
         }),
       )
 

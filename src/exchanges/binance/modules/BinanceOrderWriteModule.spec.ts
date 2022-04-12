@@ -67,7 +67,7 @@ describe('BinanceOrderWriteModule', () => {
       'privateRequest',
       Promise.resolve({
         data: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -76,7 +76,7 @@ describe('BinanceOrderWriteModule', () => {
       'listRaw',
       {
         rawMarkets: rawMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -85,7 +85,7 @@ describe('BinanceOrderWriteModule', () => {
       'parse',
       Promise.resolve({
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -111,11 +111,11 @@ describe('BinanceOrderWriteModule', () => {
     // place long limit order
     const {
       order: placeResponse1,
-      apiRequestCount,
+      requestCount,
     } = await binanceOrderWriteModule.place(placeOrderParams)
 
 
-    expect(apiRequestCount).to.be.eq(7)
+    expect(requestCount).to.be.eq(3)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({
@@ -321,7 +321,7 @@ describe('BinanceOrderWriteModule', () => {
     const requestMock = ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      Promise.resolve({ data: rawOrder, apiRequestCount: 1 }),
+      Promise.resolve({ data: rawOrder, requestCount: 1 }),
     )
 
     const marketListRawMock = ImportMock.mockFunction(
@@ -329,14 +329,14 @@ describe('BinanceOrderWriteModule', () => {
       'listRaw',
       {
         rawMarkets: rawMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
     const parseMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'parse',
-      { order: rawOrder, apiRequestCount: 1 },
+      { order: rawOrder, requestCount: 1 },
     )
 
     const placeOrderParams: IAlunaOrderPlaceParams = {
@@ -493,7 +493,7 @@ describe('BinanceOrderWriteModule', () => {
     ImportMock.mockFunction(
       BinanceHttp,
       'privateRequest',
-      { data: canceledOrderResponse, apiRequestCount: 1 },
+      { data: canceledOrderResponse, requestCount: 1 },
     )
 
     const getMock = ImportMock.mockFunction(
@@ -501,7 +501,7 @@ describe('BinanceOrderWriteModule', () => {
       'get',
       {
         order: { status: AlunaOrderStatusEnum.CANCELED } as IAlunaOrderSchema,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -544,7 +544,7 @@ describe('BinanceOrderWriteModule', () => {
     const cancelMock = ImportMock.mockFunction(
       binanceOrderWriteModule,
       'cancel',
-      Promise.resolve({ apiRequestCount: 1 }),
+      Promise.resolve({ requestCount: 1 }),
     )
 
     const placeMock = ImportMock.mockFunction(
@@ -552,7 +552,7 @@ describe('BinanceOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: BINANCE_RAW_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

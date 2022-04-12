@@ -39,7 +39,7 @@ describe('BitfinexPositionModule', () => {
         ? requestResponse
         : Promise.resolve({
           data: requestResponse,
-          apiRequestCount: 1,
+          requestCount: 1,
         }),
     )
 
@@ -75,7 +75,7 @@ describe('BitfinexPositionModule', () => {
       const response = mockBitfinexModule
         ? Promise.resolve({
           position: res,
-          apiRequestCount: 1,
+          requestCount: 1,
         })
         : res
 
@@ -116,7 +116,7 @@ describe('BitfinexPositionModule', () => {
       'listRaw',
       Promise.resolve({
         rawPositions: mockedRawPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -125,7 +125,7 @@ describe('BitfinexPositionModule', () => {
       'parseMany',
       {
         positions: mockedParsedPositions,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -272,7 +272,7 @@ describe('BitfinexPositionModule', () => {
       'getRaw',
       Promise.resolve({
         rawPosition: mockedRawPosition,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -309,7 +309,7 @@ describe('BitfinexPositionModule', () => {
     )
 
     const placeSpy = Sinon.spy(async () => Promise.resolve({
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     const openMockedPositions = filter(BITFINEX_PARSED_POSITIONS, (p) => {
@@ -334,7 +334,7 @@ describe('BitfinexPositionModule', () => {
       'get',
       Promise.resolve({
         position: mockedParsedPosition1,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -370,7 +370,7 @@ describe('BitfinexPositionModule', () => {
 
     getMock.returns(Promise.resolve({
       position: mockedParsedPosition2,
-      apiRequestCount: 1,
+      requestCount: 1,
     }))
 
     const { position: closedPosition2 } = await bitfinexPositionModule.close({
@@ -415,7 +415,7 @@ describe('BitfinexPositionModule', () => {
       'get',
       Promise.resolve({
         position: BITFINEX_PARSED_POSITIONS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -454,7 +454,7 @@ describe('BitfinexPositionModule', () => {
       'get',
       Promise.resolve({
         position: BITFINEX_PARSED_POSITIONS[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

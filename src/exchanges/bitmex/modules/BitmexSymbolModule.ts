@@ -31,14 +31,14 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     const {
       data: rawSymbols,
-      apiRequestCount,
+      requestCount,
     } = await publicRequest<IBitmexSymbolsSchema[]>({
       url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
     return {
       rawSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -47,29 +47,25 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawSymbols,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await BitmexSymbolModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       symbols: parsedSymbols,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = BitmexSymbolModule.parseMany({ rawSymbols })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -102,7 +98,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbol: parsedSymbol,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -117,7 +113,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     const parsedSymbolsDictionary: Record<string, IAlunaSymbolSchema> = {}
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     each(rawSymbols, (rawSymbol) => {
 
@@ -130,9 +126,10 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
         const {
           symbol,
-          apiRequestCount: parseCount,
+          requestCount: parseCount,
         } = this.parse({ rawSymbol })
-        apiRequestCount += parseCount + 1
+
+        requestCount += parseCount
 
         parsedSymbolsDictionary[rootSymbol] = symbol
 
@@ -140,14 +137,15 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
       if (!parsedSymbolsDictionary[quoteCurrency]) {
 
-        const { symbol, apiRequestCount: parseCount } = this.parse({
+        const { symbol, requestCount: parseCount } = this.parse({
           rawSymbol: {
             ...rawSymbol,
             rootSymbol: quoteCurrency,
           },
         })
 
-        apiRequestCount += parseCount + 1
+        requestCount += parseCount
+
         parsedSymbolsDictionary[quoteCurrency] = symbol
 
       }
@@ -160,7 +158,7 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
 
     return {
       symbols: parsedSymbols,
-      apiRequestCount,
+      requestCount,
     }
 
   }

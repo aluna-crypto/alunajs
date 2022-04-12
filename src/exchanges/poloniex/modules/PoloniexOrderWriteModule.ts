@@ -53,7 +53,7 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -118,8 +118,6 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       side,
     })
 
-    apiRequestCount += 1
-
     const timestamp = new Date().getTime()
     const body = new URLSearchParams()
 
@@ -138,7 +136,7 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
       const {
         data: orderRequest,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await PoloniexHttp
         .privateRequest<IPoloniexOrderResponse>({
           url: `${PROD_POLONIEX_URL}/tradingApi`,
@@ -146,7 +144,7 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
           keySecret: this.exchange.keySecret,
         })
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
       placedOrder = orderRequest
 
     } catch (err) {
@@ -172,17 +170,17 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     const {
       order,
-      apiRequestCount: getCount,
+      requestCount: getCount,
     } = await this.get({
       id: orderNumber,
       symbolPair: currencyPair,
     })
 
-    const totalApiRequestCount = apiRequestCount + getCount
+    const totalRequestCount = requestCount + getCount
 
     return {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -200,17 +198,15 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       order: parsedOrder,
-      apiRequestCount: getCount,
+      requestCount: getCount,
     } = await this.get({
       id,
       symbolPair,
     })
-
-    apiRequestCount += 1
 
     const timestamp = new Date().getTime()
     const body = new URLSearchParams()
@@ -221,7 +217,9 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
 
     try {
 
-      const { apiRequestCount: requestCount } = await PoloniexHttp
+      const {
+        requestCount: privateRequestCount,
+      } = await PoloniexHttp
         .privateRequest<IPoloniexOrderCanceledResponse>(
           {
             verb: AlunaHttpVerbEnum.POST,
@@ -231,7 +229,7 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
           },
         )
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (err) {
 
@@ -253,11 +251,11 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
     // Poloniex doesn't return canceled/closed orders
     parsedOrder.status = AlunaOrderStatusEnum.CANCELED
 
-    const totalApiRequestCount = apiRequestCount + getCount
+    const totalRequestCount = requestCount + getCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -284,18 +282,16 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
-    const { apiRequestCount: cancelCount } = await this.cancel({
+    const { requestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
-
     const {
       order: newOrder,
-      apiRequestCount: placeCount,
+      requestCount: placeCount,
     } = await this.place({
       rate,
       side,
@@ -305,15 +301,13 @@ export class PoloniexOrderWriteModule extends PoloniexOrderReadModule implements
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + cancelCount
       + placeCount
 
     return {
       order: newOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

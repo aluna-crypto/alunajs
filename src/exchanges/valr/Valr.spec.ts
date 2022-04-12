@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Valr } from './Valr'
 
 
@@ -36,6 +37,22 @@ describe('Valr', () => {
 
     // valr doesn't have margin trading
     expect(valr.position).not.to.be.ok
+
+  })
+
+  it('should properly validate Valr settings', async () => {
+
+    expect(Valr.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Valr.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Valr.validateSettings({ orderAnnotation: 'Aluna' })).not.to.be.ok
+    expect(Valr.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
 
   })
 

@@ -97,6 +97,7 @@ export class BitmexPositionParser {
     const total = BitmexOrderParser.computeOrderTotal({
       computedPrice: avgCostPrice,
       instrument,
+      orderQty: Math.abs(currentQty),
       computedAmount: amount,
     })
 

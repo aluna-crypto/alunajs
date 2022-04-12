@@ -8,6 +8,7 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../../lib/modules/IAlunaPositionModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BitmexSpecs } from './BitmexSpecs'
 import { BitmexBalanceModule } from './modules/BitmexBalanceModule'
 import { BitmexKeyModule } from './modules/BitmexKeyModule'
@@ -45,6 +46,16 @@ export const Bitmex: IAlunaExchangeStatic = class extends AAlunaExchange impleme
     this.balance = new BitmexBalanceModule({ exchange: this })
     this.order = new BitmexOrderWriteModule({ exchange: this })
     this.position = new BitmexPositionModule({ exchange: this })
+
+  }
+
+  public static validateSettings (
+    settings: IAlunaSettingsSchema,
+  ): boolean {
+
+    const valid = !settings.affiliateCode
+
+    return valid
 
   }
 

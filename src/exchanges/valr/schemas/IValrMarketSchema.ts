@@ -32,10 +32,10 @@ export interface IValrMarketWithCurrencies extends IValrMarketSchema {
 
 export interface IValrMarketResponseSchema {
   markets: IValrMarketSchema[]
-  apiRequestCount: number
+  requestCount: number
 }
 
 export interface IValrCurrencyPairsResponseSchema {
   currencyPairs: IValrCurrencyPairs[]
-  apiRequestCount: number
+  requestCount: number
 }

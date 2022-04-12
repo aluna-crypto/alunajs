@@ -21,6 +21,7 @@ import {
 import { editOrderParamsSchema } from '../../../utils/validation/schemas/editOrderParamsSchema'
 import { placeOrderParamsSchema } from '../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../utils/validation/validateParams'
+import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import {
@@ -63,20 +64,16 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       account,
     } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
-    apiRequestCount += 1
-
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
-
-    apiRequestCount += 1
 
     BitmexLog.info('placing new order for Bitmex')
 
@@ -88,7 +85,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
       const {
         data: orderResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
@@ -97,7 +94,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       })
 
       rawOrder = orderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
 
     } catch (error) {
@@ -107,21 +104,16 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
     }
 
     rawOrder = await this.getFreshOrder({ rawOrder })
-
-    apiRequestCount += 1
-
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -138,20 +130,16 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       schema: editOrderParamsSchema,
     })
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     this.validateOrderTypeAgainstExchangeSpecs({
       account,
       type,
     })
 
-    apiRequestCount += 1
-
     const body = await this.assembleBodyRequest({
       orderParams: params,
     })
-
-    apiRequestCount += 1
 
     BitmexLog.info('editing order for Bitmex')
 
@@ -163,7 +151,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
       const {
         data: editOrderResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await privateRequest<IBitmexOrderSchema>({
         url: `${PROD_BITMEX_URL}/order`,
         body,
@@ -172,7 +160,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
       })
 
       rawOrder = editOrderResponse
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (error) {
 
@@ -182,20 +170,16 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     rawOrder = await this.getFreshOrder({ rawOrder })
 
-    apiRequestCount += 1
-
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -211,13 +195,13 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
     const { privateRequest } = BitmexHttp
 
     let rawOrder: IBitmexOrderResponse
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
         data: cancelOrderResponse,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await privateRequest<IBitmexOrderResponse[]>({
         url: `${PROD_BITMEX_URL}/order`,
         body: { orderID: id },
@@ -225,7 +209,7 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
         verb: AlunaHttpVerbEnum.DELETE,
       })
 
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
       const [rawOrderResp] = cancelOrderResponse
 
@@ -251,16 +235,14 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseCount
+    const totalRequestCount = requestCount + parseCount
 
     return {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -347,11 +329,13 @@ export class BitmexOrderWriteModule extends BitmexOrderReadModule implements IAl
 
     })
 
+    const { orderAnnotation } = Bitmex.settings
+
     const body = {
       orderQty,
       ...(price ? { price } : {}),
       ...(stopPx ? { stopPx } : {}),
-      text: 'Sent by Aluna',
+      ...(orderAnnotation ? { text: orderAnnotation } : {}),
     }
 
     if (action === 'place') {

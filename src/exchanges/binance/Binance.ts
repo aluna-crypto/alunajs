@@ -7,6 +7,7 @@ import { IAlunaBalanceModule } from '../../lib/modules/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { BinanceSpecs } from './BinanceSpecs'
 import { BinanceBalanceModule } from './modules/BinanceBalanceModule'
 import { BinanceKeyModule } from './modules/BinanceKeyModule'
@@ -18,28 +19,38 @@ import { BinanceSymbolModule } from './modules/BinanceSymbolModule'
 
 export const Binance: IAlunaExchangeStatic = class extends AAlunaExchange implements IAlunaExchange {
 
-    // static definitions
-    static readonly ID = BinanceSpecs.id
-    static readonly SPECS = BinanceSpecs
+  // static definitions
+  static readonly ID = BinanceSpecs.id
+  static readonly SPECS = BinanceSpecs
 
-    static Symbol = BinanceSymbolModule
-    static Market = BinanceMarketModule
+  static Symbol = BinanceSymbolModule
+  static Market = BinanceMarketModule
 
-    // local definitions
-    key: IAlunaKeyModule
-    order: IAlunaOrderWriteModule
-    balance: IAlunaBalanceModule
+  // local definitions
+  key: IAlunaKeyModule
+  order: IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
 
-    constructor (params: {
-      keySecret: IAlunaKeySecretSchema,
-    }) {
+  constructor (params: {
+    keySecret: IAlunaKeySecretSchema,
+  }) {
 
-      super(params)
+    super(params)
 
-      this.key = new BinanceKeyModule({ exchange: this })
-      this.balance = new BinanceBalanceModule({ exchange: this })
-      this.order = new BinanceOrderWriteModule({ exchange: this })
+    this.key = new BinanceKeyModule({ exchange: this })
+    this.balance = new BinanceBalanceModule({ exchange: this })
+    this.order = new BinanceOrderWriteModule({ exchange: this })
 
-    }
+  }
+
+  public static validateSettings (
+    settings: IAlunaSettingsSchema,
+  ): boolean {
+
+    const valid = !settings.affiliateCode && !settings.orderAnnotation
+
+    return valid
+
+  }
 
 }

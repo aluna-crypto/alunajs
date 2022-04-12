@@ -9,7 +9,6 @@ export interface IAlunaExchangeSchema {
   name: string
   signupUrl: string
   connectApiUrl: string
-  affiliateCode?: string
   rateLimitingPerMinute: {
     perApiKey: number,
     perIp: number,

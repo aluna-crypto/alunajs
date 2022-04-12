@@ -51,7 +51,7 @@ describe('ValrOrderReadModule', () => {
       'privateRequest',
       {
         data: VALR_RAW_LIST_OPEN_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -104,7 +104,7 @@ describe('ValrOrderReadModule', () => {
     const listRawMock = ImportMock.mockFunction(
       valrOrderReadModule,
       'listRaw',
-      { rawOrders: ['raw-orders'], apiRequestCount: 1 },
+      { rawOrders: ['raw-orders'], requestCount: 1 },
     )
 
     const parseManyMock = ImportMock.mockFunction(
@@ -112,7 +112,7 @@ describe('ValrOrderReadModule', () => {
       'parseMany',
       {
         orders: VALR_PARSED_OPEN_ORDERS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -182,7 +182,7 @@ describe('ValrOrderReadModule', () => {
       'privateRequest',
       {
         data: VALR_RAW_GET_ORDERS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -213,7 +213,7 @@ describe('ValrOrderReadModule', () => {
       'getRaw',
       {
         rawOrder: 'rawOrder',
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -222,7 +222,7 @@ describe('ValrOrderReadModule', () => {
       'parse',
       {
         order: VALR_PARSED_OPEN_ORDERS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -255,7 +255,7 @@ describe('ValrOrderReadModule', () => {
       'fetchCurrencyPairs',
       Promise.resolve({
         currencyPairs: VALR_RAW_CURRENCY_PAIRS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -330,7 +330,7 @@ describe('ValrOrderReadModule', () => {
       'fetchCurrencyPairs',
       Promise.resolve({
         currencyPairs: VALR_RAW_CURRENCY_PAIRS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -360,6 +360,38 @@ describe('ValrOrderReadModule', () => {
 
   })
 
+  it(
+    'should only try to parse orders if rawOrders has at least one item',
+    async () => {
+
+      const rawOrders: IValrOrderListSchema[] = []
+
+      const parseMock = ImportMock.mockFunction(
+        ValrOrderParser,
+        'parse',
+      )
+
+      const fetchCurrencyPairsMock = ImportMock.mockFunction(
+        ValrMarketModule,
+        'fetchCurrencyPairs',
+        Promise.resolve({
+          currencyPairs: VALR_RAW_CURRENCY_PAIRS,
+          requestCount: 1,
+        }),
+      )
+
+      const {
+        orders: parsedManyResp,
+      } = await valrOrderReadModule.parseMany({ rawOrders })
+
+      expect(parsedManyResp.length).to.be.eq(0)
+      expect(parseMock.callCount).to.be.eq(0)
+
+      expect(fetchCurrencyPairsMock.callCount).to.be.eq(0)
+
+    },
+  )
+
   it('should throw error if pair symbol is not found', async () => {
 
     const fetchCurrencyPairsMock = ImportMock.mockFunction(
@@ -367,7 +399,7 @@ describe('ValrOrderReadModule', () => {
       'fetchCurrencyPairs',
       Promise.resolve({
         currencyPairs: [],
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 

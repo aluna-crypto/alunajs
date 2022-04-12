@@ -34,31 +34,31 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     let userInfoResponse: string[]
     let permissionsScope: IBitfinexPermissionsScope
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
       const {
         data: permissions,
-        apiRequestCount: permissionsCount,
+        requestCount: permissionsCount,
       } = await privateRequest<IBitfinexPermissionsScope>({
         url: 'https://api.bitfinex.com/v2/auth/r/permissions',
         keySecret,
       })
 
       permissionsScope = permissions
-      apiRequestCount += permissionsCount
+      requestCount += permissionsCount
 
       const {
         data: userInfo,
-        apiRequestCount: userInfoCount,
+        requestCount: userInfoCount,
       } = await privateRequest<string[]>({
         url: 'https://api.bitfinex.com/v2/auth/r/info/user',
         keySecret,
       })
 
       userInfoResponse = userInfo
-      apiRequestCount += userInfoCount
+      requestCount += userInfoCount
 
     } catch (error) {
 
@@ -86,7 +86,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsCount,
+      requestCount: parseDetailsCount,
     } = this.parseDetails({
       rawKey: {
         accountId,
@@ -94,13 +94,11 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       },
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseDetailsCount
+    const totalRequestCount = requestCount + parseDetailsCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -117,14 +115,12 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { accountId } = rawKey
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsCount,
+      requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       accountId,
@@ -132,11 +128,11 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
       meta: rawKey,
     }
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsCount
+    const totalRequestCount = requestCount + parsePermissionsCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -175,7 +171,7 @@ export class BitfinexKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }

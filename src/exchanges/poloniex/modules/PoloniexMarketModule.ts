@@ -34,16 +34,16 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     query.append('command', 'returnTicker')
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const {
       data: rawMarkets,
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await publicRequest<IPoloniexMarketSchema>({
       url: `${PROD_POLONIEX_URL}/public?${query.toString()}`,
     })
 
-    apiRequestCount += requestCount
+    requestCount += privateRequestCount
 
     const rawMarketsWithCurrency: IPoloniexMarketWithCurrency[] = []
 
@@ -60,11 +60,9 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     })
 
-    apiRequestCount += 1
-
     return {
       rawMarkets: rawMarketsWithCurrency,
-      apiRequestCount,
+      requestCount,
     }
 
   }
@@ -73,29 +71,25 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
-      apiRequestCount: listRawCount,
+      requestCount: listRawCount,
     } = await PoloniexMarketModule.listRaw()
-
-    apiRequestCount += 1
 
     const {
       markets: parsedMarkets,
-      apiRequestCount: parseManyCount,
+      requestCount: parseManyCount,
     } = PoloniexMarketModule.parseMany({ rawMarkets })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
 
     return {
       markets: parsedMarkets,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -112,7 +106,7 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      apiRequestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -125,16 +119,16 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     const { rawMarkets } = params
 
-    let apiRequestCount = 0
+    let requestCount = 0
 
     const parsedMarkets = map(rawMarkets, (rawMarket) => {
 
       const {
         market: parsedMarket,
-        apiRequestCount: parseCount,
+        requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      apiRequestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedMarket
 
@@ -144,7 +138,7 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
     return {
       markets: parsedMarkets,
-      apiRequestCount,
+      requestCount,
     }
 
   }

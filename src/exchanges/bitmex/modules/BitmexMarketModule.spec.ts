@@ -5,7 +5,7 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockPublicHttpRequest } from '../../../../test/helpers/http'
+import { mockPublicHttpRequest } from '../../../../test/helpers/http/axios'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexMarketParser } from '../schemas/parsers/BitmexMarketParser'
@@ -25,7 +25,7 @@ describe('BitmexMarketModule', () => {
       'listRaw',
       Promise.resolve({
         rawSymbols: BITMEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -44,7 +44,7 @@ describe('BitmexMarketModule', () => {
       'listRaw',
       {
         rawMarkets: BITMEX_RAW_SYMBOLS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -53,7 +53,7 @@ describe('BitmexMarketModule', () => {
       'parseMany',
       {
         markets: BITMEX_PARSED_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -80,7 +80,7 @@ describe('BitmexMarketModule', () => {
 
       requestMock.onCall(i).returns({
         data: [rawMarket],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
       const { rawMarket: returned } = await BitmexMarketModule.getRaw!({
@@ -140,7 +140,7 @@ describe('BitmexMarketModule', () => {
       'getRaw',
       Promise.resolve({
         rawMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -149,7 +149,7 @@ describe('BitmexMarketModule', () => {
       'parse',
       {
         market: parsedMarket,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -206,7 +206,7 @@ describe('BitmexMarketModule', () => {
 
       parseMock.onCall(i).returns({
         market,
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
     })

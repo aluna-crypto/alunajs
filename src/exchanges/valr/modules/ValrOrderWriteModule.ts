@@ -54,7 +54,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       account,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     try {
 
@@ -117,13 +117,9 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       pair: symbolPair,
     }
 
-    apiRequestCount += 1
-
     const translatedOrderType = ValrOrderTypeAdapter.translateToValr({
       from: type,
     })
-
-    apiRequestCount += 1
 
     if (translatedOrderType === ValrOrderTypesEnum.LIMIT) {
 
@@ -146,7 +142,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       data: { id },
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await ValrHttp.privateRequest<IValrPlaceOrderResponse>({
       url: `https://api.valr.com/v1/orders/${translatedOrderType}`,
       body,
@@ -154,12 +150,10 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     })
 
 
-    const { order, apiRequestCount: getRequestCount } = await this.get({
+    const { order, requestCount: getRequestCount } = await this.get({
       id,
       symbolPair,
     })
-
-    apiRequestCount += 1
 
     const meta: IValrOrderGetSchema = (order.meta as IValrOrderGetSchema)
 
@@ -180,13 +174,13 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + getRequestCount
-      + requestCount
+      + privateRequestCount
 
     const response: IAlunaOrderPlaceReturns = {
       order,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
     return response
@@ -212,17 +206,15 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw({
       id,
       symbolPair,
     })
-
-    apiRequestCount += 1
 
     const { orderStatusType } = rawOrder
 
@@ -253,16 +245,14 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     }
 
-    const { apiRequestCount: cancelRequestCount } = await this.cancel({
+    const { requestCount: cancelRequestCount } = await this.cancel({
       id,
       symbolPair,
     })
 
-    apiRequestCount += 1
-
     const {
       order: newOrder,
-      apiRequestCount: placeRequestCount,
+      requestCount: placeRequestCount,
     } = await this.place({
       rate,
       side,
@@ -272,15 +262,13 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       symbolPair,
     })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + cancelRequestCount
       + placeRequestCount
       + getRawCount
 
     const response: IAlunaOrderEditReturns = {
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
       order: newOrder,
     }
 
@@ -299,7 +287,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
       symbolPair,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const body = {
       orderId: id,
@@ -307,7 +295,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
     }
 
     const {
-      apiRequestCount: requestCount,
+      requestCount: privateRequestCount,
     } = await ValrHttp.privateRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: 'https://api.valr.com/v1/orders/order',
@@ -319,10 +307,8 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       rawOrder,
-      apiRequestCount: getRawCount,
+      requestCount: getRawCount,
     } = await this.getRaw(params)
-
-    apiRequestCount += 1
 
     if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
@@ -330,6 +316,7 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
         httpStatusCode: 500,
         message: 'Something went wrong, order not canceled',
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        metadata: rawOrder,
       })
 
       ValrLog.error(error)
@@ -340,19 +327,17 @@ export class ValrOrderWriteModule extends ValrOrderReadModule implements IAlunaO
 
     const {
       order: parsedOrder,
-      apiRequestCount: parseCount,
+      requestCount: parseCount,
     } = await this.parse({ rawOrder })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount
+    const totalRequestCount = requestCount
       + parseCount
       + getRawCount
-      + requestCount
+      + privateRequestCount
 
     const response: IAlunaOrderGetReturns = {
       order: parsedOrder,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
     return response

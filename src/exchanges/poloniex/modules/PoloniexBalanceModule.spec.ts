@@ -38,16 +38,16 @@ describe('PoloniexBalanceModule', () => {
       'privateRequest',
       {
         data: POLONIEX_RAW_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
     const {
       rawBalances,
-      apiRequestCount,
+      requestCount,
     } = await poloniexBalanceModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
 
@@ -66,7 +66,7 @@ describe('PoloniexBalanceModule', () => {
       'listRaw',
       {
         rawBalances: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -75,7 +75,7 @@ describe('PoloniexBalanceModule', () => {
       'parseMany',
       {
         balances: POLONIEX_PARSED_BALANCES,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -172,12 +172,12 @@ describe('PoloniexBalanceModule', () => {
       .onFirstCall()
       .returns({
         balance: POLONIEX_PARSED_BALANCES[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         balance: POLONIEX_PARSED_BALANCES[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
 

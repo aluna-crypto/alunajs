@@ -27,16 +27,16 @@ describe('PoloniexMarketModule', () => {
       'publicRequest',
       Promise.resolve({
         data: POLONIEX_RAW_MARKET,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
     const {
       rawMarkets,
-      apiRequestCount,
+      requestCount,
     } = await PoloniexMarketModule.listRaw()
 
-    expect(apiRequestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(1)
 
     expect(requestMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith(
@@ -56,7 +56,7 @@ describe('PoloniexMarketModule', () => {
       'listRaw',
       {
         rawMarkets: rawListMock,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -65,7 +65,7 @@ describe('PoloniexMarketModule', () => {
       'parseMany',
       {
         markets: POLONIEX_PARSED_MARKETS,
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -157,17 +157,17 @@ describe('PoloniexMarketModule', () => {
       .onFirstCall()
       .returns({
         market: POLONIEX_PARSED_MARKETS[0],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onSecondCall()
       .returns({
         market: POLONIEX_PARSED_MARKETS[1],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
       .onThirdCall()
       .returns({
         market: POLONIEX_PARSED_MARKETS[2],
-        apiRequestCount: 1,
+        requestCount: 1,
       })
 
 

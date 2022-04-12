@@ -60,7 +60,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     return {
       key: alunaPermissions,
-      apiRequestCount: 0,
+      requestCount: 0,
     }
 
   }
@@ -70,7 +70,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
     BinanceLog.info('fetching Binance key permissionsa')
 
     let rawKey: IBinanceKeyAccountSchema
-    let apiRequestCount = 0
+    let requestCount = 0
 
     try {
 
@@ -78,7 +78,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       const {
         data: keyInfo,
-        apiRequestCount: requestCount,
+        requestCount: privateRequestCount,
       } = await BinanceHttp
         .privateRequest<IBinanceKeyAccountSchema>({
           verb: AlunaHttpVerbEnum.GET,
@@ -87,7 +87,7 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
         })
 
       rawKey = keyInfo
-      apiRequestCount += requestCount
+      requestCount += privateRequestCount
 
     } catch (error) {
 
@@ -99,16 +99,14 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const {
       key: details,
-      apiRequestCount: parseDetailsRequestCount,
+      requestCount: parseDetailsRequestCount,
     } = this.parseDetails({ rawKey })
 
-    apiRequestCount += 1
-
-    const totalApiRequestCount = apiRequestCount + parseDetailsRequestCount
+    const totalRequestCount = requestCount + parseDetailsRequestCount
 
     return {
       key: details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }
@@ -123,14 +121,12 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
       rawKey,
     } = params
 
-    let apiRequestCount = 0
+    const requestCount = 0
 
     const {
       key: parsedPermissions,
-      apiRequestCount: parsePermissionsRequestCount,
+      requestCount: parsePermissionsRequestCount,
     } = this.parsePermissions({ rawKey })
-
-    apiRequestCount += 1
 
     this.details = {
       meta: rawKey,
@@ -138,11 +134,11 @@ export class BinanceKeyModule extends AAlunaModule implements IAlunaKeyModule {
       permissions: parsedPermissions,
     }
 
-    const totalApiRequestCount = apiRequestCount + parsePermissionsRequestCount
+    const totalRequestCount = requestCount + parsePermissionsRequestCount
 
     return {
       key: this.details,
-      apiRequestCount: totalApiRequestCount,
+      requestCount: totalRequestCount,
     }
 
   }

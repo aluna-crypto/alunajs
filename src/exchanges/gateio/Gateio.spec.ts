@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { Gateio } from './Gateio'
 
 
@@ -33,6 +34,22 @@ describe('Gateio', () => {
     expect(gateio.key).to.be.ok
     expect(gateio.balance).to.be.ok
     expect(gateio.order).to.be.ok
+
+  })
+
+  it('should properly validate Gateio settings', async () => {
+
+    expect(Gateio.validateSettings({ mappings: { BT: 'BTC' } })).to.be.ok
+    expect(Gateio.validateSettings({
+      proxySettings: {
+        host: 'host',
+        port: 9999,
+        protocol: AlunaProtocolsEnum.HTTP,
+      },
+    })).to.be.ok
+
+    expect(Gateio.validateSettings({ orderAnnotation: 'Aluna' })).to.be.ok
+    expect(Gateio.validateSettings({ affiliateCode: 'xyz' })).not.to.be.ok
 
   })
 

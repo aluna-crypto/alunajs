@@ -53,7 +53,7 @@ describe('PoloniexOrderWriteModule', () => {
       'privateRequest',
       Promise.resolve({
         data: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -62,7 +62,7 @@ describe('PoloniexOrderWriteModule', () => {
       'get',
       Promise.resolve({
         order: placedOrder,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -230,7 +230,7 @@ describe('PoloniexOrderWriteModule', () => {
       'get',
       Promise.resolve({
         order: POLONIEX_RAW_LIMIT_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -289,7 +289,7 @@ describe('PoloniexOrderWriteModule', () => {
       'privateRequest',
       {
         data: {},
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -298,7 +298,7 @@ describe('PoloniexOrderWriteModule', () => {
       'get',
       {
         order: { status: AlunaOrderStatusEnum.OPEN },
-        apiRequestCount: 1,
+        requestCount: 1,
       },
     )
 
@@ -341,7 +341,7 @@ describe('PoloniexOrderWriteModule', () => {
       poloniexOrderWriteModule,
       'cancel',
       Promise.resolve({
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
@@ -350,7 +350,7 @@ describe('PoloniexOrderWriteModule', () => {
       'place',
       Promise.resolve({
         order: POLONIEX_RAW_LIMIT_ORDER,
-        apiRequestCount: 1,
+        requestCount: 1,
       }),
     )
 
