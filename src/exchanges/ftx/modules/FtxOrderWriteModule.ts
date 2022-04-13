@@ -109,8 +109,6 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       from: type,
     })
 
-    requestCount += 1
-
     const body: IFtxOrderRequest = {
       side: FtxSideAdapter.translateToFtx({ from: side }),
       market: symbolPair,
@@ -118,8 +116,6 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       type: translatedOrderType,
       price: null,
     }
-
-    requestCount += 1
 
     if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
 
@@ -171,8 +167,6 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
     const { order, requestCount: parseCount } = await this.parse({
       rawOrder: placedOrder,
     })
-
-    requestCount += 1
 
     const totalRequestCount = requestCount + parseCount
 
@@ -232,8 +226,6 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     })
 
-    requestCount += 1
-
     const totalRequestCount = requestCount + getCount
 
     return {
@@ -261,14 +253,12 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       symbolPair,
     } = params
 
-    let requestCount = 0
+    const requestCount = 0
 
     const { requestCount: cancelCount } = await this.cancel({
       id,
       symbolPair,
     })
-
-    requestCount += 1
 
     const {
       order: newOrder,
@@ -281,8 +271,6 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       account,
       symbolPair,
     })
-
-    requestCount += 1
 
     const totalRequestCount = requestCount
       + cancelCount

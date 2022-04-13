@@ -22,21 +22,17 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
   public static async list (): Promise<IAlunaSymbolListReturns> {
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       rawSymbols,
       requestCount: listRawCount,
     } = await FtxSymbolModule.listRaw()
 
-    requestCount += 1
-
     const {
       symbols: parsedSymbols,
       requestCount: parseManyCount,
     } = FtxSymbolModule.parseMany({ rawSymbols })
-
-    requestCount += 1
 
     const totalRequestCount = requestCount
       + listRawCount
@@ -56,14 +52,12 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
 
     FtxLog.info('fetching Ftx symbols')
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
       requestCount: listRawCount,
     } = await FtxMarketModule.listRaw()
-
-    requestCount += 1
 
     const totalRequestCount = requestCount + listRawCount
 
@@ -125,7 +119,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
           requestCount: parseCount,
         } = this.parse({ rawSymbol: symbolPair })
 
-        requestCount += parseCount + 1
+        requestCount += parseCount
 
         parsedSymbolsDict[baseCurrency] = parsedBaseSymbol
 
@@ -143,7 +137,7 @@ export const FtxSymbolModule: IAlunaSymbolModule = class {
           },
         })
 
-        requestCount += parseCount + 1
+        requestCount += parseCount
 
         parsedSymbolsDict[quoteCurrency] = parsedQuoteSymbol
 

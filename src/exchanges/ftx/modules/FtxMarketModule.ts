@@ -49,21 +49,17 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
   public static async list (): Promise<IAlunaMarketListReturns> {
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       rawMarkets,
       requestCount: listRawCount,
     } = await FtxMarketModule.listRaw()
 
-    requestCount += 1
-
     const {
       markets: parsedMarkets,
       requestCount: parseManyCount,
     } = FtxMarketModule.parseMany({ rawMarkets })
-
-    requestCount += 1
 
     const totalRequestCount = requestCount
       + listRawCount
@@ -88,7 +84,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
 
     return {
       market: parsedMarket,
-      requestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -110,7 +106,7 @@ export const FtxMarketModule: IAlunaMarketModule = class {
         requestCount: parseCount,
       } = this.parse({ rawMarket })
 
-      requestCount += parseCount + 1
+      requestCount += parseCount
 
       return parsedMarket
 

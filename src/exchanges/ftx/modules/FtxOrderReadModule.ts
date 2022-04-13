@@ -47,21 +47,18 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
   public async list (): Promise<IAlunaOrderListReturns> {
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       rawOrders,
       requestCount: listRawCount,
     } = await this.listRaw()
 
-    requestCount += 1
-
     const {
       orders: parsedOrders,
       requestCount: parseManyCount,
     } = await this.parseMany({ rawOrders })
 
-    requestCount += 1
 
     const totalRequestCount = requestCount
       + listRawCount
@@ -144,7 +141,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
 
     return {
       order: parsedOrder,
-      requestCount: 1,
+      requestCount: 0,
     }
 
   }
@@ -167,7 +164,7 @@ export class FtxOrderReadModule extends AAlunaModule implements IAlunaOrderReadM
           requestCount: parseCount,
         } = await this.parse({ rawOrder })
 
-        requestCount += parseCount + 1
+        requestCount += parseCount
 
         return parsedOrder
 

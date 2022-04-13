@@ -93,8 +93,6 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
       requestCount: parseDetailsCount,
     } = this.parseDetails({ rawKey })
 
-    requestCount += 1
-
     const totalRequestCount = requestCount + parseDetailsCount
 
     return {
@@ -118,14 +116,12 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
     const { accountIdentifier } = account
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       key: permissions,
       requestCount: parsePermissionsCount,
     } = this.parsePermissions({ rawKey })
-
-    requestCount += 1
 
     this.details = {
       accountId: accountIdentifier.toString(),

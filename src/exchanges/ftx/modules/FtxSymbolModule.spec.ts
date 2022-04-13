@@ -27,7 +27,7 @@ describe('FtxSymbolModule', () => {
 
     const { rawSymbols, requestCount } = await FtxSymbolModule.listRaw()
 
-    expect(requestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(1)
 
     expect(rawSymbols.length).to.eq(3)
     expect(rawSymbols).to.deep.eq(FTX_RAW_MARKETS)

@@ -47,21 +47,17 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
   public async list (): Promise<IAlunaBalanceListReturns> {
 
-    let requestCount = 0
+    const requestCount = 0
 
     const {
       rawBalances,
       requestCount: listRawCount,
     } = await this.listRaw()
 
-    requestCount += 1
-
     const {
       balances: parsedBalances,
       requestCount: parseManyCount,
     } = this.parseMany({ rawBalances })
-
-    requestCount += 1
 
     FtxLog.info(`parsed ${parsedBalances.length} balances for Ftx`)
 
@@ -129,7 +125,7 @@ export class FtxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
             requestCount: parseCount,
           } = this.parse({ rawBalance })
 
-          requestCount += parseCount + 1
+          requestCount += parseCount
 
           accumulator.push(parsedBalance)
 

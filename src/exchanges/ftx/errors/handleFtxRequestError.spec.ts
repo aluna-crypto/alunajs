@@ -1,7 +1,10 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import * as handleFtxMod from './handleFtxRequestError'
 
 
@@ -10,9 +13,45 @@ describe('handleFtxRequestError', () => {
 
   const {
     handleFtxRequestError,
+    ftxNotLoggedInPatterns,
   } = handleFtxMod
 
   const requestErrorMsg = 'Error while executing request.'
+
+
+  it('should return Ftx key invalid error when applicable', async () => {
+
+    const isFtxKeyInvalidMock = ImportMock.mockFunction(
+      handleFtxMod,
+      'isFtxKeyInvalid',
+      true,
+    )
+
+    const dummyError = ftxNotLoggedInPatterns[0]
+
+    const axiosError = {
+      isAxiosError: true,
+      response: {
+        status: 401,
+        data: {
+          error: ftxNotLoggedInPatterns[0],
+        },
+      },
+    } as AxiosError
+
+
+    const alunaError = handleFtxRequestError({ error: axiosError })
+
+    expect(alunaError).to.deep.eq(new AlunaError({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: dummyError,
+      httpStatusCode: axiosError.response!.status,
+      metadata: axiosError.response!.data,
+    }))
+
+    expect(isFtxKeyInvalidMock.callCount).to.be.eq(1)
+
+  })
 
 
   it('should properly handle Ftx request error', async () => {
@@ -24,7 +63,7 @@ describe('handleFtxRequestError', () => {
       response: {
         status: 400,
         data: {
-          msg: dummyError,
+          error: dummyError,
         },
       },
     } as AxiosError
@@ -68,7 +107,6 @@ describe('handleFtxRequestError', () => {
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: requestErrorMsg,
       httpStatusCode: 500,
-      metadata: axiosError3,
     })
 
 
