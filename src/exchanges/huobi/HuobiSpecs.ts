@@ -8,7 +8,7 @@ import {
 
 
 
-export const PROD_HUOBI_URL = 'https://api.huobi.pro/v1'
+export const PROD_HUOBI_URL = 'https://api.huobi.pro'
 
 export const exchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
