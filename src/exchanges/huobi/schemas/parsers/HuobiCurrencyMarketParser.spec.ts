@@ -22,7 +22,7 @@ describe('HuobiCurrencyMarketParser', () => {
     })
 
     expect(rawMarkets.length).to.be.eq(4)
-    expect(rawSymbols.length).to.be.eq(3)
+    expect(rawSymbols.length).to.be.eq(4)
     expect(marketWithCurr.length).to.be.eq(3)
 
     marketWithCurr.forEach((item, index) => {

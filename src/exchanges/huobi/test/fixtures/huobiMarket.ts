@@ -2,7 +2,7 @@ import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import {
   IHuobiMarketSchema,
   IHuobiMarketWithCurrency,
-} from '../../schemas/HuobiMarketSchema'
+} from '../../schemas/IHuobiMarketSchema'
 
 
 

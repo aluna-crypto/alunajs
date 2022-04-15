@@ -11,6 +11,7 @@ import {
   HUOBI_RAW_MARKETS_WITH_CURRENCY,
 } from '../test/fixtures/huobiMarket'
 import { HuobiMarketModule } from './HuobiMarketModule'
+import { HuobiSymbolModule } from './HuobiSymbolModule'
 
 
 
@@ -23,25 +24,28 @@ describe('HuobiMarketModule', () => {
     const rawSymbolsPairs = 'rawSymbolsPairs'
 
     const marketsURL = `${PROD_HUOBI_URL}/market/tickers`
-    const symbolsURL = `${PROD_HUOBI_URL}/v1/settings/common/market-symbols`
 
     const requestMock = ImportMock.mockFunction(
       HuobiHttp,
       'publicRequest',
     )
 
+    const huobiSymbolModuleMock = ImportMock.mockFunction(
+      HuobiSymbolModule,
+      'listRaw',
+    )
+
+    huobiSymbolModuleMock
+      .onFirstCall().returns(Promise.resolve({
+        rawSymbols: rawSymbolsPairs,
+        requestCount: 1,
+      }))
+
     requestMock
       .onFirstCall().returns(Promise.resolve({
         data: rawMarkets,
         requestCount: 1,
       }))
-
-    requestMock
-      .onSecondCall().returns(Promise.resolve({
-        data: rawSymbolsPairs,
-        requestCount: 1,
-      }))
-
 
     const currecyMarketParserMock = ImportMock.mockFunction(
       HuobiCurrencyMarketParser,
@@ -57,9 +61,10 @@ describe('HuobiMarketModule', () => {
 
     expect(requestCount).to.be.eq(2)
 
-    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.callCount).to.be.eq(1)
+    expect(huobiSymbolModuleMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({ url: marketsURL })).to.be.ok
-    expect(requestMock.calledWith({ url: symbolsURL })).to.be.ok
+    expect(huobiSymbolModuleMock.calledWith()).to.be.ok
 
     expect(currecyMarketParserMock.callCount).to.be.eq(1)
     expect(currecyMarketParserMock.calledWith({

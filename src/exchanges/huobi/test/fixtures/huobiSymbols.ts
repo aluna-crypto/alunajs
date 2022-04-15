@@ -1,4 +1,5 @@
-import { IHuobiSymbolSchema } from '../../schemas/HuobiSymbolSchema'
+import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
+import { IHuobiSymbolSchema } from '../../schemas/IHuobiSymbolSchema'
 
 
 
@@ -8,6 +9,34 @@ export const HUOBI_RAW_SYMBOLS: IHuobiSymbolSchema[] = [
     state: 'online',
     bc: 'eth',
     qc: 'usdt',
+    pp: 2,
+    ap: 4,
+    sp: 'main',
+    vp: 8,
+    minoa: 0.001,
+    maxoa: 10000,
+    minov: 5,
+    lominoa: 0.001,
+    lomaxoa: 10000,
+    lomaxba: 10000,
+    lomaxsa: 10000,
+    smminoa: 0.001,
+    blmlt: 1.1,
+    slmgt: 0.9,
+    smmaxoa: 1000,
+    bmmaxov: 1000000,
+    msormlt: 0.1,
+    mbormlt: 0.1,
+    lr: 5,
+    smlr: 3,
+    at: 'enabled',
+    tags: '',
+  },
+  {
+    symbol: 'usdteth',
+    state: 'online',
+    bc: 'usdt',
+    qc: 'eth',
     pp: 2,
     ap: 4,
     sp: 'main',
@@ -86,5 +115,32 @@ export const HUOBI_RAW_SYMBOLS: IHuobiSymbolSchema[] = [
     smlr: 3,
     at: 'enabled',
     tags: 'activities',
+  },
+]
+
+export const HUOBI_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
+  {
+    id: 'eth',
+    exchangeId: 'huobi',
+    alias: undefined,
+    meta: {},
+  },
+  {
+    id: 'usdt',
+    exchangeId: 'huobi',
+    alias: undefined,
+    meta: {},
+  },
+  {
+    id: 'bnb',
+    exchangeId: 'huobi',
+    alias: undefined,
+    meta: {},
+  },
+  {
+    id: 'btc',
+    exchangeId: 'huobi',
+    alias: undefined,
+    meta: {},
   },
 ]

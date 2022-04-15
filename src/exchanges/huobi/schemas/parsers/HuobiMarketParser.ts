@@ -1,7 +1,7 @@
 import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Huobi } from '../../Huobi'
-import { IHuobiMarketWithCurrency } from '../HuobiMarketSchema'
+import { IHuobiMarketWithCurrency } from '../IHuobiMarketSchema'
 
 
 

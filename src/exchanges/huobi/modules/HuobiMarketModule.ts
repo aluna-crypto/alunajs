@@ -11,10 +11,10 @@ import { PROD_HUOBI_URL } from '../HuobiSpecs'
 import {
   IHuobiMarketSchema,
   IHuobiMarketWithCurrency,
-} from '../schemas/HuobiMarketSchema'
-import { IHuobiSymbolSchema } from '../schemas/HuobiSymbolSchema'
+} from '../schemas/IHuobiMarketSchema'
 import { HuobiCurrencyMarketParser } from '../schemas/parsers/HuobiCurrencyMarketParser'
 import { HuobiMarketParser } from '../schemas/parsers/HuobiMarketParser'
+import { HuobiSymbolModule } from './HuobiSymbolModule'
 
 
 
@@ -37,16 +37,9 @@ export const HuobiMarketModule: IAlunaMarketModule = class {
     })
 
     const {
-      data: rawSymbols,
-      requestCount: publicRequestCount2,
-    } = await publicRequest<IHuobiSymbolSchema[]>({
-      url: `${PROD_HUOBI_URL}/v1/settings/common/market-symbols`,
-    })
-
-    // const {
-    //   rawSymbols,
-    //   requestCount: listRawCount,
-    // } = await HuobiSymbolModule.listRaw()
+      rawSymbols,
+      requestCount: listRawCount,
+    } = await HuobiSymbolModule.listRaw()
 
     const rawMarketsWithCurrency = HuobiCurrencyMarketParser.parse({
       rawMarkets,
@@ -55,7 +48,7 @@ export const HuobiMarketModule: IAlunaMarketModule = class {
 
     const totalRequestCount = requestCount
     + publicRequestCount
-    + publicRequestCount2
+    + listRawCount
 
     return {
       rawMarkets: rawMarketsWithCurrency,

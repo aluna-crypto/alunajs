@@ -1,8 +1,8 @@
 import {
   IHuobiMarketSchema,
   IHuobiMarketWithCurrency,
-} from '../HuobiMarketSchema'
-import { IHuobiSymbolSchema } from '../HuobiSymbolSchema'
+} from '../IHuobiMarketSchema'
+import { IHuobiSymbolSchema } from '../IHuobiSymbolSchema'
 
 
 
