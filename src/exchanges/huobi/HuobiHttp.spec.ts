@@ -66,7 +66,9 @@ describe('HuobiHttp', () => {
       axiosCreateMock,
     } = mockAxiosRequest({
       error: requestError,
-      responseData: requestResponse,
+      responseData: {
+        data: requestResponse,
+      },
     })
 
     const exchangeMock = ImportMock.mockOther(
@@ -211,7 +213,6 @@ describe('HuobiHttp', () => {
       requestResponse: dummyResponse,
       signedheaderResponse: dummySignedBody,
     })
-
     const responseData = await HuobiHttp.privateRequest({
       verb: AlunaHttpVerbEnum.POST,
       url: dummyUrl,

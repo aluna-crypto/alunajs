@@ -35,6 +35,12 @@ export interface IHuobiSignedSignature {
   signature: string
 }
 
+export interface IHuobiHttpResponse<T> {
+  data: T
+  ts: number
+  status: string
+}
+
 
 
 export const generateAuthSignature = (
@@ -102,7 +108,9 @@ export const HuobiHttp: IAlunaHttp = class {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data: { data } } = await axios
+        .create()
+        .request<IHuobiHttpResponse<T>>(requestConfig)
 
       AlunaCache.cache.set<T>(cacheKey, data)
 
@@ -161,9 +169,11 @@ export const HuobiHttp: IAlunaHttp = class {
 
     try {
 
-      const { data } = await axios.create().request<T>(
-        requestConfig,
-      )
+      const { data: { data } } = await axios
+        .create()
+        .request<IHuobiHttpResponse<T>>(
+          requestConfig,
+        )
 
       return {
         data,
