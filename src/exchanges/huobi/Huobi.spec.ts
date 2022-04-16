@@ -12,8 +12,8 @@ describe('Huobi', () => {
 
     expect(Huobi.ID).to.eq('huobi')
     expect(Huobi.SPECS).to.be.ok
-    // expect(Huobi.Symbol).to.be.ok
-    // expect(Huobi.Market).to.be.ok// @TODO
+    expect(Huobi.Symbol).to.be.ok
+    expect(Huobi.Market).to.be.ok
 
   })
 
@@ -35,7 +35,7 @@ describe('Huobi', () => {
     expect(huobi.keySecret.secret).to.eq(secret)
 
     // expect(huobi.key).to.be.ok
-    // expect(huobi.balance).to.be.ok
+    expect(huobi.balance).to.be.ok
     // expect(huobi.order).to.be.ok // @TODO
 
     expect(huobi.position).not.to.be.ok

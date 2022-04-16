@@ -8,8 +8,10 @@ import { IAlunaKeyModule } from '../../lib/modules/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { HuobiLog } from './HuobiLog'
 import { HuobiSpecs } from './HuobiSpecs'
+import { HuobiBalanceModule } from './modules/HuobiBalanceModule'
+import { HuobiMarketModule } from './modules/HuobiMarketModule'
+import { HuobiSymbolModule } from './modules/HuobiSymbolModule'
 
 
 
@@ -19,32 +21,28 @@ export const Huobi: IAlunaExchangeStatic = class extends AAlunaExchange implemen
   static readonly ID = HuobiSpecs.id
   static readonly SPECS = HuobiSpecs
 
-  static Symbol = null as any // @TODO
-  static Market = null as any // @TODO
-  // static Symbol = HuobiSymbolModule
-  // static Market = HuobiMarketModule
+  static Symbol = HuobiSymbolModule
+  static Market = HuobiMarketModule
 
   // local definitions
   key: IAlunaKeyModule
   order: IAlunaOrderWriteModule
   balance: IAlunaBalanceModule
 
-  constructor (params: {
+  constructor(params: {
     keySecret: IAlunaKeySecretSchema,
   }) {
 
     super(params)
 
-    HuobiLog.info('ignore')
-
     // @TODO
     // this.key = new HuobiKeyModule({ exchange: this })
-    // this.balance = new HuobiBalanceModule({ exchange: this })
+    this.balance = new HuobiBalanceModule({ exchange: this })
     // this.order = new HuobiOrderWriteModule({ exchange: this })
 
   }
 
-  public static validateSettings (
+  public static validateSettings(
     settings: IAlunaSettingsSchema,
   ): boolean {
 
