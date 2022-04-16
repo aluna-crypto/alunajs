@@ -75,7 +75,7 @@ export const generateAuthSignature = (
 
 export const HuobiHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (
+  static async publicRequest<T>(
     params: IAlunaHttpPublicParams,
   ): Promise<IAlunaHttpResponse<T>> {
 
@@ -129,7 +129,7 @@ export const HuobiHttp: IAlunaHttp = class {
 
 
 
-  static async privateRequest<T> (
+  static async privateRequest<T>(
     params: IAlunaHttpPrivateParams,
   ): Promise<IAlunaHttpResponse<T>> {
 

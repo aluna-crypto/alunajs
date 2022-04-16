@@ -1,0 +1,45 @@
+import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
+import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
+import { HuobiOrderTypeEnum } from '../HuobiOrderTypeEnum'
+
+
+
+export class HuobiOrderTypeAdapter {
+
+
+
+  static readonly ERROR_MESSAGE_PREFIX = 'Order type'
+
+
+
+  static translateToAluna =
+    buildAdapter<HuobiOrderTypeEnum, AlunaOrderTypesEnum>({
+      errorMessagePrefix: HuobiOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [HuobiOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
+        [HuobiOrderTypeEnum.STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
+        [HuobiOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
+        [HuobiOrderTypeEnum.LIMIT_MAKER]: AlunaOrderTypesEnum.LIMIT,
+        [HuobiOrderTypeEnum.IOC]: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+        [HuobiOrderTypeEnum.LIMIT_FOK]: AlunaOrderTypesEnum.FILL_OF_KILL,
+      },
+    })
+
+
+
+  static translateToHuobi =
+    buildAdapter<AlunaOrderTypesEnum, HuobiOrderTypeEnum>({
+      errorMessagePrefix: HuobiOrderTypeAdapter.ERROR_MESSAGE_PREFIX,
+      mappings: {
+        [AlunaOrderTypesEnum.LIMIT]: HuobiOrderTypeEnum.LIMIT,
+        [AlunaOrderTypesEnum.MARKET]: HuobiOrderTypeEnum.MARKET,
+        [AlunaOrderTypesEnum.STOP_LIMIT]: HuobiOrderTypeEnum.STOP_LIMIT,
+        [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: HuobiOrderTypeEnum.IOC,
+        [AlunaOrderTypesEnum.FILL_OF_KILL]:
+          HuobiOrderTypeEnum.LIMIT_FOK,
+      },
+    })
+
+
+
+}
