@@ -1,8 +1,6 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import {
   IAlunaBalanceListRawReturns,
   IAlunaBalanceListReturns,
@@ -12,15 +10,14 @@ import {
 } from '../../../lib/modules/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { getHuobiAccountId } from '../helpers/GetHuobiAccountId'
 import { Huobi } from '../Huobi'
 import { HuobiHttp } from '../HuobiHttp'
 import { HuobiLog } from '../HuobiLog'
 import { PROD_HUOBI_URL } from '../HuobiSpecs'
 import {
-  HuobiAccountTypeEnum,
   IHuobiBalanceListSchema,
   IHuobiBalanceSchema,
-  IHuobiUserAccountSchema,
 } from '../schemas/IHuobiBalanceSchema'
 
 
@@ -35,33 +32,13 @@ export class HuobiBalanceModule extends AAlunaModule implements IAlunaBalanceMod
     const { keySecret } = this.exchange
 
     const {
-      data: accounts,
-      requestCount,
-    } = await HuobiHttp
-      .privateRequest<IHuobiUserAccountSchema[]>({
-        verb: AlunaHttpVerbEnum.GET,
-        url: `${PROD_HUOBI_URL}/v1/account/accounts`,
-        keySecret,
-      })
-
-    const spotAccount = accounts.find(
-      (account) => account.type === HuobiAccountTypeEnum.SPOT,
-    )
-
-    if (!spotAccount) {
-
-      throw new AlunaError({
-        message: 'spot account not found',
-        code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND,
-      })
-
-    }
-
-    const { id: accountId } = spotAccount
+      accountId,
+      requestCount: getHuobiAccountIdCount,
+    } = await getHuobiAccountId(keySecret)
 
     const {
       data: accountBalances,
-      requestCount: requestCount2,
+      requestCount,
     } = await HuobiHttp
       .privateRequest<IHuobiBalanceSchema>({
         verb: AlunaHttpVerbEnum.GET,
@@ -71,7 +48,7 @@ export class HuobiBalanceModule extends AAlunaModule implements IAlunaBalanceMod
 
     const { list } = accountBalances
 
-    const totalRequestCount = requestCount + requestCount2
+    const totalRequestCount = getHuobiAccountIdCount + requestCount
 
     return {
       rawBalances: list,

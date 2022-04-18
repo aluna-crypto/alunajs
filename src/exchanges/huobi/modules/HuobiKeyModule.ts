@@ -1,7 +1,5 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
-import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
 import {
   IAlunaKeyFetchDetailsReturns,
   IAlunaKeyModule,
@@ -12,13 +10,10 @@ import {
   IAlunaKeyPermissionSchema,
   IAlunaKeySchema,
 } from '../../../lib/schemas/IAlunaKeySchema'
+import { getHuobiAccountId } from '../helpers/GetHuobiAccountId'
 import { HuobiHttp } from '../HuobiHttp'
 import { HuobiLog } from '../HuobiLog'
 import { PROD_HUOBI_URL } from '../HuobiSpecs'
-import {
-  HuobiAccountTypeEnum,
-  IHuobiUserAccountSchema,
-} from '../schemas/IHuobiBalanceSchema'
 import { IHuobiKeySchema } from '../schemas/IHuobiKeySchema'
 
 
@@ -118,31 +113,12 @@ export class HuobiKeyModule extends AAlunaModule implements IAlunaKeyModule {
       requestCount += privateRequestCount2
 
       const {
-        data: accounts,
-        requestCount: privateRequestCount3,
-      } = await HuobiHttp
-        .privateRequest<IHuobiUserAccountSchema[]>({
-          verb: AlunaHttpVerbEnum.GET,
-          url: `${PROD_HUOBI_URL}/v1/account/accounts`,
-          keySecret,
-        })
+        accountId: huobiAccountId,
+        requestCount: getHuobiAccountIdCount,
+      } = await getHuobiAccountId(keySecret)
 
-      const spotAccount = accounts.find(
-        (account) => account.type === HuobiAccountTypeEnum.SPOT,
-      )
-
-      if (!spotAccount) {
-
-        throw new AlunaError({
-          message: 'spot account not found',
-          code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND,
-          httpStatusCode: 404,
-        })
-
-      }
-
-      accountId = spotAccount.id.toString()
-      requestCount += privateRequestCount3
+      accountId = huobiAccountId.toString()
+      requestCount += getHuobiAccountIdCount
 
 
     } catch (error) {

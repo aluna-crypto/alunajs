@@ -167,11 +167,18 @@ export const HuobiHttp: IAlunaHttp = class {
 
     const fullUrl = `${url}?${queryParamsWithSignature.toString()}`
 
-    const { requestConfig } = assembleAxiosRequestConfig({
+    const assembleAxiosRequestConfigObject = {
       url: fullUrl,
       method: verb,
       proxySettings: Huobi.settings.proxySettings,
-    })
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+
+    const {
+      requestConfig,
+    } = assembleAxiosRequestConfig(assembleAxiosRequestConfigObject)
 
     try {
 

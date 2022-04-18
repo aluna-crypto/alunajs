@@ -17,3 +17,12 @@ export interface IHuobiOrderSchema {
   state: HuobiOrderStatusEnum
   type: string
 }
+
+export interface IHuobiOrderRequest {
+  'account-id': string
+  amount: string
+  price?: string
+  source: string
+  symbol: string
+  type: string
+}

@@ -36,7 +36,7 @@ describe('Huobi', () => {
 
     expect(huobi.key).to.be.ok
     expect(huobi.balance).to.be.ok
-    // expect(huobi.order).to.be.ok // @TODO
+    expect(huobi.order).to.be.ok
 
     expect(huobi.position).not.to.be.ok
 
