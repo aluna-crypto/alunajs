@@ -34,7 +34,7 @@ describe('HuobiHttp', () => {
     secret: 'secret',
   }
   const dummySignedBody = {
-    signature: 'dummy',
+    queryParamsWithSignature: new URLSearchParams('dummy=dummy'),
   }
 
   const mockDeps = (
@@ -189,7 +189,7 @@ describe('HuobiHttp', () => {
       })
 
       await HuobiHttp.privateRequest({
-      // http verb not informed
+        // http verb not informed
         keySecret: dummyKeysecret,
         url: 'http://dummy.com',
       })
@@ -223,18 +223,8 @@ describe('HuobiHttp', () => {
     expect(axiosCreateMock.callCount).to.be.eq(1)
 
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
-    // expect(generateAuthHeaderMock.calledWith({
-    //   verb: AlunaHttpVerbEnum.POST,
-    //   body: dummyBody,
-    //   keySecret: dummyKeysecret,
-    //   query: undefined,
-    // })).to.be.ok
 
     expect(requestSpy.callCount).to.be.eq(1)
-    // expect(requestSpy.args[0]).to.deep.eq([{
-    //   url: `${dummyUrl}?${formattedQuery.toString()}`,
-    //   method: AlunaHttpVerbEnum.POST,
-    // }])
 
     expect(responseData).to.deep.eq({
       data: dummyResponse,
@@ -300,7 +290,7 @@ describe('HuobiHttp', () => {
     },
   )
 
-  it('should generate signed auth header just fine with body', async () => {
+  it('should generate signed auth header just fine without query', async () => {
 
     const createHmacSpy = Sinon.spy(crypto, 'createHmac')
 
@@ -315,13 +305,19 @@ describe('HuobiHttp', () => {
     const verb = 'verb' as AlunaHttpVerbEnum
     const body = dummyBody
 
+    ImportMock.mockFunction(
+      Date.prototype,
+      'toISOString',
+      '2022-04-18T12:42:01.572Z',
+    )
+
 
     const queryParams = new URLSearchParams()
 
     queryParams.append('AccessKeyId', keySecret.key)
     queryParams.append('SignatureMethod', 'HmacSHA256')
     queryParams.append('SignatureVersion', '2')
-    queryParams.append('Timestamp', '2022-04-14T14:23:34')
+    queryParams.append('Timestamp', '2022-04-18T12:42:01')
 
     const baseURL = new URL(dummyUrl).host
     const path = new URL(dummyUrl).pathname
@@ -337,7 +333,7 @@ describe('HuobiHttp', () => {
       keySecret,
       verb,
       body,
-      query: queryParams,
+      query: undefined,
       url: dummyUrl,
     })
 
@@ -350,7 +346,80 @@ describe('HuobiHttp', () => {
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('base64')).to.be.ok
 
-    expect(signedHash.signature).to.deep.eq(digestSpy.returnValues[0])
+    queryParams.append('Signature', digestSpy.returnValues[0])
+
+    expect(signedHash.queryParamsWithSignature).to.deep.eq(queryParams)
+
+  })
+
+  it('should generate signed auth header just fine with query', async () => {
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const query = 'dummy=dummy'
+
+    const keySecret = {
+      key: 'dummy-key',
+      secret: 'dummy-secret',
+    } as IAlunaKeySecretSchema
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const body = dummyBody
+
+
+    ImportMock.mockFunction(
+      Date.prototype,
+      'toISOString',
+      '2022-04-18T12:42:01.572Z',
+    )
+
+
+    const queryParams = new URLSearchParams()
+
+    queryParams.append('AccessKeyId', keySecret.key)
+    queryParams.append('SignatureMethod', 'HmacSHA256')
+    queryParams.append('SignatureVersion', '2')
+    queryParams.append('Timestamp', '2022-04-18T12:42:01')
+
+    const baseURL = new URL(dummyUrl).host
+    const path = new URL(dummyUrl).pathname
+
+    const meta = [
+      verb.toUpperCase(),
+      baseURL,
+      path,
+      `${queryParams.toString()}&${query}`,
+    ].join('\n')
+
+
+
+    const signedHash = HuobiHttpMod.generateAuthSignature({
+      keySecret,
+      verb,
+      body,
+      query,
+      url: dummyUrl,
+    })
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', keySecret.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
+    const newQueryParams = new URLSearchParams(
+      `${queryParams.toString()}&${query}`,
+    )
+
+    newQueryParams.append('Signature', digestSpy.returnValues[0])
+
+    expect(signedHash.queryParamsWithSignature).to.deep.eq(queryParams)
 
   })
 

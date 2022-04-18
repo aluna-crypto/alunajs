@@ -25,14 +25,14 @@ interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   keySecret: IAlunaKeySecretSchema
   body?: any
-  query: URLSearchParams
+  query: string | undefined
   url: string
 }
 
 
 
 export interface IHuobiSignedSignature {
-  signature: string
+  queryParamsWithSignature: URLSearchParams
 }
 
 export interface IHuobiHttpResponse<T> {
@@ -54,10 +54,24 @@ export const generateAuthSignature = (
     query,
   } = params
 
+
+  const timestamp = new Date().toISOString().slice(0, -5)
+
+  const queryParams = new URLSearchParams()
+
+  queryParams.append('AccessKeyId', keySecret.key)
+  queryParams.append('SignatureMethod', 'HmacSHA256')
+  queryParams.append('SignatureVersion', '2')
+  queryParams.append('Timestamp', timestamp.toString())
+
+  const includeSearchQuery = query
+    ? new URLSearchParams(`${queryParams.toString()}&${query}`)
+    : queryParams
+
   const path = new URL(url).pathname
   const baseURL = new URL(url).host
 
-  const queryString = query.toString()
+  const queryString = includeSearchQuery.toString()
 
   const meta = [verb.toUpperCase(), baseURL, path, queryString].join('\n')
 
@@ -66,8 +80,10 @@ export const generateAuthSignature = (
     .update(meta)
     .digest('base64')
 
+  includeSearchQuery.append('Signature', signedRequest)
+
   return {
-    signature: signedRequest,
+    queryParamsWithSignature: includeSearchQuery,
   }
 
 }
@@ -138,28 +154,18 @@ export const HuobiHttp: IAlunaHttp = class {
       body,
       verb = AlunaHttpVerbEnum.POST,
       keySecret,
+      query,
     } = params
 
-    const timestamp = new Date().toISOString().slice(0, -5)
-
-    const queryParams = new URLSearchParams()
-
-    queryParams.append('AccessKeyId', keySecret.key)
-    queryParams.append('SignatureMethod', 'HmacSHA256')
-    queryParams.append('SignatureVersion', '2')
-    queryParams.append('Timestamp', timestamp.toString())
-
-    const signedHash = generateAuthSignature({
+    const { queryParamsWithSignature } = generateAuthSignature({
       verb,
       keySecret,
       body,
       url,
-      query: queryParams,
+      query,
     })
 
-    queryParams.append('Signature', signedHash.signature)
-
-    const fullUrl = `${url}?${queryParams.toString()}`
+    const fullUrl = `${url}?${queryParamsWithSignature.toString()}`
 
     const { requestConfig } = assembleAxiosRequestConfig({
       url: fullUrl,
@@ -169,11 +175,15 @@ export const HuobiHttp: IAlunaHttp = class {
 
     try {
 
-      const { data: { data } } = await axios
+      const { data: req } = await axios
         .create()
         .request<IHuobiHttpResponse<T>>(
           requestConfig,
         )
+
+      // @TODO -> Need to verify if there's errors
+
+      const { data } = req
 
       return {
         data,

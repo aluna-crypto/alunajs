@@ -10,6 +10,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { HuobiSpecs } from './HuobiSpecs'
 import { HuobiBalanceModule } from './modules/HuobiBalanceModule'
+import { HuobiKeyModule } from './modules/HuobiKeyModule'
 import { HuobiMarketModule } from './modules/HuobiMarketModule'
 import { HuobiSymbolModule } from './modules/HuobiSymbolModule'
 
@@ -35,8 +36,7 @@ export const Huobi: IAlunaExchangeStatic = class extends AAlunaExchange implemen
 
     super(params)
 
-    // @TODO
-    // this.key = new HuobiKeyModule({ exchange: this })
+    this.key = new HuobiKeyModule({ exchange: this })
     this.balance = new HuobiBalanceModule({ exchange: this })
     // this.order = new HuobiOrderWriteModule({ exchange: this })
 

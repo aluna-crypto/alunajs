@@ -34,7 +34,7 @@ describe('Huobi', () => {
     expect(huobi.keySecret.key).to.eq(key)
     expect(huobi.keySecret.secret).to.eq(secret)
 
-    // expect(huobi.key).to.be.ok
+    expect(huobi.key).to.be.ok
     expect(huobi.balance).to.be.ok
     // expect(huobi.order).to.be.ok // @TODO
 
