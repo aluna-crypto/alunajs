@@ -198,12 +198,9 @@ export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlun
 
     let requestCount = 0
 
-    let canceledOrder: string
-
     try {
 
       const {
-        data: canceledOrderResponse,
         requestCount: privateRequestCount,
       } = await HuobiHttp.privateRequest<string>({
         verb: AlunaHttpVerbEnum.POST,
@@ -211,7 +208,6 @@ export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlun
         keySecret: this.exchange.keySecret,
       })
 
-      canceledOrder = canceledOrderResponse
       requestCount += privateRequestCount
 
     } catch (err) {
