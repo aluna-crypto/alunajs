@@ -19,10 +19,10 @@ export interface IHuobiOrderSchema {
 }
 
 export interface IHuobiOrderRequest {
-  'account-id': string
+  'account-id': number
   amount: string
   price?: string
-  source: string
+  source?: string
   symbol: string
   type: string
 }

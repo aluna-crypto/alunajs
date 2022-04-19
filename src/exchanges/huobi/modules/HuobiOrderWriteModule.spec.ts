@@ -67,7 +67,7 @@ describe('HuobiOrderWriteModule', () => {
     )
 
     getHuobiAccountIdMock.onFirstCall().returns({
-      accountId: '12345',
+      accountId: 12345,
       requestCount: 1,
     })
 
@@ -94,7 +94,7 @@ describe('HuobiOrderWriteModule', () => {
       amount: placeOrderParams.amount.toString(),
       price: placeOrderParams.rate?.toString(),
       type: `${AlunaOrderSideEnum.BUY}-${HuobiOrderTypeEnum.LIMIT}`,
-      'account-id': '12345',
+      'account-id': 12345,
       source: 'spot-api',
     }
 
@@ -120,7 +120,7 @@ describe('HuobiOrderWriteModule', () => {
     expect(placeResponse1).to.deep.eq(placedOrder)
 
     getHuobiAccountIdMock.onSecondCall().returns({
-      accountId: '12345',
+      accountId: 12345,
       requestCount: 1,
     })
 
@@ -138,7 +138,7 @@ describe('HuobiOrderWriteModule', () => {
       symbol: placeOrderParams.symbolPair,
       amount: placeOrderParams.amount.toString(),
       type: `${AlunaOrderSideEnum.SELL}-${HuobiOrderTypeEnum.MARKET}`,
-      'account-id': '12345',
+      'account-id': 12345,
       source: 'spot-api',
     }
 
@@ -187,7 +187,7 @@ describe('HuobiOrderWriteModule', () => {
     )
 
     getHuobiAccountIdMock.onFirstCall().returns({
-      accountId: '12345',
+      accountId: 12345,
       requestCount: 1,
     })
 
@@ -205,7 +205,7 @@ describe('HuobiOrderWriteModule', () => {
       amount: placeOrderParams.amount.toString(),
       price: placeOrderParams.rate?.toString(),
       type: `${AlunaOrderSideEnum.BUY}-${HuobiOrderTypeEnum.LIMIT}`,
-      'account-id': '12345',
+      'account-id': 12345,
       source: 'spot-api',
     }
 
@@ -259,7 +259,7 @@ describe('HuobiOrderWriteModule', () => {
     )
 
     getHuobiAccountIdMock.onFirstCall().returns({
-      accountId: '12345',
+      accountId: 12345,
       requestCount: 1,
     })
 
@@ -283,7 +283,7 @@ describe('HuobiOrderWriteModule', () => {
       amount: placeOrderParams.amount.toString(),
       price: placeOrderParams.rate?.toString(),
       type: `${AlunaOrderSideEnum.BUY}-${HuobiOrderTypeEnum.LIMIT}`,
-      'account-id': '12345',
+      'account-id': 12345,
       source: 'spot-api',
     }
 
@@ -310,7 +310,7 @@ describe('HuobiOrderWriteModule', () => {
     expect(placeResponse1).to.deep.eq(parseMock.returnValues[0].order)
 
     getHuobiAccountIdMock.onSecondCall().returns({
-      accountId: '12345',
+      accountId: 12345,
       requestCount: 1,
     })
 

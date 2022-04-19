@@ -32,7 +32,7 @@ import { HuobiOrderReadModule } from './HuobiOrderReadModule'
 
 export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlunaOrderWriteModule {
 
-  public async place(
+  public async place (
     params: IAlunaOrderPlaceParams,
   ): Promise<IAlunaOrderPlaceReturns> {
 
@@ -127,7 +127,7 @@ export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlun
     const body: IHuobiOrderRequest = {
       symbol: symbolPair,
       type: `${translatedSide}-${translatedOrderType}`,
-      'account-id': accountId.toString(),
+      'account-id': accountId,
       amount: amount.toString(),
       source: 'spot-api',
     }
@@ -185,7 +185,7 @@ export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlun
 
 
 
-  public async cancel(
+  public async cancel (
     params: IAlunaOrderGetParams,
   ): Promise<IAlunaOrderGetReturns> {
 
@@ -240,7 +240,7 @@ export class HuobiOrderWriteModule extends HuobiOrderReadModule implements IAlun
   }
 
 
-  public async edit(
+  public async edit (
     params: IAlunaOrderEditParams,
   ): Promise<IAlunaOrderEditReturns> {
 

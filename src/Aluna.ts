@@ -66,6 +66,10 @@ export class Aluna extends Exchanges {
         Exchange = this.Poloniex
         break
 
+      case this.Huobi.ID:
+        Exchange = this.Huobi
+        break
+
       default: {
 
         const error = new AlunaError({
@@ -134,6 +138,10 @@ export class Aluna extends Exchanges {
 
       case this.Poloniex.ID:
         Exchange = this.Poloniex
+        break
+
+      case this.Huobi.ID:
+        Exchange = this.Huobi
         break
 
       default: {
