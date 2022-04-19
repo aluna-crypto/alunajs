@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
@@ -25,7 +26,15 @@ describe('HuobiOrderParser', () => {
       returnSymbol: translatedSymbol,
     })
 
-    return { alunaSymbolMappingMock }
+    const time = new Date('2022-04-14T14:23:34.842Z').getTime()
+
+    const dateMock = ImportMock.mockFunction(
+      Date.prototype,
+      'getTime',
+      time,
+    )
+
+    return { alunaSymbolMappingMock, dateMock }
 
   }
 
@@ -86,7 +95,7 @@ describe('HuobiOrderParser', () => {
       (rm) => rm.symbol === currencyPair,
     )
 
-    rawOrder['created-at'] = new Date().getTime()
+    rawOrder['created-at'] = new Date('2022-04-14T14:23:34.842Z').getTime()
     rawOrder.state = HuobiOrderStatusEnum.CANCELED
 
     const parsedOrder = HuobiOrderParser.parse({
@@ -104,7 +113,7 @@ describe('HuobiOrderParser', () => {
       symbolMappings: {},
     })
 
-    const updatedAt = new Date().getTime()
+    const updatedAt = new Date('2022-04-14T14:23:34.842Z').getTime()
 
     expect(parsedOrder.canceledAt?.getTime()).to.be.eq(updatedAt)
 

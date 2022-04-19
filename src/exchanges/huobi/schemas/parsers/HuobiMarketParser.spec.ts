@@ -47,6 +47,7 @@ describe('HuobiMarketParser', () => {
       change,
       date,
       baseVolume,
+      quoteVolume,
     } = ticker
 
     expect(exchangeId).to.be.eq(Huobi.ID)
@@ -58,9 +59,10 @@ describe('HuobiMarketParser', () => {
     expect(low).to.be.eq(rawMarket.low)
     expect(bid).to.be.eq(rawMarket.bid)
     expect(ask).to.be.eq(rawMarket.ask)
-    expect(last).to.be.eq(rawMarket.amount)
-    expect(change).to.be.eq(0)
-    expect(baseVolume).to.be.eq(rawMarket.vol)
+    expect(last).to.be.eq(rawMarket.close)
+    expect(change).to.be.eq(rawMarket.open - rawMarket.close)
+    expect(baseVolume).to.be.eq(rawMarket.amount)
+    expect(quoteVolume).to.be.eq(rawMarket.vol)
     expect(date).to.be.ok
 
     expect(spotEnabled).to.be.ok

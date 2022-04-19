@@ -39,6 +39,8 @@ export interface IHuobiHttpResponse<T> {
   data: T
   ts: number
   status: string
+  'err-code'?: string
+  'err-msg'?: string
 }
 
 
@@ -91,7 +93,7 @@ export const generateAuthSignature = (
 
 export const HuobiHttp: IAlunaHttp = class {
 
-  static async publicRequest<T>(
+  static async publicRequest<T> (
     params: IAlunaHttpPublicParams,
   ): Promise<IAlunaHttpResponse<T>> {
 
@@ -145,7 +147,7 @@ export const HuobiHttp: IAlunaHttp = class {
 
 
 
-  static async privateRequest<T>(
+  static async privateRequest<T> (
     params: IAlunaHttpPrivateParams,
   ): Promise<IAlunaHttpResponse<T>> {
 
@@ -188,7 +190,15 @@ export const HuobiHttp: IAlunaHttp = class {
           requestConfig,
         )
 
-      // @TODO -> Need to verify if there's errors
+      if (req['err-msg']) {
+
+        const error = new Error(req['err-msg'])
+
+        error.name = req['err-code']!
+
+        throw handleHuobiRequestError({ error })
+
+      }
 
       const { data } = req
 

@@ -12,8 +12,7 @@ import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig.mock'
 import {
-  mockAlunaCache,
-  validateCache,
+  mockAlunaCache, validateCache,
 } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
 import * as handleHuobiRequestErrorMod from './errors/handleHuobiRequestError'
@@ -46,6 +45,7 @@ describe('HuobiHttp', () => {
       setCache?: boolean,
       signedheaderResponse?: HuobiHttpMod.IHuobiSignedSignature,
       mockedExchangeSettings?: IAlunaSettingsSchema,
+      isErrorResp?: boolean,
     } = {},
   ) => {
 
@@ -57,19 +57,22 @@ describe('HuobiHttp', () => {
       setCache = false,
       requestError,
       mockedExchangeSettings = {},
+      isErrorResp = false,
     } = params
 
     const { assembleAxiosRequestMock } = mockAssembleRequestConfig()
 
+    const axiosRequest = {
+      responseData: isErrorResp ? requestResponse : {
+        data: requestResponse,
+      },
+      error: isErrorResp ? undefined : requestError,
+    }
+
     const {
       requestSpy,
       axiosCreateMock,
-    } = mockAxiosRequest({
-      error: requestError,
-      responseData: {
-        data: requestResponse,
-      },
-    })
+    } = mockAxiosRequest(axiosRequest)
 
     const exchangeMock = ImportMock.mockOther(
       Huobi,
@@ -286,6 +289,45 @@ describe('HuobiHttp', () => {
       expect(handleRequestErrorSpy.args[1][0]).to.deep.eq({
         error: alunaError,
       })
+
+    },
+  )
+
+  it(
+    'should ensure handleHuobiRequestError is call on request error',
+    async () => {
+
+      const error = {
+        'err-msg': 'dummy error msg',
+        'err-code': 'dummy-error-code',
+      }
+
+      const alunaError = new Error(error['err-msg'])
+
+      alunaError.name = error['err-code']
+
+      const {
+        handleRequestErrorSpy,
+      } = mockDeps({
+        requestResponse: error,
+        isErrorResp: true,
+        requestError: alunaError,
+      })
+
+      const res = await executeAndCatch(() => HuobiHttp.privateRequest({
+        url: dummyUrl,
+        body: dummyBody,
+        keySecret: dummyKeysecret,
+      }))
+
+      expect(res.result).not.to.be.ok
+
+      expect(res.error!.message).to.be.eq(alunaError.message)
+
+      expect(handleRequestErrorSpy.callCount).to.be.eq(2)
+      expect(handleRequestErrorSpy.calledWith({
+        error: alunaError,
+      })).to.be.ok
 
     },
   )

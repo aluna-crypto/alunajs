@@ -144,13 +144,14 @@ describe('HuobiMarketModule', () => {
       low,
       bid,
       ask,
-      amount,
-      vol: baseVolume,
+      close,
+      open,
+      vol: quoteVolume,
+      amount: baseVolume,
     } = rawMarketWithCurrency
 
-    const lastTradePrice = amount
-    const change = 0
-    const volume = baseVolume
+    const lastTradePrice = close
+    const change = open - close
 
     expect(ticker).to.be.ok
     expect(ticker.high).to.be.eq(high)
@@ -159,7 +160,8 @@ describe('HuobiMarketModule', () => {
     expect(ticker.ask).to.be.eq(ask)
     expect(ticker.last).to.be.eq(lastTradePrice)
     expect(ticker.change).to.be.eq(change)
-    expect(ticker.baseVolume).to.be.eq(volume)
+    expect(ticker.baseVolume).to.be.eq(baseVolume)
+    expect(ticker.quoteVolume).to.be.eq(quoteVolume)
 
     expect(market.spotEnabled).to.be.ok
     expect(market.marginEnabled).not.to.be.ok

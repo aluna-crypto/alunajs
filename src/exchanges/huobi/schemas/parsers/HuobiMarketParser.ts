@@ -21,8 +21,10 @@ export class HuobiMarketParser {
       low,
       ask,
       bid,
-      amount,
-      vol,
+      close,
+      open,
+      amount: baseVolume,
+      vol: quoteVolume,
     } = rawMarket
 
     const symbolMappings = Huobi.settings.mappings
@@ -37,16 +39,18 @@ export class HuobiMarketParser {
       symbolMappings,
     })
 
+    const change = open - close
+
     const ticker = {
       high,
       low,
       bid,
       ask,
-      last: amount, // @TODO -> Update value
+      last: close,
       date: new Date(),
-      change: 0, // @TODO -> Update value
-      baseVolume: vol,
-      quoteVolume: vol, // @TODO -> Update value
+      change,
+      baseVolume,
+      quoteVolume,
     }
 
     return {
