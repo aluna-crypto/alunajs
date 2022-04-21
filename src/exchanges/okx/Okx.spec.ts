@@ -35,7 +35,7 @@ describe('Okx', () => {
     expect(okx.keySecret.secret).to.eq(secret)
 
     // expect(okx.key).to.be.ok // @TODO
-    // expect(okx.balance).to.be.ok
+    expect(okx.balance).to.be.ok
     // expect(okx.order).to.be.ok
 
     expect(okx.position).not.to.be.ok
