@@ -12,8 +12,8 @@ describe('Okx', () => {
 
     expect(Okx.ID).to.eq('okx')
     expect(Okx.SPECS).to.be.ok
-    // expect(Okx.Symbol).to.be.ok // @TODO
-    // expect(Okx.Market).to.be.ok
+    expect(Okx.Symbol).to.be.ok
+    expect(Okx.Market).to.be.ok
 
   })
 

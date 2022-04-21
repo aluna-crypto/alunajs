@@ -9,6 +9,7 @@ import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { OkxMarketModule } from './modules/OkxMarketModule'
+import { OkxSymbolModule } from './modules/OkxSymbolModule'
 import { OkxLog } from './OkxLog'
 import { OkxSpecs } from './OkxSpecs'
 
@@ -20,8 +21,7 @@ export const Okx: IAlunaExchangeStatic = class extends AAlunaExchange implements
   static readonly ID = OkxSpecs.id
   static readonly SPECS = OkxSpecs
 
-  static Symbol = null as any // @TODO
-  // static Symbol = OkxSymbolModule
+  static Symbol = OkxSymbolModule
   static Market = OkxMarketModule
 
   // local definitions
