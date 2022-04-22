@@ -1,10 +1,11 @@
 import { expect } from 'chai'
 
+import { BittrexMarketStatusEnum } from '../../enums/BittrexMarketStatusEnum'
 import {
   BITTREX_RAW_MARKETS,
   BITTREX_RAW_MARKET_SUMMARIES,
 } from '../../test/fixtures/bittrexMarket'
-import { BittrexMarketStatusEnum, IBittrexMarketSchema } from '../IBittrexMarketSchema'
+import { IBittrexMarketSchema } from '../IBittrexMarketSchema'
 import { BittrexMarketFilter } from './BittrexMarketFilter'
 
 

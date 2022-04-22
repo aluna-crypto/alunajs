@@ -1,12 +1,13 @@
 import { expect } from 'chai'
 
+import { BinanceSymbolStatusEnum } from '../../enums/BinanceSymbolStatusEnum'
 import {
   BINANCE_RAW_MARKETS,
 } from '../../test/fixtures/binanceMarket'
 import {
   BINANCE_RAW_SYMBOLS,
 } from '../../test/fixtures/binanceSymbols'
-import { BinanceSymbolStatusEnum, IBinanceSymbolSchema } from '../IBinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../IBinanceSymbolSchema'
 import { BinanceMarketFilter } from './BinanceMarketFilter'
 
 

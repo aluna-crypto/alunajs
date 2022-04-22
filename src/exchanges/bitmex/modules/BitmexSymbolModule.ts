@@ -16,11 +16,31 @@ import { Bitmex } from '../Bitmex'
 import { BitmexHttp } from '../BitmexHttp'
 import { BitmexLog } from '../BitmexLog'
 import { PROD_BITMEX_URL } from '../BitmexSpecs'
+import { BitmexInstrumentStateEnum } from '../enums/BitmexInstrumentStateEnum'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 
 
 
-export const BitmexSymbolModule: IAlunaSymbolModule = class {
+interface IBitmexMarketModule extends IAlunaSymbolModule {
+  filterActiveSymbols (
+    params: { rawSymbols: IBitmexSymbolsSchema[] }
+    ): IBitmexSymbolsSchema[]
+}
+
+
+export const BitmexSymbolModule: IBitmexMarketModule = class {
+
+  public static filterActiveSymbols (params: {
+    rawSymbols: IBitmexSymbolsSchema[],
+  }): IBitmexSymbolsSchema[] {
+
+    return params
+      .rawSymbols
+      .filter(
+        (rawMarket) => rawMarket.state !== BitmexInstrumentStateEnum.UNLISTED,
+      )
+
+  }
 
   public static async listRaw ()
     : Promise<IAlunaSymbolListRawReturns<IBitmexSymbolsSchema>> {
@@ -36,8 +56,12 @@ export const BitmexSymbolModule: IAlunaSymbolModule = class {
       url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
-    return {
+    const filteredActiveSymbols = BitmexSymbolModule.filterActiveSymbols({
       rawSymbols,
+    })
+
+    return {
+      rawSymbols: filteredActiveSymbols,
       requestCount,
     }
 

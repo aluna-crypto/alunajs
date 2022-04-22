@@ -1,7 +1,7 @@
 import { map } from 'lodash'
 
+import { BittrexMarketStatusEnum } from '../../enums/BittrexMarketStatusEnum'
 import {
-  BittrexMarketStatusEnum,
   IBittrexMarketSchema,
   IBittrexMarketSummarySchema,
 } from '../IBittrexMarketSchema'

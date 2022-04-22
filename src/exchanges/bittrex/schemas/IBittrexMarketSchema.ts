@@ -1,7 +1,6 @@
-export enum BittrexMarketStatusEnum {
-    ONLINE = 'ONLINE',
-    OFFLINE = 'OFFLINE'
-}
+import { BittrexMarketStatusEnum } from '../enums/BittrexMarketStatusEnum'
+
+
 
 export interface IBittrexMarketSchema {
     symbol: string

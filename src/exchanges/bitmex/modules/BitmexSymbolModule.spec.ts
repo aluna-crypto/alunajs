@@ -9,6 +9,7 @@ import {
   BitmexSpecs,
   PROD_BITMEX_URL,
 } from '../BitmexSpecs'
+import { BitmexInstrumentStateEnum } from '../enums/BitmexInstrumentStateEnum'
 import { IBitmexSymbolsSchema } from '../schemas/IBitmexSymbolsSchema'
 import {
   BITMEX_PARSED_SYMBOLS,
@@ -22,9 +23,13 @@ describe('BitmexSymbolModule', () => {
 
   it('should list Bitmex raw symbols just fine', async () => {
 
+    const rawBitmexSymbols = BITMEX_RAW_SYMBOLS
+
+    rawBitmexSymbols[1].state = BitmexInstrumentStateEnum.UNLISTED
+
     const { requestMock } = mockPublicHttpRequest({
       exchangeHttp: BitmexHttp,
-      requestResponse: BITMEX_RAW_SYMBOLS,
+      requestResponse: rawBitmexSymbols,
     })
 
     const { rawSymbols } = await BitmexSymbolModule.listRaw()
@@ -34,7 +39,14 @@ describe('BitmexSymbolModule', () => {
       url: `${PROD_BITMEX_URL}/instrument/active`,
     })
 
-    expect(rawSymbols).to.be.eq(BITMEX_RAW_SYMBOLS)
+    const filteredRawSymbols = rawBitmexSymbols
+      .filter(
+        (rawSymbol) => rawSymbol.state !== BitmexInstrumentStateEnum.UNLISTED,
+      )
+
+    expect(rawSymbols).to.deep.eq(filteredRawSymbols)
+
+    rawBitmexSymbols[1].state = BitmexInstrumentStateEnum.OPEN
 
   })
 

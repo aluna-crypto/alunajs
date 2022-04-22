@@ -1,4 +1,5 @@
-import { BittrexMarketStatusEnum, IBittrexMarketSchema } from '../../schemas/IBittrexMarketSchema'
+import { BittrexMarketStatusEnum } from '../../enums/BittrexMarketStatusEnum'
+import { IBittrexMarketSchema } from '../../schemas/IBittrexMarketSchema'
 
 
 

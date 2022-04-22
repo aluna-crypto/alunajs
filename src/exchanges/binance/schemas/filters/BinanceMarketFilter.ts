@@ -1,9 +1,10 @@
 import { map } from 'lodash'
 
+import { BinanceSymbolStatusEnum } from '../../enums/BinanceSymbolStatusEnum'
 import {
   IBinanceMarketSchema,
 } from '../IBinanceMarketSchema'
-import { BinanceSymbolStatusEnum, IBinanceSymbolSchema } from '../IBinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../IBinanceSymbolSchema'
 
 
 
@@ -46,7 +47,6 @@ export class BinanceMarketFilter {
         return filteredRawMarkets.push(rawMarket)
 
       }
-      console.log('odkawpdokwa', rawMarket)
 
     })
 
