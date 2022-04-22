@@ -41,11 +41,15 @@ export class ValrCurrencyPairsParser {
           quoteCurrency,
         } = rawSymbol
 
-        cumulator.push({
-          ...current,
-          baseCurrency,
-          quoteCurrency,
-        })
+        if (rawSymbol.active) {
+
+          cumulator.push({
+            ...current,
+            baseCurrency,
+            quoteCurrency,
+          })
+
+        }
 
       }
 

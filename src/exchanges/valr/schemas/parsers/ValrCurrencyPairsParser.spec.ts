@@ -15,6 +15,8 @@ describe('ValrCurrencyPairsParser', () => {
     const rawMarkets = VALR_RAW_MARKETS
     const rawCurrencyPairs = VALR_RAW_CURRENCY_PAIRS
 
+    rawCurrencyPairs[1].active = false
+
     const marketWithCurr = ValrCurrencyPairsParser.parse({
       rawMarkets,
       rawCurrencyPairs,
@@ -26,7 +28,7 @@ describe('ValrCurrencyPairsParser', () => {
     */
     expect(rawCurrencyPairs.length).to.be.eq(6)
 
-    expect(marketWithCurr.length).to.be.eq(3)
+    expect(marketWithCurr.length).to.be.eq(2)
 
     marketWithCurr.forEach((item, index) => {
 
