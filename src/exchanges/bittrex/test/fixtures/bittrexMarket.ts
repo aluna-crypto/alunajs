@@ -1,3 +1,61 @@
+import { BittrexMarketStatusEnum, IBittrexMarketSchema } from '../../schemas/IBittrexMarketSchema'
+
+
+
+export const BITTREX_RAW_MARKETS: IBittrexMarketSchema[] = [
+  {
+    symbol: 'BTC-EUR',
+    baseCurrencySymbol: 'BTC',
+    quoteCurrencySymbol: 'EUR',
+    minTradeSize: '0.00044994',
+    precision: 3,
+    status: BittrexMarketStatusEnum.ONLINE,
+    createdAt: '2020-03-30T06:12:04.86Z',
+    prohibitedIn: [
+      'US',
+    ],
+    associatedTermsOfService: [],
+    tags: [],
+  },
+  {
+    symbol: 'BTC-USD',
+    baseCurrencySymbol: 'BTC',
+    quoteCurrencySymbol: 'USD',
+    minTradeSize: '0.00006957',
+    precision: 3,
+    status: BittrexMarketStatusEnum.ONLINE,
+    createdAt: '2018-05-31T13:24:40.77Z',
+    prohibitedIn: [],
+    associatedTermsOfService: [],
+    tags: [],
+  },
+  {
+    symbol: 'BTC-USDT',
+    baseCurrencySymbol: 'BTC',
+    quoteCurrencySymbol: 'USDT',
+    minTradeSize: '0.00006965',
+    precision: 8,
+    status: BittrexMarketStatusEnum.OFFLINE,
+    createdAt: '2015-12-11T06:31:40.633Z',
+    prohibitedIn: [],
+    associatedTermsOfService: [],
+    tags: [],
+  },
+  {
+    symbol: 'ETH-BTC',
+    baseCurrencySymbol: 'ETH',
+    quoteCurrencySymbol: 'BTC',
+    minTradeSize: '0.00006965',
+    precision: 8,
+    status: BittrexMarketStatusEnum.ONLINE,
+    createdAt: '2015-12-11T06:31:40.633Z',
+    prohibitedIn: [],
+    associatedTermsOfService: [],
+    tags: [],
+  },
+]
+
+
 export const BITTREX_RAW_MARKET_SUMMARIES = [
   {
     symbol: 'BTC-EUR',
@@ -64,7 +122,6 @@ export const BITTREX_RAW_MARKETS_WITH_TICKER = [
     quoteCurrencySymbol: 'EUR',
     minTradeSize: '0.00044994',
     precision: 3,
-    status: 'ONLINE',
     createdAt: '2020-03-30T06:12:04.86Z',
     prohibitedIn: ['US'],
     associatedTermsOfService: [],
@@ -84,7 +141,6 @@ export const BITTREX_RAW_MARKETS_WITH_TICKER = [
     quoteCurrencySymbol: 'USD',
     minTradeSize: '0.00006230',
     precision: 3,
-    status: 'ONLINE',
     createdAt: '2018-05-31T13:24:40.77Z',
     prohibitedIn: [],
     associatedTermsOfService: [],
@@ -104,7 +160,6 @@ export const BITTREX_RAW_MARKETS_WITH_TICKER = [
     quoteCurrencySymbol: 'USDT',
     minTradeSize: '0.00006230',
     precision: 8,
-    status: 'ONLINE',
     createdAt: '2015-12-11T06:31:40.633Z',
     prohibitedIn: [],
     associatedTermsOfService: [],

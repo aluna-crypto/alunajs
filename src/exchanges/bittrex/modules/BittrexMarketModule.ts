@@ -8,7 +8,9 @@ import {
 import { BittrexHttp } from '../BittrexHttp'
 import { BittrexLog } from '../BittrexLog'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
+import { BittrexMarketFilter } from '../schemas/filters/BittrexMarketFilter'
 import {
+  IBittrexMarketSchema,
   IBittrexMarketSummarySchema,
   IBittrexMarketTickerSchema,
   IBittrexMarketWithTicker,
@@ -25,16 +27,29 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
 
     const { publicRequest } = BittrexHttp
 
+    const requestCount = 0
+
     BittrexLog.info('fetching Bittrex market summaries')
 
-    const requestCount = 0
+    const {
+      data: rawMarkets,
+      requestCount: marketsRequestCount,
+    } = await publicRequest<IBittrexMarketSchema[]>({
+      url: `${PROD_BITTREX_URL}/markets`,
+    })
+
+    BittrexLog.info('fetching Bittrex market summaries')
 
     const {
       data: rawMarketSummaries,
       requestCount: summariesRequestCount,
-    } = await
-    publicRequest<IBittrexMarketSummarySchema[]>({
+    } = await publicRequest<IBittrexMarketSummarySchema[]>({
       url: `${PROD_BITTREX_URL}/markets/summaries`,
+    })
+
+    const filteredRawMarkets = BittrexMarketFilter.filter({
+      rawMarkets,
+      rawMarketSummaries,
     })
 
     BittrexLog.info('fetching Bittrex tickers')
@@ -47,13 +62,14 @@ export const BittrexMarketModule: IAlunaMarketModule = class {
     })
 
     const rawMarketsWithTicker = BittrexTickerMarketParser.parse({
-      rawMarketSummaries,
+      rawMarketSummaries: filteredRawMarkets,
       rawMarketTickers,
     })
 
     const totalRequestCount = requestCount
-    + tickersRequestCount
-    + summariesRequestCount
+      + tickersRequestCount
+      + summariesRequestCount
+      + marketsRequestCount
 
     return {
       rawMarkets: rawMarketsWithTicker,

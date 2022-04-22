@@ -1,3 +1,21 @@
+export enum BittrexMarketStatusEnum {
+    ONLINE = 'ONLINE',
+    OFFLINE = 'OFFLINE'
+}
+
+export interface IBittrexMarketSchema {
+    symbol: string
+    baseCurrencySymbol: string
+    quoteCurrencySymbol: string
+    minTradeSize: string
+    precision: number
+    status: BittrexMarketStatusEnum
+    createdAt: string
+    prohibitedIn: string[]
+    associatedTermsOfService: string[]
+    tags: string[]
+}
+
 export interface IBittrexMarketSummarySchema {
     symbol: string
     high: string

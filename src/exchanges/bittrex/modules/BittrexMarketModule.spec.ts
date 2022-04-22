@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { Bittrex } from '../Bittrex'
 import { BittrexHttp } from '../BittrexHttp'
 import { PROD_BITTREX_URL } from '../BittrexSpecs'
+import { BittrexMarketFilter } from '../schemas/filters/BittrexMarketFilter'
 import { BittrexMarketParser } from '../schemas/parses/BittrexMarketParser'
 import { BittrexTickerMarketParser } from '../schemas/parses/BittrexTickerMarketParser'
 import {
@@ -20,10 +21,12 @@ describe('BittrexMarketModule', () => {
   it('should list Bittrex raw markets just fine', async () => {
 
     const rawMarketSummaries = 'rawMarketSummaries'
-    const rawMarketTickers = 'rawMarketSummaries'
+    const rawMarketTickers = 'rawMarketTickers'
+    const rawMarkets = 'rawMarkets'
 
     const marketSummariesURL = `${PROD_BITTREX_URL}/markets/summaries`
     const marketTickersURL = `${PROD_BITTREX_URL}/markets/tickers`
+    const marketsURL = `${PROD_BITTREX_URL}/markets`
 
     const requestMock = ImportMock.mockFunction(
       BittrexHttp,
@@ -33,11 +36,17 @@ describe('BittrexMarketModule', () => {
     requestMock
       .onFirstCall()
       .returns(Promise.resolve({
-        data: rawMarketSummaries,
+        data: rawMarkets,
         requestCount: 1,
       }))
     requestMock
       .onSecondCall()
+      .returns(Promise.resolve({
+        data: rawMarketSummaries,
+        requestCount: 1,
+      }))
+    requestMock
+      .onThirdCall()
       .returns(Promise.resolve({
         data: rawMarketTickers,
         requestCount: 1,
@@ -50,6 +59,11 @@ describe('BittrexMarketModule', () => {
       BITTREX_RAW_MARKETS_WITH_TICKER,
     )
 
+    const marketFilterMock = ImportMock.mockFunction(
+      BittrexMarketFilter,
+      'filter',
+      rawMarketSummaries,
+    )
 
     const {
       rawMarkets: response,
@@ -57,15 +71,24 @@ describe('BittrexMarketModule', () => {
     } = await BittrexMarketModule.listRaw()
 
 
-    expect(requestCount).to.be.eq(2)
+    expect(requestCount).to.be.eq(3)
 
-    expect(requestMock.callCount).to.be.eq(2)
+    expect(requestMock.callCount).to.be.eq(3)
     expect(requestMock.firstCall.calledWith(
-      { url: marketSummariesURL },
+      { url: marketsURL },
     )).to.be.ok
     expect(requestMock.secondCall.calledWith(
+      { url: marketSummariesURL },
+    )).to.be.ok
+    expect(requestMock.thirdCall.calledWith(
       { url: marketTickersURL },
     )).to.be.ok
+
+    expect(marketFilterMock.callCount).to.be.eq(1)
+    expect(marketFilterMock.calledWith({
+      rawMarketSummaries,
+      rawMarkets,
+    })).to.be.ok
 
     expect(ticketMarketParserMock.callCount).to.be.eq(1)
     expect(ticketMarketParserMock.calledWith({
