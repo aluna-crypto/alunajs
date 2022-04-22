@@ -22,11 +22,17 @@ describe('PoloniexMarketModule', () => {
 
     const marketSummariesURL = `${PROD_POLONIEX_URL}/public?command=returnTicker`
 
+    const rawMarketsList = POLONIEX_RAW_MARKET
+
+    const currencyPair = Object.keys(rawMarketsList)[0]
+
+    rawMarketsList[currencyPair].isFrozen = '1'
+
     const requestMock = ImportMock.mockFunction(
       PoloniexHttp,
       'publicRequest',
       Promise.resolve({
-        data: POLONIEX_RAW_MARKET,
+        data: rawMarketsList,
         requestCount: 1,
       }),
     )
@@ -43,7 +49,12 @@ describe('PoloniexMarketModule', () => {
       { url: marketSummariesURL },
     )).to.be.ok
 
-    expect(rawMarkets).to.deep.eq(POLONIEX_RAW_MARKETS_WITH_CURRENCY)
+    const filteredMarkets = POLONIEX_RAW_MARKETS_WITH_CURRENCY
+      .filter((rawMarket) => rawMarket.currencyPair !== currencyPair)
+
+    expect(rawMarkets).to.deep.eq(filteredMarkets)
+
+    rawMarketsList[currencyPair].isFrozen = '0'
 
   })
 

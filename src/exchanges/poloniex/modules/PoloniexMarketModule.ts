@@ -51,12 +51,18 @@ export const PoloniexMarketModule: IAlunaMarketModule = class {
 
       const [quoteCurrency, baseCurrency] = key.split('_')
 
-      rawMarketsWithCurrency.push({
-        currencyPair: key,
-        quoteCurrency,
-        baseCurrency,
-        ...value,
-      })
+      const isFrozen = value.isFrozen === '1'
+
+      if (!isFrozen) {
+
+        rawMarketsWithCurrency.push({
+          currencyPair: key,
+          quoteCurrency,
+          baseCurrency,
+          ...value,
+        })
+
+      }
 
     })
 
