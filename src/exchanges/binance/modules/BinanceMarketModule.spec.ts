@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { Binance } from '../Binance'
 import { BinanceHttp } from '../BinanceHttp'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
+import { BinanceMarketFilter } from '../schemas/filters/BinanceMarketFilter'
 import { BinanceCurrencyMarketParser } from '../schemas/parses/BinanceCurrencyMarketParser'
 import { BinanceMarketParser } from '../schemas/parses/BinanceMarketParser'
 import {
@@ -54,6 +55,12 @@ describe('BinanceMarketModule', () => {
       BINANCE_RAW_MARKETS_WITH_CURRENCY,
     )
 
+    const MarketFilterMock = ImportMock.mockFunction(
+      BinanceMarketFilter,
+      'filter',
+      rawMarkets,
+    )
+
 
     const {
       rawMarkets: response,
@@ -66,6 +73,12 @@ describe('BinanceMarketModule', () => {
     expect(binanceSymbolModuleMock.callCount).to.be.eq(1)
     expect(requestMock.calledWith({ url: marketsURL })).to.be.ok
     expect(binanceSymbolModuleMock.calledWith()).to.be.ok
+
+    expect(MarketFilterMock.callCount).to.be.eq(1)
+    expect(MarketFilterMock.calledWith({
+      rawMarkets,
+      rawSymbols: rawSymbolsPairs,
+    })).to.be.ok
 
     expect(currecyMarketParserMock.callCount).to.be.eq(1)
     expect(currecyMarketParserMock.calledWith({

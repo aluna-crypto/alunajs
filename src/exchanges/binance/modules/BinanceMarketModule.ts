@@ -8,6 +8,7 @@ import {
 import { BinanceHttp } from '../BinanceHttp'
 import { BinanceLog } from '../BinanceLog'
 import { PROD_BINANCE_URL } from '../BinanceSpecs'
+import { BinanceMarketFilter } from '../schemas/filters/BinanceMarketFilter'
 import {
   IBinanceMarketSchema,
   IBinanceMarketWithCurrency,
@@ -41,8 +42,13 @@ export const BinanceMarketModule: IAlunaMarketModule = class {
       requestCount: listRawCount,
     } = await BinanceSymbolModule.listRaw()
 
-    const rawMarketsWithCurrency = BinanceCurrencyMarketParser.parse({
+    const filteredActiveMarkets = BinanceMarketFilter.filter({
       rawMarkets,
+      rawSymbols,
+    })
+
+    const rawMarketsWithCurrency = BinanceCurrencyMarketParser.parse({
+      rawMarkets: filteredActiveMarkets,
       rawSymbols,
     })
 
