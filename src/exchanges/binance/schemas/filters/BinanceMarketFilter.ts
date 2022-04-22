@@ -48,6 +48,8 @@ export class BinanceMarketFilter {
 
       }
 
+      return rawMarket
+
     })
 
     return filteredRawMarkets

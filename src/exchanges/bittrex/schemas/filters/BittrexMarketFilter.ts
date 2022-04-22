@@ -48,6 +48,8 @@ export class BittrexMarketFilter {
 
       }
 
+      return rawMarket
+
     })
 
     return filteredRawMarkets
