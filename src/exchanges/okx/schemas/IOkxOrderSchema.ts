@@ -41,3 +41,12 @@ export interface IOkxOrderSchema {
   uTime: string
   cTime: string
 }
+
+export interface IOkxOrderRequest {
+  instId:string
+  tdMode:string
+  side: OkxSideEnum
+  ordType: OkxOrderTypeEnum
+  sz: string
+  px?: string
+}
