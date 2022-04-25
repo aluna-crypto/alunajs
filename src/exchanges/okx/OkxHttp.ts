@@ -55,6 +55,7 @@ export const generateAuthSignature = (
     keySecret,
     verb,
     path,
+    query,
   } = params
 
   if (!keySecret.passphrase) {
@@ -69,10 +70,12 @@ export const generateAuthSignature = (
 
   const timestamp = new Date().toISOString()
 
+  const pathWithQuery = query ? `${path}?${query}` : path
+
   const meta = [
     timestamp,
     verb.toUpperCase(),
-    path,
+    pathWithQuery,
   ].join('')
 
   const signedRequest = crypto
@@ -171,8 +174,19 @@ export const OkxHttp: IAlunaHttp = class {
       path,
     })
 
+
+    const fullUrl = query ? `${url}?${query}` : url
+
+
+    console.log({
+      url: fullUrl,
+      method: verb,
+      headers: signedHash,
+      proxySettings: Okx.settings.proxySettings,
+    })
+
     const { requestConfig } = assembleAxiosRequestConfig({
-      url,
+      url: fullUrl,
       method: verb,
       headers: signedHash,
       proxySettings: Okx.settings.proxySettings,

@@ -242,6 +242,60 @@ describe('OkxHttp', () => {
 
   })
 
+  it('should execute private request just fine with query', async () => {
+
+    const {
+      requestSpy,
+      axiosCreateMock,
+      generateAuthHeaderMock,
+      assembleAxiosRequestMock,
+    } = mockDeps({
+      requestResponse: dummyResponse,
+      signedheaderResponse: {
+        ...dummySignedBody,
+        'OK-ACCESS-PASSPHRASE': dummySignedBody['OK-ACCESS-PASSPHRASE']!,
+      },
+    })
+
+    const dummyQuery = 'dummy=dummy'
+
+    const responseData = await OkxHttp.privateRequest({
+      verb: AlunaHttpVerbEnum.POST,
+      url: dummyUrl,
+      body: dummyBody,
+      keySecret: dummyKeysecret,
+      query: dummyQuery,
+    })
+
+    expect(axiosCreateMock.callCount).to.be.eq(1)
+
+    expect(generateAuthHeaderMock.callCount).to.be.eq(1)
+
+    expect(requestSpy.callCount).to.be.eq(1)
+
+    expect(assembleAxiosRequestMock.calledWith(
+      {
+        url: `${dummyUrl}?${dummyQuery}`,
+        method: AlunaHttpVerbEnum.POST,
+        headers: {
+          'OK-ACCESS-KEY': 'key',
+          'OK-ACCESS-PASSPHRASE': 'passphrase',
+          'OK-ACCESS-SIGN': 'dummy',
+          'OK-ACCESS-TIMESTAMP': '2022-01-25T20:35:45.623Z',
+          'Content-Type': 'application/json',
+        },
+        proxySettings: undefined,
+      },
+    ))
+      .to.be.ok
+
+    expect(responseData).to.deep.eq({
+      data: dummyResponse,
+      requestCount: 1,
+    })
+
+  })
+
   it(
     'should ensure handleOkxRequestError is call on request error',
     async () => {
@@ -333,6 +387,59 @@ describe('OkxHttp', () => {
       timestamp,
       verb.toUpperCase(),
       path,
+    ].join('')
+
+    expect(dateMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', keySecret.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
+    expect(signedHash['OK-ACCESS-SIGN']).to.deep.eq(digestSpy.returnValues[0])
+
+  })
+
+  it('should generate signed auth header just fine with query', async () => {
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const timestamp = new Date('2022-01-25T20:35:45.623Z').toISOString()
+
+    const dateMock = ImportMock.mockFunction(
+      Date.prototype,
+      'toISOString',
+      timestamp,
+    )
+
+    const keySecret = {
+      key: 'dummy-key',
+      secret: 'dummy-secret',
+      passphrase: 'passphrase',
+    } as IAlunaKeySecretSchema
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const path = new URL(dummyUrl).pathname
+    const query = 'dummy=dummy'
+
+    const signedHash = OkxHttpMod.generateAuthSignature({
+      keySecret,
+      verb,
+      path,
+      query,
+    })
+
+    const meta = [
+      timestamp,
+      verb.toUpperCase(),
+      `${path}?${query}`,
     ].join('')
 
     expect(dateMock.callCount).to.be.eq(1)
