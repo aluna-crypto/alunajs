@@ -177,14 +177,6 @@ export const OkxHttp: IAlunaHttp = class {
 
     const fullUrl = query ? `${url}?${query}` : url
 
-
-    console.log({
-      url: fullUrl,
-      method: verb,
-      headers: signedHash,
-      proxySettings: Okx.settings.proxySettings,
-    })
-
     const { requestConfig } = assembleAxiosRequestConfig({
       url: fullUrl,
       method: verb,
