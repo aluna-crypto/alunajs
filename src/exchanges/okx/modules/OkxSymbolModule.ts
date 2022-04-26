@@ -12,6 +12,7 @@ import {
 } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { OkxSymbolStatusEnum } from '../enums/OkxSymbolStatusEnum'
 import { Okx } from '../Okx'
 import { OkxHttp } from '../OkxHttp'
 import { OkxLog } from '../OkxLog'
@@ -121,7 +122,11 @@ export const OkxSymbolModule: IAlunaSymbolModule = class {
 
     const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    each(rawSymbols, (symbolPair) => {
+    const filteredRawActiveSymbols = rawSymbols.filter(
+      (rawSymbol) => rawSymbol.state !== OkxSymbolStatusEnum.SUSPEND,
+    )
+
+    each(filteredRawActiveSymbols, (symbolPair) => {
 
       const {
         baseCcy,

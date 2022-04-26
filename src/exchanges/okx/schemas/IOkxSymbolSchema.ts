@@ -1,3 +1,7 @@
+import { OkxSymbolStatusEnum } from '../enums/OkxSymbolStatusEnum'
+
+
+
 export interface IOkxSymbolSchema {
   instType: string
   instId: string
@@ -19,5 +23,5 @@ export interface IOkxSymbolSchema {
   minSz: string
   ctType: string
   alias: string
-  state: string
+  state: OkxSymbolStatusEnum
 }

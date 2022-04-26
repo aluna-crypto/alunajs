@@ -7,6 +7,7 @@ import { Okx } from '../Okx'
 import { OkxHttp } from '../OkxHttp'
 import {
   OKX_PARSED_SYMBOLS,
+  OKX_RAW_SUSPENDED_SYMBOL,
   OKX_RAW_SYMBOLS,
 } from '../test/fixtures/okxSymbol'
 import { OkxSymbolModule } from './OkxSymbolModule'
@@ -112,6 +113,8 @@ describe('OkxSymbolModule', () => {
       'parse',
     )
 
+    const rawSymbols = [OKX_RAW_SUSPENDED_SYMBOL, ...OKX_RAW_SYMBOLS]
+
     each(OKX_PARSED_SYMBOLS, (parsed, i) => {
 
       parseMock.onCall(i).returns({ symbol: parsed, requestCount: 1 })
@@ -119,7 +122,7 @@ describe('OkxSymbolModule', () => {
     })
 
     const { symbols: parsedSymbols } = OkxSymbolModule.parseMany({
-      rawSymbols: OKX_RAW_SYMBOLS,
+      rawSymbols,
     })
 
     expect(parsedSymbols).to.deep.eq(OKX_PARSED_SYMBOLS)
