@@ -6,7 +6,7 @@ import {
 
 
 export async function list (
-  params: IAlunaMarketListParams,
+  params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListReturns> {
 
   return params as any

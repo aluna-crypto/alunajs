@@ -10,8 +10,8 @@ export interface IAlunaSymbolModule {
 
   /* eslint-disable max-len */
 
-  listRaw (params: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns>
-  list (params: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
+  listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns>
+  list (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
 
   getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns>
   get? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetReturns>

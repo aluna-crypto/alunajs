@@ -10,8 +10,8 @@ export interface IAlunaMarketModule {
 
   /* eslint-disable max-len */
 
-  list (params: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
-  listRaw (params: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns>
+  list (params?: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
+  listRaw (params?: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns>
 
   get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
   getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns>

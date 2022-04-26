@@ -6,7 +6,7 @@ import {
 
 
 export async function listRaw (
-  params: IAlunaSymbolListParams,
+  params: IAlunaSymbolListParams = {},
 ): Promise<IAlunaSymbolListRawReturns> {
 
   return params as any

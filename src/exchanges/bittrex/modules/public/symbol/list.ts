@@ -6,7 +6,7 @@ import {
 
 
 export async function list (
-  params: IAlunaSymbolListParams,
+  params: IAlunaSymbolListParams = {},
 ): Promise<IAlunaSymbolListReturns> {
 
   return params as any
