@@ -1,4 +1,3 @@
-import { ValrLog } from '../../../exchanges/valr/ValrLog'
 import { AlunaError } from '../../core/AlunaError'
 import { AlunaAdaptersErrorCodes } from '../../errors/AlunaAdaptersErrorCodes'
 
@@ -7,6 +6,8 @@ import { AlunaAdaptersErrorCodes } from '../../errors/AlunaAdaptersErrorCodes'
 export type TranslateToMappings<TEnumTo> = {
   [key: string]: TEnumTo,
 }
+
+
 
 export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
   mappings: TranslateToMappings<TEnumTo>,
@@ -32,8 +33,6 @@ export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
       message: `${errorMessagePrefix} not supported: ${from}`,
       code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
     })
-
-    ValrLog.error(error)
 
     throw error
 
