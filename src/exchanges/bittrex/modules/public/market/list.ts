@@ -1,7 +1,7 @@
 import {
   IAlunaMarketListParams,
   IAlunaMarketListReturns,
-} from '../../../../../lib/modules/IAlunaMarketModule'
+} from '../../../../../lib/modules/public/IAlunaMarketModule'
 
 
 

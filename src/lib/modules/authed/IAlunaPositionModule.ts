@@ -1,5 +1,5 @@
-import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
-import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
+import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
+import { IAlunaPositionSchema } from '../../schemas/IAlunaPositionSchema'
 
 
 

@@ -1,7 +1,7 @@
-import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
-import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
-import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
-import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
+import { AlunaAccountEnum } from '../../enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../enums/AlunaOrderSideEnum'
+import { IAlunaBalanceSchema } from '../../schemas/IAlunaBalanceSchema'
+import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
 
 
 

@@ -3,7 +3,7 @@ import { debug } from 'debug'
 import {
   IAlunaMarketGetParams,
   IAlunaMarketGetReturns,
-} from '../../../../../lib/modules/IAlunaMarketModule'
+} from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BittrexHttp } from '../../../BittrexHttp'
 
 

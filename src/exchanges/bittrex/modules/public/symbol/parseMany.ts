@@ -1,7 +1,7 @@
 import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
-} from '../../../../../lib/modules/IAlunaSymbolModule'
+} from '../../../../../lib/modules/public/IAlunaSymbolModule'
 
 
 

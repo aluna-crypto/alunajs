@@ -1,4 +1,4 @@
-import { IAlunaMarketModule } from '../../../../lib/modules/IAlunaMarketModule'
+import { IAlunaMarketModule } from '../../../../lib/modules/public/IAlunaMarketModule'
 import { get } from './market/get'
 import { getRaw } from './market/getRaw'
 import { list } from './market/list'

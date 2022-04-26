@@ -1,8 +1,8 @@
-import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
+import { IAlunaMarketSchema } from '../../schemas/IAlunaMarketSchema'
 import {
   IAlunaModuleParams,
   IAlunaModuleReturns,
-} from '../schemas/IAlunaModuleSchema'
+} from '../../schemas/IAlunaModuleSchema'
 
 
 

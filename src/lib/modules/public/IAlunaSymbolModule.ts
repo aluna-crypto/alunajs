@@ -1,8 +1,8 @@
 import {
   IAlunaModuleParams,
   IAlunaModuleReturns,
-} from '../schemas/IAlunaModuleSchema'
-import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
+} from '../../schemas/IAlunaModuleSchema'
+import { IAlunaSymbolSchema } from '../../schemas/IAlunaSymbolSchema'
 
 
 

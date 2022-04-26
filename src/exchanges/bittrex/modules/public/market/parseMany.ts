@@ -1,7 +1,7 @@
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
-} from '../../../../../lib/modules/IAlunaMarketModule'
+} from '../../../../../lib/modules/public/IAlunaMarketModule'
 
 
 

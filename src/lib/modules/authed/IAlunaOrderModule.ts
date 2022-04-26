@@ -1,8 +1,8 @@
-import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
-import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
-import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
-import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
-import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
+import { AlunaAccountEnum } from '../../enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../enums/AlunaOrderSideEnum'
+import { AlunaOrderTypesEnum } from '../../enums/AlunaOrderTypesEnum'
+import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
+import { IAlunaOrderSchema } from '../../schemas/IAlunaOrderSchema'
 
 
 

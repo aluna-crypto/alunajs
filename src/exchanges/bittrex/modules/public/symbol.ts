@@ -1,4 +1,4 @@
-import { IAlunaSymbolModule } from '../../../../lib/modules/IAlunaSymbolModule'
+import { IAlunaSymbolModule } from '../../../../lib/modules/public/IAlunaSymbolModule'
 import { get } from './symbol/get'
 import { getRaw } from './symbol/getRaw'
 import { list } from './symbol/list'
