@@ -4,57 +4,47 @@ import { IAlunaMarketModule } from '../modules/IAlunaMarketModule'
 import { IAlunaOrderWriteModule } from '../modules/IAlunaOrderModule'
 import { IAlunaPositionModule } from '../modules/IAlunaPositionModule'
 import { IAlunaSymbolModule } from '../modules/IAlunaSymbolModule'
+import { IAlunaCredentialsSchema } from '../schemas/IAlunaCredentialsSchema'
 import { IAlunaExchangeSchema } from '../schemas/IAlunaExchangeSchema'
-import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
 
-/*
-  Due to TypeScript limitations, we need to use a combination of two
-  interfaces to specify instance and static properties/methods sepparately.
-*/
+/**
+ * Public things
+ */
 
-// Instance properties and methods
-export interface IAlunaExchange {
+export interface IAlunaExchangePublic {
 
-  // basics
-  keySecret: IAlunaKeySecretSchema
+  // general
+  id: string
+  specs: IAlunaExchangeSchema
+  settings: IAlunaSettingsSchema
 
-  // private modules
-  key: IAlunaKeyModule
+  // public modules
+  symbol: IAlunaSymbolModule
+  market: IAlunaMarketModule
 
-  // TODO: consider combining order read+write
-  // TODO: consider making optional for web3 integrations (balance only)
-  order: IAlunaOrderWriteModule
-
-  balance: IAlunaBalanceModule
-  position?: IAlunaPositionModule
+  // auth method
+  auth (credentials: IAlunaCredentialsSchema): IAlunaExchangeAuthed
 
 }
 
-// Static properties and methods
-export interface IAlunaExchangeStatic {
 
-  // static constants
-  ID: string
-  SPECS: IAlunaExchangeSchema
 
-  // static public modules
-  Symbol: IAlunaSymbolModule
-  Market: IAlunaMarketModule
+/**
+ * Authenticated things
+ */
 
-  settings: IAlunaSettingsSchema
+export interface IAlunaExchangeAuthed extends IAlunaExchangePublic {
 
-  // constructor must match the one of AAlunaExchange
-  new (params: {
-    keySecret: IAlunaKeySecretSchema,
-  }): IAlunaExchange
+  // auth data
+  credentials: IAlunaCredentialsSchema
 
-  setSettings (params: {
-    settings: IAlunaSettingsSchema,
-  }): void
-
-  validateSettings (params: IAlunaSettingsSchema): boolean
+  // private modules
+  key: IAlunaKeyModule
+  order: IAlunaOrderWriteModule
+  balance: IAlunaBalanceModule
+  position?: IAlunaPositionModule
 
 }
