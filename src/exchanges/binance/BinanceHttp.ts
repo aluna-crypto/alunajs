@@ -187,6 +187,7 @@ export const BinanceHttp: IAlunaHttp = class {
       url: fullUrl,
       method: verb,
       headers,
+      data: body,
       proxySettings: Binance.settings.proxySettings,
     })
 

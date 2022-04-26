@@ -209,6 +209,7 @@ describe('BinanceHttp', () => {
       expect(requestSpy.callCount).to.be.eq(1)
 
       expect(requestSpy.args[0]).to.deep.eq([{
+        data: undefined,
         url: `http://dummy.com?${formattedQuery.toString()}`,
         method: AlunaHttpVerbEnum.POST,
         headers: dummySignedHeaders,
@@ -248,6 +249,7 @@ describe('BinanceHttp', () => {
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
       url: `${dummyUrl}?${formattedQuery.toString()}`,
+      data: dummyBody,
       method: AlunaHttpVerbEnum.POST,
       headers: dummySignedHeaders,
     }])

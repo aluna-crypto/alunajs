@@ -40,12 +40,13 @@ describe('assembleAxiosRequestConfig', () => {
     const { requestConfig: requestConfig1 } = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
+      data,
     })
 
     expect(requestConfig1.method).to.be.eq(AlunaHttpVerbEnum.GET)
     expect(requestConfig1.url).to.be.eq(url)
 
-    expect(requestConfig1.data).not.to.be.ok
+    expect(requestConfig1.data).to.be.ok
     expect(requestConfig1.headers).not.to.be.ok
 
 
@@ -65,6 +66,7 @@ describe('assembleAxiosRequestConfig', () => {
     const { requestConfig: requestConfig3 } = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.POST,
       headers,
+      data: undefined,
       url,
     })
 
@@ -81,6 +83,7 @@ describe('assembleAxiosRequestConfig', () => {
     const { requestConfig } = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.PATCH,
       url,
+      data,
       proxySettings: proxySettings1,
     })
 
@@ -95,6 +98,7 @@ describe('assembleAxiosRequestConfig', () => {
         protocol: 'http:',
       },
       httpAgent: proxySettings1.agent,
+      data,
     })
 
   })
@@ -104,6 +108,7 @@ describe('assembleAxiosRequestConfig', () => {
     const { requestConfig } = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.PATCH,
       url,
+      data: undefined,
       proxySettings: proxySettings2,
     })
 
@@ -111,6 +116,7 @@ describe('assembleAxiosRequestConfig', () => {
     expect(requestConfig.url).to.be.eq(url)
     expect(requestConfig).to.deep.eq({
       url,
+      data: undefined,
       method: AlunaHttpVerbEnum.PATCH,
       proxy: {
         host: proxySettings2.host,
@@ -127,6 +133,7 @@ describe('assembleAxiosRequestConfig', () => {
     let res = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
+      data: undefined,
       proxySettings: {
         ...proxySettings1,
         protocol: 'http' as AlunaProtocolsEnum,
@@ -137,6 +144,7 @@ describe('assembleAxiosRequestConfig', () => {
     expect(res.requestConfig.url).to.be.eq(url)
     expect(res.requestConfig).to.deep.eq({
       url,
+      data: undefined,
       method: AlunaHttpVerbEnum.GET,
       proxy: {
         host: proxySettings1.host,
@@ -149,6 +157,7 @@ describe('assembleAxiosRequestConfig', () => {
     res = assembleAxiosRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
+      data,
       proxySettings: {
         ...proxySettings2,
         protocol: 'https' as AlunaProtocolsEnum,
@@ -159,6 +168,7 @@ describe('assembleAxiosRequestConfig', () => {
     expect(res.requestConfig.url).to.be.eq(url)
     expect(res.requestConfig).to.deep.eq({
       url,
+      data,
       method: AlunaHttpVerbEnum.GET,
       proxy: {
         host: proxySettings2.host,
