@@ -12,6 +12,7 @@ import {
 } from '../../../lib/modules/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { HuobiSymbolStatusEnum } from '../enums/HuobiSymbolStatusEnum'
 import { Huobi } from '../Huobi'
 import { HuobiHttp } from '../HuobiHttp'
 import { HuobiLog } from '../HuobiLog'
@@ -121,7 +122,11 @@ export const HuobiSymbolModule: IAlunaSymbolModule = class {
 
     const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    each(rawSymbols, (symbolPair) => {
+    const filteredActiveSymbols = rawSymbols.filter(
+      (rawSymbol) => rawSymbol.state === HuobiSymbolStatusEnum.ONLINE,
+    )
+
+    each(filteredActiveSymbols, (symbolPair) => {
 
       const {
         bc: baseCurrency,

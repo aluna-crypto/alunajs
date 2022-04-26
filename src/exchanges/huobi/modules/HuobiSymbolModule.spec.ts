@@ -7,6 +7,7 @@ import { Huobi } from '../Huobi'
 import { HuobiHttp } from '../HuobiHttp'
 import {
   HUOBI_PARSED_SYMBOLS,
+  HUOBI_RAW_OFFLINE_SYMBOL,
   HUOBI_RAW_SYMBOLS,
 } from '../test/fixtures/huobiSymbols'
 import { HuobiSymbolModule } from './HuobiSymbolModule'
@@ -112,6 +113,8 @@ describe('HuobiSymbolModule', () => {
       'parse',
     )
 
+    const rawSymbols = [HUOBI_RAW_OFFLINE_SYMBOL, ...HUOBI_RAW_SYMBOLS]
+
     each(HUOBI_PARSED_SYMBOLS, (parsed, i) => {
 
       parseMock.onCall(i).returns({ symbol: parsed, requestCount: 1 })
@@ -119,7 +122,7 @@ describe('HuobiSymbolModule', () => {
     })
 
     const { symbols: parsedSymbols } = HuobiSymbolModule.parseMany({
-      rawSymbols: HUOBI_RAW_SYMBOLS,
+      rawSymbols,
     })
 
     expect(parsedSymbols).to.deep.eq(HUOBI_PARSED_SYMBOLS)

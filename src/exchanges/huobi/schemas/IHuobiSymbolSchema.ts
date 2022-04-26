@@ -1,6 +1,10 @@
+import { HuobiSymbolStatusEnum } from '../enums/HuobiSymbolStatusEnum'
+
+
+
 export interface IHuobiSymbolSchema {
   symbol: string
-  state: string
+  state: HuobiSymbolStatusEnum
   bc: string
   qc: string
   pp: number
