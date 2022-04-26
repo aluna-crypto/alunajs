@@ -1,7 +1,10 @@
 import { AlunaAccountEnum } from '../../enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../enums/AlunaOrderSideEnum'
 import { IAlunaBalanceSchema } from '../../schemas/IAlunaBalanceSchema'
-import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
+import {
+  IAlunaModuleParams,
+  IAlunaModuleReturns,
+} from '../../schemas/IAlunaModuleSchema'
 
 
 
@@ -9,8 +12,8 @@ export interface IAlunaBalanceModule {
 
   /* eslint-disable max-len */
 
-  listRaw (): Promise<IAlunaBalanceListRawReturns>
-  list (): Promise<IAlunaBalanceListReturns>
+  listRaw (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListRawReturns>
+  list (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListReturns>
 
   parseMany (params: IAlunaBalanceParseManyParams): IAlunaBalanceParseManyReturns
   parse (params: IAlunaBalanceParseParams): IAlunaBalanceParseReturns
@@ -27,21 +30,21 @@ export interface IAlunaBalanceModule {
  * Parse
  */
 
-export interface IAlunaBalanceParseParams {
-  rawBalance: any
+export interface IAlunaBalanceParseParams <T = any> extends IAlunaModuleParams {
+  rawBalance: T
 }
 
-export interface IAlunaBalanceParseReturns extends IAlunaApiRequestSchema {
+export interface IAlunaBalanceParseReturns extends IAlunaModuleReturns {
   balance: IAlunaBalanceSchema
 }
 
 
 
-export interface IAlunaBalanceParseManyParams {
-  rawBalances: any[]
+export interface IAlunaBalanceParseManyParams <T = any> extends IAlunaModuleParams {
+  rawBalances: T[]
 }
 
-export interface IAlunaBalanceParseManyReturns extends IAlunaApiRequestSchema {
+export interface IAlunaBalanceParseManyReturns extends IAlunaModuleReturns {
   balances: IAlunaBalanceSchema[]
 }
 
@@ -51,13 +54,13 @@ export interface IAlunaBalanceParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaBalanceListRawReturns<T = any> extends IAlunaApiRequestSchema {
+export interface IAlunaBalanceListParams extends IAlunaModuleParams {}
+
+export interface IAlunaBalanceListRawReturns <T = any> extends IAlunaModuleReturns {
   rawBalances: T[]
 }
 
-export interface IAlunaBalanceListReturns extends IAlunaApiRequestSchema {
-  balances: IAlunaBalanceSchema[]
-}
+export interface IAlunaBalanceListReturns extends IAlunaBalanceParseManyReturns {}
 
 
 
@@ -65,13 +68,13 @@ export interface IAlunaBalanceListReturns extends IAlunaApiRequestSchema {
  * Get Tradable Balance
  */
 
-export interface IAlunaBalanceGetTradableBalanceParams {
+export interface IAlunaBalanceGetTradableBalanceParams extends IAlunaModuleParams {
   symbolPair: string
   account?: AlunaAccountEnum
   side?: AlunaOrderSideEnum
   rate?: number
 }
 
-export interface IAlunaBalanceGetTradableBalanceReturns extends IAlunaApiRequestSchema {
+export interface IAlunaBalanceGetTradableBalanceReturns extends IAlunaModuleReturns {
   tradableBalance: number
 }

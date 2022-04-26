@@ -1,20 +1,28 @@
 import { AlunaAccountEnum } from '../../enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../enums/AlunaOrderTypesEnum'
-import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
+import {
+  IAlunaModuleParams,
+  IAlunaModuleReturns,
+} from '../../schemas/IAlunaModuleSchema'
 import { IAlunaOrderSchema } from '../../schemas/IAlunaOrderSchema'
 
 
 
 export interface IAlunaOrderReadModule {
 
+  /* eslint-disable max-len */
+
   listRaw (params?: IAlunaOrderListParams): Promise<IAlunaOrderListRawReturns>
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderListReturns>
+
   getRaw (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetRawReturns>
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetReturns>
-  parseMany (params: IAlunaOrderParseManyParams)
-    : Promise<IAlunaOrderParseManyReturns>
+
+  parseMany (params: IAlunaOrderParseManyParams): Promise<IAlunaOrderParseManyReturns>
   parse (params: IAlunaOrderParseParams): Promise<IAlunaOrderParseReturns>
+
+  /* eslint-enable max-len */
 
 }
 
@@ -34,21 +42,21 @@ export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
  * Parse
  */
 
-export interface IAlunaOrderParseParams {
-  rawOrder: any
+export interface IAlunaOrderParseParams <T = any> extends IAlunaModuleParams {
+  rawOrder: T
 }
 
-export interface IAlunaOrderParseReturns extends IAlunaApiRequestSchema {
+export interface IAlunaOrderParseReturns extends IAlunaModuleReturns {
   order: IAlunaOrderSchema
 }
 
 
 
-export interface IAlunaOrderParseManyParams {
-  rawOrders: any[]
+export interface IAlunaOrderParseManyParams <T = any> extends IAlunaModuleParams {
+  rawOrders: T[]
 }
 
-export interface IAlunaOrderParseManyReturns extends IAlunaApiRequestSchema {
+export interface IAlunaOrderParseManyReturns extends IAlunaModuleReturns {
   orders: IAlunaOrderSchema[]
 }
 
@@ -58,11 +66,11 @@ export interface IAlunaOrderParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaOrderListParams {
-  openOrdersOnly: boolean
+export interface IAlunaOrderListParams extends IAlunaModuleParams {
+  openOrdersOnly?: boolean
 }
 
-export interface IAlunaOrderListRawReturns<T = any> extends IAlunaApiRequestSchema {
+export interface IAlunaOrderListRawReturns <T = any> extends IAlunaModuleReturns {
   rawOrders: T[]
 }
 
@@ -74,18 +82,16 @@ export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns {}
  * Get
  */
 
-export interface IAlunaOrderGetParams {
+export interface IAlunaOrderGetParams extends IAlunaModuleParams {
   id: string
   symbolPair: string
 }
 
-export interface IAlunaOrderGetRawReturns extends IAlunaApiRequestSchema {
-  rawOrder: any
+export interface IAlunaOrderGetRawReturns <T = any> extends IAlunaModuleReturns {
+  rawOrder: T
 }
 
-export interface IAlunaOrderGetReturns extends IAlunaApiRequestSchema {
-  order: IAlunaOrderSchema
-}
+export interface IAlunaOrderGetReturns extends IAlunaOrderParseReturns {}
 
 
 
@@ -93,7 +99,7 @@ export interface IAlunaOrderGetReturns extends IAlunaApiRequestSchema {
  * Place
  */
 
-export interface IAlunaOrderPlaceParams {
+export interface IAlunaOrderPlaceParams extends IAlunaModuleParams {
   account: AlunaAccountEnum
   type: AlunaOrderTypesEnum
   side: AlunaOrderSideEnum

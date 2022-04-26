@@ -1,4 +1,7 @@
-import { IAlunaApiRequestSchema } from '../../schemas/IAlunaModuleSchema'
+import {
+  IAlunaModuleParams,
+  IAlunaModuleReturns,
+} from '../../schemas/IAlunaModuleSchema'
 import { IAlunaPositionSchema } from '../../schemas/IAlunaPositionSchema'
 
 
@@ -9,11 +12,15 @@ export interface IAlunaPositionModule {
 
   listRaw (params?: IAlunaPositionListParams): Promise<IAlunaPositionListRawReturns>
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionListReturns>
+
   getRaw (params: IAlunaPositionGetParams): Promise<IAlunaPositionGetRawReturns>
   get (params: IAlunaPositionGetParams): Promise<IAlunaPositionGetReturns>
+
   close (params: IAlunaPositionCloseParams): Promise<IAlunaPositionCloseReturns>
-  parse (params: IAlunaPositionParseParams): Promise<IAlunaPositionParseReturns>
+
   parseMany (params: IAlunaPositionParseManyParams): Promise<IAlunaPositionParseManyReturns>
+  parse (params: IAlunaPositionParseParams): Promise<IAlunaPositionParseReturns>
+
   getLeverage? (params: IAlunaPositionGetLeverageParams): Promise<IAlunaPositionGetLeverageReturns>
   setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<IAlunaPositionSetLeverageReturns>
 
@@ -26,21 +33,21 @@ export interface IAlunaPositionModule {
 /**
  * Parse
  */
-export interface IAlunaPositionParseParams {
-  rawPosition: any
+export interface IAlunaPositionParseParams <T = any> extends IAlunaModuleParams {
+  rawPosition: T
 }
 
-export interface IAlunaPositionParseReturns extends IAlunaApiRequestSchema {
+export interface IAlunaPositionParseReturns extends IAlunaModuleReturns {
   position: IAlunaPositionSchema
 }
 
 
 
-export interface IAlunaPositionParseManyParams {
-  rawPositions: any[]
+export interface IAlunaPositionParseManyParams <T = any> extends IAlunaModuleParams {
+  rawPositions: T[]
 }
 
-export interface IAlunaPositionParseManyReturns extends IAlunaApiRequestSchema {
+export interface IAlunaPositionParseManyReturns extends IAlunaModuleReturns {
   positions: IAlunaPositionSchema[]
 }
 
@@ -49,12 +56,12 @@ export interface IAlunaPositionParseManyReturns extends IAlunaApiRequestSchema {
 /**
  * List
  */
-export interface IAlunaPositionListParams {
+export interface IAlunaPositionListParams extends IAlunaModuleParams {
   openPositionsOnly?: boolean
 }
 
-export interface IAlunaPositionListRawReturns extends IAlunaApiRequestSchema {
-  rawPositions: any[]
+export interface IAlunaPositionListRawReturns <T = any> extends IAlunaModuleReturns {
+  rawPositions: T[]
 }
 
 export interface IAlunaPositionListReturns extends IAlunaPositionParseManyReturns {}
@@ -65,18 +72,16 @@ export interface IAlunaPositionListReturns extends IAlunaPositionParseManyReturn
  * Get
  */
 
-export interface IAlunaPositionGetParams {
+export interface IAlunaPositionGetParams extends IAlunaModuleParams {
   id?: string
   symbolPair?: string
 }
 
-export interface IAlunaPositionGetRawReturns extends IAlunaApiRequestSchema {
-  rawPosition: any
+export interface IAlunaPositionGetRawReturns <T = any> extends IAlunaModuleReturns {
+  rawPosition: T
 }
 
-export interface IAlunaPositionGetReturns extends IAlunaApiRequestSchema {
-  position: IAlunaPositionSchema
-}
+export interface IAlunaPositionGetReturns extends IAlunaPositionParseReturns {}
 
 
 
@@ -84,14 +89,12 @@ export interface IAlunaPositionGetReturns extends IAlunaApiRequestSchema {
  * Close
  */
 
-export interface IAlunaPositionCloseParams {
+export interface IAlunaPositionCloseParams extends IAlunaModuleParams {
   id?: string
   symbolPair?: string
 }
 
-export interface IAlunaPositionCloseReturns extends IAlunaApiRequestSchema {
-  position: IAlunaPositionSchema
-}
+export interface IAlunaPositionCloseReturns extends IAlunaPositionGetReturns {}
 
 
 
@@ -99,21 +102,21 @@ export interface IAlunaPositionCloseReturns extends IAlunaApiRequestSchema {
  * Leverage
  */
 
-export interface IAlunaPositionGetLeverageParams {
+export interface IAlunaPositionGetLeverageParams extends IAlunaModuleParams {
   symbolPair: string
 }
 
-export interface IAlunaPositionGetLeverageReturns extends IAlunaApiRequestSchema {
+export interface IAlunaPositionGetLeverageReturns extends IAlunaModuleReturns {
   leverage: number
 }
 
 
 
-export interface IAlunaPositionSetLeverageParams {
+export interface IAlunaPositionSetLeverageParams extends IAlunaModuleParams {
   symbolPair: string
   leverage: number
 }
 
-export interface IAlunaPositionSetLeverageReturns extends IAlunaApiRequestSchema {
+export interface IAlunaPositionSetLeverageReturns extends IAlunaModuleReturns {
   leverage: number
 }
