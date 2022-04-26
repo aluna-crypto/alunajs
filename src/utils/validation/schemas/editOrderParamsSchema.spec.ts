@@ -8,7 +8,7 @@ import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCod
 import {
   IAlunaOrderEditParams,
   IAlunaOrderPlaceParams,
-} from '../../../lib/modules/IAlunaOrderModule'
+} from '../../../lib/modules/authed/IAlunaOrderModule'
 import { executeAndCatch } from '../../executeAndCatch'
 import { validateParams } from '../validateParams'
 import { editOrderParamsSchema } from './editOrderParamsSchema'

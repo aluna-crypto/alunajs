@@ -4,7 +4,7 @@ import { values } from 'lodash'
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
-import { IAlunaOrderPlaceParams } from '../../../lib/modules/IAlunaOrderModule'
+import { IAlunaOrderPlaceParams } from '../../../lib/modules/authed/IAlunaOrderModule'
 
 
 
