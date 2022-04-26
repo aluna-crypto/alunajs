@@ -8,6 +8,7 @@ import { AlunaProtocolsEnum } from '../enums/AlunaProxyAgentEnum'
 export interface IAlunaSettingsSchema {
   affiliateCode?: string
   orderAnnotation?: string
+  referralCode?: string
   proxySettings?: IAlunaProxySchema
   mappings?: Record<string, string>
 }
