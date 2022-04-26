@@ -4,7 +4,9 @@ import {
   IAlunaMarketGetParams,
   IAlunaMarketGetReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { BittrexHttp } from '../../../BittrexHttp'
+import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 
 
 
@@ -16,15 +18,19 @@ export async function get (
   params: IAlunaMarketGetParams,
 ): Promise<IAlunaMarketGetReturns> {
 
-  const {
-    id,
-    http = new BittrexHttp(),
-  } = params
+  log('params', params)
+
+  const { http = new BittrexHttp() } = params
+
+  const market = await http.publicRequest<IAlunaMarketSchema>({
+    url: BITTREX_PRODUCTION_URL,
+  })
 
   const { requestCount } = http
 
-  log({ id, requestCount })
-
-  return params as any
+  return {
+    market,
+    requestCount,
+  }
 
 }
