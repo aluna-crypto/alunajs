@@ -3,7 +3,6 @@ import {
   IAlunaHttpAuthedParams,
   IAlunaHttpPublicParams,
   IAlunaHttpRequestCount,
-  IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
 
 
@@ -27,7 +26,7 @@ export class BittrexHttp implements IAlunaHttp {
 
   public async publicRequest <T> (
     params: IAlunaHttpPublicParams,
-  ): Promise<IAlunaHttpResponse<T>> {
+  ): Promise<T> {
 
     const {
       weight = 1,
@@ -35,14 +34,11 @@ export class BittrexHttp implements IAlunaHttp {
 
     this.requestCount.public += weight
 
-    const data: any = {
+    const data: T = {
       ...params,
-    }
+    } as any
 
-    return {
-      data,
-      requestCount: this.requestCount,
-    }
+    return data
 
   }
 
@@ -50,7 +46,7 @@ export class BittrexHttp implements IAlunaHttp {
 
   public async authedRequest <T> (
     params: IAlunaHttpAuthedParams,
-  ): Promise<IAlunaHttpResponse<T>> {
+  ): Promise<T> {
 
     const {
       weight = 1,
@@ -58,14 +54,11 @@ export class BittrexHttp implements IAlunaHttp {
 
     this.requestCount.authed += weight
 
-    const data: any = {
+    const data: T = {
       ...params,
-    }
+    } as any
 
-    return {
-      data,
-      requestCount: this.requestCount,
-    }
+    return data
 
   }
 
