@@ -19,23 +19,22 @@ export interface IAlunaHttpPublicParams {
   weight?: number
 }
 
-export interface IAlunaHttpPrivateParams extends IAlunaHttpPublicParams {
+export interface IAlunaHttpAuthedParams extends IAlunaHttpPublicParams {
   credentials: IAlunaCredentialsSchema
+}
+
+export interface IAlunaHttpRequestCount {
+  authed: number
+  public: number
 }
 
 export interface IAlunaHttpResponse<T> {
   data: T
-  requestCount: number
+  requestCount: IAlunaHttpRequestCount
 }
 
 export interface IAlunaHttp {
-
-  requestCount: {
-    authed: number,
-    public: number,
-  }
-
+  requestCount: IAlunaHttpRequestCount
   publicRequest<T>(params: IAlunaHttpPublicParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
-  privateRequest<T>(params: IAlunaHttpPrivateParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
-
+  authedRequest<T>(params: IAlunaHttpAuthedParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
 }
