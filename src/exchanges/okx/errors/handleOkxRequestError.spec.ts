@@ -2,6 +2,7 @@ import { AxiosError } from 'axios'
 import { expect } from 'chai'
 
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import * as handleOkxMod from './handleOkxRequestError'
 
 
@@ -10,6 +11,7 @@ describe('handleOkxRequestError', () => {
 
   const {
     handleOkxRequestError,
+    isInvalidApiKeyError,
   } = handleOkxMod
 
   const requestErrorMsg = 'Error while executing request.'
@@ -70,6 +72,25 @@ describe('handleOkxRequestError', () => {
       metadata: axiosError3,
     })
 
+    const axiosError4 = {
+      isAxiosError: true,
+      response: {
+        status: 500,
+        data: {
+          code: '50111',
+        },
+      },
+    } as AxiosError
+
+    alunaError = handleOkxRequestError({ error: axiosError4 })
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: requestErrorMsg,
+      httpStatusCode: 500,
+      metadata: axiosError4.response?.data,
+    })
+
 
     const error = {
       message: dummyError,
@@ -97,5 +118,18 @@ describe('handleOkxRequestError', () => {
     })
 
   })
+
+  it(
+    'should ensure Okx invalid api patterns work as expected',
+    async () => {
+
+      const INVALID_KEY_CODE = '50111'
+
+      expect(isInvalidApiKeyError({
+        code: INVALID_KEY_CODE,
+      })).to.be.ok
+
+    },
+  )
 
 })

@@ -11,7 +11,7 @@ import {
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
+import { assembleAxiosRequestConfig, IAssembleAxiosRequestConfigParams } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { handleOkxRequestError } from './errors/handleOkxRequestError'
 import { Okx } from './Okx'
@@ -56,6 +56,7 @@ export const generateAuthSignature = (
     verb,
     path,
     query,
+    body,
   } = params
 
   if (!keySecret.passphrase) {
@@ -72,10 +73,13 @@ export const generateAuthSignature = (
 
   const pathWithQuery = query ? `${path}?${query}` : path
 
+  const includeBody = body ? JSON.stringify(body) : ''
+
   const meta = [
     timestamp,
     verb.toUpperCase(),
     pathWithQuery,
+    includeBody,
   ].join('')
 
   const signedRequest = crypto
@@ -177,12 +181,22 @@ export const OkxHttp: IAlunaHttp = class {
 
     const fullUrl = query ? `${url}?${query}` : url
 
-    const { requestConfig } = assembleAxiosRequestConfig({
+    const assembleRequestConfigRequest: IAssembleAxiosRequestConfigParams = {
       url: fullUrl,
       method: verb,
       headers: signedHash,
       proxySettings: Okx.settings.proxySettings,
-    })
+    }
+
+    if (body) {
+
+      assembleRequestConfigRequest.data = body
+
+    }
+
+    const { requestConfig } = assembleAxiosRequestConfig(
+      assembleRequestConfigRequest,
+    )
 
     try {
 

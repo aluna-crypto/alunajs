@@ -9,6 +9,7 @@ import { IAlunaOrderWriteModule } from '../../lib/modules/IAlunaOrderModule'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { OkxBalanceModule } from './modules/OkxBalanceModule'
+import { OkxKeyModule } from './modules/OkxKeyModule'
 import { OkxMarketModule } from './modules/OkxMarketModule'
 import { OkxOrderWriteModule } from './modules/OkxOrderWriteModule'
 import { OkxSymbolModule } from './modules/OkxSymbolModule'
@@ -35,7 +36,7 @@ export const Okx: IAlunaExchangeStatic = class extends AAlunaExchange implements
   }) {
 
     super(params)
-    // this.key = new OkxKeyModule({ exchange: this })
+    this.key = new OkxKeyModule({ exchange: this })
     this.balance = new OkxBalanceModule({ exchange: this })
     this.order = new OkxOrderWriteModule({ exchange: this })
 

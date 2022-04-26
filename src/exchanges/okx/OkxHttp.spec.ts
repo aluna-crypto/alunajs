@@ -285,6 +285,7 @@ describe('OkxHttp', () => {
           'Content-Type': 'application/json',
         },
         proxySettings: undefined,
+        data: dummyBody,
       },
     ))
       .to.be.ok
@@ -376,17 +377,20 @@ describe('OkxHttp', () => {
     } as IAlunaKeySecretSchema
     const verb = 'verb' as AlunaHttpVerbEnum
     const path = new URL(dummyUrl).pathname
+    const body = dummyBody
 
     const signedHash = OkxHttpMod.generateAuthSignature({
       keySecret,
       verb,
       path,
+      body,
     })
 
     const meta = [
       timestamp,
       verb.toUpperCase(),
       path,
+      JSON.stringify(body),
     ].join('')
 
     expect(dateMock.callCount).to.be.eq(1)
