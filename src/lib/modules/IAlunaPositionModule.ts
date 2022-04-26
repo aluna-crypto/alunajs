@@ -1,10 +1,9 @@
-import { IAlunaModule } from '../core/IAlunaModule'
 import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
 import { IAlunaPositionSchema } from '../schemas/IAlunaPositionSchema'
 
 
 
-export interface IAlunaPositionModule extends IAlunaModule {
+export interface IAlunaPositionModule {
 
   /* eslint-disable max-len */
 

@@ -1,4 +1,3 @@
-import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
@@ -7,7 +6,7 @@ import { IAlunaOrderSchema } from '../schemas/IAlunaOrderSchema'
 
 
 
-export interface IAlunaOrderReadModule extends IAlunaModule {
+export interface IAlunaOrderReadModule {
 
   listRaw (params?: IAlunaOrderListParams): Promise<IAlunaOrderListRawReturns>
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderListReturns>

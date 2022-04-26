@@ -1,4 +1,4 @@
-import { IAlunaModule } from '../core/IAlunaModule'
+import { IAlunaHttp } from '../core/IAlunaHttp'
 import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
 import {
   IAlunaKeyPermissionSchema,
@@ -7,7 +7,7 @@ import {
 
 
 
-export interface IAlunaKeyModule extends IAlunaModule {
+export interface IAlunaKeyModule {
 
   /* eslint-disable max-len */
 

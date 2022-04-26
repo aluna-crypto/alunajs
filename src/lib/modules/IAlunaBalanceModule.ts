@@ -1,4 +1,3 @@
-import { IAlunaModule } from '../core/IAlunaModule'
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../enums/AlunaOrderSideEnum'
 import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
@@ -6,7 +5,7 @@ import { IAlunaBalanceSchema } from '../schemas/IAlunaBalanceSchema'
 
 
 
-export interface IAlunaBalanceModule extends IAlunaModule {
+export interface IAlunaBalanceModule {
 
   /* eslint-disable max-len */
 
