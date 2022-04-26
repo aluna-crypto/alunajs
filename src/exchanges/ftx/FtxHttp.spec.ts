@@ -235,6 +235,7 @@ describe('FtxHttp', () => {
 
     expect(requestSpy.callCount).to.be.eq(1)
     expect(requestSpy.args[0]).to.deep.eq([{
+      data: dummyBody,
       url: `${dummyUrl}`,
       method: AlunaHttpVerbEnum.POST,
       headers: dummySignedHeaders,

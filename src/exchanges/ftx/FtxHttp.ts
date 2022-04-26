@@ -9,7 +9,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
+import { assembleAxiosRequestConfig, IAssembleAxiosRequestConfigParams } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { handleFtxRequestError } from './errors/handleFtxRequestError'
 import { Ftx } from './Ftx'
@@ -135,13 +135,22 @@ export const FtxHttp: IAlunaHttp = class {
       path: new URL(url).pathname,
     })
 
-
-    const { requestConfig } = assembleAxiosRequestConfig({
+    const axiosRequestConfigRequest: IAssembleAxiosRequestConfigParams = {
       url,
       method: verb,
       headers: signedHash,
       proxySettings: Ftx.settings.proxySettings,
-    })
+    }
+
+    if (body) {
+
+      axiosRequestConfigRequest.data = body
+
+    }
+
+    const { requestConfig } = assembleAxiosRequestConfig(
+      axiosRequestConfigRequest,
+    )
 
     try {
 
