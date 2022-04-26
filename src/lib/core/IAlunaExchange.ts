@@ -26,7 +26,7 @@ export interface IAlunaExchangePublic {
   market: IAlunaMarketModule
 
   // auth method
-  auth (credentials: IAlunaCredentialsSchema): IAlunaExchangeAuthed
+  auth (credentials: IAlunaCredentialsSchema): Promise<IAlunaExchangeAuthed>
 
 }
 

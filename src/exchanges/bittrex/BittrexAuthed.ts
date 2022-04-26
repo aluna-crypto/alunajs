@@ -27,7 +27,7 @@ export class BittrexAuthed extends Bittrex implements IAlunaExchangeAuthed {
   }) {
 
     const {
-      settings,
+      settings = {},
       credentials,
     } = params
 
