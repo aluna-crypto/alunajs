@@ -10,7 +10,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
+import { assembleAxiosRequestConfig, IAssembleAxiosRequestConfigParams } from '../../utils/axios/assembleAxiosRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { handleHuobiRequestError } from './errors/handleHuobiRequestError'
 import { Huobi } from './Huobi'
@@ -169,13 +169,20 @@ export const HuobiHttp: IAlunaHttp = class {
 
     const fullUrl = `${url}?${queryParamsWithSignature.toString()}`
 
-    const assembleAxiosRequestConfigObject = {
-      url: fullUrl,
-      method: verb,
-      proxySettings: Huobi.settings.proxySettings,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const assembleAxiosRequestConfigObject
+      : IAssembleAxiosRequestConfigParams = {
+        url: fullUrl,
+        method: verb,
+        proxySettings: Huobi.settings.proxySettings,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+
+    if (body) {
+
+      assembleAxiosRequestConfigObject.data = body
+
     }
 
     const {

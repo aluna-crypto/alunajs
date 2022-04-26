@@ -228,6 +228,14 @@ describe('HuobiHttp', () => {
     expect(generateAuthHeaderMock.callCount).to.be.eq(1)
 
     expect(requestSpy.callCount).to.be.eq(1)
+    expect(requestSpy.args[0]).to.deep.eq([{
+      data: dummyBody,
+      url: `${dummyUrl}?${dummySignedBody.queryParamsWithSignature.toString()}`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: AlunaHttpVerbEnum.POST,
+    }])
 
     expect(responseData).to.deep.eq({
       data: dummyResponse,
