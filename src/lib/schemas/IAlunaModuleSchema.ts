@@ -1,4 +1,7 @@
-import { IAlunaHttp } from '../core/IAlunaHttp'
+import {
+  IAlunaHttp,
+  IAlunaHttpRequestCount,
+} from '../core/IAlunaHttp'
 
 
 
@@ -7,5 +10,5 @@ export interface IAlunaModuleParams {
 }
 
 export interface IAlunaModuleReturns {
-  requestCount: number
+  requestCount: IAlunaHttpRequestCount
 }
