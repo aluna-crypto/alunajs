@@ -1,13 +1,15 @@
-import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
+import {
+  IModuleParams,
+  IModuleReturns,
+} from '../schemas/IAlunaModuleSchema'
 import { IAlunaSymbolSchema } from '../schemas/IAlunaSymbolSchema'
 
 
 
 export interface IAlunaSymbolModule {
 
-
-  listRaw (): Promise<IAlunaSymbolListRawReturns>
-  list (): Promise<IAlunaSymbolListReturns>
+  listRaw (params: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns>
+  list (params: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
 
   getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns>
   get? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetReturns>
@@ -27,7 +29,7 @@ export interface IAlunaSymbolParseParams {
   rawSymbol: any
 }
 
-export interface IAlunaSymbolParseReturns extends IAlunaApiRequestSchema {
+export interface IAlunaSymbolParseReturns {
   symbol: IAlunaSymbolSchema
 }
 
@@ -37,7 +39,7 @@ export interface IAlunaSymbolParseManyParams {
   rawSymbols: any[]
 }
 
-export interface IAlunaSymbolParseManyReturns extends IAlunaApiRequestSchema {
+export interface IAlunaSymbolParseManyReturns {
   symbols: IAlunaSymbolSchema[]
 }
 
@@ -47,10 +49,13 @@ export interface IAlunaSymbolParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaSymbolListRawReturns<T = any> extends IAlunaApiRequestSchema {
+export interface IAlunaSymbolListParams extends IModuleParams {}
+
+export interface IAlunaSymbolListRawReturns<T = any> extends IModuleReturns {
   rawSymbols: T[]
 }
-export interface IAlunaSymbolListReturns extends IAlunaApiRequestSchema {
+
+export interface IAlunaSymbolListReturns extends IModuleReturns {
   symbols: IAlunaSymbolSchema[]
 }
 
@@ -60,14 +65,14 @@ export interface IAlunaSymbolListReturns extends IAlunaApiRequestSchema {
  * Get
  */
 
-export interface IAlunaSymbolGetParams {
+export interface IAlunaSymbolGetParams extends IModuleParams {
   id: string
 }
 
-export interface IAlunaSymbolGetRawReturns extends IAlunaApiRequestSchema {
-  rawSymbol: any
+export interface IAlunaSymbolGetRawReturns <T = any> extends IModuleReturns {
+  rawSymbol: T
 }
 
-export interface IAlunaSymbolGetReturns extends IAlunaApiRequestSchema {
+export interface IAlunaSymbolGetReturns extends IModuleReturns {
   symbol: IAlunaSymbolSchema
 }

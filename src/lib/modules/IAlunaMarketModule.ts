@@ -1,12 +1,15 @@
-import { IAlunaApiRequestSchema } from '../schemas/IAlunaApiRequestSchema'
 import { IAlunaMarketSchema } from '../schemas/IAlunaMarketSchema'
+import {
+  IModuleParams,
+  IModuleReturns,
+} from '../schemas/IAlunaModuleSchema'
 
 
 
 export interface IAlunaMarketModule {
 
-  list (): Promise<IAlunaMarketListReturns>
-  listRaw (): Promise<IAlunaMarketListRawReturns>
+  list (params: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
+  listRaw (params: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns>
 
   get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
   getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns>
@@ -22,11 +25,11 @@ export interface IAlunaMarketModule {
  * Parse
  */
 
-export interface IAlunaMarketParseParams {
-  rawMarket: any
+export interface IAlunaMarketParseParams<T = any> {
+  rawMarket: T
 }
 
-export interface IAlunaMarketParseReturns extends IAlunaApiRequestSchema {
+export interface IAlunaMarketParseReturns {
   market: IAlunaMarketSchema
 }
 
@@ -36,7 +39,7 @@ export interface IAlunaMarketParseManyParams {
   rawMarkets: any[]
 }
 
-export interface IAlunaMarketParseManyReturns extends IAlunaApiRequestSchema {
+export interface IAlunaMarketParseManyReturns {
   markets: IAlunaMarketSchema[]
 }
 
@@ -46,10 +49,13 @@ export interface IAlunaMarketParseManyReturns extends IAlunaApiRequestSchema {
  * List
  */
 
-export interface IAlunaMarketListRawReturns<T = any> extends IAlunaApiRequestSchema {
+export interface IAlunaMarketListParams extends IModuleParams {}
+
+export interface IAlunaMarketListRawReturns<T = any> extends IModuleReturns {
   rawMarkets: T[]
 }
-export interface IAlunaMarketListReturns extends IAlunaApiRequestSchema {
+
+export interface IAlunaMarketListReturns extends IModuleReturns {
   markets: IAlunaMarketSchema[]
 }
 
@@ -59,14 +65,14 @@ export interface IAlunaMarketListReturns extends IAlunaApiRequestSchema {
  * Get
  */
 
-export interface IAlunaMarketGetParams {
+export interface IAlunaMarketGetParams extends IModuleParams {
   id: string
 }
 
-export interface IAlunaMarketGetRawReturns extends IAlunaApiRequestSchema {
-  rawMarket: any
+export interface IAlunaMarketGetRawReturns <T = any> extends IModuleReturns {
+  rawMarket: T
 }
 
-export interface IAlunaMarketGetReturns extends IAlunaApiRequestSchema {
+export interface IAlunaMarketGetReturns extends IModuleReturns {
   market: IAlunaMarketSchema
 }
