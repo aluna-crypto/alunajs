@@ -1,5 +1,5 @@
 import { AlunaHttpVerbEnum } from '../enums/AlunaHtttpVerbEnum'
-import { IAlunaKeySecretSchema } from '../schemas/IAlunaKeySecretSchema'
+import { IAlunaCredentialsSchema } from '../schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../schemas/IAlunaSettingsSchema'
 
 
@@ -16,10 +16,11 @@ export interface IAlunaHttpPublicParams {
   options?: IAlunaHttpOptions
   settings?: IAlunaSettingsSchema
   query?: string
+  weight?: number
 }
 
 export interface IAlunaHttpPrivateParams extends IAlunaHttpPublicParams {
-  keySecret: IAlunaKeySecretSchema
+  credentials: IAlunaCredentialsSchema
 }
 
 export interface IAlunaHttpResponse<T> {
@@ -28,6 +29,13 @@ export interface IAlunaHttpResponse<T> {
 }
 
 export interface IAlunaHttp {
+
+  requestCount: {
+    authed: number,
+    public: number,
+  }
+
   publicRequest<T>(params: IAlunaHttpPublicParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
   privateRequest<T>(params: IAlunaHttpPrivateParams): Promise<IAlunaHttpResponse<T>> // eslint-disable-line
+
 }
