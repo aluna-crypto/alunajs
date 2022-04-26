@@ -30,6 +30,7 @@
     "test:mocha:ci": "nyc mocha --bail --forbid-only --reporter dot"
   },
   "dependencies": {
+    "@types/debug": "^4.1.7",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.2",
     "debug": "^4.3.4",
