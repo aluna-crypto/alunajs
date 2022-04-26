@@ -1,11 +1,11 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
-import { aluna } from './Aluna'
+import { aluna } from './aluna'
 import { AlunaError } from './lib/core/AlunaError'
 import { IAlunaExchangePublic } from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
-import { exchanges } from './lib/Exchanges'
+import { exchanges } from './lib/exchanges'
 
 
 
@@ -21,8 +21,8 @@ describe(__filename, () => {
 
     each(exchangeIds, (exchangeId) => {
 
-      let error: AlunaError
-      let exchange: IAlunaExchangePublic
+      let error: AlunaError | undefined
+      let exchange: IAlunaExchangePublic | undefined
 
       try {
 
@@ -48,8 +48,8 @@ describe(__filename, () => {
 
     const exchangeId = 'goddex'
 
-    let error: AlunaError
-    let exchange: IAlunaExchangePublic
+    let error: AlunaError | undefined
+    let exchange: IAlunaExchangePublic | undefined
 
     try {
 

@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
-import { exchanges } from './Exchanges'
+import { bittrexBaseSpecs } from '../exchanges/bittrex/bittrexSpecs'
+import { exchanges } from './exchanges'
 
 
 
@@ -8,7 +9,7 @@ describe('Exchanges', () => {
 
   it('should reference all implemented exchanges', async () => {
 
-    expect(exchanges.Bittrex).to.be.ok
+    expect(exchanges[bittrexBaseSpecs.id]).to.be.ok
 
   })
 
