@@ -10,14 +10,14 @@ export interface IAlunaMarketModule {
 
   /* eslint-disable max-len */
 
-  list (params?: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
   listRaw (params?: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns>
+  list (params?: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
 
-  get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
   getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns>
+  get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
 
-  parse (params: IAlunaMarketParseParams): Promise<IAlunaMarketParseReturns>
   parseMany (params: IAlunaMarketParseManyParams): Promise<IAlunaMarketParseManyReturns>
+  parse (params: IAlunaMarketParseParams): Promise<IAlunaMarketParseReturns>
 
   /* eslint-enable max-len */
 
@@ -59,9 +59,7 @@ export interface IAlunaMarketListRawReturns<T = any> extends IAlunaModuleReturns
   rawMarkets: T[]
 }
 
-export interface IAlunaMarketListReturns extends IAlunaModuleReturns {
-  markets: IAlunaMarketSchema[]
-}
+export interface IAlunaMarketListReturns extends IAlunaMarketParseManyReturns {}
 
 
 
@@ -77,6 +75,4 @@ export interface IAlunaMarketGetRawReturns <T = any> extends IAlunaModuleReturns
   rawMarket: T
 }
 
-export interface IAlunaMarketGetReturns extends IAlunaModuleReturns {
-  market: IAlunaMarketSchema
-}
+export interface IAlunaMarketGetReturns extends IAlunaMarketParseReturns {}

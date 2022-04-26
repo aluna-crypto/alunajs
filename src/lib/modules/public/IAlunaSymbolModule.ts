@@ -59,9 +59,7 @@ export interface IAlunaSymbolListRawReturns<T = any> extends IAlunaModuleReturns
   rawSymbols: T[]
 }
 
-export interface IAlunaSymbolListReturns extends IAlunaModuleReturns {
-  symbols: IAlunaSymbolSchema[]
-}
+export interface IAlunaSymbolListReturns extends IAlunaSymbolParseManyReturns {}
 
 
 
@@ -77,6 +75,4 @@ export interface IAlunaSymbolGetRawReturns <T = any> extends IAlunaModuleReturns
   rawSymbol: T
 }
 
-export interface IAlunaSymbolGetReturns extends IAlunaModuleReturns {
-  symbol: IAlunaSymbolSchema
-}
+export interface IAlunaSymbolGetReturns extends IAlunaSymbolParseReturns {}
