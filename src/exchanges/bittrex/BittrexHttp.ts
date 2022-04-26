@@ -1,164 +1,58 @@
-import axios from 'axios'
-import crypto from 'crypto'
-import { URL } from 'url'
-
 import {
   IAlunaHttp,
   IAlunaHttpPrivateParams,
   IAlunaHttpPublicParams,
   IAlunaHttpResponse,
 } from '../../lib/core/IAlunaHttp'
-import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { IAlunaKeySecretSchema } from '../../lib/schemas/IAlunaKeySecretSchema'
-import { assembleAxiosRequestConfig } from '../../utils/axios/assembleAxiosRequestConfig'
-import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { Bittrex } from './Bittrex'
-import { handleBittrexRequestError } from './errors/handleBittrexRequestError'
 
 
 
-export const BITTREX_HTTP_CACHE_KEY_PREFIX = 'BittrexHttp.publicRequest'
+export class BittrexHttp implements IAlunaHttp {
 
-
-interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  keySecret: IAlunaKeySecretSchema
-  url: string
-  body?: any
-}
-
-export interface IBittrexSignedHeaders {
-    'Api-Key': string
-    'Api-Timestamp': number
-    'Api-Content-Hash': string
-    'Api-Signature': string
-}
+  public requestCount: number
 
 
 
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): IBittrexSignedHeaders => {
+  constructor () {
 
-  const {
-    keySecret, verb, body, url,
-  } = params
+    this.requestCount = 0
 
-  const timestamp = new Date().getTime()
-
-  const contentHash = crypto
-    .createHash('sha512')
-    .update(body ? JSON.stringify(body) : '')
-    .digest('hex')
-
-  const preSigned = [timestamp, url, verb.toUpperCase(), contentHash].join('')
-
-  const signedHeader = crypto
-    .createHmac('sha512', keySecret.secret)
-    .update(preSigned)
-    .digest('hex')
-
-  return {
-    'Api-Content-Hash': contentHash,
-    'Api-Key': keySecret.key,
-    'Api-Signature': signedHeader,
-    'Api-Timestamp': timestamp,
   }
 
-}
 
-export const BittrexHttp: IAlunaHttp = class {
 
-  static async publicRequest<T> (
+  public async publicRequest <T> (
     params: IAlunaHttpPublicParams,
   ): Promise<IAlunaHttpResponse<T>> {
 
-    const {
-      url,
-      body,
-      verb = AlunaHttpVerbEnum.GET,
-    } = params
+    this.requestCount += 1
 
-    const cacheKey = AlunaCache.hashCacheKey({
-      args: params,
-      prefix: BITTREX_HTTP_CACHE_KEY_PREFIX,
-    })
-
-    if (AlunaCache.cache.has(cacheKey)) {
-
-      return {
-        data: AlunaCache.cache.get<T>(cacheKey)!,
-        requestCount: 0,
-      }
-
+    const data: any = {
+      ...params,
     }
 
-    const { requestConfig } = assembleAxiosRequestConfig({
-      url,
-      method: verb,
-      data: body,
-      proxySettings: Bittrex.settings.proxySettings,
-    })
-
-    try {
-
-      const { data } = await axios.create().request<T>(requestConfig)
-
-      AlunaCache.cache.set<T>(cacheKey, data)
-
-      return {
-        data,
-        requestCount: 1,
-      }
-
-    } catch (error) {
-
-      throw handleBittrexRequestError({ error })
-
+    return {
+      data,
+      requestCount: this.requestCount,
     }
 
   }
 
-  static async privateRequest<T> (params: IAlunaHttpPrivateParams)
-    : Promise<IAlunaHttpResponse<T>> {
 
-    const {
-      url,
-      body,
-      verb = AlunaHttpVerbEnum.POST,
-      keySecret,
-    } = params
 
-    const signedHash = generateAuthHeader({
-      verb,
-      path: new URL(url).pathname,
-      keySecret,
-      body,
-      url,
-    })
+  public async privateRequest <T> (
+    params: IAlunaHttpPrivateParams,
+  ): Promise<IAlunaHttpResponse<T>> {
 
-    const { requestConfig } = assembleAxiosRequestConfig({
-      url,
-      method: verb,
-      data: body,
-      headers: signedHash,
-      proxySettings: Bittrex.settings.proxySettings,
-    })
+    this.requestCount += 1
 
-    try {
+    const data: any = {
+      ...params,
+    }
 
-      const { data } = await axios.create().request<T>(requestConfig)
-
-      return {
-        data,
-        requestCount: 1,
-      }
-
-    } catch (error) {
-
-      throw handleBittrexRequestError({ error })
-
+    return {
+      data,
+      requestCount: this.requestCount,
     }
 
   }
