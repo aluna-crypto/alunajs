@@ -23,7 +23,8 @@
     "test:watch": "mocha --watch",
     "test:cover": "nyc mocha --bail",
     "test:cover:watch": "nyc mocha --watch",
-    "test:ci": "nyc mocha --bail --forbid-only --reporter dot"
+    "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
+    "generate": "ts-node .scaffolding/index.ts"
   },
   "dependencies": {
     "@types/debug": "^4.1.7",
