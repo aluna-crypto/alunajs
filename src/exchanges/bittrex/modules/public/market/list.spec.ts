@@ -12,7 +12,11 @@ describe(__filename, () => {
 
   it('should list Bittrex parsed markets just fine', async () => {
 
-    mockBittrexHttp()
+    const {
+      authedRequest,
+      publicRequest,
+      requestCount,
+    } = mockBittrexHttp()
 
     const { listRaw } = mockBittrexListRaw()
     const { parseMany } = mockBittrexParseMany()
@@ -22,9 +26,15 @@ describe(__filename, () => {
     expect(markets).to.deep.eq(BITTREX_PARSED_MARKETS)
 
     expect(listRaw.callCount).to.be.eq(1)
+    expect(listRaw.args[0][0]).to.deep.eq({
+      http: {
+        authedRequest,
+        publicRequest,
+        requestCount,
+      },
+    })
 
     expect(parseMany.callCount).to.be.eq(1)
-
 
   })
 
