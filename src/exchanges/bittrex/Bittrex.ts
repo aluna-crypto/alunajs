@@ -34,8 +34,8 @@ export class Bittrex implements IAlunaExchangePublic {
     this.specs = buildBittrexSpecs({ settings })
     this.id = this.specs.id
 
-    this.market = market
-    this.symbol = symbol
+    this.market = market(this)
+    this.symbol = symbol(this)
 
   }
 
