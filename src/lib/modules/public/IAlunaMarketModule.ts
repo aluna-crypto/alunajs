@@ -6,18 +6,18 @@ import {
 
 
 
-export interface IAlunaMarketModule <T> {
+export interface IAlunaMarketModule {
 
   /* eslint-disable max-len */
 
-  listRaw (params?: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns<T>>
+  listRaw (params?: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns<any>>
   list (params?: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
 
-  getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns<T>>
+  getRaw? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetRawReturns<any>>
   get? (params: IAlunaMarketGetParams): Promise<IAlunaMarketGetReturns>
 
-  parseMany (params: IAlunaMarketParseManyParams<T>): IAlunaMarketParseManyReturns
-  parse (params: IAlunaMarketParseParams<T>): IAlunaMarketParseReturns
+  parseMany (params: IAlunaMarketParseManyParams<any>): IAlunaMarketParseManyReturns
+  parse (params: IAlunaMarketParseParams<any>): IAlunaMarketParseReturns
 
   /* eslint-enable max-len */
 

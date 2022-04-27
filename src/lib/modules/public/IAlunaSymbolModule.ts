@@ -6,18 +6,18 @@ import { IAlunaSymbolSchema } from '../../schemas/IAlunaSymbolSchema'
 
 
 
-export interface IAlunaSymbolModule <T> {
+export interface IAlunaSymbolModule {
 
   /* eslint-disable max-len */
 
-  listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns<T>>
+  listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns<any>>
   list (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
 
-  getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns<T>>
+  getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns<any>>
   get? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetReturns>
 
-  parseMany (params: IAlunaSymbolParseManyParams<T>): IAlunaSymbolParseManyReturns
-  parse (params: IAlunaSymbolParseParams<T>): IAlunaSymbolParseReturns
+  parseMany (params: IAlunaSymbolParseManyParams<any>): IAlunaSymbolParseManyReturns
+  parse (params: IAlunaSymbolParseParams<any>): IAlunaSymbolParseReturns
 
   /* eslint-enable max-len */
 
