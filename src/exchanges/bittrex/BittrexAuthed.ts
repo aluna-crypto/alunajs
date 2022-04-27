@@ -8,6 +8,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { Bittrex } from './Bittrex'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
+import { order } from './modules/authed/order'
 
 
 
@@ -38,7 +39,7 @@ export class BittrexAuthed extends Bittrex implements IAlunaExchangeAuthed {
 
     this.key = key(this)
     this.balance = balance(this)
-    // this.order = order
+    this.order = order(this)
     // this.position = position
 
     return this
