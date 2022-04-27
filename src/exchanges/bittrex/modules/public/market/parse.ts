@@ -1,13 +1,11 @@
-// import debug from 'debug'
 import {
   IAlunaMarketParseParams,
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
+import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
-
-
-
-// const log = debug('@aluna.js:bittrex/market/parse')
 
 
 
@@ -17,48 +15,56 @@ export function parse (
 
   const { rawMarket } = params
 
-  const market = rawMarket as any
+  const {
+    marketInfo,
+    summary,
+    ticker,
+  } = rawMarket
 
-  // const {
-  //   volume,
-  //   quoteVolume,
-  //   symbol,
-  //   baseCurrencySymbol,
-  //   quoteCurrencySymbol,
-  //   askRate,
-  //   bidRate,
-  //   high,
-  //   lastTradeRate,
-  //   low,
-  //   percentChange,
-  // } = rawMarket
+  const {
+    volume,
+    quoteVolume,
+    symbol,
+    high,
+    low,
+    percentChange,
+  } = summary
 
-  // const ticker: IAlunaTickerSchema = {
-  //   high: parseFloat(high),
-  //   low: parseFloat(low),
-  //   bid: parseFloat(bidRate),
-  //   ask: parseFloat(askRate),
-  //   last: parseFloat(lastTradeRate),
-  //   date: new Date(),
-  //   change: parseFloat(percentChange) / 100,
-  //   baseVolume: parseFloat(volume),
-  //   quoteVolume: parseFloat(quoteVolume),
-  // }
+  const {
+    lastTradeRate,
+    askRate,
+    bidRate,
+  } = ticker
 
-  // const market: IAlunaMarketSchema = {
-  //   exchangeId: bittrexBaseSpecs.id,
-  //   symbolPair: symbol,
+  const {
+    baseCurrencySymbol,
+    quoteCurrencySymbol,
+  } = marketInfo
 
-  //   // Use Symbol Mappings
-  //   baseSymbolId: baseCurrencySymbol,
-  //   quoteSymbolId: quoteCurrencySymbol,
-  //   ticker,
-  //   spotEnabled: true,
-  //   marginEnabled: false,
-  //   derivativesEnabled: false,
-  //   leverageEnabled: false,
-  //   meta: rawMarket,
-  // }
+  const alunaTicker: IAlunaTickerSchema = {
+    high: parseFloat(high),
+    low: parseFloat(low),
+    bid: parseFloat(bidRate),
+    ask: parseFloat(askRate),
+    last: parseFloat(lastTradeRate),
+    date: new Date(),
+    change: parseFloat(percentChange) / 100,
+    baseVolume: parseFloat(volume),
+    quoteVolume: parseFloat(quoteVolume),
+  }
+
+  const market: IAlunaMarketSchema = {
+    exchangeId: bittrexBaseSpecs.id,
+    symbolPair: symbol,
+    baseSymbolId: baseCurrencySymbol,
+    quoteSymbolId: quoteCurrencySymbol,
+    ticker: alunaTicker,
+    spotEnabled: true,
+    marginEnabled: false,
+    derivativesEnabled: false,
+    leverageEnabled: false,
+    meta: rawMarket,
+  }
 
   return { market }
 
