@@ -10,7 +10,7 @@ import { IAlunaProxySchema } from '../../lib/schemas/IAlunaSettingsSchema'
 export interface IAssembleAxiosRequestConfigParams {
   url: string
   method: AlunaHttpVerbEnum
-  data?: any
+  data: Record<any, any> | undefined
   headers?: any
   proxySettings?: IAlunaProxySchema
 }
