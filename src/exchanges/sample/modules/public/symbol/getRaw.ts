@@ -1,35 +1,23 @@
 import debug from 'debug'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolGetParams,
   IAlunaSymbolGetRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
-import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
 
 
 const log = debug('@aluna.js:sample/symbol/getRaw')
 
 
-
-export async function getRaw (
+export const getRaw = (_exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolGetParams,
-): Promise<IAlunaSymbolGetRawReturns<any>> {
+): Promise<IAlunaSymbolGetRawReturns<ISampleSymbolSchema>> => {
 
   log('params', params)
 
-  const { http = new SampleHttp() } = params
-
-  const rawSymbol = await http.publicRequest<any>({
-    url: SAMPLE_PRODUCTION_URL,
-  })
-
-  const { requestCount } = http
-
-  return {
-    rawSymbol,
-    requestCount,
-  }
+  return {} as any
 
 }

@@ -34,8 +34,8 @@ export class Sample implements IAlunaExchangePublic {
     this.specs = buildSampleSpecs({ settings })
     this.id = this.specs.id
 
-    this.market = market
-    this.symbol = symbol
+    this.market = market(this)
+    this.symbol = symbol(this)
 
   }
 

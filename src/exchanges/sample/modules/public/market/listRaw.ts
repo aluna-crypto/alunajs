@@ -1,11 +1,11 @@
 import debug from 'debug'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketListParams,
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleMarketSchema } from '../../../schemas/ISampleMarketSchema'
 
 
 
@@ -13,23 +13,12 @@ const log = debug('@aluna.js:sample/market/listRaw')
 
 
 
-export async function listRaw (
+export const listRaw = (_exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<any>> {
+): Promise<IAlunaMarketListRawReturns<ISampleMarketSchema[]>> => {
 
   log('params', params)
 
-  const { http = new SampleHttp() } = params
-
-  const rawMarkets = await http.publicRequest<any[]>({
-    url: SAMPLE_PRODUCTION_URL,
-  })
-
-  const { requestCount } = http
-
-  return {
-    rawMarkets,
-    requestCount,
-  }
+  return {} as any
 
 }

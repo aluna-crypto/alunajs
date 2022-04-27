@@ -15,7 +15,7 @@ const log = debug('@aluna.js:bittrex/symbol/listRaw')
 
 
 
-export const listRaw = (_exchange: IAlunaExchangePublic) => async (
+export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolListParams = {},
 ): Promise<IAlunaSymbolListRawReturns<IBittrexSymbolSchema[]>> => {
 

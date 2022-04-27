@@ -1,12 +1,11 @@
 import debug from 'debug'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
-import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleMarketSchema } from '../../../schemas/ISampleMarketSchema'
 
 
 
@@ -14,23 +13,12 @@ const log = debug('@aluna.js:sample/market/parseMany')
 
 
 
-export async function parseMany (
-  params: IAlunaMarketParseManyParams,
-): Promise<IAlunaMarketParseManyReturns> {
+export const parseMany = (_exchange: IAlunaExchangePublic) => (
+  params: IAlunaMarketParseManyParams<ISampleMarketSchema[]>,
+): IAlunaMarketParseManyReturns => {
 
   log('params', params)
 
-  const { http = new SampleHttp() } = params
-
-  const markets = await http.publicRequest<IAlunaMarketSchema[]>({
-    url: SAMPLE_PRODUCTION_URL,
-  })
-
-  const { requestCount } = http
-
-  return {
-    markets,
-    requestCount,
-  }
+  return {} as any
 
 }
