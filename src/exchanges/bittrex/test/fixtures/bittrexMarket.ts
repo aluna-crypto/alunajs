@@ -2,6 +2,7 @@ import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { BittrexMarketStatusEnum } from '../../enums/BittrexMarketStatusEnum'
 import {
   IBittrexMarketInfoSchema,
+  IBittrexMarketSchema,
   IBittrexMarketsSchema,
   IBittrexMarketSummarySchema,
   IBittrexMarketTickerSchema,
@@ -109,6 +110,12 @@ export const BITTREX_RAW_MARKETS_INFO: IBittrexMarketInfoSchema[] = [
     notice: '',
   },
 ]
+
+export const BITTREX_RAW_MARKET: IBittrexMarketSchema = {
+  marketInfo: BITTREX_RAW_MARKETS_INFO[0],
+  summary: BITTREX_RAW_MARKET_SUMMARIES[0],
+  ticker: BITTREX_RAW_MARKET_TICKERS[0],
+}
 
 export const BITTREX_RAW_MARKETS: IBittrexMarketsSchema = {
   marketsInfo: BITTREX_RAW_MARKETS_INFO,
