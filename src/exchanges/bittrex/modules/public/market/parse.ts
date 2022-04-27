@@ -4,6 +4,7 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
+import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
 
@@ -41,6 +42,16 @@ export function parse (
     quoteCurrencySymbol,
   } = marketInfo
 
+  const baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseCurrencySymbol,
+    symbolMappings: {},
+  })
+
+  const quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteCurrencySymbol,
+    symbolMappings: {},
+  })
+
   const alunaTicker: IAlunaTickerSchema = {
     high: parseFloat(high),
     low: parseFloat(low),
@@ -56,8 +67,8 @@ export function parse (
   const market: IAlunaMarketSchema = {
     exchangeId: bittrexBaseSpecs.id,
     symbolPair: symbol,
-    baseSymbolId: baseCurrencySymbol,
-    quoteSymbolId: quoteCurrencySymbol,
+    baseSymbolId,
+    quoteSymbolId,
     ticker: alunaTicker,
     spotEnabled: true,
     marginEnabled: false,
