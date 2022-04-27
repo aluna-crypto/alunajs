@@ -1,12 +1,12 @@
 import debug from 'debug'
 import { map } from 'lodash'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
-import { parse } from './parse'
 
 
 
@@ -14,9 +14,9 @@ const log = debug('@aluna.js:bittrex/symbol/parseMany')
 
 
 
-export function parseMany (
+export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseManyParams<IBittrexSymbolSchema[]>,
-): IAlunaSymbolParseManyReturns {
+): IAlunaSymbolParseManyReturns => {
 
   const {
     rawSymbols,
@@ -24,7 +24,7 @@ export function parseMany (
 
   const symbols = map(rawSymbols, (rawSymbol) => {
 
-    const { symbol } = parse({
+    const { symbol } = exchange.symbol.parse({
       rawSymbol,
     })
 

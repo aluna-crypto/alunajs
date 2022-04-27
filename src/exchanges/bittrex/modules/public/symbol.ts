@@ -1,3 +1,4 @@
+import { IAlunaExchangePublic } from '../../../../lib/core/IAlunaExchange'
 import { IAlunaSymbolModule } from '../../../../lib/modules/public/IAlunaSymbolModule'
 import { get } from './symbol/get'
 import { getRaw } from './symbol/getRaw'
@@ -8,15 +9,17 @@ import { parseMany } from './symbol/parseMany'
 
 
 
-export const symbol: IAlunaSymbolModule = {
+export function symbol (exchange: IAlunaExchangePublic): IAlunaSymbolModule {
 
-  get,
-  getRaw,
+  return {
+    get: get(exchange),
+    getRaw: getRaw(exchange),
 
-  list,
-  listRaw,
+    list: list(exchange),
+    listRaw: listRaw(exchange),
 
-  parse,
-  parseMany,
+    parse: parse(exchange),
+    parseMany: parseMany(exchange),
+  }
 
 }

@@ -1,5 +1,6 @@
 import debug from 'debug'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolListParams,
   IAlunaSymbolListRawReturns,
@@ -14,9 +15,9 @@ const log = debug('@aluna.js:bittrex/symbol/listRaw')
 
 
 
-export async function listRaw (
+export const listRaw = (_exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolListParams = {},
-): Promise<IAlunaSymbolListRawReturns<IBittrexSymbolSchema[]>> {
+): Promise<IAlunaSymbolListRawReturns<IBittrexSymbolSchema[]>> => {
 
   log('fetching Bittrex raw symbols')
 

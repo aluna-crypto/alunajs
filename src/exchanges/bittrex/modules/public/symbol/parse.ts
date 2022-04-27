@@ -1,5 +1,4 @@
-// import debug from 'debug'
-
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseParams,
   IAlunaSymbolParseReturns,
@@ -10,13 +9,9 @@ import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
 
-// const log = debug('@aluna.js:bittrex/symbol/parse')
-
-
-
-export function parse (
+export const parse = (_exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseParams<IBittrexSymbolSchema>,
-): IAlunaSymbolParseReturns {
+): IAlunaSymbolParseReturns => {
 
   const {
     rawSymbol,
