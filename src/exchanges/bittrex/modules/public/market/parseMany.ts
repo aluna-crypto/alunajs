@@ -4,6 +4,7 @@ import {
   reduce,
 } from 'lodash'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
@@ -11,7 +12,6 @@ import {
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { BittrexMarketStatusEnum } from '../../../enums/BittrexMarketStatusEnum'
 import { IBittrexMarketsSchema } from '../../../schemas/IBittrexMarketSchema'
-import { parse } from './parse'
 
 
 
@@ -19,9 +19,9 @@ const log = debug('@aluna.js:bittrex/market/parseMany')
 
 
 
-export function parseMany (
+export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseManyParams<IBittrexMarketsSchema>,
-): IAlunaMarketParseManyReturns {
+): IAlunaMarketParseManyReturns => {
 
   const { rawMarkets } = params
 
@@ -50,7 +50,7 @@ export function parseMany (
     const ticker = tickersDict[symbol]
     const summary = summariesDict[symbol]
 
-    const { market } = parse({
+    const { market } = exchange.market.parse({
       rawMarket: {
         marketInfo: current,
         summary,

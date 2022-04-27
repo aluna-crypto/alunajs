@@ -1,3 +1,4 @@
+import { IAlunaExchangePublic } from '../../../../lib/core/IAlunaExchange'
 import { IAlunaMarketModule } from '../../../../lib/modules/public/IAlunaMarketModule'
 import { list } from './market/list'
 import { listRaw } from './market/listRaw'
@@ -6,12 +7,14 @@ import { parseMany } from './market/parseMany'
 
 
 
-export const market: IAlunaMarketModule = {
+export function market (exchange: IAlunaExchangePublic): IAlunaMarketModule {
 
-  list,
-  listRaw,
+  return {
+    list: list(exchange),
+    listRaw: listRaw(exchange),
 
-  parse,
-  parseMany,
+    parse: parse(exchange),
+    parseMany: parseMany(exchange),
+  }
 
 }

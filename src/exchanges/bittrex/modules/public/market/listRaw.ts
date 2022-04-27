@@ -1,5 +1,6 @@
 import debug from 'debug'
 
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketListParams,
   IAlunaMarketListRawReturns,
@@ -19,9 +20,9 @@ const log = debug('@aluna.js:bittrex/market/listRaw')
 
 
 
-export async function listRaw (
+export const listRaw = (_exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IBittrexMarketsSchema>> {
+): Promise<IAlunaMarketListRawReturns<IBittrexMarketsSchema>> => {
 
   const { http = new BittrexHttp() } = params
 

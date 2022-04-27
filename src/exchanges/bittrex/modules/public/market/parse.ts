@@ -1,3 +1,4 @@
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseParams,
   IAlunaMarketParseReturns,
@@ -10,9 +11,9 @@ import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
 
 
 
-export function parse (
+export const parse = (_exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseParams<IBittrexMarketSchema>,
-): IAlunaMarketParseReturns {
+): IAlunaMarketParseReturns => {
 
   const { rawMarket } = params
 
