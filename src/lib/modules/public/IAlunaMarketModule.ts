@@ -75,4 +75,4 @@ export interface IAlunaMarketGetRawReturns <T> extends IAlunaModuleReturns {
   rawMarket: T
 }
 
-export interface IAlunaMarketGetReturns extends IAlunaMarketParseReturns {}
+export interface IAlunaMarketGetReturns extends IAlunaModuleReturns, IAlunaMarketParseReturns {}
