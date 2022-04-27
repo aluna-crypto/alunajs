@@ -19,7 +19,8 @@ export interface IAlunaExchangeSchema {
     position?: AlunaFeaturesModeEnum,
   }
   features?: {
-    offersPositionId: boolean,
+    offersPositionId?: boolean,
+    offersOrderEditing?: boolean,
   }
   accounts: IAlunaExchangeAccountSpecsSchema[]
 }
