@@ -11,7 +11,7 @@ import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
 
 
 
-export const parse = (_exchange: IAlunaExchangePublic) => (
+export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseParams<IBittrexMarketSchema>,
 ): IAlunaMarketParseReturns => {
 

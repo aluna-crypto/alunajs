@@ -12,7 +12,7 @@ const log = debug('@aluna.js:bittrex/symbol/get')
 
 
 
-export const get = (_exchange: IAlunaExchangePublic) => async (
+export const get = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolGetParams,
 ): Promise<IAlunaSymbolGetReturns> => {
 

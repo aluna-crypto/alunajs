@@ -12,7 +12,7 @@ import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 const log = debug('@aluna.js:sample/symbol/getRaw')
 
 
-export const getRaw = (_exchange: IAlunaExchangePublic) => async (
+export const getRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolGetParams,
 ): Promise<IAlunaSymbolGetRawReturns<ISampleSymbolSchema>> => {
 

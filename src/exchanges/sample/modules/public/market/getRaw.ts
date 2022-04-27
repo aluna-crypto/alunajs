@@ -13,7 +13,7 @@ const log = debug('@aluna.js:sample/market/getRaw')
 
 
 
-export const getRaw = (_exchange: IAlunaExchangePublic) => async (
+export const getRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketGetParams,
 ): Promise<IAlunaMarketGetRawReturns<ISampleMarketSchema>> => {
 

@@ -13,7 +13,7 @@ const log = debug('@aluna.js:sample/market/parseMany')
 
 
 
-export const parseMany = (_exchange: IAlunaExchangePublic) => (
+export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseManyParams<ISampleMarketSchema[]>,
 ): IAlunaMarketParseManyReturns => {
 

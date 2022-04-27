@@ -11,7 +11,7 @@ import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
 const log = debug('@aluna.js:sample/symbol/parseMany')
 
-export const parseMany = (_exchange: IAlunaExchangePublic) => (
+export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseManyParams<ISampleSymbolSchema>,
 ): IAlunaSymbolParseManyReturns => {
 

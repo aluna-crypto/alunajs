@@ -12,7 +12,7 @@ const log = debug('@aluna.js:sample/market/list')
 
 
 
-export const list = (_exchange: IAlunaExchangePublic) => async (
+export const list = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListReturns> => {
 

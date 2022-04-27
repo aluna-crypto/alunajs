@@ -20,7 +20,7 @@ const log = debug('@aluna.js:bittrex/market/listRaw')
 
 
 
-export const listRaw = (_exchange: IAlunaExchangePublic) => async (
+export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IBittrexMarketsSchema>> => {
 

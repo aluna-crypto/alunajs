@@ -10,7 +10,7 @@ import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
 
-export const parse = (_exchange: IAlunaExchangePublic) => (
+export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseParams<IBittrexSymbolSchema>,
 ): IAlunaSymbolParseReturns => {
 
