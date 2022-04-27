@@ -9,7 +9,7 @@ import { AlunaOrderTypesEnum } from '../../../src/lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderWriteModule,
-} from '../../../src/lib/modules/IAlunaOrderModule'
+} from '../../../src/lib/modules/authed/IAlunaOrderModule'
 import {
   IAlunaExchangeOrderOptionsSchema,
   IAlunaExchangeSchema,

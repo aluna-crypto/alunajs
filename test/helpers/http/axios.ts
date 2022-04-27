@@ -10,7 +10,7 @@ export const mockPublicHttpRequest = (params: {
   exchangeHttp: IAlunaHttp,
   requestResponse?: any,
   isReject?: boolean,
-}): { requestMock: Sinon.SinonStub } => {
+}) => {
 
   const {
     exchangeHttp,
@@ -18,7 +18,7 @@ export const mockPublicHttpRequest = (params: {
     isReject = false,
   } = params
 
-  const requestMock = ImportMock.mockFunction(
+  const publicRequest = ImportMock.mockFunction(
     exchangeHttp,
     'publicRequest',
     isReject
@@ -29,7 +29,7 @@ export const mockPublicHttpRequest = (params: {
       }),
   )
 
-  return { requestMock }
+  return { publicRequest }
 
 }
 
@@ -39,7 +39,7 @@ export const mockPrivateHttpRequest = (params: {
   exchangeHttp: IAlunaHttp,
   requestResponse?: any,
   isReject?: boolean,
-}): { requestMock: Sinon.SinonStub } => {
+}) => {
 
   const {
     exchangeHttp,
@@ -47,9 +47,9 @@ export const mockPrivateHttpRequest = (params: {
     isReject = false,
   } = params
 
-  const requestMock = ImportMock.mockFunction(
+  const authedRequest = ImportMock.mockFunction(
     exchangeHttp,
-    'privateRequest',
+    'authedRequest',
     isReject
       ? requestResponse
       : Promise.resolve({
@@ -58,7 +58,7 @@ export const mockPrivateHttpRequest = (params: {
       }),
   )
 
-  return { requestMock }
+  return { authedRequest }
 
 }
 
@@ -76,31 +76,27 @@ export const mockAxiosRequest = (
     responseData,
   } = params
 
-  let response: any
+  let request: any
 
   if (error) {
 
-    response = async () => Promise.reject(error)
+    request = Sinon.spy(async () => Promise.reject(error))
 
   } else {
 
-    response = async () => Promise.resolve({ data: responseData })
+    request = Sinon.spy(async () => Promise.resolve({ data: responseData }))
 
   }
 
-  const requestSpy = Sinon.spy(response)
-
-  const axiosCreateMock = ImportMock.mockFunction(
+  const create = ImportMock.mockFunction(
     axios,
     'create',
-    {
-      request: requestSpy,
-    },
+    { request },
   )
 
   return {
-    requestSpy,
-    axiosCreateMock,
+    request,
+    create,
   }
 
 }
