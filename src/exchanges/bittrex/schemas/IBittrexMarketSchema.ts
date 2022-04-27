@@ -15,12 +15,7 @@ export interface IBittrexMarketTickerSchema {
   askRate: string
 }
 
-export interface IBittrexMarketWithTicker extends IBittrexMarketTickerSchema {
-  baseCurrencySymbol: string
-  quoteCurrencySymbol: string
-  high: string
-  low: string
-  volume: string
-  quoteVolume: string
-  percentChange: string
+export interface IBittrexMarketSchema {
+  summaries: IBittrexMarketSummarySchema[]
+  tickers: IBittrexMarketTickerSchema[]
 }
