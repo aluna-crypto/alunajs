@@ -4,7 +4,7 @@ import { AlunaError } from './AlunaError'
 
 
 
-describe('AlunaError', () => {
+describe(__filename, () => {
 
 
 

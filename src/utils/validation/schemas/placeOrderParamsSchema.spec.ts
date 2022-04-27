@@ -12,7 +12,7 @@ import { placeOrderParamsSchema } from './placeOrderParamsSchema'
 
 
 
-describe('placeOrderParamsSchema', () => {
+describe(__filename, () => {
 
   const params: IAlunaOrderPlaceParams = {
     symbolPair: 'XBTUSD',

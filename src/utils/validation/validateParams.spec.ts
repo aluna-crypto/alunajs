@@ -6,7 +6,7 @@ import { validateParams } from './validateParams'
 
 
 
-describe('validateParams', () => {
+describe(__filename, () => {
 
   it('should properly validate params', () => {
 

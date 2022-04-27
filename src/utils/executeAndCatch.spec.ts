@@ -6,7 +6,7 @@ import { executeAndCatch } from './executeAndCatch'
 
 
 
-describe('executeAndCatch', () => {
+describe(__filename, () => {
 
   it('should properly execute lambda function and return result', async () => {
 

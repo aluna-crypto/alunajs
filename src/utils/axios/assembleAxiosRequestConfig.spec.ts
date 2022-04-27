@@ -9,7 +9,7 @@ import { assembleAxiosRequestConfig } from './assembleAxiosRequestConfig'
 
 
 
-describe('assembleAxiosRequestConfig', () => {
+describe(__filename, () => {
 
 
   const url = 'aluna.com'

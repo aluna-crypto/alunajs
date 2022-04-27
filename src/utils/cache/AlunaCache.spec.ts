@@ -4,7 +4,7 @@ import { AlunaCache } from './AlunaCache'
 
 
 
-describe('AlunaCache', () => {
+describe(__filename, () => {
 
 
   it('should export global cache with default ttl', () => {

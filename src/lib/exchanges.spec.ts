@@ -5,7 +5,7 @@ import { exchanges } from './exchanges'
 
 
 
-describe('Exchanges', () => {
+describe(__filename, () => {
 
   it('should reference all implemented exchanges', async () => {
 

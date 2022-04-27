@@ -15,7 +15,7 @@ import { editOrderParamsSchema } from './editOrderParamsSchema'
 
 
 
-describe('editOrderParamsSchema', () => {
+describe(__filename, () => {
 
   const params: IAlunaOrderEditParams = {
     id: 'orderId',

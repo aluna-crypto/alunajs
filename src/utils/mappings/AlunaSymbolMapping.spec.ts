@@ -4,7 +4,7 @@ import { AlunaSymbolMapping } from './AlunaSymbolMapping'
 
 
 
-describe('AlunaSymbolMapping', () => {
+describe(__filename, () => {
 
   it('should properly translate symbol using given mapping', () => {
 
