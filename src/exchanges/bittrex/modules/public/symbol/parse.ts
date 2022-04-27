@@ -1,16 +1,11 @@
-// import debug from 'debug'
-
 import {
   IAlunaSymbolParseParams,
   IAlunaSymbolParseReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
+import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
-
-
-
-// const log = debug('@aluna.js:bittrex/symbol/parse')
 
 
 
@@ -23,14 +18,23 @@ export function parse (
   } = params
 
   const {
-    symbol,
     name,
+    symbol,
   } = rawSymbol
 
+  const id = translateSymbolId({
+    exchangeSymbolId: symbol,
+    symbolMappings: {},
+  })
+
+  const alias = id !== symbol
+    ? symbol
+    : undefined
+
   const parsedSymbol: IAlunaSymbolSchema = {
-    // Use symbol mapping
-    id: symbol,
+    id,
     name,
+    alias,
     exchangeId: bittrexBaseSpecs.id,
     meta: rawSymbol,
   }
