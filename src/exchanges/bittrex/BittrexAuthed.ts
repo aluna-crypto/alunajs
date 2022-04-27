@@ -40,7 +40,6 @@ export class BittrexAuthed extends Bittrex implements IAlunaExchangeAuthed {
     this.key = key(this)
     this.balance = balance(this)
     this.order = order(this)
-    // this.position = position
 
     return this
 
