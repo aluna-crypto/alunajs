@@ -15,8 +15,8 @@ export interface IAlunaBalanceModule {
   listRaw (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListRawReturns>
   list (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListReturns>
 
-  parseMany (params: IAlunaBalanceParseManyParams): IAlunaBalanceParseManyReturns
-  parse (params: IAlunaBalanceParseParams): IAlunaBalanceParseReturns
+  parseMany (params: IAlunaBalanceParseManyParams): Promise<IAlunaBalanceParseManyReturns>
+  parse (params: IAlunaBalanceParseParams): Promise<IAlunaBalanceParseReturns>
 
   getTradableBalance? (params: IAlunaBalanceGetTradableBalanceParams): Promise<IAlunaBalanceGetTradableBalanceReturns>
 
