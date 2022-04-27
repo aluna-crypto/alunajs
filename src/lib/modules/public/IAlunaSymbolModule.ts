@@ -6,18 +6,18 @@ import { IAlunaSymbolSchema } from '../../schemas/IAlunaSymbolSchema'
 
 
 
-export interface IAlunaSymbolModule {
+export interface IAlunaSymbolModule <T> {
 
   /* eslint-disable max-len */
 
-  listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns>
+  listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns<T>>
   list (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
 
-  getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns>
+  getRaw? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetRawReturns<T>>
   get? (params: IAlunaSymbolGetParams): Promise<IAlunaSymbolGetReturns>
 
-  parseMany (params: IAlunaSymbolParseManyParams): Promise<IAlunaSymbolParseManyReturns>
-  parse (params: IAlunaSymbolParseParams): Promise<IAlunaSymbolParseReturns>
+  parseMany (params: IAlunaSymbolParseManyParams<T>): IAlunaSymbolParseManyReturns
+  parse (params: IAlunaSymbolParseParams<T>): IAlunaSymbolParseReturns
 
   /* eslint-enable max-len */
 
@@ -29,21 +29,21 @@ export interface IAlunaSymbolModule {
  * Parse
  */
 
-export interface IAlunaSymbolParseParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaSymbolParseParams <T> {
   rawSymbol: T
 }
 
-export interface IAlunaSymbolParseReturns extends IAlunaModuleReturns {
+export interface IAlunaSymbolParseReturns {
   symbol: IAlunaSymbolSchema
 }
 
 
 
-export interface IAlunaSymbolParseManyParams <T = any> extends IAlunaModuleParams {
-  rawSymbols: T[]
+export interface IAlunaSymbolParseManyParams <T> {
+  rawSymbols: T
 }
 
-export interface IAlunaSymbolParseManyReturns extends IAlunaModuleReturns {
+export interface IAlunaSymbolParseManyReturns {
   symbols: IAlunaSymbolSchema[]
 }
 
@@ -55,11 +55,11 @@ export interface IAlunaSymbolParseManyReturns extends IAlunaModuleReturns {
 
 export interface IAlunaSymbolListParams extends IAlunaModuleParams {}
 
-export interface IAlunaSymbolListRawReturns<T = any> extends IAlunaModuleReturns {
-  rawSymbols: T[]
+export interface IAlunaSymbolListRawReturns<T> extends IAlunaModuleReturns {
+  rawSymbols: T
 }
 
-export interface IAlunaSymbolListReturns extends IAlunaSymbolParseManyReturns {}
+export interface IAlunaSymbolListReturns extends IAlunaModuleReturns, IAlunaSymbolParseManyReturns {}
 
 
 
@@ -71,7 +71,7 @@ export interface IAlunaSymbolGetParams extends IAlunaModuleParams {
   id: string
 }
 
-export interface IAlunaSymbolGetRawReturns <T = any> extends IAlunaModuleReturns {
+export interface IAlunaSymbolGetRawReturns <T> extends IAlunaModuleReturns {
   rawSymbol: T
 }
 
