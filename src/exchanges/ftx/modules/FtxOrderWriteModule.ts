@@ -2,6 +2,7 @@ import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -154,12 +155,21 @@ export class FtxOrderWriteModule extends FtxOrderReadModule implements IAlunaOrd
       placedOrder = result
       requestCount += apiRequestCount
 
-
     } catch (err) {
+
+      const NOT_ENOUGH_BALANCE_MESSAGE = 'Not enough balances'
+
+      let code = AlunaOrderErrorCodes.PLACE_FAILED
+
+      if (err.message === NOT_ENOUGH_BALANCE_MESSAGE) {
+
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      }
 
       throw new AlunaError({
         ...err,
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        code,
       })
 
     }

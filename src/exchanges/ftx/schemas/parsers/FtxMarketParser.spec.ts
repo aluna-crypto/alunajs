@@ -54,7 +54,7 @@ describe('FtxMarketParser', () => {
     expect(ask).to.be.eq(rawMarket.ask)
     expect(last).to.be.eq(rawMarket.last)
     expect(change).to.be.eq(rawMarket.change24h)
-    expect(baseVolume).to.be.eq(rawMarket.volumeUsd24h)
+    expect(baseVolume).to.be.eq(0)
     expect(quoteVolume).to.be.eq(rawMarket.quoteVolume24h)
     expect(date).to.be.ok
 
@@ -64,6 +64,31 @@ describe('FtxMarketParser', () => {
     expect(instrument).not.to.be.ok
     expect(leverageEnabled).not.to.be.ok
     expect(maxLeverage).not.to.be.ok
+
+  })
+
+  it('should parse Ftx market just fine with USD base Currency', async () => {
+
+    const rawMarket = FTX_RAW_MARKETS[0]
+
+    rawMarket.baseCurrency = 'USD'
+
+    const parsedMarket = FtxMarketParser.parse({
+      rawMarket,
+    })
+
+    const {
+      baseSymbolId,
+      ticker,
+    } = parsedMarket
+
+    const {
+      baseVolume,
+    } = ticker
+
+    expect(baseSymbolId).to.be.eq('USD')
+
+    expect(baseVolume).to.be.eq(rawMarket.volumeUsd24h)
 
   })
 

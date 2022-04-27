@@ -4,6 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { IAlunaExchange } from '../../../lib/core/IAlunaExchange'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import { FtxHttp } from '../FtxHttp'
 import { IFtxKeySchema } from '../schemas/IFtxKeySchema'
 import { FtxKeyModule } from './FtxKeyModule'
@@ -153,6 +154,54 @@ describe('FtxKeyModule', () => {
     expect(error.message).to.be.eq('any-message')
     expect(error.httpStatusCode).to.be.eq(401)
     expect(error.code).to.be.eq(AlunaHttpErrorCodes.REQUEST_ERROR)
+
+
+  })
+
+  it('should properly inform when api key or secret are wrong', async () => {
+
+    ImportMock.mockOther(
+      ftxKeyModule,
+      'exchange',
+      {
+        keySecret: {
+          key: '',
+          secret: '',
+        },
+      } as IAlunaExchange,
+    )
+
+    ImportMock.mockFunction(
+      FtxHttp,
+      'privateRequest',
+      {
+        data: {
+          result: {
+            account: null,
+          },
+        },
+      },
+    )
+
+    let result
+    let error
+
+    try {
+
+      result = await ftxKeyModule.fetchDetails()
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+
+    expect(error).to.be.ok
+    expect(error.message).to.be.eq('Invalid key provided')
+    expect(error.httpStatusCode).to.be.eq(403)
+    expect(error.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
 
 
   })

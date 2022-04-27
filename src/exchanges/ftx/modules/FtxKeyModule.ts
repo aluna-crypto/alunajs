@@ -1,5 +1,7 @@
 import { AAlunaModule } from '../../../lib/core/abstracts/AAlunaModule'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import {
   IAlunaKeyFetchDetailsReturns,
   IAlunaKeyModule,
@@ -76,6 +78,17 @@ export class FtxKeyModule extends AAlunaModule implements IAlunaKeyModule {
           url: `${PROD_FTX_URL}/login_status`,
           keySecret,
         })
+
+      if (!result.account) {
+
+        throw new AlunaError({
+          code: AlunaKeyErrorCodes.INVALID,
+          message: 'Invalid key provided',
+          httpStatusCode: 403,
+          metadata: result,
+        })
+
+      }
 
       rawKey = result
       requestCount += apiRequestCount

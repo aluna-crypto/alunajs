@@ -9,6 +9,7 @@ import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaBalanceErrorCodes } from '../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../lib/errors/AlunaOrderErrorCodes'
@@ -180,7 +181,7 @@ describe('FtxOrderWriteModule', () => {
 
     })
 
-  it('should throw an request error when placing new order', async () => {
+  it('should throw a request error when placing new order', async () => {
 
     ImportMock.mockOther(
       ftxOrderWriteModule,
@@ -248,6 +249,80 @@ describe('FtxOrderWriteModule', () => {
     expect(error.httpStatusCode).to.be.eq(500)
 
   })
+
+  it(
+    'should throw an error when placing new order with insufficient balance',
+    async () => {
+
+      ImportMock.mockOther(
+        ftxOrderWriteModule,
+        'exchange',
+      { keySecret } as IAlunaExchange,
+      )
+
+      const NOT_ENOUGH_BALANCE_MESSAGE = 'Not enough balances'
+
+      const mockedError: AlunaError = new AlunaError({
+        code: 'request-error',
+        message: NOT_ENOUGH_BALANCE_MESSAGE,
+        metadata: {
+          code: -1000,
+          msg: NOT_ENOUGH_BALANCE_MESSAGE,
+        },
+        httpStatusCode: 500,
+      })
+
+      const requestMock = ImportMock.mockFunction(
+        FtxHttp,
+        'privateRequest',
+        Promise.reject(mockedError),
+      )
+
+      const placeOrderParams: IAlunaOrderPlaceParams = {
+        amount: 0.001,
+        rate: 10000,
+        symbolPair: 'ETHZAR',
+        side: AlunaOrderSideEnum.BUY,
+        type: AlunaOrderTypesEnum.LIMIT,
+        account: AlunaAccountEnum.EXCHANGE,
+      }
+
+      const requestBody: IFtxOrderRequest = {
+        side: FtxSideEnum.BUY,
+        market: placeOrderParams.symbolPair,
+        size: placeOrderParams.amount,
+        price: placeOrderParams.rate || null,
+        type: FtxOrderTypeEnum.LIMIT,
+      }
+
+      let result
+      let error
+
+      try {
+
+        result = await ftxOrderWriteModule.place(placeOrderParams)
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(result).not.to.be.ok
+
+      expect(requestMock.callCount).to.be.eq(1)
+      expect(requestMock.calledWith({
+        url: `${PROD_FTX_URL}/orders`,
+        body: requestBody,
+        keySecret,
+      })).to.be.ok
+
+      expect(error.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error.message).to.be.eq(NOT_ENOUGH_BALANCE_MESSAGE)
+      expect(error.httpStatusCode).to.be.eq(500)
+
+    },
+  )
 
 
 

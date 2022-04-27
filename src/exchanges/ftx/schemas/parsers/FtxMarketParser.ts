@@ -25,6 +25,10 @@ export class FtxMarketParser {
       volumeUsd24h,
     } = rawMarket
 
+    const isUsdBaseCurrency = baseCurrency === 'USD'
+
+    const baseVolume = isUsdBaseCurrency ? volumeUsd24h : 0
+
     const ticker = {
       high: price,
       low: price,
@@ -33,7 +37,7 @@ export class FtxMarketParser {
       last,
       date: new Date(),
       change: change24h,
-      baseVolume: volumeUsd24h,
+      baseVolume,
       quoteVolume: quoteVolume24h,
     }
 
