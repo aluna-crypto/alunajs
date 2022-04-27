@@ -1,9 +1,4 @@
 import debug from 'debug'
-import {
-  assign,
-  filter,
-  keyBy,
-} from 'lodash'
 
 import {
   IAlunaMarketListParams,
@@ -12,6 +7,7 @@ import {
 import { BittrexHttp } from '../../../BittrexHttp'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import {
+  IBittrexMarketSchema,
   IBittrexMarketSummarySchema,
   IBittrexMarketTickerSchema,
 } from '../../../schemas/IBittrexMarketSchema'
@@ -24,43 +20,26 @@ const log = debug('@aluna.js:bittrex/market/listRaw')
 
 export async function listRaw (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns> {
+): Promise<IAlunaMarketListRawReturns<IBittrexMarketSchema>> {
 
-  const {
-    http = new BittrexHttp(),
-  } = params
+  const { http = new BittrexHttp() } = params
 
-  log('fetching Bittrex market summaries')
+  log('fetching Bittrex raw summaries')
 
-  let rawMarkets = await http.publicRequest<IBittrexMarketSummarySchema[]>({
+  const summaries = await http.publicRequest<IBittrexMarketSummarySchema[]>({
     url: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
   })
 
-  log('fetching Bittrex tickers')
+  log('fetching Bittrex raw tickers')
 
   const tickers = await http.publicRequest<IBittrexMarketTickerSchema[]>({
     url: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
   })
 
-  const tickersDictionary = keyBy(tickers, 'symbol')
-
-  rawMarkets = filter(rawMarkets, (rawMarket) => {
-
-    const { symbol } = rawMarket
-
-    const ticker = tickersDictionary[symbol]
-
-    if (ticker) {
-
-      assign(rawMarket, {
-        ...ticker,
-      })
-
-    }
-
-    return !!ticker
-
-  })
+  const rawMarkets: IBittrexMarketSchema = {
+    summaries,
+    tickers,
+  }
 
   const { requestCount } = http
 

@@ -1,12 +1,10 @@
 import debug from 'debug'
-import { map } from 'lodash'
 
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { BittrexHttp } from '../../../BittrexHttp'
-import { parse } from './parse'
+import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
 
 
 
@@ -14,34 +12,26 @@ const log = debug('@aluna.js:bittrex/market/parseMany')
 
 
 
-export async function parseMany (
-  params: IAlunaMarketParseManyParams,
-): Promise<IAlunaMarketParseManyReturns> {
+export function parseMany (
+  params: IAlunaMarketParseManyParams<IBittrexMarketSchema>,
+): IAlunaMarketParseManyReturns {
 
-  const {
-    http = new BittrexHttp(),
-    rawMarkets,
-  } = params
+  const { rawMarkets } = params
 
-  const marketsPromises = map(rawMarkets, async (rawMarket) => {
+  const markets = rawMarkets as any
 
-    const { market } = await parse({
-      rawMarket,
-    })
+  // const markets = map(rawMarkets, (rawMarket) => {
 
-    return market
+  //   const { market } = parse({
+  //     rawMarket,
+  //   })
 
-  })
+  //   return market
 
-  const markets = await Promise.all(marketsPromises)
+  // })
 
   log(`parsed ${markets.length} markets for Bittrex`)
 
-  const { requestCount } = http
-
-  return {
-    markets,
-    requestCount,
-  }
+  return { markets }
 
 }

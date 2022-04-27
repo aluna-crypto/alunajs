@@ -1,3 +1,5 @@
+import debug from 'debug'
+
 import {
   IAlunaMarketListParams,
   IAlunaMarketListReturns,
@@ -8,23 +10,21 @@ import { parseMany } from './parseMany'
 
 
 
+const log = debug('@aluna.js:bittrex/market/list')
+
+
+
 export async function list (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListReturns> {
 
-  const {
-    http = new BittrexHttp(),
-  } = params
+  log('listing Bittrex markets')
+
+  const { http = new BittrexHttp() } = params
+  const { requestCount } = http
 
   const { rawMarkets } = await listRaw({ http })
-
-  const {
-    markets,
-    requestCount,
-  } = await parseMany({
-    http,
-    rawMarkets,
-  })
+  const { markets } = parseMany({ rawMarkets })
 
   return {
     markets,
