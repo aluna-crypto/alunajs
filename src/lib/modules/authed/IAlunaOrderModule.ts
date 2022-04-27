@@ -32,7 +32,7 @@ export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
 
   place (params: IAlunaOrderPlaceParams): Promise<IAlunaOrderPlaceReturns>
   edit (params: IAlunaOrderEditParams): Promise<IAlunaOrderEditReturns>
-  cancel (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetReturns>
+  cancel (params: IAlunaOrderCancelParams): Promise<IAlunaOrderCancelReturns>
 
 }
 
@@ -123,3 +123,13 @@ export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
 }
 
 export interface IAlunaOrderEditReturns extends IAlunaOrderGetReturns {}
+
+
+
+/**
+ * Cancel
+ */
+
+export interface IAlunaOrderCancelParams extends IAlunaOrderGetParams {}
+
+export interface IAlunaOrderCancelReturns extends IAlunaOrderGetReturns {}
