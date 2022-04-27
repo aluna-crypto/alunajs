@@ -1,3 +1,5 @@
+import debug from 'debug'
+
 import {
   IAlunaSymbolListParams,
   IAlunaSymbolListReturns,
@@ -8,22 +10,21 @@ import { parseMany } from './parseMany'
 
 
 
+const log = debug('@aluna.js:bittrex/symbol/list')
+
+
+
 export async function list (
   params: IAlunaSymbolListParams = {},
 ): Promise<IAlunaSymbolListReturns> {
 
-  const {
-    http = new BittrexHttp(),
-  } = params
+  log('listing Bittrex symbols')
+
+  const { http = new BittrexHttp() } = params
+  const { requestCount } = http
 
   const { rawSymbols } = await listRaw({ http })
-
-  const { symbols } = await parseMany({
-    http,
-    rawSymbols,
-  })
-
-  const { requestCount } = http
+  const { symbols } = parseMany({ rawSymbols })
 
   return {
     symbols,

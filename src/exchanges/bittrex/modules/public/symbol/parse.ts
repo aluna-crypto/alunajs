@@ -1,20 +1,25 @@
+// import debug from 'debug'
+
 import {
   IAlunaSymbolParseParams,
   IAlunaSymbolParseReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
-import { BittrexHttp } from '../../../BittrexHttp'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
+import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
 
-export async function parse (
-  params: IAlunaSymbolParseParams,
-): Promise<IAlunaSymbolParseReturns> {
+// const log = debug('@aluna.js:bittrex/symbol/parse')
+
+
+
+export function parse (
+  params: IAlunaSymbolParseParams<IBittrexSymbolSchema>,
+): IAlunaSymbolParseReturns {
 
   const {
     rawSymbol,
-    http = new BittrexHttp(),
   } = params
 
   const {
@@ -30,11 +35,8 @@ export async function parse (
     meta: rawSymbol,
   }
 
-  const { requestCount } = http
-
   return {
     symbol: parsedSymbol,
-    requestCount,
   }
 
 }

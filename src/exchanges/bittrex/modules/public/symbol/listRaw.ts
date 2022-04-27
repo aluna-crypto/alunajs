@@ -13,11 +13,12 @@ import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 const log = debug('@aluna.js:bittrex/symbol/listRaw')
 
 
+
 export async function listRaw (
   params: IAlunaSymbolListParams = {},
-): Promise<IAlunaSymbolListRawReturns> {
+): Promise<IAlunaSymbolListRawReturns<IBittrexSymbolSchema[]>> {
 
-  log('fetching Bittrex symbols')
+  log('fetching Bittrex raw symbols')
 
   const {
     http = new BittrexHttp(),
