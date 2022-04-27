@@ -19,11 +19,11 @@
     "build:index:clean": "rm -rf src/index.ts",
     "build:index": "yarn cti entrypoint ./src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
     "build:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
-    "test:mocha": "mocha",
-    "test:mocha:watch": "mocha --watch",
-    "test:mocha:cover": "nyc mocha --bail",
-    "test:mocha:cover:watch": "nyc mocha --watch",
-    "test:mocha:ci": "nyc mocha --bail --forbid-only --reporter dot"
+    "test": "mocha",
+    "test:watch": "mocha --watch",
+    "test:cover": "nyc mocha --bail",
+    "test:cover:watch": "nyc mocha --watch",
+    "test:ci": "nyc mocha --bail --forbid-only --reporter dot"
   },
   "dependencies": {
     "@types/debug": "^4.1.7",
