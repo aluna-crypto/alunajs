@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import Sinon from 'sinon'
 
 import { mockBittrexHttp } from '../../../BittrexHttp.mock'
 import {
@@ -15,9 +14,9 @@ describe(__filename, () => {
 
   it('should list Bittrex raw markets just fine', async () => {
 
-    const { mockManager } = mockBittrexHttp()
-
-    const publicRequest = Sinon.stub()
+    const {
+      publicRequest,
+    } = mockBittrexHttp()
 
     const marketsInfo = BITTREX_RAW_MARKETS_INFO
     const summaries = BITTREX_RAW_MARKET_SUMMARIES
@@ -26,8 +25,6 @@ describe(__filename, () => {
     publicRequest.onCall(0).returns(Promise.resolve(marketsInfo))
     publicRequest.onCall(1).returns(Promise.resolve(summaries))
     publicRequest.onCall(2).returns(Promise.resolve(tickers))
-
-    mockManager.set('publicRequest', publicRequest)
 
     const { rawMarkets } = await listRaw()
 
