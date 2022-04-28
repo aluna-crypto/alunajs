@@ -6,11 +6,29 @@ import { generate } from './generate'
 
 
 
+const validations = {
+  notNull (answer: string) {
+    if (!answer) {
+      return 'You must inform exchange name.';
+    }
+    return true
+  },
+  atLeastOne (answer: string[]) {
+    if (answer.length < 1) {
+      return 'You must select at least one.';
+    }
+    return true
+  },
+}
+
+
+
 const questions = [
   {
     type: 'input',
     name: 'exchangeName',
     message: "What's the exchange name?",
+    validate: validations.notNull,
   },
   {
     type: 'checkbox',
@@ -21,12 +39,7 @@ const questions = [
       { name: 'Margin', value: AlunaAccountEnum.MARGIN },
       { name: 'Derivatives', value: AlunaAccountEnum.DERIVATIVES },
     ],
-    validate (answer: string[]) {
-      if (answer.length < 1) {
-        return 'You must select at least one.';
-      }
-      return true
-    },
+    validate: validations.atLeastOne,
   },
   {
     type: 'checkbox',
@@ -48,7 +61,6 @@ export async function main () {
   await generate(answers)
 
 }
-
 
 
 main()

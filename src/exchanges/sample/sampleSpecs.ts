@@ -76,6 +76,10 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
     order: AlunaFeaturesModeEnum.WRITE,
     position: AlunaFeaturesModeEnum.WRITE,
   },
+  features: {
+    offersOrderEditing: true,
+    offersPositionId: true,
+  },
   accounts: [
     {
       type: AlunaAccountEnum.EXCHANGE,
