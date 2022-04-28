@@ -25,7 +25,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const id = translateSymbolId({
     exchangeSymbolId: symbol,
-    symbolMappings: {},
+    symbolMappings: exchange.settings.mappings,
   })
 
   const alias = id !== symbol
