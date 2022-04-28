@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 
 import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
+import { Bittrex } from '../../../Bittrex'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { BITTREX_RAW_MARKET } from '../../../test/fixtures/bittrexMarket'
-import { parse } from './parse'
 
 
 
@@ -17,7 +17,9 @@ describe(__filename, () => {
 
     const rawMarket = BITTREX_RAW_MARKET
 
-    const { market } = parse({
+    const exchange = new Bittrex({ settings: {} })
+
+    const { market } = exchange.market.parse({
       rawMarket,
     })
 
