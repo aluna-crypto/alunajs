@@ -45,12 +45,12 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrencySymbol,
-    symbolMappings: {},
+    symbolMappings: exchange.settings.mappings,
   })
 
   const quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteCurrencySymbol,
-    symbolMappings: {},
+    symbolMappings: exchange.settings.mappings,
   })
 
   const alunaTicker: IAlunaTickerSchema = {
