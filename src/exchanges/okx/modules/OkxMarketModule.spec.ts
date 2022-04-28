@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
+import * as FetchOkxInstrumentsMod from '../helpers/FetchOkxInstruments'
 import { Okx } from '../Okx'
 import { OkxHttp } from '../OkxHttp'
 import { PROD_OKX_URL } from '../OkxSpecs'
@@ -50,6 +51,29 @@ describe('OkxMarketModule', () => {
 
     const rawListMock = 'rawListMock'
 
+    const rawSpotSymbols = 'rawSpotSymbols'
+    const rawMarginSymbols = 'rawMarginSymbols'
+
+    const requestMock = ImportMock.mockFunction(
+      FetchOkxInstrumentsMod,
+      'fetchOkxInstruments',
+    )
+
+    requestMock.onFirstCall().returns(
+      Promise.resolve({
+        rawSymbols: rawSpotSymbols,
+        requestCount: 1,
+      }),
+    )
+
+    requestMock.onSecondCall().returns(
+      Promise.resolve({
+        rawSymbols: rawMarginSymbols,
+        requestCount: 1,
+      }),
+    )
+
+
     const listRawMock = ImportMock.mockFunction(
       OkxMarketModule,
       'listRaw',
@@ -69,6 +93,8 @@ describe('OkxMarketModule', () => {
     expect(parseManyMock.callCount).to.eq(1)
     expect(parseManyMock.calledWith({
       rawMarkets: rawListMock,
+      rawSpotSymbols,
+      rawMarginSymbols,
     }))
 
     expect(parsedMarkets.length).to.eq(3)

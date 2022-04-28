@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { mockAlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping.mock'
 import { Okx } from '../../Okx'
 import { OKX_RAW_MARKETS } from '../../test/fixtures/okxMarket'
+import { OKX_RAW_MARGIN_SYMBOLS, OKX_RAW_SPOT_SYMBOLS } from '../../test/fixtures/okxSymbol'
 import { OkxMarketParser } from './OkxMarketParser'
 
 
@@ -19,9 +20,13 @@ describe('OkxMarketParser', () => {
     })
 
     const rawMarket = OKX_RAW_MARKETS[0]
+    const rawSpotSymbols = OKX_RAW_MARGIN_SYMBOLS
+    const rawMarginSymbols = OKX_RAW_SPOT_SYMBOLS
 
     const parsedMarket = OkxMarketParser.parse({
       rawMarket,
+      rawMarginSymbols,
+      rawSpotSymbols,
     })
 
     const {
@@ -66,7 +71,7 @@ describe('OkxMarketParser', () => {
     expect(date).to.be.ok
 
     expect(spotEnabled).to.be.ok
-    expect(marginEnabled).not.to.be.ok
+    expect(marginEnabled).to.be.ok
     expect(derivativesEnabled).not.to.be.ok
     expect(instrument).not.to.be.ok
     expect(leverageEnabled).not.to.be.ok

@@ -2,6 +2,7 @@ import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { AlunaSymbolMapping } from '../../../../utils/mappings/AlunaSymbolMapping'
 import { Okx } from '../../Okx'
 import { IOkxMarketWithCurrency } from '../IOkxMarketSchema'
+import { IOkxSymbolSchema } from '../IOkxSymbolSchema'
 
 
 
@@ -9,9 +10,35 @@ export class OkxMarketParser {
 
   static parse (params: {
     rawMarket: IOkxMarketWithCurrency,
+    rawSpotSymbols: IOkxSymbolSchema[],
+    rawMarginSymbols: IOkxSymbolSchema[],
   }): IAlunaMarketSchema {
 
-    const { rawMarket } = params
+    const {
+      rawMarket,
+      rawMarginSymbols,
+      rawSpotSymbols,
+    } = params
+
+    const pairSpotSymbolsDictionary: { [key:string]: IOkxSymbolSchema } = {}
+
+    rawSpotSymbols.forEach((pair) => {
+
+      const { instId } = pair
+
+      pairSpotSymbolsDictionary[instId] = pair
+
+    })
+
+    const pairMarginSymbolsDictionary: { [key:string]: IOkxSymbolSchema } = {}
+
+    rawMarginSymbols.forEach((pair) => {
+
+      const { instId } = pair
+
+      pairMarginSymbolsDictionary[instId] = pair
+
+    })
 
     const {
       baseCurrency,
@@ -53,14 +80,17 @@ export class OkxMarketParser {
       quoteVolume: parseFloat(volCcy24h),
     }
 
+    const marginEnabled = !!pairMarginSymbolsDictionary[instId]
+    const spotEnabled = !!pairSpotSymbolsDictionary[instId]
+
     return {
       exchangeId: Okx.ID,
       symbolPair: instId,
       baseSymbolId,
       quoteSymbolId,
       ticker,
-      spotEnabled: true,
-      marginEnabled: false,
+      spotEnabled,
+      marginEnabled,
       derivativesEnabled: false,
       leverageEnabled: false,
       meta: rawMarket,

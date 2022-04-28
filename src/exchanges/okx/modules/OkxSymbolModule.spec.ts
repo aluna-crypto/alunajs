@@ -3,12 +3,13 @@ import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
+import { OkxSymbolTypeEnum } from '../enums/OkxSymbolTypeEnum'
+import * as FetchOkxInstrumentsMod from '../helpers/FetchOkxInstruments'
 import { Okx } from '../Okx'
-import { OkxHttp } from '../OkxHttp'
 import {
   OKX_PARSED_SYMBOLS,
   OKX_RAW_SUSPENDED_SYMBOL,
-  OKX_RAW_SYMBOLS,
+  OKX_RAW_SPOT_SYMBOLS,
 } from '../test/fixtures/okxSymbol'
 import { OkxSymbolModule } from './OkxSymbolModule'
 
@@ -20,20 +21,30 @@ describe('OkxSymbolModule', () => {
   it('should list Okx raw symbols just fine', async () => {
 
     const requestMock = ImportMock.mockFunction(
-      OkxHttp,
-      'publicRequest',
+      FetchOkxInstrumentsMod,
+      'fetchOkxInstruments',
       Promise.resolve({
-        data: OKX_RAW_SYMBOLS,
+        rawSymbols: OKX_RAW_SPOT_SYMBOLS,
         requestCount: 1,
       }),
     )
 
     const { rawSymbols } = await OkxSymbolModule.listRaw()
 
-    expect(rawSymbols.length).to.eq(4)
-    expect(rawSymbols).to.deep.eq(OKX_RAW_SYMBOLS)
+    expect(rawSymbols.length).to.eq(8)
+    expect(rawSymbols).to.deep.eq(
+      [...OKX_RAW_SPOT_SYMBOLS, ...OKX_RAW_SPOT_SYMBOLS],
+    )
 
-    expect(requestMock.callCount).to.be.eq(1)
+    expect(requestMock.callCount).to.be.eq(2)
+
+    expect(requestMock.calledWith({
+      type: OkxSymbolTypeEnum.SPOT,
+    })).to.be.ok
+
+    expect(requestMock.calledWith({
+      type: OkxSymbolTypeEnum.MARGIN,
+    })).to.be.ok
 
   })
 
@@ -43,7 +54,7 @@ describe('OkxSymbolModule', () => {
       OkxSymbolModule,
       'listRaw',
       Promise.resolve({
-        rawSymbols: OKX_RAW_SYMBOLS,
+        rawSymbols: OKX_RAW_SPOT_SYMBOLS,
         requestCount: 1,
       }),
     )
@@ -67,15 +78,15 @@ describe('OkxSymbolModule', () => {
 
     expect(parseManyMock.callCount).to.eq(1)
     expect(parseManyMock.calledWith({
-      rawSymbols: OKX_RAW_SYMBOLS,
+      rawSymbols: OKX_RAW_SPOT_SYMBOLS,
     })).to.be.ok
 
   })
 
   it('should parse a Okx symbol just fine', async () => {
 
-    const rawSymbol1 = OKX_RAW_SYMBOLS[0]
-    const rawSymbol2 = OKX_RAW_SYMBOLS[1]
+    const rawSymbol1 = OKX_RAW_SPOT_SYMBOLS[0]
+    const rawSymbol2 = OKX_RAW_SPOT_SYMBOLS[1]
 
     const translatedSymbol = 'ETH'
 
@@ -113,7 +124,7 @@ describe('OkxSymbolModule', () => {
       'parse',
     )
 
-    const rawSymbols = [OKX_RAW_SUSPENDED_SYMBOL, ...OKX_RAW_SYMBOLS]
+    const rawSymbols = [OKX_RAW_SUSPENDED_SYMBOL, ...OKX_RAW_SPOT_SYMBOLS]
 
     each(OKX_PARSED_SYMBOLS, (parsed, i) => {
 

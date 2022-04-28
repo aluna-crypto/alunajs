@@ -7,6 +7,8 @@ import {
   IAlunaMarketParseManyReturns,
   IAlunaMarketParseReturns,
 } from '../../../lib/modules/IAlunaMarketModule'
+import { OkxSymbolTypeEnum } from '../enums/OkxSymbolTypeEnum'
+import { fetchOkxInstruments } from '../helpers/FetchOkxInstruments'
 import { OkxHttp } from '../OkxHttp'
 import { OkxLog } from '../OkxLog'
 import { PROD_OKX_URL } from '../OkxSpecs'
@@ -14,6 +16,7 @@ import {
   IOkxMarketSchema,
   IOkxMarketWithCurrency,
 } from '../schemas/IOkxMarketSchema'
+import { IOkxSymbolSchema } from '../schemas/IOkxSymbolSchema'
 import { OkxMarketParser } from '../schemas/parsers/OkxMarketParser'
 
 
@@ -70,6 +73,20 @@ export const OkxMarketModule: IAlunaMarketModule = class {
     const requestCount = 0
 
     const {
+      rawSymbols: rawSpotSymbols,
+      requestCount: spotRequestCount,
+    } = await fetchOkxInstruments({
+      type: OkxSymbolTypeEnum.SPOT,
+    })
+
+    const {
+      rawSymbols: rawMarginSymbols,
+      requestCount: marginRequestCount,
+    } = await fetchOkxInstruments({
+      type: OkxSymbolTypeEnum.MARGIN,
+    })
+
+    const {
       rawMarkets,
       requestCount: listRawCount,
     } = await OkxMarketModule.listRaw()
@@ -77,11 +94,17 @@ export const OkxMarketModule: IAlunaMarketModule = class {
     const {
       markets: parsedMarkets,
       requestCount: parseManyCount,
-    } = OkxMarketModule.parseMany({ rawMarkets })
+    } = this.parseMany({
+      rawMarkets,
+      rawSpotSymbols,
+      rawMarginSymbols,
+    })
 
     const totalRequestCount = requestCount
       + listRawCount
       + parseManyCount
+      + marginRequestCount
+      + spotRequestCount
 
     return {
       markets: parsedMarkets,
@@ -94,11 +117,21 @@ export const OkxMarketModule: IAlunaMarketModule = class {
 
   public static parse (params: {
     rawMarket: IOkxMarketWithCurrency,
+    rawMarginSymbols: IOkxSymbolSchema[],
+    rawSpotSymbols: IOkxSymbolSchema[],
   }): IAlunaMarketParseReturns {
 
-    const { rawMarket } = params
+    const {
+      rawMarket,
+      rawMarginSymbols,
+      rawSpotSymbols,
+    } = params
 
-    const parsedMarket = OkxMarketParser.parse({ rawMarket })
+    const parsedMarket = OkxMarketParser.parse({
+      rawMarket,
+      rawMarginSymbols,
+      rawSpotSymbols,
+    })
 
     return {
       market: parsedMarket,
@@ -111,9 +144,11 @@ export const OkxMarketModule: IAlunaMarketModule = class {
 
   public static parseMany (params: {
     rawMarkets: IOkxMarketWithCurrency[],
+    rawMarginSymbols: IOkxSymbolSchema[],
+    rawSpotSymbols: IOkxSymbolSchema[],
   }): IAlunaMarketParseManyReturns {
 
-    const { rawMarkets } = params
+    const { rawMarkets, rawMarginSymbols, rawSpotSymbols } = params
 
     let requestCount = 0
 
@@ -122,7 +157,7 @@ export const OkxMarketModule: IAlunaMarketModule = class {
       const {
         market: parsedMarket,
         requestCount: parseCount,
-      } = this.parse({ rawMarket })
+      } = this.parse({ rawMarket, rawMarginSymbols, rawSpotSymbols })
 
       requestCount += parseCount
 

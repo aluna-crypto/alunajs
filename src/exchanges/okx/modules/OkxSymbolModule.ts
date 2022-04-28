@@ -13,10 +13,10 @@ import {
 import { IAlunaSymbolSchema } from '../../../lib/schemas/IAlunaSymbolSchema'
 import { AlunaSymbolMapping } from '../../../utils/mappings/AlunaSymbolMapping'
 import { OkxSymbolStatusEnum } from '../enums/OkxSymbolStatusEnum'
+import { OkxSymbolTypeEnum } from '../enums/OkxSymbolTypeEnum'
+import { fetchOkxInstruments } from '../helpers/FetchOkxInstruments'
 import { Okx } from '../Okx'
-import { OkxHttp } from '../OkxHttp'
 import { OkxLog } from '../OkxLog'
-import { PROD_OKX_URL } from '../OkxSpecs'
 import { IOkxSymbolSchema } from '../schemas/IOkxSymbolSchema'
 
 
@@ -55,18 +55,27 @@ export const OkxSymbolModule: IAlunaSymbolModule = class {
 
     OkxLog.info('fetching Okx symbols')
 
-    const { publicRequest } = OkxHttp
+    const {
+      rawSymbols: rawSpotSymbols,
+      requestCount: spotRequestCount,
+    } = await fetchOkxInstruments({
+      type: OkxSymbolTypeEnum.SPOT,
+    })
 
     const {
-      data: rawSymbols,
-      requestCount,
-    } = await publicRequest<IOkxSymbolSchema[]>({
-      url: `${PROD_OKX_URL}/public/instruments?instType=SPOT`,
+      rawSymbols: rawMarginSymbols,
+      requestCount: marginRequestCount,
+    } = await fetchOkxInstruments({
+      type: OkxSymbolTypeEnum.MARGIN,
     })
+
+    const rawSymbols = [...rawSpotSymbols, ...rawMarginSymbols]
+
+    const totalRequestCount = spotRequestCount + marginRequestCount
 
     return {
       rawSymbols,
-      requestCount,
+      requestCount: totalRequestCount,
     }
 
   }
