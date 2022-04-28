@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 
+import { Bittrex } from '../../../Bittrex'
 import { mockBittrexHttp } from '../../../BittrexHttp.mock'
 import {
   BITTREX_RAW_MARKET_SUMMARIES,
   BITTREX_RAW_MARKET_TICKERS,
   BITTREX_RAW_MARKETS_INFO,
 } from '../../../test/fixtures/bittrexMarket'
-import { listRaw } from './listRaw'
 
 
 
@@ -26,7 +26,9 @@ describe(__filename, () => {
     publicRequest.onCall(1).returns(Promise.resolve(summaries))
     publicRequest.onCall(2).returns(Promise.resolve(tickers))
 
-    const { rawMarkets } = await listRaw()
+    const exchange = new Bittrex({ settings: {} })
+
+    const { rawMarkets } = await exchange.market.listRaw()
 
     expect(rawMarkets).to.deep.eq({
       marketsInfo,
