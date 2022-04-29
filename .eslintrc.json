@@ -27,7 +27,7 @@
     "no-use-before-define": "off",
     "arrow-body-style": "off",
     "no-shadow": "off",
-    "no-console": "warn",
+    "no-console": ["warn", { "allow": ["info", "error"] }],
     "class-methods-use-this": "off",
     "padded-blocks": "off",
     "semi": ["error", "never"],
