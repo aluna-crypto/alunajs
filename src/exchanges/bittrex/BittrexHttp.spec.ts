@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { random } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mockAxiosRequest } from '../../../test/helpers/http/axios'
+import { mockAxiosRequest } from '../../../test/mocks/axios/request'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
