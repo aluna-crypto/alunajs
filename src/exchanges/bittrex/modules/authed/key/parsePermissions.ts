@@ -7,6 +7,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BittrexHttp } from '../../../BittrexHttp'
+import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 
 
@@ -18,7 +19,7 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaKeyParsePermissionsParams<IBittrexKeySchema>,
 ): Promise<IAlunaKeyParsePermissionsReturns> => {
 
-  log('params', params)
+  log('parsing Bittrex key permissions', params)
 
   const { http = new BittrexHttp() } = params
 
@@ -33,7 +34,6 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
   delete rawKey.accountId
 
   Object.assign(key, rawKey)
-
 
   const { requestCount } = http
 
