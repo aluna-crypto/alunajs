@@ -41,6 +41,7 @@
       { "max": 3, "maxEOF": 1, "maxBOF": 0 }
     ],
     "no-shadow": "off",
+    "no-underscore-dangle": "off",
     "no-use-before-define": "off",
     "padded-blocks": "off",
     "semi": ["error", "never"],
@@ -104,6 +105,7 @@
     /*
       Import
     */
+
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -121,6 +123,7 @@
     /*
       Import Helpers
     */
+
     "import-helpers/order-imports": [
       "warn",
       {
