@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
-import { mockMarketListRaw } from '../../../../../../test/helpers/exchange/modules/market/listRaw'
-import { mockMarketParseMany } from '../../../../../../test/helpers/exchange/modules/market/parseMany'
+import { mockMarketListRaw } from '../../../../../../test/mocks/exchange/modules/market/listRaw'
+import { mockMarketParseMany } from '../../../../../../test/mocks/exchange/modules/market/parseMany'
 import { Bittrex } from '../../../Bittrex'
 import { IBittrexMarketsSchema } from '../../../schemas/IBittrexMarketSchema'
 import {

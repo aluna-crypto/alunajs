@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { mockSymbolParse } from '../../../../../../test/helpers/exchange/modules/symbol/parse'
+import { mockSymbolParse } from '../../../../../../test/mocks/exchange/modules/symbol/parse'
 import { Bittrex } from '../../../Bittrex'
 import {
   BITTREX_PARSED_SYMBOLS,

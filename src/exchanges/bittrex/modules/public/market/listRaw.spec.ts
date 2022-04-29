@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
+import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
-import { mockBittrexHttp } from '../../../../../../test/exchanges/Http'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import {
   BITTREX_RAW_MARKET_SUMMARIES,
@@ -22,7 +22,7 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockBittrexHttp({
+    } = mockHttp({
       returns: {
         publicRequest: [
           Promise.resolve(marketsInfo),
