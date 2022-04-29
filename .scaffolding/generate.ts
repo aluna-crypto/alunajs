@@ -1,6 +1,7 @@
 import chalk from 'chalk'
 import debug from 'debug'
 import { existsSync } from 'fs'
+import inquirer from 'inquirer'
 import { merge } from 'lodash'
 import { join } from 'path'
 import shelljs from 'shelljs'
@@ -72,10 +73,30 @@ export async function generate (answers: IPromptAnswers) {
   const destination = join(EXCHANGES, exchangeLower)
 
   if (existsSync(destination)) {
-    console.error(chalk.red(`Destination path exists, aborting.`))
-    console.error(`\t— ${destination}`)
-    return
-    process.exit()
+
+    console.error(chalk.red(`Destination path exists.`))
+
+    const question = [{
+      type: 'expand',
+      message: 'Do you want to overrite it? [y/N]: ',
+      name: 'overwrite',
+      choices: [
+        { key: 'y', name: 'Yes, please.', value: true },
+        { key: 'n', name: 'No way!', value: false },
+      ],
+      default: 1,
+    }]
+
+    const answer = await inquirer.prompt(question)
+
+    const { overwrite } = answer
+
+    if (!overwrite) {
+      console.error(chalk.gray(`Aborting.`))
+      process.exit()
+    } else {
+      shelljs.rm('-rf', destination)
+    }
   }
 
   log('copying sample files')
