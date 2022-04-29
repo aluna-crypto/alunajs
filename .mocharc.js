@@ -4,7 +4,7 @@ module.exports = {
   spec: ['src/**/*.spec.ts'],
   require: [
     'ts-node/register',
-    'test/mocha/hooks.ts',
+    'test/mochaHooks.ts',
   ],
   'watch-files': [
     'src/**/*.ts',
