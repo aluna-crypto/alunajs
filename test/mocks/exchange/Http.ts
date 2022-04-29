@@ -4,8 +4,8 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { BittrexHttp } from '../../src/exchanges/bittrex/BittrexHttp'
-import { IAlunaHttpRequestCount } from '../../src/lib/core/IAlunaHttp'
+import { BittrexHttp } from '../../../src/exchanges/bittrex/BittrexHttp'
+import { IAlunaHttpRequestCount } from '../../../src/lib/core/IAlunaHttp'
 
 
 
