@@ -15,7 +15,7 @@ const log = debug('@aluna.js:bittrex/key/parsePermissions')
 
 
 export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaKeyParsePermissionsParams,
+  params: IAlunaKeyParsePermissionsParams<IBittrexKeySchema>,
 ): Promise<IAlunaKeyParsePermissionsReturns> => {
 
   log('params', params)
