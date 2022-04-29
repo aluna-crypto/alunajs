@@ -21,7 +21,6 @@ export interface IPromptAnswers {
 }
 
 export interface IScaffoldSettings extends IPromptAnswers {
-  exchangePascal: string
   exchangeUpper: string
   exchangeLower: string
 }
@@ -43,12 +42,11 @@ export function buildSettings (params: {
   const { exchangeName } = answers
 
   const exchangeId = exchangeName.toLowerCase()
-  const exchangePascal = exchangeId.replace(/\b\w/g, l => l.toUpperCase())
   const exchangeUpper = exchangeId.toUpperCase()
   const exchangeLower = exchangeId.toLowerCase()
 
   const settings: IScaffoldSettings = merge({}, answers, {
-    exchangePascal,
+    exchangeName,
     exchangeUpper,
     exchangeLower,
   })
@@ -65,7 +63,6 @@ export async function generate (answers: IPromptAnswers) {
 
   const {
     exchangeName,
-    exchangePascal,
     exchangeUpper,
     exchangeLower,
   } = settings
@@ -93,7 +90,7 @@ export async function generate (answers: IPromptAnswers) {
 
   for(const file of files) {
     shelljs.sed('-i', /sample/g, exchangeLower, file)
-    shelljs.sed('-i', /Sample/g, exchangePascal, file)
+    shelljs.sed('-i', /Sample/g, exchangeName, file)
     shelljs.sed('-i', /SAMPLE/g, exchangeUpper, file)
     shelljs.sed('-i', /sample/g, exchangeLower, file)
   }
@@ -107,7 +104,7 @@ export async function generate (answers: IPromptAnswers) {
 
       let to = file
         .replace('sample', exchangeLower)
-        .replace('Sample', exchangePascal)
+        .replace('Sample', exchangeName)
         .replace('SAMPLE', exchangeUpper)
         .replace('sample', exchangeLower)
 
