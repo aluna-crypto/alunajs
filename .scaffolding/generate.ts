@@ -1,6 +1,10 @@
 import chalk from 'chalk'
 import debug from 'debug'
-import { existsSync } from 'fs'
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs'
 import inquirer from 'inquirer'
 import { merge } from 'lodash'
 import { join } from 'path'
@@ -172,27 +176,17 @@ export async function generate (answers: IPromptAnswers) {
     shelljs.rm('-rf', methodsDir)
     shelljs.rm(moduleFile)
 
+    const entryAuthedClassPath = join(destination, `${exchangeName}Authed.ts`)
+    const entryAuthedClassContents = readFileSync(entryAuthedClassPath, 'utf8')
 
-    const entryAuthedClass = join(destination, `${exchangePascal}Authed.ts`)
+    log('removing position mentions from authed class')
 
-    log('removing position module import authed class')
+    const positionMentions = /^.*position.*[\r\n]{1}/img
 
-    search = new RegExp(
-      `import { position } from './modules/authed/position'[\n\r]*`,
-      'mg'
-    )
-    replace = ''
+    const newEntryAuthedClassContents = entryAuthedClassContents
+      .replace(positionMentions, '')
 
-    // TODO: Fix this
-    shelljs.sed('-i', search, replace, entryAuthedClass)
-
-    log('disconnecting position module in authed class')
-
-    search = new RegExp(`this.position = position(this)`)
-    replace = ''
-
-    // TODO: Fix this
-    shelljs.sed('-i', search, replace, entryAuthedClass)
+    writeFileSync(entryAuthedClassPath, newEntryAuthedClassContents)
 
   }
 
