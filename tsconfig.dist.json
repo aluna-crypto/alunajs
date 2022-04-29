@@ -7,6 +7,6 @@
     ".history",
     "node_modules",
     "test/**/*.ts",
-
+    ".playground/**/*.ts",
   ]
 }
