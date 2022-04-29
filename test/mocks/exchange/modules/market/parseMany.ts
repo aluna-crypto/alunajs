@@ -1,23 +1,15 @@
 import { stub } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketParseManyReturns } from '../../../../../src/lib/modules/public/IAlunaMarketModule'
 
 
+export const mockMarketParseMany = (params: {
+  module: any
+}) => {
 
-export const mockMarketParseMany = (
-  params: {
-    module: any
-    returns: IAlunaMarketParseManyReturns
-  },
-) => {
+  const { module } = params
 
-  const {
-    module,
-    returns,
-  } = params
-
-  const parseMany = stub().returns(returns)
+  const parseMany = stub()
 
   const wrapper = ImportMock.mockFunction(
     module,

@@ -1,23 +1,15 @@
 import { stub } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaMarketListRawReturns } from '../../../../../src/lib/modules/public/IAlunaMarketModule'
 
 
+export const mockMarketListRaw = (params: {
+  module: any
+}) => {
 
-export const mockMarketListRaw = <T>(
-  params: {
-    module: any
-    returns: IAlunaMarketListRawReturns<T>
-  },
-) => {
+  const { module } = params
 
-  const {
-    module,
-    returns,
-  } = params
-
-  const listRaw = stub().returns(Promise.resolve(returns))
+  const listRaw = stub()
 
   const wrapper = ImportMock.mockFunction(
     module,
