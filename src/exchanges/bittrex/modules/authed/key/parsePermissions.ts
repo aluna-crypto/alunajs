@@ -7,7 +7,6 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 
 
 
@@ -21,14 +20,20 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
 
   log('params', params)
 
-  const { credentials } = exchange
-
   const { http = new BittrexHttp() } = params
 
-  const key = await http.authedRequest<IAlunaKeyPermissionSchema>({
-    url: BITTREX_PRODUCTION_URL,
-    credentials,
-  })
+  const { rawKey } = params
+
+  const key: IAlunaKeyPermissionSchema = {
+    read: false,
+    trade: false,
+    withdraw: false,
+  }
+
+  delete rawKey.accountId
+
+  Object.assign(key, rawKey)
+
 
   const { requestCount } = http
 
