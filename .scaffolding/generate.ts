@@ -76,6 +76,10 @@ export async function generate (answers: IPromptAnswers) {
 
   const destination = join(EXCHANGES, exchangeLower)
 
+
+  /**
+   * Conditionally overwritting existing exchange
+   */
   if (existsSync(destination)) {
 
     console.error(chalk.red(`Destination path exists.`))
@@ -103,6 +107,10 @@ export async function generate (answers: IPromptAnswers) {
     }
   }
 
+
+  /**
+   * Sample files
+   */
   log('copying sample files')
 
   shelljs.cp('-R', SAMPLE_EXCHANGE, destination)
@@ -110,7 +118,10 @@ export async function generate (answers: IPromptAnswers) {
   const files = shelljs.find(destination)
     .filter((file) => file.match(/\.ts$/))
 
-  // replace strings inside files
+
+  /**
+   * Sample strings inside files
+   */
   log('replacing strings inside files')
 
   for(const file of files) {
@@ -120,7 +131,10 @@ export async function generate (answers: IPromptAnswers) {
     shelljs.sed('-i', /sample/g, exchangeLower, file)
   }
 
-  // rename files
+
+  /**
+   * Sample filenames
+   */
   log('renaming files')
 
   for(const file of files) {
@@ -140,7 +154,11 @@ export async function generate (answers: IPromptAnswers) {
     }
   }
 
-  // specs configuration
+
+  /**
+   * Specs configuration
+   */
+  log('configuring specs')
 
   let search: string | RegExp
   let replace: string | RegExp
@@ -167,6 +185,13 @@ export async function generate (answers: IPromptAnswers) {
 
     shelljs.sed('-i', search, replace, specsFilepath)
 
+  }
+
+
+  /**
+   * Conditionally removing position modules
+   */
+  if (!settings.tradingFeatures.includes(AlunaAccountEnum.MARGIN)) {
 
     log('removing position modules')
 
@@ -189,5 +214,4 @@ export async function generate (answers: IPromptAnswers) {
     writeFileSync(entryAuthedClassPath, newEntryAuthedClassContents)
 
   }
-
 }
