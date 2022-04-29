@@ -13,19 +13,19 @@
     "node": "^16.14"
   },
   "scripts": {
-    "lintfix": "eslint ./src --cache --cache-location ./.husky/.eslintcache/ --fix --ext .ts --max-warnings=0",
+    "prepare": "husky install",
     "clean": "rimraf dist",
-    "build": "yarn clean && yarn build:index && tsc -p ./tsconfig.dist.json && yarn build:index:clean",
+    "build": "yarn clean && yarn build:index && tsc -p tsconfig.dist.json && yarn build:index:clean",
+    "build:index": "yarn cti entrypoint src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
     "build:index:clean": "rm -rf src/index.ts",
-    "build:index": "yarn cti entrypoint ./src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
-    "build:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
+    "build:watch": "yarn clean && tsc -p tsconfig.dist.json -w",
+    "lintfix": "eslint src --cache --cache-location .husky/.eslintcache/ --fix --ext .ts --max-warnings=0",
     "test": "mocha",
     "test:watch": "mocha --watch",
     "test:cover": "nyc mocha",
-    "test:cover:watch": "nyc mocha --watch",
+    "test:watch:cover": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
-    "generate": "ts-node .scaffolding/index.ts",
-    "prepare": "husky install",
+    "scaffold": "ts-node .scaffolding/index.ts",
     "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'"
   },
   "dependencies": {
