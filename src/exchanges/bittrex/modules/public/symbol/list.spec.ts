@@ -19,7 +19,7 @@ describe(__filename, () => {
     // mocking
     const { listRaw } = mockSymbolListRaw({ module: listRawMod })
 
-    listRaw.onCall(0).returns({
+    listRaw.returns({
       rawSymbols: BITTREX_RAW_SYMBOLS,
       requestCount: {
         authed: 0,
@@ -29,7 +29,7 @@ describe(__filename, () => {
 
     const { parseMany } = mockSymbolParseMany({ module: parseManyMod })
 
-    parseMany.onCall(0).returns({ symbols: BITTREX_PARSED_SYMBOLS })
+    parseMany.returns({ symbols: BITTREX_PARSED_SYMBOLS })
 
 
     // executing
