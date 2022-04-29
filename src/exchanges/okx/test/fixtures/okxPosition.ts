@@ -1,0 +1,75 @@
+import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaPositionSideEnum } from '../../../../lib/enums/AlunaPositionSideEnum'
+import { AlunaPositionStatusEnum } from '../../../../lib/enums/AlunaPositionStatusEnum'
+import { IAlunaPositionSchema } from '../../../../lib/schemas/IAlunaPositionSchema'
+import { OkxPositionSideEnum } from '../../enums/OkxPositionSideEnum'
+import { IOkxPositionSchema } from '../../schemas/IOkxPositionSchema'
+
+
+
+export const OKX_RAW_POSITION: IOkxPositionSchema = {
+  adl: '1',
+  availPos: '1',
+  avgPx: '2566.31',
+  cTime: '1619507758793',
+  ccy: 'ETH',
+  deltaBS: '',
+  deltaPA: '',
+  gammaBS: '',
+  gammaPA: '',
+  imr: '',
+  instId: 'ETH-USD-210430',
+  instType: 'FUTURES',
+  interest: '0',
+  usdPx: '',
+  last: '2566.22',
+  lever: '10',
+  liab: '',
+  liabCcy: '',
+  liqPx: '2352.8496681818233',
+  markPx: '2353.849',
+  margin: '0.0003896645377994',
+  mgnMode: 'isolated',
+  mgnRatio: '11.731726509588816',
+  mmr: '0.0000311811092368',
+  notionalUsd: '2276.2546609009605',
+  optVal: '',
+  pTime: '1619507761462',
+  pos: '1',
+  posCcy: '',
+  posId: '307173036051017730',
+  posSide: OkxPositionSideEnum.LONG,
+  thetaBS: '',
+  thetaPA: '',
+  tradeId: '109844',
+  uTime: '1619507761462',
+  upl: '-0.0000009932766034',
+  uplRatio: '-0.0025490556801078',
+  vegaBS: '',
+  vegaPA: '',
+  baseBal: '123456',
+  quoteBal: '1234',
+}
+
+export const OKX_PARSED_POSITION: IAlunaPositionSchema = {
+  id: '307173036051017730',
+  symbolPair: 'ETH-USD-210430',
+  exchangeId: 'okx',
+  baseSymbolId: 'ETH',
+  quoteSymbolId: 'USD',
+  total: 316815256.32,
+  amount: 123456,
+  account: AlunaAccountEnum.MARGIN,
+  status: AlunaPositionStatusEnum.OPEN,
+  side: AlunaPositionSideEnum.LONG,
+  basePrice: 2566.22,
+  openPrice: 2566.31,
+  pl: -9.932766034e-7,
+  plPercentage: -0.0025490556801078,
+  leverage: 10,
+  liquidationPrice: 2352.8496681818233,
+  openedAt: new Date('2021-04-27T07:15:58.793Z'),
+  closedAt: undefined,
+  closePrice: undefined,
+  meta: [Object],
+}

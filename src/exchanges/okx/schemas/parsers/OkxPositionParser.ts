@@ -20,9 +20,14 @@ export class OkxPositionParser {
       instId,
       posSide,
       avgPx,
-      markPx,
       last,
       posId,
+      upl,
+      uplRatio,
+      lever,
+      cTime,
+      baseBal,
+      liqPx,
     } = rawPosition
 
     const [baseCurrency, quoteCurrency] = instId.split('-')
@@ -42,13 +47,22 @@ export class OkxPositionParser {
     const status = AlunaPositionStatusEnum.OPEN
 
     const side = OkxPositionSideAdapter.translateToAluna({
-      posSide,
+      from: posSide,
     })
 
-    const computedBasePrice = Number(last)
-    const computedOpenPrice = Number(avgPx)
+    const basePrice = Number(last)
+    const openPrice = Number(avgPx)
 
-    const total = computedAmount * computedBasePrice
+    const amount = Number(baseBal)
+
+    const total = amount * basePrice
+
+    const pl = parseFloat(upl)
+    const plPercentage = parseFloat(uplRatio)
+    const leverage = Number(lever)
+    const createdAt = new Date(Number(cTime))
+
+    const liquidationPrice = Number(liqPx)
 
     const position: IAlunaPositionSchema = {
       id: posId,
@@ -57,19 +71,19 @@ export class OkxPositionParser {
       baseSymbolId,
       quoteSymbolId,
       total,
-      amount: computedAmount,
+      amount,
       account: AlunaAccountEnum.MARGIN,
       status,
       side,
-      basePrice: computedBasePrice,
-      openPrice: computedOpenPrice,
-      pl: computedPl,
+      basePrice,
+      openPrice,
+      pl,
       plPercentage,
-      leverage: computedLeverage,
+      leverage,
       liquidationPrice,
-      openedAt,
-      closedAt,
-      closePrice,
+      openedAt: createdAt,
+      closedAt: undefined, // @TODO
+      closePrice: undefined, // @TODO
       meta: rawPosition,
     }
 

@@ -1,3 +1,7 @@
+import { OkxPositionSideEnum } from '../enums/OkxPositionSideEnum'
+
+
+
 export interface IOkxPositionSchema {
   adl: string
   availPos: string
@@ -29,7 +33,7 @@ export interface IOkxPositionSchema {
   pos: string
   posCcy: string
   posId: string
-  posSide: string
+  posSide: OkxPositionSideEnum
   thetaBS: string
   thetaPA: string
   tradeId: string
@@ -38,6 +42,8 @@ export interface IOkxPositionSchema {
   uplRatio: string
   vegaBS: string
   vegaPA: string
+  baseBal: string
+  quoteBal: string
 }
 
 export interface IOkxPositionCloseResp {

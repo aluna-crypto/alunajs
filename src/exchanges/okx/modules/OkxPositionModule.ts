@@ -24,6 +24,7 @@ import { OkxHttp } from '../OkxHttp'
 import { OkxLog } from '../OkxLog'
 import { PROD_OKX_URL } from '../OkxSpecs'
 import { IOkxPositionCloseResp, IOkxPositionSchema, IOkxSetPositionLeverageResp } from '../schemas/IOkxPositionSchema'
+import { OkxPositionParser } from '../schemas/parsers/OkxPositionParser'
 
 
 
@@ -216,23 +217,16 @@ export class OkxPositionModule extends AAlunaModule implements Required<IAlunaPo
 
     const { rawPosition } = params
 
-    const { instId } = rawPosition
-
     const requestCount = 0
 
     const parsedPosition = OkxPositionParser.parse({
       rawPosition,
-      baseSymbolId,
-      quoteSymbolId,
-      instrument: instrument!,
     })
 
     return {
       position: parsedPosition,
       requestCount,
     }
-
-    return null as any
 
   }
 
@@ -313,43 +307,20 @@ export class OkxPositionModule extends AAlunaModule implements Required<IAlunaPo
       mgnMode: 'cross',
     }
 
-    try {
+    const {
+      requestCount,
+      data: [data],
+    } = await privateRequest<IOkxSetPositionLeverageResp[]>({
+      url: `${PROD_OKX_URL}/account/set-leverage`,
+      body,
+      keySecret: this.exchange.keySecret,
+    })
 
-      const {
-        requestCount,
-        data: [data],
-      } = await privateRequest<IOkxSetPositionLeverageResp[]>({
-        url: `${PROD_OKX_URL}/account/set-leverage`,
-        body,
-        keySecret: this.exchange.keySecret,
-      })
+    const { lever } = data
 
-      const { lever } = data
-
-      return {
-        requestCount,
-        leverage: Number(lever),
-      }
-
-    } catch (err) {
-
-      const {
-        code,
-        message,
-        httpStatusCode,
-      } = err
-
-      const alunaError = new AlunaError({
-        code,
-        message,
-        httpStatusCode,
-        metadata: err.metadata,
-      })
-
-      OkxLog.error(alunaError)
-
-      throw alunaError
-
+    return {
+      requestCount,
+      leverage: Number(lever),
     }
 
   }
