@@ -4,12 +4,15 @@ import {
 } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
-import { BittrexHttp } from '../../../src/exchanges/bittrex/BittrexHttp'
-import { IAlunaHttpRequestCount } from '../../../src/lib/core/IAlunaHttp'
+import {
+  IAlunaHttp,
+  IAlunaHttpRequestCount,
+} from '../../../src/lib/core/IAlunaHttp'
 
 
 
 export const mockHttp = <A = any, P = any>(params: {
+  classPrototype: IAlunaHttp,
   returns: {
     authedRequest?: Promise<A> | Promise<A | any>[],
     publicRequest?: Promise<P> | Promise<P | any>[],
@@ -17,17 +20,22 @@ export const mockHttp = <A = any, P = any>(params: {
 }) => {
 
   const {
+    classPrototype,
+    returns,
+  } = params
+
+  const {
     authedRequest: returnsAuthedRequest = {},
     publicRequest: returnsPublicRequest = {},
-  } = params.returns
+  } = returns
 
   const authedRequest = ImportMock.mockFunction(
-    BittrexHttp.prototype,
+    classPrototype,
     'authedRequest',
   )
 
   const publicRequest = ImportMock.mockFunction(
-    BittrexHttp.prototype,
+    classPrototype,
     'publicRequest',
   )
 
