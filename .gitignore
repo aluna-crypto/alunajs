@@ -10,3 +10,5 @@ coverage
 
 # dist directory
 dist
+
+.husky/.eslintcache
