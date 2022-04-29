@@ -41,10 +41,10 @@ export const catchAll = async (req: Request, res: Response) => {
 
   try {
 
-    const exchange = aluna(exchangeId)
+    let exchange = aluna(exchangeId)
 
     if (key && secret) {
-      exchange.auth({ key, secret, passphrase })
+      exchange = await exchange.auth({ key, secret, passphrase })
     }
 
     const response = await exchange[scope][method](params)
