@@ -67,7 +67,8 @@ export const BITTREX_RAW_MARKET_TICKERS: IBittrexMarketTickerSchema[] = [
     lastTradeRate: '37853.24990000',
     bidRate: '37819.37640000',
     askRate: '37841.13653987',
-  }]
+  },
+]
 
 export const BITTREX_RAW_MARKETS_INFO: IBittrexMarketInfoSchema[] = [
   {
