@@ -1,14 +1,14 @@
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import * as mod from './assembleAxiosRequestConfig'
+import * as mod from './assembleRequestConfig'
 
 
 
 export const mockAssembleRequestConfig = () => {
 
-  const assembleAxiosRequestMock = Sinon.spy(
-    (params: mod.IAssembleAxiosRequestConfigParams) => {
+  const assembleRequestConfig = Sinon.spy(
+    (params: mod.IAssembleRequestConfigParams) => {
 
       const { proxySettings: _proxySettings, ...requestConfig } = params
 
@@ -19,10 +19,10 @@ export const mockAssembleRequestConfig = () => {
 
   ImportMock.mockOther(
     mod,
-    'assembleAxiosRequestConfig',
-    assembleAxiosRequestMock,
+    'assembleRequestConfig',
+    assembleRequestConfig,
   )
 
-  return { assembleAxiosRequestMock }
+  return { assembleRequestConfig }
 
 }

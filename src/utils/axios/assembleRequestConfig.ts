@@ -7,7 +7,7 @@ import { IAlunaProxySchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-export interface IAssembleAxiosRequestConfigParams {
+export interface IAssembleRequestConfigParams {
   url: string
   method: AlunaHttpVerbEnum
   data?: any
@@ -15,15 +15,15 @@ export interface IAssembleAxiosRequestConfigParams {
   proxySettings?: IAlunaProxySchema
 }
 
-export interface IAssembleAxiosRequestConfigReturns {
+export interface IAssembleRequestConfigReturns {
   requestConfig: AxiosRequestConfig
 }
 
 
 
-export const assembleAxiosRequestConfig = (
-  params: IAssembleAxiosRequestConfigParams,
-): IAssembleAxiosRequestConfigReturns => {
+export const assembleRequestConfig = (
+  params: IAssembleRequestConfigParams,
+): IAssembleRequestConfigReturns => {
 
   const { proxySettings, ...requestConfig } = params
 
@@ -71,7 +71,7 @@ export const assembleAxiosRequestConfig = (
 
   }
 
-  const output: IAssembleAxiosRequestConfigReturns = {
+  const output: IAssembleRequestConfigReturns = {
     requestConfig,
   }
 

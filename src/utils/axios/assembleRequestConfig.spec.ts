@@ -5,7 +5,7 @@ import { Agent as HttpsAgent } from 'https'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaProxySchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { assembleAxiosRequestConfig } from './assembleAxiosRequestConfig'
+import { assembleRequestConfig } from './assembleRequestConfig'
 
 
 
@@ -37,7 +37,7 @@ describe(__filename, () => {
 
   it('should properly assemble axios request config', () => {
 
-    const { requestConfig: requestConfig1 } = assembleAxiosRequestConfig({
+    const { requestConfig: requestConfig1 } = assembleRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
     })
@@ -49,7 +49,7 @@ describe(__filename, () => {
     expect(requestConfig1.headers).not.to.be.ok
 
 
-    const { requestConfig: requestConfig2 } = assembleAxiosRequestConfig({
+    const { requestConfig: requestConfig2 } = assembleRequestConfig({
       method: AlunaHttpVerbEnum.DELETE,
       data,
       url,
@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(requestConfig2.headers).not.to.be.ok
 
 
-    const { requestConfig: requestConfig3 } = assembleAxiosRequestConfig({
+    const { requestConfig: requestConfig3 } = assembleRequestConfig({
       method: AlunaHttpVerbEnum.POST,
       headers,
       url,
@@ -78,7 +78,7 @@ describe(__filename, () => {
 
   it('should properly setup http proxy settings', () => {
 
-    const { requestConfig } = assembleAxiosRequestConfig({
+    const { requestConfig } = assembleRequestConfig({
       method: AlunaHttpVerbEnum.PATCH,
       url,
       proxySettings: proxySettings1,
@@ -101,7 +101,7 @@ describe(__filename, () => {
 
   it('should properly setup https proxy settings', () => {
 
-    const { requestConfig } = assembleAxiosRequestConfig({
+    const { requestConfig } = assembleRequestConfig({
       method: AlunaHttpVerbEnum.PATCH,
       url,
       proxySettings: proxySettings2,
@@ -124,7 +124,7 @@ describe(__filename, () => {
 
   it('should add missing colon at the end of the protocol', () => {
 
-    let res = assembleAxiosRequestConfig({
+    let res = assembleRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
       proxySettings: {
@@ -146,7 +146,7 @@ describe(__filename, () => {
       httpAgent: proxySettings1.agent,
     })
 
-    res = assembleAxiosRequestConfig({
+    res = assembleRequestConfig({
       method: AlunaHttpVerbEnum.GET,
       url,
       proxySettings: {
