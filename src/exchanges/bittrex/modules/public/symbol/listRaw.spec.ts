@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
+import { BittrexHttp } from '../../../BittrexHttp'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 import { BITTREX_RAW_SYMBOLS } from '../../../test/fixtures/bittrexSymbols'
@@ -16,6 +17,7 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp<any, IBittrexSymbolSchema[]>({
+      classPrototype: BittrexHttp.prototype,
       returns: {
         publicRequest: Promise.resolve(BITTREX_RAW_SYMBOLS),
       },

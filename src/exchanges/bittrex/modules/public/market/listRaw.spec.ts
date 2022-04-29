@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
+import { BittrexHttp } from '../../../BittrexHttp'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import {
   BITTREX_RAW_MARKET_SUMMARIES,
@@ -23,6 +24,7 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({
+      classPrototype: BittrexHttp.prototype,
       returns: {
         publicRequest: [
           Promise.resolve(marketsInfo),
