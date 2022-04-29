@@ -11,6 +11,7 @@ export interface IAlunaSettingsSchema {
   referralCode?: string
   proxySettings?: IAlunaProxySchema
   mappings?: Record<string, string>
+  useTestNet?: boolean
 }
 
 
