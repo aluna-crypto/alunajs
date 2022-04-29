@@ -14,9 +14,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseParams<IBittrexSymbolSchema>,
 ): IAlunaSymbolParseReturns => {
 
-  const {
-    rawSymbol,
-  } = params
+  const { rawSymbol } = params
 
   const {
     name,
@@ -40,8 +38,6 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     meta: rawSymbol,
   }
 
-  return {
-    symbol: parsedSymbol,
-  }
+  return { symbol: parsedSymbol }
 
 }
