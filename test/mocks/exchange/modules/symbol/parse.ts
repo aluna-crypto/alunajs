@@ -1,23 +1,15 @@
 import { stub } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { IAlunaSymbolParseReturns } from '../../../../../src/lib/modules/public/IAlunaSymbolModule'
 
 
+export const mockSymbolParse = (params: {
+  module: any
+}) => {
 
-export const mockSymbolParse = (
-  params: {
-    module: any
-    returns: IAlunaSymbolParseReturns
-  },
-) => {
+  const { module } = params
 
-  const {
-    module,
-    returns,
-  } = params
-
-  const parse = stub().returns(returns)
+  const parse = stub()
 
   const wrapper = ImportMock.mockFunction(
     module,
