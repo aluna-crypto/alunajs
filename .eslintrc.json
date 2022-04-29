@@ -20,22 +20,21 @@
     "chai-friendly"
   ],
   "rules": {
-    "camelcase": "off",
+    /*
+      Default
+    */
+    "lines-between-class-members": "off",
+    "no-use-before-define": "off",
+    "arrow-body-style": "off",
     "no-shadow": "off",
     "no-console": "warn",
-    "arrow-body-style": "off",
-    "no-use-before-define": "off",
     "class-methods-use-this": "off",
-    "lines-between-class-members": "off",
-    "padded-blocks": ["error", "always", { "allowSingleLineBlocks": true }],
+    "padded-blocks": "off",
     "semi": ["error", "never"],
-    "no-multiple-empty-lines": ["error", { "max": 3, "maxEOF": 1, "maxBOF": 0 }],
-    "padding-line-between-statements": [
+    "no-multiple-empty-lines": [
       "error",
-      { "blankLine": "always", "prev": "*", "next": "return" }
+      { "max": 3, "maxEOF": 1, "maxBOF": 0 }
     ],
-    "space-before-function-paren": ["error", "always"],
-    "no-unused-vars": "off",
     "max-len": [
       "error", {
         "code": 80,
@@ -43,37 +42,35 @@
         "ignorePattern": "^import | ^export | implements | extends | `.{30,}`"
       }
     ],
-    "@typescript-eslint/no-use-before-define": ["off"],
-    "one-var-declaration-per-line": ["error", "always"],
+
+    /*
+      Typescript
+    */
     "@typescript-eslint/no-empty-interface": [
       "error",
-      {
-        "allowSingleExtends": true
-      }
+      { "allowSingleExtends": true }
     ],
-    "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", {
-      "argsIgnorePattern": "^(_|exchange$)"
+    "@typescript-eslint/no-unused-vars": [
+      "warn", {
+      "argsIgnorePattern": "^(_|exchange$)",
+      "varsIgnorePattern": "^_"
     }],
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        "selector": "interface",
-        "format": ["PascalCase"],
-        "custom": {
-          "regex": "^I[A-Z]",
-          "match": true
-        }
+        "selector": "class",
+        "format": ["PascalCase"]
       },
       {
-        "selector": "class",
-        "modifiers": ["abstract"],
+        "selector": "interface",
         "format": ["PascalCase"],
-        "custom": {
-          "regex": "^A[A-Z]",
-          "match": true
-        }
+        "custom": { "regex": "^I[A-Z]", "match": true }
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"],
+        "custom": { "regex": "(^T[A-Z]*|.+Enum)", "match": true }
       }
     ],
     "@typescript-eslint/member-delimiter-style": ["error",
@@ -88,13 +85,21 @@
               "delimiter": "none",
               "requireLast": false
             }
+          },
+          "typeLiteral": {
+            "multiline": {
+              "delimiter": "none",
+              "requireLast": false
+            }
           }
         }
       }
     ],
-    "unused-imports/no-unused-imports": "error",
-    "unused-imports/no-unused-vars": "off",
-    "import/no-unresolved": "error",
+
+    /*
+      Import
+    */
+    "import/no-default-export": "error",
     "import/prefer-default-export": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": true }],
     "import/newline-after-import": ["error", { "count": 3 }],
@@ -102,14 +107,15 @@
       "error",
       "ignorePackages",
       {
-        "ts": "never"
+        "ts": "never",
+        "js": "never"
       }
     ],
     "import-helpers/order-imports": [
       "warn",
       {
         "newlinesBetween": "always",
-        "groups": ["module", "/^@/", ["parent", "sibling", "index"]],
+        "groups": ["module", ["parent", "sibling", "index"]],
         "alphabetize": { "order": "asc", "ignoreCase": true }
       }
     ]
