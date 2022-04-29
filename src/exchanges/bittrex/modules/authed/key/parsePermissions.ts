@@ -31,6 +31,7 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
     withdraw: false,
   }
 
+  // TODO: Add `accountId` to `IAlunaKeySchema`
   delete rawKey.accountId
 
   Object.assign(key, rawKey)
