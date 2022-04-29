@@ -23,9 +23,5 @@
   "exclude": [
     ".history",
     "node_modules",
-    "**/*.spec.ts",
-    "**/*.mock.ts",
-    "**/mocks/**/*",
-    "**/fixtures/**/*",
   ]
 }
