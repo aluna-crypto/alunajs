@@ -18,7 +18,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "playground/**/*.ts",
   ],
   "exclude": [
     ".history",
