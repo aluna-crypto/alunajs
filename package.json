@@ -25,7 +25,8 @@
     "test:cover:watch": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
     "generate": "ts-node .scaffolding/index.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node playground/index.ts'"
   },
   "dependencies": {
     "axios": "^0.21.1",
