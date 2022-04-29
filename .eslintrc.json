@@ -111,6 +111,7 @@
         "js": "never"
       }
     ],
+    "unused-imports/no-unused-imports": "error",
     "import-helpers/order-imports": [
       "warn",
       {

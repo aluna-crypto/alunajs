@@ -13,7 +13,7 @@
     "node": "^16.14"
   },
   "scripts": {
-    "lintfix": "eslint --fix --ext .js,.ts . --max-warnings=0",
+    "lintfix": "eslint ./src --cache --cache-location ./.husky/.eslintcache/ --fix --ext .ts --max-warnings=0",
     "clean": "rimraf dist",
     "build": "yarn clean && yarn build:index && tsc -p ./tsconfig.dist.json && yarn build:index:clean",
     "build:index:clean": "rm -rf src/index.ts",
@@ -24,7 +24,8 @@
     "test:cover": "nyc mocha --bail",
     "test:cover:watch": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
-    "generate": "ts-node .scaffolding/index.ts"
+    "generate": "ts-node .scaffolding/index.ts",
+    "prepare": "husky install"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -51,13 +52,13 @@
     "chai": "^4.3.4",
     "chalk": "4.1.2",
     "create-ts-index": "^1.14.0",
+    "eslint": "^7.26.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-import-resolver-typescript": "^2.4.0",
     "eslint-plugin-chai-friendly": "^0.7.1",
-    "eslint-plugin-import-helpers": "^1.1.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-unused-imports": "^1.1.1",
-    "eslint": "^7.26.0",
+    "eslint-plugin-import-helpers": "^1.1.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^7.0.4",
     "inquirer": "^8.2.3",
     "mocha": "^9.1.3",
