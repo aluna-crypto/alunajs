@@ -6,7 +6,7 @@ import { AlunaSymbolMapping } from './AlunaSymbolMapping'
 
 export const mockAlunaSymbolMapping = (
   params?: {
-    returnSymbol: string,
+    returnSymbol: string
   },
 ) => {
 

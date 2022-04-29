@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { spy } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import { mochaHooks } from '../../../test/mocha/hooks'
+import { mochaHooks } from '../../../test/mochaHooks'
 import { AlunaCache } from './AlunaCache'
 
 
@@ -12,9 +12,9 @@ import { AlunaCache } from './AlunaCache'
  */
 export const mockAlunaCache = (
   returns?: {
-  get?: any,
-  set?: boolean,
-  has?: boolean,
+  get?: any
+  set?: boolean
+  has?: boolean
 },
 ) => {
 

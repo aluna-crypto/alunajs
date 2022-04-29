@@ -107,7 +107,7 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
 
 
 export const buildBittrexSpecs = (params: {
-  settings: IAlunaSettingsSchema,
+  settings: IAlunaSettingsSchema
 }) => {
 
   const {

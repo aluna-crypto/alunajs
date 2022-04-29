@@ -9,7 +9,7 @@ import { parseMany } from './symbol/parseMany'
 
 
 
-export function symbol (exchange: IAlunaExchangePublic): IAlunaSymbolModule {
+export function symbol(exchange: IAlunaExchangePublic): IAlunaSymbolModule {
 
   return {
     get: get(exchange),

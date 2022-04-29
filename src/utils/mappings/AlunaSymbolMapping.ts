@@ -1,8 +1,8 @@
 export class AlunaSymbolMapping {
 
-  public static translateSymbolId (params: {
-    exchangeSymbolId: string,
-    symbolMappings?: Record<string, string>,
+  public static translateSymbolId(params: {
+    exchangeSymbolId: string
+    symbolMappings?: Record<string, string>
   }) {
 
     const {

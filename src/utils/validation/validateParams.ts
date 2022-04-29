@@ -7,8 +7,8 @@ import { AlunaGenericErrorCodes } from '../../lib/errors/AlunaGenericErrorCodes'
 
 export const validateParams = <T>(
   params: {
-    params: T,
-    schema: Joi.ObjectSchema<T>,
+    params: T
+    schema: Joi.ObjectSchema<T>
   },
 ): T => {
 
@@ -28,6 +28,6 @@ export const validateParams = <T>(
 
   }
 
-  return validParams!
+  return validParams || {} as T
 
 }

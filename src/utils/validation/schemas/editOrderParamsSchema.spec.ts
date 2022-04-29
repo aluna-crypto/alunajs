@@ -42,9 +42,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"id" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"id" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.id = 10
@@ -58,9 +58,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"id" must be a string')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"id" must be a string')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -79,9 +79,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"symbolPair" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"symbolPair" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.symbolPair = 8
@@ -95,9 +95,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"symbolPair" must be a string')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"symbolPair" must be a string')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -116,9 +116,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"account" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"account" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.account = 8
@@ -135,9 +135,9 @@ describe(__filename, () => {
     const msg = '"account" must be one of [exchange, margin, derivatives, '
       .concat('lending]')
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq(msg)
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq(msg)
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -156,9 +156,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"amount" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"amount" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.amount = 'abc'
@@ -172,9 +172,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"amount" must be a number')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"amount" must be a number')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -193,9 +193,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"side" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"side" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.side = 'abc'
@@ -212,9 +212,9 @@ describe(__filename, () => {
     const msg = '"side" must be one of '
       .concat(`[${values(AlunaOrderSideEnum).join(', ')}]`)
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq(msg)
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq(msg)
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -233,9 +233,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"type" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"type" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     modifiedParams.type = 'abc'
@@ -252,9 +252,9 @@ describe(__filename, () => {
     const msg = '"type" must be one of '
       .concat(`[${values(AlunaOrderTypesEnum).join(', ')}]`)
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq(msg)
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq(msg)
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -274,9 +274,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"rate" must be a number')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"rate" must be a number')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     delete modifiedParams.rate
@@ -290,9 +290,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"rate" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"rate" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -313,9 +313,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"stopRate" must be a number')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"stopRate" must be a number')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     delete modifiedParams.stopRate
@@ -329,9 +329,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"stopRate" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"stopRate" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 
@@ -353,9 +353,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"limitRate" must be a number')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"limitRate" must be a number')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
 
     delete modifiedParams.limitRate
@@ -369,9 +369,9 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(executeRes.error!.message).to.be.eq('"limitRate" is required')
-    expect(executeRes.error!.httpStatusCode).to.be.eq(400)
+    expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(executeRes.error?.message).to.be.eq('"limitRate" is required')
+    expect(executeRes.error?.httpStatusCode).to.be.eq(400)
 
   })
 

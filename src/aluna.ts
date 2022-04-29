@@ -7,7 +7,7 @@ import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
 
 
 
-export function aluna (
+export function aluna(
   exchangeId: string,
   settings: IAlunaSettingsSchema = {},
 ): IAlunaExchangePublic {

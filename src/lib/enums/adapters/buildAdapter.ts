@@ -4,14 +4,14 @@ import { AlunaAdaptersErrorCodes } from '../../errors/AlunaAdaptersErrorCodes'
 
 
 export type TranslateToMappings<TEnumTo> = {
-  [key: string]: TEnumTo,
+  [key: string]: TEnumTo
 }
 
 
 
 export const buildAdapter = <TEnumFrom, TEnumTo>(params: {
-  mappings: TranslateToMappings<TEnumTo>,
-  errorMessagePrefix: string,
+  mappings: TranslateToMappings<TEnumTo>
+  errorMessagePrefix: string
 }) => (params2: { from: TEnumFrom }): TEnumTo => {
 
     const {

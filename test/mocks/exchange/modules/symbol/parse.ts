@@ -7,8 +7,8 @@ import { IAlunaSymbolParseReturns } from '../../../../../src/lib/modules/public/
 
 export const mockSymbolParse = (
   params: {
-    module: any,
-    returns: IAlunaSymbolParseReturns,
+    module: any
+    returns: IAlunaSymbolParseReturns
   },
 ) => {
 

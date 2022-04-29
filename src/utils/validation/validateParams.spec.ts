@@ -48,8 +48,8 @@ describe(__filename, () => {
 
     expect(result).not.to.be.ok
 
-    expect(error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
-    expect(error!.message).to.be.eq(errorMessage)
+    expect(error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error?.message).to.be.eq(errorMessage)
 
   })
 

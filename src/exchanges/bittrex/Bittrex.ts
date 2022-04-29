@@ -24,8 +24,8 @@ export class Bittrex implements IAlunaExchangePublic {
 
 
 
-  constructor (params: {
-    settings: IAlunaSettingsSchema,
+  constructor(params: {
+    settings: IAlunaSettingsSchema
   }) {
 
     const { settings } = params
@@ -41,7 +41,7 @@ export class Bittrex implements IAlunaExchangePublic {
 
 
 
-  public async auth (
+  public async auth(
     credentials: IAlunaCredentialsSchema,
   ): Promise<IAlunaExchangeAuthed> {
 

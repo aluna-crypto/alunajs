@@ -7,8 +7,8 @@ import {
 
 
 
-export function mockHttp (params: {
-  classPrototype: IAlunaHttp,
+export function mockHttp(params: {
+  classPrototype: IAlunaHttp
 }) {
 
   const {

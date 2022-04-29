@@ -10,9 +10,9 @@ export class AlunaCache {
     stdTTL: 60,
   })
 
-  static hashCacheKey (params: {
-    prefix: string,
-    args: any,
+  static hashCacheKey(params: {
+    prefix: string
+    args: any
   }) {
 
     const {

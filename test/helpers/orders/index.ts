@@ -29,8 +29,8 @@ const runBeforeEach = () => {
 
 
 const accountIsOneOfExchangeAccounts = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -71,8 +71,8 @@ const accountIsOneOfExchangeAccounts = async (params: {
 
 
 const accountIsSupported = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   let error
@@ -121,8 +121,8 @@ const accountIsSupported = async (params: {
 
 
 const accountIsImplemented = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -171,8 +171,8 @@ const accountIsImplemented = async (params: {
 
 
 const orderTypeIsOneOfAccountOrderTypes = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -222,8 +222,8 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
 
 
 const orderTypeIsSupported = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -281,8 +281,8 @@ const orderTypeIsSupported = async (params: {
 
 
 const orderTypeIsImplemented = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -341,8 +341,8 @@ const orderTypeIsImplemented = async (params: {
 
 
 const orderTypeIsInWriteMode = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const {
@@ -398,8 +398,8 @@ const orderTypeIsInWriteMode = async (params: {
 
 
 export const testExchangeSpecsForOrderWriteModule = async (params: {
-  orderWriteModule: IAlunaOrderWriteModule,
-  exchangeSpecs: IAlunaExchangeSchema,
+  orderWriteModule: IAlunaOrderWriteModule
+  exchangeSpecs: IAlunaExchangeSchema
 }) => {
 
   const callbacks = [

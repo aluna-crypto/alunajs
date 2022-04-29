@@ -8,11 +8,11 @@ export class AlunaError {
 
 
 
-  constructor (params: {
-    code: string,
-    message: string,
-    metadata?: any,
-    httpStatusCode?: number,
+  constructor(params: {
+    code: string
+    message: string
+    metadata?: any
+    httpStatusCode?: number
   }) {
 
     this.code = params.code

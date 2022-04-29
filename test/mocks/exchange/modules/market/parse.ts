@@ -11,8 +11,8 @@ import { IAlunaMarketParseReturns } from '../../../../../src/lib/modules/public/
 
 export const mockMarketParse = (
   params: {
-    module: any,
-    returns: IAlunaMarketParseReturns | IAlunaMarketParseReturns[],
+    module: any
+    returns: IAlunaMarketParseReturns | IAlunaMarketParseReturns[]
   },
 ) => {
 

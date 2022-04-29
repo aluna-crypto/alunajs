@@ -7,7 +7,7 @@ import { parseMany } from './market/parseMany'
 
 
 
-export function market (exchange: IAlunaExchangePublic): IAlunaMarketModule {
+export function market(exchange: IAlunaExchangePublic): IAlunaMarketModule {
 
   return {
     list: list(exchange),

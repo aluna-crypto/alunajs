@@ -24,9 +24,9 @@ export class SampleAuthed extends Sample implements IAlunaExchangeAuthed {
 
 
 
-  constructor (params: {
-    settings: IAlunaSettingsSchema,
-    credentials: IAlunaCredentialsSchema,
+  constructor(params: {
+    settings: IAlunaSettingsSchema
+    credentials: IAlunaCredentialsSchema
   }) {
 
     const {

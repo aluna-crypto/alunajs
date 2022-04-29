@@ -7,8 +7,8 @@ import { IAlunaMarketParseManyReturns } from '../../../../../src/lib/modules/pub
 
 export const mockMarketParseMany = (
   params: {
-    module: any,
-    returns: IAlunaMarketParseManyReturns,
+    module: any
+    returns: IAlunaMarketParseManyReturns
   },
 ) => {
 

@@ -112,7 +112,7 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
 
 
 export const buildSampleSpecs = (params: {
-  settings: IAlunaSettingsSchema,
+  settings: IAlunaSettingsSchema
 }) => {
 
   const {

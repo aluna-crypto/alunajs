@@ -7,8 +7,8 @@ import { IAlunaMarketListRawReturns } from '../../../../../src/lib/modules/publi
 
 export const mockMarketListRaw = <T>(
   params: {
-    module: any,
-    returns: IAlunaMarketListRawReturns<T>,
+    module: any
+    returns: IAlunaMarketListRawReturns<T>
   },
 ) => {
 

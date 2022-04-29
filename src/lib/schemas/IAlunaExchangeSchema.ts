@@ -10,17 +10,17 @@ export interface IAlunaExchangeSchema {
   signupUrl: string
   connectApiUrl: string
   rateLimitingPerMinute: {
-    perApiKey: number,
-    perIp: number,
+    perApiKey: number
+    perIp: number
   }
   modes: {
-    balance: AlunaFeaturesModeEnum,
-    order: AlunaFeaturesModeEnum,
-    position?: AlunaFeaturesModeEnum,
+    balance: AlunaFeaturesModeEnum
+    order: AlunaFeaturesModeEnum
+    position?: AlunaFeaturesModeEnum
   }
   features?: {
-    offersPositionId?: boolean,
-    offersOrderEditing?: boolean,
+    offersPositionId?: boolean
+    offersOrderEditing?: boolean
   }
   accounts: IAlunaExchangeAccountSpecsSchema[]
 }

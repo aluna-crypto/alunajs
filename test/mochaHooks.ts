@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 
 export const mochaHooks = {
-  beforeEach () {
+  beforeEach() {
 
     ImportMock.restore()
     Sinon.restore()

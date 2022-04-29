@@ -7,9 +7,9 @@ import { IAlunaHttp } from '../../../src/lib/core/IAlunaHttp'
 
 
 export const mockPublicHttpRequest = (params: {
-  exchangeHttp: IAlunaHttp,
-  requestResponse?: any,
-  isReject?: boolean,
+  exchangeHttp: IAlunaHttp
+  requestResponse?: any
+  isReject?: boolean
 }) => {
 
   const {
@@ -36,9 +36,9 @@ export const mockPublicHttpRequest = (params: {
 
 
 export const mockPrivateHttpRequest = (params: {
-  exchangeHttp: IAlunaHttp,
-  requestResponse?: any,
-  isReject?: boolean,
+  exchangeHttp: IAlunaHttp
+  requestResponse?: any
+  isReject?: boolean
 }) => {
 
   const {
@@ -66,8 +66,8 @@ export const mockPrivateHttpRequest = (params: {
 
 export const mockAxiosRequest = (
   params: {
-    responseData?: any,
-    error?: any,
+    responseData?: any
+    error?: any
   } = { responseData: {} },
 ) => {
 

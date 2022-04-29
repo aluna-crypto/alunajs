@@ -8,7 +8,7 @@ import { parseMany } from './balance/parseMany'
 
 
 
-export function balance (exchange: IAlunaExchangeAuthed): IAlunaBalanceModule {
+export function balance(exchange: IAlunaExchangeAuthed): IAlunaBalanceModule {
 
   return {
     listRaw: listRaw(exchange),

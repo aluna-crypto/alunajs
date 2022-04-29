@@ -6,7 +6,7 @@ import { parsePermissions } from './key/parsePermissions'
 
 
 
-export function key (exchange: IAlunaExchangeAuthed): IAlunaKeyModule {
+export function key(exchange: IAlunaExchangeAuthed): IAlunaKeyModule {
 
   return {
     fetchDetails: fetchDetails(exchange),

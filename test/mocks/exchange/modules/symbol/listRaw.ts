@@ -7,8 +7,8 @@ import { IAlunaSymbolListRawReturns } from '../../../../../src/lib/modules/publi
 
 export const mockSymbolListRaw = <T>(
   params: {
-    module: any,
-    returns: IAlunaSymbolListRawReturns<T>,
+    module: any
+    returns: IAlunaSymbolListRawReturns<T>
   },
 ) => {
 

@@ -13,7 +13,7 @@ export class SampleHttp implements IAlunaHttp {
 
 
 
-  constructor () {
+  constructor() {
 
     this.requestCount = {
       authed: 0,
@@ -24,7 +24,7 @@ export class SampleHttp implements IAlunaHttp {
 
 
 
-  public async publicRequest <T> (
+  public async publicRequest <T>(
     params: IAlunaHttpPublicParams,
   ): Promise<T> {
 
@@ -44,7 +44,7 @@ export class SampleHttp implements IAlunaHttp {
 
 
 
-  public async authedRequest <T> (
+  public async authedRequest <T>(
     params: IAlunaHttpAuthedParams,
   ): Promise<T> {
 

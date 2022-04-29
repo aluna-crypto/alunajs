@@ -12,7 +12,7 @@ import { place } from './order/place'
 
 
 
-export function order (exchange: IAlunaExchangeAuthed): IAlunaOrderWriteModule {
+export function order(exchange: IAlunaExchangeAuthed): IAlunaOrderWriteModule {
 
   return {
     cancel: cancel(exchange),

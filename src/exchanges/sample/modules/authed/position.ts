@@ -12,7 +12,7 @@ import { setLeverage } from './position/setLeverage'
 
 
 
-export function position (
+export function position(
   exchange: IAlunaExchangeAuthed,
 ): IAlunaPositionModule {
 
