@@ -1,3 +1,7 @@
+import {
+  each,
+  flatten,
+} from 'lodash'
 import { stub } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -8,7 +12,7 @@ import { IAlunaMarketParseReturns } from '../../../../../src/lib/modules/public/
 export const mockMarketParse = (
   params: {
     module: any,
-    returns: IAlunaMarketParseReturns,
+    returns: IAlunaMarketParseReturns | IAlunaMarketParseReturns[],
   },
 ) => {
 
@@ -17,7 +21,13 @@ export const mockMarketParse = (
     returns,
   } = params
 
-  const parse = stub().returns(returns)
+  const parse = stub()
+
+  each(flatten([returns]), (returnItem, index) => {
+
+    parse.onCall(index).returns(returnItem)
+
+  })
 
   const wrapper = ImportMock.mockFunction(
     module,

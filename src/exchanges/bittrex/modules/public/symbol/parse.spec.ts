@@ -12,9 +12,10 @@ describe(__filename, () => {
 
   it('should parse a Bittrex symbol just fine', async () => {
 
-    const translatedSymbolId = 'ETH'
+    const { translateSymbolId } = mockTranslateSymbolId()
 
-    const { translateSymbolId } = mockTranslateSymbolId(translatedSymbolId)
+    let translatedSymbolId = 'XBT'
+    translateSymbolId.returns(translatedSymbolId)
 
     const rawSymbol1 = BITTREX_RAW_SYMBOLS[0]
     const rawSymbol2 = BITTREX_RAW_SYMBOLS[1]
@@ -28,6 +29,7 @@ describe(__filename, () => {
     expect(parsedSymbol1.exchangeId).to.be.eq(bittrexBaseSpecs.id)
     expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
     expect(parsedSymbol1.name).to.be.eq(rawSymbol1.name)
+    expect(parsedSymbol1.alias).to.be.eq(rawSymbol1.symbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.args[0][0]).to.deep.eq({
@@ -35,15 +37,17 @@ describe(__filename, () => {
       symbolMappings: undefined,
     })
 
-    translateSymbolId.returns(rawSymbol2.symbol)
+    translatedSymbolId = 'LTC'
+    translateSymbolId.returns(translatedSymbolId)
 
     const { symbol: parsedSymbol2 } = exchange.symbol.parse({
       rawSymbol: rawSymbol2,
     })
 
     expect(parsedSymbol2.exchangeId).to.be.eq(bittrexBaseSpecs.id)
-    expect(parsedSymbol2.id).to.be.eq(rawSymbol2.symbol)
+    expect(parsedSymbol2.id).to.be.eq(translatedSymbolId)
     expect(parsedSymbol2.name).to.be.eq(rawSymbol2.name)
+    expect(parsedSymbol2.alias).not.to.be.ok
 
     expect(translateSymbolId.callCount).to.be.eq(2)
     expect(translateSymbolId.args[1][0]).to.deep.eq({

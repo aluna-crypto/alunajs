@@ -12,8 +12,7 @@ describe(__filename, () => {
   it('should parse a Bittrex raw market just fine', async () => {
 
     const translatedSymbolId = 'BTC'
-
-    const { translateSymbolId } = mockTranslateSymbolId()
+    const { translateSymbolId } = mockTranslateSymbolId(translatedSymbolId)
 
     const rawMarket = BITTREX_RAW_MARKET
 
@@ -74,11 +73,11 @@ describe(__filename, () => {
     expect(translateSymbolId.callCount).to.be.eq(2)
     expect(translateSymbolId.args[0][0]).to.deep.eq({
       exchangeSymbolId: rawMarket.marketInfo.baseCurrencySymbol,
-      symbolMappings: {},
+      symbolMappings: undefined,
     })
     expect(translateSymbolId.args[1][0]).to.deep.eq({
       exchangeSymbolId: rawMarket.marketInfo.quoteCurrencySymbol,
-      symbolMappings: {},
+      symbolMappings: undefined,
     })
 
   })

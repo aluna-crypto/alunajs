@@ -54,15 +54,15 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   })
 
   const alunaTicker: IAlunaTickerSchema = {
-    high: parseFloat(high),
-    low: parseFloat(low),
-    bid: parseFloat(bidRate),
-    ask: parseFloat(askRate),
-    last: parseFloat(lastTradeRate),
+    high: Number(high),
+    low: Number(low),
+    bid: Number(bidRate),
+    ask: Number(askRate),
+    last: Number(lastTradeRate),
     date: new Date(),
-    change: parseFloat(percentChange) / 100,
-    baseVolume: parseFloat(volume),
-    quoteVolume: parseFloat(quoteVolume),
+    change: Number(percentChange) / 100,
+    baseVolume: Number(volume),
+    quoteVolume: Number(quoteVolume),
   }
 
   const market: IAlunaMarketSchema = {

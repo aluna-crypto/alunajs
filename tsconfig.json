@@ -17,14 +17,14 @@
     "suppressImplicitAnyIndexErrors": true,
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "test/**/*.ts"
   ],
   "exclude": [
     ".history",
     "node_modules",
     "**/*.spec.ts",
     "**/*.mock.ts",
-    "**/test/**/*",
     "**/mocks/**/*",
     "**/fixtures/**/*",
   ]

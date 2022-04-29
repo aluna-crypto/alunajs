@@ -1,7 +1,9 @@
 import { expect } from 'chai'
 
 import { Bittrex } from '../../../Bittrex'
-import { mockBittrexHttp } from '../../../BittrexHttp.mock'
+import { mockBittrexHttp } from '../../../../../../test/exchanges/Http'
+import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 import { BITTREX_RAW_SYMBOLS } from '../../../test/fixtures/bittrexSymbols'
 
 
@@ -12,17 +14,30 @@ describe(__filename, () => {
 
     const {
       publicRequest,
-    } = mockBittrexHttp()
-
-    publicRequest.onCall(0).returns(Promise.resolve(BITTREX_RAW_SYMBOLS))
+      authedRequest,
+    } = mockBittrexHttp<any, IBittrexSymbolSchema[]>({
+      returns: {
+        publicRequest: Promise.resolve(BITTREX_RAW_SYMBOLS),
+      },
+    })
 
     const exchange = new Bittrex({ settings: {} })
 
-    const { rawSymbols } = await exchange.symbol.listRaw()
+    const {
+      rawSymbols,
+      requestCount,
+    } = await exchange.symbol.listRaw()
 
     expect(rawSymbols).to.deep.eq(BITTREX_RAW_SYMBOLS)
 
+    expect(requestCount).to.be.ok
+
     expect(publicRequest.callCount).to.be.eq(1)
+    expect(publicRequest.args[0][0]).to.deep.eq({
+      url: `${BITTREX_PRODUCTION_URL}/currencies`,
+    })
+
+    expect(authedRequest.callCount).to.be.eq(0)
 
   })
 

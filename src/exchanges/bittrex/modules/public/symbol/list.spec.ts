@@ -3,7 +3,6 @@ import { expect } from 'chai'
 import { mockSymbolListRaw } from '../../../../../../test/helpers/exchange/modules/symbol/listRaw'
 import { mockSymbolParseMany } from '../../../../../../test/helpers/exchange/modules/symbol/parseMany'
 import { Bittrex } from '../../../Bittrex'
-import { mockBittrexHttp } from '../../../BittrexHttp.mock'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 import {
   BITTREX_PARSED_SYMBOLS,
@@ -17,7 +16,6 @@ import * as parseManyMod from './parseMany'
 describe(__filename, () => {
 
   it('should list Bittrex parsed symbols just fine', async () => {
-
 
     const { listRaw } = mockSymbolListRaw<IBittrexSymbolSchema[]>({
       module: listRawMod,
@@ -39,27 +37,17 @@ describe(__filename, () => {
 
     const exchange = new Bittrex({ settings: {} })
 
-    const {
-      authedRequest,
-      publicRequest,
-      requestCount,
-    } = mockBittrexHttp()
-
-
     const { symbols } = await exchange.symbol.list()
 
     expect(symbols).to.deep.eq(BITTREX_PARSED_SYMBOLS)
 
     expect(listRaw.callCount).to.be.eq(1)
-    expect(listRaw.args[0][0]).to.deep.eq({
-      http: {
-        authedRequest,
-        publicRequest,
-        requestCount,
-      },
-    })
+    expect(listRaw.args[0][0]).to.haveOwnProperty('http')
 
     expect(parseMany.callCount).to.be.eq(1)
+    expect(parseMany.args[0][0]).to.deep.eq({
+      rawSymbols: BITTREX_RAW_SYMBOLS,
+    })
 
   })
 

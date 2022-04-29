@@ -11,7 +11,10 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { BittrexMarketStatusEnum } from '../../../enums/BittrexMarketStatusEnum'
-import { IBittrexMarketsSchema } from '../../../schemas/IBittrexMarketSchema'
+import {
+  IBittrexMarketInfoSchema,
+  IBittrexMarketsSchema,
+} from '../../../schemas/IBittrexMarketSchema'
 
 
 
@@ -34,16 +37,19 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
   const tickersDict = keyBy(tickers, 'symbol')
   const summariesDict = keyBy(summaries, 'symbol')
 
-  const markets = reduce(marketsInfo, (accumulator, current) => {
+  type TSrc = IBittrexMarketInfoSchema
+  type TAcc = IAlunaMarketSchema[]
+
+  const markets = reduce<TSrc, TAcc>(marketsInfo, (acc, out) => {
 
     const {
       symbol,
       status,
-    } = current
+    } = out
 
     if (status === BittrexMarketStatusEnum.OFFLINE) {
 
-      return accumulator
+      return acc
 
     }
 
@@ -52,17 +58,17 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
     const { market } = exchange.market.parse({
       rawMarket: {
-        marketInfo: current,
+        marketInfo: out,
         summary,
         ticker,
       },
     })
 
-    accumulator.push(market)
+    acc.push(market)
 
-    return accumulator
+    return acc
 
-  }, [] as IAlunaMarketSchema[])
+  }, [])
 
   log(`parsed ${markets.length} markets for Bittrex`)
 
