@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
@@ -23,15 +24,10 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({
-      classPrototype: BittrexHttp.prototype,
-      returns: {
-        publicRequest: [
-          Promise.resolve(marketsInfo),
-          Promise.resolve(summaries),
-          Promise.resolve(tickers),
-        ],
-      },
+    } = mockHttp({ classPrototype: BittrexHttp.prototype })
+
+    each([marketsInfo, summaries, tickers], (returns, index) => {
+      publicRequest.onCall(index).returns(Promise.resolve(returns))
     })
 
     const exchange = new Bittrex({ settings: {} })
