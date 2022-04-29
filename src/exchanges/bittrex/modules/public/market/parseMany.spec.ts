@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import {
+  each,
   filter,
   find,
   map,
@@ -22,26 +23,26 @@ describe(__filename, () => {
 
   it('should parse many Bittrex raw markets just fine', async () => {
 
-    const onlineMarkets = filter(BITTREX_RAW_MARKETS_INFO, ({ status }) => {
-
-      return status === BittrexMarketStatusEnum.ONLINE
-
-    })
-
-    const onlineParsedMarkets = filter(BITTREX_PARSED_MARKETS, (market) => {
-
-      return !!find(onlineMarkets, { symbol: market.symbolPair })
-
-    })
-
-    const { parse } = mockMarketParse({
-      module: parseMod,
-      returns: map(onlineParsedMarkets, (market) => ({ market })),
-    })
-
     const marketsInfo = BITTREX_RAW_MARKETS_INFO
     const summaries = BITTREX_RAW_MARKET_SUMMARIES
     const tickers = BITTREX_RAW_MARKET_TICKERS
+
+    const onlineMarkets = filter(marketsInfo, ({ status }) => {
+      return status === BittrexMarketStatusEnum.ONLINE
+    })
+
+    const onlineParsedMarkets = filter(BITTREX_PARSED_MARKETS, (market) => {
+      return !!find(onlineMarkets, { symbol: market.symbolPair })
+    })
+
+    const { parse } = mockMarketParse({ module: parseMod })
+
+    const returnItems = map(onlineParsedMarkets, (market) => ({ market }))
+
+    each(returnItems, (returnItem, index) => {
+      parse.onCall(index).returns(returnItem)
+    })
+
 
     const exchange = new Bittrex({ settings: {} })
 
@@ -53,9 +54,9 @@ describe(__filename, () => {
       },
     })
 
-    expect(markets).to.deep.eq(onlineParsedMarkets)
 
     expect(parse.callCount).to.be.eq(2)
+    expect(markets).to.deep.eq(onlineParsedMarkets)
 
   })
 
