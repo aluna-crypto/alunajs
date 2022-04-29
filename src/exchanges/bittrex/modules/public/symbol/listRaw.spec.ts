@@ -12,6 +12,7 @@ describe(__filename, () => {
 
   it('should list Bittrex raw symbols just fine', async () => {
 
+    // mocking
     const {
       publicRequest,
       authedRequest,
@@ -19,6 +20,8 @@ describe(__filename, () => {
 
     publicRequest.returns(Promise.resolve(BITTREX_RAW_SYMBOLS))
 
+
+    // executing
     const exchange = new Bittrex({ settings: {} })
 
     const {
@@ -26,12 +29,15 @@ describe(__filename, () => {
       requestCount,
     } = await exchange.symbol.listRaw()
 
+
+    // validating
     expect(rawSymbols).to.deep.eq(BITTREX_RAW_SYMBOLS)
 
     expect(requestCount).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(1)
-    expect(publicRequest.args[0][0]).to.deep.eq({
+
+    expect(publicRequest.firstCall.args[0]).to.deep.eq({
       url: `${BITTREX_PRODUCTION_URL}/currencies`,
     })
 

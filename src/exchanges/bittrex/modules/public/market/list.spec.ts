@@ -16,6 +16,7 @@ describe(__filename, () => {
 
   it('should list Bittrex parsed markets just fine', async () => {
 
+    // mocking
     const { listRaw } = mockMarketListRaw({ module: listRawMod })
 
     listRaw.returns({
@@ -28,21 +29,25 @@ describe(__filename, () => {
 
     const { parseMany } = mockMarketParseMany({ module: parseManyMod })
 
-    parseMany.onCall(0).returns({
-      markets: BITTREX_PARSED_MARKETS,
-    })
+    parseMany.onCall(0).returns({ markets: BITTREX_PARSED_MARKETS })
 
+
+    // executing
     const exchange = new Bittrex({ settings: {} })
 
     const { markets } = await exchange.market.list()
 
+
+    // validating
     expect(markets).to.deep.eq(BITTREX_PARSED_MARKETS)
 
     expect(listRaw.callCount).to.be.eq(1)
-    expect(listRaw.args[0][0]).to.haveOwnProperty('http')
+    expect(listRaw.firstCall.args[0]).to.haveOwnProperty('http')
 
     expect(parseMany.callCount).to.be.eq(1)
-    expect(parseMany.args[0][0]).to.deep.eq({ rawMarkets: BITTREX_RAW_MARKETS })
+    expect(parseMany.firstCall.args[0]).to.deep.eq({
+      rawMarkets: BITTREX_RAW_MARKETS,
+    })
 
   })
 

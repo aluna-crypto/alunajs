@@ -17,6 +17,7 @@ describe(__filename, () => {
 
   it('should list Bittrex raw markets just fine', async () => {
 
+    // preparing data
     const marketsInfo = BITTREX_RAW_MARKETS_INFO
     const summaries = BITTREX_RAW_MARKET_SUMMARIES
     const tickers = BITTREX_RAW_MARKET_TICKERS
@@ -30,6 +31,8 @@ describe(__filename, () => {
       publicRequest.onCall(index).returns(Promise.resolve(returns))
     })
 
+
+    // executing
     const exchange = new Bittrex({ settings: {} })
 
     const {
@@ -37,6 +40,8 @@ describe(__filename, () => {
       requestCount,
     } = await exchange.market.listRaw()
 
+
+    // validating
     expect(rawMarkets).to.deep.eq({
       marketsInfo,
       summaries,
@@ -46,13 +51,16 @@ describe(__filename, () => {
     expect(requestCount).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(3)
-    expect(publicRequest.args[0][0]).to.deep.eq({
+
+    expect(publicRequest.firstCall.args[0]).to.deep.eq({
       url: `${BITTREX_PRODUCTION_URL}/markets`,
     })
-    expect(publicRequest.args[1][0]).to.deep.eq({
+
+    expect(publicRequest.secondCall.args[0]).to.deep.eq({
       url: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
     })
-    expect(publicRequest.args[2][0]).to.deep.eq({
+
+    expect(publicRequest.thirdCall.args[0]).to.deep.eq({
       url: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
     })
 

@@ -16,6 +16,7 @@ describe(__filename, () => {
 
   it('should list Bittrex parsed symbols just fine', async () => {
 
+    // mocking
     const { listRaw } = mockSymbolListRaw({ module: listRawMod })
 
     listRaw.onCall(0).returns({
@@ -28,21 +29,23 @@ describe(__filename, () => {
 
     const { parseMany } = mockSymbolParseMany({ module: parseManyMod })
 
-    parseMany.onCall(0).returns({
-      symbols: BITTREX_PARSED_SYMBOLS,
-    })
+    parseMany.onCall(0).returns({ symbols: BITTREX_PARSED_SYMBOLS })
 
+
+    // executing
     const exchange = new Bittrex({ settings: {} })
 
     const { symbols } = await exchange.symbol.list()
 
+
+    // validating
     expect(symbols).to.deep.eq(BITTREX_PARSED_SYMBOLS)
 
     expect(listRaw.callCount).to.be.eq(1)
-    expect(listRaw.args[0][0]).to.haveOwnProperty('http')
+    expect(listRaw.firstCall.args[0]).to.haveOwnProperty('http')
 
     expect(parseMany.callCount).to.be.eq(1)
-    expect(parseMany.args[0][0]).to.deep.eq({
+    expect(parseMany.firstCall.args[0]).to.deep.eq({
       rawSymbols: BITTREX_RAW_SYMBOLS,
     })
 

@@ -23,6 +23,7 @@ describe(__filename, () => {
 
   it('should parse many Bittrex raw markets just fine', async () => {
 
+    // preparing data
     const marketsInfo = BITTREX_RAW_MARKETS_INFO
     const summaries = BITTREX_RAW_MARKET_SUMMARIES
     const tickers = BITTREX_RAW_MARKET_TICKERS
@@ -35,6 +36,8 @@ describe(__filename, () => {
       return !!find(onlineMarkets, { symbol: market.symbolPair })
     })
 
+
+    // mocking
     const { parse } = mockMarketParse({ module: parseMod })
 
     const returnItems = map(onlineParsedMarkets, (market) => ({ market }))
@@ -44,6 +47,7 @@ describe(__filename, () => {
     })
 
 
+    // executing
     const exchange = new Bittrex({ settings: {} })
 
     const { markets } = exchange.market.parseMany({
@@ -55,6 +59,7 @@ describe(__filename, () => {
     })
 
 
+    // validating
     expect(parse.callCount).to.be.eq(2)
     expect(markets).to.deep.eq(onlineParsedMarkets)
 
