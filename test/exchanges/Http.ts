@@ -9,7 +9,7 @@ import { IAlunaHttpRequestCount } from '../../src/lib/core/IAlunaHttp'
 
 
 
-export const mockBittrexHttp = <A = any, P = any>(params: {
+export const mockHttp = <A = any, P = any>(params: {
   returns: {
     authedRequest?: Promise<A> | Promise<A | any>[],
     publicRequest?: Promise<P> | Promise<P | any>[],
