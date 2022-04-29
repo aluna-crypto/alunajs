@@ -30,10 +30,10 @@ interface ISignedHashParams {
 
 
 export interface IBittrexSignedHeaders {
-    'Api-Key': string
-    'Api-Timestamp': number
-    'Api-Content-Hash': string
-    'Api-Signature': string
+  'Api-Key': string
+  'Api-Timestamp': number
+  'Api-Content-Hash': string
+  'Api-Signature': string
 }
 
 

@@ -15,26 +15,19 @@
   },
   "plugins": [
     "@typescript-eslint",
+    "chai-friendly",
     "eslint-plugin-import-helpers",
-    "unused-imports",
-    "chai-friendly"
+    "unused-imports"
   ],
   "rules": {
+
     /*
-      Default
+      Core
     */
-    "lines-between-class-members": "off",
-    "no-use-before-define": "off",
+
     "arrow-body-style": "off",
-    "no-shadow": "off",
-    "no-console": ["warn", { "allow": ["info", "error"] }],
     "class-methods-use-this": "off",
-    "padded-blocks": "off",
-    "semi": ["error", "never"],
-    "no-multiple-empty-lines": [
-      "error",
-      { "max": 3, "maxEOF": 1, "maxBOF": 0 }
-    ],
+    "lines-between-class-members": "off",
     "max-len": [
       "error", {
         "code": 80,
@@ -42,37 +35,31 @@
         "ignorePattern": "^import | ^export | implements | extends | `.{30,}`"
       }
     ],
+    "no-console": ["warn", { "allow": ["info", "error"] }],
+    "no-multiple-empty-lines": [
+      "error",
+      { "max": 3, "maxEOF": 1, "maxBOF": 0 }
+    ],
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "padded-blocks": "off",
+    "semi": ["error", "never"],
+
 
     /*
       Typescript
     */
+
     "@typescript-eslint/no-empty-interface": [
       "error",
       { "allowSingleExtends": true }
     ],
+    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn", {
       "argsIgnorePattern": "^(_|exchange$)",
       "varsIgnorePattern": "^_"
     }],
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        "selector": "class",
-        "format": ["PascalCase"]
-      },
-      {
-        "selector": "interface",
-        "format": ["PascalCase"],
-        "custom": { "regex": "^I[A-Z]", "match": true }
-      },
-      {
-        "selector": "typeLike",
-        "format": ["PascalCase"],
-        "custom": { "regex": "(^T[A-Z]*|.+Enum)", "match": true }
-      }
-    ],
     "@typescript-eslint/member-delimiter-style": ["error",
       {
         "multiline": {
@@ -95,14 +82,28 @@
         }
       }
     ],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "class",
+        "format": ["PascalCase"]
+      },
+      {
+        "selector": "interface",
+        "format": ["PascalCase"],
+        "custom": { "regex": "^I[A-Z]", "match": true }
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"],
+        "custom": { "regex": "(^T[A-Z]*|.+Enum)", "match": true }
+      }
+    ],
+
 
     /*
       Import
     */
-    "import/no-default-export": "error",
-    "import/prefer-default-export": "off",
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true }],
-    "import/newline-after-import": ["error", { "count": 3 }],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -111,7 +112,15 @@
         "js": "never"
       }
     ],
-    "unused-imports/no-unused-imports": "error",
+    "import/no-default-export": "error",
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true }],
+    "import/newline-after-import": ["error", { "count": 3 }],
+    "import/prefer-default-export": "off",
+
+
+    /*
+      Import Helpers
+    */
     "import-helpers/order-imports": [
       "warn",
       {
@@ -119,7 +128,14 @@
         "groups": ["module", ["parent", "sibling", "index"]],
         "alphabetize": { "order": "asc", "ignoreCase": true }
       }
-    ]
+    ],
+
+
+    /*
+      Unused Imports
+    */
+    "unused-imports/no-unused-imports": "error"
+
   },
   "settings": {
     "import/resolver": {
