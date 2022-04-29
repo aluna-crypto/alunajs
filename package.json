@@ -21,7 +21,7 @@
     "build:watch": "yarn clean && tsc -p ./tsconfig.dist.json -w",
     "test": "mocha",
     "test:watch": "mocha --watch",
-    "test:cover": "nyc mocha --bail",
+    "test:cover": "nyc mocha",
     "test:cover:watch": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
     "generate": "ts-node .scaffolding/index.ts",
