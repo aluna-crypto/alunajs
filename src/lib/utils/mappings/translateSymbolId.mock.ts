@@ -4,14 +4,11 @@ import * as translateSymbolIdMod from './translateSymbolId'
 
 
 
-export const mockTranslateSymbolId = (
-  returns = 'BTC',
-) => {
+export const mockTranslateSymbolId = () => {
 
   const translateSymbolId = ImportMock.mockFunction(
     translateSymbolIdMod,
     'translateSymbolId',
-    returns,
   )
 
   return { translateSymbolId }
