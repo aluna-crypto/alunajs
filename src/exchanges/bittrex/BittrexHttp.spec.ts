@@ -156,44 +156,6 @@ describe(__filename, () => {
 
   })
 
-  it('should defaults http verb to GET on public requests', async () => {
-
-    const { assembleRequestConfig } = mockDeps()
-
-    const { request } = mockAxiosRequest()
-
-    const bittrexHttp = new BittrexHttp()
-
-    request.returns(Promise.resolve({ data: response }))
-
-
-    const responseData = await bittrexHttp.publicRequest({
-      url,
-      body,
-    })
-
-    expect(responseData).to.be.eq(response)
-
-    expect(bittrexHttp.requestCount.public).to.be.eq(1)
-    expect(bittrexHttp.requestCount.authed).to.be.eq(0)
-
-    expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
-      url,
-      method: AlunaHttpVerbEnum.GET,
-      data: body,
-    })
-
-    expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
-      url,
-      method: AlunaHttpVerbEnum.GET,
-      data: body,
-      proxySettings: undefined,
-    })
-
-  })
-
   it('should execute private request just fine', async () => {
 
     const {
