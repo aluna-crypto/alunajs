@@ -43,6 +43,31 @@
     "no-shadow": "off",
     "no-underscore-dangle": "off",
     "no-use-before-define": "off",
+    // "object-property-newline": [
+    //   "error", {
+    //     "allowAllPropertiesOnSameLine": false
+    //   }
+    // ],
+    // "object-curly-newline": [
+    //   "error",
+    //   {
+    //     "ImportDeclaration": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     },
+    //     "ObjectExpression": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     },
+    //     "ObjectPattern": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     }
+    //   }
+    // ],
     "padded-blocks": "off",
     "semi": ["error", "never"],
 
@@ -137,6 +162,7 @@
     /*
       Unused Imports
     */
+
     "unused-imports/no-unused-imports": "error"
 
   },
