@@ -29,9 +29,8 @@ export const testExchange = async (exchangeId: string) => {
     passphrase: exchangeConfig.passphrase,
   }
 
-  const publicExchange = aluna(exchangeId, { useTestNet: true })
-  const authedExchange = await aluna(exchangeId).auth(credentials)
-
+  const publicExchange = aluna(exchangeId)
+  const authedExchange = aluna(exchangeId, { credentials })
 
 
   beforeEach(async () => sleep(delayBetweenTests))
