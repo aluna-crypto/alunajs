@@ -13,7 +13,7 @@ describe(__filename, () => {
 
 
 
-  it('should properly instantiate all exchanges', async () => {
+  it('should properly instantiate exchanges (public)', async () => {
 
     const exchangeIds = Object.keys(exchanges)
 
@@ -36,7 +36,7 @@ describe(__filename, () => {
 
       expect(error).not.to.be.ok
       expect(exchange).to.be.ok
-      expect(exchange instanceof exchanges[exchangeId]).to.be.ok
+      expect(exchange instanceof exchanges[exchangeId].Public).to.be.ok
 
     })
 
