@@ -12,7 +12,7 @@ import { symbol } from './modules/public/symbol'
 
 
 
-export const testExchange = async (exchangeId: string) => {
+export const testExchange = (exchangeId: string) => {
 
   const {
     // liveData,
