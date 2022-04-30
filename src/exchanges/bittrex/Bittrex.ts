@@ -23,10 +23,10 @@ export class Bittrex implements IAlunaExchangePublic {
 
 
   constructor(params: {
-    settings: IAlunaSettingsSchema
+    settings?: IAlunaSettingsSchema
   }) {
 
-    const { settings } = params
+    const { settings = {} } = params
 
     this.settings = settings
     this.specs = buildBittrexSpecs({ settings })
