@@ -41,41 +41,41 @@ describe(__filename, () => {
       symbolMappings: undefined,
     })
 
+  })
 
 
-    it('should parse a Bittrex symbol just fine (w/o alias)', async () => {
 
-      // preparing data
-      const translatedSymbolId = 'LTC'
+  it('should parse a Bittrex symbol just fine (w/o alias)', async () => {
 
-
-      // mocking
-      const { translateSymbolId } = mockTranslateSymbolId()
-
-      translateSymbolId.returns(translatedSymbolId)
+    // preparing data
+    const translatedSymbolId = 'LTC'
 
 
-      // executing
-      const exchange = new Bittrex({ settings: {} })
+    // mocking
+    const { translateSymbolId } = mockTranslateSymbolId()
 
-      const rawSymbol = BITTREX_RAW_SYMBOLS[1] // second fixture
-
-      const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    translateSymbolId.returns(translatedSymbolId)
 
 
-      // validating
-      expect(parsedSymbol1.exchangeId).to.be.eq(bittrexBaseSpecs.id)
-      expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
-      expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-      expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
+    // executing
+    const exchange = new Bittrex({ settings: {} })
 
-      expect(translateSymbolId.callCount).to.be.eq(1)
+    const rawSymbol = BITTREX_RAW_SYMBOLS[1] // second fixture
 
-      expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
-        exchangeSymbolId: rawSymbol.symbol,
-        symbolMappings: undefined,
-      })
+    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
 
+
+    // validating
+    expect(parsedSymbol1.exchangeId).to.be.eq(bittrexBaseSpecs.id)
+    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
+    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
+    expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
+
+    expect(translateSymbolId.callCount).to.be.eq(1)
+
+    expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
+      exchangeSymbolId: rawSymbol.symbol,
+      symbolMappings: undefined,
     })
 
   })

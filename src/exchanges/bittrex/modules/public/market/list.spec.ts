@@ -29,7 +29,7 @@ describe(__filename, () => {
 
     const { parseMany } = mockMarketParseMany({ module: parseManyMod })
 
-    parseMany.onCall(0).returns({ markets: BITTREX_PARSED_MARKETS })
+    parseMany.returns({ markets: BITTREX_PARSED_MARKETS })
 
 
     // executing

@@ -18,15 +18,11 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseManyParams<IBittrexSymbolSchema[]>,
 ): IAlunaSymbolParseManyReturns => {
 
-  const {
-    rawSymbols,
-  } = params
+  const { rawSymbols } = params
 
   const symbols = map(rawSymbols, (rawSymbol) => {
 
-    const { symbol } = exchange.symbol.parse({
-      rawSymbol,
-    })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
     return symbol
 
@@ -34,8 +30,6 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   log(`parsed ${symbols.length} symbols for Bittrex`)
 
-  return {
-    symbols,
-  }
+  return { symbols }
 
 }

@@ -14,8 +14,8 @@ export interface IAlunaKeyModule {
   /* eslint-disable max-len */
 
   fetchDetails (params?: IAlunaKeyFetchDetailsParams): Promise<IAlunaKeyFetchDetailsReturns>
-  parseDetails (params: IAlunaKeyParseDetailsParams): Promise<IAlunaKeyParseDetailsReturns>
-  parsePermissions (params: IAlunaKeyParsePermissionsParams): Promise<IAlunaKeyParsePermissionsReturns>
+  parseDetails (params: IAlunaKeyParseDetailsParams<any>): Promise<IAlunaKeyParseDetailsReturns>
+  parsePermissions (params: IAlunaKeyParsePermissionsParams<any>): Promise<IAlunaKeyParsePermissionsReturns>
 
   /* eslint-enable max-len */
 
@@ -27,7 +27,7 @@ export interface IAlunaKeyModule {
  * Parse
  */
 
-export interface IAlunaKeyParseDetailsParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaKeyParseDetailsParams <T> extends IAlunaModuleParams {
   rawKey: T
 }
 
@@ -37,7 +37,7 @@ export interface IAlunaKeyParseDetailsReturns extends IAlunaModuleReturns {
 
 
 
-export interface IAlunaKeyParsePermissionsParams <T = any> extends IAlunaKeyParseDetailsParams<T> {}
+export interface IAlunaKeyParsePermissionsParams <T> extends IAlunaKeyParseDetailsParams<T> {}
 
 export interface IAlunaKeyParsePermissionsReturns extends IAlunaModuleReturns {
   key: IAlunaKeyPermissionSchema

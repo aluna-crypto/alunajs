@@ -8,6 +8,7 @@ import {
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { SampleHttp } from '../../../SampleHttp'
 import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
 
 
 
@@ -16,7 +17,7 @@ const log = debug('@aluna.js:sample/key/parseDetails')
 
 
 export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaKeyParseDetailsParams,
+  params: IAlunaKeyParseDetailsParams<ISampleKeySchema>,
 ): Promise<IAlunaKeyParseDetailsReturns> => {
 
   log('params', params)

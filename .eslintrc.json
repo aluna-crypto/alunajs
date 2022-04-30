@@ -41,7 +41,33 @@
       { "max": 3, "maxEOF": 1, "maxBOF": 0 }
     ],
     "no-shadow": "off",
+    "no-underscore-dangle": "off",
     "no-use-before-define": "off",
+    // "object-property-newline": [
+    //   "error", {
+    //     "allowAllPropertiesOnSameLine": false
+    //   }
+    // ],
+    // "object-curly-newline": [
+    //   "error",
+    //   {
+    //     "ImportDeclaration": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     },
+    //     "ObjectExpression": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     },
+    //     "ObjectPattern": {
+    //       "minProperties": 2,
+    //       "multiline": true,
+    //       "consistent": false
+    //     }
+    //   }
+    // ],
     "padded-blocks": "off",
     "semi": ["error", "never"],
 
@@ -104,6 +130,7 @@
     /*
       Import
     */
+
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -121,6 +148,7 @@
     /*
       Import Helpers
     */
+
     "import-helpers/order-imports": [
       "warn",
       {
@@ -134,6 +162,7 @@
     /*
       Unused Imports
     */
+
     "unused-imports/no-unused-imports": "error"
 
   },
