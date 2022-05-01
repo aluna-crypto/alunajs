@@ -61,7 +61,11 @@ export const testExchange = (exchangeId: string) => {
     describe('key', () => key(authedExchange))
     describe('balance', () => balance(authedExchange))
     describe('order', () => order(authedExchange))
-    describe('position', () => position(authedExchange))
+
+    // only if position module is enabled for a given exchange
+    if (authedExchange.position) {
+      describe('position', () => position(authedExchange))
+    }
   })
 
 
