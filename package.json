@@ -26,6 +26,7 @@
     "test:cover:watch": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test:e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
+    "test:e2e:watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "scaffold": "ts-node .scaffolding/index.ts",
     "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'"
   },
