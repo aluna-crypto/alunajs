@@ -14,6 +14,9 @@ import { symbol } from './modules/public/symbol'
 
 export const testExchange = (exchangeId: string) => {
 
+  /*
+    Preparing the ground.
+  */
   const {
     // liveData,
     config,
@@ -33,20 +36,34 @@ export const testExchange = (exchangeId: string) => {
   const authedExchange = aluna(exchangeId, { credentials })
 
 
+
+  /*
+    Flexible per-exchange delay to smooth things out.
+  */
   beforeEach(async () => sleep(delayBetweenTests))
 
 
 
+  /*
+    Sets up all test for public methods.
+  */
   describe('/public', () => {
     describe('symbol', () => symbol(publicExchange))
     describe('market', () => market(publicExchange))
   })
 
+
+
+  /*
+    Sets up all test for private methods.
+  */
   describe('/authed', () => {
     describe('key', () => key(authedExchange))
     describe('balance', () => balance(authedExchange))
     describe('order', () => order(authedExchange))
     describe('position', () => position(authedExchange))
   })
+
+
 
 }
