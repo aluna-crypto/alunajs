@@ -6,8 +6,18 @@ import { IAlunaExchangeAuthed } from '../../../../src/lib/core/IAlunaExchange'
 
 export function position(exchange: IAlunaExchangeAuthed) {
 
-  it('list', () => {
-    expect(true).to.be.ok
+  it.skip('list', async () => {
+
+    const {
+      orders,
+      requestCount,
+    } = await exchange.order.list()
+
+    expect(orders).to.exist
+
+    expect(requestCount.authed).to.be.greaterThan(1)
+    expect(requestCount.public).to.be.eq(0)
+
   })
 
   it('listRaw', () => {
