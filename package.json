@@ -23,7 +23,7 @@
     "test": "mocha",
     "test:watch": "mocha --watch",
     "test:cover": "nyc mocha",
-    "test:watch:cover": "nyc mocha --watch",
+    "test:cover:watch": "nyc mocha --watch",
     "test:ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test:e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "scaffold": "ts-node .scaffolding/index.ts",
