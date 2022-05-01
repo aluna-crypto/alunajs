@@ -16,7 +16,7 @@ const log = debug('@aluna.js:bittrex/order/list')
 
 
 export const list = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaOrderListParams,
+  params: IAlunaOrderListParams = {},
 ): Promise<IAlunaOrderListReturns> => {
 
   log('params', params)
