@@ -37,7 +37,10 @@ apiPublic.market.list()
 
 
 // Authed instance
-const exchangeAuthed = aluna('bitfinex', { settings, credentials })
+const exchangeAuthed = aluna('bitfinex', {
+  settings,
+  credentials,
+})
 
 apiAuthed.key.fetchDetails()
 apiAuthed.balance.list()
@@ -45,23 +48,23 @@ apiAuthed.order.list()
 apiAuthed.position.list()
 ```
 
-# Supported Exchanges
+# Integrations
 
-Full list here:
- - [Supported Exchanges](http://)
+Full list of supported exchanges here:
+ - [Supported Exchanges]([http://](https://github.com/alunacrypto/alunajs))
 
-# Playground
+# Extras
 
-Explore the AlunaJS Api live at:
-  - https://playground.alunajs.com
+Some extra modules and utilities:
+ - [Web3]([http://](https://github.com/alunacrypto/alunajs))
 
 # Contributting
 
- - [Getting Started](https://github.com/alunacrypto/alunajs)
- - [Scaffolding](https://github.com/alunacrypto/alunajs)
- - [Unit Tests](https://github.com/alunacrypto/alunajs)
- - [E2E tests](https://github.com/alunacrypto/alunajs)
- - [Integration Tests](https://github.com/alunacrypto/alunajs)
+ 1. [Getting Started](https://github.com/alunacrypto/alunajs)
+ 1. [Playground](https://github.com/alunacrypto/playground)
+ 1. [Scaffolding](https://github.com/alunacrypto/alunajs)
+ 1. [Unit Tests](https://github.com/alunacrypto/alunajs)
+ 1. [Integration Tests](https://github.com/alunacrypto/alunajs)
 
 # License
 
