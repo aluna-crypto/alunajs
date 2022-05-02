@@ -1,3 +1,1 @@
-# AlunaJS Playground
-
-Work hard, play harder.
+# AlunaJS — Playground
