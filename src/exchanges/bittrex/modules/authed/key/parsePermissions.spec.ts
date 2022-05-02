@@ -1,12 +1,8 @@
 import { expect } from 'chai'
 import { omit } from 'lodash'
 
-
-
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import {
-  Bittrex,
-} from '../../../Bittrex'
+import { BittrexAuthed } from '../../../BittrexAuthed'
 import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 
@@ -31,12 +27,11 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const exchange = new Bittrex({ settings: {} })
-    const auth = await exchange.auth(credentials)
+    const exchange = new BittrexAuthed({ credentials })
 
 
     // executing
-    const { key } = await auth.key.parsePermissions({ rawKey })
+    const { key } = await exchange.key.parsePermissions({ rawKey })
 
 
     // validating
