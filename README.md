@@ -1,7 +1,6 @@
 # AlunaJS
 
-Standardizing APIs across multiple exchanges with focus on Crypto Trading.
-
+Standardizing CryptoTrading APIs across multiple exchanges.
 
 # Install
 
@@ -38,39 +37,43 @@ apiPublic.market.list()
 
 
 // Authed instance
-const exchangeAuthed = aluna('bitfinex', { settings, credentials })
+const exchangeAuthed = aluna('bitfinex', {
+  settings,
+  credentials,
+})
 
 apiAuthed.key.fetchDetails()
+
 apiAuthed.balance.list()
+apiAuthed.balance.getTradableBalance()
+
 apiAuthed.order.list()
+apiAuthed.order.place()
+apiAuthed.order.edit()
+apiAuthed.order.cancel()
+
 apiAuthed.position.list()
+apiAuthed.position.setLeverage()
+apiAuthed.position.close()
 ```
 
-# Playground
+# Integrations
 
-Explore the AlunaJS Api live at:
-  - https://playground.alunajs.com
+Full list of supported exchanges here:
+ - [Supported Exchanges]([http://](https://github.com/alunacrypto/alunajs))
+
+# Extras
+
+Some extra modules and utilities:
+ - [Web3]([http://](https://github.com/alunacrypto/alunajs))
 
 # Contributting
 
- - [Getting Started](https://github.com/alunacrypto/alunajs)
- - [Scaffolding](https://github.com/alunacrypto/alunajs)
- - [Unit Tests](https://github.com/alunacrypto/alunajs)
- - [E2E tests](https://github.com/alunacrypto/alunajs)
- - [Integration Tests](https://github.com/alunacrypto/alunajs)
-
-# Supported Exchanges
-
-|Exchange|Spot|Margin|Futures|
-| -- | -- | -- | -- |
-|Bitfinex|✅ |❌|❌|
-|BitMEX|—|—|❌|
-|FTX|✅ |✅|✅|
-|GateIO|✅ |❌|❌|
-|Huobi|✅ |✅|✅|
-|OkX|✅ |✅|✅|
-|Poloniex|✅ |—|—|
-|Valr|✅ |—|—|
+ 1. [Getting Started](https://github.com/alunacrypto/alunajs)
+ 1. [Playground](https://github.com/alunacrypto/playground)
+ 1. [Scaffolding](https://github.com/alunacrypto/alunajs)
+ 1. [Unit Tests](https://github.com/alunacrypto/alunajs)
+ 1. [Integration Tests](https://github.com/alunacrypto/alunajs)
 
 # License
 

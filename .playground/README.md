@@ -1,1 +1,1 @@
-# AlunaJS — Playground
+../docs/playground.md

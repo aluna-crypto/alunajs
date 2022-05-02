@@ -1,1 +1,1 @@
-# AlunaJS — Integration Tests
+../../docs/e2etests.md
