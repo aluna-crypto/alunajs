@@ -29,19 +29,19 @@ export function position(params: IAuthedParams) {
     expect(true).to.be.ok
   })
 
-  it('get', () => {
+  it('get', async () => {
     expect(true).to.be.ok
   })
 
-  it('close', () => {
+  it('close', async () => {
     expect(true).to.be.ok
   })
 
-  it('setLeverage', () => {
+  it('setLeverage', async () => {
     expect(true).to.be.ok
   })
 
-  it('getLeverage', () => {
+  it('getLeverage', async () => {
     expect(true).to.be.ok
   })
 
