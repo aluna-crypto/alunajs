@@ -7,6 +7,8 @@ import { balance } from './authed/balance'
 import { key } from './authed/key'
 import { order } from './authed/order'
 import { position } from './authed/position'
+import { IAuthedParams } from './IAuthedParams'
+import { IPublicParams } from './IPublicParams'
 import { market } from './public/market'
 import { symbol } from './public/symbol'
 
@@ -17,23 +19,21 @@ export const testExchange = (exchangeId: string) => {
   /*
     Preparing the ground.
   */
-  const {
-    // liveData,
-    config,
-  } = getConfig()
+  const { config } = getConfig()
+  const { liveData } = config
 
-  const exchangeConfig = config.exchanges[exchangeId]
+  const exchangeConfigs = config.exchanges[exchangeId]
 
-  const { delayBetweenTests } = exchangeConfig
+  const { delayBetweenTests } = exchangeConfigs
 
   const credentials: IAlunaCredentialsSchema = {
-    key: exchangeConfig.key as string,
-    secret: exchangeConfig.secret as string,
-    passphrase: exchangeConfig.passphrase,
+    key: exchangeConfigs.key as string,
+    secret: exchangeConfigs.secret as string,
+    passphrase: exchangeConfigs.passphrase,
   }
 
-  const publicExchange = aluna(exchangeId)
-  const authedExchange = aluna(exchangeId, { credentials })
+  const exchangePublic = aluna(exchangeId)
+  const exchangeAuthed = aluna(exchangeId, { credentials })
 
 
 
@@ -48,8 +48,16 @@ export const testExchange = (exchangeId: string) => {
     Sets up all test for public methods.
   */
   describe('/public', () => {
-    describe('symbol', () => symbol(publicExchange))
-    describe('market', () => market(publicExchange))
+
+    const publicParams: IPublicParams = {
+      liveData,
+      exchangePublic,
+      exchangeConfigs,
+    }
+
+    describe('symbol', () => symbol(publicParams))
+    describe('market', () => market(publicParams))
+
   })
 
 
@@ -58,14 +66,22 @@ export const testExchange = (exchangeId: string) => {
     Sets up all test for private methods.
   */
   describe('/authed', () => {
-    describe('key', () => key(authedExchange))
-    describe('balance', () => balance(authedExchange))
-    describe('order', () => order(authedExchange))
+
+    const authedParams: IAuthedParams = {
+      liveData,
+      exchangeAuthed,
+      exchangeConfigs,
+    }
+
+    describe('key', () => key(authedParams))
+    describe('balance', () => balance(authedParams))
+    describe('order', () => order(authedParams))
 
     // only if position module is enabled for a given exchange
-    if (authedExchange.position) {
-      describe('position', () => position(authedExchange))
+    if (exchangeAuthed.position) {
+      describe('position', () => position(authedParams))
     }
+
   })
 
 
