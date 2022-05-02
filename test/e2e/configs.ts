@@ -22,14 +22,18 @@ export interface IE2EExchange {
   orderAccount?: AlunaAccountEnum
 }
 
+export interface IE2ELiveData  {
+  positionId?: string
+  limitOrderId?: string
+  marketOrderId?: string
+  stopLimitOrderId?: string
+  stopMarketOrderId?: string
+  orderSymbolPair?: string
+  positionSymbolPair?: string
+}
+
 export interface IE2EConfig {
-  live: {
-    positionId?: string
-    limitOrderId?: string
-    marketOrderId?: string
-    stopLimitOrderId?: string
-    stopMarketOrderId?: string
-  }
+  liveData: IE2ELiveData
   exchanges: {
     [key: string]: IE2EExchange
   }
@@ -59,21 +63,17 @@ export function getEnv() {
 
 export function getConfig() {
 
-  const liveData = {
-    limitOrderId: undefined,
-    marketOrderId: undefined,
-    positionId: undefined,
-    orderSymbolPair: undefined,
-    positionSymbolPair: undefined,
-  }
-
   const env = getEnv()
 
   const config: IE2EConfig = {
-    live: {
+    liveData: {
+      positionId: undefined,
       limitOrderId: undefined,
       marketOrderId: undefined,
-      positionId: undefined,
+      stopLimitOrderId: undefined,
+      stopMarketOrderId: undefined,
+      orderSymbolPair: undefined,
+      positionSymbolPair: undefined,
     },
     exchanges: {
       bitfinex: {
@@ -160,9 +160,6 @@ export function getConfig() {
     },
   }
 
-  return {
-    liveData,
-    config,
-  }
+  return { config }
 
 }
