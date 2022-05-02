@@ -3,7 +3,10 @@ import { each } from 'lodash'
 
 import { aluna } from './aluna'
 import { AlunaError } from './lib/core/AlunaError'
-import { IAlunaExchangeAuthed, IAlunaExchangePublic } from './lib/core/IAlunaExchange'
+import {
+  IAlunaExchangeAuthed,
+  IAlunaExchangePublic,
+} from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { exchanges } from './lib/exchanges'
 
@@ -97,6 +100,16 @@ describe(__filename, () => {
 
     expect(error?.code).to.be.eq(AlunaExchangeErrorCodes.NOT_SUPPORTED)
     expect(error?.message).to.be.eq(`Exchange not supported: ${exchangeId}.`)
+
+  })
+
+
+
+  it('should export web3 method and instance', async () => {
+
+    const { web3 } = aluna.web3()
+
+    expect(web3).to.be.ok
 
   })
 
