@@ -7,6 +7,7 @@ import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { exchanges } from './lib/exchanges'
 import { IAlunaCredentialsSchema } from './lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from './lib/schemas/IAlunaSettingsSchema'
+import { Web3 } from './modules/web3/Web3'
 
 
 
@@ -55,5 +56,15 @@ export function aluna <T extends TPublicParmas | TAuthedParams>(
   > instance
 
   return output
+
+}
+
+
+
+aluna.web3 = (_params?: any): { web3: Web3 } => {
+
+  const web3 = new Web3()
+
+  return { web3 }
 
 }
