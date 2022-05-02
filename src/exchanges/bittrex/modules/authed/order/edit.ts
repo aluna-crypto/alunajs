@@ -5,9 +5,9 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderEditReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
+import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
+import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 
 
 
@@ -21,19 +21,44 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   log('params', params)
 
-  const { credentials } = exchange
+  validateParams({
+    params,
+    schema: editOrderParamsSchema,
+  })
 
-  const { http = new BittrexHttp() } = params
+  log('editing order for Bittrex')
 
-  const order = await http.authedRequest<IAlunaOrderSchema>({
-    url: BITTREX_PRODUCTION_URL,
-    credentials,
+  const {
+    id,
+    rate,
+    side,
+    type,
+    amount,
+    account,
+    symbolPair,
+    http = new BittrexHttp(),
+  } = params
+
+  await exchange.order.cancel({
+    id,
+    symbolPair,
+    http,
+  })
+
+  const { order: newOrder } = await exchange.order.place({
+    rate,
+    side,
+    type,
+    amount,
+    account,
+    symbolPair,
+    http,
   })
 
   const { requestCount } = http
 
   return {
-    order,
+    order: newOrder,
     requestCount,
   }
 
