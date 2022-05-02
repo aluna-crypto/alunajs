@@ -8,7 +8,7 @@ import {
   IAlunaOrderParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
-import { AlunaSymbolMapping } from '../../../../../utils/mappings/AlunaSymbolMapping'
+import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { translateOrderSideToAluna } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bittrexOrderStatusAdapter'
@@ -47,12 +47,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
 
-  const baseSymbolId = AlunaSymbolMapping.translateSymbolId({
+  const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrency,
     symbolMappings: exchange.settings.mappings,
   })
 
-  const quoteSymbolId = AlunaSymbolMapping.translateSymbolId({
+  const quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteCurrency,
     symbolMappings: exchange.settings.mappings,
   })
