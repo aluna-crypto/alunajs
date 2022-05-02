@@ -29,13 +29,11 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { accountId } = rawKey
 
-  const {
-    key: parsedPermissions,
-  } = await parsePermissions(exchange)({ rawKey })
+  const { key: permissions } = await parsePermissions(exchange)({ rawKey })
 
   const key: IAlunaKeySchema = {
     accountId,
-    permissions: parsedPermissions,
+    permissions,
     meta: rawKey,
   }
 

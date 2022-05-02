@@ -61,6 +61,8 @@ describe(__filename, () => {
 
     const { assembleRequestConfig } = mockAssembleRequestConfig()
 
+    const { request } = mockAxiosRequest()
+
     const {
       mockGenerateAuthHeader = true,
       cacheParams = {
@@ -94,6 +96,7 @@ describe(__filename, () => {
 
     return {
       cache,
+      request,
       hashCacheKey,
       generateAuthHeader,
       assembleRequestConfig,
@@ -104,28 +107,33 @@ describe(__filename, () => {
 
   it('should execute public request just fine', async () => {
 
+    // preparing data
+    const verb = AlunaHttpVerbEnum.POST
+
+
+    // mocking
     const {
       cache,
+      request,
       hashCacheKey,
       generateAuthHeader,
       assembleRequestConfig,
     } = mockDeps()
 
-    const { request } = mockAxiosRequest()
-
     const bittrexHttp = new BittrexHttp()
 
     request.returns(Promise.resolve({ data: response }))
 
-    const verb = AlunaHttpVerbEnum.POST
 
-
+    // executing
     const responseData = await bittrexHttp.publicRequest({
       verb,
       url,
       body,
     })
 
+
+    // validating
     expect(responseData).to.be.eq(response)
 
     expect(bittrexHttp.requestCount.public).to.be.eq(1)
@@ -156,21 +164,25 @@ describe(__filename, () => {
 
   })
 
-  it('should execute private request just fine', async () => {
+  it('should execute authed request just fine', async () => {
 
+    // preparing data
+    const bittrexHttp = new BittrexHttp()
+
+
+    // mocking
     const {
       cache,
+      request,
       hashCacheKey,
       generateAuthHeader,
       assembleRequestConfig,
     } = mockDeps()
 
-    const { request } = mockAxiosRequest()
-
-    const bittrexHttp = new BittrexHttp()
-
     request.returns(Promise.resolve({ data: response }))
 
+
+    // executing
     const responseData = await bittrexHttp.authedRequest({
       verb: AlunaHttpVerbEnum.POST,
       url,
@@ -178,6 +190,8 @@ describe(__filename, () => {
       credentials,
     })
 
+
+    // validating
     expect(responseData).to.be.eq(response)
 
     expect(bittrexHttp.requestCount.public).to.be.eq(0)
@@ -210,35 +224,61 @@ describe(__filename, () => {
 
   })
 
-  it('should properly increment request count', async () => {
+  it('should properly increment request count on public requests', async () => {
 
-    mockDeps()
-
-    const { request } = mockAxiosRequest()
-
+    // preparing data
     const bittrexHttp = new BittrexHttp()
 
     const weight = random()
     const pubRequestCount = random()
     const authRequestCount = random()
+
     bittrexHttp.requestCount.public = pubRequestCount
     bittrexHttp.requestCount.authed = authRequestCount
+
+
+    // mocking
+    const { request } = mockDeps()
 
     request.returns(Promise.resolve({ data: response }))
 
 
+    // executing
     await bittrexHttp.publicRequest({
       url,
       body,
       weight,
     })
 
+
+    // validating
     expect(bittrexHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
     expect(bittrexHttp.requestCount.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
 
+  })
 
+  it('should properly increment request count on authed requests', async () => {
+
+    // preparing data
+    const bittrexHttp = new BittrexHttp()
+
+    const weight = random()
+    const pubRequestCount = random()
+    const authRequestCount = random()
+
+    bittrexHttp.requestCount.public = pubRequestCount
+    bittrexHttp.requestCount.authed = authRequestCount
+
+
+    // mocking
+    const { request } = mockDeps()
+
+    request.returns(Promise.resolve({ data: response }))
+
+
+    // executing
     await bittrexHttp.authedRequest({
       url,
       body,
@@ -246,61 +286,98 @@ describe(__filename, () => {
       credentials,
     })
 
-    expect(bittrexHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
+
+    // validating
+    expect(bittrexHttp.requestCount.public).to.be.eq(pubRequestCount)
     expect(bittrexHttp.requestCount.authed).to.be.eq(authRequestCount + weight)
 
-    expect(request.callCount).to.be.eq(2)
+    expect(request.callCount).to.be.eq(1)
 
   })
 
-  it('should properly handle request error', async () => {
+  it('should properly handle request error on public requests', async () => {
 
-    const { handleBittrexRequestError } = mockDeps()
-
-    const { request } = mockAxiosRequest()
-
+    // preparing data
     const bittrexHttp = new BittrexHttp()
 
     const throwedError = new Error('unknown error')
 
+
+    // mocking
+    const {
+      request,
+      handleBittrexRequestError,
+    } = mockDeps()
+
     request.returns(Promise.reject(throwedError))
 
+
+    // executing
     const publicRes = await executeAndCatch(() => bittrexHttp.publicRequest({
       url,
       body,
     }))
 
+
+    // validating
     expect(publicRes.result).not.to.be.ok
 
     expect(request.callCount).to.be.eq(1)
 
     expect(handleBittrexRequestError.callCount).to.be.eq(1)
 
+  })
+
+  it('should properly handle request error on authed requests', async () => {
+
+    // preparing data
+    const bittrexHttp = new BittrexHttp()
+
+    const throwedError = new Error('unknown error')
+
+
+    // mocking
+    const {
+      request,
+      handleBittrexRequestError,
+    } = mockDeps()
+
+    request.returns(Promise.reject(throwedError))
+
+
+    // executing
     const autheRes = await executeAndCatch(() => bittrexHttp.authedRequest({
       url,
       body,
       credentials,
     }))
 
+
+    // validating
     expect(autheRes.result).not.to.be.ok
 
-    expect(request.callCount).to.be.eq(2)
+    expect(request.callCount).to.be.eq(1)
 
-    expect(handleBittrexRequestError.callCount).to.be.eq(2)
+    expect(handleBittrexRequestError.callCount).to.be.eq(1)
 
   })
 
-  it('should properly inform proxy settings when avaiable', async () => {
+  it('should properly use proxy settings on public requests', async () => {
 
-    const { assembleRequestConfig } = mockDeps()
-
-    const { request } = mockAxiosRequest()
-
+    // preparing data
     const bittrexHttp = new BittrexHttp()
+
+
+    // mocking
+    const {
+      request,
+      assembleRequestConfig,
+    } = mockDeps()
 
     request.returns(Promise.resolve({ data: response }))
 
 
+    // executing
     await bittrexHttp.publicRequest({
       url,
       body,
@@ -308,6 +385,7 @@ describe(__filename, () => {
     })
 
 
+    // validating
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
@@ -318,7 +396,24 @@ describe(__filename, () => {
       proxySettings: settings.proxySettings,
     })
 
+  })
 
+  it('should properly use proxy settings on authed requests', async () => {
+
+    // preparing data
+    const bittrexHttp = new BittrexHttp()
+
+
+    // mocking
+    const {
+      request,
+      assembleRequestConfig,
+    } = mockDeps()
+
+    request.returns(Promise.resolve({ data: response }))
+
+
+    // executing
     await bittrexHttp.authedRequest({
       url,
       body,
@@ -326,10 +421,12 @@ describe(__filename, () => {
       credentials,
     })
 
-    expect(request.callCount).to.be.eq(2)
 
-    expect(assembleRequestConfig.callCount).to.be.eq(2)
-    expect(assembleRequestConfig.args[1][0]).to.deep.eq({
+    // validating
+    expect(request.callCount).to.be.eq(1)
+
+    expect(assembleRequestConfig.callCount).to.be.eq(1)
+    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
@@ -341,6 +438,7 @@ describe(__filename, () => {
 
   it('should generate signed auth header just fine', async () => {
 
+    // preparing data
     const createHmacSpy = spy(crypto, 'createHmac')
     const createHashSpy = spy(crypto, 'createHash')
 
@@ -350,17 +448,22 @@ describe(__filename, () => {
     const digestHmacSpy = spy(crypto.Hmac.prototype, 'digest')
     const digestHashSpy = spy(crypto.Hash.prototype, 'digest')
 
+    const path = 'path'
+    const verb = 'verb' as AlunaHttpVerbEnum
+
+    const stringifyBody = 'stringify-body'
+
     const currentDate = 'current-date'
 
     const timestampMock = { toString: () => currentDate }
 
+
+    // mocking
     const dateMock = ImportMock.mockFunction(
       Date.prototype,
       'getTime',
       timestampMock,
     )
-
-    const stringifyBody = 'stringify-body'
 
     const stringfyMock = ImportMock.mockFunction(
       JSON,
@@ -368,20 +471,12 @@ describe(__filename, () => {
       stringifyBody,
     )
 
-    const path = 'path'
-    const verb = 'verb' as AlunaHttpVerbEnum
 
+    // executing
     const contentHash = crypto
       .createHash('sha512')
       .update(body ? JSON.stringify(body) : '')
       .digest('hex')
-
-    const preSigned = [
-      timestampMock,
-      url,
-      verb.toUpperCase(),
-      contentHash,
-    ].join('')
 
     const signedHash = BittrexHttpMod.generateAuthHeader({
       credentials,
@@ -391,6 +486,8 @@ describe(__filename, () => {
       url,
     })
 
+
+    // validating
     expect(dateMock.callCount).to.be.eq(1)
 
     expect(createHmacSpy.callCount).to.be.eq(1)
@@ -415,15 +512,21 @@ describe(__filename, () => {
     expect(digestHashSpy.callCount).to.be.eq(2)
     expect(digestHashSpy.calledWith('hex')).to.be.ok
 
+
+    // mocking
+    const preSigned = [
+      timestampMock,
+      url,
+      verb.toUpperCase(),
+      contentHash,
+    ].join('')
+
+
+    // executing
     const signedHeader = crypto
       .createHmac('sha512', credentials.secret)
       .update(preSigned)
       .digest('hex')
-
-    expect(signedHash['Api-Content-Hash']).to.deep.eq(contentHash)
-    expect(signedHash['Api-Key']).to.deep.eq(credentials.key)
-    expect(signedHash['Api-Timestamp']).to.deep.eq(timestampMock)
-    expect(signedHash['Api-Signature']).to.deep.eq(signedHeader)
 
     const signedHash2 = BittrexHttpMod.generateAuthHeader({
       credentials,
@@ -433,11 +536,17 @@ describe(__filename, () => {
       // without a body
     })
 
+
+    // validating
+    expect(signedHash['Api-Content-Hash']).to.deep.eq(contentHash)
+    expect(signedHash['Api-Key']).to.deep.eq(credentials.key)
+    expect(signedHash['Api-Timestamp']).to.deep.eq(timestampMock)
+    expect(signedHash['Api-Signature']).to.deep.eq(signedHeader)
+
     expect(dateMock.callCount).to.be.eq(2)
 
     expect(createHmacSpy.callCount).to.be.eq(3)
 
-    // when no body is passed must not call stringfy on empty string
     expect(stringfyMock.callCount).to.be.eq(3)
     expect(stringfyMock.calledWith('')).not.to.be.ok
 
@@ -457,10 +566,13 @@ describe(__filename, () => {
 
   it('should validate cache usage', async () => {
 
+    // mocking
     const { request } = mockAxiosRequest()
 
     request.returns(Promise.resolve(response))
 
+
+    // executing and validating
     await validateCache({
       cacheResult: response,
       callMethod: async () => {

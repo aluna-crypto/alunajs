@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { assign, unset } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -21,9 +22,10 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
 
   log('parsing Bittrex key permissions', params)
 
-  const { http = new BittrexHttp() } = params
-
-  const { rawKey } = params
+  const {
+    rawKey,
+    http = new BittrexHttp(),
+  } = params
 
   const key: IAlunaKeyPermissionSchema = {
     read: false,
@@ -31,10 +33,9 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
     withdraw: false,
   }
 
-  // TODO: Add `accountId` to `IAlunaKeySchema`
-  delete rawKey.accountId
+  unset(rawKey, 'accountId')
 
-  Object.assign(key, rawKey)
+  assign(key, rawKey)
 
   const { requestCount } = http
 

@@ -6,7 +6,7 @@ import {
   map,
 } from 'lodash'
 
-import { mockMarketParse } from '../../../../../../test/mocks/exchange/modules/market/parse'
+import { mockMarketParse } from '../../../../../../test/mocks/exchange/modules/market/mockMarketParse'
 import { Bittrex } from '../../../Bittrex'
 import { BittrexMarketStatusEnum } from '../../../enums/BittrexMarketStatusEnum'
 import {

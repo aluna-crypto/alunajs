@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
-import { mockSymbolListRaw } from '../../../../../../test/mocks/exchange/modules/symbol/listRaw'
-import { mockSymbolParseMany } from '../../../../../../test/mocks/exchange/modules/symbol/parseMany'
+import { mockSymbolListRaw } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolListRaw'
+import { mockSymbolParseMany } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolParseMany'
 import { Bittrex } from '../../../Bittrex'
 import {
   BITTREX_PARSED_SYMBOLS,
