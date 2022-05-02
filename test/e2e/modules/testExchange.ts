@@ -1,14 +1,14 @@
 import sleep from 'sleep-promise'
 
-import { aluna } from '../../src/aluna'
-import { IAlunaCredentialsSchema } from '../../src/lib/schemas/IAlunaCredentialsSchema'
-import { getConfig } from './configs'
-import { balance } from './modules/authed/balance'
-import { key } from './modules/authed/key'
-import { order } from './modules/authed/order'
-import { position } from './modules/authed/position'
-import { market } from './modules/public/market'
-import { symbol } from './modules/public/symbol'
+import { aluna } from '../../../src/aluna'
+import { IAlunaCredentialsSchema } from '../../../src/lib/schemas/IAlunaCredentialsSchema'
+import { getConfig } from '../configs'
+import { balance } from './authed/balance'
+import { key } from './authed/key'
+import { order } from './authed/order'
+import { position } from './authed/position'
+import { market } from './public/market'
+import { symbol } from './public/symbol'
 
 
 
