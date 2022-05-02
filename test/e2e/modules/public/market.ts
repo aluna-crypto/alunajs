@@ -1,17 +1,19 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangePublic } from '../../../../src/lib/core/IAlunaExchange'
+import { IPublicParams } from '../IPublicParams'
 
 
 
-export function market(exchange: IAlunaExchangePublic) {
+export function market(params: IPublicParams) {
+
+  const { exchangePublic } = params
 
   it('listRaw', async () => {
 
     const {
       rawMarkets,
       requestCount,
-    } = await exchange.market.listRaw()
+    } = await exchangePublic.market.listRaw()
 
     expect(rawMarkets).to.exist // not always an array
 
@@ -25,7 +27,7 @@ export function market(exchange: IAlunaExchangePublic) {
     const {
       markets,
       requestCount,
-    } = await exchange.market.list()
+    } = await exchangePublic.market.list()
 
     expect(markets.length).to.be.greaterThan(0)
 

@@ -1,17 +1,22 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangeAuthed } from '../../../../src/lib/core/IAlunaExchange'
+import { IAuthedParams } from '../IAuthedParams'
 
 
 
-export function position(exchange: IAlunaExchangeAuthed) {
+export function position(params: IAuthedParams) {
 
-  it.skip('list', async () => {
+  const {
+    exchangeAuthed,
+    // exchangeConfigs,
+  } = params
+
+  it('list', async () => {
 
     const {
       orders,
       requestCount,
-    } = await exchange.order.list()
+    } = await exchangeAuthed.order.list()
 
     expect(orders).to.exist
 

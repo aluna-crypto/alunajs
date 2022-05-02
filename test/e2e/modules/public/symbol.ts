@@ -1,17 +1,19 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangePublic } from '../../../../src/lib/core/IAlunaExchange'
+import { IPublicParams } from '../IPublicParams'
 
 
 
-export function symbol(exchange: IAlunaExchangePublic) {
+export function symbol(params: IPublicParams) {
+
+  const { exchangePublic } = params
 
   it('listRaw', async () => {
 
     const {
       rawSymbols,
       requestCount,
-    } = await exchange.symbol.listRaw()
+    } = await exchangePublic.symbol.listRaw()
 
     expect(rawSymbols.length).to.be.greaterThan(0)
 
@@ -25,7 +27,7 @@ export function symbol(exchange: IAlunaExchangePublic) {
     const {
       symbols,
       requestCount,
-    } = await exchange.symbol.list()
+    } = await exchangePublic.symbol.list()
 
     expect(symbols.length).to.be.greaterThan(0)
 

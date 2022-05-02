@@ -1,17 +1,19 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangeAuthed } from '../../../../src/lib/core/IAlunaExchange'
+import { IAuthedParams } from '../IAuthedParams'
 
 
 
-export function order(exchange: IAlunaExchangeAuthed) {
+export function order(params: IAuthedParams) {
+
+  const { exchangeAuthed } = params
 
   it('list', async () => {
 
     const {
       orders,
       requestCount,
-    } = await exchange.order.list()
+    } = await exchangeAuthed.order.list()
 
     console.log(orders)
     expect(orders).to.exist

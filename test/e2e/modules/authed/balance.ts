@@ -1,21 +1,23 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangeAuthed } from '../../../../src/lib/core/IAlunaExchange'
+import { IAuthedParams } from '../IAuthedParams'
 
 
 
-export function balance(exchange: IAlunaExchangeAuthed) {
+export function balance(params: IAuthedParams) {
+
+  const { exchangeAuthed } = params
 
   it('list', () => {
-    expect(true).to.be.ok
+    expect(exchangeAuthed).to.be.ok
   })
 
   it('listRaw', () => {
-    expect(true).to.be.ok
+    expect(exchangeAuthed).to.be.ok
   })
 
   it('getTradableBalance', () => {
-    expect(true).to.be.ok
+    expect(exchangeAuthed).to.be.ok
   })
 
 }

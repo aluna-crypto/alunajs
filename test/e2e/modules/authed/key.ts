@@ -1,17 +1,19 @@
 import { expect } from 'chai'
 
-import { IAlunaExchangeAuthed, IAlunaExchangePublic } from '../../../../src/lib/core/IAlunaExchange'
+import { IAuthedParams } from '../IAuthedParams'
 
 
 
-export function key(exchange: IAlunaExchangeAuthed) {
+export function key(params: IAuthedParams) {
+
+  const { exchangeAuthed } = params
 
   it('fetchDetails', async () => {
 
     const {
       key,
       requestCount,
-    } = await exchange.key.fetchDetails()
+    } = await exchangeAuthed.key.fetchDetails()
 
     expect(key).to.exist
     // expect(key.accountId).to.exist // <— not always present
