@@ -2,7 +2,6 @@
 
 Standardizing APIs across multiple exchanges with focus on Crypto Trading.
 
-
 # Install
 
 ```
@@ -46,6 +45,11 @@ apiAuthed.order.list()
 apiAuthed.position.list()
 ```
 
+# Supported Exchanges
+
+Full list here:
+ - [Supported Exchanges](http://)
+
 # Playground
 
 Explore the AlunaJS Api live at:
@@ -58,19 +62,6 @@ Explore the AlunaJS Api live at:
  - [Unit Tests](https://github.com/alunacrypto/alunajs)
  - [E2E tests](https://github.com/alunacrypto/alunajs)
  - [Integration Tests](https://github.com/alunacrypto/alunajs)
-
-# Supported Exchanges
-
-|Exchange|Spot|Margin|Futures|
-| -- | -- | -- | -- |
-|Bitfinex|✅ |❌|❌|
-|BitMEX|—|—|❌|
-|FTX|✅ |✅|✅|
-|GateIO|✅ |❌|❌|
-|Huobi|✅ |✅|✅|
-|OkX|✅ |✅|✅|
-|Poloniex|✅ |—|—|
-|Valr|✅ |—|—|
 
 # License
 
