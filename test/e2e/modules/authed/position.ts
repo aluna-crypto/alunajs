@@ -25,8 +25,18 @@ export function position(params: IAuthedParams) {
 
   })
 
-  it('listRaw', () => {
-    expect(true).to.be.ok
+  it('listRaw', async () => {
+
+    const {
+      rawPositions,
+      requestCount,
+    } = await exchangeAuthed.position!.listRaw()
+
+    expect(rawPositions).to.exist
+
+    expect(requestCount.authed).to.be.greaterThan(1)
+    expect(requestCount.public).to.be.eq(0)
+
   })
 
   it('get', async () => {
