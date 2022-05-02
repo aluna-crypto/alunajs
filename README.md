@@ -48,7 +48,7 @@ apiAuthed.position.list()
 
 # Playground
 
-We have a playground app at:
+Explore the AlunaJS Api live at:
   - https://playground.alunajs.com
 
 # Contributting
