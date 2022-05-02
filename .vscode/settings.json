@@ -2,4 +2,34 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
+  "importSorter.generalConfiguration.sortOnBeforeSave": true,
+  "importSorter.importStringConfiguration.hasSemicolon": false,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.count": 1,
+  "importSorter.importStringConfiguration.maximumNumberOfImportExpressionsPerLine.type": "words",
+  "importSorter.importStringConfiguration.numberOfEmptyLinesAfterAllImports": 3,
+  "importSorter.importStringConfiguration.tabSize": 2,
+  "importSorter.importStringConfiguration.trailingComma": "multiLine",
+  "importSorter.sortConfiguration.customOrderingRules.defaultNumberOfEmptyLinesAfterGroup": 1,
+  "importSorter.sortConfiguration.customOrderingRules.rules": [
+    {
+      "type": "importMember",
+      "regex": "^$",
+      "orderLevel": 5,
+      "disableSort": true
+    },
+    {
+      "regex": "^[^.@]",
+      "orderLevel": 10
+    },
+    {
+      "regex": "^[@]",
+      "orderLevel": 15
+    },
+    {
+      "regex": "^[.]",
+      "orderLevel": 20
+    },
+  ],
+  "importSorter.sortConfiguration.removeUnusedDefaultImports": true,
+  "importSorter.sortConfiguration.removeUnusedImports": true
  }
