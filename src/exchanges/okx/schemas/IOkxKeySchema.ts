@@ -15,4 +15,5 @@ export interface IOkxKeySchema {
   trade: boolean
   withdraw: boolean
   accountId: string | undefined
+  margin: boolean
 }

@@ -293,6 +293,7 @@ describe('OkxKeyModule', () => {
       read: true,
       trade: false,
       withdraw: false,
+      margin: false,
     }
 
     const { key: perm1 } = okxKeyModule.parsePermissions({

@@ -117,6 +117,7 @@ describe('OkxOrderWriteModule', () => {
       ...placeOrderParams,
       type: AlunaOrderTypesEnum.MARKET,
       side: AlunaOrderSideEnum.SELL,
+      account: AlunaAccountEnum.MARGIN,
     })
 
     delete placeResponse2.rate
@@ -126,7 +127,7 @@ describe('OkxOrderWriteModule', () => {
       instId: placeOrderParams.symbolPair,
       ordType: OkxOrderTypeEnum.MARKET,
       sz: placeOrderParams.amount.toString(),
-      tdMode: 'cash',
+      tdMode: 'cross',
     }
 
     expect(requestMock.callCount).to.be.eq(2)

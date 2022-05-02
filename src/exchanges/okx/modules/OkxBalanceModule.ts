@@ -105,7 +105,7 @@ export class OkxBalanceModule extends AAlunaModule implements IAlunaBalanceModul
 
     const parsedBalance = {
       symbolId,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.MAIN,
       available,
       total,
       meta: rawBalance,

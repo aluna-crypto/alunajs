@@ -110,21 +110,21 @@ export const OKX_RAW_BALANCES: IOkxBalanceSchema[] = [
 export const OKX_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
     symbolId: 'USDT',
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.MAIN,
     available: 2,
     total: 2,
     meta: {},
   },
   {
     symbolId: 'BTC',
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.MAIN,
     available: 3,
     total: 5,
     meta: {},
   },
   {
     symbolId: 'ETH',
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.MAIN,
     available: 6,
     total: 9,
     meta: {},

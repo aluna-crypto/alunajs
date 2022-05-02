@@ -1,4 +1,5 @@
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaHttpVerbEnum } from '../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../lib/errors/AlunaAccountsErrorCodes'
@@ -115,12 +116,14 @@ export class OkxOrderWriteModule extends OkxOrderReadModule implements IAlunaOrd
       from: type,
     })
 
+    const tdMode = account === AlunaAccountEnum.MARGIN ? 'cross' : 'cash'
+
     const body: IOkxOrderRequest = {
       side: OkxOrderSideAdapter.translateToOkx({ from: side }),
       instId: symbolPair,
       ordType: translatedOrderType,
       sz: amount.toString(),
-      tdMode: 'cash',
+      tdMode,
     }
 
     if (translatedOrderType === OkxOrderTypeEnum.LIMIT) {

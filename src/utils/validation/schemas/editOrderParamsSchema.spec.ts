@@ -133,7 +133,7 @@ describe('editOrderParamsSchema', () => {
     expect(executeRes.result).not.to.be.ok
 
     const msg = '"account" must be one of [exchange, margin, derivatives, '
-      .concat('lending]')
+      .concat('lending, main]')
 
     expect(executeRes.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(executeRes.error!.message).to.be.eq(msg)

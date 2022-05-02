@@ -60,6 +60,7 @@ export class OkxKeyModule extends AAlunaModule implements IAlunaKeyModule {
       trade: false,
       withdraw: false,
       accountId: undefined,
+      margin: false,
     }
 
     try {
@@ -76,6 +77,7 @@ export class OkxKeyModule extends AAlunaModule implements IAlunaKeyModule {
 
       permissions.read = true
       permissions.accountId = accountConfiguration.uid
+      permissions.margin = Number(accountConfiguration.level) > 1
       requestCount += privateRequestCount
 
     } catch (error) {

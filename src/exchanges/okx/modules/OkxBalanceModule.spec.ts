@@ -151,7 +151,7 @@ describe('OkxBalanceModule', () => {
       .toNumber()
 
     expect(parsedBalance1.symbolId).to.be.eq(translateSymbolId)
-    expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedBalance1.account).to.be.eq(AlunaAccountEnum.MAIN)
     expect(parsedBalance1.available).to.be.eq(available)
     expect(parsedBalance1.total).to.be.eq(total)
 
@@ -171,7 +171,7 @@ describe('OkxBalanceModule', () => {
       .plus(Number(rawBalance2.frozenBal))
       .toNumber()
 
-    expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(parsedBalance2.account).to.be.eq(AlunaAccountEnum.MAIN)
     expect(parsedBalance2.symbolId).to.be.eq(translateSymbolId)
     expect(parsedBalance2.available).to.be.eq(available2)
     expect(parsedBalance2.total).to.be.eq(total2)
