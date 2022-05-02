@@ -1,6 +1,6 @@
 # AlunaJS
 
-Standardizing APIs across multiple exchanges with focus on Crypto Trading.
+Standardizing CryptoTrading APIs across multiple exchanges.
 
 # Install
 
@@ -43,9 +43,18 @@ const exchangeAuthed = aluna('bitfinex', {
 })
 
 apiAuthed.key.fetchDetails()
+
 apiAuthed.balance.list()
+apiAuthed.balance.getTradableBalance()
+
 apiAuthed.order.list()
+apiAuthed.order.place()
+apiAuthed.order.edit()
+apiAuthed.order.cancel()
+
 apiAuthed.position.list()
+apiAuthed.position.setLeverage()
+apiAuthed.position.close()
 ```
 
 # Integrations
