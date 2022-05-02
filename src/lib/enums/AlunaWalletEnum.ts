@@ -3,4 +3,5 @@ export enum AlunaWalletEnum {
   MARGIN = 'margin',
   DERIVATIVES = 'derivatives',
   TRADING = 'trading',
+  WEB3 = 'web3',
 }
