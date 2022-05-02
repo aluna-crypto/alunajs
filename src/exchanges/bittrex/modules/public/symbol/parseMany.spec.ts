@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
-import { mockSymbolParse } from '../../../../../../test/mocks/exchange/modules/symbol/parse'
+import { mockSymbolParse } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolParse'
 import { Bittrex } from '../../../Bittrex'
 import {
   BITTREX_PARSED_SYMBOLS,
