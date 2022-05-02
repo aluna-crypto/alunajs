@@ -1,6 +1,6 @@
 import { each } from 'lodash'
-import { exchanges } from '../../src/lib/exchanges'
 
+import { exchanges } from '../../src/lib/exchanges'
 import { testExchange } from './modules/testExchange'
 
 
