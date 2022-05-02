@@ -9,7 +9,6 @@ import {
   IAlunaHttp,
   IAlunaHttpRequestCount,
 } from '../../../../lib/core/IAlunaHttp'
-import { IDebankChainSchema } from '../../schemas/IDebankChainSchema'
 import { IWeb3BalanceSchema } from '../../schemas/IWeb3BalanceSchema'
 import { IWeb3TokenSchema } from '../../schemas/IWeb3TokenSchema'
 import { IWeb3TotalBalanceSchema } from '../../schemas/IWeb3TotalBalanceSchema'
@@ -51,11 +50,11 @@ export const list = (module: Web3) => async (
 
   const { chains } = totalBalance
 
-  const tokenListPromises = map(chains, (chain: IDebankChainSchema) => {
-    return module.token.list({ address, chainId: chain.id })
+  const promises = map(chains, ({ id: chainId }) => {
+    return module.token.list({ address, chainId })
   })
 
-  const tokenList = flatten(map(await Promise.all(tokenListPromises), 'tokens'))
+  const tokenList = flatten(map(await Promise.all(promises), 'tokens'))
 
   const { parsedBalances } = await parseBalances({
     totalBalance,
