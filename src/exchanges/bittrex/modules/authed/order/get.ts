@@ -5,9 +5,6 @@ import {
   IAlunaOrderGetParams,
   IAlunaOrderGetReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
-import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 
 
 
@@ -21,16 +18,12 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   log('params', params)
 
-  const { credentials } = exchange
+  const {
+    rawOrder,
+    requestCount,
+  } = await exchange.order.getRaw(params)
 
-  const { http = new BittrexHttp() } = params
-
-  const order = await http.authedRequest<IAlunaOrderSchema>({
-    url: BITTREX_PRODUCTION_URL,
-    credentials,
-  })
-
-  const { requestCount } = http
+  const { order } = exchange.order.parse({ rawOrder })
 
   return {
     order,
