@@ -1,5 +1,8 @@
 import { AlunaError } from './lib/core/AlunaError'
-import { IAlunaExchangeAuthed, IAlunaExchangePublic } from './lib/core/IAlunaExchange'
+import {
+  IAlunaExchangeAuthed,
+  IAlunaExchangePublic,
+} from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { exchanges } from './lib/exchanges'
 import { IAlunaCredentialsSchema } from './lib/schemas/IAlunaCredentialsSchema'

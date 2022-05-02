@@ -15,9 +15,10 @@ export function symbol(params: IPublicParams) {
       requestCount,
     } = await exchangePublic.symbol.listRaw()
 
+    expect(rawSymbols).to.exist
     expect(rawSymbols.length).to.be.greaterThan(0)
 
-    expect(requestCount.public).to.be.greaterThan(0) // at lesat one request
+    expect(requestCount.public).to.be.greaterThan(0)
     expect(requestCount.authed).to.be.eq(0)
 
   })
@@ -31,7 +32,7 @@ export function symbol(params: IPublicParams) {
 
     expect(symbols.length).to.be.greaterThan(0)
 
-    expect(requestCount.public).to.be.eq(0) // must come from cache now
+    expect(requestCount.public).to.be.eq(0)
     expect(requestCount.authed).to.be.eq(0)
 
   })

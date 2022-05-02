@@ -126,6 +126,7 @@
         "custom": { "regex": "(^T[A-Z]*|.+Enum)", "match": true }
       }
     ],
+    "@typescript-eslint/no-non-null-assertion": "off",
 
 
     /*
