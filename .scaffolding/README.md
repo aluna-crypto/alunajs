@@ -1,1 +1,1 @@
-# AlunaJS — Scaffolding
+../docs/scaffonding.md
