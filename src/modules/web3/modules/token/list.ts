@@ -1,28 +1,18 @@
 import debug from 'debug'
 import { map } from 'lodash'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
-import {
-  IAlunaHttp,
-  IAlunaHttpRequestCount,
-} from '../../../../lib/core/IAlunaHttp'
-import { AlunaHttpErrorCodes } from '../../../../lib/errors/AlunaHttpErrorCodes'
+import { IAlunaHttpRequestCount } from '../../../../lib/core/IAlunaHttp'
 import { IDebankTokenSchema } from '../../schemas/IDebankTokenSchema'
 import { IWeb3TokenSchema } from '../../schemas/IWeb3TokenSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
+import { IWeb3TokenListRawParams } from './listRaw'
 
 
 
 const log = debug('@aluna.js:web3/token/listRaw')
 
 
-
-export interface IWeb3TokenListParams {
-  http?: IAlunaHttp
-  address: string
-  chainId: string
-}
 
 export interface IWeb3TokenListReturns {
   tokens: IWeb3TokenSchema[]
@@ -31,45 +21,15 @@ export interface IWeb3TokenListReturns {
 
 
 
-const DEBANK_API_URL = 'https://openapi.debank.com/'
-
-
-
 export const list = (module: Web3) => async (
-  params: IWeb3TokenListParams,
+  params: IWeb3TokenListRawParams,
 ): Promise<IWeb3TokenListReturns> => {
 
   log('listing Web3 raw tokens')
 
-  const {
-    address,
-    chainId,
-    http = new Web3Http(),
-  } = params
+  const { http = new Web3Http() } = params
 
-  const url = [
-    `${DEBANK_API_URL}v1/user/token_list?`,
-    `id=${address}`,
-    `&chain_id=${chainId}`,
-    '&is_all=false',
-    '&has_token=true',
-  ].join('')
-
-  let rawTokens: IDebankTokenSchema[]
-
-  try {
-
-    rawTokens = await http.publicRequest<IDebankTokenSchema[]>({ url })
-
-  } catch (error) {
-
-    throw new AlunaError({
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      message: 'Error getting list of web3 tokens for user.',
-      metadata: error,
-    })
-
-  }
+  const { rawTokens } = await module.token.listRaw({ ...params, http })
 
   const { parsedTokens } = await parseTokens({ rawTokens })
 
