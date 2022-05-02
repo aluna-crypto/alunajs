@@ -1,12 +1,14 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { BittrexHttp } from '../../../BittrexHttp'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 
 
 
@@ -14,11 +16,9 @@ const log = debug('@aluna.js:bittrex/balance/listRaw')
 
 
 
-// TODO: replace all generic types <any>
-
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams,
-): Promise<IAlunaBalanceListRawReturns<any>> => {
+): Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema>> => {
 
   log('params', params)
 
@@ -26,8 +26,9 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BittrexHttp() } = params
 
-  const rawBalances = await http.authedRequest<any[]>({
-    url: BITTREX_PRODUCTION_URL,
+  const rawBalances = await http.authedRequest<IBittrexBalanceSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: `${BITTREX_PRODUCTION_URL}/balances`,
     credentials,
   })
 

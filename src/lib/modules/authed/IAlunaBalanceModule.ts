@@ -15,8 +15,8 @@ export interface IAlunaBalanceModule {
   listRaw (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListRawReturns>
   list (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListReturns>
 
-  parseMany (params: IAlunaBalanceParseManyParams): Promise<IAlunaBalanceParseManyReturns>
-  parse (params: IAlunaBalanceParseParams): Promise<IAlunaBalanceParseReturns>
+  parseMany (params: IAlunaBalanceParseManyParams): IAlunaBalanceParseManyReturns
+  parse (params: IAlunaBalanceParseParams): IAlunaBalanceParseReturns
 
   getTradableBalance? (params: IAlunaBalanceGetTradableBalanceParams): Promise<IAlunaBalanceGetTradableBalanceReturns>
 
@@ -30,21 +30,21 @@ export interface IAlunaBalanceModule {
  * Parse
  */
 
-export interface IAlunaBalanceParseParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaBalanceParseParams <T = any> {
   rawBalance: T
 }
 
-export interface IAlunaBalanceParseReturns extends IAlunaModuleReturns {
+export interface IAlunaBalanceParseReturns {
   balance: IAlunaBalanceSchema
 }
 
 
 
-export interface IAlunaBalanceParseManyParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaBalanceParseManyParams <T = any> {
   rawBalances: T[]
 }
 
-export interface IAlunaBalanceParseManyReturns extends IAlunaModuleReturns {
+export interface IAlunaBalanceParseManyReturns {
   balances: IAlunaBalanceSchema[]
 }
 
@@ -60,7 +60,7 @@ export interface IAlunaBalanceListRawReturns <T = any> extends IAlunaModuleRetur
   rawBalances: T[]
 }
 
-export interface IAlunaBalanceListReturns extends IAlunaBalanceParseManyReturns {}
+export interface IAlunaBalanceListReturns extends IAlunaBalanceParseManyReturns, IAlunaModuleReturns {}
 
 
 

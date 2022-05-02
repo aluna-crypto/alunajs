@@ -5,9 +5,9 @@ import {
   IAlunaBalanceListParams,
   IAlunaBalanceListReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { listRaw } from './listRaw'
+import { parseMany } from './parseMany'
 
 
 
@@ -21,14 +21,11 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('params', params)
 
-  const { credentials } = exchange
-
   const { http = new BittrexHttp() } = params
 
-  const balances = await http.authedRequest<IAlunaBalanceSchema[]>({
-    url: BITTREX_PRODUCTION_URL,
-    credentials,
-  })
+  const { rawBalances } = await listRaw(exchange)({ http })
+
+  const { balances } = parseMany(exchange)({ rawBalances })
 
   const { requestCount } = http
 

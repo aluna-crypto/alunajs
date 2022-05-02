@@ -22,6 +22,8 @@ describe(__filename, () => {
     const summaries = BITTREX_RAW_MARKET_SUMMARIES
     const tickers = BITTREX_RAW_MARKET_TICKERS
 
+
+    // mocking
     const {
       publicRequest,
       authedRequest,
