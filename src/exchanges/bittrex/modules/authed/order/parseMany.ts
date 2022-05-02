@@ -5,9 +5,6 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
-import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 
 
 
@@ -15,26 +12,24 @@ const log = debug('@aluna.js:bittrex/order/parseMany')
 
 
 
-export const parseMany = (exchange: IAlunaExchangeAuthed) => async (
+export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams,
-): Promise<IAlunaOrderParseManyReturns> => {
+): IAlunaOrderParseManyReturns => {
 
   log('params', params)
 
-  const { credentials } = exchange
+  const { rawOrders } = params
 
-  const { http = new BittrexHttp() } = params
+  const parsedOrders = rawOrders.map((rawOrder) => {
 
-  const orders = await http.authedRequest<IAlunaOrderSchema[]>({
-    url: BITTREX_PRODUCTION_URL,
-    credentials,
+    const { order } = exchange.order.parse({ rawOrder })
+
+    return order
+
   })
 
-  const { requestCount } = http
+  log(`parsed ${parsedOrders.length} orders for Bittrex`)
 
-  return {
-    orders,
-    requestCount,
-  }
+  return { orders: parsedOrders }
 
 }
