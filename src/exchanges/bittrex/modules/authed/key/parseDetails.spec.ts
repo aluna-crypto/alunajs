@@ -12,7 +12,7 @@ import * as mockParsePermissionsMod from './parsePermissions'
 
 describe(__filename, () => {
 
-  it('should parse key details just fine', async () => {
+  it('should parse Bittrex key details just fine', async () => {
 
     // preparing data
     const accountId = 'accountId'

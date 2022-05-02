@@ -9,7 +9,7 @@ import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 describe(__filename, () => {
 
-  it('should parse key permissions just fine', async () => {
+  it('should parse Bittrex key permissions just fine', async () => {
 
     // preparing data
     const accountId = 'accountId'
