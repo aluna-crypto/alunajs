@@ -1,12 +1,14 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BittrexHttp } from '../../../BittrexHttp'
 import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
@@ -14,21 +16,23 @@ const log = debug('@aluna.js:bittrex/order/getRaw')
 
 
 
-// TODO: replace all generic types <any>
-
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
-): Promise<IAlunaOrderGetRawReturns<any>> => {
+): Promise<IAlunaOrderGetRawReturns<IBittrexOrderSchema>> => {
 
   log('params', params)
 
   const { credentials } = exchange
 
-  const { http = new BittrexHttp() } = params
+  const {
+    id,
+    http = new BittrexHttp(),
+  } = params
 
   const rawOrder = await http.authedRequest<any>({
-    url: BITTREX_PRODUCTION_URL,
     credentials,
+    verb: AlunaHttpVerbEnum.GET,
+    url: `${BITTREX_PRODUCTION_URL}/orders/${id}`,
   })
 
   const { requestCount } = http
