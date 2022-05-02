@@ -1,16 +1,10 @@
 import { expect } from 'chai'
 import { omit } from 'lodash'
 
-import {
-  mockParsePermissions,
-} from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
+import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import {
-  IAlunaKeyPermissionSchema,
-} from '../../../../../lib/schemas/IAlunaKeySchema'
-import {
-  Bittrex,
-} from '../../../Bittrex'
+import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
+import { BittrexAuthed } from '../../../BittrexAuthed'
 import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 import * as mockParsePermissionsMod from './parsePermissions'
 
@@ -36,8 +30,7 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const exchange = new Bittrex({ settings: {} })
-    const auth = await exchange.auth(credentials)
+    const exchange = new BittrexAuthed({ credentials })
 
     const rawKeyWithoutAccId = omit(rawKey, 'accountId')
 
@@ -55,7 +48,7 @@ describe(__filename, () => {
 
 
     // executing
-    const { key } = await auth.key.parseDetails({ rawKey })
+    const { key } = await exchange.key.parseDetails({ rawKey })
 
 
     // validating

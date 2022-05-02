@@ -3,7 +3,7 @@ import { each } from 'lodash'
 
 import { aluna } from './aluna'
 import { AlunaError } from './lib/core/AlunaError'
-import { IAlunaExchangePublic } from './lib/core/IAlunaExchange'
+import { IAlunaExchangeAuthed, IAlunaExchangePublic } from './lib/core/IAlunaExchange'
 import { AlunaExchangeErrorCodes } from './lib/errors/AlunaExchangeErrorCodes'
 import { exchanges } from './lib/exchanges'
 
@@ -13,7 +13,7 @@ describe(__filename, () => {
 
 
 
-  it('should properly instantiate all exchanges', async () => {
+  it('should properly instantiate exchanges (public)', async () => {
 
     const exchangeIds = Object.keys(exchanges)
 
@@ -36,7 +36,38 @@ describe(__filename, () => {
 
       expect(error).not.to.be.ok
       expect(exchange).to.be.ok
-      expect(exchange instanceof exchanges[exchangeId]).to.be.ok
+      expect(exchange instanceof exchanges[exchangeId].Public).to.be.ok
+
+    })
+
+  })
+
+
+
+  it('should properly instantiate exchanges (authed)', async () => {
+
+    const exchangeIds = Object.keys(exchanges)
+
+    expect(exchangeIds.length).to.eq(1)
+
+    each(exchangeIds, (exchangeId) => {
+
+      let error: AlunaError | undefined
+      let exchange: IAlunaExchangeAuthed | undefined
+
+      try {
+
+        exchange = aluna(exchangeId, { credentials: { key: '', secret: '' } })
+
+      } catch (err) {
+
+        error = err
+
+      }
+
+      expect(error).not.to.be.ok
+      expect(exchange).to.be.ok
+      expect(exchange instanceof exchanges[exchangeId].Authed).to.be.ok
 
     })
 

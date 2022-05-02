@@ -1,10 +1,6 @@
-import {
-  IAlunaExchangeAuthed,
-  IAlunaExchangePublic,
-} from '../../lib/core/IAlunaExchange'
+import { IAlunaExchangePublic } from '../../lib/core/IAlunaExchange'
 import { IAlunaMarketModule } from '../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaSymbolModule } from '../../lib/modules/public/IAlunaSymbolModule'
-import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { buildBittrexSpecs } from './bittrexSpecs'
@@ -25,10 +21,10 @@ export class Bittrex implements IAlunaExchangePublic {
 
 
   constructor(params: {
-    settings: IAlunaSettingsSchema
+    settings?: IAlunaSettingsSchema
   }) {
 
-    const { settings } = params
+    const { settings = {} } = params
 
     this.settings = settings
     this.specs = buildBittrexSpecs({ settings })
@@ -36,21 +32,6 @@ export class Bittrex implements IAlunaExchangePublic {
 
     this.market = market(this)
     this.symbol = symbol(this)
-
-  }
-
-
-
-  public async auth(
-    credentials: IAlunaCredentialsSchema,
-  ): Promise<IAlunaExchangeAuthed> {
-
-    const { BittrexAuthed } = await import('./BittrexAuthed')
-
-    return new BittrexAuthed({
-      settings: this.settings,
-      credentials,
-    })
 
   }
 

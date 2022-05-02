@@ -25,9 +25,6 @@ export interface IAlunaExchangePublic {
   symbol: IAlunaSymbolModule
   market: IAlunaMarketModule
 
-  // auth method
-  auth (credentials: IAlunaCredentialsSchema): Promise<IAlunaExchangeAuthed>
-
 }
 
 

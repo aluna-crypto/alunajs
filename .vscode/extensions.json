@@ -6,5 +6,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "stringham.move-ts",
+    "mike-co.import-sorter",
   ],
 }

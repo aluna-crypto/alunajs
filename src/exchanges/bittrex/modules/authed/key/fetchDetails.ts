@@ -22,7 +22,7 @@ const log = debug('@aluna.js:bittrex/key/fetchDetails')
 
 
 export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaKeyFetchDetailsParams,
+  params: IAlunaKeyFetchDetailsParams = {},
 ): Promise<IAlunaKeyFetchDetailsReturns> => {
 
   log('fetching Bittrex key permissions')

@@ -2,6 +2,7 @@ import compression from 'compression'
 import express, { Request, Response } from 'express'
 
 import { aluna } from '../src/aluna'
+import { IAlunaExchangeAuthed, IAlunaExchangePublic } from '../src/lib/core/IAlunaExchange'
 
 
 
@@ -41,10 +42,13 @@ export const catchAll = async (req: Request, res: Response) => {
 
   try {
 
-    let exchange = aluna(exchangeId)
+    let exchange: IAlunaExchangePublic | IAlunaExchangeAuthed
 
     if (key && secret) {
-      exchange = await exchange.auth({ key, secret, passphrase })
+      const credentials = { key, secret, passphrase }
+      exchange = aluna(exchangeId, { credentials })
+    } else {
+      exchange = aluna(exchangeId)
     }
 
     const response = await exchange[scope][method](params)
