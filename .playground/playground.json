@@ -1,13 +1,13 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-02T16:10:58.613Z",
+    "__export_date": "2022-05-02T19:24:28.561Z",
     "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651255087851,
+            "modified": 1651519437948,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}",
             "name": "listRaw",
@@ -105,7 +105,7 @@
         {
             "_id": "req_2d1b222f29d147369089c3008f5b1ec8",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651255114365,
+            "modified": 1651508882196,
             "created": 1651252550996,
             "url": "{{ _.PLAYGROUND_URL }}",
             "name": "getRaw",
@@ -309,7 +309,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1651507786003,
+            "modified": 1651516644265,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}",
             "name": "fetchDetails",
@@ -367,10 +367,10 @@
             "_type": "request_group"
         },
         {
-            "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
+            "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1651507787769,
-            "created": 1651505373653,
+            "modified": 1651516666925,
+            "created": 1651516666747,
             "url": "{{ _.PLAYGROUND_URL }}",
             "name": "listRaw",
             "description": "",
@@ -392,7 +392,7 @@
                 "token": "",
                 "disabled": false
             },
-            "metaSortKey": -1642285931439,
+            "metaSortKey": -1641700613225.25,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -417,7 +417,7 @@
         {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1651507792354,
+            "modified": 1651509069726,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}",
             "name": "list",
@@ -441,6 +441,162 @@
                 "disabled": false
             },
             "metaSortKey": -1641115295011.5,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
+            "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
+            "modified": 1651519441414,
+            "created": 1651505373653,
+            "url": "{{ _.PLAYGROUND_URL }}",
+            "name": "listRaw",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"order.listRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "",
+                "disabled": false
+            },
+            "metaSortKey": -1642285931539,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
+            "parentId": "fld_8e5b70ed694e4db1ac36de78a4c20dc9",
+            "modified": 1651519429210,
+            "created": 1651516617835,
+            "name": "order",
+            "description": "",
+            "environment": {},
+            "environmentPropertyOrder": null,
+            "metaSortKey": -1651505366319,
+            "_type": "request_group"
+        },
+        {
+            "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
+            "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
+            "modified": 1651519405961,
+            "created": 1651519029538,
+            "url": "{{ _.PLAYGROUND_URL }}",
+            "name": "list",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"order.list\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "",
+                "disabled": false
+            },
+            "metaSortKey": -1642285931489,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_61340a5851b040e09612c173691f44ba",
+            "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
+            "modified": 1651519442871,
+            "created": 1651516690271,
+            "url": "{{ _.PLAYGROUND_URL }}",
+            "name": "getRaw",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"order.getRaw\",\n\t\"id\": \"\",\n\t\"symbolId\": \"\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "",
+                "disabled": false
+            },
+            "metaSortKey": -1642212766687.2812,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_4944714ffe964c12a008929b3214f0c1",
+            "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
+            "modified": 1651519443660,
+            "created": 1651519053540,
+            "url": "{{ _.PLAYGROUND_URL }}",
+            "name": "get",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"order.get\",\n\t\"id\": \"\",\n\t\"symbolId\": \"\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {
+                "type": "bearer",
+                "token": "",
+                "disabled": false
+            },
+            "metaSortKey": -1642139601885.5625,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -495,7 +651,7 @@
         {
             "_id": "env_3d45543920134e1fb6c24379f15ccd13",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651493809330,
+            "modified": 1651509069259,
             "created": 1651252130131,
             "name": "Bittrex",
             "data": {
@@ -518,7 +674,7 @@
         {
             "_id": "env_b3fcde421b4f4a79864800943e4c5340",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651253633545,
+            "modified": 1651508962972,
             "created": 1651252159834,
             "name": "Bitfinex",
             "data": {
@@ -541,7 +697,7 @@
         {
             "_id": "env_99d05146a17d4383817a9d4befb0a61b",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651253638346,
+            "modified": 1651508971186,
             "created": 1651252806794,
             "name": "BitMEX",
             "data": {
