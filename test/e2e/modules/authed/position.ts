@@ -14,11 +14,11 @@ export function position(params: IAuthedParams) {
   it('list', async () => {
 
     const {
-      orders,
+      positions,
       requestCount,
-    } = await exchangeAuthed.order.list()
+    } = await exchangeAuthed.position!.list()
 
-    expect(orders).to.exist
+    expect(positions).to.exist
 
     expect(requestCount.authed).to.be.greaterThan(1)
     expect(requestCount.public).to.be.eq(0)
