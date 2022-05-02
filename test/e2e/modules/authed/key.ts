@@ -25,8 +25,8 @@ export function key(params: IAuthedParams) {
 
     expect(key.meta).to.exist
 
-    expect(requestCount.authed).to.be.greaterThan(1) // at least one
-    expect(requestCount.public).to.be.eq(0) // never called
+    expect(requestCount.authed).to.be.greaterThan(0)
+    expect(requestCount.public).to.be.eq(0)
 
   })
 

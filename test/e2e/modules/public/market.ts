@@ -15,9 +15,9 @@ export function market(params: IPublicParams) {
       requestCount,
     } = await exchangePublic.market.listRaw()
 
-    expect(rawMarkets).to.exist // not always an array
+    expect(rawMarkets).to.exist
 
-    expect(requestCount.public).to.be.greaterThan(0) // at lesat one request
+    expect(requestCount.public).to.be.greaterThan(0)
     expect(requestCount.authed).to.be.eq(0)
 
   })
@@ -31,7 +31,7 @@ export function market(params: IPublicParams) {
 
     expect(markets.length).to.be.greaterThan(0)
 
-    expect(requestCount.public).to.be.eq(0) // must come from cache now
+    expect(requestCount.public).to.be.eq(0)
     expect(requestCount.authed).to.be.eq(0)
 
   })
