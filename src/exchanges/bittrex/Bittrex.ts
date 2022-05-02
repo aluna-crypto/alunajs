@@ -1,6 +1,4 @@
-import {
-  IAlunaExchangePublic,
-} from '../../lib/core/IAlunaExchange'
+import { IAlunaExchangePublic } from '../../lib/core/IAlunaExchange'
 import { IAlunaMarketModule } from '../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaSymbolModule } from '../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'

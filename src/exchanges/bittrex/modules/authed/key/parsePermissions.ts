@@ -1,5 +1,8 @@
 import { debug } from 'debug'
-import { assign, unset } from 'lodash'
+import {
+  assign,
+  unset,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {

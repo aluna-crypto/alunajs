@@ -10,9 +10,15 @@ import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
-import { IAlunaProxySchema, IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import {
+  IAlunaProxySchema,
+  IAlunaSettingsSchema,
+} from '../../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
-import { mockAlunaCache, validateCache } from '../../utils/cache/AlunaCache.mock'
+import {
+  mockAlunaCache,
+  validateCache,
+} from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
 import * as BittrexHttpMod from './BittrexHttp'
 import * as handleBittrexRequestErrorMod from './errors/handleBittrexRequestError'
