@@ -1,7 +1,9 @@
+import { IWeb3ChainSchema } from './IWeb3ChainSchema'
+import { IWeb3TokenSchema } from './IWeb3TokenSchema'
+
+
+
 export interface IWeb3BalanceSchema {
-  symbolId: string
-  symbolName: string
-  available: string
-  total: string
-  // ...
+  chain: Omit<IWeb3ChainSchema, 'meta'>
+  tokens: IWeb3TokenSchema[]
 }
