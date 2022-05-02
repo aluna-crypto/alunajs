@@ -19,8 +19,8 @@ export interface IAlunaOrderReadModule {
   getRaw (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetRawReturns>
   get (params: IAlunaOrderGetParams): Promise<IAlunaOrderGetReturns>
 
-  parseMany (params: IAlunaOrderParseManyParams): Promise<IAlunaOrderParseManyReturns>
-  parse (params: IAlunaOrderParseParams): Promise<IAlunaOrderParseReturns>
+  parseMany (params: IAlunaOrderParseManyParams): IAlunaOrderParseManyReturns
+  parse (params: IAlunaOrderParseParams): IAlunaOrderParseReturns
 
   /* eslint-enable max-len */
 
@@ -42,21 +42,21 @@ export interface IAlunaOrderWriteModule extends IAlunaOrderReadModule {
  * Parse
  */
 
-export interface IAlunaOrderParseParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaOrderParseParams <T = any> {
   rawOrder: T
 }
 
-export interface IAlunaOrderParseReturns extends IAlunaModuleReturns {
+export interface IAlunaOrderParseReturns {
   order: IAlunaOrderSchema
 }
 
 
 
-export interface IAlunaOrderParseManyParams <T = any> extends IAlunaModuleParams {
+export interface IAlunaOrderParseManyParams <T = any> {
   rawOrders: T[]
 }
 
-export interface IAlunaOrderParseManyReturns extends IAlunaModuleReturns {
+export interface IAlunaOrderParseManyReturns {
   orders: IAlunaOrderSchema[]
 }
 
@@ -74,7 +74,7 @@ export interface IAlunaOrderListRawReturns <T = any> extends IAlunaModuleReturns
   rawOrders: T[]
 }
 
-export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns {}
+export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns, IAlunaModuleReturns {}
 
 
 
@@ -91,7 +91,7 @@ export interface IAlunaOrderGetRawReturns <T = any> extends IAlunaModuleReturns 
   rawOrder: T
 }
 
-export interface IAlunaOrderGetReturns extends IAlunaOrderParseReturns {}
+export interface IAlunaOrderGetReturns extends IAlunaOrderParseReturns, IAlunaModuleReturns {}
 
 
 
