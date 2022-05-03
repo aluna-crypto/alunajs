@@ -53,4 +53,29 @@ describe(__filename, () => {
 
   })
 
+  it('should return empty object if validation fails somehow', async () => {
+
+    const params = { symbol: 666 }
+
+    const schema = {
+      validate: () => ({
+        value: undefined,
+      }),
+    } as any
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => validateParams({
+      params,
+      schema,
+    }))
+
+    expect(error).not.to.be.ok
+
+    expect(result).to.be.ok
+    expect(result).to.deep.eq({})
+
+  })
+
 })
