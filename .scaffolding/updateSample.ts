@@ -36,9 +36,9 @@ export async function updateSample () {
       default: 'Bittrex'
     }
   ]
-  
+
   const answer = await inquirer.prompt(question)
-  
+
   const { sourceExchangeName } = answer
 
   const exchangeName = sourceExchangeName
@@ -53,10 +53,12 @@ export async function updateSample () {
     exchangeLower,
   })
 
-  
+
   // Resetting folder in advance
-  // backupIgnoredFiles()
+  backupIgnoredFiles()
+
   shelljs.rm('-rf', SAMPLE_EXCHANGE_DIR)
+  shelljs.mkdir('-P', SAMPLE_EXCHANGE_DIR)
 
 
   /**
@@ -109,7 +111,7 @@ export async function updateSample () {
     }
   }
 
-  // restoreIgnoredFiles()
+  restoreIgnoredFiles()
 
 }
 
@@ -117,19 +119,15 @@ export async function updateSample () {
 
 const backupIgnoredFiles = () => {
 
-  const command = `rsync -a %FILE_PATHS ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR} --delete`
+  const cmdTemplate = `rsync -a --progress %FILE_PATHS --exclude='*' --delete ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR}/`
 
   const includeFilePaths = map(ignoredFilepaths, ignoredPath => {
-
-    return `--include '${ignoredPath}'`
-
+    return `--include='${ignoredPath}'`
   })
 
   shelljs.rm('-rf', BKP_DIR)
 
-  const cmd = command.replace('%FILE_PATHS', includeFilePaths.join(' '))
-
-  log(cmd)
+  const cmd = cmdTemplate.replace('%FILE_PATHS', includeFilePaths.join(' '))
 
   shelljs.exec(cmd)
 
@@ -139,15 +137,9 @@ const backupIgnoredFiles = () => {
 
 const restoreIgnoredFiles = () => {
 
-  const command = `rsync -a %FILE_PATHS ${BKP_DIR} ${SAMPLE_EXCHANGE_DIR}/ --delete`
+  const cmd = `rsync -a --progress ${BKP_DIR}/* ${SAMPLE_EXCHANGE_DIR}/`
 
-  const includeFilePaths = map(ignoredFilepaths, ignoredPath => {
-
-    return `--include '${ignoredPath}'`
-
-  })
-
-  shelljs.exec(command.replace('%FILE_PATHS', includeFilePaths.join(' ')))
+  shelljs.exec(cmd)
 
 }
 
