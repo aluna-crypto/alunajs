@@ -1,12 +1,12 @@
 import { expect } from 'chai'
 
+import { testExchangeSpecsForOrderWriteModule } from '../../../../../../test/helpers/orders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaAccountsErrorCodes } from '../../../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -15,11 +15,17 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexBaseSpecs, BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import {
+  BITTREX_PRODUCTION_URL,
+  bittrexBaseSpecs,
+} from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
-import { BITTREX_PARSED_ORDERS, BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
+import {
+  BITTREX_PARSED_ORDERS,
+  BITTREX_RAW_ORDERS,
+} from '../../../test/fixtures/bittrexOrders'
 import * as parseMod from './parse'
 
 
@@ -34,8 +40,6 @@ describe(__filename, () => {
   it('should place a Bittrex limit order just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
-
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
     const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
 
@@ -78,10 +82,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const {
-      order,
-      requestCount,
-    } = await exchange.order.place({
+    const { order } = await exchange.order.place({
       symbolPair: marketSymbol,
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
@@ -93,8 +94,6 @@ describe(__filename, () => {
 
     // validating
     expect(order).to.deep.eq(mockedParsedOrder)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
 
     expect(authedRequest.callCount).to.be.eq(1)
 
@@ -185,8 +184,7 @@ describe(__filename, () => {
   })
 
   it(
-    'should throw an error placing for insufficient funds '
-      .concat('placing a new bittrex order'),
+    'should throw error for insufficient funds when placing new bittrex order',
     async () => {
 
       // preparing data
@@ -252,8 +250,7 @@ describe(__filename, () => {
   )
 
   it(
-    'should throw an error placing for minimum value '
-      .concat('placing a new bittrex order'),
+    'should throw an error placing for minimum value placing new bittrex order',
     async () => {
 
       // preparing data
@@ -320,8 +317,7 @@ describe(__filename, () => {
   )
 
   it(
-    'should throw an error placing for minimum size '
-      .concat('placing a new bittrex order'),
+    'should throw an error placing for minimum size placing new bittrex order',
     async () => {
 
       // preparing data
@@ -373,7 +369,6 @@ describe(__filename, () => {
       }))
 
       // validating
-
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(expectedCode)
       expect(error?.message).to.be.eq(expectedMessage)
@@ -385,192 +380,25 @@ describe(__filename, () => {
     },
   )
 
-  it(
-    'should ensure a valid account is passed',
-    async () => {
+  it('should ensure the order type is on read mode', async () => {
 
-      // preparing data
-      const mockedRawOrder = BITTREX_RAW_ORDERS[0]
+    // preparing data
+    const exchange = new BittrexAuthed({
+      credentials: {
+        key: '.',
+        secret: '.',
+      },
+    })
 
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
+    // mocking
+    mockValidateParams()
 
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-      const account = 'unknown' as AlunaAccountEnum
+    // executing
+    await testExchangeSpecsForOrderWriteModule({
+      exchangeSpecs: bittrexBaseSpecs,
+      orderWriteModule: exchange.order,
+    })
 
-      const expectedMessage = `Account type '${account}' not found`
-      const expectedCode = AlunaAccountsErrorCodes.TYPE_NOT_FOUND
-
-      // mocking
-      mockValidateParams()
-
-      // executing
-      const exchange = new BittrexAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
-      }))
-
-
-      // validating
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.message).to.be.eq(expectedMessage)
-      expect(error?.code).to.be.eq(expectedCode)
-    },
-  )
-
-  it(
-    'should ensure the account type is implemented/supported',
-    async () => {
-
-      // preparing data
-      const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-      const account = AlunaAccountEnum.MARGIN
-
-      const expectedMessage = `Account type '${account}' not `
-        .concat('supported/implemented for Bittrex')
-      const expectedCode = AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED
-
-      // mocking
-      mockValidateParams()
-
-      // executing
-      const exchange = new BittrexAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
-      }))
-
-
-      // validating
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.message).to.be.eq(expectedMessage)
-      expect(error?.code).to.be.eq(expectedCode)
-    },
-  )
-
-  it(
-    'should ensure the order type is implemented/supported',
-    async () => {
-
-      // preparing data
-      const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-      const account = AlunaAccountEnum.LENDING
-
-      const accountSpecs = bittrexBaseSpecs.accounts.find((a) => {
-        return a.type === account
-      })
-
-      accountSpecs!.implemented = true
-
-      accountSpecs!.supported = true
-
-      const expectedMessage = `Order type '${type}' not `
-        .concat('supported/implemented for Bittrex')
-      const expectedCode = AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED
-
-      // mocking
-      mockValidateParams()
-
-      // executing
-      const exchange = new BittrexAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
-      }))
-
-
-      // validating
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.message).to.be.eq(expectedMessage)
-      expect(error?.code).to.be.eq(expectedCode)
-
-    },
-  )
-
-  it(
-    'should ensure the order type is on read mode',
-    async () => {
-
-      // preparing data
-      const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.STOP_LIMIT
-      const account = AlunaAccountEnum.EXCHANGE
-
-      const expectedMessage = `Order type '${type}' is in read mode`
-      const expectedCode = AlunaOrderErrorCodes.TYPE_IS_READ_ONLY
-
-      // mocking
-      mockValidateParams()
-
-      // executing
-      const exchange = new BittrexAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
-      }))
-
-
-      // validating
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.message).to.be.eq(expectedMessage)
-      expect(error?.code).to.be.eq(expectedCode)
-
-    },
-  )
+  })
 
 })
