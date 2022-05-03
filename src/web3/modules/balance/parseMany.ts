@@ -1,3 +1,4 @@
+import debug from 'debug'
 import {
   filter,
   flatten,
@@ -12,6 +13,10 @@ import { Web3 } from '../../Web3'
 
 
 
+const log = debug('@aluna.js:web3/balance/parseMany')
+
+
+
 export interface IWeb3BalanceParseManyParams {
   rawTotalBalance: IDebankTotalBalanceSchema
   rawTokenList: IDebankTokenSchema[]
@@ -20,6 +25,7 @@ export interface IWeb3BalanceParseManyParams {
 export interface IWeb3BalanceParseManyReturns {
   balances: IAlunaBalanceSchema[]
 }
+
 
 
 export const parseMany = (web3: Web3) => (
@@ -59,6 +65,8 @@ export const parseMany = (web3: Web3) => (
     })
 
   }))
+
+  log(`finished parsing ${balances.length} balances`)
 
   return { balances }
 
