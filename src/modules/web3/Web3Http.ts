@@ -83,7 +83,7 @@ export class Web3Http implements IAlunaHttp {
     } catch (error) {
 
       const { response } = error as AxiosError
-      const defaultMessage = 'Error request Web3 data.'
+      const defaultMessage = 'Error requesting Web3 data.'
 
       throw new AlunaError({
         code: AlunaHttpErrorCodes.REQUEST_ERROR,
