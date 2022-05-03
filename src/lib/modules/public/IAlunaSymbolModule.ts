@@ -8,8 +8,6 @@ import { IAlunaSymbolSchema } from '../../schemas/IAlunaSymbolSchema'
 
 export interface IAlunaSymbolModule {
 
-  /* eslint-disable max-len */
-
   listRaw (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListRawReturns<any>>
   list (params?: IAlunaSymbolListParams): Promise<IAlunaSymbolListReturns>
 
@@ -18,8 +16,6 @@ export interface IAlunaSymbolModule {
 
   parseMany (params: IAlunaSymbolParseManyParams<any>): IAlunaSymbolParseManyReturns
   parse (params: IAlunaSymbolParseParams<any>): IAlunaSymbolParseReturns
-
-  /* eslint-enable max-len */
 
 }
 

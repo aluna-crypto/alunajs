@@ -19,13 +19,9 @@ import {
 
 export interface IWeb3BalanceModule {
 
-  /* eslint-disable max-len */
-
   list(params?: IWeb3BalanceListParams): Promise<IWeb3BalanceListReturns>
   parseMany(params: IWeb3BalanceParseManyParams): IWeb3BalanceParseManyReturns
   getRawTotalBalance(params?: IWeb3GetRawTotalBalanceParams): Promise<IWeb3GetRawTotalBalanceReturns>
-
-  /* eslint-enable max-len */
 
 }
 

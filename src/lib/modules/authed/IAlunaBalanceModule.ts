@@ -10,7 +10,6 @@ import {
 
 export interface IAlunaBalanceModule {
 
-  /* eslint-disable max-len */
 
   listRaw (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListRawReturns>
   list (params?: IAlunaBalanceListParams): Promise<IAlunaBalanceListReturns>
@@ -19,8 +18,6 @@ export interface IAlunaBalanceModule {
   parse (params: IAlunaBalanceParseParams): IAlunaBalanceParseReturns
 
   getTradableBalance? (params: IAlunaBalanceGetTradableBalanceParams): Promise<IAlunaBalanceGetTradableBalanceReturns>
-
-  /* eslint-enable max-len */
 
 }
 

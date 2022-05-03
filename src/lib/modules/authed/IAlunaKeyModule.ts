@@ -11,13 +11,9 @@ import {
 
 export interface IAlunaKeyModule {
 
-  /* eslint-disable max-len */
-
   fetchDetails (params?: IAlunaKeyFetchDetailsParams): Promise<IAlunaKeyFetchDetailsReturns>
   parseDetails (params: IAlunaKeyParseDetailsParams<any>): Promise<IAlunaKeyParseDetailsReturns>
   parsePermissions (params: IAlunaKeyParsePermissionsParams<any>): Promise<IAlunaKeyParsePermissionsReturns>
-
-  /* eslint-enable max-len */
 
 }
 

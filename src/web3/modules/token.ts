@@ -9,11 +9,7 @@ import {
 
 export interface IWeb3TokenModule {
 
-  /* eslint-disable max-len */
-
   listRaw(params?: IWeb3TokenListRawParams): Promise<IWeb3TokenListRawReturns>
-
-  /* eslint-enable max-len */
 
 }
 
