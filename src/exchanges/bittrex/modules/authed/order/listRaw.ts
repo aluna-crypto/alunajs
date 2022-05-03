@@ -17,7 +17,7 @@ const log = debug('@aluna.js:bittrex/order/listRaw')
 
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaOrderListParams,
+  params: IAlunaOrderListParams = {},
 ): Promise<IAlunaOrderListRawReturns<IBittrexOrderSchema>> => {
 
   log('fetching Bittrex open orders', params)
