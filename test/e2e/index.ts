@@ -8,6 +8,7 @@ import { testExchange } from './modules/testExchange'
 describe('aluna', () => {
 
   const exchangeIds = Object.keys(exchanges)
+  // const exchangeIds = ['myNewExchange']
 
   each(exchangeIds, (exchangeId) => {
     describe(`— ${exchangeId}`, () => {
