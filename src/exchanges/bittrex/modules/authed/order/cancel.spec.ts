@@ -77,10 +77,6 @@ describe(__filename, () => {
 
   it('should throw an error when canceling a Bittrex order', async () => {
 
-    // preparing data
-    const http = new BittrexHttp()
-
-
     // mocking
     const {
       publicRequest,
