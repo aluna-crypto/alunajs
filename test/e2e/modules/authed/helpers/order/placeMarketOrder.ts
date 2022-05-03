@@ -24,7 +24,7 @@ export const placeMarketOrder = async (
     symbolPair,
     account: orderAccount || AlunaAccountEnum.EXCHANGE,
     amount: orderAmount,
-    side: AlunaOrderSideEnum.SELL,
+    side: AlunaOrderSideEnum.BUY,
     type: AlunaOrderTypesEnum.MARKET,
   })
 
