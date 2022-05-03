@@ -83,7 +83,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn", {
-      "argsIgnorePattern": "^(_|exchange$|module$)",
+      "argsIgnorePattern": "^(_|exchange$|web3$)",
       "varsIgnorePattern": "^_"
     }],
     "@typescript-eslint/member-delimiter-style": ["error",
