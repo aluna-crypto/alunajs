@@ -44,17 +44,17 @@ const exchangeAuthed = aluna('bitfinex', {
 
 apiAuthed.key.fetchDetails()
 
-apiAuthed.balance.list({ /* ... */})
-apiAuthed.balance.getTradableBalance({ /* ... */})
+apiAuthed.balance.list({ ... })
+apiAuthed.balance.getTradableBalance({ ... })
 
-apiAuthed.order.list({ /* ... */})
-apiAuthed.order.place({ /* ... */})
-apiAuthed.order.edit({ /* ... */})
-apiAuthed.order.cancel({ /* ... */})
+apiAuthed.order.list({ ... })
+apiAuthed.order.place({ ... })
+apiAuthed.order.edit({ ... })
+apiAuthed.order.cancel({ ... })
 
-apiAuthed.position.list({ /* ... */})
-apiAuthed.position.setLeverage({ /* ... */})
-apiAuthed.position.close({ /* ... */})
+apiAuthed.position.list({ ... })
+apiAuthed.position.setLeverage({ ... })
+apiAuthed.position.close({ ... })
 
 
 // Web3
