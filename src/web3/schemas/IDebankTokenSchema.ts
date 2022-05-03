@@ -5,7 +5,7 @@ export interface IDebankTokenSchema {
   chain: string
   name: string
   symbol: string
-  display_symbol?: string
+  display_symbol?: null | string
   optimized_symbol: string
   decimals: number
   logo_url: string
