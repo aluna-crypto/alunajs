@@ -20,7 +20,6 @@ describe(__filename, () => {
   it('should list Bittrex raw balances just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
 
     const mockedBalances = BITTREX_RAW_BALANCES
 
@@ -37,16 +36,11 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const {
-      rawBalances,
-      requestCount,
-    } = await exchange.balance.listRaw({})
+    const { rawBalances } = await exchange.balance.listRaw({})
 
 
     // validating
     expect(rawBalances).to.deep.eq(mockedBalances)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
 
     expect(authedRequest.callCount).to.be.eq(1)
 
