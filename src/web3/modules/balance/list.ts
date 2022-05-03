@@ -14,7 +14,7 @@ import { Web3Http } from '../../Web3Http'
 
 
 
-const log = debug('@aluna.js:web3/balance/listRaw')
+const log = debug('@aluna.js:web3/balance/list')
 
 
 

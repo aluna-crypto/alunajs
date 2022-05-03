@@ -15,7 +15,7 @@ import { DEBANK_API_URL } from '../../webSpecs'
 
 
 
-const log = debug('@aluna.js:web3/balance/getTotalBalanceRaw')
+const log = debug('@aluna.js:web3/balance/getRawTotalBalance')
 
 
 
