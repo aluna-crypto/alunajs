@@ -1,11 +1,11 @@
 import debug from 'debug'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpRequestCount,
-} from '../../../../lib/core/IAlunaHttp'
-import { AlunaHttpErrorCodes } from '../../../../lib/errors/AlunaHttpErrorCodes'
+} from '../../../lib/core/IAlunaHttp'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { IDebankTokenSchema } from '../../schemas/IDebankTokenSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'

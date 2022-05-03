@@ -1,7 +1,7 @@
 import debug from 'debug'
 import { map } from 'lodash'
 
-import { IAlunaHttpRequestCount } from '../../../../lib/core/IAlunaHttp'
+import { IAlunaHttpRequestCount } from '../../../lib/core/IAlunaHttp'
 import { IDebankTokenSchema } from '../../schemas/IDebankTokenSchema'
 import { IWeb3TokenSchema } from '../../schemas/IWeb3TokenSchema'
 import { Web3 } from '../../Web3'
