@@ -380,14 +380,72 @@ describe(__filename, () => {
     },
   )
 
+  it(
+    'should throw an error placing new bittrex order',
+    async () => {
+
+      // preparing data
+      const mockedRawOrder = BITTREX_RAW_ORDERS[0]
+
+      const {
+        marketSymbol,
+        quantity,
+        limit,
+      } = mockedRawOrder
+
+      const side = AlunaOrderSideEnum.BUY
+      const type = AlunaOrderTypesEnum.MARKET
+
+      const expectedMessage = 'dummy-error'
+      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
+
+      const alunaError = new AlunaError({
+        message: 'dummy-error',
+        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        httpStatusCode: 401,
+        metadata: {},
+      })
+
+      // mocking
+      const {
+        publicRequest,
+        authedRequest,
+      } = mockHttp({ classPrototype: BittrexHttp.prototype })
+
+      authedRequest.returns(Promise.reject(alunaError))
+
+      mockValidateParams()
+
+
+      // executing
+      const exchange = new BittrexAuthed({ credentials })
+
+      const { error } = await executeAndCatch(() => exchange.order.place({
+        symbolPair: marketSymbol,
+        account: AlunaAccountEnum.EXCHANGE,
+        amount: Number(quantity),
+        side,
+        type,
+        rate: Number(limit),
+      }))
+
+      // validating
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error?.code).to.be.eq(expectedCode)
+      expect(error?.message).to.be.eq(expectedMessage)
+
+      expect(authedRequest.callCount).to.be.eq(1)
+
+      expect(publicRequest.callCount).to.be.eq(0)
+
+    },
+  )
+
   it('should ensure the order type is on read mode', async () => {
 
     // preparing data
     const exchange = new BittrexAuthed({
-      credentials: {
-        key: '.',
-        secret: '.',
-      },
+      credentials,
     })
 
     // mocking
