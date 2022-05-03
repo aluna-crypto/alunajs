@@ -1,6 +1,5 @@
 import { debug } from 'debug'
 import {
-  filter,
   flatten,
   map,
 } from 'lodash'
@@ -9,10 +8,7 @@ import {
   IAlunaHttp,
   IAlunaHttpRequestCount,
 } from '../../../lib/core/IAlunaHttp'
-import { AlunaWalletEnum } from '../../../lib/enums/AlunaWalletEnum'
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
-import { IWeb3TokenSchema } from '../../schemas/IWeb3TokenSchema'
-import { IWeb3TotalBalanceSchema } from '../../schemas/IWeb3TotalBalanceSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
 
@@ -45,75 +41,31 @@ export const list = (web3: Web3) => async (
     http = new Web3Http(),
   } = params
 
-  const { totalBalance } = await web3.balance.getTotalBalance({
+  const { rawTotalBalance } = await web3.balance.getRawTotalBalance({
     address,
     http,
   })
 
-  const { chains } = totalBalance
+  const { chain_list: chainList } = rawTotalBalance
 
-  const promises = map(chains, ({ id: chainId }) => web3.token.list({
+  const promises = map(chainList, ({ id: chainId }) => web3.token.listRaw({
     address,
     chainId,
     http,
   }))
 
-  const tokenList = flatten(map(await Promise.all(promises), 'tokens'))
+  const rawTokenList = flatten(map(await Promise.all(promises), 'rawTokens'))
 
-  const { parsedBalances } = await parseBalances({
-    totalBalance,
-    tokenList,
+  const { balances } = await web3.balance.parseMany({
+    rawTotalBalance,
+    rawTokenList,
   })
 
   const { requestCount } = http
 
   return {
     requestCount,
-    balances: parsedBalances,
+    balances,
   }
-
-}
-
-
-
-export const parseBalances = async (params: {
-  totalBalance: IWeb3TotalBalanceSchema
-  tokenList: IWeb3TokenSchema[]
-}): Promise<{ parsedBalances: IAlunaBalanceSchema[] }> => {
-
-  const {
-    totalBalance,
-    tokenList,
-  } = params
-
-  const { chains } = totalBalance
-
-  const parsedBalances: IAlunaBalanceSchema[] = flatten(map(chains, (chain) => {
-
-    const tokens = filter(tokenList, { chain: chain.id })
-
-    return map(tokens, (token) => {
-
-      const { amount } = token
-
-      const balance: IAlunaBalanceSchema = {
-        symbolId: token.symbol,
-        chainId: chain.id,
-        wallet: AlunaWalletEnum.WEB3,
-        total: amount,
-        available: amount,
-        meta: {
-          totalBalance,
-          tokenList,
-        },
-      }
-
-      return balance
-
-    })
-
-  }))
-
-  return { parsedBalances }
 
 }
