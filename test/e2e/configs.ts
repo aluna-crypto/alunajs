@@ -12,7 +12,7 @@ export interface IE2EExchange {
   key?: string
   secret?: string
   passphrase?: string
-  marketId: string
+  symbolPair: string
   delayBetweenTests: number
   orderRate: number
   orderLimitRate?: number
@@ -22,7 +22,7 @@ export interface IE2EExchange {
   orderAccount?: AlunaAccountEnum
 }
 
-export interface IE2ELiveData  {
+export interface IE2ELiveData {
   positionId?: string
   limitOrderId?: string
   marketOrderId?: string
@@ -30,6 +30,7 @@ export interface IE2ELiveData  {
   stopMarketOrderId?: string
   orderSymbolPair?: string
   positionSymbolPair?: string
+  orderEditedAmount?: number
 }
 
 export interface IE2EConfig {
@@ -80,7 +81,7 @@ export function getConfig() {
         key: env.BITFINEX_API_KEY,
         secret: env.BITFINEX_API_SECRET,
         passphrase: env.BITFINEX_API_PASSPHRASE,
-        marketId: 'bitfinex/BTC/USD',
+        symbolPair: 'bitfinex/BTC/USD',
         delayBetweenTests: 1000,
         orderRate: 1000,
         orderStopRate: 150000,
@@ -93,7 +94,7 @@ export function getConfig() {
         key: env.BITMEX_API_KEY,
         secret: env.BITMEX_API_SECRET,
         passphrase: env.BITMEX_API_PASSPHRASE,
-        marketId: 'bitmex/BTC/USD:XBTUSD',
+        symbolPair: 'bitmex/BTC/USD:XBTUSD',
         delayBetweenTests: 200,
         orderRate: 1000,
         orderStopRate: 150000,
@@ -106,10 +107,10 @@ export function getConfig() {
         key: env.BITTREX_API_KEY,
         secret: env.BITTREX_API_SECRET,
         passphrase: env.BITTREX_API_PASSPHRASE,
-        marketId: 'bittrex/ETH/BTC',
+        symbolPair: 'ADA-USD',
         delayBetweenTests: 200,
-        orderRate: 0.005,
-        orderAmount: 0.05,
+        orderRate: 0.04,
+        orderAmount: 3,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
@@ -117,7 +118,7 @@ export function getConfig() {
         key: env.POLONIEX_API_KEY,
         secret: env.POLONIEX_API_SECRET,
         passphrase: env.POLONIEX_API_PASSPHRASE,
-        marketId: 'poloniex/ETH/BTC',
+        symbolPair: 'poloniex/ETH/BTC',
         delayBetweenTests: 500,
         orderRate: 0.002,
         orderAmount: 0.05,
@@ -128,7 +129,7 @@ export function getConfig() {
         key: env.BINANCE_API_KEY,
         secret: env.BINANCE_API_SECRET,
         passphrase: env.BINANCE_API_PASSPHRASE,
-        marketId: 'binance/ETH/BTC',
+        symbolPair: 'binance/ETH/BTC',
         delayBetweenTests: 200,
         orderRate: 0.02,
         orderAmount: 0.05,
@@ -139,7 +140,7 @@ export function getConfig() {
         key: env.GATEIO_API_KEY,
         secret: env.GATEIO_API_SECRET,
         passphrase: env.GATEIO_API_PASSPHRASE,
-        marketId: 'gateio/ETH/BTC',
+        symbolPair: 'gateio/ETH/BTC',
         delayBetweenTests: 200,
         orderRate: 0.005,
         orderAmount: 0.05,
@@ -150,7 +151,7 @@ export function getConfig() {
         key: env.VALR_API_KEY,
         secret: env.VALR_API_SECRET,
         passphrase: env.VALR_API_PASSPHRASE,
-        marketId: 'valr/BTC/ZAR',
+        symbolPair: 'valr/BTC/ZAR',
         delayBetweenTests: 500,
         orderRate: 100,
         orderAmount: 0.1,
