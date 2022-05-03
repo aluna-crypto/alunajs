@@ -61,10 +61,10 @@ export function aluna <T extends TPublicParmas | TAuthedParams>(
 
 
 
-aluna.web3 = (_params?: any): { web3: Web3 } => {
+aluna.web3 = (): Web3 => {
 
   const web3 = new Web3()
 
-  return { web3 }
+  return web3
 
 }

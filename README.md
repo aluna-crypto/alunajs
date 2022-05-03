@@ -36,7 +36,7 @@ apiPublic.symbol.list()
 apiPublic.market.list()
 
 
-// Authed instance
+// Authed instance (`credentials` required)
 const exchangeAuthed = aluna('bitfinex', {
   settings,
   credentials,
@@ -44,21 +44,21 @@ const exchangeAuthed = aluna('bitfinex', {
 
 apiAuthed.key.fetchDetails()
 
-apiAuthed.balance.list()
-apiAuthed.balance.getTradableBalance()
+apiAuthed.balance.list({ /* ... */})
+apiAuthed.balance.getTradableBalance({ /* ... */})
 
-apiAuthed.order.list()
-apiAuthed.order.place()
-apiAuthed.order.edit()
-apiAuthed.order.cancel()
+apiAuthed.order.list({ /* ... */})
+apiAuthed.order.place({ /* ... */})
+apiAuthed.order.edit({ /* ... */})
+apiAuthed.order.cancel({ /* ... */})
 
-apiAuthed.position.list()
-apiAuthed.position.setLeverage()
-apiAuthed.position.close()
+apiAuthed.position.list({ /* ... */})
+apiAuthed.position.setLeverage({ /* ... */})
+apiAuthed.position.close({ /* ... */})
 
 
 // Web3
-const { web3 } = aluna.web3()
+const web3 = aluna.web3()
 
 const web3Address = '0xA8...'
 const chainId = Web3DebankChainsEnum.ETHEREUM
@@ -66,7 +66,7 @@ const chainId = Web3DebankChainsEnum.ETHEREUM
 web3.balance.getTotalBalance({ address })
 web3.balance.list({ address })
 
-web3.token.list({ address, chainId } })
+web3.token.list({ address, chainId })
 ```
 
 # Integrations
