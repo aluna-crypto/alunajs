@@ -12,3 +12,6 @@ coverage
 dist
 
 .husky/.eslintcache
+
+
+.bkp
