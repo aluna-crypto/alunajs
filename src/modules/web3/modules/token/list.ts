@@ -21,7 +21,7 @@ export interface IWeb3TokenListReturns {
 
 
 
-export const list = (module: Web3) => async (
+export const list = (web3: Web3) => async (
   params: IWeb3TokenListRawParams,
 ): Promise<IWeb3TokenListReturns> => {
 
@@ -29,7 +29,7 @@ export const list = (module: Web3) => async (
 
   const { http = new Web3Http() } = params
 
-  const { rawTokens } = await module.token.listRaw({ ...params, http })
+  const { rawTokens } = await web3.token.listRaw({ ...params, http })
 
   const { parsedTokens } = await parseTokens({ rawTokens })
 
@@ -56,6 +56,7 @@ export const parseTokens = async (params: {
       chain: rawToken.chain,
       name: rawToken.name,
       symbol: rawToken.symbol,
+      amount: rawToken.amount,
       meta: rawToken,
     }
   })
