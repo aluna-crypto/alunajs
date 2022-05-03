@@ -1,12 +1,14 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { SampleHttp } from '../../../SampleHttp'
 import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
 
 
 
@@ -14,11 +16,9 @@ const log = debug('@aluna.js:sample/balance/listRaw')
 
 
 
-// TODO: replace all generic types <any>
-
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaBalanceListParams,
-): Promise<IAlunaBalanceListRawReturns<any>> => {
+  params: IAlunaBalanceListParams = {},
+): Promise<IAlunaBalanceListRawReturns<ISampleBalanceSchema>> => {
 
   log('params', params)
 
@@ -26,8 +26,9 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new SampleHttp() } = params
 
-  const rawBalances = await http.authedRequest<any[]>({
-    url: SAMPLE_PRODUCTION_URL,
+  const rawBalances = await http.authedRequest<ISampleBalanceSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: `${SAMPLE_PRODUCTION_URL}/balances`,
     credentials,
   })
 

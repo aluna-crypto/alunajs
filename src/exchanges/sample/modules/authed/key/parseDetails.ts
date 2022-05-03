@@ -7,8 +7,8 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
 import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
+import { parsePermissions } from './parsePermissions'
 
 
 
@@ -20,16 +20,22 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaKeyParseDetailsParams<ISampleKeySchema>,
 ): Promise<IAlunaKeyParseDetailsReturns> => {
 
-  log('params', params)
+  log('parsing Sample key details')
 
-  const { credentials } = exchange
+  const {
+    rawKey,
+    http = new SampleHttp(),
+  } = params
 
-  const { http = new SampleHttp() } = params
+  const { accountId } = rawKey
 
-  const key = await http.authedRequest<IAlunaKeySchema>({
-    url: SAMPLE_PRODUCTION_URL,
-    credentials,
-  })
+  const { key: permissions } = await parsePermissions(exchange)({ rawKey })
+
+  const key: IAlunaKeySchema = {
+    accountId,
+    permissions,
+    meta: rawKey,
+  }
 
   const { requestCount } = http
 

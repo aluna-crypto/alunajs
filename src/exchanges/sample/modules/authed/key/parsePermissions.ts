@@ -1,4 +1,8 @@
 import { debug } from 'debug'
+import {
+  assign,
+  unset,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -7,7 +11,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
 
 
 
@@ -16,19 +20,25 @@ const log = debug('@aluna.js:sample/key/parsePermissions')
 
 
 export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaKeyParsePermissionsParams,
+  params: IAlunaKeyParsePermissionsParams<ISampleKeySchema>,
 ): Promise<IAlunaKeyParsePermissionsReturns> => {
 
-  log('params', params)
+  log('parsing Sample key permissions', params)
 
-  const { credentials } = exchange
+  const {
+    rawKey,
+    http = new SampleHttp(),
+  } = params
 
-  const { http = new SampleHttp() } = params
+  const key: IAlunaKeyPermissionSchema = {
+    read: false,
+    trade: false,
+    withdraw: false,
+  }
 
-  const key = await http.authedRequest<IAlunaKeyPermissionSchema>({
-    url: SAMPLE_PRODUCTION_URL,
-    credentials,
-  })
+  unset(rawKey, 'accountId')
+
+  assign(key, rawKey)
 
   const { requestCount } = http
 

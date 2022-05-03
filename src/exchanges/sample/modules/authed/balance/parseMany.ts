@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -6,8 +7,8 @@ import {
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
+import { parse } from './parse'
 
 
 
@@ -15,26 +16,39 @@ const log = debug('@aluna.js:sample/balance/parseMany')
 
 
 
-export const parseMany = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaBalanceParseManyParams,
-): Promise<IAlunaBalanceParseManyReturns> => {
+export const parseMany = (exchange: IAlunaExchangeAuthed) => (
+  params: IAlunaBalanceParseManyParams<ISampleBalanceSchema>,
+): IAlunaBalanceParseManyReturns => {
 
-  log('params', params)
+  const { rawBalances } = params
 
-  const { credentials } = exchange
+  type TSrc = ISampleBalanceSchema
+  type TAcc = IAlunaBalanceSchema[]
 
-  const { http = new SampleHttp() } = params
+  const parsedBalances = reduce<TSrc, TAcc>(rawBalances, (acc, out) => {
 
-  const balances = await http.authedRequest<IAlunaBalanceSchema[]>({
-    url: SAMPLE_PRODUCTION_URL,
-    credentials,
-  })
+    const {
+      total: totalBalance,
+    } = out
 
-  const { requestCount } = http
+    const total = Number(totalBalance)
 
-  return {
-    balances,
-    requestCount,
-  }
+    if (total > 0) {
+
+      const {
+        balance: parsedBalance,
+      } = parse(exchange)(({ rawBalance: out }))
+
+      acc.push(parsedBalance)
+
+    }
+
+    return acc
+
+  }, [])
+
+  log(`parsed ${parsedBalances.length} Sample balances`)
+
+  return { balances: parsedBalances }
 
 }

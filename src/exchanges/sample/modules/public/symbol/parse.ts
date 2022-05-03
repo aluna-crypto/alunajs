@@ -1,23 +1,41 @@
-import debug from 'debug'
-
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseParams,
   IAlunaSymbolParseReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
+import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { sampleBaseSpecs } from '../../../sampleSpecs'
 import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
-
-
-const log = debug('@aluna.js:sample/symbol/parse')
 
 
 export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaSymbolParseParams<ISampleSymbolSchema>,
 ): IAlunaSymbolParseReturns => {
 
-  log('params', params)
+  const { rawSymbol } = params
 
-  return {} as any
+  const {
+    name,
+    symbol,
+  } = rawSymbol
+
+  const id = translateSymbolId({
+    exchangeSymbolId: symbol,
+    symbolMappings: exchange.settings.mappings,
+  })
+
+  const alias = (id !== symbol ? symbol : undefined)
+
+  const parsedSymbol: IAlunaSymbolSchema = {
+    id,
+    name,
+    alias,
+    exchangeId: sampleBaseSpecs.id,
+    meta: rawSymbol,
+  }
+
+  return { symbol: parsedSymbol }
 
 }

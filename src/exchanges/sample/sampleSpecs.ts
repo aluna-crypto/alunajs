@@ -11,7 +11,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-export const SAMPLE_PRODUCTION_URL = 'https://api.sample.com'
+export const SAMPLE_PRODUCTION_URL = 'https://api.sample.com/v3'
 
 
 
@@ -65,8 +65,8 @@ export const sampleExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const sampleBaseSpecs: IAlunaExchangeSchema = {
   id: 'sample',
   name: 'Sample',
-  signupUrl: 'https://sample.com/register',
-  connectApiUrl: 'https://sample.com/manage/api',
+  signupUrl: 'https://global.sample.com/account/register',
+  connectApiUrl: 'https://global.sample.com/Manage?view=api',
   rateLimitingPerMinute: {
     perApiKey: 60,
     perIp: 60,
@@ -74,11 +74,6 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
-    position: AlunaFeaturesModeEnum.WRITE,
-  },
-  features: {
-    offersOrderEditing: true,
-    offersPositionId: true,
   },
   accounts: [
     {

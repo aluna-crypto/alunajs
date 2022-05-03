@@ -1,15 +1,11 @@
-import {
-  IAlunaExchangeAuthed,
-  IAlunaExchangePublic,
-} from '../../lib/core/IAlunaExchange'
+import { IAlunaExchangePublic } from '../../lib/core/IAlunaExchange'
 import { IAlunaMarketModule } from '../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaSymbolModule } from '../../lib/modules/public/IAlunaSymbolModule'
-import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { buildSampleSpecs } from './sampleSpecs'
 import { market } from './modules/public/market'
 import { symbol } from './modules/public/symbol'
-import { buildSampleSpecs } from './sampleSpecs'
 
 
 
@@ -25,10 +21,10 @@ export class Sample implements IAlunaExchangePublic {
 
 
   constructor(params: {
-    settings: IAlunaSettingsSchema
+    settings?: IAlunaSettingsSchema
   }) {
 
-    const { settings } = params
+    const { settings = {} } = params
 
     this.settings = settings
     this.specs = buildSampleSpecs({ settings })
@@ -36,21 +32,6 @@ export class Sample implements IAlunaExchangePublic {
 
     this.market = market(this)
     this.symbol = symbol(this)
-
-  }
-
-
-
-  public async auth(
-    credentials: IAlunaCredentialsSchema,
-  ): Promise<IAlunaExchangeAuthed> {
-
-    const { SampleAuthed } = await import('./SampleAuthed')
-
-    return new SampleAuthed({
-      settings: this.settings,
-      credentials,
-    })
 
   }
 

@@ -5,9 +5,9 @@ import {
   IAlunaBalanceListParams,
   IAlunaBalanceListReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { listRaw } from './listRaw'
+import { parseMany } from './parseMany'
 
 
 
@@ -16,19 +16,16 @@ const log = debug('@aluna.js:sample/balance/list')
 
 
 export const list = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaBalanceListParams,
+  params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListReturns> => {
 
   log('params', params)
 
-  const { credentials } = exchange
-
   const { http = new SampleHttp() } = params
 
-  const balances = await http.authedRequest<IAlunaBalanceSchema[]>({
-    url: SAMPLE_PRODUCTION_URL,
-    credentials,
-  })
+  const { rawBalances } = await listRaw(exchange)({ http })
+
+  const { balances } = parseMany(exchange)({ rawBalances })
 
   const { requestCount } = http
 

@@ -1,40 +1,40 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaBalanceParseParams,
   IAlunaBalanceParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
 
 
 
-const log = debug('@aluna.js:sample/balance/parse')
+export const parse = (exchange: IAlunaExchangeAuthed) => (
+  params: IAlunaBalanceParseParams<ISampleBalanceSchema>,
+): IAlunaBalanceParseReturns => {
 
+  const { rawBalance } = params
 
+  const {
+    total,
+    available,
+    currencySymbol,
+  } = rawBalance
 
-export const parse = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaBalanceParseParams,
-): Promise<IAlunaBalanceParseReturns> => {
-
-  log('params', params)
-
-  const { credentials } = exchange
-
-  const { http = new SampleHttp() } = params
-
-  const balance = await http.authedRequest<IAlunaBalanceSchema>({
-    url: SAMPLE_PRODUCTION_URL,
-    credentials,
+  const symbolId = translateSymbolId({
+    exchangeSymbolId: currencySymbol,
+    symbolMappings: exchange.settings.mappings,
   })
 
-  const { requestCount } = http
-
-  return {
-    balance,
-    requestCount,
+  const balance: IAlunaBalanceSchema = {
+    symbolId,
+    wallet: AlunaWalletEnum.EXCHANGE,
+    available: Number(available),
+    total: Number(total),
+    meta: rawBalance,
   }
+
+  return { balance }
 
 }

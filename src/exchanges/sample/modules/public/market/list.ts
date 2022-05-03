@@ -5,19 +5,28 @@ import {
   IAlunaMarketListParams,
   IAlunaMarketListReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { SampleHttp } from '../../../SampleHttp'
 
 
 
 const log = debug('@aluna.js:sample/market/list')
 
 
-
 export const list = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListReturns> => {
 
-  log('params', params)
+  log('listing Sample markets')
 
-  return {} as any
+  const { http = new SampleHttp() } = params
+  const { requestCount } = http
+
+  const { rawMarkets } = await exchange.market.listRaw({ http })
+  const { markets } = exchange.market.parseMany({ rawMarkets })
+
+  return {
+    markets,
+    requestCount,
+  }
 
 }
