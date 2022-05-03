@@ -6,6 +6,7 @@ import { AlunaOrderStatusEnum } from '../../../../src/lib/enums/AlunaOrderStatus
 import { AlunaOrderTypesEnum } from '../../../../src/lib/enums/AlunaOrderTypesEnum'
 import { IAuthedParams } from '../IAuthedParams'
 import { placeLimitOrder } from './helpers/order/placeLimitOrder'
+import { placeMarketOrder } from './helpers/order/placeMarketOrder'
 
 
 
@@ -34,12 +35,13 @@ export function order(params: IAuthedParams) {
       } = await placeLimitOrder(params)
 
       expect(order).to.exist
-
-      liveData.limitOrderId = order.id!.toString()
-      liveData.orderSymbolPair = order.symbolPair
+      expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
+
+      liveData.limitOrderId = order.id!.toString()
+      liveData.orderSymbolPair = order.symbolPair
 
     })
 
@@ -71,7 +73,7 @@ export function order(params: IAuthedParams) {
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
-      expect(true).to.be.ok
+
     })
 
     it('getRaw', async () => {
@@ -166,8 +168,6 @@ export function order(params: IAuthedParams) {
         orderSymbolPair,
         orderEditedAmount,
       } = liveData
-      // status = must be open
-      // values shoulb be the edited ones
 
       const {
         order,
@@ -226,6 +226,110 @@ export function order(params: IAuthedParams) {
 
       expect(order).to.exist
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+    })
+
+  })
+
+
+
+  /**
+   * Market Orders
+   */
+  describe('type:market', () => {
+
+    it('place', async () => {
+
+      const {
+        order,
+        requestCount,
+      } = await placeMarketOrder(params)
+
+      expect(order).to.exist
+      expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+      liveData.limitOrderId = order.id!.toString()
+      liveData.orderSymbolPair = order.symbolPair
+
+    })
+
+    it('listRaw', async () => {
+
+      const {
+        rawOrders,
+        requestCount,
+      } = await exchangeAuthed.order.listRaw()
+
+      expect(rawOrders).to.exist
+      expect(rawOrders.length).to.be.eq(0)
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+    })
+
+    it('list', async () => {
+
+      const {
+        orders,
+        requestCount,
+      } = await exchangeAuthed.order.list()
+
+      expect(orders).to.exist
+      expect(orders.length).to.be.eq(0)
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+    })
+
+    it('getRaw', async () => {
+
+      const {
+        limitOrderId,
+        orderSymbolPair,
+      } = liveData
+
+      const {
+        rawOrder,
+        requestCount,
+      } = await exchangeAuthed.order.getRaw({
+        symbolPair: orderSymbolPair!,
+        id: limitOrderId!,
+      })
+
+      expect(rawOrder).to.exist
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+    })
+
+    it('get', async () => {
+
+      const {
+        limitOrderId,
+        orderSymbolPair,
+      } = liveData
+
+      const {
+        order,
+        requestCount,
+      } = await exchangeAuthed.order.get({
+        symbolPair: orderSymbolPair!,
+        id: limitOrderId!,
+      })
+
+      expect(order).to.exist
+      expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
