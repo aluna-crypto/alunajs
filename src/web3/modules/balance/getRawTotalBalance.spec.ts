@@ -7,7 +7,7 @@ import { executeAndCatch } from '../../../utils/executeAndCatch'
 import { WEB3_DEBANK_TOTAL_BALANCE } from '../../test/fixtures/totalBalance'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
-import { DEBANK_API_URL } from '../../webSpecs'
+import { DEBANK_API_URL } from '../../web3Settings'
 
 
 
