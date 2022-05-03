@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 
 import { IAuthedParams } from '../IAuthedParams'
 
@@ -8,12 +9,47 @@ export function balance(params: IAuthedParams) {
 
   const { exchangeAuthed } = params
 
-  it('list', () => {
-    expect(exchangeAuthed).to.be.ok
+  it('list', async () => {
+
+    const {
+      balances,
+      requestCount,
+    } = await exchangeAuthed.balance.list()
+
+    expect(balances).to.exist
+
+    expect(balances.length).to.be.greaterThan(0)
+
+    each(balances, (balance) => {
+
+      expect(balance.available).to.exist
+      expect(balance.symbolId).to.exist
+      expect(balance.wallet).to.exist
+      expect(balance.available).to.exist
+      expect(balance.total).to.exist
+      expect(balance.meta).to.exist
+
+    })
+
+    expect(requestCount.authed).to.be.greaterThan(0)
+    expect(requestCount.public).to.be.eq(0)
+
   })
 
-  it('listRaw', () => {
-    expect(exchangeAuthed).to.be.ok
+  it('listRaw', async () => {
+
+    const {
+      rawBalances,
+      requestCount,
+    } = await exchangeAuthed.balance.listRaw()
+
+    expect(rawBalances).to.exist
+
+    expect(rawBalances.length).to.be.greaterThan(0)
+
+    expect(requestCount.authed).to.be.greaterThan(0)
+    expect(requestCount.public).to.be.eq(0)
+
   })
 
   it('getTradableBalance', () => {
