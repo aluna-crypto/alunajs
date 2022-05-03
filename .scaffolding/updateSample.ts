@@ -58,7 +58,6 @@ export async function updateSample () {
   backupIgnoredFiles()
 
   shelljs.rm('-rf', SAMPLE_EXCHANGE_DIR)
-  shelljs.mkdir('-P', SAMPLE_EXCHANGE_DIR)
 
 
   /**
@@ -113,13 +112,15 @@ export async function updateSample () {
 
   restoreIgnoredFiles()
 
+  shelljs.rm('-rf', BKP_DIR)
+
 }
 
 
 
 const backupIgnoredFiles = () => {
 
-  const cmdTemplate = `rsync -a --progress %FILE_PATHS --exclude='*' --delete ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR}/`
+  const cmdTemplate = `rsync -a %FILE_PATHS --exclude='*' --delete ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR}/`
 
   const includeFilePaths = map(ignoredFilepaths, ignoredPath => {
     return `--include='${ignoredPath}'`
@@ -137,7 +138,7 @@ const backupIgnoredFiles = () => {
 
 const restoreIgnoredFiles = () => {
 
-  const cmd = `rsync -a --progress ${BKP_DIR}/* ${SAMPLE_EXCHANGE_DIR}/`
+  const cmd = `rsync -a ${BKP_DIR}/* ${SAMPLE_EXCHANGE_DIR}/`
 
   shelljs.exec(cmd)
 
