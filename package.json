@@ -28,6 +28,7 @@
     "test:e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test:e2e:watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "scaffold": "ts-node .scaffolding/index.ts",
+    "scaffold:update:sample": "DEBUG=@aluna.js:* ts-node .scaffolding/updateSample.ts",
     "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'"
   },
   "dependencies": {
