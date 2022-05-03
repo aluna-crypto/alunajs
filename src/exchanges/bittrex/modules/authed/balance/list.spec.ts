@@ -43,7 +43,7 @@ describe(__filename, () => {
     const {
       balances,
       requestCount,
-    } = await exchange.balance.list({})
+    } = await exchange.balance.list()
 
 
     // validating

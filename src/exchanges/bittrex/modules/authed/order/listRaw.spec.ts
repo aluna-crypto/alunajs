@@ -33,7 +33,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const { rawOrders } = await exchange.order.listRaw({})
+    const { rawOrders } = await exchange.order.listRaw()
 
 
     // validating
