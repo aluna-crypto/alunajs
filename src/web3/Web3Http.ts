@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { debug } from 'debug'
 
 import { AlunaError } from '../lib/core/AlunaError'
@@ -9,6 +9,7 @@ import {
   IAlunaHttpRequestCount,
 } from '../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaExchangeErrorCodes } from '../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaHttpErrorCodes } from '../lib/errors/AlunaHttpErrorCodes'
 import { assembleRequestConfig } from '../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../utils/cache/AlunaCache'
@@ -43,6 +44,8 @@ export class Web3Http implements IAlunaHttp {
   public async publicRequest <T>(
     params: IAlunaHttpPublicParams,
   ): Promise<T> {
+
+    log('performing public request')
 
     const {
       url,
@@ -82,12 +85,9 @@ export class Web3Http implements IAlunaHttp {
 
     } catch (error) {
 
-      const { response } = error as AxiosError
-      const defaultMessage = 'Error requesting Web3 data.'
-
       throw new AlunaError({
         code: AlunaHttpErrorCodes.REQUEST_ERROR,
-        message: response?.data?.code || defaultMessage,
+        message: 'Error requesting Web3 data.',
         metadata: error,
       })
 
@@ -101,17 +101,13 @@ export class Web3Http implements IAlunaHttp {
     params: IAlunaHttpAuthedParams,
   ): Promise<T> {
 
-    const {
-      weight = 1,
-    } = params
+    log('performing authed request')
 
-    log('TODO: Implement stub method: Web3.authedRequest')
-
-    this.requestCount.authed += weight
-
-    const data: T = params as any
-
-    return data
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.METHOD_NOT_IMPLEMENTED,
+      message: 'Authed requests are not implemented yet.',
+      metadata: { params },
+    })
 
   }
 
