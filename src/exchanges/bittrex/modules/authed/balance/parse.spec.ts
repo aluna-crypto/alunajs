@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
@@ -32,7 +32,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balance.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(balance.wallet).to.be.eq(AlunaWalletEnum.EXCHANGE)
     expect(balance.symbolId).to.be.eq(rawBalance.currencySymbol)
     expect(balance.available).to.be.eq(Number(rawBalance.available))
     expect(balance.total).to.be.eq(Number(rawBalance.total))

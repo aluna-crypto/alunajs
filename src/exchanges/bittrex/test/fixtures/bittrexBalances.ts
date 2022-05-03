@@ -1,4 +1,4 @@
-import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
+import { AlunaWalletEnum } from '../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
 import { IBittrexBalanceSchema } from '../../schemas/IBittrexBalanceSchema'
 
@@ -34,21 +34,21 @@ export const BITTREX_RAW_BALANCES: IBittrexBalanceSchema[] = [
 export const BITTREX_PARSED_BALANCES: IAlunaBalanceSchema[] = [
   {
     symbolId: 'BTC',
-    account: AlunaAccountEnum.EXCHANGE,
+    wallet: AlunaWalletEnum.EXCHANGE,
     available: 1500,
     total: 1500,
     meta: {},
   },
   {
     symbolId: 'ETH',
-    account: AlunaAccountEnum.EXCHANGE,
+    wallet: AlunaWalletEnum.EXCHANGE,
     available: 32,
     total: 32,
     meta: {},
   },
   {
     symbolId: 'LTC',
-    account: AlunaAccountEnum.EXCHANGE,
+    wallet: AlunaWalletEnum.EXCHANGE,
     available: 11,
     total: 11,
     meta: {},

@@ -55,6 +55,18 @@ apiAuthed.order.cancel()
 apiAuthed.position.list()
 apiAuthed.position.setLeverage()
 apiAuthed.position.close()
+
+
+// Web3
+const { web3 } = aluna.web3()
+
+const web3Address = '0xA8...'
+const chainId = Web3DebankChainsEnum.ETHEREUM
+
+web3.balance.getTotalBalance({ address })
+web3.balance.list({ address })
+
+web3.token.list({ address, chainId } })
 ```
 
 # Integrations

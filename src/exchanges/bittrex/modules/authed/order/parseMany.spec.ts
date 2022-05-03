@@ -22,8 +22,6 @@ describe(__filename, () => {
   it('should parse many Bittrex raw orders just fine', async () => {
 
     // preparing data
-    const exchange = new BittrexAuthed({ credentials })
-
     const parsedOrders = BITTREX_PARSED_ORDERS
     const rawOrders = BITTREX_RAW_ORDERS
 
@@ -37,10 +35,14 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ credentials })
+
     const { orders } = exchange.order.parseMany({ rawOrders })
 
 
     // validating
+    expect(parse.callCount).to.greaterThan(0)
+
     orders.forEach((order, idx) => {
 
       expect(order.id).to.be.eq(parsedOrders[idx].id)

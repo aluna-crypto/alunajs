@@ -1,8 +1,14 @@
 import compression from 'compression'
-import express, { Request, Response } from 'express'
+import express, {
+  Request,
+  Response,
+} from 'express'
 
 import { aluna } from '../src/aluna'
-import { IAlunaExchangeAuthed, IAlunaExchangePublic } from '../src/lib/core/IAlunaExchange'
+import {
+  IAlunaExchangeAuthed,
+  IAlunaExchangePublic,
+} from '../src/lib/core/IAlunaExchange'
 
 
 
@@ -17,7 +23,8 @@ export function main() {
 
   app.use(compression({ level: 9 }))
 
-  app.use(catchAll)
+  app.get('/exchanges', handleExchangeCommands)
+  app.get('/web3', handleWeb3Commands)
 
   app.listen(port)
 
@@ -27,7 +34,7 @@ export function main() {
 
 
 
-export const catchAll = async (req: Request, res: Response) => {
+export const handleExchangeCommands = async (req: Request, res: Response) => {
 
   const {
     exchangeId,
@@ -62,5 +69,38 @@ export const catchAll = async (req: Request, res: Response) => {
   }
 
 }
+
+
+
+export const handleWeb3Commands = async (req: Request, res: Response) => {
+
+  const {
+    exchangeId,
+    key,
+    secret,
+    passphrase,
+    method: scopeMethod,
+    ...params
+  } = req.body
+
+  const [scope, method] = scopeMethod.split('.')
+
+  try {
+
+    const { web3 } = aluna.web3()
+
+    const response = await web3[scope][method](params)
+
+    console.info(response)
+
+    res.status(200).json(response)
+
+  } catch (error) {
+    res.status(200).json(error)
+  }
+
+}
+
+
 
 main()

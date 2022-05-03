@@ -1,5 +1,5 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaBalanceParseParams,
   IAlunaBalanceParseReturns,
@@ -29,7 +29,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const balance: IAlunaBalanceSchema = {
     symbolId,
-    account: AlunaAccountEnum.EXCHANGE,
+    wallet: AlunaWalletEnum.EXCHANGE,
     available: Number(available),
     total: Number(total),
     meta: rawBalance,
