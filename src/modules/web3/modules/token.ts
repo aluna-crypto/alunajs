@@ -24,11 +24,11 @@ export interface IWeb3TokenModule {
 
 
 
-export function token(module: Web3): IWeb3TokenModule {
+export function token(web3: Web3): IWeb3TokenModule {
 
   return {
-    list: list(module),
-    listRaw: listRaw(module),
+    list: list(web3),
+    listRaw: listRaw(web3),
   }
 
 }

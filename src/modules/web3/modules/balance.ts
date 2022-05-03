@@ -1,8 +1,8 @@
 import { Web3 } from '../Web3'
 import {
   getTotalBalance,
-  IWeb3TotalBalanceParams,
-  IWeb3TotalBalanceReturns,
+  IWeb3GetTotalBalanceParams,
+  IWeb3GetTotalBalanceReturns,
 } from './balance/getTotalBalance'
 import {
   IWeb3BalanceListParams,
@@ -17,7 +17,7 @@ export interface IWeb3BalanceModule {
   /* eslint-disable max-len */
 
   list(params?: IWeb3BalanceListParams): Promise<IWeb3BalanceListReturns>
-  getTotalBalance(params?: IWeb3TotalBalanceParams): Promise<IWeb3TotalBalanceReturns>
+  getTotalBalance(params?: IWeb3GetTotalBalanceParams): Promise<IWeb3GetTotalBalanceReturns>
 
   /* eslint-enable max-len */
 
@@ -25,11 +25,11 @@ export interface IWeb3BalanceModule {
 
 
 
-export function balance(module: Web3): IWeb3BalanceModule {
+export function balance(web3: Web3): IWeb3BalanceModule {
 
   return {
-    list: list(module),
-    getTotalBalance: getTotalBalance(module),
+    list: list(web3),
+    getTotalBalance: getTotalBalance(web3),
   }
 
 }
