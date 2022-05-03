@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
+import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
 import { mockTokenList } from '../token/list.mock'
@@ -40,7 +40,7 @@ describe(__filename, () => {
 
     tokenList.returns(Promise.resolve({ tokens: tokenList }))
     getTotalBalance.returns(Promise.resolve(totalBalance))
-    parseBalances.returns(Promise.resolve({ parsedBalances }))
+    parseBalances.returns({ parsedBalances })
 
 
     // executing

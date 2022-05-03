@@ -4,12 +4,12 @@ import {
   map,
 } from 'lodash'
 
-import { AlunaError } from '../../../../lib/core/AlunaError'
+import { AlunaError } from '../../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpRequestCount,
-} from '../../../../lib/core/IAlunaHttp'
-import { AlunaHttpErrorCodes } from '../../../../lib/errors/AlunaHttpErrorCodes'
+} from '../../../lib/core/IAlunaHttp'
+import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { IDebankChainSchema } from '../../schemas/IDebankChainSchema'
 import { IDebankTotalBalanceSchema } from '../../schemas/IDebankTotalBalanceSchema'
 import { IWeb3ChainSchema } from '../../schemas/IWeb3ChainSchema'

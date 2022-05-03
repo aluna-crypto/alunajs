@@ -1,17 +1,17 @@
 import axios, { AxiosError } from 'axios'
 import { debug } from 'debug'
 
-import { AlunaError } from '../../lib/core/AlunaError'
+import { AlunaError } from '../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpAuthedParams,
   IAlunaHttpPublicParams,
   IAlunaHttpRequestCount,
-} from '../../lib/core/IAlunaHttp'
-import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaHttpErrorCodes } from '../../lib/errors/AlunaHttpErrorCodes'
-import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
-import { AlunaCache } from '../../utils/cache/AlunaCache'
+} from '../lib/core/IAlunaHttp'
+import { AlunaHttpVerbEnum } from '../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaHttpErrorCodes } from '../lib/errors/AlunaHttpErrorCodes'
+import { assembleRequestConfig } from '../utils/axios/assembleRequestConfig'
+import { AlunaCache } from '../utils/cache/AlunaCache'
 
 
 

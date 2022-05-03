@@ -8,9 +8,9 @@ import {
 import {
   IAlunaHttp,
   IAlunaHttpRequestCount,
-} from '../../../../lib/core/IAlunaHttp'
-import { AlunaWalletEnum } from '../../../../lib/enums/AlunaWalletEnum'
-import { IAlunaBalanceSchema } from '../../../../lib/schemas/IAlunaBalanceSchema'
+} from '../../../lib/core/IAlunaHttp'
+import { AlunaWalletEnum } from '../../../lib/enums/AlunaWalletEnum'
+import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
 import { IWeb3TokenSchema } from '../../schemas/IWeb3TokenSchema'
 import { IWeb3TotalBalanceSchema } from '../../schemas/IWeb3TotalBalanceSchema'
 import { Web3 } from '../../Web3'

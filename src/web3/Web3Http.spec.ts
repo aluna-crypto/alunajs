@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaCredentialsSchema } from '../lib/schemas/IAlunaCredentialsSchema'
 import * as Web3HttpMod from './Web3Http'
 
 
