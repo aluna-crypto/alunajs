@@ -9,6 +9,7 @@ import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { IDebankTokenSchema } from '../../schemas/IDebankTokenSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
+import { DEBANK_API_URL } from '../../webSpecs'
 
 
 
@@ -29,15 +30,9 @@ export interface IWeb3TokenListRawReturns {
 
 
 
-const DEBANK_API_URL = 'https://openapi.debank.com/'
-
-
-
 export const listRaw = (web3: Web3) => async (
   params: IWeb3TokenListRawParams,
 ): Promise<IWeb3TokenListRawReturns> => {
-
-  log('listing Web3 raw tokens')
 
   const {
     address,
@@ -45,8 +40,10 @@ export const listRaw = (web3: Web3) => async (
     http = new Web3Http(),
   } = params
 
+  log('getting web3 raw tokens', JSON.stringify({ chainId, address }))
+
   const url = [
-    `${DEBANK_API_URL}v1/user/token_list?`,
+    `${DEBANK_API_URL}/user/token_list?`,
     `id=${address}`,
     `&chain_id=${chainId}`,
     '&is_all=false',
@@ -63,7 +60,7 @@ export const listRaw = (web3: Web3) => async (
 
     throw new AlunaError({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      message: 'Error getting list of web3 tokens for user.',
+      message: 'Error getting Web3 raw tokens.',
       metadata: error,
     })
 
