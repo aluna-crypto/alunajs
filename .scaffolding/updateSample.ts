@@ -18,10 +18,17 @@ const BKP_DIR = join(ROOT, '.bkp')
 
 
 
+/**
+ * All levels must be included individually or the filepath
+ * won't work. It assuems a prefix as `src/exchanges/sample/`.
+ */
 const ignoredFilepaths = [
   'SampleHttp.ts',
   'enums',
   'enums/SampleSideEnum.ts',
+  // 'dir-a',
+  // 'dir-a/dir-b',
+  // 'dir-a/dir-b/filepath.txt',
 ]
 
 
