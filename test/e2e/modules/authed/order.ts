@@ -13,14 +13,11 @@ import { placeMarketOrder } from './helpers/order/placeMarketOrder'
 export function order(params: IAuthedParams) {
 
   const {
+    liveData,
     exchangeAuthed,
     exchangeConfigs,
-    liveData,
   } = params
 
-  const {
-    symbolPair,
-  } = exchangeConfigs
 
   /**
    * Limit Orders
@@ -40,7 +37,7 @@ export function order(params: IAuthedParams) {
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
 
-      liveData.limitOrderId = order.id!.toString()
+      liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
 
     })
@@ -62,6 +59,8 @@ export function order(params: IAuthedParams) {
 
     it('list', async () => {
 
+      const { orderSymbolPair } = liveData
+
       const {
         orders,
         requestCount,
@@ -69,7 +68,7 @@ export function order(params: IAuthedParams) {
 
       expect(orders).to.exist
       expect(orders.length).to.be.greaterThan(0)
-      expect(orders[0].symbolPair).to.be.eq(symbolPair)
+      expect(orders[0].symbolPair).to.be.eq(orderSymbolPair)
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
@@ -98,7 +97,7 @@ export function order(params: IAuthedParams) {
 
     })
 
-    it('get', async () => {
+    it('get:placedOrder', async () => {
 
       const {
         limitOrderId,
@@ -155,13 +154,13 @@ export function order(params: IAuthedParams) {
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
 
-      liveData.limitOrderId = order.id!.toString()
+      liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
       liveData.orderEditedAmount = newAmount
 
     })
 
-    it('get', async () => {
+    it('get:editedOrder', async () => {
 
       const {
         limitOrderId,
@@ -209,7 +208,7 @@ export function order(params: IAuthedParams) {
 
     })
 
-    it('get', async () => {
+    it('get:canceledOrder', async () => {
 
       const {
         limitOrderId,
@@ -246,7 +245,10 @@ export function order(params: IAuthedParams) {
       const {
         order,
         requestCount,
-      } = await placeMarketOrder(params)
+      } = await placeMarketOrder({
+        authed: params,
+        side: AlunaOrderSideEnum.BUY,
+      })
 
       expect(order).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
@@ -255,7 +257,7 @@ export function order(params: IAuthedParams) {
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
 
-      liveData.limitOrderId = order.id!.toString()
+      liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
 
     })
@@ -268,7 +270,6 @@ export function order(params: IAuthedParams) {
       } = await exchangeAuthed.order.listRaw()
 
       expect(rawOrders).to.exist
-      expect(rawOrders.length).to.be.eq(0)
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
@@ -283,7 +284,6 @@ export function order(params: IAuthedParams) {
       } = await exchangeAuthed.order.list()
 
       expect(orders).to.exist
-      expect(orders.length).to.be.eq(0)
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
@@ -312,7 +312,7 @@ export function order(params: IAuthedParams) {
 
     })
 
-    it('get', async () => {
+    it('get:filledOrder', async () => {
 
       const {
         limitOrderId,
@@ -333,6 +333,28 @@ export function order(params: IAuthedParams) {
 
       expect(requestCount.authed).to.be.greaterThan(0)
       expect(requestCount.public).to.be.eq(0)
+
+    })
+
+    it('undo:marketOrder', async () => {
+
+      const {
+        order,
+        requestCount,
+      } = await placeMarketOrder({
+        authed: params,
+        side: AlunaOrderSideEnum.SELL,
+      })
+
+      expect(order).to.exist
+      expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+      expect(requestCount.authed).to.be.greaterThan(0)
+      expect(requestCount.public).to.be.eq(0)
+
+      liveData.limitOrderId = order.id!
+      liveData.orderSymbolPair = order.symbolPair
 
     })
 
