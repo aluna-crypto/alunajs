@@ -1,16 +1,16 @@
 import { ImportMock } from 'ts-mock-imports'
 
-import * as mod from './list'
+import * as mod from './parseMany'
 
 
 
 export const mockBalanceParse = () => {
 
-  const parseBalances = ImportMock.mockFunction(
+  const parseMany = ImportMock.mockFunction(
     mod,
-    'parseBalances',
+    'parseMany',
   )
 
-  return { parseBalances }
+  return { parseMany }
 
 }
