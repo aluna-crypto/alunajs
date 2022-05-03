@@ -36,7 +36,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const { rawBalances } = await exchange.balance.listRaw({})
+    const { rawBalances } = await exchange.balance.listRaw()
 
 
     // validating

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 
 import { IAuthedParams } from '../IAuthedParams'
+import { isGetTradableBalanceImplemented } from './helpers/utils/isGetTradableBalanceImplemented'
 
 
 
@@ -52,8 +53,12 @@ export function balance(params: IAuthedParams) {
 
   })
 
-  it('getTradableBalance', () => {
-    expect(exchangeAuthed).to.be.ok
-  })
+  if (isGetTradableBalanceImplemented(exchangeAuthed)) {
+
+    it('getTradableBalance', () => {
+      expect(exchangeAuthed).to.be.ok
+    })
+
+  }
 
 }
