@@ -7,6 +7,7 @@ export interface IWeb3TokenSchema {
   chain: string
   name: string
   symbol: string
+  amount: number
   displaySymbol?: string
   meta: IDebankTokenSchema
 }
