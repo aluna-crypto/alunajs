@@ -1,12 +1,13 @@
 import { expect } from 'chai'
 
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { WEB3_DEBANK_TOKEN_LIST } from '../../test/fixtures/tokens'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
-import { mockTokenList } from '../token/list.mock'
-import { IWeb3GetTotalBalanceReturns } from './getTotalBalance'
-import { mockGetTotalBalance } from './getTotalBalance.mock'
-import { mockBalanceParse } from './list.mock'
+import { mockTokenListRaw } from '../token/listRaw.mock'
+import { IWeb3GetRawTotalBalanceReturns } from './getRawTotalBalance'
+import { mockGetRawTotalBalance } from './getRawTotalBalance.mock'
+import { mockBalanceParseMany } from './parseMany.mock'
 
 
 
@@ -23,24 +24,25 @@ describe(__filename, () => {
 
 
     // mocking
-    const { getTotalBalance } = mockGetTotalBalance()
-    const { list: tokenList } = mockTokenList()
-    const { parseBalances } = mockBalanceParse()
+    const { getRawTotalBalance } = mockGetRawTotalBalance()
+    const { listRaw: tokenListRaw } = mockTokenListRaw()
+    const { parseMany: balanceParseMany } = mockBalanceParseMany()
 
-    const totalBalance: IWeb3GetTotalBalanceReturns = {
+    const totalBalance: IWeb3GetRawTotalBalanceReturns = {
       requestCount: {
         authed: 0,
         public: 0,
       },
-      totalBalance: {
-        chains: [{ id: 'eth' } as any], // TODO: use fixtures with proper typing
-        totalUsdValue: 1,
+      rawTotalBalance: {
+        // TODO: use fixtures with proper typing
+        chain_list: [{ id: 'eth' } as any],
+        total_usd_value: 1,
       },
     }
 
-    tokenList.returns(Promise.resolve({ tokens: tokenList }))
-    getTotalBalance.returns(Promise.resolve(totalBalance))
-    parseBalances.returns({ parsedBalances })
+    tokenListRaw.returns(Promise.resolve({ tokens: WEB3_DEBANK_TOKEN_LIST }))
+    getRawTotalBalance.returns(Promise.resolve(totalBalance))
+    balanceParseMany.returns({ balances: parsedBalances })
 
 
     // executing
@@ -55,16 +57,16 @@ describe(__filename, () => {
 
 
     // validating
-    expect(getTotalBalance.callCount).to.eq(1)
-    expect(tokenList.callCount).to.eq(1)
-    expect(parseBalances.callCount).to.eq(1)
+    expect(getRawTotalBalance.callCount).to.eq(1)
+    expect(tokenListRaw.callCount).to.eq(1)
+    expect(balanceParseMany.callCount).to.eq(1)
 
-    expect(getTotalBalance.firstCall.args[0]).to.deep.eq({
+    expect(getRawTotalBalance.firstCall.args[0]).to.deep.eq({
       address,
       http, // <— http always present down the chain
     })
 
-    expect(tokenList.firstCall.args[0]).to.deep.eq({
+    expect(tokenListRaw.firstCall.args[0]).to.deep.eq({
       address,
       http, // <— http always present down the chain
       chainId: 'eth',
