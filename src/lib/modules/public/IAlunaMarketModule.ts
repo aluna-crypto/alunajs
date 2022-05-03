@@ -8,8 +8,6 @@ import {
 
 export interface IAlunaMarketModule {
 
-  /* eslint-disable max-len */
-
   listRaw (params?: IAlunaMarketListParams): Promise<IAlunaMarketListRawReturns<any>>
   list (params?: IAlunaMarketListParams): Promise<IAlunaMarketListReturns>
 
@@ -18,8 +16,6 @@ export interface IAlunaMarketModule {
 
   parseMany (params: IAlunaMarketParseManyParams<any>): IAlunaMarketParseManyReturns
   parse (params: IAlunaMarketParseParams<any>): IAlunaMarketParseReturns
-
-  /* eslint-enable max-len */
 
 }
 

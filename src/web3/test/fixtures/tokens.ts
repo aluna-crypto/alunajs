@@ -2,10 +2,6 @@ import { IDebankTokenSchema } from '../../schemas/IDebankTokenSchema'
 
 
 
-/* eslint-disable max-len */
-
-
-
 export const WEB3_DEBANK_TOKEN_LIST: IDebankTokenSchema[] = [
   {
     id: '0x4fbb350052bca5417566f188eb2ebce5b19bc964',

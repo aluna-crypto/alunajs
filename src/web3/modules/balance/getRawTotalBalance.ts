@@ -11,7 +11,7 @@ import { IDebankChainSchema } from '../../schemas/IDebankChainSchema'
 import { IDebankTotalBalanceSchema } from '../../schemas/IDebankTotalBalanceSchema'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
-import { DEBANK_API_URL } from '../../webSpecs'
+import { DEBANK_API_URL } from '../../web3Settings'
 
 
 

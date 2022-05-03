@@ -11,8 +11,6 @@ import { IAlunaOrderSchema } from '../../schemas/IAlunaOrderSchema'
 
 export interface IAlunaOrderReadModule {
 
-  /* eslint-disable max-len */
-
   listRaw (params?: IAlunaOrderListParams): Promise<IAlunaOrderListRawReturns>
   list (params?: IAlunaOrderListParams): Promise<IAlunaOrderListReturns>
 
@@ -21,8 +19,6 @@ export interface IAlunaOrderReadModule {
 
   parseMany (params: IAlunaOrderParseManyParams): IAlunaOrderParseManyReturns
   parse (params: IAlunaOrderParseParams): IAlunaOrderParseReturns
-
-  /* eslint-enable max-len */
 
 }
 

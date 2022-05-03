@@ -8,7 +8,7 @@ import { Web3DebankChainsEnum } from '../../enums/Web3DebankChainsEnum'
 import { WEB3_DEBANK_TOKEN_LIST } from '../../test/fixtures/tokens'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
-import { DEBANK_API_URL } from '../../webSpecs'
+import { DEBANK_API_URL } from '../../web3Settings'
 
 
 
@@ -42,7 +42,6 @@ describe(__filename, () => {
     // validating
     expect(publicRequest.callCount).to.eq(1)
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      /* eslint-disable-next-line max-len */
       url: `${DEBANK_API_URL}/user/token_list?id=${address}&chain_id=${chainId}&is_all=false&has_token=true`,
     })
 

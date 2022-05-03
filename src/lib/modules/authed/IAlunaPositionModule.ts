@@ -8,8 +8,6 @@ import { IAlunaPositionSchema } from '../../schemas/IAlunaPositionSchema'
 
 export interface IAlunaPositionModule {
 
-  /* eslint-disable max-len */
-
   listRaw (params?: IAlunaPositionListParams): Promise<IAlunaPositionListRawReturns>
   list (params?: IAlunaPositionListParams): Promise<IAlunaPositionListReturns>
 
@@ -23,8 +21,6 @@ export interface IAlunaPositionModule {
 
   getLeverage? (params: IAlunaPositionGetLeverageParams): Promise<IAlunaPositionGetLeverageReturns>
   setLeverage? (params: IAlunaPositionSetLeverageParams): Promise<IAlunaPositionSetLeverageReturns>
-
-  /* eslint-enable max-len */
 
 }
 

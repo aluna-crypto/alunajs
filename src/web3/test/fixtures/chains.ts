@@ -2,10 +2,6 @@ import { IDebankChainSchema } from '../../schemas/IDebankChainSchema'
 
 
 
-/* eslint-disable max-len */
-
-
-
 export const WEB3_DEBANK_CHAIN_LIST: IDebankChainSchema[] = [
   {
     id: 'eth',
