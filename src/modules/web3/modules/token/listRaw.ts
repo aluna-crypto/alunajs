@@ -33,7 +33,7 @@ const DEBANK_API_URL = 'https://openapi.debank.com/'
 
 
 
-export const listRaw = (module: Web3) => async (
+export const listRaw = (web3: Web3) => async (
   params: IWeb3TokenListRawParams,
 ): Promise<IWeb3TokenListRawReturns> => {
 
