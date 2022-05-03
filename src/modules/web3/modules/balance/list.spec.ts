@@ -42,6 +42,7 @@ describe(__filename, () => {
     getTotalBalance.returns(Promise.resolve(totalBalance))
     parseBalances.returns(Promise.resolve({ parsedBalances }))
 
+
     // executing
     const web3 = new Web3()
 
