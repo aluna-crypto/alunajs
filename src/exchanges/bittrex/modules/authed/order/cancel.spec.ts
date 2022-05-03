@@ -25,8 +25,6 @@ describe(__filename, () => {
   it('should cancel a Bittrex order just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
-
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
     const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
 
@@ -49,10 +47,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const {
-      order,
-      requestCount,
-    } = await exchange.order.cancel({
+    const { order } = await exchange.order.cancel({
       id,
       symbolPair: marketSymbol,
     })
@@ -60,8 +55,6 @@ describe(__filename, () => {
 
     // validating
     expect(order).to.deep.eq(mockedParsedOrder)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
 
     expect(authedRequest.callCount).to.be.eq(1)
 

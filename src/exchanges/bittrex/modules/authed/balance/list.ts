@@ -16,7 +16,7 @@ const log = debug('@aluna.js:bittrex/balance/list')
 
 
 export const list = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaBalanceListParams,
+  params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListReturns> => {
 
   log('params', params)

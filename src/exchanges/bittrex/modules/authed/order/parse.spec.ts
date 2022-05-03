@@ -8,8 +8,7 @@ import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { translateOrderSideToAluna } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bittrexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bittrexOrderTypeAdapter'
-import { BittrexOrderStatusEnum } from '../../../enums/BittrexOrderStatusEnum'
-import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
+import { BITTREX_RAW_CLOSED_ORDER, BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 
 
 
@@ -90,17 +89,9 @@ describe(__filename, () => {
       // preparing data
       const exchange = new BittrexAuthed({ credentials })
 
-      const rawOrder = BITTREX_RAW_ORDERS[0]
+      const rawOrder = BITTREX_RAW_CLOSED_ORDER
 
       const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
-
-      const oldStatus = rawOrder.status
-      const oldLimit = rawOrder.limit
-      const oldProceeds = rawOrder.proceeds
-
-      rawOrder.proceeds = rawOrder.limit
-      rawOrder.limit = undefined as any
-      rawOrder.status = BittrexOrderStatusEnum.CLOSED
 
       const translatedOrderStatus = translateOrderStatusToAluna({
         fillQuantity: rawOrder.fillQuantity,
@@ -129,11 +120,6 @@ describe(__filename, () => {
       expect(order.total).to.be.eq(total)
       expect(order.filledAt?.getTime()).to.be.eq(closedAt.getTime())
 
-
-      rawOrder.proceeds = oldProceeds
-      rawOrder.limit = oldLimit
-      rawOrder.status = oldStatus
-
     },
   )
 
@@ -144,17 +130,10 @@ describe(__filename, () => {
       // preparing data
       const exchange = new BittrexAuthed({ credentials })
 
-      const rawOrder = BITTREX_RAW_ORDERS[0]
+      const rawOrder = BITTREX_RAW_CLOSED_ORDER
 
       const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
 
-      const oldStatus = rawOrder.status
-      const oldLimit = rawOrder.limit
-      const oldProceeds = rawOrder.proceeds
-      const oldFillQuantity = rawOrder.fillQuantity
-
-      rawOrder.status = BittrexOrderStatusEnum.CLOSED
-      rawOrder.limit = undefined as any
       rawOrder.proceeds = undefined as any
       rawOrder.fillQuantity = '1'
 
@@ -184,11 +163,6 @@ describe(__filename, () => {
       expect(order.status).to.be.eq(translatedOrderStatus)
       expect(order.total).to.be.eq(total)
       expect(order.canceledAt?.getTime()).to.be.eq(closedAt.getTime())
-
-      rawOrder.status = oldStatus
-      rawOrder.limit = oldLimit
-      rawOrder.proceeds = oldProceeds
-      rawOrder.fillQuantity = oldFillQuantity
 
     },
   )

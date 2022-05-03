@@ -51,4 +51,7 @@ export const placeOrderParamsSchema = Joi.object<IAlunaOrderPlaceParams>({
     .options({
       stripUnknown: true,
     }),
+  http: Joi
+    .object()
+    .optional(),
 })

@@ -20,8 +20,6 @@ describe(__filename, () => {
   it('should get a Bittrex raw order just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
-
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
 
     const { id } = mockedRawOrder
@@ -39,10 +37,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const {
-      rawOrder,
-      requestCount,
-    } = await exchange.order.getRaw({
+    const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
     })
@@ -50,8 +45,6 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrder).to.deep.eq(mockedRawOrder)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
 
     expect(authedRequest.callCount).to.be.eq(1)
 

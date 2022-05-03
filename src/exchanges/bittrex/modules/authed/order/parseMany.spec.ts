@@ -41,13 +41,9 @@ describe(__filename, () => {
 
 
     // validating
-    expect(parse.callCount).to.greaterThan(0)
+    expect(orders).to.deep.eq(parsedOrders)
 
-    orders.forEach((order, idx) => {
-
-      expect(order.id).to.be.eq(parsedOrders[idx].id)
-
-    })
+    expect(parse.callCount).to.be.eq(rawOrders.length)
 
   })
 
