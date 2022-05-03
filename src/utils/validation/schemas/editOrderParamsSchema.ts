@@ -53,4 +53,7 @@ export const editOrderParamsSchema = Joi.object({
     .options({
       stripUnknown: true,
     }),
+  http: Joi
+    .object()
+    .optional(),
 })
