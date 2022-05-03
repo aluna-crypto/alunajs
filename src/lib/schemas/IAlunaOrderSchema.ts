@@ -19,7 +19,7 @@ export interface IAlunaOrderUICustomDisplay {
 
 export interface IAlunaOrderSchema {
 
-  id: string | number
+  id: string
   symbolPair: string
 
   exchangeId: string
