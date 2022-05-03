@@ -15,7 +15,7 @@ import { AlunaApiFeaturesEnum } from '../src/lib/enums/AlunaApiFeaturesEnum'
 
 
 
-const log = debug('@aluna.js:scaffold')
+const log = debug('@aluna.js:scaffold/generate')
 
 
 
@@ -125,7 +125,6 @@ export async function generate (answers: IPromptAnswers) {
   log('replacing strings inside files')
 
   for(const file of files) {
-    shelljs.sed('-i', /sample/g, exchangeLower, file)
     shelljs.sed('-i', /Sample/g, exchangeName, file)
     shelljs.sed('-i', /SAMPLE/g, exchangeUpper, file)
     shelljs.sed('-i', /sample/g, exchangeLower, file)
@@ -143,7 +142,6 @@ export async function generate (answers: IPromptAnswers) {
 
       let to = file
         .replace('sample', exchangeLower)
-        .replace('Sample', exchangeName)
         .replace('SAMPLE', exchangeUpper)
         .replace('sample', exchangeLower)
 
