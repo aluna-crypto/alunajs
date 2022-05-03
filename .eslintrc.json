@@ -32,7 +32,7 @@
       "error", {
         "code": 80,
         "tabWidth": 2,
-        "ignorePattern": "^import | ^export | implements | extends | (describe|it)(.|() | `.{30,}`"
+        "ignorePattern": "^import | ^export | implements | extends | (describe|it)(\\.|\\() | `.{30,}`"
       }
     ],
     "no-console": ["warn", { "allow": ["info", "error"] }],
