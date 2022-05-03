@@ -15,7 +15,6 @@ export function order(params: IAuthedParams) {
       requestCount,
     } = await exchangeAuthed.order.list()
 
-    console.log(orders)
     expect(orders).to.exist
 
     expect(requestCount.authed).to.be.greaterThan(1)

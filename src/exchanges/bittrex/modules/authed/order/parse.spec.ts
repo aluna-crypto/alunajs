@@ -94,6 +94,10 @@ describe(__filename, () => {
 
       const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
 
+      const oldStatus = rawOrder.status
+      const oldLimit = rawOrder.limit
+      const oldProceeds = rawOrder.proceeds
+
       rawOrder.proceeds = rawOrder.limit
       rawOrder.limit = undefined as any
       rawOrder.status = BittrexOrderStatusEnum.CLOSED
@@ -125,6 +129,11 @@ describe(__filename, () => {
       expect(order.total).to.be.eq(total)
       expect(order.filledAt?.getTime()).to.be.eq(closedAt.getTime())
 
+
+      rawOrder.proceeds = oldProceeds
+      rawOrder.limit = oldLimit
+      rawOrder.status = oldStatus
+
     },
   )
 
@@ -139,7 +148,13 @@ describe(__filename, () => {
 
       const [baseCurrency, quoteCurrency] = rawOrder.marketSymbol.split('-')
 
+      const oldStatus = rawOrder.status
+      const oldLimit = rawOrder.limit
+      const oldProceeds = rawOrder.proceeds
+      const oldFillQuantity = rawOrder.fillQuantity
+
       rawOrder.status = BittrexOrderStatusEnum.CLOSED
+      rawOrder.limit = undefined as any
       rawOrder.proceeds = undefined as any
       rawOrder.fillQuantity = '1'
 
@@ -169,6 +184,11 @@ describe(__filename, () => {
       expect(order.status).to.be.eq(translatedOrderStatus)
       expect(order.total).to.be.eq(total)
       expect(order.canceledAt?.getTime()).to.be.eq(closedAt.getTime())
+
+      rawOrder.status = oldStatus
+      rawOrder.limit = oldLimit
+      rawOrder.proceeds = oldProceeds
+      rawOrder.fillQuantity = oldFillQuantity
 
     },
   )
