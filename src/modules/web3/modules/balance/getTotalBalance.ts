@@ -23,12 +23,12 @@ const log = debug('@aluna.js:web3/balance/getTotalBalanceRaw')
 
 
 
-export interface IWeb3TotalBalanceParams {
+export interface IWeb3GetTotalBalanceParams {
   http?: IAlunaHttp
   address: string
 }
 
-export interface IWeb3TotalBalanceReturns {
+export interface IWeb3GetTotalBalanceReturns {
   totalBalance: IWeb3TotalBalanceSchema
   requestCount: IAlunaHttpRequestCount
 }
@@ -39,9 +39,9 @@ const DEBANK_API_URL = 'https://openapi.debank.com/'
 
 
 
-export const getTotalBalance = (module: Web3) => async (
-  params: IWeb3TotalBalanceParams,
-): Promise<IWeb3TotalBalanceReturns> => {
+export const getTotalBalance = (web3: Web3) => async (
+  params: IWeb3GetTotalBalanceParams,
+): Promise<IWeb3GetTotalBalanceReturns> => {
 
   log('getting Web3 total balance')
 
