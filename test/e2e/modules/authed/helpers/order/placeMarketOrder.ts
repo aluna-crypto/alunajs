@@ -5,26 +5,34 @@ import { IAuthedParams } from '../../../IAuthedParams'
 
 
 
+export interface IPlaceMarketOrderParams {
+  authed: IAuthedParams
+  side: AlunaOrderSideEnum
+}
+
 export const placeMarketOrder = async (
-  params: IAuthedParams,
+  params: IPlaceMarketOrderParams,
 ) => {
 
   const {
-    exchangeAuthed,
-    exchangeConfigs,
+    side,
+    authed,
   } = params
 
-  const {
-    symbolPair,
-    orderAccount,
-    orderAmount,
-  } = exchangeConfigs
 
-  return exchangeAuthed.order.place({
+  const {
+    exchangeConfigs: {
+      symbolPair,
+      orderAccount,
+      orderAmount,
+    },
+  } = authed
+
+  return authed.exchangeAuthed.order.place({
     symbolPair,
     account: orderAccount || AlunaAccountEnum.EXCHANGE,
     amount: orderAmount,
-    side: AlunaOrderSideEnum.BUY,
+    side,
     type: AlunaOrderTypesEnum.MARKET,
   })
 
