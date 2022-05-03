@@ -52,8 +52,6 @@ export class Web3Http implements IAlunaHttp {
       settings,
     } = params
 
-    this.requestCount.public += weight
-
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
@@ -71,6 +69,8 @@ export class Web3Http implements IAlunaHttp {
       return AlunaCache.cache.get<T>(cacheKey) as T
 
     }
+
+    this.requestCount.public += weight
 
     try {
 
