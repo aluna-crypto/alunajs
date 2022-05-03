@@ -19,7 +19,9 @@ const BKP_DIR = join(ROOT, '.bkp')
 
 
 const ignoredFilepaths = [
-  'src/exchanges/sample/SampleHttp.ts',
+  'SampleHttp.ts',
+  'enums',
+  'enums/SampleSideEnum.ts',
 ]
 
 
