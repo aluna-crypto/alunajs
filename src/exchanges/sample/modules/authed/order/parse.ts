@@ -9,7 +9,7 @@ import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 
 
 
-const log = debug('@aluna.js:sample/order/parse')
+const log = debug('@alunajs:sample/order/parse')
 
 
 

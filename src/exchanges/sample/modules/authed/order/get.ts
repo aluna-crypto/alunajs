@@ -8,7 +8,7 @@ import {
 
 
 
-const log = debug('@aluna.js:sample/order/get')
+const log = debug('@alunajs:sample/order/get')
 
 
 

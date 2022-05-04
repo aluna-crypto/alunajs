@@ -9,7 +9,7 @@ import { BittrexHttp } from '../../../BittrexHttp'
 
 
 
-const log = debug('@aluna.js:bittrex/symbol/list')
+const log = debug('@alunajs:bittrex/symbol/list')
 
 
 

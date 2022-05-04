@@ -8,7 +8,7 @@ import {
 
 
 
-const log = debug('@aluna.js:sample/order/parseMany')
+const log = debug('@alunajs:sample/order/parseMany')
 
 
 

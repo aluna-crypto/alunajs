@@ -17,7 +17,7 @@ import { BittrexOrderStatusEnum } from '../../../enums/BittrexOrderStatusEnum'
 
 
 
-const log = debug('@aluna.js:bittrex/order/parse')
+const log = debug('@alunajs:bittrex/order/parse')
 
 
 

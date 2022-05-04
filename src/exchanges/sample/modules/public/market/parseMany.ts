@@ -10,7 +10,7 @@ import { ISampleMarketSchema } from '../../../schemas/ISampleMarketSchema'
 
 
 
-const log = debug('@aluna.js:sample/market/parseMany')
+const log = debug('@alunajs:sample/market/parseMany')
 
 
 

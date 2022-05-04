@@ -18,7 +18,7 @@ import {
 
 
 
-const log = debug('@aluna.js:bittrex/market/parseMany')
+const log = debug('@alunajs:bittrex/market/parseMany')
 
 
 

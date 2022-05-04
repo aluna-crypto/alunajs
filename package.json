@@ -1,5 +1,5 @@
 {
-  "name": "aluna.js",
+  "name": "alunajs",
   "version": "0.0.1",
   "description": "Aluna exchanges hub.",
   "main": "dist/index.js",
@@ -28,7 +28,7 @@
     "test-ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
-    "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'",
+    "playground": "nodemon -w src -e ts -x 'DEBUG=@alunajs:* ts-node .playground/index.ts'",
     "add-exchange": "ts-node .scaffolding/addExchange.ts"
   },
   "dependencies": {

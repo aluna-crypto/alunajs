@@ -11,7 +11,7 @@ import { parseMany } from './parseMany'
 
 
 
-const log = debug('@aluna.js:bittrex/balance/list')
+const log = debug('@alunajs:bittrex/balance/list')
 
 
 

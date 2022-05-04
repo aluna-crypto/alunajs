@@ -10,7 +10,7 @@ import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
 
 
-const log = debug('@aluna.js:sample/symbol/parseMany')
+const log = debug('@alunajs:sample/symbol/parseMany')
 
 
 

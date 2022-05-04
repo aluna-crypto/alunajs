@@ -9,7 +9,7 @@ import { SampleHttp } from '../../../SampleHttp'
 
 
 
-const log = debug('@aluna.js:sample/symbol/list')
+const log = debug('@alunajs:sample/symbol/list')
 
 
 
