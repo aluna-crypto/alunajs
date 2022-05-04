@@ -41,4 +41,4 @@ jobs:
         run: yarn install
 
       - name: Running Tests
-        run: yarn test:ci
+        run: yarn test-ci
