@@ -205,12 +205,14 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
     log('removing position mentions from authed class')
 
-    const positionMentions = /^.*position.*[\r\n]{1}/img
+    const positionSearch = /^.*position.*[\r\n]{1}/img
+    const positionReplace = ''
 
-    const newEntryAuthedClassContents = entryAuthedClassContents
-      .replace(positionMentions, '')
-
-    writeFileSync(entryAuthedClassPath, newEntryAuthedClassContents)
+    replaceSync({
+      filepath: entryAuthedClassPath,
+      search: positionSearch,
+      replace: positionReplace,
+    })
 
   }
 
