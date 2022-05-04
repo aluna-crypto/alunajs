@@ -332,7 +332,7 @@ describe(__filename, () => {
         implemented: true,
         orderTypes: [
           {
-            type: AlunaOrderTypesEnum.LIMIT,
+            type,
             supported: false,
             implemented: true,
             mode: AlunaFeaturesModeEnum.WRITE,
@@ -386,7 +386,7 @@ describe(__filename, () => {
         implemented: true,
         orderTypes: [
           {
-            type: AlunaOrderTypesEnum.LIMIT,
+            type,
             supported: true,
             implemented: false,
             mode: AlunaFeaturesModeEnum.WRITE,
@@ -441,7 +441,7 @@ describe(__filename, () => {
         implemented: true,
         orderTypes: [
           {
-            type: AlunaOrderTypesEnum.LIMIT,
+            type,
             supported: true,
             implemented: true,
             mode: AlunaFeaturesModeEnum.READ,
