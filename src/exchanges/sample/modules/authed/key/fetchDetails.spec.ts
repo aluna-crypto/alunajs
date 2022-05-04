@@ -55,7 +55,7 @@ describe(__filename, () => {
     const {
       key,
       requestCount,
-    } = await exchange.key.fetchDetails({ http })
+    } = await exchange.key.fetchDetails()
 
 
     // validating
