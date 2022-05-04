@@ -6,7 +6,7 @@ import {
   map,
 } from 'lodash'
 
-import { mockMarketParse } from '../../../../../../test/mocks/exchange/modules/market/mockMarketParse'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Bittrex } from '../../../Bittrex'
 import { BittrexMarketStatusEnum } from '../../../enums/BittrexMarketStatusEnum'
 import {
@@ -38,7 +38,7 @@ describe(__filename, () => {
 
 
     // mocking
-    const { parse } = mockMarketParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     const returnItems = map(onlineParsedMarkets, (market) => ({ market }))
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
-import { mockSymbolParse } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolParse'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Bittrex } from '../../../Bittrex'
 import {
   BITTREX_PARSED_SYMBOLS,
@@ -16,7 +16,7 @@ describe(__filename, () => {
   it('should parse many Bittrex symbols just fine', async () => {
 
     // preparing data
-    const { parse } = mockSymbolParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     each(BITTREX_PARSED_SYMBOLS, (symbol, index) => {
       parse.onCall(index).returns({ symbol })

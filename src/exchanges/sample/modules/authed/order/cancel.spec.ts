@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -38,7 +38,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: SampleHttp.prototype })
 
-    const { parse } = mockOrderParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     parse.returns({ order: mockedParsedOrder })
 

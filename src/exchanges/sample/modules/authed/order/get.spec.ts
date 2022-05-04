@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
-import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
@@ -38,7 +38,7 @@ describe(__filename, () => {
 
     getRaw.returns(Promise.resolve({ rawOrder: mockedRawOrder }))
 
-    const { parse } = mockOrderParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     parse.returns({ order: mockedParsedOrder })
 

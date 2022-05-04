@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
-import { mockMarketParse } from '../../../../../../test/mocks/exchange/modules/market/mockMarketParse'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Sample } from '../../../Sample'
 import { SAMPLE_RAW_MARKETS } from '../../../test/fixtures/sampleMarket'
 import * as parseMod from './parse'
@@ -17,7 +17,7 @@ describe(__filename, () => {
     const rawMarkets = SAMPLE_RAW_MARKETS
 
     // mocking
-    const { parse } = mockMarketParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     each(PARSED_MARKETS, (market, index) => {
       parse.onCall(index).returns({ market })

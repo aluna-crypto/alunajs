@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
-import { mockBalanceParse } from '../../../../../../test/mocks/exchange/modules/balance/mockBalanceParse'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import {
@@ -29,7 +29,7 @@ describe(__filename, () => {
 
 
     // mocking
-    const { parse } = mockBalanceParse({ module: parseMod })
+    const { parse } = mockParse({ module: parseMod })
 
     each(parsedBalances, (balance, index) => {
       parse.onCall(index).returns({ balance })
