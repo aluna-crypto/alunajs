@@ -138,18 +138,19 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
   for(const file of files) {
 
-    if (/(sample)[^\/]*\.ts$/mi.test(file)) {
+    const reg = /(sample)[^\/]*\.ts$/mi
+
+    if (reg.test(file)) {
 
       let to = file
-        .replace('sample', exchangeLower)
-        .replace('SAMPLE', exchangeUpper)
-        .replace('sample', exchangeLower)
+        .replace(/Sample/g, exchangeName)
+        .replace(/SAMPLE/g, exchangeUpper)
+        .replace(/sample/g, exchangeLower)
 
       shelljs.mv(file, to)
 
-      log('mv', { file, to })
-
     }
+
   }
 
 
