@@ -13,7 +13,6 @@ import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
 import { BittrexSideEnum } from '../../../enums/BittrexSideEnum'
 import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
-import { parseDetails } from './parseDetails'
 
 
 
@@ -118,7 +117,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { key } = await parseDetails(exchange)({ rawKey: permissions })
+  const { key } = await exchange.key.parseDetails({ rawKey: permissions })
 
   const { requestCount } = http
 
