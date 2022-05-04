@@ -215,3 +215,24 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
   console.info('New exchange bootstraped at:\n\t— ', chalk.green(destination))
 }
+
+
+
+export const replaceSync = (params: {
+  search: string | RegExp,
+  replace: string,
+  filepath: string,
+}) => {
+
+  const {
+    filepath,
+    replace,
+    search,
+  } = params
+
+  const contents = readFileSync(filepath, 'utf8')
+  const newContents = contents.replace(search, replace)
+
+  writeFileSync(filepath, newContents)
+
+}
