@@ -13,6 +13,8 @@ export const renameSampleFiles = (
     files,
   } = params
 
+  const newFilePaths: string[] = []
+
   for(const file of files) {
 
     const reg = /(sample)[^\/]*\.ts$/mi
@@ -26,8 +28,14 @@ export const renameSampleFiles = (
 
       shell.mv(file, to)
 
+      newFilePaths.push(to)
+
+    } else {
+      newFilePaths.push(file)
     }
 
   }
+
+  params.files = newFilePaths
 
 }

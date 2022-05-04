@@ -22,6 +22,6 @@ export const copySampleFiles = (params: IBoostrapMethodParams) => {
   const files = shell.find(DESTINATION)
     .filter((file) => file.match(/\.ts$/))
 
-  return files
+  params.files = files
 
 }

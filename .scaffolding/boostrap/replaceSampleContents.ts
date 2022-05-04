@@ -22,6 +22,4 @@ export const replaceSampleContents = (
     shell.sed('-i', /sample/g, configs.exchangeLower, file)
   }
 
-  return files
-
 }

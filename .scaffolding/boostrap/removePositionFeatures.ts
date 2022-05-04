@@ -1,6 +1,5 @@
 import { settings } from 'cluster'
 import { log } from 'console'
-import { readFileSync } from 'fs'
 import { join } from 'path'
 import shell from 'shelljs'
 
@@ -35,7 +34,6 @@ export const removePositionFeatures = (
     shell.rm('-f', moduleFile)
 
     const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
-    const entryAuthedClassContents = readFileSync(entryAuthedClassPath, 'utf8')
 
     log('removing position mentions from authed class')
 
