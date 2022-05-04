@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Bittrex({ settings: {} })
+    const exchange = new Bittrex({})
 
     const { symbols } = exchange.symbol.parseMany({
       rawSymbols: BITTREX_RAW_SYMBOLS,

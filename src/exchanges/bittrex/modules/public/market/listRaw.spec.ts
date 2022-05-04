@@ -35,7 +35,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Bittrex({ settings: {} })
+    const exchange = new Bittrex({})
 
     const {
       rawMarkets,

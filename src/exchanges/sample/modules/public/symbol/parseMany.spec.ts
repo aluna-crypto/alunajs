@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({ settings: {} })
+    const exchange = new Sample({})
 
     const { symbols } = exchange.symbol.parseMany({
       rawSymbols: SAMPLE_RAW_SYMBOLS,

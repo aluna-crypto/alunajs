@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Bittrex({ settings: {} })
+    const exchange = new Bittrex({})
 
     const rawSymbol = BITTREX_RAW_SYMBOLS[0] // first fixture
 
@@ -58,7 +58,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Bittrex({ settings: {} })
+    const exchange = new Bittrex({})
 
     const rawSymbol = BITTREX_RAW_SYMBOLS[1] // second fixture
 

@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({ settings: {} })
+    const exchange = new Sample({})
 
     const { market } = exchange.market.parse({
       rawMarket,
