@@ -52,7 +52,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          code: dummyError,
+          exchangeErroMsg: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          code: dummyError,
+          exchangeErroMsg: dummyError,
         },
       },
     } as AxiosError
@@ -160,10 +160,7 @@ describe(__filename, () => {
     'should ensure Sample invalid api patterns work as expected',
     async () => {
 
-      let message = 'Lorem Ipsum is simply dummy INVALID_SIGNATURE'
-      expect(isSampleKeyInvalid(message)).to.be.ok
-
-      message = 'APIKEY_INVALID Lorem Ipsum is simply'
+      const message = 'api-invalid'
       expect(isSampleKeyInvalid(message)).to.be.ok
 
     },

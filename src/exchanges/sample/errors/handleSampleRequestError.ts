@@ -8,7 +8,8 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const sampleInvalidKeyPatterns: Array<RegExp> = [
-  new RegExp(/INVALID_SIGNATURE|APIKEY_INVALID/mi),
+  // TODO: Review exchange invalid api key error patterns
+  new RegExp(/api-invalid/mi),
 ]
 
 
@@ -51,7 +52,8 @@ export const handleSampleRequestError = (
 
     const { response } = error as AxiosError
 
-    message = response?.data?.code || message
+    // TODO: Review exchange error prop on request response
+    message = response?.data?.exchangeErroMsg || message
 
     httpStatusCode = response?.status || httpStatusCode
 
