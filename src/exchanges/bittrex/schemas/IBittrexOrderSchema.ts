@@ -1,7 +1,7 @@
+import { BittrexOrderSideEnum } from '../enums/BittrexOrderSideEnum'
 import { BittrexOrderStatusEnum } from '../enums/BittrexOrderStatusEnum'
 import { BittrexOrderTimeInForceEnum } from '../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../enums/BittrexOrderTypeEnum'
-import { BittrexSideEnum } from '../enums/BittrexSideEnum'
 
 
 
@@ -15,7 +15,7 @@ export interface IBittrexOrderToCancel {
 export interface IBittrexOrderSchema {
   id: string
   marketSymbol: string
-  direction: BittrexSideEnum
+  direction: BittrexOrderSideEnum
   type: BittrexOrderTypeEnum
   quantity: string
   limit: string

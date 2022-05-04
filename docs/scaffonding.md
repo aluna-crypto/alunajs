@@ -75,7 +75,7 @@ Here we need to configure and the `types` related to the exchange.
 They should completely describe the data model for all Exchange API methods.
 
 Enums:
-- [`BittrexSideEnum.ts`](http://github.com/alunacrypto/alunajs)
+- [`BittrexOrderSideEnum.ts`](http://github.com/alunacrypto/alunajs)
 - [`BittrexOrderTypeEnum.ts`](http://github.com/alunacrypto/alunajs)
 
 Schemas:
