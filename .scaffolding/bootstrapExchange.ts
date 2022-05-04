@@ -86,7 +86,7 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
     const question = [{
       type: 'expand',
-      message: 'Do you want to overrite it? [y/N]: ',
+      message: 'Do you want to overrite it?',
       name: 'overwrite',
       choices: [
         { key: 'y', name: 'Yes, please.', value: true },
