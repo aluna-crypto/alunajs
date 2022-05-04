@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { BittrexSideEnum } from '../BittrexSideEnum'
+import { BittrexOrderSideEnum } from '../BittrexOrderSideEnum'
 
 
 
@@ -9,13 +9,13 @@ const errorMessagePrefix = 'Order side'
 
 
 export const translateOrderSideToAluna = buildAdapter<
-  BittrexSideEnum,
+  BittrexOrderSideEnum,
   AlunaOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [BittrexSideEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [BittrexSideEnum.SELL]: AlunaOrderSideEnum.SELL,
+    [BittrexOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+    [BittrexOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
   },
 })
 
@@ -23,12 +23,11 @@ export const translateOrderSideToAluna = buildAdapter<
 
 export const translateOrderSideToBittrex = buildAdapter<
   AlunaOrderSideEnum,
-  BittrexSideEnum
+  BittrexOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderSideEnum.BUY]: BittrexSideEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: BittrexSideEnum.SELL,
+    [AlunaOrderSideEnum.BUY]: BittrexOrderSideEnum.BUY,
+    [AlunaOrderSideEnum.SELL]: BittrexOrderSideEnum.SELL,
   },
 })
-
