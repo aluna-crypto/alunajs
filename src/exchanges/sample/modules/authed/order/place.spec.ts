@@ -13,15 +13,15 @@ import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorC
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
+import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderSideAdapter'
+import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
+import { SampleOrderTimeInForceEnum } from '../../../enums/SampleOrderTimeInForceEnum'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
 import {
   SAMPLE_PRODUCTION_URL,
   sampleBaseSpecs,
 } from '../../../sampleSpecs'
-import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderSideAdapter'
-import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
-import { SampleOrderTimeInForceEnum } from '../../../enums/SampleOrderTimeInForceEnum'
 import {
   SAMPLE_PARSED_ORDERS,
   SAMPLE_RAW_ORDERS,
@@ -435,15 +435,12 @@ describe(__filename, () => {
     },
   )
 
-  it('should ensure the order type is on read mode', async () => {
+  it('should ensure Bittrex order specs are properly validated', async () => {
 
     // preparing data
     const exchange = new SampleAuthed({
       credentials,
     })
-
-    // mocking
-    mockValidateParams()
 
     // executing
     await testExchangeSpecsForOrderWriteModule({
