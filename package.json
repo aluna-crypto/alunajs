@@ -29,8 +29,7 @@
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'",
-    "add-exchange": "ts-node .scaffolding/addExchange.ts",
-    "update-sample": "ts-node .scaffolding/updateSample.ts"
+    "add-exchange": "ts-node .scaffolding/addExchange.ts"
   },
   "dependencies": {
     "axios": "^0.21.1",
