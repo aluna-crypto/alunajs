@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 
 import { AlunaAccountEnum } from '../src/lib/enums/AlunaAccountEnum'
 import { AlunaApiFeaturesEnum } from '../src/lib/enums/AlunaApiFeaturesEnum'
-import { generate } from './generate'
+import { bootstrapExchange } from './bootstrapExchange'
 import { validations } from './validations'
 
 
@@ -13,6 +13,7 @@ const questions = [
     name: 'exchangeName',
     message: "What's the exchange name?",
     validate: validations.notNull,
+    help: () => '(i.e.: Bitfinex, BitMEX, GateIO))',
   },
   {
     type: 'checkbox',
@@ -38,13 +39,13 @@ const questions = [
 
 
 
-export async function main () {
+export async function addExchange () {
 
   const answers = await inquirer.prompt(questions)
 
-  await generate(answers)
+  await bootstrapExchange(answers)
 
 }
 
 
-main()
+addExchange()

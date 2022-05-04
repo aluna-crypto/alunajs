@@ -62,7 +62,7 @@ export function buildSettings (params: {
 
 
 
-export async function generate (answers: IPromptAnswers) {
+export async function bootstrapExchange (answers: IPromptAnswers) {
 
   const settings = buildSettings({ answers })
 
@@ -212,4 +212,6 @@ export async function generate (answers: IPromptAnswers) {
     writeFileSync(entryAuthedClassPath, newEntryAuthedClassContents)
 
   }
+
+  console.info('New exchange bootstraped at:\n\t— ', chalk.green(destination))
 }
