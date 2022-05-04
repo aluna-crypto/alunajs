@@ -3,7 +3,7 @@ import inquirer from 'inquirer'
 import { AlunaAccountEnum } from '../src/lib/enums/AlunaAccountEnum'
 import { AlunaApiFeaturesEnum } from '../src/lib/enums/AlunaApiFeaturesEnum'
 import { bootstrapExchange } from './bootstrapExchange'
-import { validations } from './validations'
+import { inquirerValidations } from './utils/inquirerValidations'
 
 
 
@@ -12,7 +12,7 @@ const questions = [
     type: 'input',
     name: 'exchangeName',
     message: "What's the exchange name?",
-    validate: validations.notNull,
+    validate: inquirerValidations.notNull,
     help: () => '(i.e.: Bitfinex, BitMEX, GateIO))',
   },
   {
@@ -24,7 +24,7 @@ const questions = [
       { name: 'Margin', value: AlunaAccountEnum.MARGIN },
       { name: 'Derivatives', value: AlunaAccountEnum.DERIVATIVES },
     ],
-    validate: validations.atLeastOne,
+    validate: inquirerValidations.atLeastOne,
   },
   {
     type: 'checkbox',

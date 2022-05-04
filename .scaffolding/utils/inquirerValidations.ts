@@ -1,4 +1,4 @@
-export const validations = {
+export const inquirerValidations = {
   notNull(answer: string) {
     if (!answer) {
       return 'You must inform exchange name.';
