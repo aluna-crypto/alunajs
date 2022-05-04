@@ -16,7 +16,7 @@
     "prepare": "husky install",
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
-    "build": "yarn clean && yarn build:index && tsc -p tsconfig.dist.json && yarn build:index:clean",
+    "build": "yarn clean && yarn build-index && tsc -p tsconfig.dist.json && yarn build-index-clean",
     "build-index": "yarn cti entrypoint src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
     "build-watch": "yarn clean && tsc -p tsconfig.dist.json -w",
     "lint": "eslint src --cache --cache-location .husky/.eslintcache/ --ext .ts --max-warnings=0",
