@@ -3,8 +3,6 @@ import { assign } from 'lodash'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaFeaturesModeEnum } from '../../../../../lib/enums/AlunaFeaturesModeEnum'
-import { AlunaAccountsErrorCodes } from '../../../../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -12,13 +10,11 @@ import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BittrexHttp } from '../../../BittrexHttp'
-import {
-  BITTREX_PRODUCTION_URL,
-  bittrexBaseSpecs,
-} from '../../../bittrexSpecs'
+import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
@@ -44,74 +40,19 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     schema: placeOrderParamsSchema,
   })
 
+  ensureOrderIsSupported({
+    exchangeSpecs: exchange.specs,
+    orderPlaceParams: params,
+  })
+
   const {
     amount,
     rate,
     symbolPair,
     side,
     type,
-    account,
     http = new BittrexHttp(),
   } = params
-
-  try {
-
-    const accountSpecs = bittrexBaseSpecs.accounts.find((a) => {
-      return a.type === account
-    })
-
-    if (!accountSpecs) {
-
-      throw new AlunaError({
-        message: `Account type '${account}' not found`,
-        code: AlunaAccountsErrorCodes.TYPE_NOT_FOUND,
-      })
-
-    }
-
-    const {
-      supported,
-      implemented,
-      orderTypes,
-    } = accountSpecs
-
-    if (!supported || !implemented) {
-
-      throw new AlunaError({
-        message:
-            `Account type '${account}' not supported/implemented for Bittrex`,
-        code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
-      })
-
-    }
-
-    const orderType = orderTypes.find((o) => o.type === type)
-
-    if (!orderType || !orderType.implemented || !orderType.supported) {
-
-      throw new AlunaError({
-        message: `Order type '${type}' not supported/implemented for Bittrex`,
-        code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
-      })
-
-    }
-
-    if (orderType.mode === AlunaFeaturesModeEnum.READ) {
-
-      throw new AlunaError({
-        message: `Order type '${type}' is in read mode`,
-        code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY,
-      })
-
-    }
-
-  } catch (error) {
-
-    log(error)
-
-    throw error
-
-  }
 
   const translatedOrderType = translateOrderTypeToBittrex({
     from: type,

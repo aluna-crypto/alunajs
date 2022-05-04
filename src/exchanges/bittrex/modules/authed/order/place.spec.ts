@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 
-import { testExchangeSpecsForOrderWriteModule } from '../../../../../../test/helpers/orders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -10,15 +9,14 @@ import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnu
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
+import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import {
-  BITTREX_PRODUCTION_URL,
-  bittrexBaseSpecs,
-} from '../../../bittrexSpecs'
+import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
@@ -65,6 +63,9 @@ describe(__filename, () => {
     }
 
     // mocking
+
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
     const {
       publicRequest,
       authedRequest,
@@ -82,14 +83,16 @@ describe(__filename, () => {
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const { order } = await exchange.order.place({
+    const params: IAlunaOrderPlaceParams = {
       symbolPair: marketSymbol,
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
       side,
       type,
       rate: Number(limit),
-    })
+    }
+
+    const { order } = await exchange.order.place(params)
 
 
     // validating
@@ -104,6 +107,12 @@ describe(__filename, () => {
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
+      exchangeSpecs: exchange.specs,
+      orderPlaceParams: params,
+    })
 
   })
 
@@ -135,6 +144,8 @@ describe(__filename, () => {
     }
 
     // mocking
+    mockEnsureOrderIsSupported()
+
     const {
       publicRequest,
       authedRequest,
@@ -207,6 +218,8 @@ describe(__filename, () => {
       })
 
       // mocking
+      mockEnsureOrderIsSupported()
+
       const {
         publicRequest,
         authedRequest,
@@ -274,6 +287,8 @@ describe(__filename, () => {
       })
 
       // mocking
+      mockEnsureOrderIsSupported()
+
       const {
         publicRequest,
         authedRequest,
@@ -340,6 +355,8 @@ describe(__filename, () => {
       })
 
       // mocking
+      mockEnsureOrderIsSupported()
+
       const {
         publicRequest,
         authedRequest,
@@ -401,6 +418,8 @@ describe(__filename, () => {
       })
 
       // mocking
+      mockEnsureOrderIsSupported()
+
       const {
         publicRequest,
         authedRequest,
@@ -434,20 +453,5 @@ describe(__filename, () => {
 
     },
   )
-
-  it.skip('should ensure the order type is on read mode', async () => {
-
-    // preparing data
-    const exchange = new BittrexAuthed({
-      credentials,
-    })
-
-    // executing
-    await testExchangeSpecsForOrderWriteModule({
-      exchangeSpecs: bittrexBaseSpecs,
-      orderWriteModule: exchange.order,
-    })
-
-  })
 
 })
