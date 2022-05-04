@@ -1,4 +1,4 @@
-import { log } from 'console'
+import { debug } from 'debug'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
@@ -6,6 +6,10 @@ import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCode
 import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
+
+
+
+const log = debug('@aluna.js:utils/order/ensureOrderIsSupported')
 
 
 
@@ -34,6 +38,8 @@ export const ensureOrderIsSupported = (
 
   try {
 
+    let message: string
+
     const accountSpecs = exchangeSpecs.accounts.find((a) => {
       return a.type === account
     })
@@ -55,9 +61,11 @@ export const ensureOrderIsSupported = (
 
     if (!supported || !implemented) {
 
+      message = `Account type '${account}' not supported/implemented `
+        .concat(`for ${exchangeSpecs.name}`)
+
       throw new AlunaError({
-        message:
-            `Account type '${account}' not supported/implemented for Sample`,
+        message,
         code: AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED,
       })
 
@@ -67,8 +75,11 @@ export const ensureOrderIsSupported = (
 
     if (!orderType || !orderType.implemented || !orderType.supported) {
 
+      message = `Order type '${type}' not supported/implemented for `
+        .concat(`${exchangeSpecs.name}`)
+
       throw new AlunaError({
-        message: `Order type '${type}' not supported/implemented for Sample`,
+        message,
         code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
       })
 
