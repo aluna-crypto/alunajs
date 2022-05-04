@@ -107,7 +107,7 @@ describe(__filename, () => {
 
   it('should export web3 method and instance', async () => {
 
-    const { web3 } = aluna.web3()
+    const web3 = aluna.web3()
 
     expect(web3).to.be.ok
 

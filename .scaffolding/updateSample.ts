@@ -18,13 +18,23 @@ const BKP_DIR = join(ROOT, '.bkp')
 
 
 
+/**
+ * All levels must be included individually or the filepath
+ * won't work. It assuems a prefix as `src/exchanges/sample/`.
+ */
 const ignoredFilepaths = [
+  // 'dir-a',
+  // 'dir-a/dir-b',
+  // 'dir-a/dir-b/filepath.txt',
   'src/exchanges/sample/SampleHttp.ts',
   'src/exchanges/sample/sampleSpecs.ts',
   'src/exchanges/sample/errors/handleSampleRequestError.ts',
   'src/exchanges/sample/modules/authed/balace/parse.ts',
   'src/exchanges/sample/modules/authed/balace/parseMany.ts',
   'src/exchanges/sample/modules/authed/balace/listRaw.ts',
+  'SampleHttp.ts',
+  'enums',
+  'enums/SampleSideEnum.ts',
 ]
 
 
@@ -39,9 +49,9 @@ export async function updateSample () {
       default: 'Bittrex'
     }
   ]
-  
+
   const answer = await inquirer.prompt(question)
-  
+
   const { sourceExchangeName } = answer
 
   const exchangeName = sourceExchangeName
@@ -56,9 +66,10 @@ export async function updateSample () {
     exchangeLower,
   })
 
-  
+
   // Resetting folder in advance
-  // backupIgnoredFiles()
+  backupIgnoredFiles()
+
   shelljs.rm('-rf', SAMPLE_EXCHANGE_DIR)
 
 
@@ -112,7 +123,9 @@ export async function updateSample () {
     }
   }
 
-  // restoreIgnoredFiles()
+  restoreIgnoredFiles()
+
+  shelljs.rm('-rf', BKP_DIR)
 
 }
 
@@ -120,19 +133,15 @@ export async function updateSample () {
 
 const backupIgnoredFiles = () => {
 
-  const command = `rsync -a %FILE_PATHS ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR} --delete`
+  const cmdTemplate = `rsync -a %FILE_PATHS --exclude='*' --delete ${SAMPLE_EXCHANGE_DIR}/* ${BKP_DIR}/`
 
   const includeFilePaths = map(ignoredFilepaths, ignoredPath => {
-
-    return `--include '${ignoredPath}'`
-
+    return `--include='${ignoredPath}'`
   })
 
   shelljs.rm('-rf', BKP_DIR)
 
-  const cmd = command.replace('%FILE_PATHS', includeFilePaths.join(' '))
-
-  log(cmd)
+  const cmd = cmdTemplate.replace('%FILE_PATHS', includeFilePaths.join(' '))
 
   shelljs.exec(cmd)
 
@@ -142,15 +151,9 @@ const backupIgnoredFiles = () => {
 
 const restoreIgnoredFiles = () => {
 
-  const command = `rsync -a %FILE_PATHS ${BKP_DIR} ${SAMPLE_EXCHANGE_DIR}/ --delete`
+  const cmd = `rsync -a ${BKP_DIR}/* ${SAMPLE_EXCHANGE_DIR}/`
 
-  const includeFilePaths = map(ignoredFilepaths, ignoredPath => {
-
-    return `--include '${ignoredPath}'`
-
-  })
-
-  shelljs.exec(command.replace('%FILE_PATHS', includeFilePaths.join(' ')))
+  shelljs.exec(cmd)
 
 }
 

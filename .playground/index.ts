@@ -87,7 +87,7 @@ export const handleWeb3Commands = async (req: Request, res: Response) => {
 
   try {
 
-    const { web3 } = aluna.web3()
+    const web3 = aluna.web3()
 
     const response = await web3[scope][method](params)
 
