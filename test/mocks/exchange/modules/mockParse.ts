@@ -3,22 +3,22 @@ import { ImportMock } from 'ts-mock-imports'
 
 
 
-export const mockMarketListRaw = (params: {
+export const mockParse = (params: {
   module: any
 }) => {
 
   const { module } = params
 
-  const listRaw = stub()
+  const parse = stub()
 
   const wrapper = ImportMock.mockFunction(
     module,
-    'listRaw',
-    listRaw,
+    'parse',
+    parse,
   )
 
   return {
-    listRaw,
+    parse,
     wrapper,
   }
 
