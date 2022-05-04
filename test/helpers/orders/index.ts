@@ -109,7 +109,8 @@ const accountIsSupported = async (params: {
 
   }
 
-  const msg = `Account type '${account}' not supported/implemented for ${exchangeSpecs.name}`
+  const msg = `Account type '${account}' not supported/implemented `
+    .concat(`for ${exchangeSpecs.name}`)
 
   expect(error).to.be.ok
 
@@ -159,7 +160,8 @@ const accountIsImplemented = async (params: {
 
   }
 
-  const msg = `Account type '${account}' not supported/implemented for ${exchangeSpecs.name}`
+  const msg = `Account type '${account}' not supported/implemented `
+    .concat(`for ${exchangeSpecs.name}`)
 
   expect(error).to.be.ok
 
@@ -210,7 +212,8 @@ const orderTypeIsOneOfAccountOrderTypes = async (params: {
 
   }
 
-  const msg = `Order type '${type}' not supported/implemented for ${exchangeSpecs.name}`
+  const msg = `Order type '${type}' not supported/implemented `
+    .concat(`for ${exchangeSpecs.name}`)
 
   expect(error).to.be.ok
 
@@ -269,7 +272,8 @@ const orderTypeIsSupported = async (params: {
 
   }
 
-  const msg = `Order type '${type}' not supported/implemented for ${exchangeSpecs.name}`
+  const msg = `Order type '${type}' not supported/implemented `
+    .concat(`for ${exchangeSpecs.name}`)
 
   expect(error).to.be.ok
 
@@ -329,7 +333,8 @@ const orderTypeIsImplemented = async (params: {
 
   }
 
-  const msg = `Order type '${type}' not supported/implemented for ${exchangeSpecs.name}`
+  const msg = `Order type '${type}' not supported/implemented `
+    .concat(`for ${exchangeSpecs.name}`)
 
   expect(error).to.be.ok
 
