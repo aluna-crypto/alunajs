@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
-import { testExchangeSpecsForOrderWriteModule } from '../../../../../../test/helpers/orders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -10,17 +9,16 @@ import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
+import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderSideAdapter'
 import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import {
-  sampleBaseSpecs,
-  sampleEndpoints,
-} from '../../../sampleSpecs'
+import { sampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as parseMod from './parse'
 
@@ -73,18 +71,22 @@ describe(__filename, () => {
 
     mockValidateParams()
 
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
 
     // executing
     const exchange = new SampleAuthed({ credentials })
 
-    const { order } = await exchange.order.place({
+    const params: IAlunaOrderPlaceParams = {
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
       side,
       type,
       rate: 0,
-    })
+    }
+
+    const { order } = await exchange.order.place(params)
 
 
     // validating
@@ -99,6 +101,8 @@ describe(__filename, () => {
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
   })
 
@@ -141,6 +145,8 @@ describe(__filename, () => {
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
     mockValidateParams()
+
+    mockEnsureOrderIsSupported()
 
 
     // executing
@@ -208,6 +214,8 @@ describe(__filename, () => {
 
       mockValidateParams()
 
+      mockEnsureOrderIsSupported()
+
 
       // executing
       const exchange = new SampleAuthed({ credentials })
@@ -272,6 +280,8 @@ describe(__filename, () => {
 
       mockValidateParams()
 
+      mockEnsureOrderIsSupported()
+
 
       // executing
       const exchange = new SampleAuthed({ credentials })
@@ -329,6 +339,8 @@ describe(__filename, () => {
 
     mockValidateParams()
 
+    mockEnsureOrderIsSupported()
+
 
     // executing
     const exchange = new SampleAuthed({ credentials })
@@ -352,23 +364,5 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(0)
 
   })
-
-  it.skip(
-    'should ensure Sample order specs are properly validated',
-    async () => {
-
-      // preparing data
-      const exchange = new SampleAuthed({
-        credentials,
-      })
-
-      // executing
-      await testExchangeSpecsForOrderWriteModule({
-        exchangeSpecs: sampleBaseSpecs,
-        orderWriteModule: exchange.order,
-      })
-
-    },
-  )
 
 })
