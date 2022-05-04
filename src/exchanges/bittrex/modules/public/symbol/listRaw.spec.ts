@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { BITTREX_RAW_SYMBOLS } from '../../../test/fixtures/bittrexSymbols'
 
 
@@ -38,7 +38,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: `${BITTREX_PRODUCTION_URL}/currencies`,
+      url: bittrexEndpoints.symbol.list,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

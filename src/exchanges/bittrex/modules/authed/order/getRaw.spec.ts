@@ -5,7 +5,7 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 
 
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: `${BITTREX_PRODUCTION_URL}/orders/${id}`,
+      url: bittrexEndpoints.order.get(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

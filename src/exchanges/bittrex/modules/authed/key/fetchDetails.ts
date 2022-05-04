@@ -7,7 +7,7 @@ import {
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
 import { BittrexSideEnum } from '../../../enums/BittrexSideEnum'
@@ -43,7 +43,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<any>({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${BITTREX_PRODUCTION_URL}/balances`,
+      url: bittrexEndpoints.balance.list,
       credentials,
     })
 
@@ -76,7 +76,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<IBittrexBalanceSchema>({
       verb: AlunaHttpVerbEnum.POST,
-      url: `${BITTREX_PRODUCTION_URL}/orders`,
+      url: bittrexEndpoints.order.list,
       credentials,
       body: requestBody,
     })
@@ -103,7 +103,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     const account = await http.authedRequest<IBittrexKeySchema>({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${BITTREX_PRODUCTION_URL}/account`,
+      url: bittrexEndpoints.key.account,
       credentials,
     })
 

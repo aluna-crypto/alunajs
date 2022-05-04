@@ -6,7 +6,7 @@ import {
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import {
   IBittrexMarketInfoSchema,
   IBittrexMarketsSchema,
@@ -29,15 +29,15 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   log('fetching Bittrex markets')
 
   const marketsInfo = await http.publicRequest<IBittrexMarketInfoSchema[]>({
-    url: `${BITTREX_PRODUCTION_URL}/markets`,
+    url: bittrexEndpoints.market.markets,
   })
 
   const summaries = await http.publicRequest<IBittrexMarketSummarySchema[]>({
-    url: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
+    url: bittrexEndpoints.market.summaries,
   })
 
   const tickers = await http.publicRequest<IBittrexMarketTickerSchema[]>({
-    url: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
+    url: bittrexEndpoints.market.tickers,
   })
 
 
