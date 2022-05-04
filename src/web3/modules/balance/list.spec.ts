@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { IAlunaBalanceSchema } from '../../../lib/schemas/IAlunaBalanceSchema'
+import { WEB3_DEBANK_CHAIN_LIST } from '../../test/fixtures/chains'
 import { WEB3_DEBANK_TOKEN_LIST } from '../../test/fixtures/tokens'
 import { Web3 } from '../../Web3'
 import { Web3Http } from '../../Web3Http'
@@ -34,8 +35,7 @@ describe(__filename, () => {
         public: 0,
       },
       rawTotalBalance: {
-        // TODO: use fixtures with proper typing
-        chain_list: [{ id: 'eth' } as any],
+        chain_list: WEB3_DEBANK_CHAIN_LIST,
         total_usd_value: 1,
       },
     }
@@ -58,7 +58,7 @@ describe(__filename, () => {
 
     // validating
     expect(getRawTotalBalance.callCount).to.eq(1)
-    expect(tokenListRaw.callCount).to.eq(1)
+    expect(tokenListRaw.callCount).to.eq(WEB3_DEBANK_CHAIN_LIST.length)
     expect(balanceParseMany.callCount).to.eq(1)
 
     expect(getRawTotalBalance.firstCall.args[0]).to.deep.eq({
