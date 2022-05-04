@@ -231,18 +231,23 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
   const definitionReplace = `${definitionSearch}\n  [${el}BaseSpecs.id]: ${el},`
 
   const exchangesFilepath = join(SRC, 'lib', 'exchanges.ts')
-  console.log('exchangesFilepath', exchangesFilepath)
+
+  const buildCondition = (term: string) => (contents: string) => {
+    return (contents.indexOf(term) == -1)
+  }
 
   replaceSync({
     filepath: exchangesFilepath,
     search: importsSearch,
     replace: importsReplace,
+    condition: buildCondition(exchangeLower),
   })
 
   replaceSync({
     filepath: exchangesFilepath,
     search: definitionSearch,
     replace: definitionReplace,
+    condition: buildCondition(definitionReplace),
   })
 
 
