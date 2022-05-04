@@ -6,7 +6,12 @@
   "exclude": [
     ".history",
     "node_modules",
-    "test/**/*.ts",
-    ".playground/**/*.ts",
+    "test",
+    ".scaffolding",
+    ".playground",
+    "**/*.spec.ts",
+    "**/*.mock.ts",
+    "**/fixtures/*.ts",
+    "**/mocks/*.ts",
   ]
 }
