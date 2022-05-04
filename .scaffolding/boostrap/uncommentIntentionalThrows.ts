@@ -18,8 +18,6 @@ export const uncommentIntentionalThrows = (
 
   const regex = /^.*(scaffold\:delete).*$/mg
 
-  console.log(regex)
-
   for(const file of files) {
     shell.sed('-i', regex, '', file)
   }
