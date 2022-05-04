@@ -4,9 +4,9 @@ Run one of many commands:
 
 ```bash
 yarn test
-yarn test:watch
-yarn test:cover
-yarn test:cover:watch
+yarn test-watch
+yarn test-cover
+yarn test-cover-watch
 ```
 
 # More

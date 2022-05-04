@@ -3,7 +3,7 @@
 This will run all tets again _**all**_ implemented exchanges.
 
 ```ts
-yarn test:e2e
+yarn test-e2e
 ```
 
 > _Requires `.alunarc` to be configured with keys and secrets.

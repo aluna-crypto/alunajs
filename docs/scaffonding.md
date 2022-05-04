@@ -5,7 +5,7 @@ The first step to add a new **_exchange_**.
 ## TL;DR
 
 ```
-yarn scaffold
+yarn add-exchange
 ```
 
 ## Terminology
@@ -28,7 +28,7 @@ Before configuring the generator, the basics.
 Let's do it.
 
 ```
-yarn scaffold
+yarn add-exchange
 ```
 
 `<image-1-here>`<br/>
