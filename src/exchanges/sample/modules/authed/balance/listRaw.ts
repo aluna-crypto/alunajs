@@ -7,7 +7,6 @@ import {
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
 import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
 
 
@@ -26,9 +25,10 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new SampleHttp() } = params
 
+  // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<ISampleBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: `${SAMPLE_PRODUCTION_URL}/balances`,
+    url: '',
     credentials,
   })
 
