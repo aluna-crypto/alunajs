@@ -6,11 +6,11 @@ import {
   map,
 } from 'lodash'
 
+import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Bittrex } from '../../../Bittrex'
 import { BittrexMarketStatusEnum } from '../../../enums/BittrexMarketStatusEnum'
 import {
-  BITTREX_PARSED_MARKETS,
   BITTREX_RAW_MARKET_SUMMARIES,
   BITTREX_RAW_MARKET_TICKERS,
   BITTREX_RAW_MARKETS_INFO,
@@ -32,7 +32,7 @@ describe(__filename, () => {
       return status === BittrexMarketStatusEnum.ONLINE
     })
 
-    const onlineParsedMarkets = filter(BITTREX_PARSED_MARKETS, (market) => {
+    const onlineParsedMarkets = filter(PARSED_MARKETS, (market) => {
       return !!find(onlineMarkets, { symbol: market.symbolPair })
     })
 

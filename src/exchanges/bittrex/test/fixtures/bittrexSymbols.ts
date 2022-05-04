@@ -1,4 +1,3 @@
-import { IAlunaSymbolSchema } from '../../../../lib/schemas/IAlunaSymbolSchema'
 import { IBittrexSymbolSchema } from '../../schemas/IBittrexSymbolSchema'
 
 
@@ -45,26 +44,5 @@ export const BITTREX_RAW_SYMBOLS: IBittrexSymbolSchema[] = [
     baseAddress: '0xfbb1b73c4f0bda4f67dca266ce6ef42f520fbb98',
     associatedTermsOfService: [],
     tags: [],
-  },
-]
-
-export const BITTREX_PARSED_SYMBOLS: IAlunaSymbolSchema[] = [
-  {
-    id: 'BTC',
-    name: 'Bitcoin',
-    exchangeId: 'bittrex',
-    meta: {},
-  },
-  {
-    id: 'LTC',
-    name: 'Litecoin',
-    exchangeId: 'bittrex',
-    meta: {},
-  },
-  {
-    id: 'ETH',
-    name: 'Ethereum',
-    exchangeId: 'bittrex',
-    meta: {},
   },
 ]

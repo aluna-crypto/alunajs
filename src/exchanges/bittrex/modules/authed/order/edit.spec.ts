@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderCancel } from '../../../../../../test/mocks/exchange/modules/order/mockOrderCancel'
 import { mockOrderPlace } from '../../../../../../test/mocks/exchange/modules/order/mockOrderPlace'
@@ -11,7 +12,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PARSED_ORDERS, BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
+import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 import * as cancelMod from './cancel'
 import * as placeMod from './place'
 
@@ -30,7 +31,7 @@ describe(__filename, () => {
     const http = new BittrexHttp()
 
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-    const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
       id, marketSymbol, quantity, limit,
