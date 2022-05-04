@@ -216,6 +216,10 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
   }
 
+
+  /**
+   * Done.
+   */
   console.info('New exchange bootstraped at:\n\t— ', chalk.green(destination))
 }
 
