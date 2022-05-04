@@ -16,6 +16,7 @@ import { patchAlunaSpec } from './boostrap/patchingAlunaSpec'
 import { removePositionFeatures } from './boostrap/removePositionFeatures'
 import { renameSampleFiles } from './boostrap/renameSampleFiles'
 import { replaceSampleContents } from './boostrap/replaceSampleContents'
+import { uncommentIntentionalThrows } from './boostrap/uncommentIntentionalThrows'
 
 
 
@@ -134,14 +135,14 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
     },
   }
 
-  bootstrapParams.files = copySampleFiles(bootstrapParams)
-
+  copySampleFiles(bootstrapParams)
   replaceSampleContents(bootstrapParams)
   renameSampleFiles(bootstrapParams)
   configureSpecs(bootstrapParams)
   removePositionFeatures(bootstrapParams)
   addEntryOnExchangesList(bootstrapParams)
   patchAlunaSpec(bootstrapParams)
+  uncommentIntentionalThrows(bootstrapParams)
 
 
   /**
