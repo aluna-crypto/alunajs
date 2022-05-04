@@ -251,6 +251,37 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
   })
 
 
+
+  /**
+   * Patching `aluna.spec.ts` test.
+   */
+  const specFilepath = join(SRC, 'aluna.spec.ts')
+
+  const contents = readFileSync(exchangesFilepath, 'utf8')
+  const matches = contents.match(/\:/g) || []
+
+  const exchangesNum = matches.length
+
+  const specSearch = new RegExp(
+    `expect\\(exchangeIds\\.length\\)\\.to\\.eq\\(${exchangesNum - 1}\\)`,
+    'g',
+  )
+  const specReplace = `expect(exchangeIds.length).to.eq(${exchangesNum})`
+
+  console.log({
+    specSearch,
+    specReplace,
+    exchangesNum,
+  })
+
+  replaceSync({
+    filepath: specFilepath,
+    search: specSearch,
+    replace: specReplace,
+    condition: (contents: string) => contents.indexOf(specReplace) === -1
+  })
+
+
   /**
    * Done.
    */
