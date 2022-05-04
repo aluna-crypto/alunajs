@@ -33,8 +33,6 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
-
     const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
@@ -79,6 +77,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,
@@ -139,8 +139,6 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
-
     const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
@@ -193,6 +191,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,
@@ -224,8 +224,6 @@ describe(__filename, () => {
       key: 'key',
       secret: 'secret',
     }
-
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
 
     const accountId = 'accountId'
 
@@ -270,6 +268,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,

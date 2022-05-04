@@ -20,8 +20,6 @@ describe(__filename, () => {
   it('should parse many Bittrex raw balances just fine', async () => {
 
     // preparing data
-    const exchange = new BittrexAuthed({ credentials })
-
     const parsedBalances = PARSED_BALANCES
     const rawBalances = BITTREX_RAW_BALANCES
 
@@ -35,6 +33,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ credentials })
+
     const { balances } = exchange.balance.parseMany({ rawBalances })
 
 
