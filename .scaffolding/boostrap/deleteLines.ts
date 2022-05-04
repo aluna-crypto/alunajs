@@ -5,7 +5,7 @@ import { IBoostrapMethodParams } from './IBoostrapMethodParams'
 
 
 
-export const uncommentIntentionalThrows = (
+export const deleteLines = (
   params: IBoostrapMethodParams,
 ) => {
 
@@ -16,7 +16,7 @@ export const uncommentIntentionalThrows = (
 
   log('uncommenting intentional throws')
 
-  const regex = /^.*(scaffold\:delete).*$/mg
+  const regex = /^.*(scaffold\:delete-line).*$/mg
 
   for(const file of files) {
     shell.sed('-i', regex, '', file)
