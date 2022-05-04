@@ -127,3 +127,28 @@ export const buildBittrexSpecs = (params: {
   return specs
 
 }
+
+
+
+export const bittrexEndpoints = {
+  symbol: {
+    list: `${BITTREX_PRODUCTION_URL}/currencies`,
+  },
+  market: {
+    markets: `${BITTREX_PRODUCTION_URL}/markets`,
+    summaries: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
+    tickers: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
+  },
+  key: {
+    account: `${BITTREX_PRODUCTION_URL}/account`,
+  },
+  balance: {
+    list: `${BITTREX_PRODUCTION_URL}/balances`,
+  },
+  order: {
+    get: (id: string) => `${BITTREX_PRODUCTION_URL}/orders/${id}`,
+    list: `${BITTREX_PRODUCTION_URL}/orders/open`,
+    place: `${BITTREX_PRODUCTION_URL}/orders`,
+    cancel: (id: string) => `${BITTREX_PRODUCTION_URL}/orders/${id}`,
+  },
+}
