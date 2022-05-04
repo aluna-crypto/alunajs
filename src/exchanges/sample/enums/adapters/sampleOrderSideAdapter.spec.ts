@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { SampleSideEnum } from '../SampleSideEnum'
+import { SampleOrderSideEnum } from '../SampleOderSideEnum'
 import {
   translateOrderSideToAluna,
   translateOrderSideToSample,
@@ -21,11 +21,11 @@ describe(__filename, () => {
     () => {
 
       expect(translateOrderSideToAluna({
-        from: SampleSideEnum.BUY,
+        from: SampleOrderSideEnum.BUY,
       })).to.be.eq(AlunaOrderSideEnum.BUY)
 
       expect(translateOrderSideToAluna({
-        from: SampleSideEnum.SELL,
+        from: SampleOrderSideEnum.SELL,
       })).to.be.eq(AlunaOrderSideEnum.SELL)
 
       let result
@@ -34,7 +34,7 @@ describe(__filename, () => {
       try {
 
         result = translateOrderSideToAluna({
-          from: notSupported as SampleSideEnum,
+          from: notSupported as SampleOrderSideEnum,
         })
 
       } catch (err) {
@@ -60,11 +60,11 @@ describe(__filename, () => {
 
       expect(translateOrderSideToSample({
         from: AlunaOrderSideEnum.BUY,
-      })).to.be.eq(SampleSideEnum.BUY)
+      })).to.be.eq(SampleOrderSideEnum.BUY)
 
       expect(translateOrderSideToSample({
         from: AlunaOrderSideEnum.SELL,
-      })).to.be.eq(SampleSideEnum.SELL)
+      })).to.be.eq(SampleOrderSideEnum.SELL)
 
       let result
       let error

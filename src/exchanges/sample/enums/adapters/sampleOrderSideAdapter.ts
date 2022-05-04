@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { SampleSideEnum } from '../SampleSideEnum'
+import { SampleSideEnum } from '../SampleOderSideEnum'
 
 
 
