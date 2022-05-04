@@ -13,7 +13,7 @@ import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
 import { BittrexSideEnum } from '../../../enums/BittrexSideEnum'
@@ -93,12 +93,12 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(3)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${BITTREX_PRODUCTION_URL}/balances`,
+      url: bittrexEndpoints.balance.list,
       credentials,
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
-      url: `${BITTREX_PRODUCTION_URL}/orders`,
+      url: bittrexEndpoints.order.list,
       credentials,
       body: {
         marketSymbol: 'BTCEUR',
@@ -112,7 +112,7 @@ describe(__filename, () => {
 
     expect(authedRequest.thirdCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${BITTREX_PRODUCTION_URL}/account`,
+      url: bittrexEndpoints.key.account,
       credentials,
     })
 

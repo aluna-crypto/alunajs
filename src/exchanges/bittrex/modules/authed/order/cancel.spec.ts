@@ -9,8 +9,11 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
-import { BITTREX_PARSED_ORDERS, BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
+import {
+  BITTREX_PARSED_ORDERS,
+  BITTREX_RAW_ORDERS,
+} from '../../../test/fixtures/bittrexOrders'
 import * as parseMod from './parse'
 
 
@@ -61,7 +64,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: `${BITTREX_PRODUCTION_URL}/orders/${id}`,
+      url: bittrexEndpoints.order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -69,6 +72,9 @@ describe(__filename, () => {
   })
 
   it('should throw an error when canceling a Bittrex order', async () => {
+
+    // preparing data
+    const id = 'id'
 
     // mocking
     const {
@@ -91,7 +97,7 @@ describe(__filename, () => {
 
     const { error: responseError } = await executeAndCatch(
       () => exchange.order.cancel({
-        id: 'id',
+        id,
         symbolPair: 'symbolPair',
       }),
     )
@@ -105,7 +111,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: `${BITTREX_PRODUCTION_URL}/orders/id`,
+      url: bittrexEndpoints.order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

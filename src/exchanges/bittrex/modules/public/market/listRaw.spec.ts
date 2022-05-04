@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bittrex } from '../../../Bittrex'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import {
   BITTREX_RAW_MARKET_SUMMARIES,
   BITTREX_RAW_MARKET_TICKERS,
@@ -55,15 +55,15 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(3)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: `${BITTREX_PRODUCTION_URL}/markets`,
+      url: bittrexEndpoints.market.markets,
     })
 
     expect(publicRequest.secondCall.args[0]).to.deep.eq({
-      url: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
+      url: bittrexEndpoints.market.summaries,
     })
 
     expect(publicRequest.thirdCall.args[0]).to.deep.eq({
-      url: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
+      url: bittrexEndpoints.market.tickers,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

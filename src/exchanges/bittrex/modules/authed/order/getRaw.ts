@@ -7,7 +7,7 @@ import {
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { BITTREX_PRODUCTION_URL } from '../../../bittrexSpecs'
+import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
@@ -32,7 +32,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const rawOrder = await http.authedRequest<any>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: `${BITTREX_PRODUCTION_URL}/orders/${id}`,
+    url: bittrexEndpoints.order.get(id),
   })
 
   const { requestCount } = http
