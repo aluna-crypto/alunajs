@@ -12,7 +12,6 @@ export const uncommentIntentionalThrows = (
   const {
     log,
     files,
-    configs,
   } = params
 
   log('uncommenting intentional throws')
@@ -22,7 +21,6 @@ export const uncommentIntentionalThrows = (
   console.log(regex)
 
   for(const file of files) {
-    console.log(file, regex)
     shell.sed('-i', regex, '', file)
   }
 
