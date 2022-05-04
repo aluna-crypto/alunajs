@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderCancel } from '../../../../../../test/mocks/exchange/modules/order/mockOrderCancel'
 import { mockOrderPlace } from '../../../../../../test/mocks/exchange/modules/order/mockOrderPlace'
@@ -11,7 +12,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PARSED_ORDERS, SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as cancelMod from './cancel'
 import * as placeMod from './place'
 
@@ -30,10 +31,10 @@ describe(__filename, () => {
     const http = new SampleHttp()
 
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-    const mockedParsedOrder = SAMPLE_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      id, marketSymbol, quantity, limit,
+      id, quantity,
     } = mockedRawOrder
 
 
@@ -53,12 +54,12 @@ describe(__filename, () => {
 
     const params: IAlunaOrderEditParams = {
       id,
-      symbolPair: marketSymbol,
+      symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
-      rate: Number(limit),
+      rate: 0,
     }
 
     const {

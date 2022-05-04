@@ -435,15 +435,12 @@ describe(__filename, () => {
     },
   )
 
-  it('should ensure the order type is on read mode', async () => {
+  it.skip('should ensure the order type is on read mode', async () => {
 
     // preparing data
     const exchange = new BittrexAuthed({
       credentials,
     })
-
-    // mocking
-    mockValidateParams()
 
     // executing
     await testExchangeSpecsForOrderWriteModule({

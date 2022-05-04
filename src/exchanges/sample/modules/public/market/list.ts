@@ -19,9 +19,11 @@ export const list = (exchange: IAlunaExchangePublic) => async (
   log('listing Sample markets')
 
   const { http = new SampleHttp() } = params
+
   const { requestCount } = http
 
   const { rawMarkets } = await exchange.market.listRaw({ http })
+
   const { markets } = exchange.market.parseMany({ rawMarkets })
 
   return {

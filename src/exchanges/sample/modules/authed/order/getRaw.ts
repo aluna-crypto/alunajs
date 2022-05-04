@@ -7,7 +7,7 @@ import {
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { sampleEndpoints } from '../../../sampleSpecs'
 import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
@@ -29,10 +29,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     http = new SampleHttp(),
   } = params
 
+  // TODO: Implement proper request
   const rawOrder = await http.authedRequest<any>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: `${SAMPLE_PRODUCTION_URL}/orders/${id}`,
+    url: sampleEndpoints.order.get(id),
   })
 
   const { requestCount } = http

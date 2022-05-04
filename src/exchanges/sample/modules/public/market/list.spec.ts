@@ -1,12 +1,10 @@
 import { expect } from 'chai'
 
+import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockMarketListRaw } from '../../../../../../test/mocks/exchange/modules/market/mockMarketListRaw'
 import { mockMarketParseMany } from '../../../../../../test/mocks/exchange/modules/market/mockMarketParseMany'
 import { Sample } from '../../../Sample'
-import {
-  SAMPLE_PARSED_MARKETS,
-  SAMPLE_RAW_MARKETS,
-} from '../../../test/fixtures/sampleMarket'
+import { SAMPLE_RAW_MARKETS } from '../../../test/fixtures/sampleMarket'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
 
@@ -29,7 +27,7 @@ describe(__filename, () => {
 
     const { parseMany } = mockMarketParseMany({ module: parseManyMod })
 
-    parseMany.returns({ markets: SAMPLE_PARSED_MARKETS })
+    parseMany.returns({ markets: PARSED_MARKETS })
 
 
     // executing
@@ -39,7 +37,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(markets).to.deep.eq(SAMPLE_PARSED_MARKETS)
+    expect(markets).to.deep.eq(PARSED_MARKETS)
 
     expect(listRaw.callCount).to.be.eq(1)
     expect(listRaw.firstCall.args[0]).to.haveOwnProperty('http')

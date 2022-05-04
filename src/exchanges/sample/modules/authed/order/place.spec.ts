@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { testExchangeSpecsForOrderWriteModule } from '../../../../../../test/helpers/orders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
@@ -8,24 +9,19 @@ import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderSideAdapter'
 import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
-import { SampleOrderTimeInForceEnum } from '../../../enums/SampleOrderTimeInForceEnum'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
 import {
-  SAMPLE_PRODUCTION_URL,
   sampleBaseSpecs,
+  sampleEndpoints,
 } from '../../../sampleSpecs'
-import {
-  SAMPLE_PARSED_ORDERS,
-  SAMPLE_RAW_ORDERS,
-} from '../../../test/fixtures/sampleOrders'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as parseMod from './parse'
 
 
@@ -41,12 +37,10 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-    const mockedParsedOrder = SAMPLE_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      marketSymbol,
       quantity,
-      limit,
     } = mockedRawOrder
 
     const side = AlunaOrderSideEnum.BUY
@@ -57,11 +51,12 @@ describe(__filename, () => {
 
     const body = {
       direction: translatedOrderSide,
-      marketSymbol,
+      marketSymbol: '',
       type: translatedOrderType,
       quantity: Number(quantity),
-      limit: Number(limit),
-      timeInForce: SampleOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      rate: 0,
+      // limit: 0,
+      // timeInForce: SampleOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
     }
 
     // mocking
@@ -83,12 +78,12 @@ describe(__filename, () => {
     const exchange = new SampleAuthed({ credentials })
 
     const { order } = await exchange.order.place({
-      symbolPair: marketSymbol,
+      symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
       side,
       type,
-      rate: Number(limit),
+      rate: 0,
     })
 
 
@@ -100,7 +95,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: `${SAMPLE_PRODUCTION_URL}/orders`,
+      url: sampleEndpoints.order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -112,12 +107,10 @@ describe(__filename, () => {
     // preparing data
 
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-    const mockedParsedOrder = SAMPLE_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      marketSymbol,
       quantity,
-      limit,
     } = mockedRawOrder
 
     const side = AlunaOrderSideEnum.BUY
@@ -128,10 +121,11 @@ describe(__filename, () => {
 
     const body = {
       direction: translatedOrderSide,
-      marketSymbol,
+      marketSymbol: '',
       type: translatedOrderType,
       quantity: Number(quantity),
-      timeInForce: SampleOrderTimeInForceEnum.FILL_OR_KILL,
+      rate: 0,
+      // timeInForce: SampleOrderTimeInForceEnum.FILL_OR_KILL,
     }
 
     // mocking
@@ -153,12 +147,12 @@ describe(__filename, () => {
     const exchange = new SampleAuthed({ credentials })
 
     const { order } = await exchange.order.place({
-      symbolPair: marketSymbol,
+      symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
       amount: Number(quantity),
       side,
       type,
-      rate: Number(limit),
+      rate: 0,
     })
 
 
@@ -170,7 +164,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: `${SAMPLE_PRODUCTION_URL}/orders`,
+      url: sampleEndpoints.order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -185,9 +179,7 @@ describe(__filename, () => {
       const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
 
       const {
-        marketSymbol,
         quantity,
-        limit,
       } = mockedRawOrder
 
       const side = AlunaOrderSideEnum.BUY
@@ -221,79 +213,12 @@ describe(__filename, () => {
       const exchange = new SampleAuthed({ credentials })
 
       const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
+        symbolPair: '',
         account: AlunaAccountEnum.EXCHANGE,
         amount: Number(quantity),
         side,
         type,
-        rate: Number(limit),
-      }))
-
-
-      // validating
-
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.code).to.be.eq(expectedCode)
-      expect(error?.message).to.be.eq(expectedMessage)
-
-      expect(authedRequest.callCount).to.be.eq(1)
-
-      expect(publicRequest.callCount).to.be.eq(0)
-
-    },
-  )
-
-  it(
-    'should throw an error placing for minimum value placing new sample order',
-    async () => {
-
-      // preparing data
-      const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-
-      const expectedMessage = 'The amount of quote currency involved in '
-        .concat('a transaction would be less ')
-        .concat('than the minimum limit of 10K satoshis')
-      const expectedCode = AlunaGenericErrorCodes.UNKNOWN
-
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'DUST_TRADE_DISALLOWED_MIN_VALUE',
-        },
-      })
-
-      // mocking
-      const {
-        publicRequest,
-        authedRequest,
-      } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-      authedRequest.returns(Promise.reject(alunaError))
-
-      mockValidateParams()
-
-
-      // executing
-      const exchange = new SampleAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
+        rate: 0,
       }))
 
 
@@ -318,9 +243,7 @@ describe(__filename, () => {
       const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
 
       const {
-        marketSymbol,
         quantity,
-        limit,
       } = mockedRawOrder
 
       const side = AlunaOrderSideEnum.BUY
@@ -354,12 +277,12 @@ describe(__filename, () => {
       const exchange = new SampleAuthed({ credentials })
 
       const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
+        symbolPair: '',
         account: AlunaAccountEnum.EXCHANGE,
         amount: Number(quantity),
         side,
         type,
-        rate: Number(limit),
+        rate: 0,
       }))
 
       // validating
@@ -374,80 +297,78 @@ describe(__filename, () => {
     },
   )
 
-  it(
-    'should throw an error placing new sample order',
+  it('should throw an error placing new sample order', async () => {
+
+    // preparing data
+    const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
+
+    const {
+      quantity,
+    } = mockedRawOrder
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.MARKET
+
+    const expectedMessage = 'dummy-error'
+    const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
+
+    const alunaError = new AlunaError({
+      message: 'dummy-error',
+      code: AlunaOrderErrorCodes.PLACE_FAILED,
+      httpStatusCode: 401,
+      metadata: {},
+    })
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: SampleHttp.prototype })
+
+    authedRequest.returns(Promise.reject(alunaError))
+
+    mockValidateParams()
+
+
+    // executing
+    const exchange = new SampleAuthed({ credentials })
+
+    const { error } = await executeAndCatch(() => exchange.order.place({
+      symbolPair: '',
+      account: AlunaAccountEnum.EXCHANGE,
+      amount: Number(quantity),
+      side,
+      type,
+      rate: Number(0),
+    }))
+
+    // validating
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error?.code).to.be.eq(expectedCode)
+    expect(error?.message).to.be.eq(expectedMessage)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it.skip(
+    'should ensure Sample order specs are properly validated',
     async () => {
 
       // preparing data
-      const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-
-      const {
-        marketSymbol,
-        quantity,
-        limit,
-      } = mockedRawOrder
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-
-      const expectedMessage = 'dummy-error'
-      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
-
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {},
+      const exchange = new SampleAuthed({
+        credentials,
       })
 
-      // mocking
-      const {
-        publicRequest,
-        authedRequest,
-      } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-      authedRequest.returns(Promise.reject(alunaError))
-
-      mockValidateParams()
-
-
       // executing
-      const exchange = new SampleAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: marketSymbol,
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: Number(quantity),
-        side,
-        type,
-        rate: Number(limit),
-      }))
-
-      // validating
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.code).to.be.eq(expectedCode)
-      expect(error?.message).to.be.eq(expectedMessage)
-
-      expect(authedRequest.callCount).to.be.eq(1)
-
-      expect(publicRequest.callCount).to.be.eq(0)
+      await testExchangeSpecsForOrderWriteModule({
+        exchangeSpecs: sampleBaseSpecs,
+        orderWriteModule: exchange.order,
+      })
 
     },
   )
-
-  it('should ensure Bittrex order specs are properly validated', async () => {
-
-    // preparing data
-    const exchange = new SampleAuthed({
-      credentials,
-    })
-
-    // executing
-    await testExchangeSpecsForOrderWriteModule({
-      exchangeSpecs: sampleBaseSpecs,
-      orderWriteModule: exchange.order,
-    })
-
-  })
 
 })

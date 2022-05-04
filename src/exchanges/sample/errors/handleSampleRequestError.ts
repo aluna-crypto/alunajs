@@ -52,7 +52,7 @@ export const handleSampleRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review exchange error prop on request response
+    // TODO: Review property `exchangeErroMsg` on request response
     message = response?.data?.exchangeErroMsg || message
 
     httpStatusCode = response?.status || httpStatusCode

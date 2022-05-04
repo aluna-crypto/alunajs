@@ -4,7 +4,7 @@ import {
   IAlunaSymbolParseReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
-import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { sampleBaseSpecs } from '../../../sampleSpecs'
 import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
@@ -28,6 +28,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const alias = (id !== symbol ? symbol : undefined)
 
+  // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
     name,

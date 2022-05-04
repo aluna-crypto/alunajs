@@ -1,14 +1,12 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockOrderListRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderListRaw'
 import { mockOrderParseMany } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParseMany'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import {
-  SAMPLE_PARSED_ORDERS,
-  SAMPLE_RAW_ORDERS,
-} from '../../../test/fixtures/sampleOrders'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
 
@@ -27,7 +25,7 @@ describe(__filename, () => {
     const http = new SampleHttp()
 
     const mockedRawOrders = SAMPLE_RAW_ORDERS
-    const mockedParsedOrders = SAMPLE_PARSED_ORDERS
+    const mockedParsedOrders = PARSED_ORDERS
 
 
     // mocking

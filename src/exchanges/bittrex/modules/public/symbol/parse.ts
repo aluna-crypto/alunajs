@@ -4,7 +4,7 @@ import {
   IAlunaSymbolParseReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
-import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 

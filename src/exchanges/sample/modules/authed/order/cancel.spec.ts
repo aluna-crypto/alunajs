@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -9,8 +10,8 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
-import { SAMPLE_PARSED_ORDERS, SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
+import { sampleEndpoints } from '../../../sampleSpecs'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as parseMod from './parse'
 
 
@@ -26,9 +27,9 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-    const mockedParsedOrder = SAMPLE_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id, marketSymbol } = mockedRawOrder
+    const { id } = mockedRawOrder
 
 
     // mocking
@@ -49,7 +50,7 @@ describe(__filename, () => {
 
     const { order } = await exchange.order.cancel({
       id,
-      symbolPair: marketSymbol,
+      symbolPair: '',
     })
 
 
@@ -61,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: `${SAMPLE_PRODUCTION_URL}/orders/${id}`,
+      url: sampleEndpoints.order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -69,6 +70,9 @@ describe(__filename, () => {
   })
 
   it('should throw an error when canceling a Sample order', async () => {
+
+    // preparing data
+    const id = 'id'
 
     // mocking
     const {
@@ -91,7 +95,7 @@ describe(__filename, () => {
 
     const { error: responseError } = await executeAndCatch(
       () => exchange.order.cancel({
-        id: 'id',
+        id,
         symbolPair: 'symbolPair',
       }),
     )
@@ -105,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: `${SAMPLE_PRODUCTION_URL}/orders/id`,
+      url: sampleEndpoints.order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

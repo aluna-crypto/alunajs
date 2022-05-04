@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
+import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Sample } from '../../../Sample'
 import { sampleBaseSpecs } from '../../../sampleSpecs'
 import { SAMPLE_RAW_SYMBOLS } from '../../../test/fixtures/sampleSymbols'

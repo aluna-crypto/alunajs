@@ -9,7 +9,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { sampleEndpoints } from '../../../sampleSpecs'
 import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
@@ -33,9 +33,10 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
+    // TODO: Implement proper request
     const rawOrder = await http.authedRequest<ISampleOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: `${SAMPLE_PRODUCTION_URL}/orders/${id}`,
+      url: sampleEndpoints.order.get(id),
       credentials,
     })
 

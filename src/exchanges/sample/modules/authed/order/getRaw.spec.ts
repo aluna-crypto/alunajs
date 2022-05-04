@@ -5,7 +5,7 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
+import { sampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 
 
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: `${SAMPLE_PRODUCTION_URL}/orders/${id}`,
+      url: sampleEndpoints.order.get(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

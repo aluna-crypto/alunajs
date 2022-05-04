@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
+import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Bittrex } from '../../../Bittrex'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { BITTREX_RAW_MARKET } from '../../../test/fixtures/bittrexMarket'

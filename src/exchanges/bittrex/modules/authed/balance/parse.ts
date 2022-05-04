@@ -5,7 +5,7 @@ import {
   IAlunaBalanceParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 
 

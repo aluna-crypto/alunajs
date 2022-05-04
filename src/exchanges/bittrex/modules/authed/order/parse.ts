@@ -8,7 +8,7 @@ import {
   IAlunaOrderParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
-import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { translateOrderSideToAluna } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bittrexOrderStatusAdapter'

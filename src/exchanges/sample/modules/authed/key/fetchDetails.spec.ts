@@ -1,22 +1,14 @@
 import { expect } from 'chai'
-import { each } from 'lodash'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/key/mockParseDetails'
-import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
-import { AlunaHttpErrorCodes } from '../../../../../lib/errors/AlunaHttpErrorCodes'
-import { IAlunaKeyFetchDetailsReturns } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { SAMPLE_PRODUCTION_URL } from '../../../sampleSpecs'
-import { SampleOrderTimeInForceEnum } from '../../../enums/SampleOrderTimeInForceEnum'
-import { SampleOrderTypeEnum } from '../../../enums/SampleOrderTypeEnum'
-import { SampleSideEnum } from '../../../enums/SampleSideEnum'
+import { sampleEndpoints } from '../../../sampleSpecs'
+import { SAMPLE_KEY_PERMISSIONS } from '../../../test/fixtures/sampleKey'
 import * as parseDetailsMod from './parseDetails'
 
 
@@ -33,17 +25,11 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
-    const exchange = new SampleAuthed({ settings: {}, credentials })
-
     const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
       accountId,
-      permissions: {
-        read: true,
-        trade: true,
-        withdraw: true,
-      },
+      permissions: SAMPLE_KEY_PERMISSIONS,
       meta: {},
     }
 
@@ -53,22 +39,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: SampleHttp.prototype })
 
-    const badReqError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: 'BAD_REQUEST',
-      httpStatusCode: 400,
-      metadata: {
-        code: 'BAD_REQUEST',
-      },
-    })
-
-    const requestResponses = [
-      Promise.resolve(true),
-      Promise.reject(badReqError),
-      Promise.resolve({ accountId }),
-    ]
-
-    each(requestResponses, (r, i) => authedRequest.onCall(i).returns(r))
+    authedRequest.returns(Promise.resolve(SAMPLE_KEY_PERMISSIONS))
 
 
     const { parseDetails } = mockParseDetails({
@@ -79,6 +50,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new SampleAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,
@@ -90,345 +63,19 @@ describe(__filename, () => {
 
     expect(requestCount).to.deep.eq(http.requestCount)
 
-    expect(authedRequest.callCount).to.be.eq(3)
+    expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: `${SAMPLE_PRODUCTION_URL}/balances`,
+      url: sampleEndpoints.key.fetchDetails,
       credentials,
-    })
-    expect(authedRequest.secondCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.POST,
-      url: `${SAMPLE_PRODUCTION_URL}/orders`,
-      credentials,
-      body: {
-        marketSymbol: 'BTCEUR',
-        direction: SampleSideEnum.BUY,
-        type: SampleOrderTypeEnum.MARKET,
-        quantity: 0,
-        timeInForce: SampleOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
-        useAwards: false,
-      },
     })
 
-    expect(authedRequest.thirdCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
-      url: `${SAMPLE_PRODUCTION_URL}/account`,
-      credentials,
-    })
 
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: {
-        accountId,
-        read: true,
-        trade: true,
-        withdraw: false,
-      },
+      rawKey: SAMPLE_KEY_PERMISSIONS,
     })
-
-  })
-
-  it('should properly verify if key has permission to read', async () => {
-
-    // preparing data
-    const http = new SampleHttp()
-
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
-    const exchange = new SampleAuthed({ settings: {}, credentials })
-
-    const accountId = 'accountId'
-
-    const parsedKey: IAlunaKeySchema = {
-      accountId,
-      permissions: {
-        read: true,
-        trade: true,
-        withdraw: true,
-      },
-      meta: {},
-    }
-
-    // mocking
-    const {
-      authedRequest,
-    } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-    const invalidPerError = new AlunaError({
-      code: AlunaGenericErrorCodes.PARAM_ERROR,
-      message: 'INVALID_PERMISSION',
-      httpStatusCode: 400,
-      metadata: {
-        code: 'INVALID_PERMISSION',
-      },
-    })
-
-    const badReqError = new AlunaError({
-      code: AlunaGenericErrorCodes.UNKNOWN,
-      message: 'BAD_REQUEST',
-      httpStatusCode: 400,
-      metadata: {
-        code: 'BAD_REQUEST',
-      },
-    })
-
-    const requestResponses = [
-      Promise.reject(invalidPerError),
-      Promise.reject(badReqError),
-      Promise.resolve({ accountId }),
-    ]
-
-    each(requestResponses, (r, i) => authedRequest.onCall(i).returns(r))
-
-
-    const { parseDetails } = mockParseDetails({
-      module: parseDetailsMod,
-    })
-
-    parseDetails.returns(Promise.resolve({ key: parsedKey }))
-
-
-    // executing
-    const {
-      key,
-      requestCount,
-    } = await exchange.key.fetchDetails({ http })
-
-
-    // validating
-    expect(key).to.be.eq(key)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
-
-    expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: {
-        accountId,
-        read: false,
-        trade: true,
-        withdraw: false,
-      },
-    })
-
-  })
-
-  it('should properly verify if key has permission to trade', async () => {
-
-    // preparing data
-    const http = new SampleHttp()
-
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
-    const exchange = new SampleAuthed({ settings: {}, credentials })
-
-    const accountId = 'accountId'
-
-    const parsedKey: IAlunaKeySchema = {
-      accountId,
-      permissions: {
-        read: true,
-        trade: true,
-        withdraw: true,
-      },
-      meta: {},
-    }
-
-    // mocking
-    const {
-      authedRequest,
-    } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-    const invalidPerError = new AlunaError({
-      code: AlunaGenericErrorCodes.PARAM_ERROR,
-      message: 'INVALID_PERMISSION',
-      httpStatusCode: 400,
-      metadata: {
-        code: 'INVALID_PERMISSION',
-      },
-    })
-
-    const requestResponses = [
-      Promise.resolve(true),
-      Promise.reject(invalidPerError),
-      Promise.resolve({ accountId }),
-    ]
-
-    each(requestResponses, (r, i) => authedRequest.onCall(i).returns(r))
-
-
-    const { parseDetails } = mockParseDetails({
-      module: parseDetailsMod,
-    })
-
-    parseDetails.returns(Promise.resolve({ key: parsedKey }))
-
-
-    // executing
-    const {
-      key,
-      requestCount,
-    } = await exchange.key.fetchDetails({ http })
-
-
-    // validating
-    expect(key).to.be.eq(key)
-
-    expect(requestCount).to.deep.eq(http.requestCount)
-
-    expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: {
-        accountId,
-        read: true,
-        trade: false,
-        withdraw: false,
-      },
-    })
-
-  })
-
-  it(
-    'should handle request error when trying fetch key read details',
-    async () => {
-
-      // preparing data
-      const credentials: IAlunaCredentialsSchema = {
-        key: 'key',
-        secret: 'secret',
-      }
-
-      const exchange = new SampleAuthed({ settings: {}, credentials })
-
-      const requestError = new AlunaError({
-        code: AlunaHttpErrorCodes.REQUEST_ERROR,
-        message: 'unkown error.',
-        httpStatusCode: 400,
-      })
-
-
-      // mocking
-      const {
-        authedRequest,
-      } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-      authedRequest.returns(Promise.reject(requestError))
-
-
-      // executing
-      const {
-        error,
-        result,
-      } = await executeAndCatch<IAlunaKeyFetchDetailsReturns>(
-        () => exchange.key.fetchDetails(),
-      )
-
-
-      // validating
-      expect(result).not.to.be.ok
-
-      expect(error!).to.deep.eq(requestError)
-
-    },
-  )
-
-  it(
-    'should handle request error when trying fetch key trade details',
-    async () => {
-
-      // preparing data
-      const credentials: IAlunaCredentialsSchema = {
-        key: 'key',
-        secret: 'secret',
-      }
-
-      const exchange = new SampleAuthed({ settings: {}, credentials })
-
-      const requestError = new AlunaError({
-        code: AlunaHttpErrorCodes.REQUEST_ERROR,
-        message: 'unkown error.',
-        httpStatusCode: 400,
-      })
-
-
-      // mocking
-      const {
-        authedRequest,
-      } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-      const requestResponses = [
-        Promise.resolve(true),
-        Promise.reject(requestError),
-      ]
-
-      each(requestResponses, (r, i) => authedRequest.onCall(i).returns(r))
-
-
-      // executing
-      const {
-        error,
-        result,
-      } = await executeAndCatch<IAlunaKeyFetchDetailsReturns>(
-        () => exchange.key.fetchDetails(),
-      )
-
-
-      // validating
-      expect(result).not.to.be.ok
-
-      expect(error!).to.deep.eq(requestError)
-
-    },
-  )
-
-  it('should handle request error when trying fetch account id', async () => {
-
-    // preparing data
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
-    const exchange = new SampleAuthed({ settings: {}, credentials })
-
-    const requestError = new AlunaError({
-      code: AlunaHttpErrorCodes.REQUEST_ERROR,
-      message: 'unkown error.',
-      httpStatusCode: 400,
-    })
-
-
-    // mocking
-    const {
-      authedRequest,
-    } = mockHttp({ classPrototype: SampleHttp.prototype })
-
-    const requestResponses = [
-      Promise.resolve(true),
-      Promise.resolve(true),
-      Promise.reject(requestError),
-    ]
-
-    each(requestResponses, (r, i) => authedRequest.onCall(i).returns(r))
-
-
-    // executing
-    const {
-      error,
-      result,
-    } = await executeAndCatch<IAlunaKeyFetchDetailsReturns>(
-      () => exchange.key.fetchDetails(),
-    )
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    expect(error!).to.deep.eq(requestError)
 
   })
 

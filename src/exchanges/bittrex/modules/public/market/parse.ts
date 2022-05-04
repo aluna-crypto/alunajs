@@ -5,7 +5,7 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
-import { translateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { IBittrexMarketSchema } from '../../../schemas/IBittrexMarketSchema'
 

@@ -20,9 +20,11 @@ export const list = (exchange: IAlunaExchangePublic) => async (
   log('listing Sample symbols')
 
   const { http = new SampleHttp() } = params
+
   const { requestCount } = http
 
   const { rawSymbols } = await exchange.symbol.listRaw({ http })
+
   const { symbols } = exchange.symbol.parseMany({ rawSymbols })
 
   return {

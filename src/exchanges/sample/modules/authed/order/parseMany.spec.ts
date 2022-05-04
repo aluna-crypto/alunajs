@@ -1,13 +1,11 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
-import {
-  SAMPLE_PARSED_ORDERS,
-  SAMPLE_RAW_ORDERS,
-} from '../../../test/fixtures/sampleOrders'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as parseMod from './parse'
 
 
@@ -22,7 +20,7 @@ describe(__filename, () => {
   it('should parse many Sample raw orders just fine', async () => {
 
     // preparing data
-    const parsedOrders = SAMPLE_PARSED_ORDERS
+    const parsedOrders = PARSED_ORDERS
     const rawOrders = SAMPLE_RAW_ORDERS
 
 

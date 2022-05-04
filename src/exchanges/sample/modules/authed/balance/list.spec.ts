@@ -1,14 +1,12 @@
 import { expect } from 'chai'
 
+import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockBalanceListRaw } from '../../../../../../test/mocks/exchange/modules/balance/mockBalanceListRaw'
 import { mockBalanceParseMany } from '../../../../../../test/mocks/exchange/modules/balance/mockBalanceParseMany'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import {
-  SAMPLE_PARSED_BALANCES,
-  SAMPLE_RAW_BALANCES,
-} from '../../../test/fixtures/sampleBalances'
+import { SAMPLE_RAW_BALANCES } from '../../../test/fixtures/sampleBalances'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
 
@@ -27,7 +25,8 @@ describe(__filename, () => {
     const http = new SampleHttp()
 
     const rawBalances = SAMPLE_RAW_BALANCES
-    const parsedBalances = SAMPLE_PARSED_BALANCES
+    const parsedBalances = PARSED_BALANCES
+
 
     // mocking
     const { listRaw } = mockBalanceListRaw({ module: listRawMod })

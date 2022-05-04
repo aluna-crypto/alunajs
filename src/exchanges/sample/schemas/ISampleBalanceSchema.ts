@@ -1,6 +1,7 @@
+// TODO: Describe balance interface for Sample exchange
 export interface ISampleBalanceSchema {
-  currencySymbol: string
   total: string
   available: string
-  updatedAt: string
+  currencySymbol: string
+  // ...
 }

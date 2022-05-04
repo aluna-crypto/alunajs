@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
+import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SAMPLE_RAW_BALANCES } from '../../../test/fixtures/sampleBalances'
 

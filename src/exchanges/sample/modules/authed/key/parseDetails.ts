@@ -8,7 +8,6 @@ import {
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { SampleHttp } from '../../../SampleHttp'
 import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
-import { parsePermissions } from './parsePermissions'
 
 
 
@@ -29,7 +28,7 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { accountId } = rawKey
 
-  const { key: permissions } = await parsePermissions(exchange)({ rawKey })
+  const { key: permissions } = await exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
     accountId,

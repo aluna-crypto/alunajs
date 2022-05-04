@@ -1,8 +1,4 @@
 import { debug } from 'debug'
-import {
-  assign,
-  unset,
-} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -31,14 +27,10 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
   } = params
 
   const key: IAlunaKeyPermissionSchema = {
-    read: false,
-    trade: false,
-    withdraw: false,
+    read: rawKey.read,
+    trade: rawKey.trade,
+    withdraw: rawKey.withdraw,
   }
-
-  unset(rawKey, 'accountId')
-
-  assign(key, rawKey)
 
   const { requestCount } = http
 

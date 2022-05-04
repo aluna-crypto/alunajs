@@ -20,7 +20,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   log(params, 'params')
 
-  // TODO: Implement balance 'parse'
+  // TODO: Implement balance parse
   const balance: IAlunaBalanceSchema = {} as any
 
   return { balance }

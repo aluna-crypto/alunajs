@@ -1,12 +1,10 @@
 import { expect } from 'chai'
 
+import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockSymbolListRaw } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolListRaw'
 import { mockSymbolParseMany } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolParseMany'
 import { Sample } from '../../../Sample'
-import {
-  SAMPLE_PARSED_SYMBOLS,
-  SAMPLE_RAW_SYMBOLS,
-} from '../../../test/fixtures/sampleSymbols'
+import { SAMPLE_RAW_SYMBOLS } from '../../../test/fixtures/sampleSymbols'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
 
@@ -29,7 +27,7 @@ describe(__filename, () => {
 
     const { parseMany } = mockSymbolParseMany({ module: parseManyMod })
 
-    parseMany.returns({ symbols: SAMPLE_PARSED_SYMBOLS })
+    parseMany.returns({ symbols: PARSED_SYMBOLS })
 
 
     // executing
@@ -39,7 +37,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(symbols).to.deep.eq(SAMPLE_PARSED_SYMBOLS)
+    expect(symbols).to.deep.eq(PARSED_SYMBOLS)
 
     expect(listRaw.callCount).to.be.eq(1)
     expect(listRaw.firstCall.args[0]).to.haveOwnProperty('http')

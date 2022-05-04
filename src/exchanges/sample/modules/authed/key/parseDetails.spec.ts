@@ -30,8 +30,6 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const exchange = new SampleAuthed({ credentials })
-
     const rawKeyWithoutAccId = omit(rawKey, 'accountId')
 
     const permissions: IAlunaKeyPermissionSchema = {
@@ -48,6 +46,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new SampleAuthed({ credentials })
+
     const { key } = await exchange.key.parseDetails({ rawKey })
 
 

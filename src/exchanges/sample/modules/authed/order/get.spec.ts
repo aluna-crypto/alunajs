@@ -1,14 +1,12 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
 import { mockOrderParse } from '../../../../../../test/mocks/exchange/modules/order/mockOrderParse'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
-import {
-  SAMPLE_PARSED_ORDERS,
-  SAMPLE_RAW_ORDERS,
-} from '../../../test/fixtures/sampleOrders'
+import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
 
@@ -25,7 +23,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-    const mockedParsedOrder = SAMPLE_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const { id } = mockedRawOrder
 

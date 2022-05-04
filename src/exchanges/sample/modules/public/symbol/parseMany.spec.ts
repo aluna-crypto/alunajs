@@ -1,12 +1,10 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
+import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockSymbolParse } from '../../../../../../test/mocks/exchange/modules/symbol/mockSymbolParse'
 import { Sample } from '../../../Sample'
-import {
-  SAMPLE_PARSED_SYMBOLS,
-  SAMPLE_RAW_SYMBOLS,
-} from '../../../test/fixtures/sampleSymbols'
+import { SAMPLE_RAW_SYMBOLS } from '../../../test/fixtures/sampleSymbols'
 import * as parseMod from './parse'
 
 
@@ -18,7 +16,7 @@ describe(__filename, () => {
     // preparing data
     const { parse } = mockSymbolParse({ module: parseMod })
 
-    each(SAMPLE_PARSED_SYMBOLS, (symbol, index) => {
+    each(PARSED_SYMBOLS, (symbol, index) => {
       parse.onCall(index).returns({ symbol })
     })
 

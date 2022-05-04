@@ -1,8 +1,12 @@
 import { expect } from 'chai'
+import { each } from 'lodash'
 
+import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
+import { mockBalanceParse } from '../../../../../../test/mocks/exchange/modules/balance/mockBalanceParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SAMPLE_RAW_BALANCES } from '../../../test/fixtures/sampleBalances'
+import * as parseMod from './parse'
 
 
 
@@ -19,6 +23,14 @@ describe(__filename, () => {
     const rawBalances = SAMPLE_RAW_BALANCES
 
 
+    // mocking
+    const { parse } = mockBalanceParse({ module: parseMod })
+
+    each(PARSED_BALANCES, (balance, i) => {
+      parse.onCall(i).returns({ balance })
+    })
+
+
     // executing
     const exchange = new SampleAuthed({ credentials })
 
@@ -26,7 +38,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq([])
+    expect(balances).to.deep.eq(PARSED_BALANCES)
 
   })
 

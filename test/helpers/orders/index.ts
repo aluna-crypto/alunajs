@@ -336,6 +336,7 @@ const orderTypeIsImplemented = async (params: {
   const msg = `Order type '${type}' not supported/implemented `
     .concat(`for ${exchangeSpecs.name}`)
 
+
   expect(error).to.be.ok
 
   const { message } = error

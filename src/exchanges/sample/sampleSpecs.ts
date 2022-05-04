@@ -11,7 +11,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: Review exchange API
+// TODO: Review exchange API url
 export const SAMPLE_PRODUCTION_URL = 'https://api.sample.com/v3'
 
 
@@ -69,7 +69,7 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
   // TODO: Review 'signupUrl'
   signupUrl: 'https://sample.com/account/register',
   // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://sample.com/Manage?view=api',
+  connectApiUrl: 'https://sample.com/manage?view=api',
   // TODO: Review exchange rates limits
   rateLimitingPerMinute: {
     perApiKey: 0,
@@ -80,6 +80,7 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
+    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,
@@ -91,7 +92,6 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
       supported: false,
       implemented: false,
       orderTypes: [],
-
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
@@ -130,4 +130,30 @@ export const buildSampleSpecs = (params: {
 
   return specs
 
+}
+
+
+
+export const sampleEndpoints = {
+  symbol: {
+    // get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
+  market: {
+    // get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
+  key: {
+    fetchDetails: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
+  balance: {
+    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
+  order: {
+    get: (id: string) => `${SAMPLE_PRODUCTION_URL}/<desired-method>/${id}`,
+    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    place: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    cancel: (id: string) => `${SAMPLE_PRODUCTION_URL}/<desired-method>/${id}`,
+    // edit: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
 }

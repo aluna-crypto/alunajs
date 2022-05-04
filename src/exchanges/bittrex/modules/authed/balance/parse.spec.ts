@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { mockTranslateSymbolId } from '../../../../../lib/utils/mappings/translateSymbolId.mock'
+import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BITTREX_RAW_BALANCES } from '../../../test/fixtures/bittrexBalances'
 
