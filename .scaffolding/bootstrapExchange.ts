@@ -218,6 +218,35 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
 
 
   /**
+   * Adding entry to list of exchanges
+   */
+  const el = exchangeLower
+  const import1 = `import { ${el} } from '../exchanges/${el}'`
+  const import2 = `import { ${el}BaseSpecs } from '../exchanges/${el}/${el}Specs'`
+
+  const importsSearch = 'import'
+  const importsReplace = `${import1}\n${import2}\n${importsSearch}`
+
+  const definitionSearch = 'export const exchanges = {'
+  const definitionReplace = `${definitionSearch}\n  [${el}BaseSpecs.id]: ${el},`
+
+  const exchangesFilepath = join(SRC, 'lib', 'exchanges.ts')
+  console.log('exchangesFilepath', exchangesFilepath)
+
+  replaceSync({
+    filepath: exchangesFilepath,
+    search: importsSearch,
+    replace: importsReplace,
+  })
+
+  replaceSync({
+    filepath: exchangesFilepath,
+    search: definitionSearch,
+    replace: definitionReplace,
+  })
+
+
+  /**
    * Done.
    */
   console.info('New exchange bootstraped at:\n\t— ', chalk.green(destination))
