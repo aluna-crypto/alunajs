@@ -20,6 +20,11 @@ const BKP_DIR = join(ROOT, '.bkp')
 
 const ignoredFilepaths = [
   'src/exchanges/sample/SampleHttp.ts',
+  'src/exchanges/sample/sampleSpecs.ts',
+  'src/exchanges/sample/errors/handleSampleRequestError.ts',
+  'src/exchanges/sample/modules/authed/balace/parse.ts',
+  'src/exchanges/sample/modules/authed/balace/parseMany.ts',
+  'src/exchanges/sample/modules/authed/balace/listRaw.ts',
 ]
 
 
