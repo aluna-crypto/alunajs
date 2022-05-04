@@ -1,5 +1,5 @@
 import axios from 'axios'
-import crypto from 'crypto'
+import debug from 'debug'
 
 import {
   IAlunaHttp,
@@ -19,6 +19,10 @@ export const SAMPLE_HTTP_CACHE_KEY_PREFIX = 'SampleHttp.publicRequest'
 
 
 
+const log = debug('@alunajs:sample/SampleHttp')
+
+
+// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   path: string
@@ -29,11 +33,9 @@ interface ISignedHashParams {
 
 
 
+// TODO: Review interface properties
 export interface ISampleSignedHeaders {
-  'Api-Key': string
   'Api-Timestamp': number
-  'Api-Content-Hash': string
-  'Api-Signature': string
 }
 
 
@@ -42,36 +44,23 @@ export const generateAuthHeader = (
   params: ISignedHashParams,
 ): ISampleSignedHeaders => {
 
-  const {
-    credentials,
-    verb,
-    body,
-    url,
-  } = params
+  log(params)
 
-  const timestamp = new Date().getTime()
+  // const {
+  //   credentials,
+  //   verb,
+  //   body,
+  //   url,
+  // } = params
 
-  const {
-    key,
-    secret,
-  } = credentials
+  // const {
+  //   key,
+  //   secret,
+  // } = credentials
 
-  const contentHash = crypto
-    .createHash('sha512')
-    .update(body ? JSON.stringify(body) : '')
-    .digest('hex')
-
-  const preSigned = [timestamp, url, verb.toUpperCase(), contentHash].join('')
-
-  const signedHeader = crypto
-    .createHmac('sha512', secret)
-    .update(preSigned)
-    .digest('hex')
+  const timestamp = Date.now()
 
   return {
-    'Api-Content-Hash': contentHash,
-    'Api-Key': key,
-    'Api-Signature': signedHeader,
     'Api-Timestamp': timestamp,
   }
 
@@ -171,7 +160,7 @@ export class SampleHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash,
+      headers: signedHash, // TODO: Review headers injection
       proxySettings: settings?.proxySettings,
     })
 

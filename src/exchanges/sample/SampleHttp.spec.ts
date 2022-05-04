@@ -1,8 +1,6 @@
 import { expect } from 'chai'
-import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
-import { spy } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
@@ -20,8 +18,8 @@ import {
   validateCache,
 } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import * as SampleHttpMod from './SampleHttp'
 import * as handleSampleRequestErrorMod from './errors/handleSampleRequestError'
+import * as SampleHttpMod from './SampleHttp'
 
 
 
@@ -445,45 +443,19 @@ describe(__filename, () => {
   it('should generate signed auth header just fine', async () => {
 
     // preparing data
-    const createHmacSpy = spy(crypto, 'createHmac')
-    const createHashSpy = spy(crypto, 'createHash')
-
-    const updateSpy = spy(crypto.Hmac.prototype, 'update')
-    const updateHashSpy = spy(crypto.Hash.prototype, 'update')
-
-    const digestHmacSpy = spy(crypto.Hmac.prototype, 'digest')
-    const digestHashSpy = spy(crypto.Hash.prototype, 'digest')
-
     const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
 
-    const stringifyBody = 'stringify-body'
-
-    const currentDate = 'current-date'
-
-    const timestampMock = { toString: () => currentDate }
-
+    const currentDate = Date.now()
 
     // mocking
     const dateMock = ImportMock.mockFunction(
-      Date.prototype,
-      'getTime',
-      timestampMock,
+      Date,
+      'now',
+      currentDate,
     )
-
-    const stringfyMock = ImportMock.mockFunction(
-      JSON,
-      'stringify',
-      stringifyBody,
-    )
-
 
     // executing
-    const contentHash = crypto
-      .createHash('sha512')
-      .update(body ? JSON.stringify(body) : '')
-      .digest('hex')
-
     const signedHash = SampleHttpMod.generateAuthHeader({
       credentials,
       path,
@@ -492,81 +464,9 @@ describe(__filename, () => {
       url,
     })
 
-
     // validating
     expect(dateMock.callCount).to.be.eq(1)
-
-    expect(createHmacSpy.callCount).to.be.eq(1)
-    expect(createHashSpy.callCount).to.be.eq(2)
-    expect(createHashSpy
-      .secondCall
-      .calledWith('sha512')).to.be.ok
-    expect(createHmacSpy
-      .firstCall
-      .calledWith('sha512', credentials.secret)).to.be.ok
-
-    expect(updateSpy.callCount).to.be.eq(1)
-    expect(updateHashSpy.callCount).to.be.eq(2)
-    expect(updateHashSpy.secondCall.calledWith(JSON.stringify(body))).to.be.ok
-
-    expect(stringfyMock.callCount).to.be.eq(3)
-    expect(stringfyMock.calledWith(body)).to.be.ok
-
-    expect(digestHmacSpy.callCount).to.be.eq(1)
-    expect(digestHmacSpy.calledWith('hex')).to.be.ok
-
-    expect(digestHashSpy.callCount).to.be.eq(2)
-    expect(digestHashSpy.calledWith('hex')).to.be.ok
-
-
-    // mocking
-    const preSigned = [
-      timestampMock,
-      url,
-      verb.toUpperCase(),
-      contentHash,
-    ].join('')
-
-
-    // executing
-    const signedHeader = crypto
-      .createHmac('sha512', credentials.secret)
-      .update(preSigned)
-      .digest('hex')
-
-    const signedHash2 = SampleHttpMod.generateAuthHeader({
-      credentials,
-      path,
-      verb,
-      url,
-      // without a body
-    })
-
-
-    // validating
-    expect(signedHash['Api-Content-Hash']).to.deep.eq(contentHash)
-    expect(signedHash['Api-Key']).to.deep.eq(credentials.key)
-    expect(signedHash['Api-Timestamp']).to.deep.eq(timestampMock)
-    expect(signedHash['Api-Signature']).to.deep.eq(signedHeader)
-
-    expect(dateMock.callCount).to.be.eq(2)
-
-    expect(createHmacSpy.callCount).to.be.eq(3)
-
-    expect(stringfyMock.callCount).to.be.eq(3)
-    expect(stringfyMock.calledWith('')).not.to.be.ok
-
-    expect(updateSpy.callCount).to.be.eq(3)
-
-    expect(digestHmacSpy.callCount).to.be.eq(3)
-
-    const contentHash2 = crypto.createHash('sha512').update('').digest('hex')
-
-    expect(signedHash2['Api-Content-Hash']).to.deep.eq(contentHash2)
-    expect(
-      signedHash2['Api-Key'],
-    ).to.deep.eq(credentials.key)
-    expect(signedHash2['Api-Timestamp']).to.deep.eq(timestampMock)
+    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
 
   })
 
