@@ -198,7 +198,7 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
     const moduleFile = join(destination, 'modules', 'authed', 'position.ts')
 
     shelljs.rm('-rf', methodsDir)
-    shelljs.rm(moduleFile)
+    shelljs.rm('-f', moduleFile)
 
     const entryAuthedClassPath = join(destination, `${exchangeName}Authed.ts`)
     const entryAuthedClassContents = readFileSync(entryAuthedClassPath, 'utf8')
