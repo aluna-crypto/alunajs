@@ -11,7 +11,7 @@ import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
 
 
-const log = debug('@aluna.js:sample/symbol/listRaw')
+const log = debug('@alunajs:sample/symbol/listRaw')
 
 
 

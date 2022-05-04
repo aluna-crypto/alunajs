@@ -9,7 +9,7 @@ import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 
 
 
-const log = debug('@aluna.js:utils/order/ensureOrderIsSupported')
+const log = debug('@alunajs:utils/order/ensureOrderIsSupported')
 
 
 

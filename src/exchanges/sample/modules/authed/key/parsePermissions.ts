@@ -11,7 +11,7 @@ import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
 
 
 
-const log = debug('@aluna.js:sample/key/parsePermissions')
+const log = debug('@alunajs:sample/key/parsePermissions')
 
 
 

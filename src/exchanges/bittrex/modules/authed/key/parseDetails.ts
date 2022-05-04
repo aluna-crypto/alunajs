@@ -12,7 +12,7 @@ import { parsePermissions } from './parsePermissions'
 
 
 
-const log = debug('@aluna.js:bittrex/key/parseDetails')
+const log = debug('@alunajs:bittrex/key/parseDetails')
 
 
 

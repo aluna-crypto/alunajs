@@ -17,7 +17,7 @@ import { parseDetails } from './parseDetails'
 
 
 
-const log = debug('@aluna.js:bittrex/key/fetchDetails')
+const log = debug('@alunajs:bittrex/key/fetchDetails')
 
 
 

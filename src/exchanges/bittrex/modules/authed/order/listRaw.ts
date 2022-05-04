@@ -12,7 +12,7 @@ import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
-const log = debug('@aluna.js:bittrex/order/listRaw')
+const log = debug('@alunajs:bittrex/order/listRaw')
 
 
 

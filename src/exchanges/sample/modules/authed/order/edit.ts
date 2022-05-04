@@ -11,7 +11,7 @@ import { SampleHttp } from '../../../SampleHttp'
 
 
 
-const log = debug('@aluna.js:sample/order/edit')
+const log = debug('@alunajs:sample/order/edit')
 
 
 

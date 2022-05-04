@@ -13,7 +13,7 @@ import { DEBANK_API_URL } from '../../web3Settings'
 
 
 
-const log = debug('@aluna.js:web3/token/listRaw')
+const log = debug('@alunajs:web3/token/listRaw')
 
 
 

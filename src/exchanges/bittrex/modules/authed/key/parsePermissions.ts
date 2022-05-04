@@ -15,7 +15,7 @@ import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 
 
-const log = debug('@aluna.js:bittrex/key/parsePermissions')
+const log = debug('@alunajs:bittrex/key/parsePermissions')
 
 
 

@@ -16,7 +16,7 @@ import {
 
 
 
-const log = debug('@aluna.js:bittrex/market/listRaw')
+const log = debug('@alunajs:bittrex/market/listRaw')
 
 
 

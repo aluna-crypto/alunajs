@@ -10,7 +10,7 @@ import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
 
-const log = debug('@aluna.js:bittrex/symbol/parseMany')
+const log = debug('@alunajs:bittrex/symbol/parseMany')
 
 
 

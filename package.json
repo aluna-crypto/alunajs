@@ -1,5 +1,5 @@
 {
-  "name": "aluna.js",
+  "name": "alunajs",
   "version": "0.0.1",
   "description": "Aluna exchanges hub.",
   "main": "dist/index.js",
@@ -16,21 +16,20 @@
     "prepare": "husky install",
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
-    "build": "yarn clean && yarn build:index && tsc -p tsconfig.dist.json && yarn build:index:clean",
+    "build": "yarn clean && yarn build-index && tsc -p tsconfig.dist.json && yarn clean-index",
     "build-index": "yarn cti entrypoint src -s false -e 'exchanges' -i '.spec' -i '.mock' -o index.ts -w -b",
     "build-watch": "yarn clean && tsc -p tsconfig.dist.json -w",
     "lint": "eslint src --cache --cache-location .husky/.eslintcache/ --ext .ts --max-warnings=0",
     "lintfix": "eslint src --cache --cache-location .husky/.eslintcache/ --ext .ts --max-warnings=0 --fix",
     "test": "mocha",
     "test-watch": "mocha --watch",
-    "test-cover": "nyc mocha",
+    "test-cover": "nyc mocha --reporter dot",
     "test-cover-watch": "nyc mocha --watch",
     "test-ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
-    "playground": "nodemon -w src -e ts -x 'DEBUG=@aluna.js:* ts-node .playground/index.ts'",
-    "add-exchange": "ts-node .scaffolding/addExchange.ts",
-    "update-sample": "ts-node .scaffolding/updateSample.ts"
+    "playground": "nodemon -w src -e ts -x 'DEBUG=@alunajs:* ts-node .playground/index.ts'",
+    "add-exchange": "ts-node .scaffolding/addExchange.ts"
   },
   "dependencies": {
     "axios": "^0.21.1",

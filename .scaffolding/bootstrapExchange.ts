@@ -20,7 +20,7 @@ import { uncommentIntentionalThrows } from './boostrap/uncommentIntentionalThrow
 
 
 
-const log = debug('@aluna.js:scaffold/generate')
+const log = debug('@alunajs:scaffold/generate')
 
 
 

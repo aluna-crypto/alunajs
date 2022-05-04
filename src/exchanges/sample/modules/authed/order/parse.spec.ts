@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 
-/** scaffold:delete
+/** scaffold:keep
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
-scaffold:delete */
+scaffold:keep */
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
@@ -28,12 +28,12 @@ describe(__filename, () => {
 
     expect(order).to.deep.eq(rawOrder)
 
-    /** scaffold:delete
+    /** scaffold:keep
     throw new AlunaError({
       code: AlunaGenericErrorCodes.UNKNOWN,
       message: 'TODO: Implement me',
     })
-    scaffold:delete */
+    scaffold:keep */
 
   })
 

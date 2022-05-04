@@ -9,7 +9,7 @@ import { BittrexHttp } from '../../../BittrexHttp'
 
 
 
-const log = debug('@aluna.js:bittrex/market/list')
+const log = debug('@alunajs:bittrex/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

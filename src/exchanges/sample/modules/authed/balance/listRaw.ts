@@ -12,7 +12,7 @@ import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
 
 
 
-const log = debug('@aluna.js:sample/balance/listRaw')
+const log = debug('@alunajs:sample/balance/listRaw')
 
 
 

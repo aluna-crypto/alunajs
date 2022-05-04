@@ -8,7 +8,7 @@ import {
 
 
 
-const log = debug('@aluna.js:bittrex/order/get')
+const log = debug('@alunajs:bittrex/order/get')
 
 
 
