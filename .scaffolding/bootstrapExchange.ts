@@ -11,12 +11,13 @@ import { AlunaApiFeaturesEnum } from '../src/lib/enums/AlunaApiFeaturesEnum'
 import { addEntryOnExchangesList } from './boostrap/addEntryOnExchangesList'
 import { configureSpecs } from './boostrap/configureSpecs'
 import { copySampleFiles } from './boostrap/copySampleFiles'
+import { deleteLines } from './boostrap/deleteLines'
 import { IBoostrapMethodParams } from './boostrap/IBoostrapMethodParams'
 import { patchAlunaSpec } from './boostrap/patchingAlunaSpec'
 import { removePositionFeatures } from './boostrap/removePositionFeatures'
 import { renameSampleFiles } from './boostrap/renameSampleFiles'
 import { replaceSampleContents } from './boostrap/replaceSampleContents'
-import { deleteLines } from './boostrap/deleteLines'
+import { skipTests } from './boostrap/skipTests'
 
 
 
@@ -143,6 +144,7 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
   addEntryOnExchangesList(bootstrapParams)
   patchAlunaSpec(bootstrapParams)
   deleteLines(bootstrapParams)
+  skipTests(bootstrapParams)
 
 
   /**
