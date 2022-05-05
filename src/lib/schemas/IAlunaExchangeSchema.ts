@@ -1,6 +1,7 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
+import { IAlunaSettingsSchema } from './IAlunaSettingsSchema'
 
 
 
@@ -23,6 +24,7 @@ export interface IAlunaExchangeSchema {
     offersOrderEditing?: boolean
   }
   accounts: IAlunaExchangeAccountSpecsSchema[]
+  settings: IAlunaSettingsSchema
 }
 
 export interface IAlunaExchangeAccountSpecsSchema {
