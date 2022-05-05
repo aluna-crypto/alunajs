@@ -17,18 +17,27 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const { rawSymbol } = params
 
   const {
-    name,
-    symbol,
+    currency,
+    currencyName,
   } = rawSymbol
 
   const id = translateSymbolId({
-    exchangeSymbolId: symbol,
-    symbolMappings: exchange.settings.mappings,
+    exchangeSymbolId: currency,
+    symbolMappings: bitfinexBaseSpecs.settings.mappings,
   })
 
-  const alias = (id !== symbol ? symbol : undefined)
+  const alias = id !== currency
+    ? currency
+    : undefined
 
-  // TODO: Review symbol assembling
+  let name: string | undefined
+
+  if (currencyName) {
+
+    [, name] = currencyName
+
+  }
+
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
     name,
