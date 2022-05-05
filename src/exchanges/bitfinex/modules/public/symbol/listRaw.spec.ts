@@ -4,7 +4,11 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bitfinex } from '../../../Bitfinex'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
-import { BITFINEX_RAW_SYMBOLS } from '../../../test/fixtures/bitfinexSymbols'
+import {
+  BITFINEX_CURRENCIES,
+  BITFINEX_CURRENCIES_LABELS,
+  BITFINEX_RAW_SYMBOLS,
+} from '../../../test/fixtures/bitfinexSymbols'
 
 
 
@@ -18,7 +22,10 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
 
-    publicRequest.returns(Promise.resolve(BITFINEX_RAW_SYMBOLS))
+    publicRequest.returns(Promise.resolve([
+      BITFINEX_CURRENCIES,
+      BITFINEX_CURRENCIES_LABELS,
+    ]))
 
 
     // executing
