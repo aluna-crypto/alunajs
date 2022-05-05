@@ -21,7 +21,7 @@ export const BITFINEX_HTTP_CACHE_KEY_PREFIX = 'BitfinexHttp.publicRequest'
 
 interface ISignedHashParams {
   url: string
-  body?: Record<any, any>
+  body: Record<any, any>
   credentials: IAlunaCredentialsSchema
 }
 
@@ -55,7 +55,7 @@ export const generateAuthHeader = (
 
   const nonce = (Date.now() * 1000).toString()
 
-  const payload = `/api${path}${nonce}${body ? JSON.stringify(body) : ''}`
+  const payload = `/api${path}${nonce}${JSON.stringify(body)}`
 
   const sig = crypto.createHmac('sha384', secret)
     .update(payload)
@@ -147,7 +147,7 @@ export class BitfinexHttp implements IAlunaHttp {
 
     const {
       url,
-      body,
+      body = {},
       verb = AlunaHttpVerbEnum.POST,
       credentials,
       settings,
