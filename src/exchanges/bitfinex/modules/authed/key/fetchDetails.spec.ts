@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/key/mockParseDetails'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import {
   IAlunaKeyPermissionSchema,
@@ -78,12 +77,10 @@ describe(__filename, () => {
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
       url: bitfinexEndpoints.key.fetchDetails,
       credentials,
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
       url: bitfinexEndpoints.key.account,
       credentials,
     })

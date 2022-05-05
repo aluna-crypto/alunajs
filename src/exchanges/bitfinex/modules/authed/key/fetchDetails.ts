@@ -1,7 +1,6 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaKeyFetchDetailsParams,
   IAlunaKeyFetchDetailsReturns,
@@ -30,13 +29,11 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
   const { http = new BitfinexHttp() } = params
 
   const permissionsScope = await http.authedRequest<IBitfinexPermissionsScope>({
-    verb: AlunaHttpVerbEnum.GET,
     url: bitfinexEndpoints.key.fetchDetails,
     credentials,
   })
 
   const [accountId] = await http.authedRequest<string[]>({
-    verb: AlunaHttpVerbEnum.GET,
     url: bitfinexEndpoints.key.account,
     credentials,
   })
