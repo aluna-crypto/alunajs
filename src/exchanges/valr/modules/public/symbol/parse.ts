@@ -28,7 +28,6 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const alias = (id !== symbol ? symbol : undefined)
 
-  // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
     name: longName,
