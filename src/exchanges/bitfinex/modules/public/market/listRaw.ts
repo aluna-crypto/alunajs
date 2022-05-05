@@ -7,7 +7,10 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
-import { IBitfinexMarketSchema } from '../../../schemas/IBitfinexMarketSchema'
+import {
+  IBitfinexMarketsSchema,
+  IBitfinexTicker,
+} from '../../../schemas/IBitfinexMarketSchema'
 
 
 
@@ -17,16 +20,24 @@ const log = debug('@alunajs:bitfinex/market/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IBitfinexMarketSchema[]>> => {
+): Promise<IAlunaMarketListRawReturns<IBitfinexMarketsSchema>> => {
 
   const { http = new BitfinexHttp() } = params
 
   log('fetching Bitfinex markets')
 
-  // TODO: Implement proper request
-  const rawMarkets = await http.publicRequest<IBitfinexMarketSchema[]>({
-    url: bitfinexEndpoints.market.list,
+  const tickers = await http.publicRequest<IBitfinexTicker[]>({
+    url: bitfinexEndpoints.market.tickers,
   })
+
+  const enabledMarginCurrencies = await http.publicRequest<string[][]>({
+    url: bitfinexEndpoints.market.enabledMarginCurrencies,
+  })
+
+  const rawMarkets: IBitfinexMarketsSchema = {
+    tickers,
+    enabledMarginCurrencies,
+  }
 
   const { requestCount } = http
 

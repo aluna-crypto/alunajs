@@ -2,8 +2,8 @@ import { expect } from 'chai'
 import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { ValrAuthed } from '../../../ValrAuthed'
 import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
+import { ValrAuthed } from '../../../ValrAuthed'
 
 
 
@@ -31,11 +31,11 @@ describe(__filename, () => {
 
 
     // executing
-    const { key } = exchange.key.parsePermissions({ rawKey })
+    const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 
     // validating
-    expect(key).to.deep.eq(omit(rawKey, 'accountId'))
+    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
 
   })
 

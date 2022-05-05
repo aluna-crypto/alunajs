@@ -42,7 +42,7 @@ describe(__filename, () => {
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns({ key: permissions })
+    parsePermissions.returns({ permissions })
 
 
     // executing

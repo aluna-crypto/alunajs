@@ -36,12 +36,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const symbols = reduce<string, IAlunaSymbolSchema[]>(currencies, (acc, currency) => {
 
-    // skipping derivatives symbols for now
-    if (/F0/.test(currency)) {
 
-      return acc
-
-    }
 
     const rawSymbol: IBitfinexSymbolSchema = {
       currency,

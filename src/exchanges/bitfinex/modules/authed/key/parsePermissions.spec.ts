@@ -1,9 +1,9 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
-import { IBitfinexKeySchema } from '../../../schemas/IBitfinexKeySchema'
+import { BITFINEX_RAW_KEY } from '../../../test/fixtures/bitfinexKey'
 
 
 
@@ -12,14 +12,7 @@ describe(__filename, () => {
   it('should parse Bitfinex key permissions just fine', async () => {
 
     // preparing data
-    const accountId = 'accountId'
-
-    const rawKey: IBitfinexKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
+    const rawKey = BITFINEX_RAW_KEY
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -27,15 +20,21 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const exchange = new BitfinexAuthed({ credentials })
-
 
     // executing
-    const { key } = exchange.key.parsePermissions({ rawKey })
+    const exchange = new BitfinexAuthed({ credentials })
+
+    const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 
     // validating
-    expect(key).to.deep.eq(omit(rawKey, 'accountId'))
+    const expectedPermission: IAlunaKeyPermissionSchema = {
+      read: true,
+      trade: true,
+      withdraw: false,
+    }
+
+    expect(permissions).to.deep.eq(expectedPermission)
 
   })
 

@@ -6,7 +6,6 @@ import {
   IAlunaKeyParsePermissionsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { BitfinexHttp } from '../../../BitfinexHttp'
 import { IBitfinexKeySchema } from '../../../schemas/IBitfinexKeySchema'
 
 
@@ -21,22 +20,33 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   log('parsing Bitfinex key permissions', params)
 
-  const {
-    rawKey,
-    http = new BitfinexHttp(),
-  } = params
+  const { rawKey } = params
 
-  const key: IAlunaKeyPermissionSchema = {
-    read: rawKey.read,
-    trade: rawKey.trade,
-    withdraw: rawKey.withdraw,
+  const { permissionsScope } = rawKey
+
+  const [
+    _accountScope,
+    ordersScope,
+    _fundingScope,
+    _settingsScope,
+    walletsScope,
+    withdrawScope,
+  ] = permissionsScope
+
+  const canReadBalances = walletsScope[1] === 1
+
+  const canReadOrders = ordersScope[1] === 1
+
+  const canCreateOrders = ordersScope[2] === 1
+
+  const canWithdraw = withdrawScope[2] === 1
+
+  const permissions: IAlunaKeyPermissionSchema = {
+    read: canReadBalances && canReadOrders,
+    trade: canCreateOrders,
+    withdraw: canWithdraw,
   }
 
-  const { requestCount } = http
-
-  return {
-    key,
-    requestCount,
-  }
+  return { permissions }
 
 }

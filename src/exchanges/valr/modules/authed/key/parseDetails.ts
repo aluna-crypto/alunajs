@@ -6,7 +6,6 @@ import {
   IAlunaKeyParseDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { ValrHttp } from '../../../ValrHttp'
 import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 
 
@@ -21,14 +20,11 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
 
   log('parsing Valr key details')
 
-  const {
-    rawKey,
-    http = new ValrHttp(),
-  } = params
+  const { rawKey } = params
 
   const { accountId } = rawKey
 
-  const { key: permissions } = exchange.key.parsePermissions({ rawKey })
+  const { permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
     accountId,
@@ -36,11 +32,6 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
     meta: rawKey,
   }
 
-  const { requestCount } = http
-
-  return {
-    key,
-    requestCount,
-  }
+  return { key }
 
 }

@@ -4,7 +4,10 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bitfinex } from '../../../Bitfinex'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
-import { BITFINEX_RAW_MARKETS } from '../../../test/fixtures/bitfinexMarket'
+import {
+  BITFINEX_MARGIN_ENABLED_CURRENCIES,
+  BITFINEX_RAW_TICKERS,
+} from '../../../test/fixtures/bitfinexMarket'
 
 
 
@@ -12,13 +15,18 @@ describe(__filename, () => {
 
   it('should list Bitfinex raw markets just fine', async () => {
 
+    // preparing data
+    const rawTickers = BITFINEX_RAW_TICKERS
+    const enabledMarginCurrencies = BITFINEX_MARGIN_ENABLED_CURRENCIES
+
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
 
-    publicRequest.returns(Promise.resolve(BITFINEX_RAW_MARKETS))
+    publicRequest.onFirstCall().returns(Promise.resolve(rawTickers))
+    publicRequest.onSecondCall().returns(Promise.resolve(enabledMarginCurrencies))
 
 
     // executing
@@ -31,14 +39,20 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawMarkets).to.deep.eq(BITFINEX_RAW_MARKETS)
+    expect(rawMarkets).to.deep.eq({
+      tickers: rawTickers,
+      enabledMarginCurrencies,
+    })
 
     expect(requestCount).to.be.ok
 
-    expect(publicRequest.callCount).to.be.eq(1)
+    expect(publicRequest.callCount).to.be.eq(2)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.market.list,
+      url: bitfinexEndpoints.market.tickers,
+    })
+    expect(publicRequest.secondCall.args[0]).to.deep.eq({
+      url: bitfinexEndpoints.market.enabledMarginCurrencies,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

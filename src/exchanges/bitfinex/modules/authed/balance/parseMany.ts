@@ -1,11 +1,13 @@
 import { debug } from 'debug'
-import { map } from 'lodash'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
+import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
+import { BitfinexAccountsEnum } from '../../../enums/BitfinexAccountsEnum'
 import { IBitfinexBalanceSchema } from '../../../schemas/IBitfinexBalanceSchema'
 
 
@@ -22,15 +24,30 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawBalances } = params
 
-  // TODO: Review map implementation
-  const parsedBalances = map(rawBalances, (rawBalance) => {
+
+  type TSrc = IBitfinexBalanceSchema
+  type TAcc = IAlunaBalanceSchema[]
+
+  const balances = reduce<TSrc, TAcc>(rawBalances, (acc, rawBalance) => {
+
+    const [walletType] = rawBalance
+
+    // skipping 'lending' balances types for now
+    if (walletType === BitfinexAccountsEnum.FUNDING) {
+
+      return acc
+
+    }
 
     const { balance } = exchange.balance.parse({ rawBalance })
 
-    return balance
+    acc.push(balance)
 
-  })
+    return acc
 
-  return { balances: parsedBalances }
+  }, [])
+
+
+  return { balances }
 
 }

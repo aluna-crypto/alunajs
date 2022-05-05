@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import { spy } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
@@ -16,12 +18,12 @@ import {
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
 import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import * as handleBitfinexRequestErrorMod from './errors/handleBitfinexRequestError'
 import * as BitfinexHttpMod from './BitfinexHttp'
+import * as handleBitfinexRequestErrorMod from './errors/handleBitfinexRequestError'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { BitfinexHttp } = BitfinexHttpMod
 
@@ -211,8 +213,6 @@ describe.skip(__filename, () => {
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.args[0][0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -418,7 +418,6 @@ describe.skip(__filename, () => {
     // executing
     await bitfinexHttp.authedRequest({
       url,
-      body,
       settings,
       credentials,
     })
@@ -431,43 +430,64 @@ describe.skip(__filename, () => {
     expect(assembleRequestConfig.args[0][0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
-      data: body,
+      data: {},
       headers: signedHeader,
       proxySettings: settings.proxySettings,
     })
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine(w/ body)', async () => {
 
     // preparing data
-    const path = 'path'
-    const verb = 'verb' as AlunaHttpVerbEnum
-
     const currentDate = Date.now()
 
+    const path = new URL(url).pathname
+    const nonce = (currentDate * 1000).toString()
+    const payload = `/api${path}${nonce}${JSON.stringify(body)}`
+
+    const expectedSig = crypto.createHmac('sha384', credentials.secret)
+      .update(payload)
+      .digest('hex')
+
+
     // mocking
-    const dateMock = ImportMock.mockFunction(
+    const mockedDateNow = ImportMock.mockFunction(
       Date,
       'now',
       currentDate,
     )
 
+    const createHmacSpy = spy(crypto, 'createHmac')
+    const updateSpy = spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = spy(crypto.Hmac.prototype, 'digest')
+
+
     // executing
-    const signedHash = BitfinexHttpMod.generateAuthHeader({
+    const headers = BitfinexHttpMod.generateAuthHeader({
       credentials,
-      path,
-      verb,
       body,
       url,
     })
 
+
     // validating
-    expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+    expect(mockedDateNow.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha384', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(payload)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(headers['bfx-apikey']).to.be.eq(credentials.key)
+    expect(headers['bfx-nonce']).to.be.eq(nonce)
+    expect(headers['bfx-signature']).to.be.eq(expectedSig)
 
   })
-
 
   /**
    * Executes macro test.

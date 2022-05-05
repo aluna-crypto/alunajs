@@ -14,11 +14,11 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
-import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
-import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
+import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { BITFINEX_RAW_ORDERS } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
 
@@ -45,7 +45,10 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.LIMIT
 
     const translatedOrderSide = translateOrderSideToBitfinex({ from: side })
-    const translatedOrderType = translateOrderTypeToBitfinex({ from: type })
+    const translatedOrderType = translateOrderTypeToBitfinex({
+      from: type,
+      account: AlunaAccountEnum.EXCHANGE,
+    })
 
     const body = {
       direction: translatedOrderSide,
@@ -121,7 +124,10 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.MARKET
 
     const translatedOrderSide = translateOrderSideToBitfinex({ from: side })
-    const translatedOrderType = translateOrderTypeToBitfinex({ from: type })
+    const translatedOrderType = translateOrderTypeToBitfinex({
+      from: type,
+      account: AlunaAccountEnum.EXCHANGE,
+    })
 
     const body = {
       direction: translatedOrderSide,

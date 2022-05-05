@@ -6,7 +6,6 @@ import {
   IAlunaKeyParseDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { BittrexHttp } from '../../../BittrexHttp'
 import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 
@@ -21,14 +20,11 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
 
   log('parsing Bittrex key details')
 
-  const {
-    rawKey,
-    http = new BittrexHttp(),
-  } = params
+  const { rawKey } = params
 
   const { accountId } = rawKey
 
-  const { key: permissions } = exchange.key.parsePermissions({ rawKey })
+  const { permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
     accountId,
@@ -36,11 +32,6 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
     meta: rawKey,
   }
 
-  const { requestCount } = http
-
-  return {
-    key,
-    requestCount,
-  }
+  return { key }
 
 }
