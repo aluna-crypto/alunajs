@@ -20,7 +20,6 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbols } = params
 
-  // TODO: Review implementation
   const symbols = map(rawSymbols, (rawSymbol) => {
 
     const { symbol } = exchange.symbol.parse({ rawSymbol })

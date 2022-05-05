@@ -23,7 +23,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new ValrHttp() } = params
 
-  // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IValrSymbolSchema[]>({
     url: valrEndpoints.symbol.list,
   })
