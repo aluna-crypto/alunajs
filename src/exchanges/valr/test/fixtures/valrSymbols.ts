@@ -5,16 +5,28 @@ import { IValrSymbolSchema } from '../../schemas/IValrSymbolSchema'
 // TODO: Review fixtures
 export const VALR_RAW_SYMBOLS: IValrSymbolSchema[] = [
   {
-    symbol: 'BTC',
-    name: 'Bitcoin',
+    symbol: 'R',
+    isActive: true,
+    shortName: 'ZAR',
+    longName: 'Rand',
+    decimalPlaces: 2,
+    withdrawalDecimalPlaces: 2,
   },
   {
-    symbol: 'LTC',
-    name: 'Litecoin',
+    symbol: 'BTC',
+    isActive: true,
+    shortName: 'BTC',
+    longName: 'Bitcoin',
+    decimalPlaces: 8,
+    withdrawalDecimalPlaces: 8,
   },
   {
     symbol: 'ETH',
-    name: 'Ethereum',
+    isActive: true,
+    shortName: 'ETH',
+    longName: 'Ethereum',
+    decimalPlaces: 18,
+    withdrawalDecimalPlaces: 8,
   },
 ]
 
