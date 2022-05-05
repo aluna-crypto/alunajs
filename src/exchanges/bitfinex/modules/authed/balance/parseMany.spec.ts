@@ -1,10 +1,14 @@
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  each,
+  filter,
+} from 'lodash'
 
 import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
+import { BitfinexAccountsEnum } from '../../../enums/BitfinexAccountsEnum'
 import { BITFINEX_RAW_BALANCES } from '../../../test/fixtures/bitfinexBalances'
 import * as parseMod from './parse'
 
@@ -22,6 +26,12 @@ describe(__filename, () => {
     // preparing data
     const rawBalances = BITFINEX_RAW_BALANCES
 
+    const validRawBalances = filter(BITFINEX_RAW_BALANCES, ([wallet]) => {
+
+      return wallet !== BitfinexAccountsEnum.FUNDING
+
+    })
+
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
@@ -38,7 +48,10 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq(PARSED_BALANCES)
+    const expectedBalances = PARSED_BALANCES.slice(0, validRawBalances.length)
+    expect(balances).to.deep.eq(expectedBalances)
+
+    expect(parse.callCount).to.be.eq(validRawBalances.length)
 
   })
 
