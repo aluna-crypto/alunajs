@@ -148,7 +148,7 @@ export const bitfinexEndpoints = {
     account: `${BITFINEX_AUTHED_URL}/auth/r/info/user`,
   },
   balance: {
-    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    list: `${BITFINEX_PUBLIC_URL}/auth/r/wallets`,
   },
   order: {
     get: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,
