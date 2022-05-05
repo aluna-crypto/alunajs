@@ -10,7 +10,7 @@ module.exports = {
   'skip-full': true,
   'check-coverage': true,
   'report-dir': `${__dirname}/coverage`,
-  'temp-dir': `.${__dirname}/nyc`,
+  'temp-dir': `${__dirname}/nyc`,
   reporter: ['text', 'html', 'text-summary'],
   branches: 100,
   lines: 100,
