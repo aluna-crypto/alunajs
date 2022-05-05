@@ -10,12 +10,6 @@ export const BITFINEX_CURRENCIES: string[] = [
   'AAVE',
   'ADA',
   'BTC',
-  'ETH',
-  'EUR',
-  'USD',
-  'UST',
-  'UDC',
-  'USTF0',
 ]
 
 
@@ -24,11 +18,6 @@ export const BITFINEX_CURRENCIES_LABELS: TBitfinexCurrenciesPairs = [
   ['AAVE', 'AAVE'],
   ['ADA', 'Cardano ADA'],
   ['BTC', 'Bitcoin'],
-  ['ETH', 'Ethereum'],
-  ['EUR', 'Euro'],
-  ['USD', 'US Dollar'],
-  ['UDC', 'USDC'],
-  ['UST', 'Tether USDt'],
 ]
 
 
