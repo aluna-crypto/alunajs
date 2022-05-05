@@ -46,6 +46,8 @@ export const generateAuthHeader = (
 
   log(params)
 
+  // TODO: Implement method
+
   // const {
   //   credentials,
   //   verb,
