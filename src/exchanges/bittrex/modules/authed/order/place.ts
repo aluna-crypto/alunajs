@@ -87,7 +87,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const orderResponse = await http.authedRequest<IBittrexOrderSchema>({
-      url: bittrexEndpoints.order.list,
+      url: bittrexEndpoints.order.place,
       body,
       credentials,
     })

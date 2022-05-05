@@ -101,7 +101,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: bittrexEndpoints.order.list,
+      url: bittrexEndpoints.order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -179,7 +179,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: bittrexEndpoints.order.list,
+      url: bittrexEndpoints.order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

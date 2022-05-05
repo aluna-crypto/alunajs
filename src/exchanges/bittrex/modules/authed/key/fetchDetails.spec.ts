@@ -98,7 +98,7 @@ describe(__filename, () => {
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
-      url: bittrexEndpoints.order.list,
+      url: bittrexEndpoints.order.place,
       credentials,
       body: {
         marketSymbol: 'BTCEUR',

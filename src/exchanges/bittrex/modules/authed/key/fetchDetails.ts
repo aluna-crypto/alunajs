@@ -75,7 +75,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<IBittrexBalanceSchema>({
       verb: AlunaHttpVerbEnum.POST,
-      url: bittrexEndpoints.order.list,
+      url: bittrexEndpoints.order.place,
       credentials,
       body: requestBody,
     })
