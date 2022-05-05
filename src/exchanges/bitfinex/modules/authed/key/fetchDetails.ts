@@ -8,7 +8,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
-import { IBitfinexKeySchema } from '../../../schemas/IBitfinexKeySchema'
+import {
+  IBitfinexKeySchema,
+  IBitfinexPermissionsScope,
+} from '../../../schemas/IBitfinexKeySchema'
 
 
 
@@ -26,14 +29,24 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BitfinexHttp() } = params
 
-  // TODO: Implement proper request
-  const permissions = await http.authedRequest<IBitfinexKeySchema>({
+  const permissionsScope = await http.authedRequest<IBitfinexPermissionsScope>({
     verb: AlunaHttpVerbEnum.GET,
     url: bitfinexEndpoints.key.fetchDetails,
     credentials,
   })
 
-  const { key } = exchange.key.parseDetails({ rawKey: permissions })
+  const [accountId] = await http.authedRequest<string[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: bitfinexEndpoints.key.account,
+    credentials,
+  })
+
+  const rawKey: IBitfinexKeySchema = {
+    accountId,
+    permissionsScope,
+  }
+
+  const { key } = exchange.key.parseDetails({ rawKey })
 
   const { requestCount } = http
 
