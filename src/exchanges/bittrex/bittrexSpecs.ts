@@ -102,6 +102,7 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
       orderTypes: [],
     },
   ],
+  settings: {},
 }
 
 
@@ -110,11 +111,8 @@ export const buildBittrexSpecs = (params: {
   settings: IAlunaSettingsSchema
 }) => {
 
-  const {
-    settings: {
-      referralCode,
-    },
-  } = params
+  const { settings } = params
+  const { referralCode } = settings
 
   const specs = cloneDeep(bittrexBaseSpecs)
 
@@ -123,6 +121,8 @@ export const buildBittrexSpecs = (params: {
     specs.signupUrl = `${specs.signupUrl}?referralCode=${referralCode}`
 
   }
+
+  specs.settings = settings
 
   return specs
 

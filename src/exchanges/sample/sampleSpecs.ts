@@ -106,6 +106,7 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
       orderTypes: [],
     },
   ],
+  settings: {},
 }
 
 
@@ -114,11 +115,8 @@ export const buildSampleSpecs = (params: {
   settings: IAlunaSettingsSchema
 }) => {
 
-  const {
-    settings: {
-      referralCode,
-    },
-  } = params
+  const { settings } = params
+  const { referralCode } = settings
 
   const specs = cloneDeep(sampleBaseSpecs)
 
@@ -127,6 +125,8 @@ export const buildSampleSpecs = (params: {
     specs.signupUrl = `${specs.signupUrl}?referralCode=${referralCode}`
 
   }
+
+  specs.settings = settings
 
   return specs
 
