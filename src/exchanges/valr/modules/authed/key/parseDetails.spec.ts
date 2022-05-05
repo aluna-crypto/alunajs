@@ -4,8 +4,8 @@ import { omit } from 'lodash'
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { ValrAuthed } from '../../../ValrAuthed'
 import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
+import { ValrAuthed } from '../../../ValrAuthed'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
@@ -42,7 +42,7 @@ describe(__filename, () => {
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns({ key: permissions })
+    parsePermissions.returns({ permissions })
 
 
     // executing

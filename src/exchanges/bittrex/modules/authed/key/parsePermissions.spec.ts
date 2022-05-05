@@ -31,11 +31,11 @@ describe(__filename, () => {
 
 
     // executing
-    const { key } = exchange.key.parsePermissions({ rawKey })
+    const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 
     // validating
-    expect(key).to.deep.eq(omit(rawKey, 'accountId'))
+    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
 
   })
 
