@@ -438,14 +438,66 @@ describe(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine(w/ body)', async () => {
 
     // preparing data
     const currentDate = Date.now()
 
     const path = new URL(url).pathname
     const nonce = (currentDate * 1000).toString()
-    const payload = `/api${path}${nonce}${JSON.stringify({})}`
+    const payload = `/api${path}${nonce}${JSON.stringify(body)}`
+
+    const expectedSig = crypto.createHmac('sha384', credentials.secret)
+      .update(payload)
+      .digest('hex')
+
+
+    // mocking
+    const mockedDateNow = ImportMock.mockFunction(
+      Date,
+      'now',
+      currentDate,
+    )
+
+    const createHmacSpy = spy(crypto, 'createHmac')
+    const updateSpy = spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = spy(crypto.Hmac.prototype, 'digest')
+
+
+    // executing
+    const headers = BitfinexHttpMod.generateAuthHeader({
+      credentials,
+      body,
+      url,
+    })
+
+
+    // validating
+    expect(mockedDateNow.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha384', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(payload)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(headers['bfx-apikey']).to.be.eq(credentials.key)
+    expect(headers['bfx-nonce']).to.be.eq(nonce)
+    expect(headers['bfx-signature']).to.be.eq(expectedSig)
+
+  })
+
+  it('should generate signed auth header just fine(w/o body)', async () => {
+
+    // preparing data
+    const currentDate = Date.now()
+
+    const path = new URL(url).pathname
+    const nonce = (currentDate * 1000).toString()
+    const payload = `/api${path}${nonce}`
 
     const expectedSig = crypto.createHmac('sha384', credentials.secret)
       .update(payload)
@@ -486,8 +538,6 @@ describe(__filename, () => {
     expect(headers['bfx-apikey']).to.be.eq(credentials.key)
     expect(headers['bfx-nonce']).to.be.eq(nonce)
     expect(headers['bfx-signature']).to.be.eq(expectedSig)
-
-    expect(body).to.deep.eq(body)
 
   })
 

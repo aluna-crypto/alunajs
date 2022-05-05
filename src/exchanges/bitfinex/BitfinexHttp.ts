@@ -1,7 +1,5 @@
 import axios from 'axios'
 import crypto from 'crypto'
-import debug from 'debug'
-import { omit } from 'lodash'
 
 import {
   IAlunaHttp,
@@ -18,10 +16,6 @@ import { handleBitfinexRequestError } from './errors/handleBitfinexRequestError'
 
 
 export const BITFINEX_HTTP_CACHE_KEY_PREFIX = 'BitfinexHttp.publicRequest'
-
-
-
-const log = debug('@alunajs:bitfinex/BitfinexHttp')
 
 
 
@@ -46,11 +40,9 @@ export const generateAuthHeader = (
   params: ISignedHashParams,
 ): IBitfinexSignedHeaders => {
 
-  log(omit(params, 'credentials'))
-
   const {
     credentials,
-    body = {},
+    body,
     url,
   } = params
 
@@ -63,7 +55,7 @@ export const generateAuthHeader = (
 
   const nonce = (Date.now() * 1000).toString()
 
-  const payload = `/api${path}${nonce}${JSON.stringify(body)}`
+  const payload = `/api${path}${nonce}${body ? JSON.stringify(body) : ''}`
 
   const sig = crypto.createHmac('sha384', secret)
     .update(payload)
