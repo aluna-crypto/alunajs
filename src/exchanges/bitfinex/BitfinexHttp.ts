@@ -1,5 +1,7 @@
 import axios from 'axios'
+import crypto from 'crypto'
 import debug from 'debug'
+import { omit } from 'lodash'
 
 import {
   IAlunaHttp,
@@ -22,20 +24,20 @@ export const BITFINEX_HTTP_CACHE_KEY_PREFIX = 'BitfinexHttp.publicRequest'
 const log = debug('@alunajs:bitfinex/BitfinexHttp')
 
 
-// TODO: Review interface properties
+
 interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  credentials: IAlunaCredentialsSchema
   url: string
-  body?: any
+  body?: Record<any, any>
+  credentials: IAlunaCredentialsSchema
 }
 
 
 
-// TODO: Review interface properties
 export interface IBitfinexSignedHeaders {
-  'Api-Timestamp': number
+  'Content-Type': string
+  'bfx-nonce': string
+  'bfx-apikey': string
+  'bfx-signature': string
 }
 
 
@@ -44,25 +46,37 @@ export const generateAuthHeader = (
   params: ISignedHashParams,
 ): IBitfinexSignedHeaders => {
 
-  log(params)
+  log(omit(params, 'credentials'))
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    credentials,
+    body = {},
+    url,
+  } = params
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const {
+    key,
+    secret,
+  } = credentials
 
-  const timestamp = Date.now()
+  const path = new URL(url).pathname
 
-  return {
-    'Api-Timestamp': timestamp,
+  const nonce = (Date.now() * 1000).toString()
+
+  const payload = `/api${path}${nonce}${JSON.stringify(body)}`
+
+  const sig = crypto.createHmac('sha384', secret)
+    .update(payload)
+    .digest('hex')
+
+  const headers: IBitfinexSignedHeaders = {
+    'Content-Type': 'application/json',
+    'bfx-nonce': nonce,
+    'bfx-apikey': key,
+    'bfx-signature': sig,
   }
+
+  return headers
 
 }
 
@@ -149,8 +163,6 @@ export class BitfinexHttp implements IAlunaHttp {
     } = params
 
     const signedHash = generateAuthHeader({
-      verb,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -160,7 +172,7 @@ export class BitfinexHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings: settings?.proxySettings,
     })
 
