@@ -31,7 +31,7 @@ describe(__filename, () => {
 
 
     // executing
-    const { key } = await exchange.key.parsePermissions({ rawKey })
+    const { key } = exchange.key.parsePermissions({ rawKey })
 
 
     // validating

@@ -117,7 +117,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { key } = await exchange.key.parseDetails({ rawKey: permissions })
+  const { key } = exchange.key.parseDetails({ rawKey: permissions })
 
   const { requestCount } = http
 

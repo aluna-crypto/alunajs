@@ -15,9 +15,9 @@ const log = debug('@alunajs:sample/key/parsePermissions')
 
 
 
-export const parsePermissions = (exchange: IAlunaExchangeAuthed) => async (
+export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaKeyParsePermissionsParams<ISampleKeySchema>,
-): Promise<IAlunaKeyParsePermissionsReturns> => {
+): IAlunaKeyParsePermissionsReturns => {
 
   log('parsing Sample key permissions', params)
 

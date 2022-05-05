@@ -46,7 +46,7 @@ describe(__filename, () => {
       module: parseDetailsMod,
     })
 
-    parseDetails.returns(Promise.resolve({ key: parsedKey }))
+    parseDetails.returns({ key: parsedKey })
 
 
     // executing

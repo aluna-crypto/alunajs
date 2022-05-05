@@ -12,8 +12,8 @@ import {
 export interface IAlunaKeyModule {
 
   fetchDetails (params?: IAlunaKeyFetchDetailsParams): Promise<IAlunaKeyFetchDetailsReturns>
-  parseDetails (params: IAlunaKeyParseDetailsParams<any>): Promise<IAlunaKeyParseDetailsReturns>
-  parsePermissions (params: IAlunaKeyParsePermissionsParams<any>): Promise<IAlunaKeyParsePermissionsReturns>
+  parseDetails (params: IAlunaKeyParseDetailsParams<any>): IAlunaKeyParseDetailsReturns
+  parsePermissions (params: IAlunaKeyParsePermissionsParams<any>): IAlunaKeyParsePermissionsReturns
 
 }
 

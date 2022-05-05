@@ -42,13 +42,13 @@ describe(__filename, () => {
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns(Promise.resolve({ key: permissions }))
+    parsePermissions.returns({ key: permissions })
 
 
     // executing
     const exchange = new SampleAuthed({ credentials })
 
-    const { key } = await exchange.key.parseDetails({ rawKey })
+    const { key } = exchange.key.parseDetails({ rawKey })
 
 
     // validating

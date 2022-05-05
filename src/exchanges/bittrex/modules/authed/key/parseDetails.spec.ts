@@ -12,7 +12,7 @@ import * as mockParsePermissionsMod from './parsePermissions'
 
 describe(__filename, () => {
 
-  it('should parse Bittrex key details just fine', async () => {
+  it('should parse Bittrex key details just fine', () => {
 
     // preparing data
     const accountId = 'accountId'
@@ -42,13 +42,13 @@ describe(__filename, () => {
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns(Promise.resolve({ key: permissions }))
+    parsePermissions.returns({ key: permissions })
 
 
     // executing
     const exchange = new BittrexAuthed({ credentials })
 
-    const { key } = await exchange.key.parseDetails({ rawKey })
+    const { key } = exchange.key.parseDetails({ rawKey })
 
 
     // validating

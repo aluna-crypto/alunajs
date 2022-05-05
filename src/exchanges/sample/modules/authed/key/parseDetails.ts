@@ -15,9 +15,9 @@ const log = debug('@alunajs:sample/key/parseDetails')
 
 
 
-export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
+export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaKeyParseDetailsParams<ISampleKeySchema>,
-): Promise<IAlunaKeyParseDetailsReturns> => {
+): IAlunaKeyParseDetailsReturns => {
 
   log('parsing Sample key details')
 
@@ -28,7 +28,7 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { accountId } = rawKey
 
-  const { key: permissions } = await exchange.key.parsePermissions({ rawKey })
+  const { key: permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
     accountId,
