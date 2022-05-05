@@ -12,6 +12,8 @@ describe(__filename, () => {
   it('should parse a Sample symbol just fine (w/ alias)', async () => {
 
     // preparing data
+    const rawSymbol = SAMPLE_RAW_SYMBOLS[0] // first fixture
+
     const translatedSymbolId = 'XBT'
 
 
@@ -24,8 +26,6 @@ describe(__filename, () => {
     // executing
     const exchange = new Sample({})
 
-    const rawSymbol = SAMPLE_RAW_SYMBOLS[0] // first fixture
-
     const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
 
 
@@ -34,6 +34,7 @@ describe(__filename, () => {
     expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
     expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
     expect(parsedSymbol1.alias).to.be.eq(rawSymbol.symbol) // should be equal
+    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
@@ -48,28 +49,27 @@ describe(__filename, () => {
   it('should parse a Sample symbol just fine (w/o alias)', async () => {
 
     // preparing data
-    const translatedSymbolId = 'LTC'
+    const rawSymbol = SAMPLE_RAW_SYMBOLS[1] // second fixture
 
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.returns(translatedSymbolId)
+    translateSymbolId.returns(rawSymbol.symbol)
 
 
     // executing
     const exchange = new Sample({})
-
-    const rawSymbol = SAMPLE_RAW_SYMBOLS[1] // second fixture
 
     const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
     expect(parsedSymbol1.exchangeId).to.be.eq(sampleBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
+    expect(parsedSymbol1.id).to.be.eq(rawSymbol.symbol)
     expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
     expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
+    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
 
