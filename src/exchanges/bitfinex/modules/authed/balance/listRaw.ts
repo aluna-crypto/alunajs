@@ -1,7 +1,6 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
@@ -26,9 +25,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BitfinexHttp() } = params
 
-  // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<IBitfinexBalanceSchema[]>({
-    verb: AlunaHttpVerbEnum.GET,
     url: bitfinexEndpoints.balance.list,
     credentials,
   })
