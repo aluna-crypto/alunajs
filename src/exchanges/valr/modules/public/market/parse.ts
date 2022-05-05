@@ -4,6 +4,7 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
 import { IValrMarketSchema } from '../../../schemas/IValrMarketSchema'
 import { valrBaseSpecs } from '../../../valrSpecs'
 
@@ -33,7 +34,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const { baseCurrency, quoteCurrency } = pair
 
-  const ticker = {
+  const ticker: IAlunaTickerSchema = {
     ask: Number(askPrice),
     baseVolume: Number(baseVolume),
     bid: Number(bidPrice),

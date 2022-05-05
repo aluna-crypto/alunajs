@@ -4,6 +4,7 @@ import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSy
 import { Valr } from '../../../Valr'
 import { VALR_RAW_CURRENCY_PAIRS, VALR_RAW_MARKETS } from '../../../test/fixtures/valrMarket'
 import { valrBaseSpecs } from '../../../valrSpecs'
+import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
 
 
 
@@ -32,7 +33,7 @@ describe(__filename, () => {
       lowPrice,
     } = summary
 
-    const ticker = {
+    const ticker: IAlunaTickerSchema = {
       ask: Number(askPrice),
       baseVolume: Number(baseVolume),
       bid: Number(bidPrice),
