@@ -7,13 +7,14 @@ import { VALR_RAW_SYMBOLS } from '../../../test/fixtures/valrSymbols'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   it('should parse a Valr symbol just fine (w/ alias)', async () => {
 
     // preparing data
     const translatedSymbolId = 'XBT'
 
+    const rawSymbol = VALR_RAW_SYMBOLS[0] // first fixture
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
@@ -24,16 +25,15 @@ describe.skip(__filename, () => {
     // executing
     const exchange = new Valr({})
 
-    const rawSymbol = VALR_RAW_SYMBOLS[0] // first fixture
-
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(valrBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(rawSymbol.symbol) // should be equal
+    expect(symbol.exchangeId).to.be.eq(valrBaseSpecs.id)
+    expect(symbol.id).to.be.eq(translatedSymbolId)
+    expect(symbol.name).to.be.eq(rawSymbol.longName)
+    expect(symbol.alias).to.be.eq(rawSymbol.symbol) // should be equal
+    expect(symbol.meta).to.deep.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
@@ -48,28 +48,28 @@ describe.skip(__filename, () => {
   it('should parse a Valr symbol just fine (w/o alias)', async () => {
 
     // preparing data
-    const translatedSymbolId = 'LTC'
 
+    const rawSymbol = VALR_RAW_SYMBOLS[1] // second fixture
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.returns(translatedSymbolId)
+    translateSymbolId.returns(rawSymbol.symbol)
 
 
     // executing
     const exchange = new Valr({})
 
-    const rawSymbol = VALR_RAW_SYMBOLS[1] // second fixture
 
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(valrBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
+    expect(symbol.exchangeId).to.be.eq(valrBaseSpecs.id)
+    expect(symbol.id).to.be.eq(rawSymbol.symbol)
+    expect(symbol.name).to.be.eq(rawSymbol.longName)
+    expect(symbol.alias).to.be.eq(undefined) // different = undefined
+    expect(symbol.meta).to.deep.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
 

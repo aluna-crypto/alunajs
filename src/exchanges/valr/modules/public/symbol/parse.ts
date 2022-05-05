@@ -17,7 +17,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const { rawSymbol } = params
 
   const {
-    name,
+    longName,
     symbol,
   } = rawSymbol
 
@@ -31,7 +31,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
-    name,
+    name: longName,
     alias,
     exchangeId: valrBaseSpecs.id,
     meta: rawSymbol,
