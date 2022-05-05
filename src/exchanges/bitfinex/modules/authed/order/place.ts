@@ -11,10 +11,10 @@ import {
 import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
-import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
+import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
@@ -47,11 +47,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
+    account,
     http = new BitfinexHttp(),
   } = params
 
   const translatedOrderType = translateOrderTypeToBitfinex({
     from: type,
+    account,
   })
 
   // TODO: Validate all body properties
