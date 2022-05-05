@@ -12,7 +12,8 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 // TODO: Review exchange API url
-export const BITFINEX_PRODUCTION_URL = 'https://api.bitfinex.com/v3'
+export const BITFINEX_AUTHED_URL = 'https://api.bitfinex.com/v2'
+export const BITFINEX_PUBLIC_URL = 'https://api-pub.bitfinex.com/v2'
 
 
 
@@ -136,24 +137,24 @@ export const buildBitfinexSpecs = (params: {
 
 export const bitfinexEndpoints = {
   symbol: {
-    // get: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
-    list: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
+    // get: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
+    list: `${BITFINEX_PUBLIC_URL}/conf/pub:list:currency,pub:map:currency:label`,
   },
   market: {
-    // get: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
-    list: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
+    // get: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
+    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
   },
   key: {
-    fetchDetails: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
+    fetchDetails: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
   },
   balance: {
-    list: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
+    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
   },
   order: {
-    get: (id: string) => `${BITFINEX_PRODUCTION_URL}/<desired-method>/${id}`,
-    list: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
-    place: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
-    cancel: (id: string) => `${BITFINEX_PRODUCTION_URL}/<desired-method>/${id}`,
-    // edit: `${BITFINEX_PRODUCTION_URL}/<desired-method>`,
+    get: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,
+    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    place: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    cancel: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,
+    // edit: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
   },
 }
