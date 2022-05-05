@@ -1,27 +1,85 @@
-import { ValrMarketStatusEnum } from '../../enums/ValrMarketStatusEnum'
-import { IValrMarketSchema } from '../../schemas/IValrMarketSchema'
+import { IValrMarketCurrencyPairs, IValrMarketSummarySchema } from '../../schemas/IValrMarketSchema'
 
 
 
-// TODO: Review fixtures
-export const VALR_RAW_MARKETS: IValrMarketSchema[] = [
+export const VALR_RAW_MARKETS: IValrMarketSummarySchema[] = [
   {
-    symbol: 'BTC-EUR',
-    volume: '9.64127008',
-    quoteVolume: '311825.04145095',
-    status: ValrMarketStatusEnum.ONLINE,
+    currencyPair: 'BTC-EUR',
+    askPrice: '0.00039334',
+    bidPrice: '0.00039291',
+    lastTradedPrice: '0.00039266',
+    previousClosePrice: '0.00041848',
+    baseVolume: '0',
+    highPrice: '0.00043926',
+    lowPrice: '0.00038734',
+    created: '2021-05-31T13:53:07.930Z',
+    changeFromPrevious: '-6.16',
   },
   {
+    currencyPair: 'BTC-USD',
+    askPrice: '528862',
+    bidPrice: '528027',
+    lastTradedPrice: '528422',
+    previousClosePrice: '513184',
+    baseVolume: '262.38179134',
+    highPrice: '533499',
+    lowPrice: '490999',
+    created: '2021-05-31T13:53:10.645Z',
+    changeFromPrevious: '2.96',
+  },
+  {
+    currencyPair: 'BTC-USDT',
+    askPrice: '36350',
+    bidPrice: '36306',
+    lastTradedPrice: '36349',
+    previousClosePrice: '34524',
+    baseVolume: '675.16130937',
+    highPrice: '36973',
+    lowPrice: '32890',
+    created: '2021-05-31T13:53:03.155Z',
+    changeFromPrevious: '5.28',
+  },
+]
+
+export const VALR_RAW_CURRENCY_PAIRS: IValrMarketCurrencyPairs[] = [
+  {
     symbol: 'BTC-USD',
-    volume: '126.19108264',
-    quoteVolume: '4696409.21649740',
-    status: ValrMarketStatusEnum.ONLINE,
+    baseCurrency: 'BTC',
+    quoteCurrency: 'USD',
+    shortName: 'BTC/USD',
+    active: true,
+    minBaseAmount: '0.0001',
+    maxBaseAmount: '9',
+    minQuoteAmount: '10',
+    maxQuoteAmount: '5000000',
+    tickSize: '1',
+    baseDecimalPlaces: '8',
   },
   {
     symbol: 'BTC-USDT',
-    volume: '86.32449650',
-    quoteVolume: '3191538.22788546',
-    status: ValrMarketStatusEnum.OFFLINE,
+    baseCurrency: 'BTC',
+    quoteCurrency: 'USDT',
+    shortName: 'BTC/USDT',
+    active: true,
+    minBaseAmount: '0.001',
+    maxBaseAmount: '240',
+    minQuoteAmount: '10',
+    maxQuoteAmount: '5000000',
+    tickSize: '1',
+    baseDecimalPlaces: '8',
+  },
+  {
+    symbol: 'BTC-EUR',
+    baseCurrency: 'BTC',
+    quoteCurrency: 'EUR',
+    shortName: 'BTC/EUR',
+    active: false,
+    minBaseAmount: '3',
+    maxBaseAmount: '11510',
+    minQuoteAmount: '0.0079',
+    maxQuoteAmount: '30',
+    tickSize: '0.00000001',
+    baseDecimalPlaces: '8',
   },
 ]
 

@@ -141,7 +141,8 @@ export const valrEndpoints = {
   },
   market: {
     // get: `${VALR_PRODUCTION_URL}/<desired-method>`,
-    list: `${VALR_PRODUCTION_URL}/<desired-method>`,
+    summaries: `${VALR_PRODUCTION_URL}/public/marketsummary`,
+    pairs: `${VALR_PRODUCTION_URL}/public/pairs`,
   },
   key: {
     fetchDetails: `${VALR_PRODUCTION_URL}/<desired-method>`,
