@@ -137,12 +137,11 @@ export const buildBitfinexSpecs = (params: {
 
 export const bitfinexEndpoints = {
   symbol: {
-    // get: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
     list: `${BITFINEX_PUBLIC_URL}/conf/pub:list:currency,pub:map:currency:label`,
   },
   market: {
-    // get: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
-    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    tickers: `${BITFINEX_PUBLIC_URL}/tickers?symbols=ALL`,
+    enabledMarginCurrencies: `${BITFINEX_PUBLIC_URL}/conf/pub:list:pair:margin`,
   },
   key: {
     fetchDetails: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
