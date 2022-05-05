@@ -1,14 +1,12 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { SAMPLE_RAW_ORDERS } from '../../../../sample/test/fixtures/sampleOrders'
 import { BittrexAuthed } from '../../../BittrexAuthed'
-import {
-  BITTREX_PARSED_ORDERS,
-  BITTREX_RAW_ORDERS,
-} from '../../../test/fixtures/bittrexOrders'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
 
@@ -24,8 +22,8 @@ describe(__filename, () => {
   it('should get a Bittrex order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-    const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
+    const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const { id } = mockedRawOrder
 

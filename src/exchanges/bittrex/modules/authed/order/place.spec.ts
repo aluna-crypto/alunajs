@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -20,10 +21,7 @@ import { bittrexEndpoints } from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
-import {
-  BITTREX_PARSED_ORDERS,
-  BITTREX_RAW_ORDERS,
-} from '../../../test/fixtures/bittrexOrders'
+import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 import * as parseMod from './parse'
 
 
@@ -39,7 +37,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-    const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
       marketSymbol,
@@ -121,7 +119,7 @@ describe(__filename, () => {
     // preparing data
 
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
-    const mockedParsedOrder = BITTREX_PARSED_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
       marketSymbol,

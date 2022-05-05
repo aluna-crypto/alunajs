@@ -1,4 +1,3 @@
-import { IAlunaMarketSchema } from '../../../../lib/schemas/IAlunaMarketSchema'
 import { BittrexMarketStatusEnum } from '../../enums/BittrexMarketStatusEnum'
 import {
   IBittrexMarketInfoSchema,
@@ -123,72 +122,3 @@ export const BITTREX_RAW_MARKETS: IBittrexMarketsSchema = {
   summaries: BITTREX_RAW_MARKET_SUMMARIES,
   tickers: BITTREX_RAW_MARKET_TICKERS,
 }
-
-export const BITTREX_PARSED_MARKETS: IAlunaMarketSchema[] = [
-  {
-    exchangeId: 'bittrex',
-    symbolPair: 'BTC-EUR',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'EUR',
-    ticker: {
-      high: 33296.366,
-      low: 31790,
-      bid: 32999.758,
-      ask: 33048.12,
-      last: 33296.366,
-      date: new Date('2022-02-04T12:32:38.582Z'),
-      change: 0.030699999999999998,
-      baseVolume: 9.64127008,
-      quoteVolume: 311825.04145095,
-    },
-    spotEnabled: true,
-    marginEnabled: false,
-    derivativesEnabled: false,
-    leverageEnabled: false,
-    meta: {},
-  },
-  {
-    exchangeId: 'bittrex',
-    symbolPair: 'BTC-USD',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'USD',
-    ticker: {
-      high: 38221.848,
-      low: 36269.717,
-      bid: 37836.19,
-      ask: 37850.139,
-      last: 37865.494,
-      date: new Date('2022-02-04T12:32:38.582Z'),
-      change: 0.040999999999999995,
-      baseVolume: 126.19108264,
-      quoteVolume: 4696409.2164974,
-    },
-    spotEnabled: true,
-    marginEnabled: false,
-    derivativesEnabled: false,
-    leverageEnabled: false,
-    meta: {},
-  },
-  {
-    exchangeId: 'bittrex',
-    symbolPair: 'BTC-USDT',
-    baseSymbolId: 'BTC',
-    quoteSymbolId: 'USDT',
-    ticker: {
-      high: 38200,
-      low: 36265.18,
-      bid: 37819.3764,
-      ask: 37841.13653987,
-      last: 37853.2499,
-      date: new Date('2022-02-04T12:32:38.582Z'),
-      change: 0.042,
-      baseVolume: 86.3244965,
-      quoteVolume: 3191538.22788546,
-    },
-    spotEnabled: true,
-    marginEnabled: false,
-    derivativesEnabled: false,
-    leverageEnabled: false,
-    meta: {},
-  },
-]

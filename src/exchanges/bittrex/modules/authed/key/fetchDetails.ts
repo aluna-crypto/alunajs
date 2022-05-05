@@ -8,12 +8,11 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { BittrexHttp } from '../../../BittrexHttp'
 import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { BittrexOrderSideEnum } from '../../../enums/BittrexOrderSideEnum'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
-import { BittrexSideEnum } from '../../../enums/BittrexSideEnum'
 import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
-import { parseDetails } from './parseDetails'
 
 
 
@@ -67,7 +66,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     const requestBody = {
       marketSymbol: 'BTCEUR',
-      direction: BittrexSideEnum.BUY,
+      direction: BittrexOrderSideEnum.BUY,
       type: BittrexOrderTypeEnum.MARKET,
       quantity: 0,
       timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
@@ -118,7 +117,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { key } = await parseDetails(exchange)({ rawKey: permissions })
+  const { key } = await exchange.key.parseDetails({ rawKey: permissions })
 
   const { requestCount } = http
 

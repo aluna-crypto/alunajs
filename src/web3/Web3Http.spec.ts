@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { Agent } from 'http'
 
+import { testCache } from '../../test/macros/testCache'
 import { mockAxiosRequest } from '../../test/mocks/axios/request'
 import {
   IAlunaHttpAuthedParams,
@@ -16,10 +17,7 @@ import {
   IAlunaSettingsSchema,
 } from '../lib/schemas/IAlunaSettingsSchema'
 import { mockAssembleRequestConfig } from '../utils/axios/assembleRequestConfig.mock'
-import {
-  mockAlunaCache,
-  validateCache,
-} from '../utils/cache/AlunaCache.mock'
+import { mockAlunaCache } from '../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../utils/executeAndCatch'
 import { Web3Http } from './Web3Http'
 
@@ -260,30 +258,22 @@ describe(__filename, () => {
 
 
 
-  it('should validate cache usage', async () => {
+  /**
+   * Executes macro test.
+   * */
+  testCache({
+    cacheResult: response,
+    callMethod: async () => {
 
-    // mocking
-    const { request } = mockAxiosRequest()
+      const params: IAlunaHttpPublicParams = {
+        url,
+        body,
+        verb: AlunaHttpVerbEnum.GET,
+      }
 
-    request.returns(Promise.resolve(response))
+      await new Web3Http().publicRequest(params)
 
-
-    // executing and validating
-    await validateCache({
-      cacheResult: response,
-      callMethod: async () => {
-
-        const params: IAlunaHttpPublicParams = {
-          url,
-          body,
-          verb: AlunaHttpVerbEnum.GET,
-        }
-
-        await new Web3Http().publicRequest(params)
-
-      },
-
-    })
+    },
 
   })
 

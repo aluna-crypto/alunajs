@@ -1,13 +1,11 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BittrexAuthed } from '../../../BittrexAuthed'
-import {
-  BITTREX_PARSED_ORDERS,
-  BITTREX_RAW_ORDERS,
-} from '../../../test/fixtures/bittrexOrders'
+import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 import * as parseMod from './parse'
 
 
@@ -22,7 +20,7 @@ describe(__filename, () => {
   it('should parse many Bittrex raw orders just fine', async () => {
 
     // preparing data
-    const parsedOrders = BITTREX_PARSED_ORDERS
+    const parsedOrders = PARSED_ORDERS
     const rawOrders = BITTREX_RAW_ORDERS
 
 

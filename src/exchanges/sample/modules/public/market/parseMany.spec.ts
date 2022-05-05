@@ -25,7 +25,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({ settings: {} })
+    const exchange = new Sample({})
 
     const { markets } = exchange.market.parseMany({
       rawMarkets,

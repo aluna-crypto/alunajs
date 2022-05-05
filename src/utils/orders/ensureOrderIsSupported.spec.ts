@@ -43,6 +43,7 @@ describe(__filename, () => {
       offersOrderEditing: false,
     },
     accounts: [],
+    settings: {},
   }
 
   const defaultOrderPlaceParams: IAlunaOrderPlaceParams = {

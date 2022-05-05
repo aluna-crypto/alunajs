@@ -6,8 +6,6 @@ import {
   IAlunaBalanceListReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { listRaw } from './listRaw'
-import { parseMany } from './parseMany'
 
 
 
@@ -23,9 +21,9 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BittrexHttp() } = params
 
-  const { rawBalances } = await listRaw(exchange)({ http })
+  const { rawBalances } = await exchange.balance.listRaw({ http })
 
-  const { balances } = parseMany(exchange)({ rawBalances })
+  const { balances } = exchange.balance.parseMany({ rawBalances })
 
   const { requestCount } = http
 

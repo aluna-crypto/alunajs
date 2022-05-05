@@ -8,7 +8,6 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
-import { parse } from './parse'
 
 
 
@@ -37,7 +36,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
       const {
         balance: parsedBalance,
-      } = parse(exchange)(({ rawBalance: out }))
+      } = exchange.balance.parse({ rawBalance: out })
 
       acc.push(parsedBalance)
 

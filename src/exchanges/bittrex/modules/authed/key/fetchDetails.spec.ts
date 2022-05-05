@@ -14,9 +14,9 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
 import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { BittrexOrderSideEnum } from '../../../enums/BittrexOrderSideEnum'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
-import { BittrexSideEnum } from '../../../enums/BittrexSideEnum'
 import * as parseDetailsMod from './parseDetails'
 
 
@@ -32,8 +32,6 @@ describe(__filename, () => {
       key: 'key',
       secret: 'secret',
     }
-
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
 
     const accountId = 'accountId'
 
@@ -79,6 +77,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,
@@ -102,7 +102,7 @@ describe(__filename, () => {
       credentials,
       body: {
         marketSymbol: 'BTCEUR',
-        direction: BittrexSideEnum.BUY,
+        direction: BittrexOrderSideEnum.BUY,
         type: BittrexOrderTypeEnum.MARKET,
         quantity: 0,
         timeInForce: BittrexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
@@ -138,8 +138,6 @@ describe(__filename, () => {
       key: 'key',
       secret: 'secret',
     }
-
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
 
     const accountId = 'accountId'
 
@@ -193,6 +191,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,
@@ -224,8 +224,6 @@ describe(__filename, () => {
       key: 'key',
       secret: 'secret',
     }
-
-    const exchange = new BittrexAuthed({ settings: {}, credentials })
 
     const accountId = 'accountId'
 
@@ -270,6 +268,8 @@ describe(__filename, () => {
 
 
     // executing
+    const exchange = new BittrexAuthed({ settings: {}, credentials })
+
     const {
       key,
       requestCount,

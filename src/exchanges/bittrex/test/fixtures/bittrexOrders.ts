@@ -1,12 +1,7 @@
-import { AlunaAccountEnum } from '../../../../lib/enums/AlunaAccountEnum'
-import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
-import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { IAlunaOrderSchema } from '../../../../lib/schemas/IAlunaOrderSchema'
+import { BittrexOrderSideEnum } from '../../enums/BittrexOrderSideEnum'
 import { BittrexOrderStatusEnum } from '../../enums/BittrexOrderStatusEnum'
 import { BittrexOrderTimeInForceEnum } from '../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../enums/BittrexOrderTypeEnum'
-import { BittrexSideEnum } from '../../enums/BittrexSideEnum'
 import { IBittrexOrderSchema } from '../../schemas/IBittrexOrderSchema'
 
 
@@ -15,7 +10,7 @@ export const BITTREX_RAW_ORDERS: IBittrexOrderSchema[] = [
   {
     id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
     marketSymbol: 'BTC-EUR',
-    direction: BittrexSideEnum.BUY,
+    direction: BittrexOrderSideEnum.BUY,
     type: BittrexOrderTypeEnum.LIMIT,
     quantity: '9.94497801',
     limit: '1.25692000',
@@ -37,7 +32,7 @@ export const BITTREX_RAW_ORDERS: IBittrexOrderSchema[] = [
   {
     id: '8bc1e59c-77fa-4554-bd11-966e360e4eb8',
     marketSymbol: 'BTC-EUR',
-    direction: BittrexSideEnum.BUY,
+    direction: BittrexOrderSideEnum.BUY,
     type: BittrexOrderTypeEnum.MARKET,
     quantity: '9.94497801',
     ceiling: '10.00000000',
@@ -63,7 +58,7 @@ export const BITTREX_RAW_ORDERS: IBittrexOrderSchema[] = [
 export const BITTREX_RAW_CLOSED_ORDER = {
   id: '8bc1e59c-77fa-4554-bd11-966e360e4eb5',
   marketSymbol: 'BTC-EUR',
-  direction: BittrexSideEnum.BUY,
+  direction: BittrexOrderSideEnum.BUY,
   type: BittrexOrderTypeEnum.LIMIT,
   quantity: '9.94497801',
   limit: null as any,
@@ -82,40 +77,3 @@ export const BITTREX_RAW_CLOSED_ORDER = {
     type: BittrexOrderTypeEnum.LIMIT,
   },
 }
-
-
-
-export const BITTREX_PARSED_ORDERS: IAlunaOrderSchema[] = [
-  {
-    id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
-    symbolPair: 'USDT-USD',
-    total: 12.5000417603292,
-    amount: 9.94497801,
-    rate: 1.25692,
-    exchangeId: 'bittrex',
-    baseSymbolId: 'USDT',
-    quoteSymbolId: 'USD',
-    account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaOrderSideEnum.BUY,
-    status: AlunaOrderStatusEnum.OPEN,
-    type: AlunaOrderTypesEnum.LIMIT,
-    placedAt: new Date('2015-12-11T06:31:40.633Z'),
-    meta: {},
-  },
-  {
-    id: '8bc1e59c-77fa-4554-bd11-966e360e4eb8',
-    symbolPair: 'USDT-USD',
-    total: 12.5000417603292,
-    amount: 9.94497801,
-    rate: 1.25692,
-    exchangeId: 'bittrex',
-    baseSymbolId: 'USDT',
-    quoteSymbolId: 'USD',
-    account: AlunaAccountEnum.EXCHANGE,
-    side: AlunaOrderSideEnum.BUY,
-    status: AlunaOrderStatusEnum.FILLED,
-    type: AlunaOrderTypesEnum.MARKET,
-    placedAt: new Date('2015-12-11T06:31:40.633Z'),
-    meta: {},
-  },
-]

@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({ settings: {} })
+    const exchange = new Sample({})
 
     const rawSymbol = SAMPLE_RAW_SYMBOLS[0] // first fixture
 
@@ -58,7 +58,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({ settings: {} })
+    const exchange = new Sample({})
 
     const rawSymbol = SAMPLE_RAW_SYMBOLS[1] // second fixture
 

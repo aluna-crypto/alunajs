@@ -1,12 +1,10 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
+import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Bittrex } from '../../../Bittrex'
-import {
-  BITTREX_PARSED_SYMBOLS,
-  BITTREX_RAW_SYMBOLS,
-} from '../../../test/fixtures/bittrexSymbols'
+import { BITTREX_RAW_SYMBOLS } from '../../../test/fixtures/bittrexSymbols'
 import * as parseMod from './parse'
 
 
@@ -18,13 +16,13 @@ describe(__filename, () => {
     // preparing data
     const { parse } = mockParse({ module: parseMod })
 
-    each(BITTREX_PARSED_SYMBOLS, (symbol, index) => {
+    each(PARSED_SYMBOLS, (symbol, index) => {
       parse.onCall(index).returns({ symbol })
     })
 
 
     // executing
-    const exchange = new Bittrex({ settings: {} })
+    const exchange = new Bittrex({})
 
     const { symbols } = exchange.symbol.parseMany({
       rawSymbols: BITTREX_RAW_SYMBOLS,

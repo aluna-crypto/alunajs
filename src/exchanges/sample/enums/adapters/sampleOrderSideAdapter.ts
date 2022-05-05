@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { SampleSideEnum } from '../SampleSideEnum'
+import { SampleOrderSideEnum } from '../SampleOderSideEnum'
 
 
 
@@ -9,13 +9,13 @@ const errorMessagePrefix = 'Order side'
 
 
 export const translateOrderSideToAluna = buildAdapter<
-  SampleSideEnum,
+  SampleOrderSideEnum,
   AlunaOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [SampleSideEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [SampleSideEnum.SELL]: AlunaOrderSideEnum.SELL,
+    [SampleOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+    [SampleOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
   },
 })
 
@@ -23,12 +23,11 @@ export const translateOrderSideToAluna = buildAdapter<
 
 export const translateOrderSideToSample = buildAdapter<
   AlunaOrderSideEnum,
-  SampleSideEnum
+  SampleOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderSideEnum.BUY]: SampleSideEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: SampleSideEnum.SELL,
+    [AlunaOrderSideEnum.BUY]: SampleOrderSideEnum.BUY,
+    [AlunaOrderSideEnum.SELL]: SampleOrderSideEnum.SELL,
   },
 })
-
