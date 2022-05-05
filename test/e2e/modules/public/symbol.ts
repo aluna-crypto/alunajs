@@ -16,7 +16,10 @@ export function symbol(params: IPublicParams) {
     } = await exchangePublic.symbol.listRaw()
 
     expect(rawSymbols).to.exist
-    expect(rawSymbols.length).to.be.greaterThan(0)
+
+    if (Array.isArray(rawSymbols)) {
+      expect(rawSymbols.length).to.be.greaterThan(0)
+    }
 
     expect(requestCount.public).to.be.greaterThan(0)
     expect(requestCount.authed).to.be.eq(0)

@@ -2,22 +2,24 @@ import { IAlunaExchangeAuthed } from '../../lib/core/IAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/authed/IAlunaOrderModule'
+import { IAlunaPositionModule } from '../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { Bitfinex } from './Bitfinex'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
-import { Valr } from './Valr'
 
 
 
-export class ValrAuthed extends Valr implements IAlunaExchangeAuthed {
+export class BitfinexAuthed extends Bitfinex implements IAlunaExchangeAuthed {
 
   public credentials: IAlunaCredentialsSchema
 
   public key: IAlunaKeyModule
   public order: IAlunaOrderWriteModule
   public balance: IAlunaBalanceModule
+  public position?: IAlunaPositionModule
 
 
 
