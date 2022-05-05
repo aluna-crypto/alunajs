@@ -11,15 +11,15 @@ import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { handleSampleRequestError } from './errors/handleSampleRequestError'
+import { handleValrRequestError } from './errors/handleValrRequestError'
 
 
 
-export const SAMPLE_HTTP_CACHE_KEY_PREFIX = 'SampleHttp.publicRequest'
+export const VALR_HTTP_CACHE_KEY_PREFIX = 'ValrHttp.publicRequest'
 
 
 
-const log = debug('@alunajs:sample/SampleHttp')
+const log = debug('@alunajs:valr/ValrHttp')
 
 
 // TODO: Review interface properties
@@ -34,7 +34,7 @@ interface ISignedHashParams {
 
 
 // TODO: Review interface properties
-export interface ISampleSignedHeaders {
+export interface IValrSignedHeaders {
   'Api-Timestamp': number
 }
 
@@ -42,11 +42,9 @@ export interface ISampleSignedHeaders {
 
 export const generateAuthHeader = (
   params: ISignedHashParams,
-): ISampleSignedHeaders => {
+): IValrSignedHeaders => {
 
   log(params)
-
-  // TODO: Implement method
 
   // const {
   //   credentials,
@@ -70,7 +68,7 @@ export const generateAuthHeader = (
 
 
 
-export class SampleHttp implements IAlunaHttp {
+export class ValrHttp implements IAlunaHttp {
 
   public requestCount: IAlunaHttpRequestCount
 
@@ -101,7 +99,7 @@ export class SampleHttp implements IAlunaHttp {
 
     const cacheKey = AlunaCache.hashCacheKey({
       args: params,
-      prefix: SAMPLE_HTTP_CACHE_KEY_PREFIX,
+      prefix: VALR_HTTP_CACHE_KEY_PREFIX,
     })
 
     if (AlunaCache.cache.has(cacheKey)) {
@@ -129,7 +127,7 @@ export class SampleHttp implements IAlunaHttp {
 
     } catch (error) {
 
-      throw handleSampleRequestError({ error })
+      throw handleValrRequestError({ error })
 
     }
 
@@ -176,7 +174,7 @@ export class SampleHttp implements IAlunaHttp {
 
     } catch (error) {
 
-      throw handleSampleRequestError({ error })
+      throw handleValrRequestError({ error })
 
     }
 
