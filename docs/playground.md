@@ -14,7 +14,7 @@ yarn playgropund
 
 # AlunaRC
 Before moving on, be sure to set up your `.alunarc`:
-- [Setting up `.alunarc`](alunarc.md)
+- [Setting up `.alunarc`](../alunarc.md)
 
 
 # Insomnia

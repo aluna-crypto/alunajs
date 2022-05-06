@@ -10,4 +10,4 @@ yarn test-cover-watch
 ```
 
 # More
- - [Integration Tests](../test/e2e)
+ - [Integration Tests](e2e)
