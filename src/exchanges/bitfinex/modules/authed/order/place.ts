@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -12,10 +13,16 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import {
+  bitfinexBaseSpecs,
+  bitfinexEndpoints,
+} from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
-import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
+import {
+  IBitfinexOrderSchema,
+  TBitfinexPlaceOrderResponse,
+} from '../../../schemas/IBitfinexOrderSchema'
 
 
 
@@ -48,6 +55,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     side,
     type,
     account,
+    limitRate,
+    stopRate,
     http = new BitfinexHttp(),
   } = params
 
@@ -56,70 +65,116 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     account,
   })
 
-  // TODO: Validate all body properties
+  const translatedAmount = translateOrderSideToBitfinex({
+    amount: Number(amount),
+    side,
+  })
+
+  let price: undefined | string
+  let priceAuxLimit: undefined | string
+
+  switch (type) {
+
+    case AlunaOrderTypesEnum.LIMIT:
+      price = rate!.toString()
+      break
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      price = stopRate!.toString()
+      break
+
+    case AlunaOrderTypesEnum.STOP_LIMIT:
+      price = stopRate!.toString()
+      priceAuxLimit = limitRate!.toString()
+      break
+
+    default:
+
+  }
+
+  const { affiliateCode } = bitfinexBaseSpecs.settings
+
   const body = {
-    direction: translateOrderSideToBitfinex({ from: side }),
-    marketSymbol: symbolPair,
+    amount: translatedAmount,
+    symbol: symbolPair,
     type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    ...(price ? { price } : {}),
+    ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
+    ...(affiliateCode ? { meta: { aff_code: affiliateCode } } : {}),
+
   }
 
   log('placing new order for Bitfinex')
 
-  let placedOrder: IBitfinexOrderSchema
+  let rawOrder: IBitfinexOrderSchema
 
   try {
 
-    // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IBitfinexOrderSchema>({
+    const response = await http.authedRequest<TBitfinexPlaceOrderResponse>({
       url: bitfinexEndpoints.order.place,
       body,
       credentials,
     })
 
-    placedOrder = orderResponse
+    const [
+      _mts,
+      _type,
+      _messageId,
+      _placeHolder,
+      [placedOrder],
+      _code,
+      status,
+      text,
+    ] = response
 
-  } catch (err) {
+    if (status !== 'SUCCESS') {
 
-    let {
-      code,
-      message,
-    } = err
-
-    const { metadata } = err
-
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
-
-      code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
-      message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        message: text,
+        metadata: response,
+      })
 
     }
 
-    throw new AlunaError({
-      ...err,
+    rawOrder = placedOrder
+
+    const { order } = exchange.order.parse({ rawOrder })
+
+    const { requestCount } = http
+
+    return {
+      order,
+      requestCount,
+    }
+
+  } catch (err) {
+
+    const { message, metadata } = err
+
+    let {
       code,
+      httpStatusCode,
+    } = err
+
+    if (/not enough.+balance/i.test(err.message)) {
+
+      code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 400
+
+    }
+
+    const error = new AlunaError({
       message,
+      code,
+      httpStatusCode,
+      metadata,
     })
 
-  }
+    log(error)
 
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
+    throw error
 
-  const { requestCount } = http
-
-  return {
-    order,
-    requestCount,
   }
 
 }

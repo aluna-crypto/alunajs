@@ -1,7 +1,8 @@
 import { debug } from 'debug'
 
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderGetRawReturns,
@@ -25,16 +26,43 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const { credentials } = exchange
 
   const {
-    id,
+    id: stringId,
+    symbolPair,
     http = new BitfinexHttp(),
   } = params
 
-  // TODO: Implement proper request
-  const rawOrder = await http.authedRequest<any>({
+  const id = Number(stringId)
+
+  let orders = await http.authedRequest<IBitfinexOrderSchema[]>({
     credentials,
-    verb: AlunaHttpVerbEnum.GET,
-    url: bitfinexEndpoints.order.get(id),
+    url: bitfinexEndpoints.order.get(symbolPair),
+    body: { id: [id] },
   })
+
+  if (!orders.length) {
+
+    orders = await http.authedRequest<IBitfinexOrderSchema[]>({
+      credentials,
+      url: bitfinexEndpoints.order.getHistory(symbolPair),
+      body: { id: [id] },
+    })
+
+    if (!orders.length) {
+
+      const error = new AlunaError({
+        code: AlunaOrderErrorCodes.NOT_FOUND,
+        message: 'Order was not found.',
+      })
+
+      log(error)
+
+      throw error
+
+    }
+
+  }
+
+  const [rawOrder] = orders
 
   const { requestCount } = http
 

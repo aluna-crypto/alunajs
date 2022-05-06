@@ -41,7 +41,7 @@ describe(__filename, () => {
     // validating
     expect(orders).to.deep.eq(parsedOrders)
 
-    expect(parse.callCount).to.be.eq(rawOrders.length)
+    expect(parse.callCount).to.be.eq(parsedOrders.length)
 
   })
 

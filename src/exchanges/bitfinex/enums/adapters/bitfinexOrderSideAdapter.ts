@@ -1,33 +1,37 @@
-import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { BitfinexOrderSideEnum } from '../BitfinexOrderSideEnum'
 
 
 
-const errorMessagePrefix = 'Order side'
+export const translateOrderSideToAluna = (params: {
+  amount: number
+}): AlunaOrderSideEnum => {
+
+  const { amount } = params
+
+  const side = Number(amount) > 0
+    ? AlunaOrderSideEnum.BUY
+    : AlunaOrderSideEnum.SELL
+
+  return side
+
+}
 
 
 
-export const translateOrderSideToAluna = buildAdapter<
-  BitfinexOrderSideEnum,
-  AlunaOrderSideEnum
->({
-  errorMessagePrefix,
-  mappings: {
-    [BitfinexOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [BitfinexOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
-  },
-})
+export const translateOrderSideToBitfinex = (params: {
+  side: AlunaOrderSideEnum
+  amount: number | string
+}): string => {
 
+  const {
+    side,
+    amount,
+  } = params
 
+  const fixedAmount = side === AlunaOrderSideEnum.BUY
+    ? Math.abs(Number(amount))
+    : -Math.abs(Number(amount))
 
-export const translateOrderSideToBitfinex = buildAdapter<
-  AlunaOrderSideEnum,
-  BitfinexOrderSideEnum
->({
-  errorMessagePrefix,
-  mappings: {
-    [AlunaOrderSideEnum.BUY]: BitfinexOrderSideEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: BitfinexOrderSideEnum.SELL,
-  },
-})
+  return fixedAmount.toString()
+
+}

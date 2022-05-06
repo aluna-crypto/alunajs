@@ -5,6 +5,7 @@ import {
   IAlunaOrderGetParams,
   IAlunaOrderGetReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { BitfinexHttp } from '../../../BitfinexHttp'
 
 
 
@@ -19,11 +20,20 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
   log('params', params)
 
   const {
-    rawOrder,
-    requestCount,
-  } = await exchange.order.getRaw(params)
+    id,
+    symbolPair,
+    http = new BitfinexHttp(),
+  } = params
+
+  const { rawOrder } = await exchange.order.getRaw({
+    id,
+    symbolPair,
+    http,
+  })
 
   const { order } = exchange.order.parse({ rawOrder })
+
+  const { requestCount } = http
 
   return {
     order,

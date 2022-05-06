@@ -2,11 +2,11 @@
  * Those enums are used to fetch data from debank API,
  * see: https://docs.open.debank.com/en/reference/api-reference/chain#returns-1
  */
-export const Web3DebankChainsEnum = {
-  ETHEREUM: 'eth',
-  BSC: 'bsc',
-  POLYGON: 'matic',
-  FANTOM: 'ftm',
-  AVALANCHE: 'avax',
-  MOONRIVER: 'movr',
+export enum Web3DebankChainsEnum {
+  ETHEREUM = 'eth',
+  BSC = 'bsc',
+  POLYGON = 'matic',
+  FANTOM = 'ftm',
+  AVALANCHE = 'avax',
+  MOONRIVER = 'movr',
 }

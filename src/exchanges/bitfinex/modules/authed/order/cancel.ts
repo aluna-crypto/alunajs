@@ -2,7 +2,6 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -10,7 +9,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { bitfinexEndpoints } from '../../../bitfinexSpecs'
-import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
+import { TBitfinexEditCancelOrderResponse } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
@@ -28,19 +27,45 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new BitfinexHttp(),
   } = params
 
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IBitfinexOrderSchema>({
-      verb: AlunaHttpVerbEnum.DELETE,
-      url: bitfinexEndpoints.order.get(id),
+    const response = await http.authedRequest<TBitfinexEditCancelOrderResponse>({
+      url: bitfinexEndpoints.order.cancel,
       credentials,
+      body: { id: Number(id) },
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const [
+      _mts,
+      _type,
+      _messageId,
+      _placeHolder,
+      _canceledOrder, // Bitfinex do not return the order with canceled status
+      _code,
+      status,
+      text,
+    ] = response
+
+    if (status !== 'SUCCESS') {
+
+      throw new AlunaError({
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        message: text,
+        metadata: response,
+        httpStatusCode: 500,
+      })
+
+    }
+
+    const { order } = await exchange.order.get({
+      id,
+      symbolPair,
+      http,
+    })
 
     const { requestCount } = http
 
@@ -51,16 +76,11 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   } catch (err) {
 
-    const {
-      metadata,
-      httpStatusCode,
-    } = err
-
     const error = new AlunaError({
-      message: 'Something went wrong, order not canceled',
-      httpStatusCode,
+      message: err.message,
       code: AlunaOrderErrorCodes.CANCEL_FAILED,
-      metadata,
+      metadata: err.metadata,
+      httpStatusCode: err.httpStatusCode,
     })
 
     log(error)
