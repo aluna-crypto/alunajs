@@ -1,6 +1,6 @@
 # AlunaJS
 
-Standardizing CryptoTrading APIs across multiple exchanges.
+Standardizing CryptoTrading APIs across multiple exchanges, for NodeJS.
 
 # Install
 
@@ -61,12 +61,15 @@ apiAuthed.position.close({ ... })
 # Web3
 
 ```ts
-import { aluna } from 'alunajs'
+import {
+  aluna,
+  Web3ChainsEnum,
+} from 'alunajs'
 
 const web3 = aluna.web3()
 
 const web3Address = '0xA8...'
-const chainId = Web3DebankChainsEnum.ETHEREUM
+const chainId = Web3ChainsEnum.ETHEREUM
 
 web3.balance.getTotalBalance({ address })
 web3.balance.list({ address })
