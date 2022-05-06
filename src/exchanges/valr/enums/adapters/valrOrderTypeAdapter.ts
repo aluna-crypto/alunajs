@@ -15,11 +15,12 @@ export const translateOrderTypeToAluna = buildAdapter<
   errorMessagePrefix,
   mappings: {
     [ValrOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
+    [ValrOrderTypeEnum.LIMIT_POST_ONLY]: AlunaOrderTypesEnum.LIMIT,
+    [ValrOrderTypeEnum.STOP_LOSS_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
     [ValrOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [ValrOrderTypeEnum.CEILING_LIMIT]:
-          AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [ValrOrderTypeEnum.CEILING_MARKET]:
-          AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [ValrOrderTypeEnum.SIMPLE]: AlunaOrderTypesEnum.MARKET,
+    [ValrOrderTypeEnum.TAKE_PROFIT_LIMIT]:
+      AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
   },
 })
 
@@ -33,10 +34,9 @@ export const translateOrderTypeToValr = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: ValrOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: ValrOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]:
-          ValrOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]:
-          ValrOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.STOP_LIMIT]: ValrOrderTypeEnum.STOP_LOSS_LIMIT,
+    [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]:
+      ValrOrderTypeEnum.TAKE_PROFIT_LIMIT,
   },
 })
 

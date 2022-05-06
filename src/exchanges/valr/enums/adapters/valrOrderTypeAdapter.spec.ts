@@ -24,16 +24,24 @@ describe(__filename, () => {
       })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
       expect(translateOrderTypeToAluna({
+        from: ValrOrderTypeEnum.LIMIT_POST_ONLY,
+      })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
+
+      expect(translateOrderTypeToAluna({
         from: ValrOrderTypeEnum.MARKET,
       })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
       expect(translateOrderTypeToAluna({
-        from: ValrOrderTypeEnum.CEILING_LIMIT,
-      })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
+        from: ValrOrderTypeEnum.SIMPLE,
+      })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
       expect(translateOrderTypeToAluna({
-        from: ValrOrderTypeEnum.CEILING_MARKET,
-      })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
+        from: ValrOrderTypeEnum.STOP_LOSS_LIMIT,
+      })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
+
+      expect(translateOrderTypeToAluna({
+        from: ValrOrderTypeEnum.TAKE_PROFIT_LIMIT,
+      })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
       let result
       let error
@@ -73,12 +81,12 @@ describe(__filename, () => {
       })).to.be.eq(ValrOrderTypeEnum.MARKET)
 
       expect(translateOrderTypeToValr({
-        from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-      })).to.be.eq(ValrOrderTypeEnum.CEILING_LIMIT)
+        from: AlunaOrderTypesEnum.STOP_LIMIT,
+      })).to.be.eq(ValrOrderTypeEnum.STOP_LOSS_LIMIT)
 
       expect(translateOrderTypeToValr({
-        from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-      })).to.be.eq(ValrOrderTypeEnum.CEILING_MARKET)
+        from: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+      })).to.be.eq(ValrOrderTypeEnum.TAKE_PROFIT_LIMIT)
 
       let result
       let error

@@ -1,4 +1,10 @@
 export enum ValrOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  ACTIVE = 'Active',
+  PLACED = 'Placed',
+  FILLED = 'Filled',
+  CANCELLED = 'Cancelled',
+  FAILED = 'Failed',
+  REQUESTED = 'Requested',
+  EXPIRED = 'Expired',
+  PARTIALLY_FILLED = 'Partially Filled'
 }

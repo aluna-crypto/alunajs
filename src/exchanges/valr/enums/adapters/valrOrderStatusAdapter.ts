@@ -6,42 +6,23 @@ import { ValrOrderStatusEnum } from '../ValrOrderStatusEnum'
 
 const errorMessagePrefix = 'Order status'
 
-export const translateOrderStatusToAluna = (
-  params: {
-      fillQuantity: string
-      quantity: string
-      from: ValrOrderStatusEnum
-    },
-): AlunaOrderStatusEnum => {
-
-  const { fillQuantity, quantity, from } = params
-
-  const isOpen = from === ValrOrderStatusEnum.OPEN
-
-  if (isOpen) {
-
-    return AlunaOrderStatusEnum.OPEN
-
-  }
-
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
-
-  if (parsedQty === parsedFillQty) {
-
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
-
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
-
-  }
-
-  return AlunaOrderStatusEnum.CANCELED
-
-}
+export const translateOrderStatusToAluna = buildAdapter<
+  ValrOrderStatusEnum,
+  AlunaOrderStatusEnum
+>({
+  errorMessagePrefix,
+  mappings: {
+    [ValrOrderStatusEnum.ACTIVE]: AlunaOrderStatusEnum.OPEN,
+    [ValrOrderStatusEnum.PLACED]: AlunaOrderStatusEnum.OPEN,
+    [ValrOrderStatusEnum.REQUESTED]: AlunaOrderStatusEnum.OPEN,
+    [ValrOrderStatusEnum.PARTIALLY_FILLED]:
+        AlunaOrderStatusEnum.PARTIALLY_FILLED,
+    [ValrOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+    [ValrOrderStatusEnum.FAILED]: AlunaOrderStatusEnum.CANCELED,
+    [ValrOrderStatusEnum.EXPIRED]: AlunaOrderStatusEnum.CANCELED,
+    [ValrOrderStatusEnum.CANCELLED]: AlunaOrderStatusEnum.CANCELED,
+  },
+})
 
 
 
@@ -51,11 +32,11 @@ export const translateOrderStatusToValr = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderStatusEnum.OPEN]: ValrOrderStatusEnum.OPEN,
+    [AlunaOrderStatusEnum.OPEN]: ValrOrderStatusEnum.PLACED,
     [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
-          ValrOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: ValrOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CLOSED,
+        ValrOrderStatusEnum.PARTIALLY_FILLED,
+    [AlunaOrderStatusEnum.FILLED]: ValrOrderStatusEnum.FILLED,
+    [AlunaOrderStatusEnum.CANCELED]: ValrOrderStatusEnum.CANCELLED,
   },
 })
 
