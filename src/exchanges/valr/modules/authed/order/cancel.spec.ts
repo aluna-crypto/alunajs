@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { filter } from 'lodash'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
@@ -11,8 +12,11 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_GET_ORDERS, VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
+import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 
 
 
@@ -26,10 +30,13 @@ describe(__filename, () => {
   it('should cancel a Valr order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
+    const canceledOrder = filter(
+      VALR_RAW_GET_ORDERS,
+      { orderStatusType: ValrOrderStatusEnum.CANCELLED },
+    )[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderId: id } = canceledOrder
 
 
     // mocking
@@ -38,11 +45,13 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
+    const { getRaw } = mockOrderGetRaw({ module: getRawMod })
     const { parse } = mockParse({ module: parseMod })
 
     parse.returns({ order: mockedParsedOrder })
+    getRaw.returns({ rawOrder: canceledOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve(canceledOrder))
 
 
     // executing
@@ -63,6 +72,10 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
       url: valrEndpoints.order.cancel,
+      body: {
+        orderId: id,
+        pair: '',
+      },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -74,6 +87,11 @@ describe(__filename, () => {
     // preparing data
     const id = 'id'
 
+    const canceledOrder = filter(
+      VALR_RAW_ORDERS,
+      { status: ValrOrderStatusEnum.CANCELLED },
+    )[0]
+
     // mocking
     const {
       publicRequest,
@@ -83,11 +101,14 @@ describe(__filename, () => {
     const error = new AlunaError({
       code: AlunaOrderErrorCodes.CANCEL_FAILED,
       message: 'Something went wrong, order not canceled',
-      httpStatusCode: 401,
-      metadata: {},
+      httpStatusCode: 500,
+      metadata: canceledOrder,
     })
 
-    authedRequest.returns(Promise.reject(error))
+    const { getRaw } = mockOrderGetRaw({ module: getRawMod })
+
+    getRaw.returns(Promise.resolve({ rawOrder: canceledOrder }))
+    authedRequest.returns(Promise.resolve({}))
 
 
     // executing
@@ -110,6 +131,10 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
       url: valrEndpoints.order.cancel,
+      body: {
+        orderId: id,
+        pair: 'symbolPair',
+      },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

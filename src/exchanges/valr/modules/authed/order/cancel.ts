@@ -10,7 +10,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderSchema } from '../../../schemas/IValrOrderSchema'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 
 
 
@@ -28,16 +28,43 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     http = new ValrHttp(),
+    id,
+    symbolPair,
   } = params
+
+  const body = {
+    orderId: id,
+    pair: symbolPair,
+  }
 
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IValrOrderSchema>({
+    await http.authedRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: valrEndpoints.order.cancel,
       credentials,
+      body,
     })
+
+    const { rawOrder } = await exchange.order.getRaw({
+      id,
+      symbolPair,
+      http,
+    })
+
+
+    if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
+
+      const error = new AlunaError({
+        httpStatusCode: 500,
+        message: 'Something went wrong, order not canceled',
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        metadata: rawOrder,
+      })
+
+      throw error
+
+    }
 
     const { order } = exchange.order.parse({ rawOrder })
 
