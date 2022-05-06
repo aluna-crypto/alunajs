@@ -81,14 +81,14 @@ web3.token.list({ address, chainId })
 # Integrations
 
 Full list of supported exchanges here:
- - [Supported Exchanges]([http://](https://github.com/alunacrypto/alunajs))
+ - [Supported Exchanges](docs/exchanges-table.md)
 
 
 # Contributting
 
  1. [Getting Started](docs/contributing.md)
  1. [Playground](.playground)
- 1. [Scaffolding](.scaffolding)
+ 1. [Scaffolding](.scaffolding) (_integrating a new exchange_)
  1. [Unit Tests](test)
  3. [Integration Tests](test/e2e)
 

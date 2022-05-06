@@ -12,7 +12,7 @@ yarn test-e2e
 
 ## AlunaRC
 > Before moving on, be sure to set up your `.alunarc`:
-> - [Setting up `.alunarc`](../docs/alunarc.md)
+> - [Setting up `.alunarc`](../../docs/alunarc.md)
 
 
 # Customization
