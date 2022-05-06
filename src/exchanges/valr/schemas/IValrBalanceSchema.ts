@@ -1,7 +1,7 @@
-// TODO: Describe balance interface for Valr exchange
 export interface IValrBalanceSchema {
-  total: string
+  currency: string
   available: string
-  currencySymbol: string
-  // ...
+  reserved: string
+  total: string
+  updatedAt?: string
 }
