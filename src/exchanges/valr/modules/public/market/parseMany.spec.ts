@@ -49,7 +49,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(parse.callCount).to.be.eq(PARSED_MARKETS.length)
+    expect(parse.callCount).to.be.eq(onlineParsedMarkets.length)
     expect(markets).to.deep.eq(onlineParsedMarkets)
 
   })
