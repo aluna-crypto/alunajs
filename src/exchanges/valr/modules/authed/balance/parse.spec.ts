@@ -4,10 +4,12 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { VALR_RAW_BALANCES } from '../../../test/fixtures/valrBalances'
+import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -21,17 +23,31 @@ describe.skip(__filename, () => {
 
     const rawBalance = VALR_RAW_BALANCES[0]
 
+    const {
+      available,
+      currency,
+      total,
+    } = rawBalance
+
+    const parsedBalance: IAlunaBalanceSchema = {
+      symbolId: currency,
+      available: Number(available),
+      total: Number(total),
+      meta: rawBalance,
+      wallet: AlunaWalletEnum.EXCHANGE,
+    }
+
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
-    translateSymbolId.returns(rawBalance.currencySymbol)
+    translateSymbolId.returns(rawBalance.currency)
 
     // executing
     const { balance } = exchange.balance.parse({ rawBalance })
 
 
     // validating
-    expect(balance).to.deep.eq({})
+    expect(balance).to.deep.eq(parsedBalance)
 
   })
 

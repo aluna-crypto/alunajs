@@ -1,42 +1,73 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 import { ValrAuthed } from '../../../ValrAuthed'
+import { ValrApiKeyPermissionsEnum, IValrKeySchema } from '../../../schemas/IValrKeySchema'
+import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 
 
 
 describe(__filename, () => {
 
-  it('should parse Valr key permissions just fine', async () => {
+  it(
+    'should parse Valr key permissions just fine w/o any permission',
+    async () => {
 
-    // preparing data
-    const accountId = 'accountId'
+      // preparing data
+      const rawKey: IValrKeySchema = VALR_KEY_PERMISSIONS
 
-    const rawKey: IValrKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
+      const credentials: IAlunaCredentialsSchema = {
+        key: 'key',
+        secret: 'secret',
+        passphrase: 'passphrase',
+      }
 
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-      passphrase: 'passphrase',
-    }
+      const exchange = new ValrAuthed({ credentials })
 
-    const exchange = new ValrAuthed({ credentials })
+      // executing
+      const { permissions } = exchange.key.parsePermissions({ rawKey })
+
+      // validating
+      expect(permissions.read).not.to.be.ok
+      expect(permissions.withdraw).not.to.be.ok
+      expect(permissions.trade).not.to.be.ok
+
+    },
+  )
+
+  it(
+    'should parse Valr key permissions just fine w/ permissions',
+    async () => {
+
+      // preparing data
+      const rawKey: IValrKeySchema = VALR_KEY_PERMISSIONS
+
+      rawKey.permissions = [
+        ValrApiKeyPermissionsEnum.VIEW_ACCESS,
+        ValrApiKeyPermissionsEnum.TRADE,
+        ValrApiKeyPermissionsEnum.WITHDRAW,
+        'NEW_ADDED_PERSSION' as ValrApiKeyPermissionsEnum,
+      ]
+
+      const credentials: IAlunaCredentialsSchema = {
+        key: 'key',
+        secret: 'secret',
+        passphrase: 'passphrase',
+      }
+
+      const exchange = new ValrAuthed({ credentials })
 
 
-    // executing
-    const { permissions } = exchange.key.parsePermissions({ rawKey })
+      // executing
+      const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 
-    // validating
-    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
+      // validating
+      expect(permissions.read).to.be.ok
+      expect(permissions.withdraw).to.be.ok
+      expect(permissions.trade).to.be.ok
 
-  })
+    },
+  )
 
 })

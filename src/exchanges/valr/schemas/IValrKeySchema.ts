@@ -1,8 +1,18 @@
-// TODO: Describe key interface for Valr exchange
 export interface IValrKeySchema {
-  read: boolean
-  trade: boolean
-  withdraw: boolean
-  accountId?: string
-  // ...
+  label: string
+  permissions: ValrApiKeyPermissionsEnum[]
+  addedAt: string
+  allowedIpAddressCidr?: string
+  allowedWithdrawAddressList?: IValrKeyAllowedWithdrawAddressList[]
+}
+
+export enum ValrApiKeyPermissionsEnum {
+  VIEW_ACCESS = 'View access',
+  TRADE = 'Trade',
+  WITHDRAW = 'Withdraw',
+}
+
+export interface IValrKeyAllowedWithdrawAddressList {
+  currency: string
+  address: string
 }

@@ -8,5 +8,5 @@ export enum Web3DebankChainsEnum {
   POLYGON = 'matic',
   FANTOM = 'ftm',
   AVALANCHE = 'avax',
-  MOONRIVER = 'movr'
+  MOONRIVER = 'movr',
 }

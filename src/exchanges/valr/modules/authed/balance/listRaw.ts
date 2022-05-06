@@ -26,7 +26,6 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new ValrHttp() } = params
 
-  // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<IValrBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: valrEndpoints.balance.list,

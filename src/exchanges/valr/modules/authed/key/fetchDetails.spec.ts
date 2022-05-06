@@ -25,11 +25,13 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
-    const accountId = 'accountId'
-
     const parsedKey: IAlunaKeySchema = {
-      accountId,
-      permissions: VALR_KEY_PERMISSIONS,
+      accountId: undefined,
+      permissions: {
+        read: false,
+        trade: false,
+        withdraw: false,
+      },
       meta: {},
     }
 

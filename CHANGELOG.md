@@ -3,3 +3,4 @@
 ## 2022-06-01
 
  - First release
+   - Hello world

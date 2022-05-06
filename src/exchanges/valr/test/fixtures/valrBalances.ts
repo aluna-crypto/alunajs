@@ -2,22 +2,27 @@ import { IValrBalanceSchema } from '../../schemas/IValrBalanceSchema'
 
 
 
-// TODO: Review fixtures
 export const VALR_RAW_BALANCES: IValrBalanceSchema[] = [
   {
-    total: '1500.00000000',
-    available: '1500.00000000',
-    currencySymbol: 'BTC',
+    currency: 'BTC',
+    available: '0.044511644725',
+    reserved: '0.01',
+    total: '0.054511644725',
+    updatedAt: '2020-05-31T05:02:18.186Z',
   },
   {
-    total: '32.00000000',
-    available: '32.00000000',
-    currencySymbol: 'BTC',
+    currency: 'ETH',
+    available: '0.01626594758',
+    reserved: '0.49',
+    total: '0.50626594758',
+    updatedAt: '2020-05-31T05:10:16.522Z',
   },
   {
-    total: '11.00000000',
-    available: '11.00000000',
-    currencySymbol: 'BTC',
+    currency: 'LTC',
+    available: '1.57270565',
+    reserved: '0',
+    total: '1.57270565',
+    updatedAt: '2020-05-11T18:42:17.953Z',
   },
 ]
 

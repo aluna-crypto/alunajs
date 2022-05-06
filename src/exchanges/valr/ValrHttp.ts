@@ -1,5 +1,6 @@
 import axios from 'axios'
 import debug from 'debug'
+import crypto from 'crypto'
 
 import {
   IAlunaHttp,
@@ -22,7 +23,6 @@ export const VALR_HTTP_CACHE_KEY_PREFIX = 'ValrHttp.publicRequest'
 const log = debug('@alunajs:valr/ValrHttp')
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   path: string
@@ -33,9 +33,10 @@ interface ISignedHashParams {
 
 
 
-// TODO: Review interface properties
 export interface IValrSignedHeaders {
-  'Api-Timestamp': number
+  'X-VALR-API-KEY': string
+  'X-VALR-SIGNATURE': string
+  'X-VALR-TIMESTAMP': number
 }
 
 
@@ -46,22 +47,32 @@ export const generateAuthHeader = (
 
   log(params)
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    credentials,
+    verb,
+    body,
+    path,
+  } = params
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const {
+    key,
+    secret,
+  } = credentials
 
   const timestamp = Date.now()
 
+  const signedRequest = crypto
+    .createHmac('sha512', secret)
+    .update(timestamp.toString())
+    .update(verb.toUpperCase())
+    .update(`${path}`)
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
+
   return {
-    'Api-Timestamp': timestamp,
+    'X-VALR-API-KEY': key,
+    'X-VALR-SIGNATURE': signedRequest,
+    'X-VALR-TIMESTAMP': timestamp,
   }
 
 }

@@ -71,7 +71,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IValrOrderSchema>({
-      url: valrEndpoints.order.place,
+      url: valrEndpoints.order.place(translatedOrderType),
       body,
       credentials,
     })

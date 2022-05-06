@@ -7,15 +7,17 @@ git clone git://github.com/your-username/alunajs
 cd alunajs && yarn install
 ```
 
-Now, go one and configure your `.alunarc` file.
+### AlunaRC
+Before moving on, be sure to set up your `.alunarc`:
+- [Setting up `.alunarc`](alunarc.md)
 
-## Done
-
+Done.
 You are set.
 
 # Next Steps
 
- - [Playground](https://github.com/alunacrypto/playground)
- - [Scaffolding](https://github.com/alunacrypto/alunajs)
- - [Unit Tests](https://github.com/alunacrypto/alunajs)
- - [Integration Tests](https://github.com/alunacrypto/alunajs)
+  1. [Playground](../.playground)
+  1. [Scaffolding](../.scaffolding) (_adding a new exchange_)
+  1. [Unit Tests](../test)
+  1. [Integration Tests](../test/e2e)
+  1. [Pull Requests](pull-requests.md)

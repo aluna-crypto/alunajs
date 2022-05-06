@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: valrEndpoints.order.get(id),
+      url: valrEndpoints.order.get(id, ''),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

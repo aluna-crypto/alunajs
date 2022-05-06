@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -7,6 +6,7 @@ import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeyS
 import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 import { ValrAuthed } from '../../../ValrAuthed'
 import * as mockParsePermissionsMod from './parsePermissions'
+import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 
 
 
@@ -15,14 +15,8 @@ describe(__filename, () => {
   it('should parse Valr key details just fine', async () => {
 
     // preparing data
-    const accountId = 'accountId'
 
-    const rawKey: IValrKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
+    const rawKey: IValrKeySchema = VALR_KEY_PERMISSIONS
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -30,10 +24,10 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const rawKeyWithoutAccId = omit(rawKey, 'accountId')
-
     const permissions: IAlunaKeyPermissionSchema = {
-      ...rawKeyWithoutAccId,
+      read: false,
+      trade: false,
+      withdraw: false,
     }
 
 
@@ -53,7 +47,7 @@ describe(__filename, () => {
 
     // validating
     expect(key).to.deep.eq({
-      accountId,
+      accountId: undefined,
       permissions,
       meta: rawKey,
     })
