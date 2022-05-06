@@ -1,7 +1,6 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
@@ -22,8 +21,6 @@ describe(__filename, () => {
     // preparing data
     const mockedRawOrder = BITFINEX_RAW_ORDERS[0]
 
-    const { id } = mockedRawOrder
-
 
     // mocking
     const {
@@ -31,15 +28,22 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
 
     // executing
     const exchange = new BitfinexAuthed({ credentials })
 
-    const { rawOrder } = await exchange.order.getRaw({
+    const [
       id,
-      symbolPair: '',
+      _gid,
+      _cid,
+      symbolPair,
+    ] = mockedRawOrder
+
+    const { rawOrder } = await exchange.order.getRaw({
+      id: id.toString(),
+      symbolPair,
     })
 
 
@@ -49,9 +53,9 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: bitfinexEndpoints.order.get(id),
+      url: bitfinexEndpoints.order.get(symbolPair),
+      body: { id: [id] },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
