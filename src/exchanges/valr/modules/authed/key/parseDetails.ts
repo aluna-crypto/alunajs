@@ -26,12 +26,10 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
     http = new ValrHttp(),
   } = params
 
-  const { accountId } = rawKey
-
   const { key: permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
-    accountId,
+    accountId: undefined, // valr doesn't have accountId
     permissions,
     meta: rawKey,
   }
