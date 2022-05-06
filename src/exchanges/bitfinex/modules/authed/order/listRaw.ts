@@ -18,7 +18,7 @@ const log = debug('@alunajs:bitfinex/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<IBitfinexOrderSchema>> => {
+): Promise<IAlunaOrderListRawReturns<IBitfinexOrderSchema[]>> => {
 
   log('fetching Bitfinex open orders', params)
 

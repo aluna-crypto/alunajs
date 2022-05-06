@@ -5,6 +5,7 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
 
@@ -13,7 +14,7 @@ const log = debug('@alunajs:sample/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams,
+  params: IAlunaOrderParseManyParams<ISampleOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
   log('params', params)

@@ -49,7 +49,7 @@ export interface IAlunaOrderParseReturns {
 
 
 export interface IAlunaOrderParseManyParams <T = any> {
-  rawOrders: T[]
+  rawOrders: T
 }
 
 export interface IAlunaOrderParseManyReturns {
@@ -67,7 +67,7 @@ export interface IAlunaOrderListParams extends IAlunaModuleParams {
 }
 
 export interface IAlunaOrderListRawReturns <T = any> extends IAlunaModuleReturns {
-  rawOrders: T[]
+  rawOrders: T
 }
 
 export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns, IAlunaModuleReturns {}
