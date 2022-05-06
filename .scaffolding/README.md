@@ -116,10 +116,9 @@ Here, all the authenticated methods:
 Examples:
 
   - Bittrex
-    - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
-    - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
-    - [`bitfinex/modules/authed/order.ts`](../src/exchanges/bitfinex/modules/authed/order.ts)
-    - [`bitfinex/modules/authed/position.ts`](../src/exchanges/bitfinex/modules/authed/position.ts)
+    - [`bittrex/modules/authed/key.ts`](../src/exchanges/bittrex/modules/authed/key.ts)
+    - [`bittrex/modules/authed/balance.ts`](../src/exchanges/bittrex/modules/authed/balance.ts)
+    - [`bittrex/modules/authed/order.ts`](../src/exchanges/bittrex/modules/authed/order.ts)
   - Bitfinex
     - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
     - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
