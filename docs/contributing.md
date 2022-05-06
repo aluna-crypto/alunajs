@@ -16,7 +16,7 @@ You are set.
 
 # Next Steps
 
-  - [Playground](.playground)
-  - [Scaffolding](.scaffolding)
-  - [Unit Tests](test)
-  - [Integration Tests](test/e2e)
+  - [Playground](../.playground)
+  - [Scaffolding](../.scaffolding)
+  - [Unit Tests](../test)
+  - [Integration Tests](../test/e2e)
