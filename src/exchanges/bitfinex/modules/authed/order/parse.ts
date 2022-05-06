@@ -14,6 +14,7 @@ import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { translateAccountToAluna } from '../../../enums/adapters/bitfinexAccountsAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bitfinexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
+import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
@@ -22,7 +23,7 @@ const log = debug('@alunajs:bitfinex/order/parse')
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams,
+  params: IAlunaOrderParseParams<IBitfinexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
   log('params', params)
