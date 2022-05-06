@@ -26,6 +26,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new ValrHttp(),
   } = params
 
@@ -33,7 +34,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const rawOrder = await http.authedRequest<any>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: valrEndpoints.order.get(id),
+    url: valrEndpoints.order.get(id, symbolPair),
   })
 
   const { requestCount } = http

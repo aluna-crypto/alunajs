@@ -27,7 +27,6 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   const { credentials } = exchange
 
   const {
-    id,
     http = new ValrHttp(),
   } = params
 
@@ -36,7 +35,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IValrOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: valrEndpoints.order.get(id),
+      url: valrEndpoints.order.cancel,
       credentials,
     })
 

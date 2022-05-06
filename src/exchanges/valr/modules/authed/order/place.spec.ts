@@ -97,7 +97,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: valrEndpoints.order.place,
+      url: valrEndpoints.order.place(translatedOrderType),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -170,7 +170,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: valrEndpoints.order.place,
+      url: valrEndpoints.order.place(translatedOrderType),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

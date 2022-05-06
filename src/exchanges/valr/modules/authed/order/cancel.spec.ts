@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: valrEndpoints.order.cancel(id),
+      url: valrEndpoints.order.cancel,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: valrEndpoints.order.cancel(id),
+      url: valrEndpoints.order.cancel,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
