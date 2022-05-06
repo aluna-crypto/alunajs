@@ -84,9 +84,9 @@ Full list of supported exchanges here:
  - [Supported Exchanges](docs/exchanges-table.md)
 
 
-# Contributting
+# Getting Involved
 
- 1. [Getting Started](docs/contributing.md)
+ 1. [Contributing](docs/contributing.md)
  1. [Playground](.playground)
  1. [Scaffolding](.scaffolding) (_adding a new exchange_)
  1. [Unit Tests](test)
