@@ -1,15 +1,13 @@
 import { expect } from 'chai'
 
-import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-
 
 
 describe(__filename, () => {
 
-  const credentials: IAlunaCredentialsSchema = {
-    key: 'key',
-    secret: 'secret',
-  }
+  // const credentials: IAlunaCredentialsSchema = {
+  //   key: 'key',
+  //   secret: 'secret',
+  // }
 
   it('should place a Bitfinex limit order just fine', async () => {
 
