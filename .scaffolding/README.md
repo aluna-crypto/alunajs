@@ -76,10 +76,10 @@ They should completely describe the data model for all Exchange API methods.
 
 ## Enums
   - Bittrex:
-    - [`BittrexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderSideEnum.ts`)
+    - [`BittrexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderSideEnum.ts)
     - [`BittrexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderTypeEnum.ts)
   - Bitfinex:
-    - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderSideEnum.ts`)
+    - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderSideEnum.ts)
     - [`BitfinexOrderTypeEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderTypeEnum.ts)
 
 ## Schemas
