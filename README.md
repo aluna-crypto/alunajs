@@ -88,9 +88,9 @@ Full list of supported exchanges here:
 
  1. [Getting Started](docs/contributing.md)
  1. [Playground](.playground)
- 1. [Scaffolding](.scaffolding) (_integrating a new exchange_)
+ 1. [Scaffolding](.scaffolding) (_adding a new exchange_)
  1. [Unit Tests](test)
- 3. [Integration Tests](test/e2e)
+ 1. [Integration Tests](test/e2e)
 
 
 # License

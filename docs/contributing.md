@@ -16,7 +16,7 @@ You are set.
 
 # Next Steps
 
-  - [Playground](../.playground)
-  - [Scaffolding](../.scaffolding)
-  - [Unit Tests](../test)
-  - [Integration Tests](../test/e2e)
+  1. [Playground](../.playground)
+  1. [Scaffolding](../.scaffolding) (_adding a new exchange_)
+  1. [Unit Tests](../test)
+  1. [Integration Tests](../test/e2e)
