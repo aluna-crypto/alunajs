@@ -4,14 +4,12 @@
 node_modules
 
 # coverage stuff
-coverage-mocha
-coverage-nyc
 coverage
+.nyc
 
 # dist directory
 dist
-
-.husky/.eslintcache
+.eslintcache
 
 
 .bkp

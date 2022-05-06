@@ -7,7 +7,6 @@ import {
   IAlunaKeyParsePermissionsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { ValrHttp } from '../../../ValrHttp'
 import { IValrKeySchema, ValrApiKeyPermissionsEnum } from '../../../schemas/IValrKeySchema'
 
 
@@ -22,35 +21,30 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   log('parsing Valr key permissions', params)
 
-  const {
-    rawKey,
-    http = new ValrHttp(),
-  } = params
+  const { rawKey } = params
 
-  const {
-    permissions,
-  } = rawKey
+  const { permissions: rawPermissions } = rawKey
 
-  const key: IAlunaKeyPermissionSchema = {
+  const permissions: IAlunaKeyPermissionSchema = {
     read: false,
     trade: false,
     withdraw: false,
   }
 
-  forEach(permissions, (permission) => {
+  forEach(rawPermissions, (permission) => {
 
     switch (permission) {
 
       case ValrApiKeyPermissionsEnum.VIEW_ACCESS:
-        key.read = true
+        permissions.read = true
         break
 
       case ValrApiKeyPermissionsEnum.TRADE:
-        key.trade = true
+        permissions.trade = true
         break
 
       case ValrApiKeyPermissionsEnum.WITHDRAW:
-        key.withdraw = true
+        permissions.withdraw = true
         break
 
       default:
@@ -62,11 +56,6 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   })
 
-  const { requestCount } = http
-
-  return {
-    key,
-    requestCount,
-  }
+  return { permissions }
 
 }

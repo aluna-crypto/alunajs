@@ -39,7 +39,7 @@ apiPublic.market.list()
 // Authed instance (`credentials` required)
 const exchangeAuthed = aluna('bitfinex', {
   settings,
-  credentials,
+  credentials, // <- here
 })
 
 apiAuthed.key.fetchDetails()
@@ -56,12 +56,20 @@ apiAuthed.position.list({ ... })
 apiAuthed.position.setLeverage({ ... })
 apiAuthed.position.close({ ... })
 
+```
 
-// Web3
+# Web3
+
+```ts
+import {
+  aluna,
+  Web3ChainsEnum,
+} from 'alunajs'
+
 const web3 = aluna.web3()
 
 const web3Address = '0xA8...'
-const chainId = Web3DebankChainsEnum.ETHEREUM
+const chainId = Web3ChainsEnum.ETHEREUM
 
 web3.balance.getTotalBalance({ address })
 web3.balance.list({ address })
@@ -69,23 +77,21 @@ web3.balance.list({ address })
 web3.token.list({ address, chainId })
 ```
 
+
 # Integrations
 
 Full list of supported exchanges here:
- - [Supported Exchanges]([http://](https://github.com/alunacrypto/alunajs))
+ - [Supported Exchanges](docs/exchanges-table.md)
 
-# Extras
 
-Some extra modules and utilities:
- - [Web3]([http://](https://github.com/alunacrypto/alunajs))
+# Getting Involved
 
-# Contributting
+ 1. [Contributing](docs/contributing.md)
+ 1. [Playground](.playground)
+ 1. [Scaffolding](.scaffolding) (_adding a new exchange_)
+ 1. [Unit Tests](test)
+ 1. [Integration Tests](test/e2e)
 
- 1. [Getting Started](https://github.com/alunacrypto/alunajs)
- 1. [Playground](https://github.com/alunacrypto/playground)
- 1. [Scaffolding](https://github.com/alunacrypto/alunajs)
- 1. [Unit Tests](https://github.com/alunacrypto/alunajs)
- 1. [Integration Tests](https://github.com/alunacrypto/alunajs)
 
 # License
 

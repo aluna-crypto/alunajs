@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { ValrAuthed } from '../../../ValrAuthed'
-import { IValrKeySchema, ValrApiKeyPermissionsEnum } from '../../../schemas/IValrKeySchema'
+import { ValrApiKeyPermissionsEnum, IValrKeySchema } from '../../../schemas/IValrKeySchema'
 import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 
 
@@ -24,15 +24,13 @@ describe(__filename, () => {
 
       const exchange = new ValrAuthed({ credentials })
 
-
       // executing
-      const { key } = exchange.key.parsePermissions({ rawKey })
-
+      const { permissions } = exchange.key.parsePermissions({ rawKey })
 
       // validating
-      expect(key.read).not.to.be.ok
-      expect(key.withdraw).not.to.be.ok
-      expect(key.trade).not.to.be.ok
+      expect(permissions.read).not.to.be.ok
+      expect(permissions.withdraw).not.to.be.ok
+      expect(permissions.trade).not.to.be.ok
 
     },
   )
@@ -61,13 +59,13 @@ describe(__filename, () => {
 
 
       // executing
-      const { key } = exchange.key.parsePermissions({ rawKey })
+      const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 
       // validating
-      expect(key.read).to.be.ok
-      expect(key.withdraw).to.be.ok
-      expect(key.trade).to.be.ok
+      expect(permissions.read).to.be.ok
+      expect(permissions.withdraw).to.be.ok
+      expect(permissions.trade).to.be.ok
 
     },
   )

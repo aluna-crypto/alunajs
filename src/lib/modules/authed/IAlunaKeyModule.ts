@@ -23,11 +23,11 @@ export interface IAlunaKeyModule {
  * Parse
  */
 
-export interface IAlunaKeyParseDetailsParams <T> extends IAlunaModuleParams {
+export interface IAlunaKeyParseDetailsParams <T> {
   rawKey: T
 }
 
-export interface IAlunaKeyParseDetailsReturns extends IAlunaModuleReturns {
+export interface IAlunaKeyParseDetailsReturns {
   key: IAlunaKeySchema
 }
 
@@ -35,8 +35,8 @@ export interface IAlunaKeyParseDetailsReturns extends IAlunaModuleReturns {
 
 export interface IAlunaKeyParsePermissionsParams <T> extends IAlunaKeyParseDetailsParams<T> {}
 
-export interface IAlunaKeyParsePermissionsReturns extends IAlunaModuleReturns {
-  key: IAlunaKeyPermissionSchema
+export interface IAlunaKeyParsePermissionsReturns {
+  permissions: IAlunaKeyPermissionSchema
 }
 
 
@@ -47,4 +47,4 @@ export interface IAlunaKeyParsePermissionsReturns extends IAlunaModuleReturns {
 
 export interface IAlunaKeyFetchDetailsParams extends IAlunaModuleParams {}
 
-export interface IAlunaKeyFetchDetailsReturns extends IAlunaKeyParseDetailsReturns {}
+export interface IAlunaKeyFetchDetailsReturns extends IAlunaKeyParseDetailsReturns, IAlunaModuleReturns {}

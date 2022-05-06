@@ -79,6 +79,7 @@ export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
+    position: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
     // TODO: Review supported/implemented accounts
@@ -144,10 +145,11 @@ export const bitfinexEndpoints = {
     enabledMarginCurrencies: `${BITFINEX_PUBLIC_URL}/conf/pub:list:pair:margin`,
   },
   key: {
-    fetchDetails: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    fetchDetails: `${BITFINEX_AUTHED_URL}/auth/r/permissions`,
+    account: `${BITFINEX_AUTHED_URL}/auth/r/info/user`,
   },
   balance: {
-    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
+    list: `${BITFINEX_PUBLIC_URL}/auth/r/wallets`,
   },
   order: {
     get: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,

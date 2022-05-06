@@ -6,6 +6,9 @@ import {
   IAlunaBalanceParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
+import { translateWalletToAluna } from '../../../enums/adapters/bitfinexWalletAdapter'
 import { IBitfinexBalanceSchema } from '../../../schemas/IBitfinexBalanceSchema'
 
 
@@ -20,9 +23,33 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   log(params, 'params')
 
-  // TODO: Implement balance parse
-  const balance: IAlunaBalanceSchema = {} as any
+  const { rawBalance } = params
 
-  return { balance }
+  const [
+    walletType,
+    currency,
+    balance,
+    _unsettledInterest,
+    availableBalance,
+  ] = rawBalance
+
+  const wallet = translateWalletToAluna({
+    from: walletType,
+  })
+
+  const symbolId = translateSymbolId({
+    exchangeSymbolId: currency,
+    symbolMappings: bitfinexBaseSpecs.settings.mappings,
+  })
+
+  const parsedBalance: IAlunaBalanceSchema = {
+    symbolId,
+    available: availableBalance,
+    wallet,
+    total: balance,
+    meta: rawBalance,
+  }
+
+  return { balance: parsedBalance }
 
 }

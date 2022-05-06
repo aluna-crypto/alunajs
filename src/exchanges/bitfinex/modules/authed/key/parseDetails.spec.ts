@@ -1,11 +1,11 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { IBitfinexKeySchema } from '../../../schemas/IBitfinexKeySchema'
+import { BITFINEX_KEY_PERMISSIONS } from '../../../test/fixtures/bitfinexKey'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
@@ -18,10 +18,8 @@ describe(__filename, () => {
     const accountId = 'accountId'
 
     const rawKey: IBitfinexKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
       accountId,
+      permissionsScope: BITFINEX_KEY_PERMISSIONS,
     }
 
     const credentials: IAlunaCredentialsSchema = {
@@ -30,10 +28,9 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const rawKeyWithoutAccId = omit(rawKey, 'accountId')
-
     const permissions: IAlunaKeyPermissionSchema = {
-      ...rawKeyWithoutAccId,
+      read: true,
+      trade: true,
     }
 
 
@@ -42,7 +39,7 @@ describe(__filename, () => {
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns({ key: permissions })
+    parsePermissions.returns({ permissions })
 
 
     // executing

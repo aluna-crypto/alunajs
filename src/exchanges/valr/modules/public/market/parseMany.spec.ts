@@ -1,14 +1,20 @@
 import { expect } from 'chai'
 import {
-  each, filter, find, map,
+  each,
+  filter,
+  find,
+  map,
 } from 'lodash'
 
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
-import { Valr } from '../../../Valr'
-import { VALR_RAW_CURRENCY_PAIRS, VALR_RAW_MARKETS } from '../../../test/fixtures/valrMarket'
-import * as parseMod from './parse'
 import { IValrMarketsSchema } from '../../../schemas/IValrMarketSchema'
+import {
+  VALR_RAW_CURRENCY_PAIRS,
+  VALR_RAW_MARKETS,
+} from '../../../test/fixtures/valrMarket'
+import { Valr } from '../../../Valr'
+import * as parseMod from './parse'
 
 
 
