@@ -68,7 +68,7 @@ Examples:
  - [`BittfinexHttp.ts`](../src/exchanges/bitfinex/BitfinexHttp.ts)
 
 
-# 3. Schemas & Enums
+# 3. Enums & Schemas
 
 Here we need to configure and the `types` related to the exchange.
 
@@ -103,11 +103,19 @@ Examples:
 
   - Bittrex
     - [`bittrex/modules/public/market.ts`](../src/exchanges/bittrex/modules/public/market.ts)
+      - [`bittrex/modules/public/market/list.ts`](../src/exchanges/bittrex/modules/public/market/list.ts)
+      - [`bittrex/modules/public/market/listRaw.ts`](../src/exchanges/bittrex/modules/public/market/listRaw.ts)
     - [`bittrex/modules/public/symbol.ts`](../src/exchanges/bittrex/modules/public/symbol.ts)
+      - [`bittrex/modules/public/symbol/list.ts`](../src/exchanges/bittrex/modules/public/symbol/list.ts)
+      - [`bittrex/modules/public/symbol/listRaw.ts`](../src/exchanges/bittrex/modules/public/symbol/listRaw.ts)
 
   - Bitfinex
     - [`bitfinex/modules/public/market.ts`](../src/exchanges/bitfinex/modules/public/market.ts)
+      - [`bitfinex/modules/public/market/list.ts`](../src/exchanges/bitfinex/modules/public/market/list.ts)
+      - [`bitfinex/modules/public/market/listRaw.ts`](../src/exchanges/bitfinex/modules/public/market/listRaw.ts)
     - [`bitfinex/modules/public/symbol.ts`](../src/exchanges/bitfinex/modules/public/symbol.ts)
+      - [`bitfinex/modules/public/symbol/list.ts`](../src/exchanges/bitfinex/modules/public/symbol/list.ts)
+      - [`bitfinex/modules/public/symbol/listRaw.ts`](../src/exchanges/bitfinex/modules/public/symbol/listRaw.ts)
 
 # 5. Authed Modules
 
