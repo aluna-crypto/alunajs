@@ -42,7 +42,7 @@ export const bitfinexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -50,10 +50,10 @@ export const bitfinexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
+    type: AlunaOrderTypesEnum.STOP_MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -90,9 +90,9 @@ export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
     },
     {
       type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      supported: true,
+      implemented: true,
+      orderTypes: bitfinexExchangeOrderTypes,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
@@ -148,13 +148,14 @@ export const bitfinexEndpoints = {
     account: `${BITFINEX_AUTHED_URL}/auth/r/info/user`,
   },
   balance: {
-    list: `${BITFINEX_PUBLIC_URL}/auth/r/wallets`,
+    list: `${BITFINEX_AUTHED_URL}/auth/r/wallets`,
   },
   order: {
-    get: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,
-    list: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
-    place: `${BITFINEX_PUBLIC_URL}/<desired-method>`,
-    cancel: (id: string) => `${BITFINEX_PUBLIC_URL}/<desired-method>/${id}`,
-    // edit: `${BITFINEX_PRODUCTION_PUBLIC_URL}/<desired-method>`,
+    get: (symbolPair: string) => `${BITFINEX_AUTHED_URL}/auth/r/orders/${symbolPair}`,
+    getHistory: (symbolPair: string) => `${BITFINEX_AUTHED_URL}/auth/r/orders/${symbolPair}/hist`,
+    list: `${BITFINEX_AUTHED_URL}/auth/r/orders`,
+    place: `${BITFINEX_AUTHED_URL}/auth/w/order/submit`,
+    cancel: `${BITFINEX_AUTHED_URL}/auth/w/order/cancel`,
+    edit: `${BITFINEX_AUTHED_URL}/auth/w/order/update`,
   },
 }
