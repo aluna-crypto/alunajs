@@ -39,7 +39,7 @@ apiPublic.market.list()
 // Authed instance (`credentials` required)
 const exchangeAuthed = aluna('bitfinex', {
   settings,
-  credentials,
+  credentials, // <- here
 })
 
 apiAuthed.key.fetchDetails()
@@ -56,8 +56,13 @@ apiAuthed.position.list({ ... })
 apiAuthed.position.setLeverage({ ... })
 apiAuthed.position.close({ ... })
 
+```
 
-// Web3
+# Web3
+
+```ts
+import { aluna } from 'alunajs'
+
 const web3 = aluna.web3()
 
 const web3Address = '0xA8...'
@@ -69,15 +74,12 @@ web3.balance.list({ address })
 web3.token.list({ address, chainId })
 ```
 
+
 # Integrations
 
 Full list of supported exchanges here:
  - [Supported Exchanges]([http://](https://github.com/alunacrypto/alunajs))
 
-# Extras
-
-Some extra modules and utilities:
- - [Web3]([http://](https://github.com/alunacrypto/alunajs))
 
 # Contributting
 
