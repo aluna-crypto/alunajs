@@ -83,11 +83,12 @@ Full list of supported exchanges here:
 
 # Contributting
 
- 1. [Getting Started](https://github.com/alunacrypto/alunajs)
- 1. [Playground](https://github.com/alunacrypto/playground)
- 1. [Scaffolding](https://github.com/alunacrypto/alunajs)
- 1. [Unit Tests](https://github.com/alunacrypto/alunajs)
- 1. [Integration Tests](https://github.com/alunacrypto/alunajs)
+ 1. [Getting Started](docs/contributing.md)
+ 1. [Playground](playground)
+ 1. [Scaffolding](.scaffolding)
+ 1. [Unit Tests](test)
+ 3. [Integration Tests](test/e2e)
+
 
 # License
 
