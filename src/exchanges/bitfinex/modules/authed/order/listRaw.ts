@@ -1,7 +1,6 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderListParams,
   IAlunaOrderListRawReturns,
@@ -26,9 +25,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BitfinexHttp() } = params
 
-  // TODO: Implement proper request
   const rawOrders = await http.authedRequest<IBitfinexOrderSchema[]>({
-    verb: AlunaHttpVerbEnum.GET,
     url: bitfinexEndpoints.order.list,
     credentials,
   })
