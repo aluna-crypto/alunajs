@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { BitfinexOrderSideEnum } from '../BitfinexOderSideEnum'
+import { BitfinexOrderSideEnum } from '../BitfinexOrderSideEnum'
 
 
 

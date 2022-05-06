@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { BitfinexOrderSideEnum } from '../BitfinexOderSideEnum'
+import { BitfinexOrderSideEnum } from '../BitfinexOrderSideEnum'
 import {
   translateOrderSideToAluna,
   translateOrderSideToBitfinex,
