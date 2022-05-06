@@ -1,13 +1,19 @@
 # AlunaJS / Integration Tests
 
+Make sure exchange integratons are working.
+
+# TL;DR
+
 This will run all tets again _**all**_ implemented exchanges.
 
-```ts
+```
 yarn test-e2e
 ```
 
-> _Requires `.alunarc` to be configured with keys and secrets.
-> <sup>([**?**](http://github.com/alunacrypto/alunajs))</sup>_
+## AlunaRC
+> Before moving on, be sure to set up your `.alunarc`:
+> - [Setting up `.alunarc`](../docs/alunarc.md)
+
 
 # Customization
 

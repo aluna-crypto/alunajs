@@ -12,9 +12,9 @@ Live API explorer:
 yarn playgropund
 ```
 
-# AlunaRC
-Before moving on, be sure to set up your `.alunarc`:
-- [Setting up `.alunarc`](../alunarc.md)
+## AlunaRC
+> Before moving on, be sure to set up your `.alunarc`:
+> - [Setting up `.alunarc`](../../alunarc.md)
 
 
 # Insomnia
