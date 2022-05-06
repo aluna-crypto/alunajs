@@ -40,7 +40,7 @@ jobs:
         run: yarn install
 
       - name: Linting Project
-        run: yarn lintfix
+        run: yarn lint
 
       - name: Building Project
         run: yarn build
