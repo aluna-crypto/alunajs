@@ -14,7 +14,7 @@ yarn playgropund
 
 # AlunaRC
 Before moving on, be sure to set up your `.alunarc`:
-- [Setting up `.alunarc`](http://github.com/alunacrypto/alunajs)
+- [Setting up `.alunarc`](alunarc.md)
 
 
 # Insomnia
@@ -29,7 +29,7 @@ Let's get started:.
    - Example template file at `.playground/.alunarc`
    - Configure all desired API keys and secrets
   1. Then, back on Insonia, go to `Data` -> `Import Data` -> `From File`
-  2. Import the `<repo-root>/.playground/aluna-playground.json` file
+  2. Import the file `<repo-root>/.playground/playground.json` file
   3. Voilà
 
 

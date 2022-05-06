@@ -84,7 +84,7 @@ Full list of supported exchanges here:
 # Contributting
 
  1. [Getting Started](docs/contributing.md)
- 1. [Playground](playground)
+ 1. [Playground](.playground)
  1. [Scaffolding](.scaffolding)
  1. [Unit Tests](test)
  3. [Integration Tests](test/e2e)

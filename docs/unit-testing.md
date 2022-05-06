@@ -10,4 +10,4 @@ yarn test-cover-watch
 ```
 
 # More
- - [Integration Tests](https://github.com/alunacrypto/alunajs)
+ - [Integration Tests](../test/e2e)

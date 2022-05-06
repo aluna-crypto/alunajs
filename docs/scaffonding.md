@@ -64,8 +64,8 @@ First, implement an http class.
 It should sign requests and send them the way the exchange expects.
 
 Examples:
- - [`BittrexHttp.ts`](http://github.com/alunacrypto/alunajs)
- - [`BittfinexHttp.ts`](http://github.com/alunacrypto/alunajs)
+ - [`BittrexHttp.ts`](../src/exchanges/bittrex/BittrexHttp.ts)
+ - [`BittfinexHttp.ts`](../src/exchanges/bittrex/BitfinexHttp.ts)
 
 
 # 3. Schemas & Enums
@@ -75,17 +75,24 @@ Here we need to configure and the `types` related to the exchange.
 They should completely describe the data model for all Exchange API methods.
 
 Enums:
-- [`BittrexOrderSideEnum.ts`](http://github.com/alunacrypto/alunajs)
-- [`BittrexOrderTypeEnum.ts`](http://github.com/alunacrypto/alunajs)
+  - Bittrex:
+    - [`BittrexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderSideEnum.ts`)
+    - [`BittrexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderTypeEnum.ts)
+  - Bitfinex:
+    - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BitfinexOrderSideEnum.ts`)
+    - [`BitfinexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BitfinexOrderTypeEnum.ts)
 
 Schemas:
- - Bittrex:
-   - [`IBittrexSymbolSchema.ts`](http://github.com/alunacrypto/alunajs)
-   - [`IBittrexMarketSchema.ts`](http://github.com/alunacrypto/alunajs)
-   - [`IBittrexKeySchema.ts`](http://github.com/alunacrypto/alunajs)
-   - [`IBittrexBalanceSchema.ts`](http://github.com/alunacrypto/alunajs)
-- Bitfinex:
-   - [`IBitfinexPositionSchema.ts`](http://github.com/alunacrypto/alunajs)
+  - Bittrex:
+    - [`IBittrexSymbolSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexSymbolSchema.ts)
+    - [`IBittrexMarketSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexMarketSchema.ts)
+    - [`IBittrexKeySchema.ts`](../src/exchanges/bittrex/schemas/IBittrexKeySchema.ts)
+    - [`IBittrexBalanceSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexBalanceSchema.ts)
+  - Bitfinex:
+    - [`IBitfinexSymbolSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexSymbolSchema.ts)
+    - [`IBitfinexMarketSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexMarketSchema.ts)
+    - [`IBitfinexKeySchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexKeySchema.ts)
+    - [`IBitfinexBalanceSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexBalanceSchema.ts)
 
 
 # 4. Public Modules
@@ -94,8 +101,8 @@ Implement all the public API methods:
 
 Examples:
 
- - [`bitfinex/modules/public/market.ts`](http://github.com/alunacrypto/alunajs)
- - [`bitfinex/modules/public/symbol.ts`](http://github.com/alunacrypto/alunajs)
+ - [`bitfinex/modules/public/market.ts`](../src/exchanges/bitfinex/modules/public/market.ts)
+ - [`bitfinex/modules/public/symbol.ts`](../src/exchanges/bitfinex/modules/public/symbol.ts)
 
 
 # 5. Authed Modules
@@ -104,7 +111,7 @@ Here, all the authenticated methods:
 
 Examples:
 
- - [`bitfinex/modules/authed/key.ts`](http://github.com/alunacrypto/alunajs)
- - [`bitfinex/modules/authed/balance.ts`](http://github.com/alunacrypto/alunajs)
- - [`bitfinex/modules/authed/order.ts`](http://github.com/alunacrypto/alunajs)
- - [`bitfinex/modules/authed/position.ts`](http://github.com/alunacrypto/alunajs)
+ - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
+ - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
+ - [`bitfinex/modules/authed/order.ts`](../src/exchanges/bitfinex/modules/authed/order.ts)
+ - [`bitfinex/modules/authed/position.ts`](../src/exchanges/bitfinex/modules/authed/position.ts)
