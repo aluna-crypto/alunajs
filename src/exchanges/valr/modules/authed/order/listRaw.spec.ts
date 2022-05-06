@@ -7,6 +7,7 @@ import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
 import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
 
 
 
@@ -21,6 +22,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrders = VALR_RAW_ORDERS
+    const mockedRawPairs = VALR_RAW_CURRENCY_PAIRS
 
     // mocking
     const {
@@ -29,6 +31,7 @@ describe(__filename, () => {
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
     authedRequest.returns(Promise.resolve(mockedRawOrders))
+    publicRequest.returns(Promise.resolve(mockedRawPairs))
 
     // executing
     const exchange = new ValrAuthed({ credentials })
@@ -37,7 +40,10 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawOrders).to.deep.eq(mockedRawOrders)
+    expect(rawOrders).to.deep.eq({
+      orders: mockedRawOrders,
+      pairs: mockedRawPairs,
+    })
 
     expect(authedRequest.callCount).to.be.eq(1)
 
@@ -47,7 +53,7 @@ describe(__filename, () => {
       url: valrEndpoints.order.list,
     })
 
-    expect(publicRequest.callCount).to.be.eq(0)
+    expect(publicRequest.callCount).to.be.eq(1)
 
   })
 
