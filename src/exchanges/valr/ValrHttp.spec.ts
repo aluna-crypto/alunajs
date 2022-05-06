@@ -520,8 +520,6 @@ describe.skip(__filename, () => {
       currentDate,
     )
 
-    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
-
     const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
 
     const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
