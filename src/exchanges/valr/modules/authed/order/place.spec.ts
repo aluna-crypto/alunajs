@@ -50,7 +50,7 @@ describe(__filename, () => {
     const translatedOrderType = translateOrderTypeToValr({ from: type })
 
     const body = {
-      direction: translatedOrderSide,
+      side: translatedOrderSide,
       pair: '',
       quantity: Number(quantity),
       price: 0,
@@ -125,7 +125,7 @@ describe(__filename, () => {
     const translatedOrderType = translateOrderTypeToValr({ from: type })
 
     const body = {
-      direction: translatedOrderSide,
+      side: translatedOrderSide,
       pair: '',
       baseAmount: Number(quantity),
     }

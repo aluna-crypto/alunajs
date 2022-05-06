@@ -23,7 +23,7 @@ import * as ValrHttpMod from './ValrHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { ValrHttp } = ValrHttpMod
 
@@ -543,8 +543,9 @@ describe.skip(__filename, () => {
 
     expect(updateSpy.callCount).to.be.eq(4)
 
-    expect(stringfyMock.callCount).to.be.eq(1)
-    expect(stringfyMock.calledWith('')).to.be.ok
+    expect(stringfyMock.callCount).to.be.eq(0)
+
+    expect(updateSpy.calledWith('')).to.be.ok
 
     expect(digestSpy.callCount).to.be.eq(1)
     expect(digestSpy.calledWith('hex')).to.be.ok
