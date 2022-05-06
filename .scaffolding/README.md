@@ -79,8 +79,8 @@ Enums:
     - [`BittrexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderSideEnum.ts`)
     - [`BittrexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderTypeEnum.ts)
   - Bitfinex:
-    - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BitfinexOrderSideEnum.ts`)
-    - [`BitfinexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BitfinexOrderTypeEnum.ts)
+    - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderSideEnum.ts`)
+    - [`BitfinexOrderTypeEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderTypeEnum.ts)
 
 Schemas:
   - Bittrex:
@@ -89,10 +89,10 @@ Schemas:
     - [`IBittrexKeySchema.ts`](../src/exchanges/bittrex/schemas/IBittrexKeySchema.ts)
     - [`IBittrexBalanceSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexBalanceSchema.ts)
   - Bitfinex:
-    - [`IBitfinexSymbolSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexSymbolSchema.ts)
-    - [`IBitfinexMarketSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexMarketSchema.ts)
-    - [`IBitfinexKeySchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexKeySchema.ts)
-    - [`IBitfinexBalanceSchema.ts`](../src/exchanges/bittrex/schemas/IBitfinexBalanceSchema.ts)
+    - [`IBitfinexSymbolSchema.ts`](../src/exchanges/bitfinex/schemas/IBitfinexSymbolSchema.ts)
+    - [`IBitfinexMarketSchema.ts`](../src/exchanges/bitfinex/schemas/IBitfinexMarketSchema.ts)
+    - [`IBitfinexKeySchema.ts`](../src/exchanges/bitfinex/schemas/IBitfinexKeySchema.ts)
+    - [`IBitfinexBalanceSchema.ts`](../src/exchanges/bitfinex/schemas/IBitfinexBalanceSchema.ts)
 
 
 # 4. Public Modules
