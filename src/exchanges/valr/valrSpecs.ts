@@ -145,16 +145,16 @@ export const valrEndpoints = {
     pairs: `${VALR_PRODUCTION_URL}/public/pairs`,
   },
   key: {
-    fetchDetails: `${VALR_PRODUCTION_URL}/<desired-method>`,
+    fetchDetails: `${VALR_PRODUCTION_URL}/account/api-keys/current`,
   },
   balance: {
     list: `${VALR_PRODUCTION_URL}/account/balances`,
   },
   order: {
-    get: (id: string) => `${VALR_PRODUCTION_URL}/<desired-method>/${id}`,
-    list: `${VALR_PRODUCTION_URL}/<desired-method>`,
-    place: `${VALR_PRODUCTION_URL}/<desired-method>`,
-    cancel: (id: string) => `${VALR_PRODUCTION_URL}/<desired-method>/${id}`,
+    get: (id: string, symbolPair: string) => `${VALR_PRODUCTION_URL}/orders/${symbolPair}/orderid/${id}`,
+    list: `${VALR_PRODUCTION_URL}/orders/open`,
+    place: (orderType: string) => `${VALR_PRODUCTION_URL}/orders/${orderType}`,
+    cancel: `${VALR_PRODUCTION_URL}/orders/order`,
     // edit: `${VALR_PRODUCTION_URL}/<desired-method>`,
   },
 }
