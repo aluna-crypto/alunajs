@@ -1,6 +1,6 @@
 # AlunaJS
 
-Standardizing CryptoTrading APIs across multiple exchanges, for NodeJS.
+Standardizing CryptoTrading APIs across multiple exchanges.
 
 # Install
 
