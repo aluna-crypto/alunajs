@@ -26,7 +26,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new ValrHttp() } = params
 
-  // TODO: Implement proper request
   const permissions = await http.authedRequest<IValrKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
     url: valrEndpoints.key.fetchDetails,
