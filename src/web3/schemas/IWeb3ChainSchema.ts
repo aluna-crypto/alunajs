@@ -1,10 +1,10 @@
-import { Web3DebankChainsEnum } from '../enums/Web3DebankChainsEnum'
+import { Web3ChainsEnum } from '../enums/Web3ChainsEnum'
 
 
 
 export interface IWeb3ChainSchema {
 
-  id: string | Web3DebankChainsEnum
+  id: string | Web3ChainsEnum
   communityId: string | number
   name: string
   nativeTokenId: string
