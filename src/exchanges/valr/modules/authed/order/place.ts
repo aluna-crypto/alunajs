@@ -15,7 +15,10 @@ import { translateOrderSideToValr } from '../../../enums/adapters/valrOrderSideA
 import { translateOrderTypeToValr } from '../../../enums/adapters/valrOrderTypeAdapter'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderSchema } from '../../../schemas/IValrOrderSchema'
+import { IValrOrderGetSchema, IValrOrderPlaceResponseSchema } from '../../../schemas/IValrOrderSchema'
+import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
+import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 
 
 
@@ -54,64 +57,59 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  // TODO: Validate all body properties
   const body = {
     direction: translateOrderSideToValr({ from: side }),
-    marketSymbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    pair: symbolPair,
+  }
+
+  if (translatedOrderType === ValrOrderTypeEnum.LIMIT) {
+
+    Object.assign(body, {
+      quantity: amount,
+      price: rate,
+      postOnly: false,
+      timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
+    })
+
+  } else {
+
+    Object.assign(body, {
+      baseAmount: amount,
+    })
+
   }
 
   log('placing new order for Valr')
 
-  let placedOrder: IValrOrderSchema
+  const { id } = await http.authedRequest<IValrOrderPlaceResponseSchema>({
+    url: valrEndpoints.order.place(translatedOrderType),
+    body,
+    credentials,
+  })
 
-  try {
+  const { order } = await exchange.order.get({
+    id,
+    symbolPair,
+  })
 
-    // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IValrOrderSchema>({
-      url: valrEndpoints.order.place(translatedOrderType),
-      body,
-      credentials,
-    })
+  const meta: IValrOrderGetSchema = (order.meta as IValrOrderGetSchema)
 
-    placedOrder = orderResponse
+  if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
 
-  } catch (err) {
+    let code = AlunaOrderErrorCodes.PLACE_FAILED
 
-    let {
-      code,
-      message,
-    } = err
-
-    const { metadata } = err
-
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (meta.failedReason === 'Insufficient Balance') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
-      message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
     throw new AlunaError({
-      ...err,
+      message: meta.failedReason,
       code,
-      message,
     })
 
   }
-
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
 
   const { requestCount } = http
 

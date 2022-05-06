@@ -7,6 +7,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { ValrAuthed } from '../../../ValrAuthed'
 import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import * as parseMod from './parse'
+import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
 
 
 
@@ -21,7 +22,13 @@ describe(__filename, () => {
 
     // preparing data
     const parsedOrders = PARSED_ORDERS
-    const rawOrders = VALR_RAW_ORDERS
+    const originalRawOrders = VALR_RAW_ORDERS.slice(0, 2)
+    const rawCurrencyPairs = VALR_RAW_CURRENCY_PAIRS
+
+    const rawOrders = {
+      orders: originalRawOrders,
+      rawCurrencyPairs,
+    }
 
 
     // mocking
@@ -41,7 +48,7 @@ describe(__filename, () => {
     // validating
     expect(orders).to.deep.eq(parsedOrders)
 
-    expect(parse.callCount).to.be.eq(rawOrders.length)
+    expect(parse.callCount).to.be.eq(rawOrders.orders.length)
 
   })
 

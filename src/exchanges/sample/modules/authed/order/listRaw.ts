@@ -18,7 +18,7 @@ const log = debug('@alunajs:sample/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<ISampleOrderSchema>> => {
+): Promise<IAlunaOrderListRawReturns<ISampleOrderSchema[]>> => {
 
   log('fetching Sample open orders', params)
 

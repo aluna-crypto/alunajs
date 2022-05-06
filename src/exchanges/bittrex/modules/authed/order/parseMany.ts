@@ -5,6 +5,7 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
@@ -13,7 +14,7 @@ const log = debug('@alunajs:bittrex/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams,
+  params: IAlunaOrderParseManyParams<IBittrexOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
   log('params', params)

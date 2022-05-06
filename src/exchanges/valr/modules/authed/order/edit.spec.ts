@@ -34,7 +34,8 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      id, quantity,
+      orderId: id,
+      originalQuantity: quantity,
     } = mockedRawOrder
 
 

@@ -2,12 +2,10 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
-import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -20,7 +18,11 @@ import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
 import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
+import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
+import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum'
 
 
 
@@ -38,7 +40,7 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      quantity,
+      originalQuantity: quantity,
     } = mockedRawOrder
 
     const side = AlunaOrderSideEnum.BUY
@@ -49,12 +51,11 @@ describe(__filename, () => {
 
     const body = {
       direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
+      pair: '',
       quantity: Number(quantity),
-      rate: 0,
-      // limit: 0,
-      // timeInForce: ValrOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      price: 0,
+      postOnly: false,
+      timeInForce: ValrOrderTimeInForceEnum.GOOD_TILL_CANCELLED,
     }
 
     // mocking
@@ -63,9 +64,9 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockOrderGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -114,7 +115,7 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      quantity,
+      originalQuantity: quantity,
     } = mockedRawOrder
 
     const side = AlunaOrderSideEnum.BUY
@@ -125,11 +126,8 @@ describe(__filename, () => {
 
     const body = {
       direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
-      quantity: Number(quantity),
-      rate: 0,
-      // timeInForce: ValrOrderTimeInForceEnum.FILL_OR_KILL,
+      pair: '',
+      baseAmount: Number(quantity),
     }
 
     // mocking
@@ -138,9 +136,9 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockOrderGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -178,31 +176,35 @@ describe(__filename, () => {
   })
 
   it(
-    'should throw error for insufficient funds when placing new valr order',
+    'should throw error when placing new valr order',
     async () => {
 
       // preparing data
       const mockedRawOrder = VALR_RAW_ORDERS[0]
 
       const {
-        quantity,
+        originalQuantity: quantity,
+        orderId: id,
       } = mockedRawOrder
 
       const side = AlunaOrderSideEnum.BUY
       const type = AlunaOrderTypesEnum.MARKET
 
-      const expectedMessage = 'Account has insufficient balance '
-        .concat('for requested action.')
-      const expectedCode = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      const expectedMessage = 'dummy-error'
+      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
 
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'INSUFFICIENT_FUNDS',
+      const placeResponse = {
+        id,
+      }
+
+      const orderResponse = {
+        order: {
+          meta: {
+            orderStatusType: ValrOrderStatusEnum.FAILED,
+            failedReason: 'dummy-error',
+          },
         },
-      })
+      }
 
       // mocking
       const {
@@ -210,7 +212,14 @@ describe(__filename, () => {
         authedRequest,
       } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-      authedRequest.returns(Promise.reject(alunaError))
+      const { get } = mockOrderGet(
+        {
+          module: getMod,
+        },
+      )
+
+      authedRequest.returns(Promise.resolve(placeResponse))
+      get.returns(Promise.resolve(orderResponse))
 
       mockValidateParams()
 
@@ -228,7 +237,6 @@ describe(__filename, () => {
         type,
         rate: 0,
       }))
-
 
       // validating
 
@@ -244,31 +252,35 @@ describe(__filename, () => {
   )
 
   it(
-    'should throw an error placing for minimum size placing new valr order',
+    'should throw error when placing new valr order',
     async () => {
 
       // preparing data
       const mockedRawOrder = VALR_RAW_ORDERS[0]
 
       const {
-        quantity,
+        originalQuantity: quantity,
+        orderId: id,
       } = mockedRawOrder
 
       const side = AlunaOrderSideEnum.BUY
       const type = AlunaOrderTypesEnum.MARKET
 
-      const expectedMessage = 'The trade was smaller than the min '
-        .concat('trade size quantity for the market')
-      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
+      const expectedMessage = 'Insufficient Balance'
+      const expectedCode = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'MIN_TRADE_REQUIREMENT_NOT_MET',
+      const placeResponse = {
+        id,
+      }
+
+      const orderResponse = {
+        order: {
+          meta: {
+            orderStatusType: ValrOrderStatusEnum.FAILED,
+            failedReason: 'Insufficient Balance',
+          },
         },
-      })
+      }
 
       // mocking
       const {
@@ -276,7 +288,14 @@ describe(__filename, () => {
         authedRequest,
       } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-      authedRequest.returns(Promise.reject(alunaError))
+      const { get } = mockOrderGet(
+        {
+          module: getMod,
+        },
+      )
+
+      authedRequest.returns(Promise.resolve(placeResponse))
+      get.returns(Promise.resolve(orderResponse))
 
       mockValidateParams()
 
@@ -296,6 +315,7 @@ describe(__filename, () => {
       }))
 
       // validating
+
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(expectedCode)
       expect(error?.message).to.be.eq(expectedMessage)
@@ -306,63 +326,5 @@ describe(__filename, () => {
 
     },
   )
-
-  it('should throw an error placing new valr order', async () => {
-
-    // preparing data
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
-
-    const {
-      quantity,
-    } = mockedRawOrder
-
-    const side = AlunaOrderSideEnum.BUY
-    const type = AlunaOrderTypesEnum.MARKET
-
-    const expectedMessage = 'dummy-error'
-    const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
-
-    const alunaError = new AlunaError({
-      message: 'dummy-error',
-      code: AlunaOrderErrorCodes.PLACE_FAILED,
-      httpStatusCode: 401,
-      metadata: {},
-    })
-
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: ValrHttp.prototype })
-
-    authedRequest.returns(Promise.reject(alunaError))
-
-    mockValidateParams()
-
-    mockEnsureOrderIsSupported()
-
-
-    // executing
-    const exchange = new ValrAuthed({ credentials })
-
-    const { error } = await executeAndCatch(() => exchange.order.place({
-      symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
-      side,
-      type,
-      rate: Number(0),
-    }))
-
-    // validating
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error?.code).to.be.eq(expectedCode)
-    expect(error?.message).to.be.eq(expectedMessage)
-
-    expect(authedRequest.callCount).to.be.eq(1)
-
-    expect(publicRequest.callCount).to.be.eq(0)
-
-  })
 
 })

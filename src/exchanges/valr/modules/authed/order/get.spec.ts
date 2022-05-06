@@ -25,10 +25,10 @@ describe(__filename, () => {
     const mockedRawOrder = VALR_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderId } = mockedRawOrder
 
     const params: IAlunaOrderGetParams = {
-      id,
+      id: orderId,
       symbolPair: '',
     }
 
@@ -47,7 +47,7 @@ describe(__filename, () => {
     const exchange = new ValrAuthed({ credentials })
 
     const { order } = await exchange.order.get({
-      id,
+      id: orderId,
       symbolPair: '',
     })
 

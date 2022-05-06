@@ -8,7 +8,8 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderSchema } from '../../../schemas/IValrOrderSchema'
+import { IValrOrderListResponseSchema, IValrOrderListSchema } from '../../../schemas/IValrOrderSchema'
+import { IValrMarketCurrencyPairs } from '../../../schemas/IValrMarketSchema'
 
 
 
@@ -18,7 +19,7 @@ const log = debug('@alunajs:valr/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<IValrOrderSchema>> => {
+): Promise<IAlunaOrderListRawReturns<IValrOrderListResponseSchema>> => {
 
   log('fetching Valr open orders', params)
 
@@ -26,17 +27,25 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new ValrHttp() } = params
 
-  // TODO: Implement proper request
-  const rawOrders = await http.authedRequest<IValrOrderSchema[]>({
+  const rawOrders = await http.authedRequest<IValrOrderListSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: valrEndpoints.order.list,
     credentials,
   })
 
+  const pairs = await http.publicRequest<IValrMarketCurrencyPairs[]>({
+    url: valrEndpoints.market.pairs,
+  })
+
+  const rawOrdersResponse: IValrOrderListResponseSchema = {
+    orders: rawOrders,
+    pairs,
+  }
+
   const { requestCount } = http
 
   return {
-    rawOrders,
+    rawOrders: rawOrdersResponse,
     requestCount,
   }
 

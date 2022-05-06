@@ -52,7 +52,6 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
       const error = new AlunaError({
         code: AlunaOrderErrorCodes.NOT_FOUND,
         message: 'Order was not found.',
-        metadata: params,
       })
 
       log(error)

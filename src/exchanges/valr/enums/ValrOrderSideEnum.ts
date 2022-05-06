@@ -1,4 +1,4 @@
 export enum ValrOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }

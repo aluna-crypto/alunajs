@@ -16,7 +16,7 @@ const log = debug('@alunajs:bitfinex/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams<IBitfinexOrderSchema>,
+  params: IAlunaOrderParseManyParams<IBitfinexOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
   log('params', params)
