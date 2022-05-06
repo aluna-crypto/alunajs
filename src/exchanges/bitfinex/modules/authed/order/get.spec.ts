@@ -6,6 +6,7 @@ import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/o
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
+import { BitfinexHttp } from '../../../BitfinexHttp'
 import { BITFINEX_RAW_ORDERS } from '../../../test/fixtures/bitfinexOrders'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
@@ -25,17 +26,16 @@ describe(__filename, () => {
     const mockedRawOrder = BITFINEX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const [id] = mockedRawOrder
 
     const params: IAlunaOrderGetParams = {
-      id,
+      id: id.toString(),
       symbolPair: '',
     }
 
 
     // mocking
     const { getRaw } = mockOrderGetRaw({ module: getRawMod })
-
     getRaw.returns(Promise.resolve({ rawOrder: mockedRawOrder }))
 
     const { parse } = mockParse({ module: parseMod })
@@ -46,17 +46,17 @@ describe(__filename, () => {
     // executing
     const exchange = new BitfinexAuthed({ credentials })
 
-    const { order } = await exchange.order.get({
-      id,
-      symbolPair: '',
-    })
+    const { order } = await exchange.order.get(params)
 
 
     // validating
     expect(order).to.deep.eq(mockedParsedOrder)
 
     expect(getRaw.callCount).to.be.eq(1)
-    expect(getRaw.firstCall.args[0]).to.deep.eq(params)
+    expect(getRaw.firstCall.args[0]).to.deep.eq({
+      ...params,
+      http: new BitfinexHttp(),
+    })
 
     expect(parse.callCount).to.be.eq(1)
     expect(parse.firstCall.args[0]).to.deep.eq({
