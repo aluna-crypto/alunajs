@@ -65,7 +65,7 @@ It should sign requests and send them the way the exchange expects.
 
 Examples:
  - [`BittrexHttp.ts`](../src/exchanges/bittrex/BittrexHttp.ts)
- - [`BittfinexHttp.ts`](../src/exchanges/bittrex/BitfinexHttp.ts)
+ - [`BittfinexHttp.ts`](../src/exchanges/bitfinex/BitfinexHttp.ts)
 
 
 # 3. Schemas & Enums
@@ -74,7 +74,7 @@ Here we need to configure and the `types` related to the exchange.
 
 They should completely describe the data model for all Exchange API methods.
 
-Enums:
+## Enums
   - Bittrex:
     - [`BittrexOrderSideEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderSideEnum.ts`)
     - [`BittrexOrderTypeEnum.ts`](../src/exchanges/bittrex/enums/BittrexOrderTypeEnum.ts)
@@ -82,7 +82,7 @@ Enums:
     - [`BitfinexOrderSideEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderSideEnum.ts`)
     - [`BitfinexOrderTypeEnum.ts`](../src/exchanges/bitfinex/enums/BitfinexOrderTypeEnum.ts)
 
-Schemas:
+## Schemas
   - Bittrex:
     - [`IBittrexSymbolSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexSymbolSchema.ts)
     - [`IBittrexMarketSchema.ts`](../src/exchanges/bittrex/schemas/IBittrexMarketSchema.ts)
@@ -101,9 +101,13 @@ Implement all the public API methods:
 
 Examples:
 
- - [`bitfinex/modules/public/market.ts`](../src/exchanges/bitfinex/modules/public/market.ts)
- - [`bitfinex/modules/public/symbol.ts`](../src/exchanges/bitfinex/modules/public/symbol.ts)
+  - Bittrex
+    - [`bittrex/modules/public/market.ts`](../src/exchanges/bittrex/modules/public/market.ts)
+    - [`bittrex/modules/public/symbol.ts`](../src/exchanges/bittrex/modules/public/symbol.ts)
 
+  - Bitfinex
+    - [`bitfinex/modules/public/market.ts`](../src/exchanges/bitfinex/modules/public/market.ts)
+    - [`bitfinex/modules/public/symbol.ts`](../src/exchanges/bitfinex/modules/public/symbol.ts)
 
 # 5. Authed Modules
 
@@ -111,7 +115,13 @@ Here, all the authenticated methods:
 
 Examples:
 
- - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
- - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
- - [`bitfinex/modules/authed/order.ts`](../src/exchanges/bitfinex/modules/authed/order.ts)
- - [`bitfinex/modules/authed/position.ts`](../src/exchanges/bitfinex/modules/authed/position.ts)
+  - Bittrex
+    - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
+    - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
+    - [`bitfinex/modules/authed/order.ts`](../src/exchanges/bitfinex/modules/authed/order.ts)
+    - [`bitfinex/modules/authed/position.ts`](../src/exchanges/bitfinex/modules/authed/position.ts)
+  - Bitfinex
+    - [`bitfinex/modules/authed/key.ts`](../src/exchanges/bitfinex/modules/authed/key.ts)
+    - [`bitfinex/modules/authed/balance.ts`](../src/exchanges/bitfinex/modules/authed/balance.ts)
+    - [`bitfinex/modules/authed/order.ts`](../src/exchanges/bitfinex/modules/authed/order.ts)
+    - [`bitfinex/modules/authed/position.ts`](../src/exchanges/bitfinex/modules/authed/position.ts)
