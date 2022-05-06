@@ -197,7 +197,6 @@ describe(__filename, () => {
       orderStatusType,
       orderType,
       originalPrice,
-      stopPrice,
       orderUpdatedAt,
     } = rawOrder
 
