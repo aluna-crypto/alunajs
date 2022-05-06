@@ -22,7 +22,6 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawBalances } = params
 
-  // TODO: Review map implementation
   const parsedBalances = map(rawBalances, (rawBalance) => {
 
     const { balance } = exchange.balance.parse({ rawBalance })
