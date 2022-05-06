@@ -1,45 +1,47 @@
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaAdaptersErrorCodes } from '../../../../lib/errors/AlunaAdaptersErrorCodes'
 import { BitfinexOrderStatusEnum } from '../BitfinexOrderStatusEnum'
 
 
 
 const errorMessagePrefix = 'Order status'
 
-export const translateOrderStatusToAluna = (
-  params: {
-      fillQuantity: string
-      quantity: string
-      from: BitfinexOrderStatusEnum
-    },
-): AlunaOrderStatusEnum => {
+export const translateOrderStatusToAluna = (params: {
+  from: string
+}): AlunaOrderStatusEnum => {
 
-  const { fillQuantity, quantity, from } = params
+  const { from } = params
 
-  const isOpen = from === BitfinexOrderStatusEnum.OPEN
+  switch (true) {
 
-  if (isOpen) {
+    case /^active/i.test(from):
+      return AlunaOrderStatusEnum.OPEN
 
-    return AlunaOrderStatusEnum.OPEN
+    case /^executed/i.test(from):
+      return AlunaOrderStatusEnum.FILLED
+
+    case /^partially/i.test(from):
+    case /^insufficient.+partially/i.test(from):
+    case /^canceled.+partially/i.test(from): // not sure about this one
+      return AlunaOrderStatusEnum.PARTIALLY_FILLED
+
+    case /canceled/i.test(from):
+      return AlunaOrderStatusEnum.CANCELED
+
+    default: {
+
+      const message = `${errorMessagePrefix} not supported: ${from}`
+
+      throw new AlunaError({
+        message,
+        code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
+      })
+
+    }
 
   }
-
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
-
-  if (parsedQty === parsedFillQty) {
-
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
-
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
-
-  }
-
-  return AlunaOrderStatusEnum.CANCELED
 
 }
 
@@ -51,11 +53,11 @@ export const translateOrderStatusToBitfinex = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderStatusEnum.OPEN]: BitfinexOrderStatusEnum.OPEN,
+    [AlunaOrderStatusEnum.OPEN]: BitfinexOrderStatusEnum.ACTIVE,
+    [AlunaOrderStatusEnum.FILLED]: BitfinexOrderStatusEnum.EXECUTED,
     [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
-          BitfinexOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: BitfinexOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: BitfinexOrderStatusEnum.CLOSED,
+      BitfinexOrderStatusEnum.PARTIALLY_FILLED,
+    [AlunaOrderStatusEnum.CANCELED]: BitfinexOrderStatusEnum.CANCELED,
   },
 })
 
