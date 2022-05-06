@@ -13,10 +13,7 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import {
-  bitfinexBaseSpecs,
-  bitfinexEndpoints,
-} from '../../../bitfinexSpecs'
+import { bitfinexEndpoints } from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import {
@@ -92,7 +89,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { affiliateCode } = bitfinexBaseSpecs.settings
+  const { affiliateCode } = exchange.specs.settings
 
   const body = {
     amount: translatedAmount,
@@ -101,7 +98,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     ...(price ? { price } : {}),
     ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
     ...(affiliateCode ? { meta: { aff_code: affiliateCode } } : {}),
-
   }
 
   log('placing new order for Bitfinex')
@@ -132,6 +128,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       throw new AlunaError({
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         message: text,
+        httpStatusCode: 500,
         metadata: response,
       })
 
