@@ -17,7 +17,7 @@ const questions = [
     name: 'exchangeName',
     message: "What's the exchange name?",
     validate: inquirerValidations.notNull,
-    help: () => '(i.e.: Bitfinex, BitMEX, GateIO))',
+    help: () => '(i.e.: Bitfinex, BitMEX, Gate)',
   },
   {
     type: 'checkbox',
@@ -35,8 +35,8 @@ const questions = [
     message: 'Select API features:',
     name: 'apiFeatures',
     choices: [
-      { name: 'Order Editing', value: AlunaApiFeaturesEnum.ORDER_EDITING },
-      { name: 'Position ID', value: AlunaApiFeaturesEnum.POSITION_ID },
+      { name: 'Provides method for editing orders', value: AlunaApiFeaturesEnum.ORDER_EDITING },
+      { name: 'Provides uid for positions', value: AlunaApiFeaturesEnum.POSITION_ID },
     ],
   },
 ]
@@ -53,12 +53,12 @@ export function getArgV(): any {
     })
     .option('tradingFeatures', {
       alias: 't',
-      description: 'Exchange Features',
+      description: 'Trading Features',
       type: 'string',
     })
     .option('apiFeatures', {
       alias: 'a',
-      description: 'API Featurs',
+      description: 'API Features',
       type: 'string',
     })
     .help()
