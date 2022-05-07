@@ -61,9 +61,9 @@ export function aluna <T extends TPublicParmas | TAuthedParams>(
 
 
 
-aluna.web3 = (): Web3 => {
+aluna.web3 = (settings?: IAlunaSettingsSchema): Web3 => {
 
-  const web3 = new Web3()
+  const web3 = new Web3(settings)
 
   return web3
 
