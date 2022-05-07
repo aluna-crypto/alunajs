@@ -48,12 +48,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   let rate: number | undefined

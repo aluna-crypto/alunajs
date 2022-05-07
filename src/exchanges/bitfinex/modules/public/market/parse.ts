@@ -55,7 +55,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   }
 
-  const symbolMappings = bitfinexBaseSpecs.settings.mappings
+  const symbolMappings = bitfinexBaseSpecs.settings.symbolMappings
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,

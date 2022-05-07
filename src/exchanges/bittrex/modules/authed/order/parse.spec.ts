@@ -76,11 +76,11 @@ describe(__filename, () => {
     expect(translateSymbolId.callCount).to.be.eq(2)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
       exchangeSymbolId: baseCurrency,
-      symbolMappings: exchange.settings.mappings,
+      symbolMappings: exchange.settings.symbolMappings,
     })
     expect(translateSymbolId.secondCall.args[0]).to.deep.eq({
       exchangeSymbolId: quoteCurrency,
-      symbolMappings: exchange.settings.mappings,
+      symbolMappings: exchange.settings.symbolMappings,
     })
 
   })
