@@ -3,3 +3,4 @@ export interface ISamplePositionSchema {
   id?: string
   symbolPair: string
   // ...
+}
