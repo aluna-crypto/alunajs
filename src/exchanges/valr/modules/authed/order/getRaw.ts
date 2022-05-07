@@ -1,17 +1,20 @@
 import { debug } from 'debug'
 
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { IValrMarketCurrencyPairs } from '../../../schemas/IValrMarketSchema'
+import {
+  IValrOrderGetResponseSchema,
+  IValrOrderGetSchema,
+} from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderGetResponseSchema, IValrOrderGetSchema } from '../../../schemas/IValrOrderSchema'
-import { IValrMarketCurrencyPairs } from '../../../schemas/IValrMarketSchema'
-import { AlunaError } from '../../../../../lib/core/AlunaError'
-import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 
 
 
@@ -23,7 +26,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetRawReturns<IValrOrderGetResponseSchema>> => {
 
-  log('params', params)
+  log('getting raw order', params)
 
   const { credentials } = exchange
 

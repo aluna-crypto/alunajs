@@ -189,7 +189,7 @@ describe(__filename, () => {
     }
 
     return {
-      expectedId: id,
+      expectedId: id.toString(),
       expectedSymbolPair: symbolPair,
       expectedRate,
       expectedStopRate,

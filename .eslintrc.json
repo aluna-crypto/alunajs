@@ -71,6 +71,7 @@
     // ],
     "padded-blocks": "off",
     "semi": ["error", "never"],
+    "consistent-return": ["off"],
 
 
     /*

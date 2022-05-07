@@ -34,7 +34,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderPlaceParams,
 ): Promise<IAlunaOrderPlaceReturns> => {
 
-  log('params', params)
+  log('placing order', params)
 
   const { credentials } = exchange
 

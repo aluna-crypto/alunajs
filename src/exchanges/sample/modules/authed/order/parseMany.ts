@@ -17,8 +17,6 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams<ISampleOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
-  log('params', params)
-
   const { rawOrders } = params
 
   const parsedOrders = rawOrders.map((rawOrder) => {
@@ -29,7 +27,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   })
 
-  log(`parsed ${parsedOrders.length} orders for Sample`)
+  log(`parsed ${parsedOrders.length} orders`)
 
   return { orders: parsedOrders }
 

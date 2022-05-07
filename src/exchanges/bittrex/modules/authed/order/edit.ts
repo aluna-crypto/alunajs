@@ -19,7 +19,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderEditParams,
 ): Promise<IAlunaOrderEditReturns> => {
 
-  log('params', params)
+  log('editing order', params)
 
   validateParams({
     params,

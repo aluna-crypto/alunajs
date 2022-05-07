@@ -17,7 +17,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
 ): Promise<IAlunaOrderListReturns> => {
 
-  log('params', params)
+  log('listing orders', params)
 
   const { http = new ValrHttp() } = params
 

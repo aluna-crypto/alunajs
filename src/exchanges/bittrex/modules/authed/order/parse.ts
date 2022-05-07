@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
@@ -18,7 +16,7 @@ import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
-const log = debug('@alunajs:bittrex/order/parse')
+// const log = debug('@alunajs:bittrex/order/parse')
 
 
 
@@ -26,7 +24,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBittrexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('params', params)
 
   const { rawOrder } = params
 

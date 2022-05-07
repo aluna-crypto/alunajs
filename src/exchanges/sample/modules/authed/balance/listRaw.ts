@@ -20,7 +20,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListRawReturns<ISampleBalanceSchema>> => {
 
-  log('params', params)
+  log('listing raw balances', params)
 
   const { credentials } = exchange
 
