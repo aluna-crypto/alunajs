@@ -58,7 +58,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   const body = {
-    direction: translateOrderSideToValr({ from: side }),
+    side: translateOrderSideToValr({ from: side }),
     pair: symbolPair,
   }
 
