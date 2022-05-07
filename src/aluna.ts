@@ -45,9 +45,9 @@ export function aluna <T extends TPublicParmas | TAuthedParams>(
   let instance: IAlunaExchangeAuthed | IAlunaExchangePublic
 
   if (credentials) {
-    instance = new exchange.Authed({ settings, credentials })
+    instance = new exchange.AuthedClass({ settings, credentials })
   } else {
-    instance = new exchange.Public({ settings })
+    instance = new exchange.PublicClass({ settings })
   }
 
   const output = <T extends TAuthedParams
