@@ -21,7 +21,7 @@ describe(__filename, () => {
 
     const valr = new ValrAuthed({ settings, credentials })
 
-    expect(valr.id).to.eq('sample')
+    expect(valr.id).to.eq('valr')
 
     expect(valr.symbol).to.be.ok
     expect(valr.market).to.be.ok
