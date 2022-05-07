@@ -31,7 +31,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IValrOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('params', params)
+  // log('parse order', params)
 
   const { rawOrder } = params
 

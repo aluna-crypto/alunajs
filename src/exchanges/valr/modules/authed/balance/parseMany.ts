@@ -18,8 +18,6 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseManyParams<IValrBalanceSchema>,
 ): IAlunaBalanceParseManyReturns => {
 
-  log(params, 'params')
-
   const { rawBalances } = params
 
   const parsedBalances = map(rawBalances, (rawBalance) => {
@@ -29,6 +27,8 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
     return balance
 
   })
+
+  log(`parsed ${parsedBalances.length} balances`)
 
   return { balances: parsedBalances }
 
