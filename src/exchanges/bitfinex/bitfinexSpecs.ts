@@ -159,4 +159,11 @@ export const bitfinexEndpoints = {
     cancel: `${BITFINEX_AUTHED_URL}/auth/w/order/cancel`,
     edit: `${BITFINEX_AUTHED_URL}/auth/w/order/update`,
   },
+  position: {
+    get: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+    list: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+    close: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+    setLeverage: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+    getLeverage: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+  },
 }
