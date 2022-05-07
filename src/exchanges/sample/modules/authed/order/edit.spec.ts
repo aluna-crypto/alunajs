@@ -28,7 +28,7 @@ describe(__filename, () => {
   it('should edit a Sample order just fine', async () => {
 
     // preparing data
-    const http = new SampleHttp()
+    const http = new SampleHttp({})
 
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]

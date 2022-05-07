@@ -33,7 +33,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
-    http = new ValrHttp(),
+    http = new ValrHttp(exchange.settings),
   } = params
 
   const order = await http.authedRequest<IValrOrderGetSchema>({

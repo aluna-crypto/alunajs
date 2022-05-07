@@ -57,7 +57,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     account,
     limitRate,
     stopRate,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBitfinex({

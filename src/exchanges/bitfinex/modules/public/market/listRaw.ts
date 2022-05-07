@@ -22,7 +22,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IBitfinexMarketsSchema>> => {
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   log('fetching Bitfinex markets')
 

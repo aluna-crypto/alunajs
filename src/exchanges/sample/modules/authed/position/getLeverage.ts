@@ -21,7 +21,7 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   log('getting leverage', { id, symbolPair })

@@ -53,7 +53,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new ValrHttp(),
+    http = new ValrHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToValr({

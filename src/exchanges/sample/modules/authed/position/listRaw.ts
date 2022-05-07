@@ -22,7 +22,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   log('listing raw positions', params)
 
   const {
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   const { credentials } = exchange

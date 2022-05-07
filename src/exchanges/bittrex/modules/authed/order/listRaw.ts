@@ -24,7 +24,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new BittrexHttp() } = params
+  const { http = new BittrexHttp(exchange.settings) } = params
 
   const rawOrders = await http.authedRequest<IBittrexOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,

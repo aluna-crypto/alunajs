@@ -24,7 +24,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   log('getting raw position', { id })

@@ -19,7 +19,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<ISampleMarketSchema[]>> => {
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   log('fetching Sample markets')
 

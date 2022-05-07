@@ -26,7 +26,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const permissionsScope = await http.authedRequest<IBitfinexPermissionsScope>({
     url: bitfinexEndpoints.key.fetchDetails,

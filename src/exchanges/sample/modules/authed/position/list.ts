@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing positions')
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   const { rawPositions } = await exchange.position!.listRaw({ http })
 

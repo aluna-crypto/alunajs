@@ -27,7 +27,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
   log('fetching Bittrex key permissions')
 
   const { credentials } = exchange
-  const { http = new BittrexHttp() } = params
+  const { http = new BittrexHttp(exchange.settings) } = params
 
   const INVALID_PERMISSION_MESSAGE = 'INVALID_PERMISSION'
   const BAD_REQUEST_MESSAGE = 'BAD_REQUEST'

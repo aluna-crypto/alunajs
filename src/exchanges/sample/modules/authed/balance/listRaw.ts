@@ -24,7 +24,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<ISampleBalanceSchema[]>({

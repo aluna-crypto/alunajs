@@ -41,7 +41,7 @@ describe(__filename, () => {
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
       exchangeSymbolId: rawBalance.currencySymbol,
-      symbolMappings: exchange.settings.mappings,
+      symbolMappings: ({}).mappings,
     })
 
   })

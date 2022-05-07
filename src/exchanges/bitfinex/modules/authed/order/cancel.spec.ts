@@ -78,7 +78,7 @@ describe(__filename, () => {
     expect(get.firstCall.args[0]).to.deep.eq({
       id: id.toString(),
       symbolPair,
-      http: new BitfinexHttp(),
+      http: new BitfinexHttp({}),
     })
 
   })

@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Sample symbols')
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

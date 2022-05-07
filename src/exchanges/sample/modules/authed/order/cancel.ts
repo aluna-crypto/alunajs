@@ -28,7 +28,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   try {

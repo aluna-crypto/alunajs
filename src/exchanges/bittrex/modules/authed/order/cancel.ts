@@ -28,7 +28,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new BittrexHttp(),
+    http = new BittrexHttp(exchange.settings),
   } = params
 
   try {

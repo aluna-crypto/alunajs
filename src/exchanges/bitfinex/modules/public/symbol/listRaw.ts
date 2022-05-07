@@ -24,7 +24,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bitfinex raw symbols')
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const [
     currencies,

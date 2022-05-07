@@ -28,7 +28,7 @@ describe(__filename, () => {
   it('should edit a Bittrex order just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
+    const http = new BittrexHttp({})
 
     const mockedRawOrder = BITTREX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]

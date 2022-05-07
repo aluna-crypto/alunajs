@@ -6,10 +6,13 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { IValrMarketCurrencyPairs } from '../../../schemas/IValrMarketSchema'
+import {
+  IValrOrderListResponseSchema,
+  IValrOrderListSchema,
+} from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderListResponseSchema, IValrOrderListSchema } from '../../../schemas/IValrOrderSchema'
-import { IValrMarketCurrencyPairs } from '../../../schemas/IValrMarketSchema'
 
 
 
@@ -25,7 +28,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const rawOrders = await http.authedRequest<IValrOrderListSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
