@@ -9,6 +9,7 @@ import { Bitfinex } from './Bitfinex'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
+import { position } from './modules/authed/position'
 
 
 
@@ -40,6 +41,7 @@ export class BitfinexAuthed extends Bitfinex implements IAlunaExchangeAuthed {
     this.key = key(this)
     this.balance = balance(this)
     this.order = order(this)
+    this.position = position(this)
 
     return this
 
