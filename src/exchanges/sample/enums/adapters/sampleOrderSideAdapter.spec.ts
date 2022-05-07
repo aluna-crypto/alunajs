@@ -16,77 +16,71 @@ describe(__filename, () => {
 
 
 
-  it(
-    'should properly translate Sample order sides to Aluna order sides',
-    () => {
+  it('should properly translate Sample order sides to Aluna order sides', () => {
 
-      expect(translateOrderSideToAluna({
-        from: SampleOrderSideEnum.BUY,
-      })).to.be.eq(AlunaOrderSideEnum.BUY)
+    expect(translateOrderSideToAluna({
+      from: SampleOrderSideEnum.BUY,
+    })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-      expect(translateOrderSideToAluna({
-        from: SampleOrderSideEnum.SELL,
-      })).to.be.eq(AlunaOrderSideEnum.SELL)
+    expect(translateOrderSideToAluna({
+      from: SampleOrderSideEnum.SELL,
+    })).to.be.eq(AlunaOrderSideEnum.SELL)
 
-      let result
-      let error
+    let result
+    let error
 
-      try {
+    try {
 
-        result = translateOrderSideToAluna({
-          from: notSupported as SampleOrderSideEnum,
-        })
+      result = translateOrderSideToAluna({
+        from: notSupported as SampleOrderSideEnum,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
+    expect(result).not.to.be.ok
 
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order side not supported: ${notSupported}`)
 
-    },
-  )
+  })
 
 
 
-  it(
-    'should properly translate Aluna order sides to Sample order sides',
-    () => {
+  it('should properly translate Aluna order sides to Sample order sides', () => {
 
-      expect(translateOrderSideToSample({
-        from: AlunaOrderSideEnum.BUY,
-      })).to.be.eq(SampleOrderSideEnum.BUY)
+    expect(translateOrderSideToSample({
+      from: AlunaOrderSideEnum.BUY,
+    })).to.be.eq(SampleOrderSideEnum.BUY)
 
-      expect(translateOrderSideToSample({
-        from: AlunaOrderSideEnum.SELL,
-      })).to.be.eq(SampleOrderSideEnum.SELL)
+    expect(translateOrderSideToSample({
+      from: AlunaOrderSideEnum.SELL,
+    })).to.be.eq(SampleOrderSideEnum.SELL)
 
-      let result
-      let error
+    let result
+    let error
 
-      try {
+    try {
 
-        result = translateOrderSideToSample({
-          from: notSupported as AlunaOrderSideEnum,
-        })
+      result = translateOrderSideToSample({
+        from: notSupported as AlunaOrderSideEnum,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order side not supported: ${notSupported}`)
 
-    },
-  )
+  })
 
 })

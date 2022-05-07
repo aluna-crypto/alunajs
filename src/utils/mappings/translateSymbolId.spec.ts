@@ -24,23 +24,20 @@ describe(__filename, () => {
 
   })
 
-  it(
-    'should default to exchange symbol when mapping does not include symbol',
-    () => {
+  it('should default to exchange symbol when mapping does not include symbol', () => {
 
-      const exchangeSymbolId = 'UST'
+    const exchangeSymbolId = 'UST'
 
-      const symbolMappings: Record<string, string> = {}
+    const symbolMappings: Record<string, string> = {}
 
-      const translatedSymbol = translateSymbolId({
-        exchangeSymbolId,
-        symbolMappings,
-      })
+    const translatedSymbol = translateSymbolId({
+      exchangeSymbolId,
+      symbolMappings,
+    })
 
-      expect(translatedSymbol).to.be.eq(exchangeSymbolId)
+    expect(translatedSymbol).to.be.eq(exchangeSymbolId)
 
-    },
-  )
+  })
 
   it('should default to exchange symbol when mapping does not exists', () => {
 

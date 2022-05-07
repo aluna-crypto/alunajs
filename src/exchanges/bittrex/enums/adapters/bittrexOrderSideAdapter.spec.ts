@@ -16,77 +16,71 @@ describe(__filename, () => {
 
 
 
-  it(
-    'should properly translate Bittrex order sides to Aluna order sides',
-    () => {
+  it('should properly translate Bittrex order sides to Aluna order sides', () => {
 
-      expect(translateOrderSideToAluna({
-        from: BittrexOrderSideEnum.BUY,
-      })).to.be.eq(AlunaOrderSideEnum.BUY)
+    expect(translateOrderSideToAluna({
+      from: BittrexOrderSideEnum.BUY,
+    })).to.be.eq(AlunaOrderSideEnum.BUY)
 
-      expect(translateOrderSideToAluna({
-        from: BittrexOrderSideEnum.SELL,
-      })).to.be.eq(AlunaOrderSideEnum.SELL)
+    expect(translateOrderSideToAluna({
+      from: BittrexOrderSideEnum.SELL,
+    })).to.be.eq(AlunaOrderSideEnum.SELL)
 
-      let result
-      let error
+    let result
+    let error
 
-      try {
+    try {
 
-        result = translateOrderSideToAluna({
-          from: notSupported as BittrexOrderSideEnum,
-        })
+      result = translateOrderSideToAluna({
+        from: notSupported as BittrexOrderSideEnum,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
+    expect(result).not.to.be.ok
 
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order side not supported: ${notSupported}`)
 
-    },
-  )
+  })
 
 
 
-  it(
-    'should properly translate Aluna order sides to Bittrex order sides',
-    () => {
+  it('should properly translate Aluna order sides to Bittrex order sides', () => {
 
-      expect(translateOrderSideToBittrex({
-        from: AlunaOrderSideEnum.BUY,
-      })).to.be.eq(BittrexOrderSideEnum.BUY)
+    expect(translateOrderSideToBittrex({
+      from: AlunaOrderSideEnum.BUY,
+    })).to.be.eq(BittrexOrderSideEnum.BUY)
 
-      expect(translateOrderSideToBittrex({
-        from: AlunaOrderSideEnum.SELL,
-      })).to.be.eq(BittrexOrderSideEnum.SELL)
+    expect(translateOrderSideToBittrex({
+      from: AlunaOrderSideEnum.SELL,
+    })).to.be.eq(BittrexOrderSideEnum.SELL)
 
-      let result
-      let error
+    let result
+    let error
 
-      try {
+    try {
 
-        result = translateOrderSideToBittrex({
-          from: notSupported as AlunaOrderSideEnum,
-        })
+      result = translateOrderSideToBittrex({
+        from: notSupported as AlunaOrderSideEnum,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
-      expect(result).not.to.be.ok
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order side not supported: ${notSupported}`)
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order side not supported: ${notSupported}`)
 
-    },
-  )
+  })
 
 })

@@ -17,17 +17,13 @@ export const translateOrderTypeToAluna = buildAdapter<BitfinexOrderTypeEnum, Alu
     [BitfinexOrderTypeEnum.STOP]: AlunaOrderTypesEnum.STOP_MARKET,
     [BitfinexOrderTypeEnum.EXCHANGE_STOP]: AlunaOrderTypesEnum.STOP_MARKET,
     [BitfinexOrderTypeEnum.STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
-    [BitfinexOrderTypeEnum.EXCHANGE_STOP_LIMIT]:
-          AlunaOrderTypesEnum.STOP_LIMIT,
+    [BitfinexOrderTypeEnum.EXCHANGE_STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
     [BitfinexOrderTypeEnum.FOK]: AlunaOrderTypesEnum.FILL_OF_KILL,
     [BitfinexOrderTypeEnum.EXCHANGE_FOK]: AlunaOrderTypesEnum.FILL_OF_KILL,
     [BitfinexOrderTypeEnum.IOC]: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
-    [BitfinexOrderTypeEnum.EXCHANGE_IOC]:
-          AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
-    [BitfinexOrderTypeEnum.TRAILING_STOP]:
-          AlunaOrderTypesEnum.TRAILING_STOP,
-    [BitfinexOrderTypeEnum.EXCHANGE_TRAILING_STOP]:
-          AlunaOrderTypesEnum.TRAILING_STOP,
+    [BitfinexOrderTypeEnum.EXCHANGE_IOC]: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+    [BitfinexOrderTypeEnum.TRAILING_STOP]: AlunaOrderTypesEnum.TRAILING_STOP,
+    [BitfinexOrderTypeEnum.EXCHANGE_TRAILING_STOP]: AlunaOrderTypesEnum.TRAILING_STOP,
   },
 })
 
@@ -54,14 +50,10 @@ export const translateOrderTypeToBitfinex = (params: {
       mappings: {
         [AlunaOrderTypesEnum.LIMIT]: BitfinexOrderTypeEnum.EXCHANGE_LIMIT,
         [AlunaOrderTypesEnum.MARKET]: BitfinexOrderTypeEnum.EXCHANGE_MARKET,
-        [AlunaOrderTypesEnum.STOP_MARKET]:
-            BitfinexOrderTypeEnum.EXCHANGE_STOP,
-        [AlunaOrderTypesEnum.STOP_LIMIT]:
-            BitfinexOrderTypeEnum.EXCHANGE_STOP_LIMIT,
-        [AlunaOrderTypesEnum.FILL_OF_KILL]:
-            BitfinexOrderTypeEnum.EXCHANGE_FOK,
-        [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]:
-            BitfinexOrderTypeEnum.EXCHANGE_IOC,
+        [AlunaOrderTypesEnum.STOP_MARKET]: BitfinexOrderTypeEnum.EXCHANGE_STOP,
+        [AlunaOrderTypesEnum.STOP_LIMIT]: BitfinexOrderTypeEnum.EXCHANGE_STOP_LIMIT,
+        [AlunaOrderTypesEnum.FILL_OF_KILL]: BitfinexOrderTypeEnum.EXCHANGE_FOK,
+        [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: BitfinexOrderTypeEnum.EXCHANGE_IOC,
       },
     })({ from })
 
@@ -73,14 +65,10 @@ export const translateOrderTypeToBitfinex = (params: {
       [AlunaOrderTypesEnum.LIMIT]: BitfinexOrderTypeEnum.LIMIT,
       [AlunaOrderTypesEnum.MARKET]: BitfinexOrderTypeEnum.MARKET,
       [AlunaOrderTypesEnum.STOP_MARKET]: BitfinexOrderTypeEnum.STOP,
-      [AlunaOrderTypesEnum.STOP_LIMIT]:
-          BitfinexOrderTypeEnum.STOP_LIMIT,
-      [AlunaOrderTypesEnum.FILL_OF_KILL]:
-          BitfinexOrderTypeEnum.FOK,
-      [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]:
-          BitfinexOrderTypeEnum.IOC,
+      [AlunaOrderTypesEnum.STOP_LIMIT]: BitfinexOrderTypeEnum.STOP_LIMIT,
+      [AlunaOrderTypesEnum.FILL_OF_KILL]: BitfinexOrderTypeEnum.FOK,
+      [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: BitfinexOrderTypeEnum.IOC,
     },
   })({ from })
 
 }
-
