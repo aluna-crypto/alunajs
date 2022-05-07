@@ -110,6 +110,7 @@ export interface IAlunaPositionGetLeverageReturns extends IAlunaModuleReturns {
 
 
 export interface IAlunaPositionSetLeverageParams extends IAlunaModuleParams {
+  id?: string
   symbolPair: string
   leverage: number
 }
