@@ -19,8 +19,6 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams<IBitfinexOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
-  log('params', params)
-
   const { rawOrders } = params
 
   type TAcc = IBitfinexOrderSchema
@@ -50,7 +48,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   }, [])
 
-  log(`parsed ${parsedOrders.length} orders for Bitfinex`)
+  log(`parsed ${parsedOrders.length} orders`)
 
   return { orders: parsedOrders }
 

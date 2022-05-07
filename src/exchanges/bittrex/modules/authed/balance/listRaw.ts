@@ -20,7 +20,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema>> => {
 
-  log('params', params)
+  log('listing balances', params)
 
   const { credentials } = exchange
 

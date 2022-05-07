@@ -21,7 +21,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetRawReturns<IBitfinexOrderSchema>> => {
 
-  log('params', params)
+  log('getting raw order', params)
 
   const { credentials } = exchange
 

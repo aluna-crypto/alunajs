@@ -21,7 +21,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderCancelParams,
 ): Promise<IAlunaOrderCancelReturns> => {
 
-  log('params', params)
+  log('canceling order', params)
 
   const { credentials } = exchange
 

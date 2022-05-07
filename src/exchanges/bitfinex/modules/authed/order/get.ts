@@ -17,7 +17,7 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetReturns> => {
 
-  log('params', params)
+  log('getting order', params)
 
   const {
     id,

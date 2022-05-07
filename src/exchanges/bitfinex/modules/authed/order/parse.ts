@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
@@ -18,7 +16,7 @@ import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
-const log = debug('@alunajs:bitfinex/order/parse')
+// const log = debug('@alunajs:bitfinex/order/parse')
 
 
 
@@ -26,7 +24,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBitfinexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('params', params)
 
   const {
     rawOrder,

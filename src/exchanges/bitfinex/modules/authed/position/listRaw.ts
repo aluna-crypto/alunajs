@@ -19,7 +19,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaPositionListParams = {},
 ): Promise<IAlunaPositionListRawReturns<IBitfinexPositionSchema[]>> => {
 
-  log('params', params)
+  log('listing raw positions', params)
 
   const {
     http = new BitfinexHttp(),

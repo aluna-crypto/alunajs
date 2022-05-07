@@ -6,9 +6,9 @@ import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
+import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
 
 
@@ -20,7 +20,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListRawReturns<IValrBalanceSchema>> => {
 
-  log('params', params)
+  log('listing raw balances', params)
 
   const { credentials } = exchange
 

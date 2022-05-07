@@ -8,9 +8,9 @@ import {
   IAlunaOrderCancelParams,
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 
 
 
@@ -22,7 +22,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderCancelParams,
 ): Promise<IAlunaOrderCancelReturns> => {
 
-  log('params', params)
+  log('canceling order', params)
 
   const { credentials } = exchange
 
