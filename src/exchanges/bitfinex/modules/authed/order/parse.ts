@@ -140,7 +140,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   }
 
   const order: IAlunaOrderSchema = {
-    id,
+    id: id.toString(),
     symbolPair,
     exchangeId: bitfinexBaseSpecs.id,
     baseSymbolId,
