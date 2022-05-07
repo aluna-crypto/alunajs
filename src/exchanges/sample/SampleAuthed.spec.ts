@@ -8,7 +8,7 @@ import { SampleAuthed } from './SampleAuthed'
 
 describe(__filename, () => {
 
-  it('should ensure exchangehave all properties and methods', async () => {
+  it('should contain public & authed modules', async () => {
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'some-key',

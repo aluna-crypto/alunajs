@@ -7,7 +7,7 @@ import { Sample } from './Sample'
 
 describe(__filename, () => {
 
-  it('should ensure exchange have all properties and methods', async () => {
+  it('should contain public modules', async () => {
 
     const settings: IAlunaSettingsSchema = {
       referralCode: '123',
