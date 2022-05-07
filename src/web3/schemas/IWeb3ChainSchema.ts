@@ -3,7 +3,6 @@ import { Web3ChainsEnum } from '../enums/Web3ChainsEnum'
 
 
 export interface IWeb3ChainSchema {
-
   id: string | Web3ChainsEnum
   communityId: string | number
   name: string
@@ -11,5 +10,4 @@ export interface IWeb3ChainSchema {
   logoUrl: string
   wrappedTokenId: string
   usdValue: number
-
 }
