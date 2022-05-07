@@ -1,6 +1,6 @@
 import axios from 'axios'
-import debug from 'debug'
 import crypto from 'crypto'
+import debug from 'debug'
 
 import {
   IAlunaHttp,
@@ -45,7 +45,7 @@ export const generateAuthHeader = (
   params: ISignedHashParams,
 ): IValrSignedHeaders => {
 
-  log(params)
+  log('generateAuthHeader', params)
 
   const {
     credentials,

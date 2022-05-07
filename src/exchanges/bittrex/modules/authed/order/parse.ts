@@ -24,7 +24,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBittrexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('params', params)
+  // log('parse order', params)
 
   const { rawOrder } = params
 

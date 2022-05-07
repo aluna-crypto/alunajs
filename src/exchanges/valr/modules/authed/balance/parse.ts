@@ -1,5 +1,3 @@
-import debug from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import {
@@ -12,7 +10,7 @@ import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
 
 
-const log = debug('@alunajs:exchanges/valr/balance/parse')
+// const log = debug('@alunajs:exchanges/valr/balance/parse')
 
 
 
@@ -20,7 +18,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseParams<IValrBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
-  log(params, 'params')
+  // log('parse balance', params)
 
   const { rawBalance } = params
 
