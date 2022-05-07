@@ -16,10 +16,8 @@ export const translateOrderTypeToAluna = buildAdapter<
   mappings: {
     [GateOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [GateOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [GateOrderTypeEnum.CEILING_LIMIT]:
-          AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [GateOrderTypeEnum.CEILING_MARKET]:
-          AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [GateOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
+    [GateOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
   },
 })
 
@@ -33,10 +31,7 @@ export const translateOrderTypeToGate = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: GateOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: GateOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]:
-          GateOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]:
-          GateOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: GateOrderTypeEnum.CEILING_LIMIT,
+    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: GateOrderTypeEnum.CEILING_MARKET,
   },
 })
-
