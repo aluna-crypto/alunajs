@@ -160,10 +160,7 @@ export const bitfinexEndpoints = {
     edit: `${BITFINEX_AUTHED_URL}/auth/w/order/update`,
   },
   position: {
-    get: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
-    list: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
-    close: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
-    setLeverage: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
-    getLeverage: `${BITFINEX_AUTHED_URL}/<desired-method-here>`,
+    get: `${BITFINEX_AUTHED_URL}/auth/r/positions/audit`,
+    list: `${BITFINEX_AUTHED_URL}/auth/r/positions`,
   },
 }
