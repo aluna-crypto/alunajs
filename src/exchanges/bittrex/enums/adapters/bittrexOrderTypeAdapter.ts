@@ -16,10 +16,8 @@ export const translateOrderTypeToAluna = buildAdapter<
   mappings: {
     [BittrexOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [BittrexOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [BittrexOrderTypeEnum.CEILING_LIMIT]:
-          AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [BittrexOrderTypeEnum.CEILING_MARKET]:
-          AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [BittrexOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
+    [BittrexOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
   },
 })
 
@@ -33,10 +31,7 @@ export const translateOrderTypeToBittrex = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: BittrexOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: BittrexOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]:
-          BittrexOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]:
-          BittrexOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: BittrexOrderTypeEnum.CEILING_LIMIT,
+    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: BittrexOrderTypeEnum.CEILING_MARKET,
   },
 })
-

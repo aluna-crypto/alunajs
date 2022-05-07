@@ -15,63 +15,62 @@ describe(__filename, () => {
   const notSupported = 'not-supported'
 
 
-  it('should translate Valr order status to Aluna order status',
-    () => {
+  it('should translate Valr order status to Aluna order status', () => {
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.ACTIVE,
-      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.ACTIVE,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.PLACED,
-      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.PLACED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.REQUESTED,
-      })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.REQUESTED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.PARTIALLY_FILLED,
-      })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.PARTIALLY_FILLED,
+    })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.FILLED,
-      })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.FILLED,
+    })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.FAILED,
-      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.FAILED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.EXPIRED,
-      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.EXPIRED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-      expect(translateOrderStatusToAluna({
-        from: ValrOrderStatusEnum.CANCELLED,
-      })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+    expect(translateOrderStatusToAluna({
+      from: ValrOrderStatusEnum.CANCELLED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-      let result
-      let error
+    let result
+    let error
 
-      try {
+    try {
 
-        translateOrderStatusToAluna({
-          from: notSupported as ValrOrderStatusEnum,
-        })
+      translateOrderStatusToAluna({
+        from: notSupported as ValrOrderStatusEnum,
+      })
 
-      } catch (err) {
+    } catch (err) {
 
-        error = err
+      error = err
 
-      }
+    }
 
 
-      expect(result).not.to.be.ok
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error.message)
-        .to.be.eq(`Order status not supported: ${notSupported}`)
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
-    })
+  })
 
 
 
