@@ -1,4 +1,4 @@
-import { log } from 'console'
+import { each } from 'lodash'
 import shell from 'shelljs'
 
 import { IBoostrapMethodParams } from './IBoostrapMethodParams'
@@ -16,12 +16,10 @@ export const deleteLines = (
 
   log('uncommenting intentional throws')
 
-  const regex = /^.*(scaffold\:delete-line).*$/mg
+  const regex = /^.*(scaffold:delete-line).*$/mg
 
-  for(const file of files) {
+  each(files, (file) => {
     shell.sed('-i', regex, '', file)
-  }
-
-  return files
+  })
 
 }

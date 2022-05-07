@@ -1,3 +1,4 @@
+import { each } from 'lodash'
 import shell from 'shelljs'
 
 import { IBoostrapMethodParams } from './IBoostrapMethodParams'
@@ -16,10 +17,10 @@ export const replaceSampleContents = (
 
   log('replacing strings inside files')
 
-  for(const file of files) {
+  each(files, (file) => {
     shell.sed('-i', /Sample/g, configs.exchangeName, file)
     shell.sed('-i', /SAMPLE/g, configs.exchangeUpper, file)
     shell.sed('-i', /sample/g, configs.exchangeLower, file)
-  }
+  })
 
 }

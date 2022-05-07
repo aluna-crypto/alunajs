@@ -1,4 +1,7 @@
-import { log } from 'console'
+import {
+  each,
+  find,
+} from 'lodash'
 import shell from 'shelljs'
 
 import { IBoostrapMethodParams } from './IBoostrapMethodParams'
@@ -26,22 +29,22 @@ export const skipTests = (
 
   log('skiping describe wrappers')
 
-  for(const file of files) {
+  each(files, (file) => {
 
     let found = false
 
-    for (const pattern of filePatterns) {
+    find(filePatterns, (pattern) => {
       if (pattern.test(file)) {
         found = true
-        break
+        return found
       }
-    }
+    })
 
     if (found) {
       shell.sed('-i', 'describe', 'describe.skip', file)
     }
 
-  }
+  })
 
   return files
 

@@ -43,26 +43,26 @@ const questions = [
 
 
 
-export function getArgV (): any {
+export function getArgV(): any {
 
-  const argv = yargs
+  const { argv } = yargs
     .option('exchangeName', {
       alias: 'e',
       description: 'Exchange Name',
-      type: 'string'
+      type: 'string',
     })
     .option('tradingFeatures', {
       alias: 't',
       description: 'Exchange Features',
-      type: 'string'
+      type: 'string',
     })
     .option('apiFeatures', {
       alias: 'a',
       description: 'API Featurs',
-      type: 'string'
+      type: 'string',
     })
     .help()
-    .alias('help', 'h').argv
+    .alias('help', 'h')
 
   return argv
 
@@ -70,7 +70,7 @@ export function getArgV (): any {
 
 
 
-export async function addExchange () {
+export async function addExchange() {
 
   const argv: IPromptAnswers = getArgV()
   let answers

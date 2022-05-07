@@ -75,10 +75,6 @@ export const handleExchangeCommands = async (req: Request, res: Response) => {
 export const handleWeb3Commands = async (req: Request, res: Response) => {
 
   const {
-    exchangeId,
-    key,
-    secret,
-    passphrase,
     method: scopeMethod,
     ...params
   } = req.body

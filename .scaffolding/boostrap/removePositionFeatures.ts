@@ -1,5 +1,3 @@
-import { settings } from 'cluster'
-import { log } from 'console'
 import { filter } from 'lodash'
 import { join } from 'path'
 import shell from 'shelljs'
@@ -13,9 +11,6 @@ import { IBoostrapMethodParams } from './IBoostrapMethodParams'
 export const removePositionFeatures = (
   params: IBoostrapMethodParams,
 ) => {
-
-  let search: string | RegExp
-  let replace: string | RegExp
 
   const {
     log,
@@ -53,6 +48,6 @@ export const removePositionFeatures = (
 
   const isAPositionMod = /modules\/authed\/position/
 
-  params.files = filter(params.files, (f) => !isAPositionMod.test(f))
+  return filter(params.files, (f) => !isAPositionMod.test(f))
 
 }

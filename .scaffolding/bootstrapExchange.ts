@@ -45,8 +45,8 @@ const SAMPLE_EXCHANGE = join(EXCHANGES, 'sample')
 
 
 
-export function buildSettings (params: {
-  answers: IPromptAnswers,
+export function buildSettings(params: {
+  answers: IPromptAnswers
 }): IScaffoldSettings {
 
   const { answers } = params
@@ -68,7 +68,7 @@ export function buildSettings (params: {
 
 
 
-export async function bootstrapExchange (answers: IPromptAnswers) {
+export async function bootstrapExchange(answers: IPromptAnswers) {
 
   const settings = buildSettings({ answers })
 
@@ -88,7 +88,7 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
    */
   if (existsSync(DESTINATION)) {
 
-    console.error(chalk.red(`Destination path exists.`))
+    console.error(chalk.red('Destination path exists.'))
 
     const question = [{
       type: 'expand',
@@ -106,7 +106,7 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
     const { overwrite } = answer
 
     if (!overwrite) {
-      console.error(chalk.gray(`Aborting.`))
+      console.error(chalk.gray('Aborting.'))
       process.exit()
     } else {
       shelljs.rm('-rf', DESTINATION)
@@ -136,11 +136,19 @@ export async function bootstrapExchange (answers: IPromptAnswers) {
     },
   }
 
-  copySampleFiles(bootstrapParams)
+  // initializes files array with copied sample files
+  bootstrapParams.files = copySampleFiles(bootstrapParams)
   replaceSampleContents(bootstrapParams)
-  renameSampleFiles(bootstrapParams)
+
+  // update filepaths with renamed filenames
+  bootstrapParams.files = renameSampleFiles(bootstrapParams)
+
   configureSpecs(bootstrapParams)
-  removePositionFeatures(bootstrapParams)
+
+  // update filepaths, removes position stuff
+  bootstrapParams.files = removePositionFeatures(bootstrapParams)
+
+  // keep on changing stuff
   addEntryOnExchangesList(bootstrapParams)
   patchAlunaSpec(bootstrapParams)
   deleteLines(bootstrapParams)
