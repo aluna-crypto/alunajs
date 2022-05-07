@@ -4,6 +4,6 @@ import { BitfinexAuthed } from './BitfinexAuthed'
 
 
 export const bitfinex = {
-  Public: Bitfinex,
-  Authed: BitfinexAuthed,
+  PublicClass: Bitfinex,
+  AuthedClass: BitfinexAuthed,
 }
