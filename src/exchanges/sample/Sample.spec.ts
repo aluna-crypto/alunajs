@@ -1,8 +1,7 @@
 import { expect } from 'chai'
 
-import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { SampleAuthed } from './SampleAuthed'
+import { Sample } from './Sample'
 
 
 
@@ -11,28 +10,18 @@ describe(__filename, () => {
   it('should ensure exchange have all properties and methods', async () => {
 
     const settings: IAlunaSettingsSchema = {
-      referralCode: '666',
+      referralCode: '123',
     }
 
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
-    const sample = new SampleAuthed({
-      credentials,
-      settings,
-    })
+    const sample = new Sample({ settings })
 
     expect(sample.id).to.eq('sample')
+
     expect(sample.symbol).to.be.ok
     expect(sample.market).to.be.ok
-    expect(sample.key).to.be.ok
-    expect(sample.balance).to.be.ok
-    expect(sample.order).to.be.ok
+
     expect(sample.specs).to.be.ok
     expect(sample.settings).to.deep.eq(settings)
-    expect(sample.credentials).to.deep.eq(credentials)
 
   })
 
