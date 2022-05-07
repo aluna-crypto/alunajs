@@ -2,7 +2,8 @@
 
 Adding support for ***{EXCHANGE_NAME}***.
 
-Implemented modules:
+# Modules
+
   - Public
     - [ ] Symbol
     - [ ] Market
@@ -12,8 +13,9 @@ Implemented modules:
     - [ ] Order
     - [ ] Position?
 
-Others:
- - [ ] *Build is **passing***
- - [ ] *Coverage is at **100%***
- - [ ] *[Integration tests](../../test/e2e) are **passing** (*important one!*)*
- - [ ] *Configs **added** to Insomnia [`playground.json`](../../.playground/playground.json) file*
+# Checklist
+
+ - [ ] _Build is **passing**_
+ - [ ] _Coverage is at **100%**_
+ - [ ] _Integration tests  are **passing** (*important one!*)_
+ - [ ] _Configs **added** to Insomnia `playground.json` file_
