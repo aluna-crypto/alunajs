@@ -5,10 +5,11 @@ import { IAlunaOrderWriteModule } from '../../lib/modules/authed/IAlunaOrderModu
 import { IAlunaPositionModule } from '../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { Sample } from './Sample'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
+import { position } from './modules/authed/position'
+import { Sample } from './Sample'
 
 
 
@@ -40,6 +41,7 @@ export class SampleAuthed extends Sample implements IAlunaExchangeAuthed {
     this.key = key(this)
     this.balance = balance(this)
     this.order = order(this)
+    this.position = position(this)
 
     return this
 
