@@ -14,7 +14,12 @@ export const skipTests = (
     files,
   } = params
 
-  const filePatters = [
+  /**
+   * Files matching these patterns will have their root `describe` case marked
+   * be mark as `describe.skip`, thus disabling them on purpose to call user
+   * attention.
+   */
+  const filePatterns = [
     /parse\.spec\.ts$/,
     /Http\.spec\.ts$/,
   ]
@@ -25,7 +30,7 @@ export const skipTests = (
 
     let found = false
 
-    for (const pattern of filePatters) {
+    for (const pattern of filePatterns) {
       if (pattern.test(file)) {
         found = true
         break
