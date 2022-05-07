@@ -36,7 +36,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     account,
     symbolPair,
-    http = new BittrexHttp(),
+    http = new BittrexHttp(exchange.settings),
   } = params
 
   await exchange.order.cancel({

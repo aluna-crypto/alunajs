@@ -51,7 +51,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new BittrexHttp(),
+    http = new BittrexHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBittrex({

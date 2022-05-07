@@ -1,9 +1,9 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
-import crypto from 'crypto'
 
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
@@ -124,7 +124,7 @@ describe(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
     request.returns(Promise.resolve({ data: response }))
 
@@ -171,7 +171,7 @@ describe(__filename, () => {
   it('should execute authed request just fine', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
 
     // mocking
@@ -231,7 +231,7 @@ describe(__filename, () => {
   it('should properly increment request count on public requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -266,7 +266,7 @@ describe(__filename, () => {
   it('should properly increment request count on authed requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -302,7 +302,7 @@ describe(__filename, () => {
   it('should properly handle request error on public requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -335,7 +335,7 @@ describe(__filename, () => {
   it('should properly handle request error on authed requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -369,7 +369,7 @@ describe(__filename, () => {
   it('should properly use proxy settings on public requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
 
     // mocking
@@ -405,7 +405,7 @@ describe(__filename, () => {
   it('should properly use proxy settings on authed requests', async () => {
 
     // preparing data
-    const valrHttp = new ValrHttp()
+    const valrHttp = new ValrHttp({})
 
 
     // mocking
@@ -573,7 +573,7 @@ describe(__filename, () => {
         verb: AlunaHttpVerbEnum.GET,
       }
 
-      await new ValrHttp().publicRequest(params)
+      await new ValrHttp({}).publicRequest(params)
 
     },
 

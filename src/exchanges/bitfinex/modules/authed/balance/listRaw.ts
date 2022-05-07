@@ -23,7 +23,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const rawBalances = await http.authedRequest<IBitfinexBalanceSchema[]>({
     url: bitfinexEndpoints.balance.list,

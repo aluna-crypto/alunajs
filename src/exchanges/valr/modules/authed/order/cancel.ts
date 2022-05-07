@@ -27,7 +27,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   const { credentials } = exchange
 
   const {
-    http = new ValrHttp(),
+    http = new ValrHttp(exchange.settings),
     id,
     symbolPair,
   } = params

@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Valr symbols')
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

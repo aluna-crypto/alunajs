@@ -8,7 +8,10 @@ import { bittrexBaseSpecs } from '../../../bittrexSpecs'
 import { translateOrderSideToAluna } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bittrexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bittrexOrderTypeAdapter'
-import { BITTREX_RAW_CLOSED_ORDER, BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
+import {
+  BITTREX_RAW_CLOSED_ORDER,
+  BITTREX_RAW_ORDERS,
+} from '../../../test/fixtures/bittrexOrders'
 
 
 

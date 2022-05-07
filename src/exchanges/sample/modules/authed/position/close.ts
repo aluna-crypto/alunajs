@@ -26,7 +26,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   log('closing position', { id, symbolPair })

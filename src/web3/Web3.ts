@@ -1,3 +1,4 @@
+import { IAlunaSettingsSchema } from '../lib/schemas/IAlunaSettingsSchema'
 import {
   balance,
   IWeb3BalanceModule,
@@ -13,13 +14,16 @@ export class Web3 {
 
   public token: IWeb3TokenModule
   public balance: IWeb3BalanceModule
+  public settings: IAlunaSettingsSchema
 
 
 
-  constructor() {
+  constructor(settings?: IAlunaSettingsSchema) {
 
     this.token = token(this)
     this.balance = balance(this)
+
+    this.settings = settings || {}
 
     return this
 

@@ -5,11 +5,13 @@ import {
   IAlunaMarketListParams,
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import {
+  IValrMarketCurrencyPairs,
+  IValrMarketsSchema,
+  IValrMarketSummarySchema,
+} from '../../../schemas/IValrMarketSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import {
-  IValrMarketCurrencyPairs, IValrMarketsSchema, IValrMarketSummarySchema,
-} from '../../../schemas/IValrMarketSchema'
 
 
 
@@ -21,7 +23,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IValrMarketsSchema>> => {
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   log('fetching Valr markets')
 

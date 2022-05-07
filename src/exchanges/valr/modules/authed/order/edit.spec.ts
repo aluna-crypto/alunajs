@@ -10,9 +10,9 @@ import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnu
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
+import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import * as cancelMod from './cancel'
 import * as placeMod from './place'
 
@@ -28,7 +28,7 @@ describe(__filename, () => {
   it('should edit a Valr order just fine', async () => {
 
     // preparing data
-    const http = new ValrHttp()
+    const http = new ValrHttp({})
 
     const mockedRawOrder = VALR_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]

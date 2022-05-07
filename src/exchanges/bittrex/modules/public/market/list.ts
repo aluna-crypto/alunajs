@@ -18,7 +18,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Bittrex markets')
 
-  const { http = new BittrexHttp() } = params
+  const { http = new BittrexHttp(exchange.settings) } = params
   const { requestCount } = http
 
   const { rawMarkets } = await exchange.market.listRaw({ http })

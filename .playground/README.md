@@ -24,13 +24,10 @@ Insomnia is a REST spec / explorer tool that we use for this purpose.
 Let's get started:.
 
 1. Download and install [Insomnia](https://insomnia.rest/)
-1. Install Insomnia [dotenv](https://insomnia.rest/plugins/insomnia-plugin-dotenv) plugin
-1. Create an `.alunarc` file and place it on your `$HOME` folder
-   - Example template file at `.playground/.alunarc`
-   - Configure all desired API keys and secrets
-  1. Then, back on Insonia, go to `Data` -> `Import Data` -> `From File`
-  2. Import the file `<repo-root>/.playground/playground.json` file
-  3. Voilà
+1. Install the [dotenv](https://insomnia.rest/plugins/insomnia-plugin-dotenv) plugin
+2. Then go to `Data` -> `Import Data` -> `From File`
+3. Import the file `<repo-root>/.playground/playground.json` file
+4. Voilà
 
 
 # Start the Server

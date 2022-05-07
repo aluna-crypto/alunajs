@@ -104,7 +104,7 @@ describe(__filename, () => {
 
 
     // executing
-    const web3Http = new Web3Http()
+    const web3Http = new Web3Http({})
 
     const responseData = await web3Http.publicRequest({
       url,
@@ -162,7 +162,7 @@ describe(__filename, () => {
 
 
     // executing
-    const web3Http = await new Web3Http()
+    const web3Http = await new Web3Http({})
 
     const {
       error,
@@ -194,7 +194,7 @@ describe(__filename, () => {
 
 
     // executing
-    const web3http = new Web3Http()
+    const web3http = new Web3Http({})
 
     const {
       error,
@@ -234,7 +234,7 @@ describe(__filename, () => {
 
 
     // executing
-    const web3Http = new Web3Http()
+    const web3Http = new Web3Http({})
 
     await web3Http.publicRequest({
       url,
@@ -271,7 +271,7 @@ describe(__filename, () => {
         verb: AlunaHttpVerbEnum.GET,
       }
 
-      await new Web3Http().publicRequest(params)
+      await new Web3Http({}).publicRequest(params)
 
     },
 

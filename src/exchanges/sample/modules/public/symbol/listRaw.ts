@@ -21,7 +21,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Sample raw symbols')
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<ISampleSymbolSchema[]>({

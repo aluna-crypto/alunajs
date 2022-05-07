@@ -55,7 +55,7 @@ describe(__filename, () => {
     expect(getRaw.callCount).to.be.eq(1)
     expect(getRaw.firstCall.args[0]).to.deep.eq({
       ...params,
-      http: new BitfinexHttp(),
+      http: new BitfinexHttp({}),
     })
 
     expect(parse.callCount).to.be.eq(1)

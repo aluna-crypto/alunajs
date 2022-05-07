@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing positions')
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const { rawPositions } = await exchange.position!.listRaw({ http })
 

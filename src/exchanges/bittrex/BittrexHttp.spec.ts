@@ -124,7 +124,7 @@ describe(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
     request.returns(Promise.resolve({ data: response }))
 
@@ -171,7 +171,7 @@ describe(__filename, () => {
   it('should execute authed request just fine', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
 
     // mocking
@@ -231,7 +231,7 @@ describe(__filename, () => {
   it('should properly increment request count on public requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -266,7 +266,7 @@ describe(__filename, () => {
   it('should properly increment request count on authed requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -302,7 +302,7 @@ describe(__filename, () => {
   it('should properly handle request error on public requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -335,7 +335,7 @@ describe(__filename, () => {
   it('should properly handle request error on authed requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -369,7 +369,7 @@ describe(__filename, () => {
   it('should properly use proxy settings on public requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
 
     // mocking
@@ -405,7 +405,7 @@ describe(__filename, () => {
   it('should properly use proxy settings on authed requests', async () => {
 
     // preparing data
-    const bittrexHttp = new BittrexHttp()
+    const bittrexHttp = new BittrexHttp({})
 
 
     // mocking
@@ -582,7 +582,7 @@ describe(__filename, () => {
         verb: AlunaHttpVerbEnum.GET,
       }
 
-      await new BittrexHttp().publicRequest(params)
+      await new BittrexHttp({}).publicRequest(params)
 
     },
 

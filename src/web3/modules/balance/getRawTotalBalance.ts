@@ -39,7 +39,7 @@ export const getRawTotalBalance = (web3: Web3) => async (
 
   const {
     address,
-    http = new Web3Http(),
+    http = new Web3Http(web3.settings),
   } = params
 
   const url = [

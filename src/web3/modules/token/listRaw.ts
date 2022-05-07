@@ -37,7 +37,7 @@ export const listRaw = (web3: Web3) => async (
   const {
     address,
     chainId,
-    http = new Web3Http(),
+    http = new Web3Http(web3.settings),
   } = params
 
   log('getting web3 raw tokens', JSON.stringify({ chainId, address }))

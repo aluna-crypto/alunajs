@@ -28,7 +28,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id: stringId,
     symbolPair,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const id = Number(stringId)

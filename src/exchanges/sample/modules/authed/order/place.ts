@@ -47,7 +47,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToSample({

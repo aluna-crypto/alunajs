@@ -19,7 +19,7 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   log('getting position', { id })

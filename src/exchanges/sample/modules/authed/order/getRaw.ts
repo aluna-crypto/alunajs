@@ -26,7 +26,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   // TODO: Implement proper request

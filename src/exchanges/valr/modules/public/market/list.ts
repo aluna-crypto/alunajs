@@ -18,7 +18,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Valr markets')
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

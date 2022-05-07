@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('list balances', params)
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const { rawBalances } = await exchange.balance.listRaw({ http })
 

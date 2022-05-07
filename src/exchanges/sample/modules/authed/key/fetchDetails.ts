@@ -24,7 +24,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new SampleHttp() } = params
+  const { http = new SampleHttp(exchange.settings) } = params
 
   // TODO: Implement proper request
   const permissions = await http.authedRequest<ISampleKeySchema>({
