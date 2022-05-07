@@ -44,7 +44,7 @@ export const generateAuthHeader = (
   params: ISignedHashParams,
 ): IGateSignedHeaders => {
 
-  log(params)
+  log('generateAuthHeader', params)
 
   // TODO: Implement method
 
