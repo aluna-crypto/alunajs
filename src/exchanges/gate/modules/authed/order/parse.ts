@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaOrderParseParams,
@@ -10,7 +8,7 @@ import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
 
-const log = debug('@alunajs:gate/order/parse')
+// const log = debug('@alunajs:gate/order/parse')
 
 
 
@@ -18,7 +16,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IGateOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('params', params)
 
   const { rawOrder } = params
 
