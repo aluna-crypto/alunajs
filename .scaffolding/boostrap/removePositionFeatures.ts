@@ -30,9 +30,11 @@ export const removePositionFeatures = (
 
     const methodsDir = join(DESTINATION, 'modules', 'authed', 'position')
     const moduleFile = join(DESTINATION, 'modules', 'authed', 'position.ts')
+    const schemaFile = join(DESTINATION, 'schemas', `I${exchangeName}PositionSchema.ts`)
 
     shell.rm('-rf', methodsDir)
     shell.rm('-f', moduleFile)
+    shell.rm('-f', schemaFile)
 
     const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
 
