@@ -5,6 +5,7 @@ import {
   IAlunaPositionListParams,
   IAlunaPositionListReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
+import { BitfinexHttp } from '../../../BitfinexHttp'
 
 
 
@@ -13,11 +14,22 @@ const log = debug('@alunajs:bitfinex/position/list')
 
 
 export const list = (exchange: IAlunaExchangeAuthed) => async (
-  params: IAlunaPositionListParams,
+  params: IAlunaPositionListParams = {},
 ): Promise<IAlunaPositionListReturns> => {
 
-  log('params', params)
+  log('listing positions')
 
-  return params as any
+  const { http = new BitfinexHttp() } = params
+
+  const { rawPositions } = await exchange.position!.listRaw({ http })
+
+  const { positions } = await exchange.position!.parseMany({ rawPositions })
+
+  const { requestCount } = http
+
+  return {
+    positions,
+    requestCount,
+  }
 
 }

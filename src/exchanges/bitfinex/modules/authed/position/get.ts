@@ -5,6 +5,7 @@ import {
   IAlunaPositionGetParams,
   IAlunaPositionGetReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
+import { BitfinexHttp } from '../../../BitfinexHttp'
 
 
 
@@ -16,8 +17,22 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaPositionGetParams,
 ): Promise<IAlunaPositionGetReturns> => {
 
-  log('params', params)
+  const {
+    id,
+    http = new BitfinexHttp(),
+  } = params
 
-  return params as any
+  log('getting position', { id })
+
+  const { rawPosition } = await exchange.position!.getRaw({ id, http })
+
+  const { position } = await exchange.position!.parse({ rawPosition })
+
+  const { requestCount } = http
+
+  return {
+    position,
+    requestCount,
+  }
 
 }
