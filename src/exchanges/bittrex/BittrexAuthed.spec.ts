@@ -21,7 +21,7 @@ describe(__filename, () => {
 
     const bittrex = new BittrexAuthed({ settings, credentials })
 
-    expect(bittrex.id).to.eq('sample')
+    expect(bittrex.id).to.eq('bittrex')
 
     expect(bittrex.symbol).to.be.ok
     expect(bittrex.market).to.be.ok

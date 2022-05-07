@@ -17,7 +17,7 @@ const questions = [
     name: 'exchangeName',
     message: "What's the exchange name?",
     validate: inquirerValidations.notNull,
-    help: () => '(i.e.: Bitfinex, BitMEX, GateIO))',
+    help: () => '(i.e.: Bitfinex, BitMEX, Gate)',
   },
   {
     type: 'checkbox',
@@ -35,34 +35,34 @@ const questions = [
     message: 'Select API features:',
     name: 'apiFeatures',
     choices: [
-      { name: 'Order Editing', value: AlunaApiFeaturesEnum.ORDER_EDITING },
-      { name: 'Position ID', value: AlunaApiFeaturesEnum.POSITION_ID },
+      { name: 'Provides method for editing orders', value: AlunaApiFeaturesEnum.ORDER_EDITING },
+      { name: 'Provides uid for positions', value: AlunaApiFeaturesEnum.POSITION_ID },
     ],
   },
 ]
 
 
 
-export function getArgV (): any {
+export function getArgV(): any {
 
-  const argv = yargs
+  const { argv } = yargs
     .option('exchangeName', {
       alias: 'e',
       description: 'Exchange Name',
-      type: 'string'
+      type: 'string',
     })
     .option('tradingFeatures', {
       alias: 't',
-      description: 'Exchange Features',
-      type: 'string'
+      description: 'Trading Features',
+      type: 'string',
     })
     .option('apiFeatures', {
       alias: 'a',
-      description: 'API Featurs',
-      type: 'string'
+      description: 'API Features',
+      type: 'string',
     })
     .help()
-    .alias('help', 'h').argv
+    .alias('help', 'h')
 
   return argv
 
@@ -70,7 +70,7 @@ export function getArgV (): any {
 
 
 
-export async function addExchange () {
+export async function addExchange() {
 
   const argv: IPromptAnswers = getArgV()
   let answers

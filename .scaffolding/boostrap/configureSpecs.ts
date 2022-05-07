@@ -1,4 +1,3 @@
-import { settings } from 'cluster'
 import { join } from 'path'
 import shell from 'shelljs'
 
@@ -29,8 +28,8 @@ export const configureSpecs = (
 
     log('configuring order-editing feature specs')
 
-    search = `offersOrderEditing: true,`
-    replace = `offersOrderEditing: false,`
+    search = 'offersOrderEditing: true,'
+    replace = 'offersOrderEditing: false,'
 
     shell.sed('-i', search, replace, specsFilepath)
 
@@ -40,8 +39,8 @@ export const configureSpecs = (
 
     log('configuring position-id feature specs')
 
-    search = `offersPositionId: true,`
-    replace = `offersPositionId: false,`
+    search = 'offersPositionId: true,'
+    replace = 'offersPositionId: false,'
 
     shell.sed('-i', search, replace, specsFilepath)
 

@@ -1,3 +1,4 @@
+import { each } from 'lodash'
 import shell from 'shelljs'
 
 import { IBoostrapMethodParams } from './IBoostrapMethodParams'
@@ -15,13 +16,13 @@ export const renameSampleFiles = (
 
   const newFilePaths: string[] = []
 
-  for(const file of files) {
+  each(files, (file) => {
 
-    const reg = /(sample)[^\/]*\.ts$/mi
+    const reg = /(sample)[^/]*\.ts$/mi
 
     if (reg.test(file)) {
 
-      let to = file
+      const to = file
         .replace(/Sample/g, configs.exchangeName)
         .replace(/SAMPLE/g, configs.exchangeUpper)
         .replace(/sample/g, configs.exchangeLower)
@@ -34,8 +35,8 @@ export const renameSampleFiles = (
       newFilePaths.push(file)
     }
 
-  }
+  })
 
-  params.files = newFilePaths
+  return newFilePaths
 
 }

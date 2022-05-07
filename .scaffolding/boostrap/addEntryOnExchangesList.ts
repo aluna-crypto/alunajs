@@ -9,9 +9,6 @@ export const addEntryOnExchangesList = (
   params: IBoostrapMethodParams,
 ) => {
 
-  let search: string | RegExp
-  let replace: string | RegExp
-
   const {
     // log,
     // settings,
@@ -32,7 +29,7 @@ export const addEntryOnExchangesList = (
   const exchangesFilepath = join(SRC, 'lib', 'exchanges.ts')
 
   const buildCondition = (term: string) => (contents: string) => {
-    return (contents.indexOf(term) == -1)
+    return (contents.indexOf(term) === -1)
   }
 
   replaceSync({

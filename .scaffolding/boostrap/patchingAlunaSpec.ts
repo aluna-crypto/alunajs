@@ -21,7 +21,7 @@ export const patchAlunaSpec = (
   const exchangesFilepath = join(SRC, 'lib', 'exchanges.ts')
 
   const contents = readFileSync(exchangesFilepath, 'utf8')
-  const matches = contents.match(/\:/g) || []
+  const matches = contents.match(/:/g) || []
 
   const exchangesNum = matches.length
 
@@ -36,7 +36,7 @@ export const patchAlunaSpec = (
     filepath: specFilepath,
     search: specSearch,
     replace: specReplace,
-    condition: (contents: string) => contents.indexOf(specReplace) === -1
+    condition: (contents: string) => contents.indexOf(specReplace) === -1,
   })
 
 }
