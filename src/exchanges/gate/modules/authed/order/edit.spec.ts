@@ -28,7 +28,7 @@ describe(__filename, () => {
   it('should edit a Gate order just fine', async () => {
 
     // preparing data
-    const http = new GateHttp()
+    const http = new GateHttp({})
 
     const mockedRawOrder = GATE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]

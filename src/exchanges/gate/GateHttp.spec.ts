@@ -122,7 +122,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
     request.returns(Promise.resolve({ data: response }))
 
@@ -169,7 +169,7 @@ describe.skip(__filename, () => {
   it('should execute authed request just fine', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
 
     // mocking
@@ -229,7 +229,7 @@ describe.skip(__filename, () => {
   it('should properly increment request count on public requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -264,7 +264,7 @@ describe.skip(__filename, () => {
   it('should properly increment request count on authed requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -300,7 +300,7 @@ describe.skip(__filename, () => {
   it('should properly handle request error on public requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -333,7 +333,7 @@ describe.skip(__filename, () => {
   it('should properly handle request error on authed requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -367,7 +367,7 @@ describe.skip(__filename, () => {
   it('should properly use proxy settings on public requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
 
     // mocking
@@ -403,7 +403,7 @@ describe.skip(__filename, () => {
   it('should properly use proxy settings on authed requests', async () => {
 
     // preparing data
-    const gateHttp = new GateHttp()
+    const gateHttp = new GateHttp({})
 
 
     // mocking
@@ -482,7 +482,7 @@ describe.skip(__filename, () => {
         verb: AlunaHttpVerbEnum.GET,
       }
 
-      await new GateHttp().publicRequest(params)
+      await new GateHttp({}).publicRequest(params)
 
     },
 

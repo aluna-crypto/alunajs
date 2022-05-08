@@ -7,7 +7,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { GateAuthed } from '../../../GateAuthed'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { GATE_KEY_PERMISSIONS } from '../../../test/fixtures/gateKey'
 import * as parseDetailsMod from './parseDetails'
 
@@ -18,7 +18,7 @@ describe(__filename, () => {
   it('should fetch Gate key details just fine', async () => {
 
     // preparing data
-    const http = new GateHttp()
+    const http = new GateHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -66,7 +66,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: gateEndpoints.key.fetchDetails,
+      url: getGateEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
 
