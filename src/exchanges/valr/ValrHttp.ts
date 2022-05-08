@@ -1,6 +1,5 @@
 import axios from 'axios'
 import crypto from 'crypto'
-import debug from 'debug'
 
 import {
   IAlunaHttp,
@@ -18,65 +17,6 @@ import { handleValrRequestError } from './errors/handleValrRequestError'
 
 
 export const VALR_HTTP_CACHE_KEY_PREFIX = 'ValrHttp.publicRequest'
-
-
-
-const log = debug('@alunajs:valr/ValrHttp')
-
-
-interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  credentials: IAlunaCredentialsSchema
-  url: string
-  body?: any
-}
-
-
-
-export interface IValrSignedHeaders {
-  'X-VALR-API-KEY': string
-  'X-VALR-SIGNATURE': string
-  'X-VALR-TIMESTAMP': number
-}
-
-
-
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): IValrSignedHeaders => {
-
-  log('generateAuthHeader', params)
-
-  const {
-    credentials,
-    verb,
-    body,
-    path,
-  } = params
-
-  const {
-    key,
-    secret,
-  } = credentials
-
-  const timestamp = Date.now()
-
-  const signedRequest = crypto
-    .createHmac('sha512', secret)
-    .update(timestamp.toString())
-    .update(verb.toUpperCase())
-    .update(`${path}`)
-    .update(body ? JSON.stringify(body) : '')
-    .digest('hex')
-
-  return {
-    'X-VALR-API-KEY': key,
-    'X-VALR-SIGNATURE': signedRequest,
-    'X-VALR-TIMESTAMP': timestamp,
-  }
-
-}
 
 
 
@@ -112,22 +52,31 @@ export class ValrHttp implements IAlunaHttp {
       settings,
     } = params
 
+    const {
+      cacheTtlInSeconds = 60,
+      disableCache = false,
+    } = settings || this.settings
+
     const cacheKey = AlunaCache.hashCacheKey({
       args: params,
       prefix: VALR_HTTP_CACHE_KEY_PREFIX,
     })
 
-    if (AlunaCache.cache.has(cacheKey)) {
-
-      return AlunaCache.cache.get<T>(cacheKey) as T
-
+    if (disableCache) {
+      AlunaCache.cache.del(cacheKey)
     }
+
+    if (AlunaCache.cache.has(cacheKey)) {
+      return AlunaCache.cache.get<T>(cacheKey) as T
+    }
+
+    const { proxySettings } = (settings || this.settings)
 
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
       data: body,
-      proxySettings: settings?.proxySettings,
+      proxySettings,
     })
 
     this.requestCount.public += weight
@@ -136,7 +85,7 @@ export class ValrHttp implements IAlunaHttp {
 
       const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, data)
+      AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
 
       return data
 
@@ -193,6 +142,58 @@ export class ValrHttp implements IAlunaHttp {
 
     }
 
+  }
+
+}
+
+
+
+interface ISignedHashParams {
+  verb: AlunaHttpVerbEnum
+  path: string
+  credentials: IAlunaCredentialsSchema
+  url: string
+  body?: any
+}
+
+export interface IValrSignedHeaders {
+  'X-VALR-API-KEY': string
+  'X-VALR-SIGNATURE': string
+  'X-VALR-TIMESTAMP': number
+}
+
+
+
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+): IValrSignedHeaders => {
+
+  const {
+    credentials,
+    verb,
+    body,
+    path,
+  } = params
+
+  const {
+    key,
+    secret,
+  } = credentials
+
+  const timestamp = Date.now()
+
+  const signedRequest = crypto
+    .createHmac('sha512', secret)
+    .update(timestamp.toString())
+    .update(verb.toUpperCase())
+    .update(`${path}`)
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
+
+  return {
+    'X-VALR-API-KEY': key,
+    'X-VALR-SIGNATURE': signedRequest,
+    'X-VALR-TIMESTAMP': timestamp,
   }
 
 }

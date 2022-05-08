@@ -1,8 +1,10 @@
 import { cloneDeep } from 'lodash'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -130,25 +132,37 @@ export const buildBittrexSpecs = (params: {
 
 
 
-export const bittrexEndpoints = {
-  symbol: {
-    list: `${BITTREX_PRODUCTION_URL}/currencies`,
-  },
-  market: {
-    markets: `${BITTREX_PRODUCTION_URL}/markets`,
-    summaries: `${BITTREX_PRODUCTION_URL}/markets/summaries`,
-    tickers: `${BITTREX_PRODUCTION_URL}/markets/tickers`,
-  },
-  key: {
-    account: `${BITTREX_PRODUCTION_URL}/account`,
-  },
-  balance: {
-    list: `${BITTREX_PRODUCTION_URL}/balances`,
-  },
-  order: {
-    get: (id: string) => `${BITTREX_PRODUCTION_URL}/orders/${id}`,
-    list: `${BITTREX_PRODUCTION_URL}/orders/open`,
-    place: `${BITTREX_PRODUCTION_URL}/orders`,
-    cancel: (id: string) => `${BITTREX_PRODUCTION_URL}/orders/${id}`,
-  },
+export const getBittrexEndpoints = (settings: IAlunaSettingsSchema) => {
+
+  const baseUrl = BITTREX_PRODUCTION_URL
+
+  if (settings.useTestNet) {
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET,
+      message: 'Bittrex don\'t have a testnet.',
+    })
+  }
+
+  return {
+    symbol: {
+      list: `${baseUrl}/currencies`,
+    },
+    market: {
+      markets: `${baseUrl}/markets`,
+      summaries: `${baseUrl}/markets/summaries`,
+      tickers: `${baseUrl}/markets/tickers`,
+    },
+    key: {
+      account: `${baseUrl}/account`,
+    },
+    balance: {
+      list: `${baseUrl}/balances`,
+    },
+    order: {
+      get: (id: string) => `${baseUrl}/orders/${id}`,
+      list: `${baseUrl}/orders/open`,
+      place: `${baseUrl}/orders`,
+      cancel: (id: string) => `${baseUrl}/orders/${id}`,
+    },
+  }
 }

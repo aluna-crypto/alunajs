@@ -1,5 +1,4 @@
 import axios from 'axios'
-import debug from 'debug'
 
 import {
   IAlunaHttp,
@@ -17,57 +16,6 @@ import { handleSampleRequestError } from './errors/handleSampleRequestError'
 
 
 export const SAMPLE_HTTP_CACHE_KEY_PREFIX = 'SampleHttp.publicRequest'
-
-
-
-const log = debug('@alunajs:sample/SampleHttp')
-
-
-// TODO: Review interface properties
-interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  credentials: IAlunaCredentialsSchema
-  url: string
-  body?: any
-}
-
-
-
-// TODO: Review interface properties
-export interface ISampleSignedHeaders {
-  'Api-Timestamp': number
-}
-
-
-
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): ISampleSignedHeaders => {
-
-  log('generateAuthHeader', params)
-
-  // TODO: Implement method
-
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
-
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
-
-  const timestamp = Date.now()
-
-  return {
-    'Api-Timestamp': timestamp,
-  }
-
-}
 
 
 
@@ -184,6 +132,50 @@ export class SampleHttp implements IAlunaHttp {
 
     }
 
+  }
+
+}
+
+
+
+// FIXME: Review interface properties
+interface ISignedHashParams {
+  verb: AlunaHttpVerbEnum
+  path: string
+  credentials: IAlunaCredentialsSchema
+  url: string
+  body?: any
+}
+
+// FIXME: Review interface properties
+export interface ISampleSignedHeaders {
+  'Api-Timestamp': number
+}
+
+
+
+export const generateAuthHeader = (
+  _params: ISignedHashParams,
+): ISampleSignedHeaders => {
+
+  // FIXME: Implement method (and rename `_params` to `params`)
+
+  // const {
+  //   credentials,
+  //   verb,
+  //   body,
+  //   url,
+  // } = params
+
+  // const {
+  //   key,
+  //   secret,
+  // } = credentials
+
+  const timestamp = Date.now()
+
+  return {
+    'Api-Timestamp': timestamp,
   }
 
 }
