@@ -52,19 +52,10 @@ export class ValrHttp implements IAlunaHttp {
       settings,
     } = params
 
-    const {
-      cacheTtlInSeconds = 60,
-      disableCache = false,
-    } = settings || this.settings
-
     const cacheKey = AlunaCache.hashCacheKey({
       args: params,
       prefix: VALR_HTTP_CACHE_KEY_PREFIX,
     })
-
-    if (disableCache) {
-      AlunaCache.cache.del(cacheKey)
-    }
 
     if (AlunaCache.cache.has(cacheKey)) {
       return AlunaCache.cache.get<T>(cacheKey) as T
@@ -85,7 +76,7 @@ export class ValrHttp implements IAlunaHttp {
 
       const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
+      AlunaCache.cache.set<T>(cacheKey, data)
 
       return data
 
