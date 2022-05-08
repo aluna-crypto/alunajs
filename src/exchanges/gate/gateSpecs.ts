@@ -1,8 +1,10 @@
 import { cloneDeep } from 'lodash'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -131,25 +133,36 @@ export const buildGateSpecs = (params: {
 }
 
 
+export const getGateEndpoints = (settings: IAlunaSettingsSchema) => {
 
-export const gateEndpoints = {
-  symbol: {
-    list: `${GATE_PRODUCTION_URL}/spot/currencies`,
-  },
-  market: {
-    list: `${GATE_PRODUCTION_URL}/spot/tickers`,
-  },
-  key: {
-    fetchDetails: `${GATE_PRODUCTION_URL}/spot/accounts`,
-  },
-  balance: {
-    list: `${GATE_PRODUCTION_URL}/spot/accounts`,
-  },
-  order: {
-    get: (id: string, query: string) => `${GATE_PRODUCTION_URL}/spot/orders/${id}?${query}`,
-    list: `${GATE_PRODUCTION_URL}/spot/open_orders`,
-    place: `${GATE_PRODUCTION_URL}/spot/orders`,
-    cancel: (id: string, query: string) => `${GATE_PRODUCTION_URL}/spot/orders/${id}?${query}`,
-    // edit: `${GATE_PRODUCTION_URL}/<desired-method>`,
-  },
+  const baseUrl = GATE_PRODUCTION_URL
+
+  if (settings.useTestNet) {
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET,
+      message: 'Gate don\'t have a testnet.',
+    })
+  }
+
+  return {
+    symbol: {
+      list: `${baseUrl}/spot/currencies`,
+    },
+    market: {
+      list: `${baseUrl}/spot/tickers`,
+    },
+    key: {
+      fetchDetails: `${baseUrl}/spot/accounts`,
+    },
+    balance: {
+      list: `${baseUrl}/spot/accounts`,
+    },
+    order: {
+      get: (id: string, query: string) => `${baseUrl}/spot/orders/${id}?${query}`,
+      list: `${baseUrl}/spot/open_orders`,
+      place: `${baseUrl}/spot/orders`,
+      cancel: (id: string, query: string) => `${baseUrl}/spot/orders/${id}?${query}`,
+      // edit: `${baseUrl}/<desired-method>`,
+    },
+  }
 }
