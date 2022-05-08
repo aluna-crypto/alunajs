@@ -6,9 +6,9 @@ import {
   IAlunaKeyFetchDetailsParams,
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
+import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 
 
 
@@ -24,7 +24,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { credentials } = exchange
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const permissions = await http.authedRequest<IValrKeySchema>({
     verb: AlunaHttpVerbEnum.GET,

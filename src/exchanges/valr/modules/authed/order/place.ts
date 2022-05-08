@@ -13,12 +13,15 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToValr } from '../../../enums/adapters/valrOrderSideAdapter'
 import { translateOrderTypeToValr } from '../../../enums/adapters/valrOrderTypeAdapter'
-import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { IValrOrderGetSchema, IValrOrderPlaceResponseSchema } from '../../../schemas/IValrOrderSchema'
-import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
 import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
+import {
+  IValrOrderGetSchema,
+  IValrOrderPlaceResponseSchema,
+} from '../../../schemas/IValrOrderSchema'
+import { ValrHttp } from '../../../ValrHttp'
+import { valrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -30,7 +33,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderPlaceParams,
 ): Promise<IAlunaOrderPlaceReturns> => {
 
-  log('params', params)
+  log('placing order', params)
 
   const { credentials } = exchange
 
@@ -50,7 +53,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new ValrHttp(),
+    http = new ValrHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToValr({
@@ -58,7 +61,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   const body = {
-    direction: translateOrderSideToValr({ from: side }),
+    side: translateOrderSideToValr({ from: side }),
     pair: symbolPair,
   }
 

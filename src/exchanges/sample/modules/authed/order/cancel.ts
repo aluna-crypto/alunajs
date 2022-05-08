@@ -22,13 +22,13 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderCancelParams,
 ): Promise<IAlunaOrderCancelReturns> => {
 
-  log('params', params)
+  log('canceling order', params)
 
   const { credentials } = exchange
 
   const {
     id,
-    http = new SampleHttp(),
+    http = new SampleHttp(exchange.settings),
   } = params
 
   try {

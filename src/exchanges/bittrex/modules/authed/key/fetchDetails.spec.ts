@@ -26,7 +26,7 @@ describe(__filename, () => {
   it('should fetch Bittrex key details just fine', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
+    const http = new BittrexHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -132,7 +132,7 @@ describe(__filename, () => {
   it('should properly verify if key has permission to read', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
+    const http = new BittrexHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -218,7 +218,7 @@ describe(__filename, () => {
   it('should properly verify if key has permission to trade', async () => {
 
     // preparing data
-    const http = new BittrexHttp()
+    const http = new BittrexHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',

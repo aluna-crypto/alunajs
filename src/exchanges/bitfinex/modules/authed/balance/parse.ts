@@ -21,7 +21,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseParams<IBitfinexBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
-  log(params, 'params')
+  log('list balances', params)
 
   const { rawBalance } = params
 
@@ -39,7 +39,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const symbolId = translateSymbolId({
     exchangeSymbolId: currency,
-    symbolMappings: bitfinexBaseSpecs.settings.mappings,
+    symbolMappings: bitfinexBaseSpecs.settings.symbolMappings,
   })
 
   const parsedBalance: IAlunaBalanceSchema = {

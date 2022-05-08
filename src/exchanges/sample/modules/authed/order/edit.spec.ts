@@ -28,14 +28,12 @@ describe(__filename, () => {
   it('should edit a Sample order just fine', async () => {
 
     // preparing data
-    const http = new SampleHttp()
+    const http = new SampleHttp({})
 
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const {
-      id, quantity,
-    } = mockedRawOrder
+    const { id } = mockedRawOrder
 
 
     // mocking
@@ -56,7 +54,7 @@ describe(__filename, () => {
       id,
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
+      amount: 0.01,
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 0,

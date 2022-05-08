@@ -20,8 +20,6 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseManyParams<IBitfinexBalanceSchema>,
 ): IAlunaBalanceParseManyReturns => {
 
-  log(params, 'params')
-
   const { rawBalances } = params
 
 
@@ -47,6 +45,8 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   }, [])
 
+
+  log(`parsed ${balances.length} balances`)
 
   return { balances }
 

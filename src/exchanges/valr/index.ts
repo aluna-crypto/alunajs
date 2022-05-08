@@ -4,6 +4,6 @@ import { ValrAuthed } from './ValrAuthed'
 
 
 export const valr = {
-  Public: Valr,
-  Authed: ValrAuthed,
+  PublicClass: Valr,
+  AuthedClass: ValrAuthed,
 }

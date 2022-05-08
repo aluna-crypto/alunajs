@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Bitfinex symbols')
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

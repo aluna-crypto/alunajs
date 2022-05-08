@@ -30,7 +30,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderEditParams,
 ): Promise<IAlunaOrderEditReturns> => {
 
-  log('params', params)
+  log('editing order', params)
 
   const { credentials } = exchange
 
@@ -49,7 +49,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     stopRate,
     limitRate,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const translatedAmount = translateOrderSideToBitfinex({

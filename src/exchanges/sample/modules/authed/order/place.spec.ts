@@ -37,10 +37,6 @@ describe(__filename, () => {
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const {
-      quantity,
-    } = mockedRawOrder
-
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.LIMIT
 
@@ -51,7 +47,7 @@ describe(__filename, () => {
       direction: translatedOrderSide,
       marketSymbol: '',
       type: translatedOrderType,
-      quantity: Number(quantity),
+      quantity: 0.01,
       rate: 0,
       // limit: 0,
       // timeInForce: SampleOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
@@ -80,7 +76,7 @@ describe(__filename, () => {
     const params: IAlunaOrderPlaceParams = {
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
+      amount: 0.01,
       side,
       type,
       rate: 0,
@@ -113,10 +109,6 @@ describe(__filename, () => {
     const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const {
-      quantity,
-    } = mockedRawOrder
-
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
 
@@ -127,7 +119,7 @@ describe(__filename, () => {
       direction: translatedOrderSide,
       marketSymbol: '',
       type: translatedOrderType,
-      quantity: Number(quantity),
+      quantity: 0.01,
       rate: 0,
       // timeInForce: SampleOrderTimeInForceEnum.FILL_OR_KILL,
     }
@@ -155,7 +147,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.place({
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
+      amount: 0.01,
       side,
       type,
       rate: 0,
@@ -182,11 +174,7 @@ describe(__filename, () => {
     async () => {
 
       // preparing data
-      const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-
-      const {
-        quantity,
-      } = mockedRawOrder
+      // const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
 
       const side = AlunaOrderSideEnum.BUY
       const type = AlunaOrderTypesEnum.MARKET
@@ -223,7 +211,7 @@ describe(__filename, () => {
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
         account: AlunaAccountEnum.EXCHANGE,
-        amount: Number(quantity),
+        amount: 0.01,
         side,
         type,
         rate: 0,
@@ -248,11 +236,7 @@ describe(__filename, () => {
     async () => {
 
       // preparing data
-      const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-
-      const {
-        quantity,
-      } = mockedRawOrder
+      // const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
 
       const side = AlunaOrderSideEnum.BUY
       const type = AlunaOrderTypesEnum.MARKET
@@ -289,7 +273,7 @@ describe(__filename, () => {
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
         account: AlunaAccountEnum.EXCHANGE,
-        amount: Number(quantity),
+        amount: 0.01,
         side,
         type,
         rate: 0,
@@ -310,11 +294,7 @@ describe(__filename, () => {
   it('should throw an error placing new sample order', async () => {
 
     // preparing data
-    const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
-
-    const {
-      quantity,
-    } = mockedRawOrder
+    // const mockedRawOrder = SAMPLE_RAW_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
@@ -348,7 +328,7 @@ describe(__filename, () => {
     const { error } = await executeAndCatch(() => exchange.order.place({
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
+      amount: 0.01,
       side,
       type,
       rate: Number(0),

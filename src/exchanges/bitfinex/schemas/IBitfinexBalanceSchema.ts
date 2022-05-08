@@ -15,6 +15,8 @@ type TBitfinexBalance = [
 ]
 
 interface IBitfinexBalanceTradeDetails {
+
+  /* eslint-disable camelcase */
   reason: string
   order_id: number
   order_id_oppo: number
@@ -23,5 +25,6 @@ interface IBitfinexBalanceTradeDetails {
   trade_amount: string
   order_cid: number | null
   order_gid: number | null
-}
+  /* eslint-enable camelcase */
 
+}

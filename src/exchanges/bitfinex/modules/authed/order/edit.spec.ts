@@ -12,7 +12,7 @@ describe(__filename, () => {
   it('should edit a Bitfinex order just fine', async () => {
 
     // preparing data
-    // const http = new BitfinexHttp()
+    // const http = new BitfinexHttp({})
 
     expect(2).to.be.ok
 

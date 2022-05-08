@@ -31,7 +31,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderPlaceParams,
 ): Promise<IAlunaOrderPlaceReturns> => {
 
-  log('params', params)
+  log('placing order', params)
 
   const { credentials } = exchange
 
@@ -54,7 +54,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     account,
     limitRate,
     stopRate,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBitfinex({

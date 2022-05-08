@@ -3,7 +3,7 @@ import { IScaffoldSettings } from '../bootstrapExchange'
 
 
 export interface IBoostrapMethodParams {
-  log: Function
+  log: any // function
   settings: IScaffoldSettings
   files: string[]
   paths: {
@@ -12,7 +12,7 @@ export interface IBoostrapMethodParams {
     EXCHANGES: string
     SAMPLE_EXCHANGE: string
     DESTINATION: string
-  },
+  }
   configs: {
     exchangeName: string
     exchangeUpper: string

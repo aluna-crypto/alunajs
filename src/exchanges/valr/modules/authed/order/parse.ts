@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
@@ -16,12 +14,16 @@ import { translateOrderTypeToAluna } from '../../../enums/adapters/valrOrderType
 import { ValrOrderSideEnum } from '../../../enums/ValrOrderSideEnum'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
-import { IValrOrderGetSchema, IValrOrderListSchema, IValrOrderSchema } from '../../../schemas/IValrOrderSchema'
+import {
+  IValrOrderGetSchema,
+  IValrOrderListSchema,
+  IValrOrderSchema,
+} from '../../../schemas/IValrOrderSchema'
 import { valrBaseSpecs } from '../../../valrSpecs'
 
 
 
-const log = debug('@alunajs:valr/order/parse')
+// const log = debug('@alunajs:valr/order/parse')
 
 
 
@@ -29,7 +31,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IValrOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('parse order', params)
 
   const { rawOrder } = params
 
@@ -94,12 +96,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const alnOrderType = translateOrderTypeToAluna({ from: type })

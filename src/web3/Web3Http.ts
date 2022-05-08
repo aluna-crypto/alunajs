@@ -11,6 +11,7 @@ import {
 import { AlunaHttpVerbEnum } from '../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaExchangeErrorCodes } from '../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaHttpErrorCodes } from '../lib/errors/AlunaHttpErrorCodes'
+import { IAlunaSettingsSchema } from '../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../utils/cache/AlunaCache'
 
@@ -26,16 +27,19 @@ export const WEB3_CACHE_KEY_PREFIX = 'Web3.publicRequest'
 
 export class Web3Http implements IAlunaHttp {
 
+  public settings: IAlunaSettingsSchema
   public requestCount: IAlunaHttpRequestCount
 
 
 
-  constructor() {
+  constructor(settings: IAlunaSettingsSchema) {
 
     this.requestCount = {
       authed: 0,
       public: 0,
     }
+
+    this.settings = settings
 
   }
 

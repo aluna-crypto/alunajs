@@ -18,7 +18,7 @@ describe(__filename, () => {
   it('should fetch Sample key details just fine', async () => {
 
     // preparing data
-    const http = new SampleHttp()
+    const http = new SampleHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',

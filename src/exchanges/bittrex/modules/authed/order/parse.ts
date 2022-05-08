@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
@@ -14,18 +12,19 @@ import { translateOrderSideToAluna } from '../../../enums/adapters/bittrexOrderS
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bittrexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderStatusEnum } from '../../../enums/BittrexOrderStatusEnum'
+import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
-const log = debug('@alunajs:bittrex/order/parse')
+// const log = debug('@alunajs:bittrex/order/parse')
 
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams,
+  params: IAlunaOrderParseParams<IBittrexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('parse order', params)
 
   const { rawOrder } = params
 
@@ -49,12 +48,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteCurrency,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   let rate: number | undefined

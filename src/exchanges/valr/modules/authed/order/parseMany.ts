@@ -6,7 +6,10 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IValrOrderListResponseSchema, IValrOrderSchema } from '../../../schemas/IValrOrderSchema'
+import {
+  IValrOrderListResponseSchema,
+  IValrOrderSchema,
+} from '../../../schemas/IValrOrderSchema'
 
 
 
@@ -17,8 +20,6 @@ const log = debug('@alunajs:valr/order/parseMany')
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams<IValrOrderListResponseSchema>,
 ): IAlunaOrderParseManyReturns => {
-
-  log('params', params)
 
   const { rawOrders } = params
 
@@ -44,7 +45,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   })
 
-  log(`parsed ${parsedOrders.length} orders for Valr`)
+  log(`parsed ${parsedOrders.length} orders`)
 
   return { orders: parsedOrders }
 

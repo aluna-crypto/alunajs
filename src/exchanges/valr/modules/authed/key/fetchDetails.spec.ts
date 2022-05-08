@@ -5,10 +5,10 @@ import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
+import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 import * as parseDetailsMod from './parseDetails'
 
 
@@ -18,7 +18,7 @@ describe(__filename, () => {
   it('should fetch Valr key details just fine', async () => {
 
     // preparing data
-    const http = new ValrHttp()
+    const http = new ValrHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',

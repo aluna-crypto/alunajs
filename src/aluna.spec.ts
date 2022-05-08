@@ -39,7 +39,7 @@ describe(__filename, () => {
 
       expect(error).not.to.be.ok
       expect(exchange).to.be.ok
-      expect(exchange instanceof exchanges[exchangeId].Public).to.be.ok
+      expect(exchange instanceof exchanges[exchangeId].PublicClass).to.be.ok
 
     })
 
@@ -70,7 +70,7 @@ describe(__filename, () => {
 
       expect(error).not.to.be.ok
       expect(exchange).to.be.ok
-      expect(exchange instanceof exchanges[exchangeId].Authed).to.be.ok
+      expect(exchange instanceof exchanges[exchangeId].AuthedClass).to.be.ok
 
     })
 

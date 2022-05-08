@@ -156,4 +156,11 @@ export const sampleEndpoints = {
     cancel: (id: string) => `${SAMPLE_PRODUCTION_URL}/<desired-method>/${id}`,
     // edit: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
   },
+  position: {
+    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    close: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    getLeverage: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+    setLeverage: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
+  },
 }

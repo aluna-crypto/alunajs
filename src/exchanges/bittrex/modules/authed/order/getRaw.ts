@@ -20,13 +20,13 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetRawReturns<IBittrexOrderSchema>> => {
 
-  log('params', params)
+  log('getting raw order', params)
 
   const { credentials } = exchange
 
   const {
     id,
-    http = new BittrexHttp(),
+    http = new BittrexHttp(exchange.settings),
   } = params
 
   const rawOrder = await http.authedRequest<any>({

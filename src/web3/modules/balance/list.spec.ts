@@ -17,8 +17,10 @@ describe(__filename, () => {
   it('should list Web3 balances just fine', async () => {
 
     // preparing data
-    const http = new Web3Http()
+    const http = new Web3Http({})
+
     const address = '0xA8950F8C30595bE20A279b4F2ca54d140128AB1D'
+
     const parsedBalances: IAlunaBalanceSchema[] = [
       { itWorked: true } as any, // TODO: use fixtures with proper typing
     ]

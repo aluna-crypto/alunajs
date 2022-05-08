@@ -9,6 +9,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { handleBittrexRequestError } from './errors/handleBittrexRequestError'
@@ -81,16 +82,19 @@ export const generateAuthHeader = (
 
 export class BittrexHttp implements IAlunaHttp {
 
+  public settings: IAlunaSettingsSchema
   public requestCount: IAlunaHttpRequestCount
 
 
 
-  constructor() {
+  constructor(settings: IAlunaSettingsSchema) {
 
     this.requestCount = {
       authed: 0,
       public: 0,
     }
+
+    this.settings = settings
 
   }
 

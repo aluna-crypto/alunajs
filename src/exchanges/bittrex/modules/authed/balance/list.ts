@@ -17,9 +17,9 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListReturns> => {
 
-  log('params', params)
+  log('listing balances', params)
 
-  const { http = new BittrexHttp() } = params
+  const { http = new BittrexHttp(exchange.settings) } = params
 
   const { rawBalances } = await exchange.balance.listRaw({ http })
 

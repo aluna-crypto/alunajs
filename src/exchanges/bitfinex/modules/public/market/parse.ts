@@ -26,10 +26,10 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const [
     symbol,
     bid,
-    _bid_size,
+    _bidSize,
     ask,
-    _ask_size,
-    _daily_change,
+    _askSize,
+    _dailyChange,
     dailyChangeRelative,
     lastPrice,
     volume,
@@ -55,7 +55,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   }
 
-  const symbolMappings = bitfinexBaseSpecs.settings.mappings
+  const symbolMappings = bitfinexBaseSpecs.settings.symbolMappings
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,

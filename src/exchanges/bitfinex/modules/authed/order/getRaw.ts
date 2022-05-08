@@ -21,14 +21,14 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetRawReturns<IBitfinexOrderSchema>> => {
 
-  log('params', params)
+  log('getting raw order', params)
 
   const { credentials } = exchange
 
   const {
     id: stringId,
     symbolPair,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const id = Number(stringId)

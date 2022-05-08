@@ -5,9 +5,9 @@ import {
   IAlunaSymbolListParams,
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { valrEndpoints } from '../../../valrSpecs'
-import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
 
 
 
@@ -21,7 +21,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Valr raw symbols')
 
-  const { http = new ValrHttp() } = params
+  const { http = new ValrHttp(exchange.settings) } = params
 
   const rawSymbols = await http.publicRequest<IValrSymbolSchema[]>({
     url: valrEndpoints.symbol.list,

@@ -1,5 +1,3 @@
-import { debug } from 'debug'
-
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
@@ -14,18 +12,19 @@ import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { translateAccountToAluna } from '../../../enums/adapters/bitfinexAccountsAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bitfinexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
+import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
-const log = debug('@alunajs:bitfinex/order/parse')
+// const log = debug('@alunajs:bitfinex/order/parse')
 
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams,
+  params: IAlunaOrderParseParams<IBitfinexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  log('params', params)
+  // log('parse order', params)
 
   const {
     rawOrder,
@@ -72,7 +71,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   }
 
-  const symbolMappings = bitfinexBaseSpecs.settings.mappings
+  const symbolMappings = bitfinexBaseSpecs.settings.symbolMappings
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,
@@ -139,7 +138,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   }
 
   const order: IAlunaOrderSchema = {
-    id,
+    id: id.toString(),
     symbolPair,
     exchangeId: bitfinexBaseSpecs.id,
     baseSymbolId,

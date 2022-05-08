@@ -4,6 +4,6 @@ import { SampleAuthed } from './SampleAuthed'
 
 
 export const sample = {
-  Public: Sample,
-  Authed: SampleAuthed,
+  PublicClass: Sample,
+  AuthedClass: SampleAuthed,
 }

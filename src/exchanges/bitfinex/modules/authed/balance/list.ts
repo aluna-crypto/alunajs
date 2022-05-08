@@ -17,9 +17,9 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
 ): Promise<IAlunaBalanceListReturns> => {
 
-  log('params', params)
+  log('listing balances', params)
 
-  const { http = new BitfinexHttp() } = params
+  const { http = new BitfinexHttp(exchange.settings) } = params
 
   const { rawBalances } = await exchange.balance.listRaw({ http })
 

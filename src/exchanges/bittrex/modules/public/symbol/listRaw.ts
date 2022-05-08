@@ -21,7 +21,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bittrex raw symbols')
 
-  const { http = new BittrexHttp() } = params
+  const { http = new BittrexHttp(exchange.settings) } = params
 
   const rawSymbols = await http.publicRequest<IBittrexSymbolSchema[]>({
     url: bittrexEndpoints.symbol.list,

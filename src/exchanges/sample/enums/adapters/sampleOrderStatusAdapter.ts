@@ -52,10 +52,8 @@ export const translateOrderStatusToSample = buildAdapter<
   errorMessagePrefix,
   mappings: {
     [AlunaOrderStatusEnum.OPEN]: SampleOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
-          SampleOrderStatusEnum.OPEN,
+    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: SampleOrderStatusEnum.OPEN,
     [AlunaOrderStatusEnum.FILLED]: SampleOrderStatusEnum.CLOSED,
     [AlunaOrderStatusEnum.CANCELED]: SampleOrderStatusEnum.CLOSED,
   },
 })
-

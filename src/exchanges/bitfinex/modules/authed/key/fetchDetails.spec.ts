@@ -23,7 +23,7 @@ describe(__filename, () => {
   it('should fetch Bitfinex key details just fine', async () => {
 
     // preparing data
-    const http = new BitfinexHttp()
+    const http = new BitfinexHttp({})
 
     const bitfinexPermissions = BITFINEX_KEY_PERMISSIONS
     const { accountId } = BITFINEX_RAW_KEY

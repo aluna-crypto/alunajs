@@ -17,12 +17,12 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
 ): Promise<IAlunaOrderGetReturns> => {
 
-  log('params', params)
+  log('getting order', params)
 
   const {
     id,
     symbolPair,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   const { rawOrder } = await exchange.order.getRaw({

@@ -24,7 +24,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const symbolId = translateSymbolId({
     exchangeSymbolId: currencySymbol,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const balance: IAlunaBalanceSchema = {

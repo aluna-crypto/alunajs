@@ -21,14 +21,14 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderCancelParams,
 ): Promise<IAlunaOrderCancelReturns> => {
 
-  log('params', params)
+  log('canceling order', params)
 
   const { credentials } = exchange
 
   const {
     id,
     symbolPair,
-    http = new BitfinexHttp(),
+    http = new BitfinexHttp(exchange.settings),
   } = params
 
   try {

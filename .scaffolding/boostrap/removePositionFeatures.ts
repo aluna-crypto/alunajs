@@ -1,5 +1,4 @@
-import { settings } from 'cluster'
-import { log } from 'console'
+import { filter } from 'lodash'
 import { join } from 'path'
 import shell from 'shelljs'
 
@@ -12,9 +11,6 @@ import { IBoostrapMethodParams } from './IBoostrapMethodParams'
 export const removePositionFeatures = (
   params: IBoostrapMethodParams,
 ) => {
-
-  let search: string | RegExp
-  let replace: string | RegExp
 
   const {
     log,
@@ -29,9 +25,11 @@ export const removePositionFeatures = (
 
     const methodsDir = join(DESTINATION, 'modules', 'authed', 'position')
     const moduleFile = join(DESTINATION, 'modules', 'authed', 'position.ts')
+    const schemaFile = join(DESTINATION, 'schemas', `I${exchangeName}PositionSchema.ts`)
 
     shell.rm('-rf', methodsDir)
     shell.rm('-f', moduleFile)
+    shell.rm('-f', schemaFile)
 
     const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
 
@@ -47,5 +45,9 @@ export const removePositionFeatures = (
     })
 
   }
+
+  const isAPositionMod = /modules\/authed\/position/
+
+  return filter(params.files, (f) => !isAPositionMod.test(f))
 
 }
