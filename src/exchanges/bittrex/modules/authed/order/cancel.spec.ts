@@ -10,7 +10,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { BITTREX_RAW_ORDERS } from '../../../test/fixtures/bittrexOrders'
 import * as parseMod from './parse'
 
@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: bittrexEndpoints.order.cancel(id),
+      url: getBittrexEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: bittrexEndpoints.order.cancel(id),
+      url: getBittrexEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

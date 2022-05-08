@@ -7,7 +7,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { BITFINEX_RAW_ORDERS } from '../../../test/fixtures/bitfinexOrders'
 
 
@@ -57,7 +57,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: bitfinexEndpoints.order.get(symbolPair),
+      url: getBitfinexEndpoints(exchange.settings).order.get(symbolPair),
       body: { id: [id] },
     })
 
@@ -103,12 +103,12 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: bitfinexEndpoints.order.get(symbolPair),
+      url: getBitfinexEndpoints(exchange.settings).order.get(symbolPair),
       body: { id: [id] },
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
       credentials,
-      url: bitfinexEndpoints.order.getHistory(symbolPair),
+      url: getBitfinexEndpoints(exchange.settings).order.getHistory(symbolPair),
       body: { id: [id] },
     })
 

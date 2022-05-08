@@ -6,7 +6,7 @@ import {
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { IBitfinexBalanceSchema } from '../../../schemas/IBitfinexBalanceSchema'
 
 
@@ -21,12 +21,15 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing raw balances', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new BitfinexHttp(exchange.settings) } = params
+  const { http = new BitfinexHttp(settings) } = params
 
   const rawBalances = await http.authedRequest<IBitfinexBalanceSchema[]>({
-    url: bitfinexEndpoints.balance.list,
+    url: getBitfinexEndpoints(settings).balance.list,
     credentials,
   })
 

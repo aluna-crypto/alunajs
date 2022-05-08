@@ -18,7 +18,18 @@ import {
 } from 'alunajs'
 
 
-const settings: IAlunaSettingsSchema = {}
+
+const settings: IAlunaSettingsSchema = {
+  // disableCache?: boolean,
+  // cacheTtlInSeconds?: number,
+  // disableCache?: boolean,
+  // affiliateCode?: string,
+  // orderAnnotation?: string,
+  // referralCode?: string,
+  // proxySettings?: IAlunaProxySchema,
+  // mappings?: Record<string, string>,
+  mappings: { XBT: 'BTC' },
+}
 
 const credentials: IAlunaCredentialsSchema = {
   key: 'xxx',,
@@ -27,7 +38,8 @@ const credentials: IAlunaCredentialsSchema = {
 }
 
 
-// Public instance
+
+// —— public instance
 const exchangePublic = aluna('bitfinex', { settings })
 
 console.log(exchangePublic.specs)
@@ -36,7 +48,8 @@ apiPublic.symbol.list()
 apiPublic.market.list()
 
 
-// Authed instance (`credentials` required)
+
+// —— authed instance (`credentials` required)
 const exchangeAuthed = aluna('bitfinex', {
   settings,
   credentials, // <- here
@@ -66,7 +79,7 @@ import {
   Web3ChainsEnum,
 } from 'alunajs'
 
-const web3 = aluna.web3()
+const web3 = aluna.web3(/* settings?: IAlunaSettings */)
 
 const web3Address = '0xA8...'
 const chainId = Web3ChainsEnum.ETHEREUM

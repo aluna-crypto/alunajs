@@ -3,10 +3,10 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { VALR_RAW_BALANCES } from '../../../test/fixtures/valrBalances'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_BALANCES } from '../../../test/fixtures/valrBalances'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -45,7 +45,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: valrEndpoints.balance.list,
+      url: getValrEndpoints(exchange.settings).balance.list,
       credentials,
     })
 

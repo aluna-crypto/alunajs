@@ -14,7 +14,7 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
@@ -33,7 +33,10 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -51,7 +54,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new BittrexHttp(exchange.settings),
+    http = new BittrexHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBittrex({
@@ -87,7 +90,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const orderResponse = await http.authedRequest<IBittrexOrderSchema>({
-      url: bittrexEndpoints.order.place,
+      url: getBittrexEndpoints(settings).order.place,
       body,
       credentials,
     })

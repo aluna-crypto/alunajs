@@ -18,7 +18,7 @@ import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderS
 import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_RAW_ORDERS } from '../../../test/fixtures/sampleOrders'
 import * as parseMod from './parse'
 
@@ -93,7 +93,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: sampleEndpoints.order.place,
+      url: getSampleEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -162,7 +162,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: sampleEndpoints.order.place,
+      url: getSampleEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

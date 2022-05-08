@@ -6,7 +6,7 @@ import {
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
@@ -21,10 +21,12 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bittrex raw symbols')
 
-  const { http = new BittrexHttp(exchange.settings) } = params
+  const { settings } = exchange
+
+  const { http = new BittrexHttp(settings) } = params
 
   const rawSymbols = await http.publicRequest<IBittrexSymbolSchema[]>({
-    url: bittrexEndpoints.symbol.list,
+    url: getBittrexEndpoints(settings).symbol.list,
   })
 
   const { requestCount } = http

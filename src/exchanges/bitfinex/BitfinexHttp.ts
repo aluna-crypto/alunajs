@@ -20,61 +20,6 @@ export const BITFINEX_HTTP_CACHE_KEY_PREFIX = 'BitfinexHttp.publicRequest'
 
 
 
-interface ISignedHashParams {
-  url: string
-  body: Record<any, any>
-  credentials: IAlunaCredentialsSchema
-}
-
-
-
-export interface IBitfinexSignedHeaders {
-  'Content-Type': string
-  'bfx-nonce': string
-  'bfx-apikey': string
-  'bfx-signature': string
-}
-
-
-
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): IBitfinexSignedHeaders => {
-
-  const {
-    credentials,
-    body,
-    url,
-  } = params
-
-  const {
-    key,
-    secret,
-  } = credentials
-
-  const path = new URL(url).pathname
-
-  const nonce = (Date.now() * 1000).toString()
-
-  const payload = `/api${path}${nonce}${JSON.stringify(body)}`
-
-  const sig = crypto.createHmac('sha384', secret)
-    .update(payload)
-    .digest('hex')
-
-  const headers: IBitfinexSignedHeaders = {
-    'Content-Type': 'application/json',
-    'bfx-nonce': nonce,
-    'bfx-apikey': key,
-    'bfx-signature': sig,
-  }
-
-  return headers
-
-}
-
-
-
 export class BitfinexHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
@@ -187,5 +132,58 @@ export class BitfinexHttp implements IAlunaHttp {
     }
 
   }
+
+}
+
+
+
+interface ISignedHashParams {
+  url: string
+  body: Record<any, any>
+  credentials: IAlunaCredentialsSchema
+}
+
+export interface IBitfinexSignedHeaders {
+  'Content-Type': string
+  'bfx-nonce': string
+  'bfx-apikey': string
+  'bfx-signature': string
+}
+
+
+
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+): IBitfinexSignedHeaders => {
+
+  const {
+    credentials,
+    body,
+    url,
+  } = params
+
+  const {
+    key,
+    secret,
+  } = credentials
+
+  const path = new URL(url).pathname
+
+  const nonce = (Date.now() * 1000).toString()
+
+  const payload = `/api${path}${nonce}${JSON.stringify(body)}`
+
+  const sig = crypto.createHmac('sha384', secret)
+    .update(payload)
+    .digest('hex')
+
+  const headers: IBitfinexSignedHeaders = {
+    'Content-Type': 'application/json',
+    'bfx-nonce': nonce,
+    'bfx-apikey': key,
+    'bfx-signature': sig,
+  }
+
+  return headers
 
 }

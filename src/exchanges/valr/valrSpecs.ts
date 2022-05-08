@@ -1,8 +1,10 @@
 import { cloneDeep } from 'lodash'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -11,7 +13,6 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: Review exchange API url
 export const VALR_PRODUCTION_URL = 'https://api.valr.com/v1'
 
 
@@ -134,27 +135,40 @@ export const buildValrSpecs = (params: {
 
 
 
-export const valrEndpoints = {
-  symbol: {
-    // get: `${VALR_PRODUCTION_URL}/<desired-method>`,
-    list: `${VALR_PRODUCTION_URL}/public/currencies`,
-  },
-  market: {
-    // get: `${VALR_PRODUCTION_URL}/<desired-method>`,
-    summaries: `${VALR_PRODUCTION_URL}/public/marketsummary`,
-    pairs: `${VALR_PRODUCTION_URL}/public/pairs`,
-  },
-  key: {
-    fetchDetails: `${VALR_PRODUCTION_URL}/account/api-keys/current`,
-  },
-  balance: {
-    list: `${VALR_PRODUCTION_URL}/account/balances`,
-  },
-  order: {
-    get: (id: string, symbolPair: string) => `${VALR_PRODUCTION_URL}/orders/${symbolPair}/orderid/${id}`,
-    list: `${VALR_PRODUCTION_URL}/orders/open`,
-    place: (orderType: string) => `${VALR_PRODUCTION_URL}/orders/${orderType}`,
-    cancel: `${VALR_PRODUCTION_URL}/orders/order`,
-    // edit: `${VALR_PRODUCTION_URL}/<desired-method>`,
-  },
+export const getValrEndpoints = (settings: IAlunaSettingsSchema) => {
+
+  const baseUrl = VALR_PRODUCTION_URL
+
+  if (settings.useTestNet) {
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET,
+      message: 'Valr don\'t have a testnet.',
+    })
+  }
+
+  return {
+    symbol: {
+      // get: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/public/currencies`,
+    },
+    market: {
+      // get: `${baseUrl}/<desired-method>`,
+      summaries: `${baseUrl}/public/marketsummary`,
+      pairs: `${baseUrl}/public/pairs`,
+    },
+    key: {
+      fetchDetails: `${baseUrl}/account/api-keys/current`,
+    },
+    balance: {
+      list: `${baseUrl}/account/balances`,
+    },
+    order: {
+      get: (id: string, symbolPair: string) => `${baseUrl}/orders/${symbolPair}/orderid/${id}`,
+      list: `${baseUrl}/orders/open`,
+      place: (orderType: string) => `${baseUrl}/orders/${orderType}`,
+      cancel: `${baseUrl}/orders/order`,
+      // edit: `${baseUrl}/<desired-method>`,
+    },
+  }
+
 }

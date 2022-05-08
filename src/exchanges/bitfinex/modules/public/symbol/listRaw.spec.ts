@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Bitfinex } from '../../../Bitfinex'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   BITFINEX_CURRENCIES,
   BITFINEX_CURRENCIES_LABELS,
@@ -45,7 +45,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.symbol.list,
+      url: getBitfinexEndpoints(exchange.settings).symbol.list,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

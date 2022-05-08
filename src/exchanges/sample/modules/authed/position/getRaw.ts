@@ -8,7 +8,7 @@ import {
   IAlunaPositionGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISamplePositionSchema } from '../../../schemas/ISamplePositionSchema'
 
 
@@ -22,19 +22,22 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 ): Promise<IAlunaPositionGetRawReturns<ISamplePositionSchema>> => {
 
   const {
+    settings,
+    credentials,
+  } = exchange
+
+  const {
     id,
     symbolPair,
-    http = new SampleHttp(exchange.settings),
+    http = new SampleHttp(settings),
   } = params
 
   log('getting raw position', { id })
 
-  const { credentials } = exchange
-
   // TODO: Implement proper request
   const rawPosition = await http.authedRequest<ISamplePositionSchema>({
     credentials,
-    url: sampleEndpoints.position.get,
+    url: getSampleEndpoints(settings).position.get,
     body: { id, symbolPair },
   })
 

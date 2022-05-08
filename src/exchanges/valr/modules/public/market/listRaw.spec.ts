@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import {
+  VALR_RAW_CURRENCY_PAIRS,
+  VALR_RAW_MARKETS,
+} from '../../../test/fixtures/valrMarket'
 import { Valr } from '../../../Valr'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_CURRENCY_PAIRS, VALR_RAW_MARKETS } from '../../../test/fixtures/valrMarket'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -42,11 +45,11 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(2)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: valrEndpoints.market.summaries,
+      url: getValrEndpoints(exchange.settings).market.summaries,
     })
 
     expect(publicRequest.secondCall.args[0]).to.deep.eq({
-      url: valrEndpoints.market.pairs,
+      url: getValrEndpoints(exchange.settings).market.pairs,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

@@ -32,7 +32,7 @@ describe(__filename, () => {
     expect(bitfinex.position).to.be.ok
 
     expect(bitfinex.specs).to.be.ok
-    expect(bitfinex.settings).to.deep.eq(settings)
+    expect(bitfinex.settings).to.deep.eq(bitfinex.settings)
 
   })
 

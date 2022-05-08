@@ -21,7 +21,7 @@ describe(__filename, () => {
     expect(valr.market).to.be.ok
 
     expect(valr.specs).to.be.ok
-    expect(valr.settings).to.deep.eq(settings)
+    expect(valr.settings).to.deep.eq(valr.settings)
 
   })
 

@@ -6,7 +6,7 @@ import {
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   IBitfinexSymbolsSchema,
   TBitfinexCurrenciesPairs,
@@ -24,13 +24,15 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bitfinex raw symbols')
 
-  const { http = new BitfinexHttp(exchange.settings) } = params
+  const { settings } = exchange
+
+  const { http = new BitfinexHttp(settings) } = params
 
   const [
     currencies,
     currenciesNames,
   ] = await http.publicRequest<[string[], TBitfinexCurrenciesPairs]>({
-    url: bitfinexEndpoints.symbol.list,
+    url: getBitfinexEndpoints(settings).symbol.list,
   })
 
   const rawSymbols: IBitfinexSymbolsSchema = {

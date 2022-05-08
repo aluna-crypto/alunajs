@@ -29,12 +29,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   quoteSymbolId = translateSymbolId({
     exchangeSymbolId: quoteSymbolId,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   // TODO: Implement proper parser

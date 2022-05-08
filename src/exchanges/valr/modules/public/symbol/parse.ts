@@ -5,8 +5,8 @@ import {
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { valrBaseSpecs } from '../../../valrSpecs'
 import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
+import { valrBaseSpecs } from '../../../valrSpecs'
 
 
 
@@ -23,7 +23,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const id = translateSymbolId({
     exchangeSymbolId: symbol,
-    symbolMappings: exchange.settings.mappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const alias = (id !== symbol ? symbol : undefined)

@@ -2,6 +2,7 @@ import { BitfinexOrderTypeEnum } from '../../enums/BitfinexOrderTypeEnum'
 import {
   IBitfinexOrderSchema,
   TBitfinexEditCancelOrderResponse,
+  TBitfinexPlaceOrderResponse,
 } from '../../schemas/IBitfinexOrderSchema'
 
 
@@ -109,6 +110,54 @@ export const BITFINEX_RAW_ORDERS: IBitfinexOrderSchema[] = [
     null,
     {},
   ],
+]
+
+
+
+export const BITFINEX_PLACE_ORDER_RESPONSE: TBitfinexPlaceOrderResponse = [
+  1568298355648,
+  'on-req',
+  null,
+  null,
+  [
+    [
+      85415343559,
+      null,
+      1643374365010,
+      'tETHBTC',
+      1643374365000,
+      1643374365000,
+      0,
+      -0.0008,
+      'EXCHANGE MARKET' as BitfinexOrderTypeEnum,
+      null,
+      null,
+      null,
+      '0',
+      'EXECUTED @ 0.06544(-0.0008)',
+      null,
+      null,
+      0.065447,
+      0.06544,
+      0,
+      0,
+      null,
+      null,
+      null,
+      0,
+      0,
+      null,
+      null,
+      null,
+      'API>BFX',
+      null,
+      null,
+      {},
+    ],
+  ],
+  100,
+  'SUCCESS',
+  'Submitted for cancellation; waiting for confirmation (ID: 30937950333).',
 ]
 
 

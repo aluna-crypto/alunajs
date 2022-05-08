@@ -6,7 +6,7 @@ import {
   IAlunaPositionListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISamplePositionSchema } from '../../../schemas/ISamplePositionSchema'
 
 
@@ -22,14 +22,17 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   log('listing raw positions', params)
 
   const {
-    http = new SampleHttp(exchange.settings),
-  } = params
+    settings,
+    credentials,
+  } = exchange
 
-  const { credentials } = exchange
+  const {
+    http = new SampleHttp(settings),
+  } = params
 
   const rawPositions = await http.authedRequest<ISamplePositionSchema[]>({
     credentials,
-    url: sampleEndpoints.position.list,
+    url: getSampleEndpoints(settings).position.list,
   })
 
   const { requestCount } = http

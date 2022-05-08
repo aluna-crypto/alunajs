@@ -9,7 +9,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
@@ -24,11 +24,14 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   log('canceling order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
-    http = new SampleHttp(exchange.settings),
+    http = new SampleHttp(settings),
   } = params
 
   try {
@@ -36,7 +39,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<ISampleOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: sampleEndpoints.order.get(id),
+      url: getSampleEndpoints(settings).order.get(id),
       credentials,
     })
 

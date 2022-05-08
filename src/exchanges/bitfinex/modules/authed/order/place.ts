@@ -13,10 +13,7 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import {
-  bitfinexBaseSpecs,
-  bitfinexEndpoints,
-} from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import {
@@ -36,7 +33,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    specs,
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -44,7 +45,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   ensureOrderIsSupported({
-    exchangeSpecs: exchange.specs,
+    exchangeSpecs: specs,
     orderPlaceParams: params,
   })
 
@@ -57,7 +58,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     account,
     limitRate,
     stopRate,
-    http = new BitfinexHttp(exchange.settings),
+    http = new BitfinexHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBitfinex({
@@ -92,7 +93,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { affiliateCode } = bitfinexBaseSpecs.settings
+  const { affiliateCode } = exchange.specs.settings
 
   const body = {
     amount: translatedAmount,
@@ -101,7 +102,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     ...(price ? { price } : {}),
     ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
     ...(affiliateCode ? { meta: { aff_code: affiliateCode } } : {}),
-
   }
 
   log('placing new order for Bitfinex')
@@ -111,7 +111,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const response = await http.authedRequest<TBitfinexPlaceOrderResponse>({
-      url: bitfinexEndpoints.order.place,
+      url: getBitfinexEndpoints(settings).order.place,
       body,
       credentials,
     })
@@ -132,6 +132,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       throw new AlunaError({
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         message: text,
+        httpStatusCode: 500,
         metadata: response,
       })
 

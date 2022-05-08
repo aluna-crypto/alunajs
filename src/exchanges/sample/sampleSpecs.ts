@@ -11,8 +11,9 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: Review exchange API url
+// FIXME: set proper urls
 export const SAMPLE_PRODUCTION_URL = 'https://api.sample.com/v3'
+export const SAMPLE_TESTNET_URL = 'https://testnet.api.sample.com/v3'
 
 
 
@@ -121,9 +122,7 @@ export const buildSampleSpecs = (params: {
   const specs = cloneDeep(sampleBaseSpecs)
 
   if (referralCode) {
-
     specs.signupUrl = `${specs.signupUrl}?referralCode=${referralCode}`
-
   }
 
   specs.settings = settings
@@ -133,34 +132,50 @@ export const buildSampleSpecs = (params: {
 }
 
 
+export const getSampleEndpoints = (
+  settings: IAlunaSettingsSchema,
+) => {
 
-export const sampleEndpoints = {
-  symbol: {
-    // get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
-  market: {
-    // get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
-  key: {
-    fetchDetails: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
-  balance: {
-    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
-  order: {
-    get: (id: string) => `${SAMPLE_PRODUCTION_URL}/<desired-method>/${id}`,
-    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    place: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    cancel: (id: string) => `${SAMPLE_PRODUCTION_URL}/<desired-method>/${id}`,
-    // edit: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
-  position: {
-    list: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    get: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    close: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    getLeverage: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-    setLeverage: `${SAMPLE_PRODUCTION_URL}/<desired-method>`,
-  },
+  let baseUrl = SAMPLE_PRODUCTION_URL
+
+  if (settings.useTestNet) {
+    baseUrl = SAMPLE_TESTNET_URL
+    /*
+      throw new AlunaError({
+        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
+        message: 'Sample don't have a testnet.',
+      })
+    */
+  }
+
+  return {
+    symbol: {
+      get: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/<desired-method>`,
+    },
+    market: {
+      get: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/<desired-method>`,
+    },
+    key: {
+      fetchDetails: `${baseUrl}/<desired-method>`,
+    },
+    balance: {
+      list: `${baseUrl}/<desired-method>`,
+    },
+    order: {
+      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
+      list: `${baseUrl}/<desired-method>`,
+      place: `${baseUrl}/<desired-method>`,
+      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
+      edit: `${baseUrl}/<desired-method>`,
+    },
+    position: {
+      list: `${baseUrl}/<desired-method>`,
+      get: `${baseUrl}/<desired-method>`,
+      close: `${baseUrl}/<desired-method>`,
+      getLeverage: `${baseUrl}/<desired-method>`,
+      setLeverage: `${baseUrl}/<desired-method>`,
+    },
+  }
 }

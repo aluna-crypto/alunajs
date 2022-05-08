@@ -7,7 +7,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_KEY_PERMISSIONS } from '../../../test/fixtures/sampleKey'
 import * as parseDetailsMod from './parseDetails'
 
@@ -66,7 +66,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: sampleEndpoints.key.fetchDetails,
+      url: getSampleEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
 

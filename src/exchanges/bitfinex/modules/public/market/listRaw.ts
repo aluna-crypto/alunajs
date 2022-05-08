@@ -6,7 +6,7 @@ import {
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   IBitfinexMarketsSchema,
   IBitfinexTicker,
@@ -22,16 +22,20 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IBitfinexMarketsSchema>> => {
 
-  const { http = new BitfinexHttp(exchange.settings) } = params
-
   log('fetching Bitfinex markets')
 
+  const { settings } = exchange
+
+  const { http = new BitfinexHttp(settings) } = params
+
+  const urls = getBitfinexEndpoints(settings)
+
   const tickers = await http.publicRequest<IBitfinexTicker[]>({
-    url: bitfinexEndpoints.market.tickers,
+    url: urls.market.tickers,
   })
 
   const enabledMarginCurrencies = await http.publicRequest<string[][]>({
-    url: bitfinexEndpoints.market.enabledMarginCurrencies,
+    url: urls.market.enabledMarginCurrencies,
   })
 
   const rawMarkets: IBitfinexMarketsSchema = {

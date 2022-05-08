@@ -6,7 +6,7 @@ import {
   IAlunaPositionGetLeverageReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 
 
 
@@ -19,19 +19,22 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
 ): Promise<IAlunaPositionGetLeverageReturns> => {
 
   const {
+    settings,
+    credentials,
+  } = exchange
+
+  const {
     id,
     symbolPair,
-    http = new SampleHttp(exchange.settings),
+    http = new SampleHttp(settings),
   } = params
 
   log('getting leverage', { id, symbolPair })
 
-  const { credentials } = exchange
-
   // TODO: Implement proper getter
   const leverage = await http.authedRequest<number>({
     credentials,
-    url: sampleEndpoints.position.getLeverage,
+    url: getSampleEndpoints(settings).position.getLeverage,
     body: { id, symbolPair },
   })
 

@@ -12,7 +12,7 @@ import {
   IValrOrderListSchema,
 } from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -26,18 +26,21 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Valr open orders', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new ValrHttp(exchange.settings) } = params
+  const { http = new ValrHttp(settings) } = params
 
   const rawOrders = await http.authedRequest<IValrOrderListSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: valrEndpoints.order.list,
+    url: getValrEndpoints(settings).order.list,
     credentials,
   })
 
   const pairs = await http.publicRequest<IValrMarketCurrencyPairs[]>({
-    url: valrEndpoints.market.pairs,
+    url: getValrEndpoints(settings).market.pairs,
   })
 
   const rawOrdersResponse: IValrOrderListResponseSchema = {

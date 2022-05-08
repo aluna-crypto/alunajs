@@ -21,7 +21,7 @@ describe(__filename, () => {
     expect(sample.market).to.be.ok
 
     expect(sample.specs).to.be.ok
-    expect(sample.settings).to.deep.eq(settings)
+    expect(sample.settings).to.deep.eq(sample.settings)
 
   })
 

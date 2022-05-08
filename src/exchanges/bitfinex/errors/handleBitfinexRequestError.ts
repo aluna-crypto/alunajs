@@ -8,8 +8,12 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const bitfinexInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
-  new RegExp(/api-invalid/mi),
+  /(Invalid X-BFX-SIGNATURE|X-BFX-APIKEY)/mi,
+  /apikey: (invalid|digest invalid)/mi,
+  /AuthenticationError/mi,
+  /Could not find a key matching the given X-BFX-APIKEY/mi,
+  /accept the margin trading terms and conditions/mi,
+  /does not have permission for this action/mi,
 ]
 
 
@@ -52,12 +56,13 @@ export const handleBitfinexRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
-
     httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
+
+    message = response?.data?.[2] || message
+
+
 
   } else {
 

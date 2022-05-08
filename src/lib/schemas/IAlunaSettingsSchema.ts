@@ -6,14 +6,14 @@ import { AlunaProtocolsEnum } from '../enums/AlunaProxyAgentEnum'
 
 
 export interface IAlunaSettingsSchema {
-  cacheTTL?: number // default 60
+  cacheTtlInSeconds?: number // default 60
   disableCache?: boolean // default false
   affiliateCode?: string
   orderAnnotation?: string
   referralCode?: string
   proxySettings?: IAlunaProxySchema
-  mappings?: Record<string, string>
   useTestNet?: boolean
+  symbolMappings?: Record<string, string>
 }
 
 

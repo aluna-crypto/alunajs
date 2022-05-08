@@ -10,7 +10,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -24,10 +24,13 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   log('canceling order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
-    http = new ValrHttp(exchange.settings),
+    http = new ValrHttp(settings),
     id,
     symbolPair,
   } = params
@@ -41,7 +44,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<void>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: valrEndpoints.order.cancel,
+      url: getValrEndpoints(settings).order.cancel,
       credentials,
       body,
     })

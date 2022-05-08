@@ -6,7 +6,7 @@ import {
   IAlunaOrderListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
@@ -21,12 +21,15 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Bitfinex open orders', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new BitfinexHttp(exchange.settings) } = params
+  const { http = new BitfinexHttp(settings) } = params
 
   const rawOrders = await http.authedRequest<IBitfinexOrderSchema[]>({
-    url: bitfinexEndpoints.order.list,
+    url: getBitfinexEndpoints(settings).order.list,
     credentials,
   })
 

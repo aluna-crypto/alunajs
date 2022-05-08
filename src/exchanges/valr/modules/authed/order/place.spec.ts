@@ -2,10 +2,12 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -14,15 +16,13 @@ import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOr
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToValr } from '../../../enums/adapters/valrOrderSideAdapter'
 import { translateOrderTypeToValr } from '../../../enums/adapters/valrOrderTypeAdapter'
+import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { getValrEndpoints } from '../../../valrSpecs'
 import * as getMod from './get'
-import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
-import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
-import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum'
 
 
 
@@ -98,7 +98,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: valrEndpoints.order.place(translatedOrderType),
+      url: getValrEndpoints(exchange.settings).order.place(translatedOrderType),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -168,7 +168,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: valrEndpoints.order.place(translatedOrderType),
+      url: getValrEndpoints(exchange.settings).order.place(translatedOrderType),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

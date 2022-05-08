@@ -14,7 +14,7 @@ import {
   IValrOrderGetSchema,
 } from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -28,22 +28,27 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting raw order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
     symbolPair,
-    http = new ValrHttp(exchange.settings),
+    http = new ValrHttp(settings),
   } = params
+
+  const urls = getValrEndpoints(settings)
 
   const order = await http.authedRequest<IValrOrderGetSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: valrEndpoints.order.get(id, symbolPair),
+    url: urls.order.get(id, symbolPair),
   })
 
   const pairs = await http.publicRequest<IValrMarketCurrencyPairs[]>({
-    url: valrEndpoints.market.pairs,
+    url: urls.market.pairs,
   })
 
   const pair = pairs.find((p) => p.symbol === order.currencyPair)

@@ -21,7 +21,7 @@ import {
   IValrOrderPlaceResponseSchema,
 } from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -35,7 +35,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    specs,
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -43,7 +47,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   ensureOrderIsSupported({
-    exchangeSpecs: exchange.specs,
+    exchangeSpecs: specs,
     orderPlaceParams: params,
   })
 
@@ -53,7 +57,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new ValrHttp(exchange.settings),
+    http = new ValrHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToValr({
@@ -85,7 +89,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   log('placing new order for Valr')
 
   const { id } = await http.authedRequest<IValrOrderPlaceResponseSchema>({
-    url: valrEndpoints.order.place(translatedOrderType),
+    url: getValrEndpoints(settings).order.place(translatedOrderType),
     body,
     credentials,
   })

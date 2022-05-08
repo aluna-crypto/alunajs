@@ -7,7 +7,7 @@ import {
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
 
 
@@ -22,14 +22,17 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Sample key permissions')
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new SampleHttp(exchange.settings) } = params
+  const { http = new SampleHttp(settings) } = params
 
   // TODO: Implement proper request
   const permissions = await http.authedRequest<ISampleKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
-    url: sampleEndpoints.key.fetchDetails,
+    url: getSampleEndpoints(settings).key.fetchDetails,
     credentials,
   })
 

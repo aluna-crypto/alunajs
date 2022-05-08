@@ -9,7 +9,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
@@ -24,18 +24,21 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   log('canceling order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
-    http = new BittrexHttp(exchange.settings),
+    http = new BittrexHttp(settings),
   } = params
 
   try {
 
     const rawOrder = await http.authedRequest<IBittrexOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: bittrexEndpoints.order.cancel(id),
+      url: getBittrexEndpoints(settings).order.cancel(id),
       credentials,
     })
 

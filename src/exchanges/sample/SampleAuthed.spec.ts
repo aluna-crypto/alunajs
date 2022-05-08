@@ -32,7 +32,7 @@ describe(__filename, () => {
     expect(sample.position).to.be.ok
 
     expect(sample.specs).to.be.ok
-    expect(sample.settings).to.deep.eq(settings)
+    expect(sample.settings).to.deep.eq(sample.settings)
 
   })
 

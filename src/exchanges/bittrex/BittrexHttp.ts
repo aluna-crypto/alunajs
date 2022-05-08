@@ -20,66 +20,6 @@ export const BITTREX_HTTP_CACHE_KEY_PREFIX = 'BittrexHttp.publicRequest'
 
 
 
-interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  credentials: IAlunaCredentialsSchema
-  url: string
-  body?: any
-}
-
-
-
-export interface IBittrexSignedHeaders {
-  'Api-Key': string
-  'Api-Timestamp': number
-  'Api-Content-Hash': string
-  'Api-Signature': string
-}
-
-
-
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): IBittrexSignedHeaders => {
-
-  const {
-    credentials,
-    verb,
-    body,
-    url,
-  } = params
-
-  const timestamp = new Date().getTime()
-
-  const {
-    key,
-    secret,
-  } = credentials
-
-  const contentHash = crypto
-    .createHash('sha512')
-    .update(body ? JSON.stringify(body) : '')
-    .digest('hex')
-
-  const preSigned = [timestamp, url, verb.toUpperCase(), contentHash].join('')
-
-  const signedHeader = crypto
-    .createHmac('sha512', secret)
-    .update(preSigned)
-    .digest('hex')
-
-  return {
-    'Api-Content-Hash': contentHash,
-    'Api-Key': key,
-    'Api-Signature': signedHeader,
-    'Api-Timestamp': timestamp,
-  }
-
-}
-
-
-
 export class BittrexHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
@@ -193,6 +133,64 @@ export class BittrexHttp implements IAlunaHttp {
 
     }
 
+  }
+
+}
+
+
+
+interface ISignedHashParams {
+  verb: AlunaHttpVerbEnum
+  path: string
+  credentials: IAlunaCredentialsSchema
+  url: string
+  body?: any
+}
+
+export interface IBittrexSignedHeaders {
+  'Api-Key': string
+  'Api-Timestamp': number
+  'Api-Content-Hash': string
+  'Api-Signature': string
+}
+
+
+
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+): IBittrexSignedHeaders => {
+
+  const {
+    credentials,
+    verb,
+    body,
+    url,
+  } = params
+
+  const timestamp = new Date().getTime()
+
+  const {
+    key,
+    secret,
+  } = credentials
+
+  const contentHash = crypto
+    .createHash('sha512')
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
+
+  const preSigned = [timestamp, url, verb.toUpperCase(), contentHash].join('')
+
+  const signedHeader = crypto
+    .createHmac('sha512', secret)
+    .update(preSigned)
+    .digest('hex')
+
+  return {
+    'Api-Content-Hash': contentHash,
+    'Api-Key': key,
+    'Api-Signature': signedHeader,
+    'Api-Timestamp': timestamp,
   }
 
 }

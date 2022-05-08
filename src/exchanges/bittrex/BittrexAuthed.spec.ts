@@ -31,7 +31,7 @@ describe(__filename, () => {
     expect(bittrex.order).to.be.ok
 
     expect(bittrex.specs).to.be.ok
-    expect(bittrex.settings).to.deep.eq(settings)
+    expect(bittrex.settings).to.deep.eq(bittrex.settings)
 
   })
 
