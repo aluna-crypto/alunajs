@@ -20,9 +20,15 @@ import {
 
 
 const settings: IAlunaSettingsSchema = {
-  mappings: {
-    XBT: 'BTC',
-  },
+  // disableCache?: boolean,
+  // cacheTtlInSeconds?: number,
+  // disableCache?: boolean,
+  // affiliateCode?: string,
+  // orderAnnotation?: string,
+  // referralCode?: string,
+  // proxySettings?: IAlunaProxySchema,
+  // mappings?: Record<string, string>,
+  mappings: { XBT: 'BTC' },
 }
 
 const credentials: IAlunaCredentialsSchema = {
