@@ -14,9 +14,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getValrEndpoints({ useTestNet: false })
-    })
+    } = await executeAndCatch(() => getValrEndpoints({ useTestNet: false }))
 
 
     // validating
@@ -31,9 +29,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getValrEndpoints({ useTestNet: true })
-    })
+    } = await executeAndCatch(() => getValrEndpoints({ useTestNet: true }))
 
     // validating
     expect(result).not.to.be.ok

@@ -14,10 +14,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getBitfinexEndpoints({ useTestNet: false })
-    })
-
+    } = await executeAndCatch(() => getBitfinexEndpoints({ useTestNet: false }))
 
     // validating
     expect(error).not.to.be.ok
@@ -31,9 +28,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getBitfinexEndpoints({ useTestNet: true })
-    })
+    } = await executeAndCatch(() => getBitfinexEndpoints({ useTestNet: true }))
 
     // validating
     expect(result).not.to.be.ok

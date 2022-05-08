@@ -13,9 +13,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getSampleEndpoints({ useTestNet: false })
-    })
+    } = await executeAndCatch(() => getSampleEndpoints({ useTestNet: false }))
 
     // validating
     expect(error).not.to.be.ok
@@ -29,9 +27,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => {
-      getSampleEndpoints({ useTestNet: true })
-    })
+    } = await executeAndCatch(() => getSampleEndpoints({ useTestNet: true }))
 
     // validating
     expect(error).not.to.be.ok
