@@ -10,7 +10,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   BITFINEX_CANCEL_ORDER_RESPONSE,
   BITFINEX_RAW_ORDERS,
@@ -68,7 +68,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: bitfinexEndpoints.order.cancel,
+      url: getBitfinexEndpoints(exchange.settings).order.cancel,
       body: { id },
     })
 
@@ -135,7 +135,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: bitfinexEndpoints.order.cancel,
+      url: getBitfinexEndpoints(exchange.settings).order.cancel,
       body: { id },
     })
 

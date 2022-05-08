@@ -4,7 +4,7 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { BITFINEX_RAW_BALANCES } from '../../../test/fixtures/bitfinexBalances'
 
 
@@ -43,7 +43,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.balance.list,
+      url: getBitfinexEndpoints(exchange.settings).balance.list,
       credentials,
     })
 

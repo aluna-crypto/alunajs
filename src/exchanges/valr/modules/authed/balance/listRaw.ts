@@ -8,7 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -22,13 +22,16 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing raw balances', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new ValrHttp(exchange.settings) } = params
+  const { http = new ValrHttp(settings) } = params
 
   const rawBalances = await http.authedRequest<IValrBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: valrEndpoints.balance.list,
+    url: getValrEndpoints(settings).balance.list,
     credentials,
   })
 

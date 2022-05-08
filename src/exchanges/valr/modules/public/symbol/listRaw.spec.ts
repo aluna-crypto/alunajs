@@ -1,10 +1,10 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { VALR_RAW_SYMBOLS } from '../../../test/fixtures/valrSymbols'
 import { Valr } from '../../../Valr'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_SYMBOLS } from '../../../test/fixtures/valrSymbols'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -38,7 +38,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: valrEndpoints.symbol.list,
+      url: getValrEndpoints(exchange.settings).symbol.list,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

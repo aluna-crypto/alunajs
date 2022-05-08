@@ -10,7 +10,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISamplePositionSchema } from '../../../schemas/ISamplePositionSchema'
 
 
@@ -24,14 +24,17 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
 ): Promise<IAlunaPositionCloseReturns> => {
 
   const {
+    settings,
+    credentials,
+  } = exchange
+
+  const {
     id,
     symbolPair,
-    http = new SampleHttp(exchange.settings),
+    http = new SampleHttp(settings),
   } = params
 
   log('closing position', { id, symbolPair })
-
-  const { credentials } = exchange
 
   const { position } = await exchange.position!.get({ id, symbolPair, http })
 
@@ -49,7 +52,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
   // TODO: Properly close position
   await http.authedRequest<ISamplePositionSchema>({
     credentials,
-    url: sampleEndpoints.position.close,
+    url: getSampleEndpoints(settings).position.close,
     body: { id, symbolPair },
   })
 

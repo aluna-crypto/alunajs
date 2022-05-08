@@ -8,7 +8,7 @@ import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { VALR_KEY_PERMISSIONS } from '../../../test/fixtures/valrKey'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
+import { getValrEndpoints } from '../../../valrSpecs'
 import * as parseDetailsMod from './parseDetails'
 
 
@@ -68,7 +68,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: valrEndpoints.key.fetchDetails,
+      url: getValrEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
 

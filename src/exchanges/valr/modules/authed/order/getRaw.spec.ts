@@ -1,17 +1,17 @@
 import { expect } from 'chai'
-
 import { cloneDeep } from 'lodash'
+
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
+import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
-import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
-import { executeAndCatch } from '../../../../../utils/executeAndCatch'
-import { AlunaError } from '../../../../../lib/core/AlunaError'
-import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
+import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
@@ -64,7 +64,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: valrEndpoints.order.get(id, ''),
+      url: getValrEndpoints(exchange.settings).order.get(id, ''),
     })
 
     expect(publicRequest.callCount).to.be.eq(1)
@@ -112,7 +112,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: valrEndpoints.order.get(id, currencyPair),
+      url: getValrEndpoints(exchange.settings).order.get(id, currencyPair),
     })
 
     expect(publicRequest.callCount).to.be.eq(1)

@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Sample } from '../../../Sample'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_RAW_SYMBOLS } from '../../../test/fixtures/sampleSymbols'
 
 
@@ -38,7 +38,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: sampleEndpoints.symbol.list,
+      url: getSampleEndpoints(exchange.settings).symbol.list,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

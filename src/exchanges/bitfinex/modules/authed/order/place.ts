@@ -15,7 +15,7 @@ import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import {
   bitfinexBaseSpecs,
-  bitfinexEndpoints,
+  getBitfinexEndpoints,
 } from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
@@ -36,7 +36,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    specs,
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -44,7 +48,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   ensureOrderIsSupported({
-    exchangeSpecs: exchange.specs,
+    exchangeSpecs: specs,
     orderPlaceParams: params,
   })
 
@@ -57,7 +61,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     account,
     limitRate,
     stopRate,
-    http = new BitfinexHttp(exchange.settings),
+    http = new BitfinexHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToBitfinex({
@@ -111,7 +115,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const response = await http.authedRequest<TBitfinexPlaceOrderResponse>({
-      url: bitfinexEndpoints.order.place,
+      url: getBitfinexEndpoints(settings).order.place,
       body,
       credentials,
     })

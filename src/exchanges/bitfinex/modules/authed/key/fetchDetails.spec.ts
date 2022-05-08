@@ -9,7 +9,7 @@ import {
 } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   BITFINEX_KEY_PERMISSIONS,
   BITFINEX_RAW_KEY,
@@ -77,11 +77,11 @@ describe(__filename, () => {
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.key.fetchDetails,
+      url: getBitfinexEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.key.account,
+      url: getBitfinexEndpoints(exchange.settings).key.account,
       credentials,
     })
 

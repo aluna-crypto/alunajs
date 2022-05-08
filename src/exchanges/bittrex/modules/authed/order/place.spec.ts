@@ -17,7 +17,7 @@ import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOr
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { translateOrderSideToBittrex } from '../../../enums/adapters/bittrexOrderSideAdapter'
 import { translateOrderTypeToBittrex } from '../../../enums/adapters/bittrexOrderTypeAdapter'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
@@ -101,7 +101,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: bittrexEndpoints.order.place,
+      url: getBittrexEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -179,7 +179,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: bittrexEndpoints.order.place,
+      url: getBittrexEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

@@ -6,7 +6,7 @@ import {
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   IBitfinexKeySchema,
   IBitfinexPermissionsScope,
@@ -24,17 +24,20 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Bitfinex key permissions')
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new BitfinexHttp(exchange.settings) } = params
+  const { http = new BitfinexHttp(settings) } = params
 
   const permissionsScope = await http.authedRequest<IBitfinexPermissionsScope>({
-    url: bitfinexEndpoints.key.fetchDetails,
+    url: getBitfinexEndpoints(settings).key.fetchDetails,
     credentials,
   })
 
   const [accountId] = await http.authedRequest<string[]>({
-    url: bitfinexEndpoints.key.account,
+    url: getBitfinexEndpoints(settings).key.account,
     credentials,
   })
 

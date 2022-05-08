@@ -3,4 +3,5 @@ export const AlunaExchangeErrorCodes = {
   MODULE_NOT_IMPLEMENTED: 'exchange-module-not-implemented',
   METHOD_NOT_IMPLEMENTED: 'exchange-method-not-implemented',
   EXCHANGE_IS_DOWN: 'exchange-is-down',
+  EXCHANGE_DONT_HAVE_TESTNET: 'exchange-dont-have-testnet',
 }

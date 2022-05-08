@@ -13,7 +13,7 @@ import {
 import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import {
   IBitfinexOrderSchema,
@@ -32,7 +32,10 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   log('editing order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -49,7 +52,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     stopRate,
     limitRate,
-    http = new BitfinexHttp(exchange.settings),
+    http = new BitfinexHttp(settings),
   } = params
 
   const translatedAmount = translateOrderSideToBitfinex({
@@ -93,7 +96,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const response = await http.authedRequest<TBitfinexEditCancelOrderResponse>({
-      url: bitfinexEndpoints.order.edit,
+      url: getBitfinexEndpoints(settings).order.edit,
       body,
       credentials,
     })

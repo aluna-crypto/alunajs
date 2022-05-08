@@ -8,7 +8,7 @@ import {
   IAlunaPositionGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { IBitfinexPositionSchema } from '../../../schemas/IBitfinexPositionSchema'
 import { throwPositionIdRequiredFor } from './helpers/throwPositionIdRequiredFor'
 
@@ -23,6 +23,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 ): Promise<IAlunaPositionGetRawReturns<IBitfinexPositionSchema>> => {
 
   const {
+    settings,
+    credentials,
+  } = exchange
+
+  const {
     id,
     http = new BitfinexHttp(exchange.settings),
   } = params
@@ -33,11 +38,9 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     throwPositionIdRequiredFor('getting Bitfinex position')
   }
 
-  const { credentials } = exchange
-
   const response = await http.authedRequest<IBitfinexPositionSchema[]>({
     credentials,
-    url: bitfinexEndpoints.position.get,
+    url: getBitfinexEndpoints(settings).position.get,
     body: { id: [Number(id)], limit: 1 },
   })
 

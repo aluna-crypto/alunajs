@@ -5,7 +5,7 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BittrexAuthed } from '../../../BittrexAuthed'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { BITTREX_RAW_BALANCES } from '../../../test/fixtures/bittrexBalances'
 
 
@@ -46,7 +46,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: bittrexEndpoints.balance.list,
+      url: getBittrexEndpoints(exchange.settings).balance.list,
       credentials,
     })
 

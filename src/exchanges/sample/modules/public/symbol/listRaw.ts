@@ -6,7 +6,7 @@ import {
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISampleSymbolSchema } from '../../../schemas/ISampleSymbolSchema'
 
 
@@ -21,11 +21,13 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Sample raw symbols')
 
-  const { http = new SampleHttp(exchange.settings) } = params
+  const { settings } = exchange
+
+  const { http = new SampleHttp(settings) } = params
 
   // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<ISampleSymbolSchema[]>({
-    url: sampleEndpoints.symbol.list,
+    url: getSampleEndpoints(settings).symbol.list,
   })
 
   const { requestCount } = http

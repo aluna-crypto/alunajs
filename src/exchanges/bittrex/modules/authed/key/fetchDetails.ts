@@ -7,7 +7,7 @@ import {
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import { BittrexOrderSideEnum } from '../../../enums/BittrexOrderSideEnum'
 import { BittrexOrderTimeInForceEnum } from '../../../enums/BittrexOrderTimeInForceEnum'
 import { BittrexOrderTypeEnum } from '../../../enums/BittrexOrderTypeEnum'
@@ -26,7 +26,11 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Bittrex key permissions')
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
+
   const { http = new BittrexHttp(exchange.settings) } = params
 
   const INVALID_PERMISSION_MESSAGE = 'INVALID_PERMISSION'
@@ -42,7 +46,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<any>({
       verb: AlunaHttpVerbEnum.GET,
-      url: bittrexEndpoints.balance.list,
+      url: getBittrexEndpoints(settings).balance.list,
       credentials,
     })
 
@@ -75,7 +79,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     await http.authedRequest<IBittrexBalanceSchema>({
       verb: AlunaHttpVerbEnum.POST,
-      url: bittrexEndpoints.order.place,
+      url: getBittrexEndpoints(settings).order.place,
       credentials,
       body: requestBody,
     })
@@ -102,7 +106,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     const account = await http.authedRequest<IBittrexKeySchema>({
       verb: AlunaHttpVerbEnum.GET,
-      url: bittrexEndpoints.key.account,
+      url: getBittrexEndpoints(settings).key.account,
       credentials,
     })
 

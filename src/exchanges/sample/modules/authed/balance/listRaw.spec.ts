@@ -5,7 +5,7 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { SampleAuthed } from '../../../SampleAuthed'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { SAMPLE_RAW_BALANCES } from '../../../test/fixtures/sampleBalances'
 
 
@@ -45,7 +45,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: sampleEndpoints.balance.list,
+      url: getSampleEndpoints(exchange.settings).balance.list,
       credentials,
     })
 

@@ -8,7 +8,7 @@ import {
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
@@ -23,19 +23,22 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting raw order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id: stringId,
     symbolPair,
-    http = new BitfinexHttp(exchange.settings),
+    http = new BitfinexHttp(settings),
   } = params
 
   const id = Number(stringId)
 
   let orders = await http.authedRequest<IBitfinexOrderSchema[]>({
     credentials,
-    url: bitfinexEndpoints.order.get(symbolPair),
+    url: getBitfinexEndpoints(settings).order.get(symbolPair),
     body: { id: [id] },
   })
 
@@ -43,7 +46,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
     orders = await http.authedRequest<IBitfinexOrderSchema[]>({
       credentials,
-      url: bitfinexEndpoints.order.getHistory(symbolPair),
+      url: getBitfinexEndpoints(settings).order.getHistory(symbolPair),
       body: { id: [id] },
     })
 

@@ -8,7 +8,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexEndpoints } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { TBitfinexEditCancelOrderResponse } from '../../../schemas/IBitfinexOrderSchema'
 
 
@@ -23,18 +23,21 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   log('canceling order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
     symbolPair,
-    http = new BitfinexHttp(exchange.settings),
+    http = new BitfinexHttp(settings),
   } = params
 
   try {
 
     const response = await http.authedRequest<TBitfinexEditCancelOrderResponse>({
-      url: bitfinexEndpoints.order.cancel,
+      url: getBitfinexEndpoints(settings).order.cancel,
       credentials,
       body: { id: Number(id) },
     })

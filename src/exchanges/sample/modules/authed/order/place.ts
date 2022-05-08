@@ -14,7 +14,7 @@ import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToSample } from '../../../enums/adapters/sampleOrderSideAdapter'
 import { translateOrderTypeToSample } from '../../../enums/adapters/sampleOrderTypeAdapter'
 import { SampleHttp } from '../../../SampleHttp'
-import { sampleEndpoints } from '../../../sampleSpecs'
+import { getSampleEndpoints } from '../../../sampleSpecs'
 import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
@@ -29,7 +29,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    specs,
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -37,7 +41,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   ensureOrderIsSupported({
-    exchangeSpecs: exchange.specs,
+    exchangeSpecs: specs,
     orderPlaceParams: params,
   })
 
@@ -47,7 +51,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new SampleHttp(exchange.settings),
+    http = new SampleHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToSample({
@@ -71,7 +75,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     // TODO: Implement proper request
     const orderResponse = await http.authedRequest<ISampleOrderSchema>({
-      url: sampleEndpoints.order.place,
+      url: getSampleEndpoints(settings).order.place,
       body,
       credentials,
     })

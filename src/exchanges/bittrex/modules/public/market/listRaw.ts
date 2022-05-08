@@ -6,7 +6,7 @@ import {
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BittrexHttp } from '../../../BittrexHttp'
-import { bittrexEndpoints } from '../../../bittrexSpecs'
+import { getBittrexEndpoints } from '../../../bittrexSpecs'
 import {
   IBittrexMarketInfoSchema,
   IBittrexMarketsSchema,
@@ -24,22 +24,25 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IBittrexMarketsSchema>> => {
 
-  const { http = new BittrexHttp(exchange.settings) } = params
-
   log('fetching Bittrex markets')
 
+  const { settings } = exchange
+
+  const { http = new BittrexHttp(settings) } = params
+
+  const urls = getBittrexEndpoints(settings)
+
   const marketsInfo = await http.publicRequest<IBittrexMarketInfoSchema[]>({
-    url: bittrexEndpoints.market.markets,
+    url: urls.market.markets,
   })
 
   const summaries = await http.publicRequest<IBittrexMarketSummarySchema[]>({
-    url: bittrexEndpoints.market.summaries,
+    url: urls.market.summaries,
   })
 
   const tickers = await http.publicRequest<IBittrexMarketTickerSchema[]>({
-    url: bittrexEndpoints.market.tickers,
+    url: urls.market.tickers,
   })
-
 
   const rawMarkets: IBittrexMarketsSchema = {
     marketsInfo,

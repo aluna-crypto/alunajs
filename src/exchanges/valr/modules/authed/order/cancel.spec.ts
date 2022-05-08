@@ -1,22 +1,25 @@
 import { expect } from 'chai'
-
 import { filter } from 'lodash'
+
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import {
+  VALR_RAW_GET_ORDERS,
+  VALR_RAW_ORDERS,
+} from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
-import { valrEndpoints } from '../../../valrSpecs'
-import { VALR_RAW_GET_ORDERS, VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { getValrEndpoints } from '../../../valrSpecs'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
-import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
-import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 
 
 
@@ -71,7 +74,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: valrEndpoints.order.cancel,
+      url: getValrEndpoints(exchange.settings).order.cancel,
       body: {
         orderId: id,
         pair: '',
@@ -130,7 +133,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: valrEndpoints.order.cancel,
+      url: getValrEndpoints(exchange.settings).order.cancel,
       body: {
         orderId: id,
         pair: 'symbolPair',
