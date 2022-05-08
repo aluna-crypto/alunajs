@@ -19,7 +19,9 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderEditParams,
 ): Promise<IAlunaOrderEditReturns> => {
 
-  log('editing orders', params)
+  log('edting order', params)
+
+  const { settings } = exchange
 
   validateParams({
     params,
@@ -36,7 +38,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     account,
     symbolPair,
-    http = new GateHttp(),
+    http = new GateHttp(settings),
   } = params
 
   await exchange.order.cancel({

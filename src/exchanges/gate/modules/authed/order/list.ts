@@ -19,7 +19,9 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing orders', params)
 
-  const { http = new GateHttp() } = params
+  const { settings } = exchange
+
+  const { http = new GateHttp(settings) } = params
 
   const { rawOrders } = await exchange.order.listRaw({ http })
 

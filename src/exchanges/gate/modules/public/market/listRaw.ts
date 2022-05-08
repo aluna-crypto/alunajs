@@ -6,7 +6,7 @@ import {
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateMarketSchema } from '../../../schemas/IGateMarketSchema'
 
 
@@ -19,13 +19,15 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListRawReturns<IGateMarketSchema[]>> => {
 
-  const { http = new GateHttp() } = params
-
   log('fetching Gate markets')
+
+  const { settings } = exchange
+
+  const { http = new GateHttp(settings) } = params
 
   // TODO: Implement proper request
   const rawMarkets = await http.publicRequest<IGateMarketSchema[]>({
-    url: gateEndpoints.market.list,
+    url: getGateEndpoints(settings).market.list,
   })
 
   const { requestCount } = http

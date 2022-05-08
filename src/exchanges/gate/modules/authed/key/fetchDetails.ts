@@ -7,7 +7,7 @@ import {
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateKeySchema } from '../../../schemas/IGateKeySchema'
 
 
@@ -22,14 +22,17 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   log('fetching Gate key permissions')
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new GateHttp() } = params
+  const { http = new GateHttp(settings) } = params
 
   // TODO: Implement proper request
   const permissions = await http.authedRequest<IGateKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
-    url: gateEndpoints.key.fetchDetails,
+    url: getGateEndpoints(settings).key.fetchDetails,
     credentials,
   })
 

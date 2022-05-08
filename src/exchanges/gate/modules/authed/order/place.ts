@@ -14,7 +14,7 @@ import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToGate } from '../../../enums/adapters/gateOrderSideAdapter'
 import { translateOrderTypeToGate } from '../../../enums/adapters/gateOrderTypeAdapter'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
@@ -29,7 +29,10 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   validateParams({
     params,
@@ -47,7 +50,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new GateHttp(),
+    http = new GateHttp(settings),
   } = params
 
   const translatedOrderType = translateOrderTypeToGate({
@@ -71,7 +74,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IGateOrderSchema>({
-      url: gateEndpoints.order.place,
+      url: getGateEndpoints(settings).order.place,
       body,
       credentials,
     })

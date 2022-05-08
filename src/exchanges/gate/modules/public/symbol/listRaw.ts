@@ -6,7 +6,7 @@ import {
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateSymbolSchema } from '../../../schemas/IGateSymbolSchema'
 
 
@@ -21,11 +21,13 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Gate raw symbols')
 
-  const { http = new GateHttp() } = params
+  const { settings } = exchange
+
+  const { http = new GateHttp(settings) } = params
 
   // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IGateSymbolSchema[]>({
-    url: gateEndpoints.symbol.list,
+    url: getGateEndpoints(settings).symbol.list,
   })
 
   const { requestCount } = http

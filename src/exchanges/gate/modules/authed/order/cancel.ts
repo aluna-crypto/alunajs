@@ -9,7 +9,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
@@ -24,11 +24,14 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   log('canceling order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
-    http = new GateHttp(),
+    http = new GateHttp(settings),
   } = params
 
   try {
@@ -36,7 +39,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IGateOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: gateEndpoints.order.get(id, ''),
+      url: getGateEndpoints(settings).order.get(id, ''),
       credentials,
     })
 

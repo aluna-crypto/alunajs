@@ -7,7 +7,7 @@ import {
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
@@ -22,18 +22,21 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting raw order', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
   const {
     id,
-    http = new GateHttp(),
+    http = new GateHttp(settings),
   } = params
 
   // TODO: Implement proper request
   const rawOrder = await http.authedRequest<any>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: gateEndpoints.order.get(id, ''),
+    url: getGateEndpoints(settings).order.get(id, ''),
   })
 
   const { requestCount } = http

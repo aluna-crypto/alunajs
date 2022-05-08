@@ -7,7 +7,7 @@ import {
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateBalanceSchema } from '../../../schemas/IGateBalanceSchema'
 
 
@@ -22,14 +22,17 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing raw balances', params)
 
-  const { credentials } = exchange
+  const {
+    settings,
+    credentials,
+  } = exchange
 
-  const { http = new GateHttp() } = params
+  const { http = new GateHttp(settings) } = params
 
   // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<IGateBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: gateEndpoints.balance.list,
+    url: getGateEndpoints(settings).balance.list,
     credentials,
   })
 

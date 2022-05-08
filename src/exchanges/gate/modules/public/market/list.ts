@@ -18,7 +18,9 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   log('listing Gate markets')
 
-  const { http = new GateHttp() } = params
+  const { settings } = exchange
+
+  const { http = new GateHttp(settings) } = params
 
   const { requestCount } = http
 
