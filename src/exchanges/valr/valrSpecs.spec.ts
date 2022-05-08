@@ -8,15 +8,32 @@ import { getValrEndpoints } from './valrSpecs'
 
 describe(__filename, () => {
 
+  it('should get production endpoints', async () => {
+
+    // executing
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => {
+      getValrEndpoints({ useTestNet: false })
+    })
+
+
+    // validating
+    expect(error).not.to.be.ok
+    expect(result).to.be.ok
+
+  })
+
   it('should warn about testnet unavaiability', async () => {
 
+    // executing
     const {
       error,
       result,
     } = await executeAndCatch(() => {
       getValrEndpoints({ useTestNet: true })
     })
-
 
     // validating
     expect(result).not.to.be.ok

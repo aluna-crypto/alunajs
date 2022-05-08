@@ -1,19 +1,41 @@
 import { expect } from 'chai'
 
+import { executeAndCatch } from '../../utils/executeAndCatch'
 import { getSampleEndpoints } from './sampleSpecs'
 
 
 
 describe(__filename, () => {
 
-  it('should differ between producton and testnet urls', () => {
+  it('should get production endpoints', async () => {
 
     // executing
-    const prod = getSampleEndpoints({ useTestNet: false })
-    const test = getSampleEndpoints({ useTestNet: true })
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => {
+      getSampleEndpoints({ useTestNet: false })
+    })
 
     // validating
-    expect(prod.order.list).not.to.eq(test.order.list)
+    expect(error).not.to.be.ok
+    expect(result).to.be.ok
+
+  })
+
+  it('should get testnet endpoints', async () => {
+
+    // executing
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => {
+      getSampleEndpoints({ useTestNet: true })
+    })
+
+    // validating
+    expect(error).not.to.be.ok
+    expect(result).to.be.ok
 
   })
 
