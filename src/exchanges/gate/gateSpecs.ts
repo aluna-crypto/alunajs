@@ -161,7 +161,7 @@ export const getGateEndpoints = (settings: IAlunaSettingsSchema) => {
       get: (id: string, query: string) => `${baseUrl}/spot/orders/${id}?${query}`,
       list: `${baseUrl}/spot/open_orders`,
       place: `${baseUrl}/spot/orders`,
-      cancel: (id: string, query: string) => `${baseUrl}/spot/orders/${id}?${query}`,
+      cancel: (id: string) => `${baseUrl}/spot/orders/${id}`,
       // edit: `${baseUrl}/<desired-method>`,
     },
   }

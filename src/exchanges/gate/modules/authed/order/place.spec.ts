@@ -18,7 +18,7 @@ import { translateOrderSideToGate } from '../../../enums/adapters/gateOrderSideA
 import { translateOrderTypeToGate } from '../../../enums/adapters/gateOrderTypeAdapter'
 import { GateAuthed } from '../../../GateAuthed'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { GATE_RAW_ORDERS } from '../../../test/fixtures/gateOrders'
 import * as parseMod from './parse'
 
@@ -97,7 +97,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: gateEndpoints.order.place,
+      url: getGateEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -170,7 +170,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: gateEndpoints.order.place,
+      url: getGateEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

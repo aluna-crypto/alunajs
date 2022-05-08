@@ -10,7 +10,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { GateAuthed } from '../../../GateAuthed'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { GATE_RAW_ORDERS } from '../../../test/fixtures/gateOrders'
 import * as parseMod from './parse'
 
@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: gateEndpoints.order.cancel(id, ''),
+      url: getGateEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: gateEndpoints.order.cancel(id),
+      url: getGateEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

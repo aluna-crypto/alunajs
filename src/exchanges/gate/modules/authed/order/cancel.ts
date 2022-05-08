@@ -39,7 +39,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IGateOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getGateEndpoints(settings).order.get(id, ''),
+      url: getGateEndpoints(settings).order.cancel(id),
       credentials,
     })
 

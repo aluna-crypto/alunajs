@@ -5,7 +5,7 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { GateAuthed } from '../../../GateAuthed'
 import { GateHttp } from '../../../GateHttp'
-import { gateEndpoints } from '../../../gateSpecs'
+import { getGateEndpoints } from '../../../gateSpecs'
 import { GATE_RAW_ORDERS } from '../../../test/fixtures/gateOrders'
 
 
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: gateEndpoints.order.get(id, ''),
+      url: getGateEndpoints(exchange.settings).order.get(id, ''),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

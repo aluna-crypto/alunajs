@@ -35,7 +35,7 @@ describe(__filename, () => {
 
     expect(error).to.be.ok
     expect(error?.code).to.eq(AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET)
-    expect(error?.message).to.eq('Valr don\'t have a testnet.')
+    expect(error?.message).to.eq('Gate don\'t have a testnet.')
 
   })
 
