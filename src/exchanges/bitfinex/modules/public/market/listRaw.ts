@@ -24,9 +24,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bitfinex markets')
 
-  const {
-    settings,
-  } = exchange
+  const { settings } = exchange
 
   const { http = new BitfinexHttp(settings) } = params
 
