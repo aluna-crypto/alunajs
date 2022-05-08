@@ -1,5 +1,4 @@
 import axios from 'axios'
-import debug from 'debug'
 
 import {
   IAlunaHttp,
@@ -9,6 +8,7 @@ import {
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
 import { handleGateRequestError } from './errors/handleGateRequestError'
@@ -19,69 +19,21 @@ export const GATE_HTTP_CACHE_KEY_PREFIX = 'GateHttp.publicRequest'
 
 
 
-const log = debug('@alunajs:gate/GateHttp')
-
-
-// TODO: Review interface properties
-interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
-  credentials: IAlunaCredentialsSchema
-  url: string
-  body?: any
-}
-
-
-
-// TODO: Review interface properties
-export interface IGateSignedHeaders {
-  'Api-Timestamp': number
-}
-
-
-
-export const generateAuthHeader = (
-  params: ISignedHashParams,
-): IGateSignedHeaders => {
-
-  log('generateAuthHeader', params)
-
-  // TODO: Implement method
-
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
-
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
-
-  const timestamp = Date.now()
-
-  return {
-    'Api-Timestamp': timestamp,
-  }
-
-}
-
-
-
 export class GateHttp implements IAlunaHttp {
 
+  public settings: IAlunaSettingsSchema
   public requestCount: IAlunaHttpRequestCount
 
 
 
-  constructor() {
+  constructor(settings: IAlunaSettingsSchema) {
 
     this.requestCount = {
       authed: 0,
       public: 0,
     }
+
+    this.settings = settings
 
   }
 
@@ -180,6 +132,50 @@ export class GateHttp implements IAlunaHttp {
 
     }
 
+  }
+
+}
+
+
+
+// TODO: Review interface properties
+interface ISignedHashParams {
+  verb: AlunaHttpVerbEnum
+  path: string
+  credentials: IAlunaCredentialsSchema
+  url: string
+  body?: any
+}
+
+// TODO: Review interface properties
+export interface IGateSignedHeaders {
+  'Api-Timestamp': number
+}
+
+
+
+export const generateAuthHeader = (
+  params: ISignedHashParams,
+): IGateSignedHeaders => {
+
+  // TODO: Implement method
+
+  // const {
+  //   credentials,
+  //   verb,
+  //   body,
+  //   url,
+  // } = params
+
+  // const {
+  //   key,
+  //   secret,
+  // } = credentials
+
+  const timestamp = Date.now()
+
+  return {
+    'Api-Timestamp': timestamp,
   }
 
 }
