@@ -68,14 +68,11 @@ export const bitfinexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
   id: 'bitfinex',
   name: 'Bitfinex',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://bitfinex.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://bitfinex.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://www.bitfinex.com/sign-up/',
+  connectApiUrl: 'https://setting.bitfinex.com/api#new-key',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: -1,
+    perIp: 70,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
@@ -83,7 +80,6 @@ export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
     position: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,
