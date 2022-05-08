@@ -155,10 +155,10 @@ export interface IGateSignedHeaders {
 
 
 export const generateAuthHeader = (
-  params: ISignedHashParams,
+  _params: ISignedHashParams,
 ): IGateSignedHeaders => {
 
-  // TODO: Implement method
+  // TODO: Implement method (and rename `_params` to `params`)
 
   // const {
   //   credentials,
