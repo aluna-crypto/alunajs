@@ -6,7 +6,6 @@ import { IValrMarketCurrencyPairs } from './IValrMarketSchema'
 
 
 
-// TODO: Describe order interface for Valr exchange
 export interface IValrOrderSchema {
   order: IValrOrderGetSchema | IValrOrderListSchema
   pair: IValrMarketCurrencyPairs

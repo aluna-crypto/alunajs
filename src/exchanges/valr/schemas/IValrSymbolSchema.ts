@@ -1,4 +1,3 @@
-// TODO: Describe symbol interface for Valr exchange
 export interface IValrSymbolSchema {
   symbol: string
   isActive: boolean

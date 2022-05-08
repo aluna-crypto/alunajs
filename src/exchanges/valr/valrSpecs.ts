@@ -67,21 +67,17 @@ export const valrExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const valrBaseSpecs: IAlunaExchangeSchema = {
   id: 'valr',
   name: 'Valr',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://valr.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://valr.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://www.valr.com/signup',
+  connectApiUrl: 'https://www.valr.com/api-keys/create',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 180,
+    perIp: 360,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,

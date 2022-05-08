@@ -8,8 +8,9 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const valrInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
-  new RegExp(/api-invalid/mi),
+  new RegExp('API-key is invalid'),
+  new RegExp('API key or secret is invalid'),
+  new RegExp('Request has an invalid signature'),
 ]
 
 
@@ -52,8 +53,7 @@ export const handleValrRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.message || message
 
     httpStatusCode = response?.status || httpStatusCode
 
