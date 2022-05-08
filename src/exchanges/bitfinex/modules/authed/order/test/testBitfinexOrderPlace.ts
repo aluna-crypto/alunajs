@@ -13,7 +13,7 @@ import { BitfinexAuthed } from '../../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../../BitfinexHttp'
 import {
   bitfinexBaseSpecs,
-  bitfinexEndpoints,
+  getBitfinexEndpoints,
 } from '../../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../../enums/adapters/bitfinexOrderTypeAdapter'
@@ -74,7 +74,7 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
 
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      url: bitfinexEndpoints.order.place,
+      url: getBitfinexEndpoints(exchange.settings).order.place,
       credentials,
       body,
     })
