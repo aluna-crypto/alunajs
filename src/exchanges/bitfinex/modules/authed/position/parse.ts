@@ -10,10 +10,7 @@ import { translateSymbolId } from '../../../../../utils/mappings/translateSymbol
 import { translatePositionSideToAluna } from '../../../enums/adapters/bitfinexPositionSideAdapter'
 import { BitfinexPositionStatusEnum } from '../../../enums/BitfinexPositionStatusEnum'
 import { IBitfinexPositionSchema } from '../../../schemas/IBitfinexPositionSchema'
-
-
-
-// const log = debug('@alunajs:bitfinex/position/parse')
+import { splitSymbolPair } from '../../public/market/helpers/splitSymbolPair'
 
 
 
@@ -130,42 +127,5 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   }
 
   return { position }
-
-}
-
-
-
-interface ISplitSymbolPairResponse {
-  baseSymbolId: string
-  quoteSymbolId: string
-}
-
-export const splitSymbolPair = (params: {
-  symbolPair: string
-}): ISplitSymbolPairResponse => {
-
-  const { symbolPair } = params
-
-  let baseSymbolId: string
-  let quoteSymbolId: string
-
-  const spliter = symbolPair.indexOf(':')
-
-  if (spliter >= 0) {
-
-    baseSymbolId = symbolPair.slice(1, spliter)
-    quoteSymbolId = symbolPair.slice(spliter + 1)
-
-  } else {
-
-    baseSymbolId = symbolPair.slice(1, 4)
-    quoteSymbolId = symbolPair.slice(4)
-
-  }
-
-  return {
-    baseSymbolId,
-    quoteSymbolId,
-  }
 
 }
