@@ -1,5 +1,7 @@
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaAdaptersErrorCodes } from '../../../../lib/errors/AlunaAdaptersErrorCodes'
 import { GateOrderStatusEnum } from '../GateOrderStatusEnum'
 
 
@@ -8,13 +10,21 @@ const errorMessagePrefix = 'Order status'
 
 export const translateOrderStatusToAluna = (
   params: {
-      fillQuantity: string
-      quantity: string
+      leftToFill: number
+      amount: number
       from: GateOrderStatusEnum
     },
 ): AlunaOrderStatusEnum => {
 
-  const { fillQuantity, quantity, from } = params
+  const { leftToFill, from, amount } = params
+
+  const isPartiallyFilled = leftToFill > 0 && leftToFill !== amount
+
+  if (isPartiallyFilled) {
+
+    return AlunaOrderStatusEnum.PARTIALLY_FILLED
+
+  }
 
   const isOpen = from === GateOrderStatusEnum.OPEN
 
@@ -24,22 +34,28 @@ export const translateOrderStatusToAluna = (
 
   }
 
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
+  const isClosed = from === GateOrderStatusEnum.CLOSED
 
-  if (parsedQty === parsedFillQty) {
+  if (isClosed) {
 
     return AlunaOrderStatusEnum.FILLED
 
   }
 
-  if (parsedFillQty > 0) {
+  const isCancelled = from === GateOrderStatusEnum.CANCELLED
 
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
+  if (isCancelled) {
+
+    return AlunaOrderStatusEnum.CANCELED
 
   }
 
-  return AlunaOrderStatusEnum.CANCELED
+  const error = new AlunaError({
+    message: `${errorMessagePrefix} not supported: ${from}`,
+    code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
+  })
+
+  throw error
 
 }
 
@@ -55,7 +71,7 @@ export const translateOrderStatusToGate = buildAdapter<
     [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
           GateOrderStatusEnum.OPEN,
     [AlunaOrderStatusEnum.FILLED]: GateOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: GateOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.CANCELED]: GateOrderStatusEnum.CANCELLED,
   },
 })
 

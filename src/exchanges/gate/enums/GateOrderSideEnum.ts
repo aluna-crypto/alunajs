@@ -1,4 +1,4 @@
 export enum GateOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }

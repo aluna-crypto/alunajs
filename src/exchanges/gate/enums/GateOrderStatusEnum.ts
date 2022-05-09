@@ -1,4 +1,5 @@
 export enum GateOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  OPEN = 'open',
+  CLOSED = 'closed',
+  CANCELLED = 'cancelled'
 }

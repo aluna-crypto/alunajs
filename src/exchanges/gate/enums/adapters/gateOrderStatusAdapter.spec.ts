@@ -17,34 +17,51 @@ describe(__filename, () => {
 
   it('should translate Gate order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+
+    const zeroedLeftToFill = 0
+    const leftToFill = 2
+    const totalLeftToFillAmount = 2
+    const additionalAmount = 3
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: GateOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
-
-    expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: GateOrderStatusEnum.CLOSED,
+      from: GateOrderStatusEnum.OPEN,
+      leftToFill,
+      amount: additionalAmount,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
+      from: GateOrderStatusEnum.OPEN,
+      leftToFill: zeroedLeftToFill,
+      amount: totalLeftToFillAmount,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+    expect(translateOrderStatusToAluna({
       from: GateOrderStatusEnum.CLOSED,
+      leftToFill: zeroedLeftToFill,
+      amount: totalLeftToFillAmount,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: GateOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: GateOrderStatusEnum.CANCELLED,
+      leftToFill: zeroedLeftToFill,
+      amount: totalLeftToFillAmount,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    try {
+
+      translateOrderStatusToAluna({
+        from: notSupported as GateOrderStatusEnum,
+        leftToFill: zeroedLeftToFill,
+        amount: totalLeftToFillAmount,
+      })
+
+    } catch (err) {
+
+      expect(err instanceof AlunaError).to.be.ok
+      expect(err.message)
+        .to.be.eq(`Order status not supported: ${notSupported}`)
+
+    }
 
   })
 
@@ -66,7 +83,7 @@ describe(__filename, () => {
 
     expect(translateOrderStatusToGate({
       from: AlunaOrderStatusEnum.CANCELED,
-    })).to.be.eq(GateOrderStatusEnum.CLOSED)
+    })).to.be.eq(GateOrderStatusEnum.CANCELLED)
 
     let result
     let error

@@ -22,18 +22,6 @@ describe(__filename, () => {
       from: GateOrderTypeEnum.LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
-    expect(translateOrderTypeToAluna({
-      from: GateOrderTypeEnum.MARKET,
-    })).to.be.eq(AlunaOrderTypesEnum.MARKET)
-
-    expect(translateOrderTypeToAluna({
-      from: GateOrderTypeEnum.CEILING_LIMIT,
-    })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
-
-    expect(translateOrderTypeToAluna({
-      from: GateOrderTypeEnum.CEILING_MARKET,
-    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
-
     let result
     let error
 
@@ -64,18 +52,6 @@ describe(__filename, () => {
     expect(translateOrderTypeToGate({
       from: AlunaOrderTypesEnum.LIMIT,
     })).to.be.eq(GateOrderTypeEnum.LIMIT)
-
-    expect(translateOrderTypeToGate({
-      from: AlunaOrderTypesEnum.MARKET,
-    })).to.be.eq(GateOrderTypeEnum.MARKET)
-
-    expect(translateOrderTypeToGate({
-      from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(GateOrderTypeEnum.CEILING_LIMIT)
-
-    expect(translateOrderTypeToGate({
-      from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(GateOrderTypeEnum.CEILING_MARKET)
 
     let result
     let error
