@@ -1,11 +1,12 @@
 import { debug } from 'debug'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
+import { IGateOrderListResponseSchema, IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
 
@@ -14,12 +15,23 @@ const log = debug('@alunajs:gate/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams<IGateOrderSchema[]>,
+  params: IAlunaOrderParseManyParams<IGateOrderListResponseSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
   const { rawOrders } = params
 
-  const parsedOrders = rawOrders.map((rawOrder) => {
+  type TSrc = IGateOrderListResponseSchema
+  type TAcc = IGateOrderSchema[]
+
+  const detachedRawOrders = reduce<TSrc, TAcc>(rawOrders, (acc, curr) => {
+
+    acc.push(...curr.orders)
+
+    return acc
+
+  }, [])
+
+  const parsedOrders = detachedRawOrders.map((rawOrder) => {
 
     const { order } = exchange.order.parse({ rawOrder })
 
