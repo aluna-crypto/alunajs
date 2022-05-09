@@ -25,7 +25,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new GateHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IGateSymbolSchema[]>({
     url: getGateEndpoints(settings).symbol.list,
   })
