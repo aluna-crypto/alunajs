@@ -29,7 +29,6 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new GateHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<IGateBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getGateEndpoints(settings).balance.list,
