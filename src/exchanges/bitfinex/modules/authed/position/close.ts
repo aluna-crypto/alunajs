@@ -31,7 +31,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
   log('closing position', id)
 
   if (!id) {
-    throwPositionIdRequiredFor('closing Bitfinex positions')
+    throwPositionIdRequiredFor('closing Bitfinex position')
   }
 
   const { position } = await exchange.position!.get({ id, http })
