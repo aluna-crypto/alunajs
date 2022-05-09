@@ -5,19 +5,24 @@ import { IGateBalanceSchema } from '../../schemas/IGateBalanceSchema'
 // TODO: Review fixtures
 export const GATE_RAW_BALANCES: IGateBalanceSchema[] = [
   {
-    total: '1500.00000000',
-    available: '1500.00000000',
-    currencySymbol: 'BTC',
+    currency: 'BNB',
+    available: '15',
+    locked: '0',
   },
   {
-    total: '32.00000000',
-    available: '32.00000000',
-    currencySymbol: 'BTC',
+    currency: 'BTC',
+    available: '3',
+    locked: '4',
   },
   {
-    total: '11.00000000',
-    available: '11.00000000',
-    currencySymbol: 'BTC',
+    currency: 'ETH',
+    available: '5.54',
+    locked: '3',
+  },
+  {
+    currency: 'USDT',
+    available: '0',
+    locked: '0',
   },
 ]
 

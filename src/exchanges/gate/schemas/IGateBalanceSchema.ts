@@ -1,7 +1,5 @@
-// TODO: Describe balance interface for Gate exchange
 export interface IGateBalanceSchema {
-  total: string
+  currency: string
   available: string
-  currencySymbol: string
-  // ...
+  locked: string
 }
