@@ -152,7 +152,7 @@ export const getGateEndpoints = (settings: IAlunaSettingsSchema) => {
       list: `${baseUrl}/spot/tickers`,
     },
     key: {
-      fetchDetails: `${baseUrl}/spot/accounts`,
+      fetchDetails: `${baseUrl}/wallet/fee`,
     },
     balance: {
       list: `${baseUrl}/spot/accounts`,
