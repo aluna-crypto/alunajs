@@ -29,14 +29,18 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new GateHttp(settings),
   } = params
 
-  // TODO: Implement proper request
-  const rawOrder = await http.authedRequest<any>({
+  const query = new URLSearchParams()
+
+  query.append('currency_pair', symbolPair)
+
+  const rawOrder = await http.authedRequest<IGateOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getGateEndpoints(settings).order.get(id, ''),
+    url: getGateEndpoints(settings).order.get(id, query.toString()),
   })
 
   const { requestCount } = http
