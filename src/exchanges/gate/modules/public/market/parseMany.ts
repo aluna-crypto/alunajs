@@ -20,7 +20,6 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawMarkets } = params
 
-  // TODO: Review implementation
   const markets = map(rawMarkets, (rawMarket) => {
 
     const { market } = exchange.market.parse({
