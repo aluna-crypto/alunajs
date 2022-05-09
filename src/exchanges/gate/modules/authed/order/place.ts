@@ -3,7 +3,6 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -12,7 +11,6 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToGate } from '../../../enums/adapters/gateOrderSideAdapter'
-import { translateOrderTypeToGate } from '../../../enums/adapters/gateOrderTypeAdapter'
 import { GateHttp } from '../../../GateHttp'
 import { getGateEndpoints } from '../../../gateSpecs'
 import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
@@ -49,30 +47,30 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     rate,
     symbolPair,
     side,
-    type,
     http = new GateHttp(settings),
   } = params
 
-  const translatedOrderType = translateOrderTypeToGate({
-    from: type,
-  })
-
-  // TODO: Validate all body properties
   const body = {
-    direction: translateOrderSideToGate({ from: side }),
-    marketSymbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    side: translateOrderSideToGate({ from: side }),
+    currency_pair: symbolPair,
+    amount: amount.toString(),
+    price: rate!.toString(),
   }
 
   log('placing new order for Gate')
+
+  const { orderAnnotation } = exchange.settings
+
+  if (orderAnnotation) {
+
+    Object.assign(body, { text: orderAnnotation })
+
+  }
 
   let placedOrder: IGateOrderSchema
 
   try {
 
-    // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IGateOrderSchema>({
       url: getGateEndpoints(settings).order.place,
       body,
@@ -83,26 +81,20 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   } catch (err) {
 
-    let {
-      code,
-      message,
-    } = err
+    const { message } = err
+
+    let { code } = err
 
     const { metadata } = err
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    const INSUFFICIENT_BALANCE_LABEL = 'BALANCE_NOT_ENOUGH'
+
+    const isInsufficientBalanceError = metadata.label
+      === INSUFFICIENT_BALANCE_LABEL
+
+    if (isInsufficientBalanceError) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
-      message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
