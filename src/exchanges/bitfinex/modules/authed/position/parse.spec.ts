@@ -27,84 +27,9 @@ describe(__filename, () => {
     const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
     rawPosition[1] = BitfinexPositionStatusEnum.ACTIVE
 
-    const mockedBaseSymbolId = 'BTC'
-    const mockedQuoteSymbolId = 'ETH'
-
-    // mocking
-    const { splitSymbolPair } = mockSplitSymbolPair({
-      baseSymbolId: mockedBaseSymbolId,
-      quoteSymbolId: mockedQuoteSymbolId,
-    })
-
-    const mockedDate = new Date(Date.now())
-
-    function fakeDateConstructor() {
-
-      return mockedDate
-
-    }
-
-    ImportMock.mockOther(
-      global,
-      'Date',
-      fakeDateConstructor as any,
-    )
-
 
     // executing
-    const exchange = new BitfinexAuthed({ credentials })
-
-    const { position } = exchange.position!.parse({
-      rawPosition,
-    })
-
-
-    // validating
-    const {
-      expectedAmount,
-      expectedBasePrice,
-      expectedClosePrice,
-      expectedClosedAt,
-      expectedLeverage,
-      expectedLiquidationPrice,
-      expectedOpenPrice,
-      expectedOpenedAt,
-      expectedPl,
-      expectedPlPercentage,
-      expectedSide,
-      expectedStatus,
-      expectedTotal,
-    } = getExpectedPositionsProp(rawPosition)
-
-    expect(position.exchangeId).to.be.eq(bitfinexBaseSpecs.id)
-
-    expect(position.id).to.be.eq(rawPosition[11])
-
-    expect(position.symbolPair).to.be.eq(rawPosition[0])
-    expect(position.baseSymbolId).to.be.eq(mockedBaseSymbolId)
-    expect(position.quoteSymbolId).to.be.eq(mockedQuoteSymbolId)
-
-    expect(position.status).to.be.eq(expectedStatus)
-    expect(position.side).to.be.eq(expectedSide)
-
-    expect(position.basePrice).to.be.eq(expectedBasePrice)
-    expect(position.openPrice).to.be.eq(expectedOpenPrice)
-    expect(position.amount).to.be.eq(expectedAmount)
-    expect(position.total).to.be.eq(expectedTotal)
-
-    expect(position.pl).to.be.eq(expectedPl)
-    expect(position.plPercentage).to.be.eq(expectedPlPercentage)
-    expect(position.liquidationPrice).to.be.eq(expectedLiquidationPrice)
-    expect(position.leverage).to.be.eq(expectedLeverage)
-
-    expect(position.openedAt).to.deep.eq(expectedOpenedAt)
-    expect(position.closedAt).to.deep.eq(expectedClosedAt)
-    expect(position.closePrice).to.deep.eq(expectedClosePrice)
-
-    expect(splitSymbolPair.callCount).to.be.eq(1)
-    expect(splitSymbolPair.firstCall.args[0]).to.deep.eq({
-      symbolPair: rawPosition[0],
-    })
+    runTest(rawPosition)
 
   })
 
@@ -115,86 +40,9 @@ describe(__filename, () => {
     const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
     rawPosition[1] = BitfinexPositionStatusEnum.CLOSED
 
-    const mockedBaseSymbolId = 'BTC'
-    const mockedQuoteSymbolId = 'ETH'
-
-
-    // mocking
-    const { splitSymbolPair } = mockSplitSymbolPair({
-      baseSymbolId: mockedBaseSymbolId,
-      quoteSymbolId: mockedQuoteSymbolId,
-    })
-
-    const mockedDate = new Date(Date.now())
-
-    function fakeDateConstructor() {
-
-      return mockedDate
-
-    }
-
-    ImportMock.mockOther(
-      global,
-      'Date',
-      fakeDateConstructor as any,
-    )
-
 
     // executing
-    const exchange = new BitfinexAuthed({ credentials })
-
-    const { position } = exchange.position!.parse({
-      rawPosition,
-    })
-
-
-    // validating
-    const {
-      expectedAmount,
-      expectedBasePrice,
-      expectedClosePrice,
-      expectedClosedAt,
-      expectedLeverage,
-      expectedLiquidationPrice,
-      expectedOpenPrice,
-      expectedOpenedAt,
-      expectedPl,
-      expectedPlPercentage,
-      expectedSide,
-      expectedStatus,
-      expectedTotal,
-    } = getExpectedPositionsProp(rawPosition)
-
-
-    expect(position.exchangeId).to.be.eq(bitfinexBaseSpecs.id)
-
-    expect(position.id).to.be.eq(rawPosition[11])
-
-    expect(position.symbolPair).to.be.eq(rawPosition[0])
-    expect(position.baseSymbolId).to.be.eq(mockedBaseSymbolId)
-    expect(position.quoteSymbolId).to.be.eq(mockedQuoteSymbolId)
-
-    expect(position.status).to.be.eq(expectedStatus)
-    expect(position.side).to.be.eq(expectedSide)
-
-    expect(position.basePrice).to.be.eq(expectedBasePrice)
-    expect(position.openPrice).to.be.eq(expectedOpenPrice)
-    expect(position.amount).to.be.eq(expectedAmount)
-    expect(position.total).to.be.eq(expectedTotal)
-
-    expect(position.pl).to.be.eq(expectedPl)
-    expect(position.plPercentage).to.be.eq(expectedPlPercentage)
-    expect(position.liquidationPrice).to.be.eq(expectedLiquidationPrice)
-    expect(position.leverage).to.be.eq(expectedLeverage)
-
-    expect(position.openedAt).to.deep.eq(expectedOpenedAt)
-    expect(position.closedAt).to.deep.eq(expectedClosedAt)
-    expect(position.closePrice).to.deep.eq(expectedClosePrice)
-
-    expect(splitSymbolPair.callCount).to.be.eq(1)
-    expect(splitSymbolPair.firstCall.args[0]).to.deep.eq({
-      symbolPair: rawPosition[0],
-    })
+    runTest(rawPosition)
 
   })
 
@@ -204,86 +52,9 @@ describe(__filename, () => {
     const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
     rawPosition[2] = 0
 
-    const mockedBaseSymbolId = 'BTC'
-    const mockedQuoteSymbolId = 'ETH'
-
-
-    // mocking
-    const { splitSymbolPair } = mockSplitSymbolPair({
-      baseSymbolId: mockedBaseSymbolId,
-      quoteSymbolId: mockedQuoteSymbolId,
-    })
-
-    const mockedDate = new Date(Date.now())
-
-    function fakeDateConstructor() {
-
-      return mockedDate
-
-    }
-
-    ImportMock.mockOther(
-      global,
-      'Date',
-      fakeDateConstructor as any,
-    )
-
 
     // executing
-    const exchange = new BitfinexAuthed({ credentials })
-
-    const { position } = exchange.position!.parse({
-      rawPosition,
-    })
-
-
-    // validating
-    const {
-      expectedAmount,
-      expectedBasePrice,
-      expectedClosePrice,
-      expectedClosedAt,
-      expectedLeverage,
-      expectedLiquidationPrice,
-      expectedOpenPrice,
-      expectedOpenedAt,
-      expectedPl,
-      expectedPlPercentage,
-      expectedSide,
-      expectedStatus,
-      expectedTotal,
-    } = getExpectedPositionsProp(rawPosition)
-
-
-    expect(position.exchangeId).to.be.eq(bitfinexBaseSpecs.id)
-
-    expect(position.id).to.be.eq(rawPosition[11])
-
-    expect(position.symbolPair).to.be.eq(rawPosition[0])
-    expect(position.baseSymbolId).to.be.eq(mockedBaseSymbolId)
-    expect(position.quoteSymbolId).to.be.eq(mockedQuoteSymbolId)
-
-    expect(position.status).to.be.eq(expectedStatus)
-    expect(position.side).to.be.eq(expectedSide)
-
-    expect(position.basePrice).to.be.eq(expectedBasePrice)
-    expect(position.openPrice).to.be.eq(expectedOpenPrice)
-    expect(position.amount).to.be.eq(expectedAmount)
-    expect(position.total).to.be.eq(expectedTotal)
-
-    expect(position.pl).to.be.eq(expectedPl)
-    expect(position.plPercentage).to.be.eq(expectedPlPercentage)
-    expect(position.liquidationPrice).to.be.eq(expectedLiquidationPrice)
-    expect(position.leverage).to.be.eq(expectedLeverage)
-
-    expect(position.openedAt).to.deep.eq(expectedOpenedAt)
-    expect(position.closedAt).to.deep.eq(expectedClosedAt)
-    expect(position.closePrice).to.deep.eq(expectedClosePrice)
-
-    expect(splitSymbolPair.callCount).to.be.eq(1)
-    expect(splitSymbolPair.firstCall.args[0]).to.deep.eq({
-      symbolPair: rawPosition[0],
-    })
+    runTest(rawPosition)
 
   })
 
@@ -296,86 +67,9 @@ describe(__filename, () => {
     rawPosition[8] = 15
     rawPosition[9] = 20
 
-    const mockedBaseSymbolId = 'BTC'
-    const mockedQuoteSymbolId = 'ETH'
-
-
-    // mocking
-    const { splitSymbolPair } = mockSplitSymbolPair({
-      baseSymbolId: mockedBaseSymbolId,
-      quoteSymbolId: mockedQuoteSymbolId,
-    })
-
-    const mockedDate = new Date(Date.now())
-
-    function fakeDateConstructor() {
-
-      return mockedDate
-
-    }
-
-    ImportMock.mockOther(
-      global,
-      'Date',
-      fakeDateConstructor as any,
-    )
-
 
     // executing
-    const exchange = new BitfinexAuthed({ credentials })
-
-    const { position } = exchange.position!.parse({
-      rawPosition,
-    })
-
-
-    // validating
-    const {
-      expectedAmount,
-      expectedBasePrice,
-      expectedClosePrice,
-      expectedClosedAt,
-      expectedLeverage,
-      expectedLiquidationPrice,
-      expectedOpenPrice,
-      expectedOpenedAt,
-      expectedPl,
-      expectedPlPercentage,
-      expectedSide,
-      expectedStatus,
-      expectedTotal,
-    } = getExpectedPositionsProp(rawPosition)
-
-
-    expect(position.exchangeId).to.be.eq(bitfinexBaseSpecs.id)
-
-    expect(position.id).to.be.eq(rawPosition[11])
-
-    expect(position.symbolPair).to.be.eq(rawPosition[0])
-    expect(position.baseSymbolId).to.be.eq(mockedBaseSymbolId)
-    expect(position.quoteSymbolId).to.be.eq(mockedQuoteSymbolId)
-
-    expect(position.status).to.be.eq(expectedStatus)
-    expect(position.side).to.be.eq(expectedSide)
-
-    expect(position.basePrice).to.be.eq(expectedBasePrice)
-    expect(position.openPrice).to.be.eq(expectedOpenPrice)
-    expect(position.amount).to.be.eq(expectedAmount)
-    expect(position.total).to.be.eq(expectedTotal)
-
-    expect(position.pl).to.be.eq(expectedPl)
-    expect(position.plPercentage).to.be.eq(expectedPlPercentage)
-    expect(position.liquidationPrice).to.be.eq(expectedLiquidationPrice)
-    expect(position.leverage).to.be.eq(expectedLeverage)
-
-    expect(position.openedAt).to.deep.eq(expectedOpenedAt)
-    expect(position.closedAt).to.deep.eq(expectedClosedAt)
-    expect(position.closePrice).to.deep.eq(expectedClosePrice)
-
-    expect(splitSymbolPair.callCount).to.be.eq(1)
-    expect(splitSymbolPair.firstCall.args[0]).to.deep.eq({
-      symbolPair: rawPosition[0],
-    })
+    runTest(rawPosition)
 
   })
 
@@ -385,6 +79,17 @@ describe(__filename, () => {
     const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
     rawPosition[12] = null
 
+
+    // executing
+    runTest(rawPosition)
+
+  })
+
+
+
+  const runTest = (rawPosition: IBitfinexPositionSchema) => {
+
+    // preparing data
     const mockedBaseSymbolId = 'BTC'
     const mockedQuoteSymbolId = 'ETH'
 
@@ -433,12 +138,12 @@ describe(__filename, () => {
       expectedSide,
       expectedStatus,
       expectedTotal,
-    } = getExpectedPositionsProp(rawPosition)
+    } = getExpectedPositionsProps(rawPosition)
 
 
     expect(position.exchangeId).to.be.eq(bitfinexBaseSpecs.id)
 
-    expect(position.id).to.be.eq(rawPosition[11])
+    expect(position.id).to.be.eq(rawPosition[11].toString())
 
     expect(position.symbolPair).to.be.eq(rawPosition[0])
     expect(position.baseSymbolId).to.be.eq(mockedBaseSymbolId)
@@ -466,9 +171,9 @@ describe(__filename, () => {
       symbolPair: rawPosition[0],
     })
 
-  })
+  }
 
-  const getExpectedPositionsProp = (
+  const getExpectedPositionsProps = (
     rawPosition: IBitfinexPositionSchema,
   ) => {
 
