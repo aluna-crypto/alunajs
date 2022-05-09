@@ -17,23 +17,20 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const { rawSymbol } = params
 
   const {
-    name,
-    symbol,
+    currency,
   } = rawSymbol
 
   const { symbolMappings } = exchange.settings
 
   const id = translateSymbolId({
-    exchangeSymbolId: symbol,
+    exchangeSymbolId: currency,
     symbolMappings,
   })
 
-  const alias = (id !== symbol ? symbol : undefined)
+  const alias = (id !== currency ? currency : undefined)
 
-  // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
-    name,
     alias,
     exchangeId: gateBaseSpecs.id,
     meta: rawSymbol,
