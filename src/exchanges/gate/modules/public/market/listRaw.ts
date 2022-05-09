@@ -25,7 +25,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new GateHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawMarkets = await http.publicRequest<IGateMarketSchema[]>({
     url: getGateEndpoints(settings).market.list,
   })
