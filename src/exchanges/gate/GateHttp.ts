@@ -1,4 +1,5 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
 import {
   IAlunaHttp,
@@ -114,7 +115,7 @@ export class GateHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings: settings?.proxySettings,
     })
 
@@ -138,44 +139,65 @@ export class GateHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
+  credentials: IAlunaCredentialsSchema
   verb: AlunaHttpVerbEnum
   path: string
-  credentials: IAlunaCredentialsSchema
   url: string
   body?: any
 }
 
-// TODO: Review interface properties
 export interface IGateSignedHeaders {
-  'Api-Timestamp': number
+  'KEY': string
+  'Timestamp': string
+  'SIGN': string
 }
 
 
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IGateSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    verb,
+    body,
+    path,
+    url,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    key,
+    secret,
+  } = credentials
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const query = url.includes('?') ? url.split('?')[1] : ''
 
-  const timestamp = Date.now()
+  const timestamp = (new Date().getTime() / 1000).toString()
+
+  const hashedPayload = crypto
+    .createHash('sha512')
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
+
+  const preSigned = [
+    verb.toUpperCase(),
+    path,
+    query,
+    hashedPayload,
+    timestamp,
+  ].join('\n')
+
+  const signedHeader = crypto
+    .createHmac('sha512', secret)
+    .update(preSigned)
+    .digest('hex')
 
   return {
-    'Api-Timestamp': timestamp,
+    KEY: key,
+    SIGN: signedHeader,
+    Timestamp: timestamp,
   }
 
 }

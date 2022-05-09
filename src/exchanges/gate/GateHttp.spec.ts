@@ -1,7 +1,9 @@
 import { expect } from 'chai'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
+import crypto from 'crypto'
 
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
@@ -21,7 +23,7 @@ import * as GateHttpMod from './GateHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { GateHttp } = GateHttpMod
 
@@ -444,14 +446,34 @@ describe.skip(__filename, () => {
     const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
 
-    const currentDate = Date.now()
+    const timestampMock = new Date().getTime()
+
+    const stringifyBody = 'stringify-body'
+
+
 
     // mocking
+
     const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
-      currentDate,
+      Date.prototype,
+      'getTime',
+      timestampMock,
     )
+
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+      stringifyBody,
+    )
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const createHashSpy = Sinon.spy(crypto, 'createHash')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const updateHashSpy = Sinon.spy(crypto.Hash.prototype, 'update')
+
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    const digestHashSpy = Sinon.spy(crypto.Hash.prototype, 'digest')
 
     // executing
     const signedHash = GateHttpMod.generateAuthHeader({
@@ -464,7 +486,110 @@ describe.skip(__filename, () => {
 
     // validating
     expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHashSpy.callCount).to.be.eq(1)
+    expect(createHashSpy
+      .firstCall
+      .calledWith('sha512')).to.be.ok
+    expect(createHmacSpy
+      .firstCall
+      .calledWith('sha512', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateHashSpy.callCount).to.be.eq(1)
+    expect(updateHashSpy.firstCall.calledWith(JSON.stringify(body))).to.be.ok
+
+    expect(stringfyMock.callCount).to.be.eq(2)
+    expect(stringfyMock.calledWith(body)).to.be.ok
+
+    expect(digestHmacSpy.callCount).to.be.eq(1)
+    expect(digestHmacSpy.calledWith('hex')).to.be.ok
+
+    expect(digestHashSpy.callCount).to.be.eq(1)
+    expect(digestHashSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash.KEY).to.deep.eq(credentials.key)
+    expect(Number(signedHash.Timestamp) * 1000).to.eq(timestampMock)
+    expect(signedHash.SIGN).to.deep.eq(digestHmacSpy.returnValues[0])
+
+  })
+
+  it('should generate signed auth header just fine w/ query', async () => {
+
+    // preparing data
+    const path = 'path'
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const query = 'query'
+
+    const urlWithQuery = `${url}?${query}`
+
+    const timestampMock = new Date().getTime()
+
+    const stringifyBody = 'stringify-body'
+
+
+
+    // mocking
+
+    const dateMock = ImportMock.mockFunction(
+      Date.prototype,
+      'getTime',
+      timestampMock,
+    )
+
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+      stringifyBody,
+    )
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const createHashSpy = Sinon.spy(crypto, 'createHash')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const updateHashSpy = Sinon.spy(crypto.Hash.prototype, 'update')
+
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+    const digestHashSpy = Sinon.spy(crypto.Hash.prototype, 'digest')
+
+    // executing
+    const signedHash = GateHttpMod.generateAuthHeader({
+      credentials,
+      path,
+      verb,
+      url: urlWithQuery,
+    })
+
+    // validating
+    expect(dateMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHashSpy.callCount).to.be.eq(1)
+    expect(createHashSpy
+      .firstCall
+      .calledWith('sha512')).to.be.ok
+    expect(createHmacSpy
+      .firstCall
+      .calledWith('sha512', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateHashSpy.callCount).to.be.eq(1)
+    expect(
+      updateHashSpy.firstCall.calledWith(''),
+    ).to.be.ok
+
+    expect(stringfyMock.callCount).to.be.eq(0)
+
+    expect(digestHmacSpy.callCount).to.be.eq(1)
+    expect(digestHmacSpy.calledWith('hex')).to.be.ok
+
+    expect(digestHashSpy.callCount).to.be.eq(1)
+    expect(digestHashSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash.KEY).to.deep.eq(credentials.key)
+    expect(Number(signedHash.Timestamp) * 1000).to.eq(timestampMock)
+    expect(signedHash.SIGN).to.deep.eq(digestHmacSpy.returnValues[0])
 
   })
 
