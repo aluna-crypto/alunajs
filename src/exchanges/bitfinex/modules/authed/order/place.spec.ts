@@ -1,5 +1,8 @@
 import { expect } from 'chai'
-import { cloneDeep } from 'lodash'
+import {
+  cloneDeep,
+  each,
+} from 'lodash'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
@@ -16,6 +19,7 @@ import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOr
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
+import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { BITFINEX_PLACE_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
 import { testBitfinexOrderPlace } from './test/testBitfinexOrderPlace'
@@ -35,174 +39,63 @@ describe(__filename, () => {
     side: AlunaOrderSideEnum.BUY,
     symbolPair: 'tBTCETH',
     type: AlunaOrderTypesEnum.LIMIT,
-    rate: 10,
+    rate: 5,
+    stopRate: 10,
+    limitRate: 15,
   }
 
-  // EXCHANGE LIMIT Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.LIMIT,
-    amount: 10,
+  const bitfinexAccounts = bitfinexBaseSpecs.accounts
+
+  each(bitfinexAccounts, (account) => {
+
+    const {
+      implemented,
+      orderTypes,
+      type: accountType,
+    } = account
+
+    if (implemented) {
+
+      each(orderTypes, (orderType) => {
+
+        const {
+          type,
+          implemented,
+        } = orderType
+
+        if (implemented) {
+
+          // Buy Order
+          const orderParams: IAlunaOrderPlaceParams = {
+            ...commonOrderParams,
+            account: accountType,
+            type,
+            amount: 10,
+          }
+
+          testBitfinexOrderPlace(orderParams)
+
+
+          // Sell Order
+          testBitfinexOrderPlace({
+            ...orderParams,
+            amount: -10,
+          })
+
+        }
+
+      })
+
+    }
+
   })
-
-
-  // EXCHANGE LIMIT Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.LIMIT,
-    amount: -10,
-  })
-
-
-  // EXCHANGE MARKET Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.MARKET,
-    amount: 10,
-    rate: undefined,
-  })
-
-
-  // EXCHANGE MARKET Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.MARKET,
-    amount: -10,
-    rate: undefined,
-  })
-
-
-  // EXCHANGE STOP_MARKET Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.STOP_MARKET,
-    amount: 10,
-    stopRate: 5,
-  })
-
-
-  // EXCHANGE STOP_MARKET Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.STOP_MARKET,
-    amount: -10,
-    stopRate: 5,
-  })
-
-
-  // EXCHANGE STOP_LIMIT Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    amount: 10,
-    stopRate: 5,
-    limitRate: 8,
-  })
-
-
-  // EXCHANGE STOP_LIMIT Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.EXCHANGE,
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    amount: -10,
-    stopRate: 5,
-    limitRate: 8,
-  })
-
-
-  // MARGIN LIMIT Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.LIMIT,
-    amount: 10,
-  })
-
-
-  // MARGIN LIMIT Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.LIMIT,
-    amount: -10,
-  })
-
-
-  // MARGIN MARKET Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.MARKET,
-    amount: 10,
-    rate: undefined,
-  })
-
-
-  // MARGIN MARKET Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.MARKET,
-    amount: -10,
-    rate: undefined,
-  })
-
-
-  // MARGIN STOP_MARKET Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.STOP_MARKET,
-    amount: 10,
-    stopRate: 5,
-  })
-
-
-  // MARGIN STOP_MARKET Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.STOP_MARKET,
-    amount: -10,
-    stopRate: 5,
-  })
-
-
-  // MARGIN STOP_LIMIT Buy Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    amount: 10,
-    stopRate: 5,
-    limitRate: 8,
-  })
-
-
-  // MARGIN STOP_LIMIT Sell Order
-  testBitfinexOrderPlace({
-    ...commonOrderParams,
-    account: AlunaAccountEnum.MARGIN,
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    amount: -10,
-    stopRate: 5,
-    limitRate: 8,
-  })
-
 
   it('should throw error if order place request fails', async () => {
 
     // preparing data
     const mockedRequestResponse = cloneDeep(BITFINEX_PLACE_ORDER_RESPONSE)
     mockedRequestResponse[6] = 'ERROR'
+
 
     // mocking
     const {
@@ -226,6 +119,8 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => exchange.order.place(commonOrderParams))
 
+
+    // validating
     expect(result).not.to.be.ok
 
     expect(error!.code).to.be.eq(AlunaOrderErrorCodes.PLACE_FAILED)
@@ -280,6 +175,8 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => exchange.order.place(commonOrderParams))
 
+
+    // validating
     expect(result).not.to.be.ok
 
     expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
