@@ -8,6 +8,7 @@ import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchem
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { IBitfinexMarketSchema } from '../../../schemas/IBitfinexMarketSchema'
+import { splitSymbolPair } from './helpers/splitSymbolPair'
 
 
 
@@ -24,7 +25,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   } = rawMarket
 
   const [
-    symbol,
+    symbolPair,
     bid,
     _bidSize,
     ask,
@@ -38,24 +39,12 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   ] = rawTicker
 
 
-  let baseSymbolId: string
-  let quoteSymbolId: string
+  let {
+    baseSymbolId,
+    quoteSymbolId,
+  } = splitSymbolPair({ symbolPair })
 
-  const spliter = symbol.indexOf(':')
-
-  if (spliter >= 0) {
-
-    baseSymbolId = symbol.slice(1, spliter)
-    quoteSymbolId = symbol.slice(spliter + 1)
-
-  } else {
-
-    baseSymbolId = symbol.slice(1, 4)
-    quoteSymbolId = symbol.slice(4)
-
-  }
-
-  const { symbolMappings } = bitfinexBaseSpecs.settings
+  const { symbolMappings } = exchange.settings
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,
@@ -66,6 +55,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     exchangeSymbolId: quoteSymbolId,
     symbolMappings,
   })
+
   const ticker: IAlunaTickerSchema = {
     bid,
     ask,
@@ -82,7 +72,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const market: IAlunaMarketSchema = {
     exchangeId: bitfinexBaseSpecs.id,
-    symbolPair: symbol,
+    symbolPair,
     baseSymbolId,
     quoteSymbolId,
     ticker,
