@@ -31,15 +31,19 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new GateHttp(settings),
   } = params
 
+  const query = new URLSearchParams()
+
+  query.append('currency_pair', symbolPair)
+
   try {
 
-    // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IGateOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getGateEndpoints(settings).order.cancel(id),
+      url: getGateEndpoints(settings).order.cancel(id, query.toString()),
       credentials,
     })
 
