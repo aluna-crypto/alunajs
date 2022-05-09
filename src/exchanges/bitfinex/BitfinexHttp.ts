@@ -49,25 +49,31 @@ export class BitfinexHttp implements IAlunaHttp {
       body,
       verb = AlunaHttpVerbEnum.GET,
       weight = 1,
-      settings,
     } = params
+
+    const settings = (params.settings || this.settings)
+
+    const {
+      disableCache = false,
+      cacheTtlInSeconds = 60,
+    } = settings
 
     const cacheKey = AlunaCache.hashCacheKey({
       args: params,
       prefix: BITFINEX_HTTP_CACHE_KEY_PREFIX,
     })
 
-    if (AlunaCache.cache.has(cacheKey)) {
-
+    if (!disableCache && AlunaCache.cache.has(cacheKey)) {
       return AlunaCache.cache.get<T>(cacheKey) as T
-
     }
+
+    const { proxySettings } = settings
 
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
       data: body,
-      proxySettings: settings?.proxySettings,
+      proxySettings,
     })
 
     this.requestCount.public += weight
@@ -76,7 +82,9 @@ export class BitfinexHttp implements IAlunaHttp {
 
       const { data } = await axios.create().request<T>(requestConfig)
 
-      AlunaCache.cache.set<T>(cacheKey, data)
+      if (!disableCache) {
+        AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
+      }
 
       return data
 
@@ -99,9 +107,10 @@ export class BitfinexHttp implements IAlunaHttp {
       body = {},
       verb = AlunaHttpVerbEnum.POST,
       credentials,
-      settings,
       weight = 1,
     } = params
+
+    const settings = (params.settings || this.settings)
 
     const signedHash = generateAuthHeader({
       credentials,
@@ -109,12 +118,14 @@ export class BitfinexHttp implements IAlunaHttp {
       url,
     })
 
+    const { proxySettings } = settings
+
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
       data: body,
       headers: signedHash,
-      proxySettings: settings?.proxySettings,
+      proxySettings,
     })
 
     this.requestCount.authed += weight
