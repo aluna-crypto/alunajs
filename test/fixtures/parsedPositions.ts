@@ -7,7 +7,7 @@ import { IAlunaPositionSchema } from '../../src/lib/schemas/IAlunaPositionSchema
 
 export const PARSED_POSITIONS: IAlunaPositionSchema[] = [
   {
-    id: 151970561,
+    id: '151970561',
     symbolPair: 'tADAUSD',
     baseSymbolId: 'ADA',
     quoteSymbolId: 'USD',
@@ -27,7 +27,7 @@ export const PARSED_POSITIONS: IAlunaPositionSchema[] = [
     meta: {},
   },
   {
-    id: 151970562,
+    id: '151970562',
     symbolPair: 'tETHBTC',
     baseSymbolId: 'ETH',
     quoteSymbolId: 'BTC',

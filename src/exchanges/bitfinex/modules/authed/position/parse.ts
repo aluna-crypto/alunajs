@@ -104,7 +104,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   }
 
   const position: IAlunaPositionSchema = {
-    id: positionId,
+    id: positionId.toString(),
     symbolPair: symbol,
     exchangeId: exchange.specs.id,
     baseSymbolId,
