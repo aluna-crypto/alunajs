@@ -65,10 +65,6 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   switch (type) {
 
-    case AlunaOrderTypesEnum.LIMIT:
-      price = rate!.toString()
-      break
-
     case AlunaOrderTypesEnum.STOP_MARKET:
       price = stopRate!.toString()
       break
@@ -78,14 +74,16 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
       priceAuxLimit = limitRate!.toString()
       break
 
+    // LIMIT
     default:
+      price = rate!.toString()
 
   }
 
   const body = {
     amount: translatedAmount,
     id: Number(id),
-    ...(price ? { price } : {}),
+    price,
     ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
   }
 
@@ -118,6 +116,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
         code: AlunaHttpErrorCodes.REQUEST_ERROR,
         message: text,
         metadata: response,
+        httpStatusCode: 500,
       })
 
     }
