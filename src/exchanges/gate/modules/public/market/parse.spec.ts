@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Gate } from '../../../Gate'
@@ -39,19 +38,6 @@ describe(__filename, () => {
       change: Number(changePercentage),
       baseVolume: Number(baseVolume),
       quoteVolume: Number(quoteVolume),
-    }
-
-    const parsedMarket: IAlunaMarketSchema = {
-      exchangeId: gateBaseSpecs.id,
-      symbolPair: currencyPair,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
-      ticker,
-      spotEnabled: true,
-      marginEnabled: false,
-      derivativesEnabled: false,
-      leverageEnabled: false,
-      meta: rawMarket,
     }
 
     // mocking
