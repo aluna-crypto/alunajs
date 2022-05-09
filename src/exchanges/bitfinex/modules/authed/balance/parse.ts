@@ -7,7 +7,6 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { translateWalletToAluna } from '../../../enums/adapters/bitfinexWalletAdapter'
 import { IBitfinexBalanceSchema } from '../../../schemas/IBitfinexBalanceSchema'
 
@@ -39,7 +38,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const symbolId = translateSymbolId({
     exchangeSymbolId: currency,
-    symbolMappings: bitfinexBaseSpecs.settings.symbolMappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const parsedBalance: IAlunaBalanceSchema = {
