@@ -2,19 +2,30 @@ import { IGateSymbolSchema } from '../../schemas/IGateSymbolSchema'
 
 
 
-// TODO: Review fixtures
 export const GATE_RAW_SYMBOLS: IGateSymbolSchema[] = [
   {
-    symbol: 'BTC',
-    name: 'Bitcoin',
+    currency: 'BTC',
+    delisted: false,
+    deposit_disabled: false,
+    trade_disabled: false,
+    withdraw_delayed: false,
+    withdraw_disabled: false,
   },
   {
-    symbol: 'LTC',
-    name: 'Litecoin',
+    currency: 'ETH',
+    delisted: false,
+    deposit_disabled: false,
+    trade_disabled: false,
+    withdraw_delayed: false,
+    withdraw_disabled: false,
   },
   {
-    symbol: 'ETH',
-    name: 'Ethereum',
+    currency: 'BNB',
+    delisted: false,
+    deposit_disabled: false,
+    trade_disabled: false,
+    withdraw_delayed: false,
+    withdraw_disabled: false,
   },
 ]
 
