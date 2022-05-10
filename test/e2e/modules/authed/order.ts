@@ -59,7 +59,7 @@ export function order(params: IAuthedParams) {
 
 
   /**
-   * Stop Limit Orders
+   * Stop Market Orders
    */
   const isStopMarketOrderSupported = isOrderTypeSupportedAndImplemented({
     account: orderAccount || AlunaAccountEnum.EXCHANGE,

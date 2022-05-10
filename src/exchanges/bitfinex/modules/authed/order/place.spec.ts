@@ -60,10 +60,10 @@ describe(__filename, () => {
 
         const {
           type,
-          implemented,
+          implemented: isTypeImplemented,
         } = orderType
 
-        if (implemented) {
+        if (isTypeImplemented) {
 
           // Buy Order
           const orderParams: IAlunaOrderPlaceParams = {
