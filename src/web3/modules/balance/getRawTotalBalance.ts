@@ -26,7 +26,7 @@ export interface IWeb3GetRawTotalBalanceParams {
 
 export interface IWeb3GetRawTotalBalanceReturns {
   rawTotalBalance: IDebankTotalBalanceSchema
-  requestCount: IAlunaHttpRequestCount
+  requestWeight: IAlunaHttpRequestCount
 }
 
 
@@ -73,10 +73,10 @@ export const getRawTotalBalance = (web3: Web3) => async (
     (chain: IDebankChainSchema) => (chain.usd_value !== 0),
   )
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    requestCount,
+    requestWeight,
     rawTotalBalance,
   }
 

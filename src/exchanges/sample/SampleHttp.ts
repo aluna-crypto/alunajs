@@ -22,13 +22,13 @@ export const SAMPLE_HTTP_CACHE_KEY_PREFIX = 'SampleHttp.publicRequest'
 export class SampleHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
-  public requestCount: IAlunaHttpRequestCount
+  public requestWeight: IAlunaHttpRequestCount
 
 
 
   constructor(settings: IAlunaSettingsSchema) {
 
-    this.requestCount = {
+    this.requestWeight = {
       authed: 0,
       public: 0,
     }
@@ -75,7 +75,7 @@ export class SampleHttp implements IAlunaHttp {
       proxySettings,
     })
 
-    this.requestCount.public += weight
+    this.requestWeight.public += weight
 
     try {
 
@@ -129,7 +129,7 @@ export class SampleHttp implements IAlunaHttp {
       proxySettings,
     })
 
-    this.requestCount.authed += weight
+    this.requestWeight.authed += weight
 
     try {
 

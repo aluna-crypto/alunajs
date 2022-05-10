@@ -28,11 +28,11 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   const { position } = exchange.position!.parse({ rawPosition })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     position,
-    requestCount,
+    requestWeight,
   }
 
 }

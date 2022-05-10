@@ -14,7 +14,7 @@ export function balance(params: IAuthedParams) {
 
     const {
       balances,
-      requestCount,
+      requestWeight,
     } = await exchangeAuthed.balance.list()
 
     expect(balances).to.exist
@@ -32,8 +32,8 @@ export function balance(params: IAuthedParams) {
 
     })
 
-    expect(requestCount.authed).to.be.greaterThan(0)
-    expect(requestCount.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.greaterThan(0)
+    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -41,15 +41,15 @@ export function balance(params: IAuthedParams) {
 
     const {
       rawBalances,
-      requestCount,
+      requestWeight,
     } = await exchangeAuthed.balance.listRaw()
 
     expect(rawBalances).to.exist
 
     expect(rawBalances.length).to.be.greaterThan(0)
 
-    expect(requestCount.authed).to.be.greaterThan(0)
-    expect(requestCount.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.greaterThan(0)
+    expect(requestWeight.public).to.be.eq(0)
 
   })
 

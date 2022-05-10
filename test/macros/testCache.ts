@@ -40,7 +40,7 @@ export const testCache = async (params: ITestCacheParams) => {
     } = mockAlunaCache({ has: false, get: undefined })
 
     // executing
-    await new (HttpClass)({}).publicRequest(requestParams)
+    await new HttpClass({}).publicRequest(requestParams)
 
     // validating
     expect(cache.has.callCount).to.eq(1)

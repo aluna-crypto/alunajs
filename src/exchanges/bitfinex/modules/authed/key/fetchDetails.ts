@@ -48,11 +48,11 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { key } = exchange.key.parseDetails({ rawKey })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     key,
-    requestCount,
+    requestWeight,
   }
 
 }

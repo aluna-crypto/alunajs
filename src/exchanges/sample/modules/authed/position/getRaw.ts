@@ -51,11 +51,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawPosition,
-    requestCount,
+    requestWeight,
   }
 
 }

@@ -26,14 +26,14 @@ describe(__filename, () => {
 
     const {
       rawMarkets,
-      requestCount,
+      requestWeight,
     } = await exchange.market.listRaw()
 
 
     // validating
     expect(rawMarkets).to.deep.eq(SAMPLE_RAW_MARKETS)
 
-    expect(requestCount).to.be.ok
+    expect(requestWeight).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(1)
 

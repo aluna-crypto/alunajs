@@ -20,14 +20,14 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     rawOrder,
-    requestCount,
+    requestWeight,
   } = await exchange.order.getRaw(params)
 
   const { order } = exchange.order.parse({ rawOrder })
 
   return {
     order,
-    requestCount,
+    requestWeight,
   }
 
 }

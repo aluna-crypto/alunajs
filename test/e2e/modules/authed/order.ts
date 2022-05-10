@@ -34,14 +34,14 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await placeLimitOrder(params)
 
       expect(order).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
       liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
@@ -52,14 +52,14 @@ export function order(params: IAuthedParams) {
 
       const {
         rawOrders,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.listRaw()
 
       expect(rawOrders).to.exist
       expect(rawOrders.length).to.be.greaterThan(0)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -69,15 +69,15 @@ export function order(params: IAuthedParams) {
 
       const {
         orders,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.list()
 
       expect(orders).to.exist
       expect(orders.length).to.be.greaterThan(0)
       expect(orders[0].symbolPair).to.be.eq(orderSymbolPair)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -90,7 +90,7 @@ export function order(params: IAuthedParams) {
 
       const {
         rawOrder,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.getRaw({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
@@ -98,8 +98,8 @@ export function order(params: IAuthedParams) {
 
       expect(rawOrder).to.exist
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -112,7 +112,7 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
@@ -121,8 +121,8 @@ export function order(params: IAuthedParams) {
       expect(order).to.exist
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -143,7 +143,7 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.edit({
         id: limitOrderId!,
         symbolPair: orderSymbolPair!,
@@ -157,8 +157,8 @@ export function order(params: IAuthedParams) {
       expect(order).to.exist
       expect(order.amount).to.be.eq(newAmount)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
       liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
@@ -176,7 +176,7 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
@@ -186,8 +186,8 @@ export function order(params: IAuthedParams) {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
       expect(order.amount).to.be.eq(orderEditedAmount)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -200,7 +200,7 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.cancel({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
@@ -208,8 +208,8 @@ export function order(params: IAuthedParams) {
 
       expect(order).to.exist
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -222,7 +222,7 @@ export function order(params: IAuthedParams) {
 
       const {
         order,
-        requestCount,
+        requestWeight,
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
@@ -231,8 +231,8 @@ export function order(params: IAuthedParams) {
       expect(order).to.exist
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-      expect(requestCount.authed).to.be.greaterThan(0)
-      expect(requestCount.public).to.be.eq(0)
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -256,7 +256,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await placeMarketOrder({
           authed: params,
           side: AlunaOrderSideEnum.BUY,
@@ -265,8 +265,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
         liveData.marketOrderId = order.id!
         liveData.orderSymbolPair = order.symbolPair
@@ -277,13 +277,13 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.listRaw()
 
         expect(rawOrders).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -291,13 +291,13 @@ export function order(params: IAuthedParams) {
 
         const {
           orders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.list()
 
         expect(orders).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -310,7 +310,7 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrder,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.getRaw({
           symbolPair: orderSymbolPair!,
           id: marketOrderId!,
@@ -318,8 +318,8 @@ export function order(params: IAuthedParams) {
 
         expect(rawOrder).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -332,7 +332,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: marketOrderId!,
@@ -342,8 +342,8 @@ export function order(params: IAuthedParams) {
         expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -351,7 +351,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await placeMarketOrder({
           authed: params,
           side: AlunaOrderSideEnum.SELL,
@@ -360,8 +360,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -388,14 +388,14 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await placeStopLimitOrder(params)
 
         expect(order).to.exist
         expect(order.type).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
         liveData.stopLimitOrderId = order.id!
         liveData.orderSymbolPair = order.symbolPair
@@ -406,14 +406,14 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.listRaw()
 
         expect(rawOrders).to.exist
         expect(rawOrders.length).to.be.greaterThan(0)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -423,15 +423,15 @@ export function order(params: IAuthedParams) {
 
         const {
           orders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.list()
 
         expect(orders).to.exist
         expect(orders.length).to.be.greaterThan(0)
         expect(orders[0].symbolPair).to.be.eq(orderSymbolPair)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -444,7 +444,7 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrder,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.getRaw({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
@@ -452,8 +452,8 @@ export function order(params: IAuthedParams) {
 
         expect(rawOrder).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -466,7 +466,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
@@ -475,8 +475,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -498,7 +498,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.edit({
           id: stopLimitOrderId!,
           symbolPair: orderSymbolPair!,
@@ -513,8 +513,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.amount).to.be.eq(newAmount)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
         liveData.stopLimitOrderId = order.id!
         liveData.orderSymbolPair = order.symbolPair
@@ -532,7 +532,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
@@ -542,8 +542,8 @@ export function order(params: IAuthedParams) {
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
         expect(order.amount).to.be.eq(orderEditedAmount)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -556,7 +556,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.cancel({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
@@ -564,8 +564,8 @@ export function order(params: IAuthedParams) {
 
         expect(order).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -578,7 +578,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
@@ -587,8 +587,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -613,14 +613,14 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await placeStopMarketOrder(params)
 
         expect(order).to.exist
         expect(order.type).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
         liveData.stopMarketOrderId = order.id!
         liveData.orderSymbolPair = order.symbolPair
@@ -631,14 +631,14 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.listRaw()
 
         expect(rawOrders).to.exist
         expect(rawOrders.length).to.be.greaterThan(0)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -648,15 +648,15 @@ export function order(params: IAuthedParams) {
 
         const {
           orders,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.list()
 
         expect(orders).to.exist
         expect(orders.length).to.be.greaterThan(0)
         expect(orders[0].symbolPair).to.be.eq(orderSymbolPair)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -669,7 +669,7 @@ export function order(params: IAuthedParams) {
 
         const {
           rawOrder,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.getRaw({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
@@ -677,8 +677,8 @@ export function order(params: IAuthedParams) {
 
         expect(rawOrder).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -691,7 +691,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
@@ -700,8 +700,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -722,7 +722,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.edit({
           id: stopMarketOrderId!,
           symbolPair: orderSymbolPair!,
@@ -736,8 +736,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.amount).to.be.eq(newAmount)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
         liveData.stopMarketOrderId = order.id!
         liveData.orderSymbolPair = order.symbolPair
@@ -755,7 +755,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
@@ -765,8 +765,8 @@ export function order(params: IAuthedParams) {
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
         expect(order.amount).to.be.eq(orderEditedAmount)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -779,7 +779,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.cancel({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
@@ -787,8 +787,8 @@ export function order(params: IAuthedParams) {
 
         expect(order).to.exist
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 
@@ -801,7 +801,7 @@ export function order(params: IAuthedParams) {
 
         const {
           order,
-          requestCount,
+          requestWeight,
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
@@ -810,8 +810,8 @@ export function order(params: IAuthedParams) {
         expect(order).to.exist
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
-        expect(requestCount.authed).to.be.greaterThan(0)
-        expect(requestCount.public).to.be.eq(0)
+        expect(requestWeight.authed).to.be.greaterThan(0)
+        expect(requestWeight.public).to.be.eq(0)
 
       })
 

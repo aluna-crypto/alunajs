@@ -70,11 +70,11 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       http,
     })
 
-    const { requestCount } = http
+    const { requestWeight } = http
 
     return {
       order,
-      requestCount,
+      requestWeight,
     }
 
   } catch (err) {

@@ -25,7 +25,7 @@ export interface IWeb3TokenListRawParams {
 
 export interface IWeb3TokenListRawReturns {
   rawTokens: IDebankTokenSchema[]
-  requestCount: IAlunaHttpRequestCount
+  requestWeight: IAlunaHttpRequestCount
 }
 
 
@@ -66,10 +66,10 @@ export const listRaw = (web3: Web3) => async (
 
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    requestCount,
+    requestWeight,
     rawTokens,
   }
 

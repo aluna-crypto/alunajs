@@ -55,11 +55,11 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     http,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     order: newOrder,
-    requestCount,
+    requestWeight,
   }
 
 }

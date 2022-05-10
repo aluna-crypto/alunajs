@@ -38,11 +38,11 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
     body: { id, symbolPair },
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     leverage,
-    requestCount,
+    requestWeight,
   }
 
 }

@@ -30,7 +30,7 @@ describe(__filename, () => {
 
     const {
       rawMarkets,
-      requestCount,
+      requestWeight,
     } = await exchange.market.listRaw()
 
 
@@ -40,7 +40,7 @@ describe(__filename, () => {
       pairs: VALR_RAW_CURRENCY_PAIRS,
     })
 
-    expect(requestCount).to.be.ok
+    expect(requestWeight).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(2)
 

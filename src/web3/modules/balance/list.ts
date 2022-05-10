@@ -25,7 +25,7 @@ export interface IWeb3BalanceListParams {
 
 export interface IWeb3BalanceListReturns {
   balances: IAlunaBalanceSchema[]
-  requestCount: IAlunaHttpRequestCount
+  requestWeight: IAlunaHttpRequestCount
 }
 
 
@@ -61,10 +61,10 @@ export const list = (web3: Web3) => async (
     rawTokenList,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    requestCount,
+    requestWeight,
     balances,
   }
 

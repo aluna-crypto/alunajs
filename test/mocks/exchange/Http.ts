@@ -25,13 +25,13 @@ export function mockHttp(params: {
     'publicRequest',
   )
 
-  const requestCount: IAlunaHttpRequestCount = {
+  const requestWeight: IAlunaHttpRequestCount = {
     authed: 0,
     public: 0,
   }
 
   return {
-    requestCount,
+    requestWeight,
     authedRequest,
     publicRequest,
   }

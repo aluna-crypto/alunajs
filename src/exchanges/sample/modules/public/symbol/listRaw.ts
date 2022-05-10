@@ -30,10 +30,10 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     url: getSampleEndpoints(settings).symbol.list,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    requestCount,
+    requestWeight,
     rawSymbols,
   }
 

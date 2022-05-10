@@ -137,8 +137,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(sampleHttp.requestCount.public).to.be.eq(1)
-    expect(sampleHttp.requestCount.authed).to.be.eq(0)
+    expect(sampleHttp.requestWeight.public).to.be.eq(1)
+    expect(sampleHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -195,8 +195,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(sampleHttp.requestCount.public).to.be.eq(0)
-    expect(sampleHttp.requestCount.authed).to.be.eq(1)
+    expect(sampleHttp.requestWeight.public).to.be.eq(0)
+    expect(sampleHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -234,8 +234,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    sampleHttp.requestCount.public = pubRequestCount
-    sampleHttp.requestCount.authed = authRequestCount
+    sampleHttp.requestWeight.public = pubRequestCount
+    sampleHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -253,8 +253,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(sampleHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
-    expect(sampleHttp.requestCount.authed).to.be.eq(authRequestCount)
+    expect(sampleHttp.requestWeight.public).to.be.eq(pubRequestCount + weight)
+    expect(sampleHttp.requestWeight.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
 
@@ -269,8 +269,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    sampleHttp.requestCount.public = pubRequestCount
-    sampleHttp.requestCount.authed = authRequestCount
+    sampleHttp.requestWeight.public = pubRequestCount
+    sampleHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -289,8 +289,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(sampleHttp.requestCount.public).to.be.eq(pubRequestCount)
-    expect(sampleHttp.requestCount.authed).to.be.eq(authRequestCount + weight)
+    expect(sampleHttp.requestWeight.public).to.be.eq(pubRequestCount)
+    expect(sampleHttp.requestWeight.authed).to.be.eq(authRequestCount + weight)
 
     expect(request.callCount).to.be.eq(1)
 

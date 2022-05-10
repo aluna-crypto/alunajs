@@ -12,7 +12,7 @@ export function key(params: IAuthedParams) {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchangeAuthed.key.fetchDetails()
 
     expect(key).to.exist
@@ -25,8 +25,8 @@ export function key(params: IAuthedParams) {
 
     expect(key.meta).to.exist
 
-    expect(requestCount.authed).to.be.greaterThan(0)
-    expect(requestCount.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.greaterThan(0)
+    expect(requestWeight.public).to.be.eq(0)
 
   })
 
