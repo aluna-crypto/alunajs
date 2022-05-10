@@ -67,11 +67,13 @@ export class GateHttp implements IAlunaHttp {
       return AlunaCache.cache.get<T>(cacheKey) as T
     }
 
+    const { proxySettings } = settings
+
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
       data: body,
-      proxySettings: settings?.proxySettings,
+      proxySettings,
     })
 
     this.requestCount.public += weight
