@@ -34,7 +34,7 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      id, quantity,
+      id, amount,
     } = mockedRawOrder
 
 
@@ -56,7 +56,7 @@ describe(__filename, () => {
       id,
       symbolPair: '',
       account: AlunaAccountEnum.EXCHANGE,
-      amount: Number(quantity),
+      amount: Number(amount),
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 0,

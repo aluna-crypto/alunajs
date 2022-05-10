@@ -5,6 +5,7 @@ import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { GateAuthed } from '../../../GateAuthed'
+import { IGateOrderListResponseSchema } from '../../../schemas/IGateOrderSchema'
 import { GATE_RAW_ORDERS } from '../../../test/fixtures/gateOrders'
 import * as parseMod from './parse'
 
@@ -22,6 +23,13 @@ describe(__filename, () => {
     // preparing data
     const parsedOrders = PARSED_ORDERS
     const rawOrders = GATE_RAW_ORDERS
+    const rawOrdersList: IGateOrderListResponseSchema[] = [
+      {
+        currency_pair: '',
+        orders: rawOrders,
+        total: 1,
+      },
+    ]
 
 
     // mocking
@@ -35,7 +43,7 @@ describe(__filename, () => {
     // executing
     const exchange = new GateAuthed({ credentials })
 
-    const { orders } = exchange.order.parseMany({ rawOrders })
+    const { orders } = exchange.order.parseMany({ rawOrders: rawOrdersList })
 
 
     // validating

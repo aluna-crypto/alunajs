@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getGateEndpoints(exchange.settings).order.get(id, ''),
+      url: getGateEndpoints(exchange.settings).order.get(id, 'currency_pair='),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

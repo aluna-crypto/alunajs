@@ -42,7 +42,7 @@ export const GATE_RAW_ORDERS: IGateOrderSchema[] = [
     update_time: '1644845927',
     create_time_ms: 1644845927564,
     update_time_ms: 1644845927564,
-    status: GateOrderStatusEnum.OPEN,
+    status: GateOrderStatusEnum.CLOSED,
     currency_pair: 'BNB_USDT',
     type: GateOrderTypeEnum.LIMIT,
     account: 'spot',

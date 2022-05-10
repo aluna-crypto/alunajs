@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getGateEndpoints(exchange.settings).order.cancel(id),
+      url: getGateEndpoints(exchange.settings).order.cancel(id, 'currency_pair='),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -109,7 +109,9 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getGateEndpoints(exchange.settings).order.cancel(id),
+      url: getGateEndpoints(exchange.settings)
+        .order
+        .cancel(id, 'currency_pair=symbolPair'),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
