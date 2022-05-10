@@ -1,0 +1,35 @@
+import debug from 'debug'
+
+import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
+import {
+  IAlunaSymbolListParams,
+  IAlunaSymbolListReturns,
+} from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { binanceHttp } from '../../../binanceHttp'
+
+
+
+const log = debug('@alunajs:binance/symbol/list')
+
+
+
+export const list = (exchange: IAlunaExchangePublic) => async (
+  params: IAlunaSymbolListParams = {},
+): Promise<IAlunaSymbolListReturns> => {
+
+  log('listing binance symbols')
+
+  const { http = new binanceHttp(exchange.settings) } = params
+
+  const { requestCount } = http
+
+  const { rawSymbols } = await exchange.symbol.listRaw({ http })
+
+  const { symbols } = exchange.symbol.parseMany({ rawSymbols })
+
+  return {
+    symbols,
+    requestCount,
+  }
+
+}
