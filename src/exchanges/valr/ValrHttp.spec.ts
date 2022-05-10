@@ -7,7 +7,6 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
-import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
@@ -88,9 +87,7 @@ describe(__filename, () => {
     )
 
     if (!mockGenerateAuthHeader) {
-
       generateAuthHeader.restore()
-
     }
 
     const {
@@ -563,20 +560,6 @@ describe(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({
-    cacheResult: response,
-    callMethod: async () => {
-
-      const params: IAlunaHttpPublicParams = {
-        url,
-        body,
-        verb: AlunaHttpVerbEnum.GET,
-      }
-
-      await new ValrHttp({}).publicRequest(params)
-
-    },
-
-  })
+  testCache({ HttpClass: ValrHttp })
 
 })
