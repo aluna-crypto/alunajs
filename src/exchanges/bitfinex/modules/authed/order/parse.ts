@@ -13,10 +13,7 @@ import { translateAccountToAluna } from '../../../enums/adapters/bitfinexAccount
 import { translateOrderStatusToAluna } from '../../../enums/adapters/bitfinexOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
-
-
-
-// const log = debug('@alunajs:bitfinex/order/parse')
+import { splitSymbolPair } from '../../public/market/helpers/splitSymbolPair'
 
 
 
@@ -24,7 +21,6 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBitfinexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const {
     rawOrder,
@@ -54,24 +50,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   ] = rawOrder
 
 
-  let baseSymbolId: string
-  let quoteSymbolId: string
+  let {
+    baseSymbolId,
+    quoteSymbolId,
+  } = splitSymbolPair({ symbolPair })
 
-  const spliter = symbolPair.indexOf(':')
-
-  if (spliter >= 0) {
-
-    baseSymbolId = symbolPair.slice(1, spliter)
-    quoteSymbolId = symbolPair.slice(spliter + 1)
-
-  } else {
-
-    baseSymbolId = symbolPair.slice(1, 4)
-    quoteSymbolId = symbolPair.slice(4)
-
-  }
-
-  const { symbolMappings } = bitfinexBaseSpecs.settings
+  const { symbolMappings } = exchange.settings
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,

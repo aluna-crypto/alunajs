@@ -3,15 +3,14 @@ import { expect } from 'chai'
 import { PARSED_ORDERS } from '../../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../../test/mocks/exchange/modules/mockParse'
-import { IAlunaOrderPlaceParams } from '../../../../../../lib/modules/authed/IAlunaOrderModule'
+import { IAlunaOrderEditParams } from '../../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { mockEnsureOrderIsSupported } from '../../../../../../utils/orders/ensureOrderIsSupported.mock'
-import { placeOrderParamsSchema } from '../../../../../../utils/validation/schemas/placeOrderParamsSchema'
+import { editOrderParamsSchema } from '../../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { mockValidateParams } from '../../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../../BitfinexHttp'
 import { getBitfinexEndpoints } from '../../../../bitfinexSpecs'
-import { BITFINEX_PLACE_ORDER_RESPONSE } from '../../../../test/fixtures/bitfinexOrders'
+import { BITFINEX_CANCEL_ORDER_RESPONSE } from '../../../../test/fixtures/bitfinexOrders'
 import * as parseMod from '../parse'
 import { getExpectedRequestBody } from './helpers/getExpectedRequestBody'
 
@@ -24,7 +23,7 @@ const credentials: IAlunaCredentialsSchema = {
 
 
 
-export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
+export const testBitfinexOrderEdit = (params: IAlunaOrderEditParams) => {
 
   const {
     account,
@@ -33,11 +32,11 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
   } = params
 
 
-  it(`should place a Bitfinex ${side} ${account} ${type} order just fine`, async () => {
+  it(`should edit a Bitfinex ${side} ${account} ${type} order just fine`, async () => {
 
     // preparing data
     const mockedParsedOrder = PARSED_ORDERS[0]
-    const mockedRequestResponse = BITFINEX_PLACE_ORDER_RESPONSE
+    const mockedRequestResponse = BITFINEX_CANCEL_ORDER_RESPONSE
 
 
     // mocking
@@ -50,8 +49,6 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
 
     const { validateParamsMock } = mockValidateParams()
 
-    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
-
     const { parse } = mockParse({ module: parseMod })
     parse.returns({ order: mockedParsedOrder })
 
@@ -59,7 +56,7 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
     // executing
     const exchange = new BitfinexAuthed({ credentials })
 
-    const { order } = await exchange.order.place(params)
+    const { order } = await exchange.order.edit(params)
 
 
     // validating
@@ -69,7 +66,7 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
 
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      url: getBitfinexEndpoints(exchange.settings).order.place,
+      url: getBitfinexEndpoints(exchange.settings).order.edit,
       credentials,
       body,
     })
@@ -78,19 +75,13 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
 
     expect(parse.callCount).to.be.eq(1)
     expect(parse.firstCall.args[0]).to.deep.eq({
-      rawOrder: mockedRequestResponse[4][0],
+      rawOrder: mockedRequestResponse[4],
     })
 
     expect(validateParamsMock.callCount).to.be.eq(1)
     expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
       params,
-      schema: placeOrderParamsSchema,
-    })
-
-    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
-    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
-      exchangeSpecs: exchange.specs,
-      orderPlaceParams: params,
+      schema: editOrderParamsSchema,
     })
 
   })

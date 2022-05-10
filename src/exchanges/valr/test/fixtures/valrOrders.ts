@@ -6,7 +6,6 @@ import { IValrOrderGetSchema, IValrOrderListSchema } from '../../schemas/IValrOr
 
 
 
-// TODO: Review fixtures
 export const VALR_RAW_ORDERS: IValrOrderListSchema[] = [
   {
     orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',

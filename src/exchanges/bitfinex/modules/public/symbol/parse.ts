@@ -23,7 +23,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const id = translateSymbolId({
     exchangeSymbolId: currency,
-    symbolMappings: bitfinexBaseSpecs.settings.symbolMappings,
+    symbolMappings: exchange.settings.symbolMappings,
   })
 
   const alias = id !== currency

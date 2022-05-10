@@ -52,7 +52,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          message: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          message: dummyError,
         },
       },
     } as AxiosError
@@ -160,7 +160,7 @@ describe(__filename, () => {
     'should ensure Valr invalid api patterns work as expected',
     async () => {
 
-      const message = 'api-invalid'
+      const message = 'API-key is invalid'
       expect(isValrKeyInvalid(message)).to.be.ok
 
     },

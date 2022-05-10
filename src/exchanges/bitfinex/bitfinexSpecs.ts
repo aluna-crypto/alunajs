@@ -159,6 +159,7 @@ export const getBitfinexEndpoints = (settings: IAlunaSettingsSchema) => {
     },
     balance: {
       list: `${baseAuthedUrl}/auth/r/wallets`,
+      getTradableBalance: `${baseAuthedUrl}/auth/calc/order/avail`,
     },
     order: {
       get: (symbolPair: string) => `${baseAuthedUrl}/auth/r/orders/${symbolPair}`,
