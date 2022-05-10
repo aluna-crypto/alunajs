@@ -3,10 +3,7 @@ import { Agent } from 'http'
 
 import { testCache } from '../../test/macros/testCache'
 import { mockAxiosRequest } from '../../test/mocks/axios/request'
-import {
-  IAlunaHttpAuthedParams,
-  IAlunaHttpPublicParams,
-} from '../lib/core/IAlunaHttp'
+import { IAlunaHttpAuthedParams } from '../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../lib/enums/AlunaProxyAgentEnum'
 import { AlunaExchangeErrorCodes } from '../lib/errors/AlunaExchangeErrorCodes'
@@ -261,21 +258,7 @@ describe(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({
-    cacheResult: response,
-    callMethod: async () => {
-
-      const params: IAlunaHttpPublicParams = {
-        url,
-        body,
-        verb: AlunaHttpVerbEnum.GET,
-      }
-
-      await new Web3Http({}).publicRequest(params)
-
-    },
-
-  })
+  testCache({ HttpClass: Web3Http })
 
 
 

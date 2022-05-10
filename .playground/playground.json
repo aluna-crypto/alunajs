@@ -1,13 +1,13 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-07T13:14:40.263Z",
-    "__export_source": "insomnia.desktop.app:v2022.3.0",
+    "__export_date": "2022-05-10T01:55:58.067Z",
+    "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
             "parentId": "fld_450cb5daa18c4f93ae9181103190df8e",
-            "modified": 1651598344994,
+            "modified": 1652147739438,
             "created": 1651592058813,
             "url": "{{ _.PLAYGROUND_URL }}/web3",
             "name": "list",
@@ -73,7 +73,7 @@
         {
             "_id": "req_8bfcd094ea864aac8ce541496a2cafcd",
             "parentId": "fld_450cb5daa18c4f93ae9181103190df8e",
-            "modified": 1651598411813,
+            "modified": 1652147739928,
             "created": 1651592071679,
             "url": "{{ _.PLAYGROUND_URL }}/web3",
             "name": "getRawTotalBalance",
@@ -105,7 +105,7 @@
         {
             "_id": "req_bd3eceaf0ece49c78c42b8a46c87a4dd",
             "parentId": "fld_03587f8c8b88445194f28897080cd84a",
-            "modified": 1651598624209,
+            "modified": 1652147741441,
             "created": 1651592030744,
             "url": "{{ _.PLAYGROUND_URL }}/web3",
             "name": "listRaw",
@@ -149,7 +149,7 @@
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651598238856,
+            "modified": 1652147730806,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -217,7 +217,7 @@
         {
             "_id": "req_c284cfcbcce94ecf865cfb5da8ea9e9f",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651598246375,
+            "modified": 1652147731307,
             "created": 1651252547687,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -249,7 +249,7 @@
         {
             "_id": "req_2d1b222f29d147369089c3008f5b1ec8",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651598248047,
+            "modified": 1652147731811,
             "created": 1651252550996,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -281,7 +281,7 @@
         {
             "_id": "req_342915eb0b2d44169cdc8ab88b475ab7",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1651598316389,
+            "modified": 1652147732292,
             "created": 1651252553501,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -313,7 +313,7 @@
         {
             "_id": "req_069acff72d9d4c0bb863897b2ffa4549",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1651592325553,
+            "modified": 1652147734423,
             "created": 1651252596523,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -357,7 +357,7 @@
         {
             "_id": "req_17ebfd8cc4dd4ccbb97242469a1026c9",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1651592326921,
+            "modified": 1652147733985,
             "created": 1651252596530,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -389,7 +389,7 @@
         {
             "_id": "req_c589c7d2612e4a70a317f7ed214ac94d",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1651592327466,
+            "modified": 1652147734766,
             "created": 1651252596535,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -421,7 +421,7 @@
         {
             "_id": "req_1af87ba42cb940adab464a0241927001",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1651592327716,
+            "modified": 1652147735288,
             "created": 1651252596538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -453,7 +453,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1651598230730,
+            "modified": 1652147727468,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "fetchDetails",
@@ -471,11 +471,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1644627204294,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -511,17 +507,17 @@
             "_type": "request_group"
         },
         {
-            "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
+            "_id": "req_e147340c7ecd4eb785265d1b060ff2a6",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1651928317958,
-            "created": 1651516666747,
+            "modified": 1652147726659,
+            "created": 1652142980199,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
-            "name": "listRaw",
+            "name": "getTradableBalance",
             "description": "",
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"balance.listRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+                "text": "{\n\t\"method\": \"balance.getTradableBalance\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -531,12 +527,8 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
-            "metaSortKey": -1641700613225.25,
+            "authentication": {},
+            "metaSortKey": -1641700613275.25,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
@@ -559,9 +551,41 @@
             "_type": "request_group"
         },
         {
+            "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
+            "parentId": "fld_404131e490e9469898d0a610690c9775",
+            "modified": 1652147726260,
+            "created": 1651516666747,
+            "url": "{{ _.PLAYGROUND_URL }}/exchanges",
+            "name": "listRaw",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"balance.listRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1641700613225.25,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1651929141538,
+            "modified": 1652147725674,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -579,11 +603,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1641115295011.5,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -597,7 +617,7 @@
         {
             "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651598112824,
+            "modified": 1652147725135,
             "created": 1651505373653,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -615,11 +635,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642285931539,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -645,7 +661,7 @@
         {
             "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651929160068,
+            "modified": 1652147724740,
             "created": 1651519029538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -663,11 +679,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642285931489,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -681,7 +693,7 @@
         {
             "_id": "req_61340a5851b040e09612c173691f44ba",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651598122231,
+            "modified": 1652147724269,
             "created": 1651516690271,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -699,11 +711,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642212766687.2812,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -717,7 +725,7 @@
         {
             "_id": "req_4944714ffe964c12a008929b3214f0c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651598129535,
+            "modified": 1652147723875,
             "created": 1651519053540,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -735,11 +743,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642139601885.5625,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -753,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651929188447,
+            "modified": 1652147723382,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -785,7 +789,7 @@
         {
             "_id": "req_8cc2810f054d4681914645b0e9324e2b",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651929190047,
+            "modified": 1652147722801,
             "created": 1651597897328,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:market",
@@ -817,7 +821,7 @@
         {
             "_id": "req_14b8a678fd9347e4b378d68441c5fee9",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651929197026,
+            "modified": 1652147722053,
             "created": 1651595618759,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "edit",
@@ -849,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1651929195786,
+            "modified": 1652147721700,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -881,7 +885,7 @@
         {
             "_id": "req_e4a51247e67544b792bd07ca2844e9d6",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1651929235689,
+            "modified": 1652147721174,
             "created": 1651928091972,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -899,11 +903,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642285931539,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -929,7 +929,7 @@
         {
             "_id": "req_8201bcf6510c4d8a9b255bff5b9fd3c0",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1651929236814,
+            "modified": 1652147720759,
             "created": 1651928091987,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -947,11 +947,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642285931489,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -965,7 +961,7 @@
         {
             "_id": "req_6e801707cf614c5faba6781ff1cc71cf",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1651929237346,
+            "modified": 1652147720333,
             "created": 1651928091980,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -983,11 +979,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642212766687.2812,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -1001,7 +993,7 @@
         {
             "_id": "req_4c7d5579e1b8495ab536e467bce146cd",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1651929232343,
+            "modified": 1652147719849,
             "created": 1651928091991,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -1019,11 +1011,7 @@
                     "id": "pair_90baf7d104734ae78c9d56f732640381"
                 }
             ],
-            "authentication": {
-                "type": "bearer",
-                "token": "",
-                "disabled": false
-            },
+            "authentication": {},
             "metaSortKey": -1642139601885.5625,
             "isPrivate": false,
             "settingStoreCookies": true,
@@ -1037,7 +1025,7 @@
         {
             "_id": "req_bd0959425e7644dea3b1b2b3d65ea27d",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1651929224552,
+            "modified": 1652147718308,
             "created": 1651928091994,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "close",
@@ -1175,14 +1163,14 @@
         {
             "_id": "env_b3fcde421b4f4a79864800943e4c5340",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651929096703,
+            "modified": 1652143102757,
             "created": 1651252159834,
             "name": "Bitfinex",
             "data": {
                 "EXCHANGE_ID": "bitfinex",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'BITFINEX_API_KEY' %}",
                 "SECRET": "{% dotenv _.ALUNAJS_RC, 'BITFINEX_API_SECRET' %}",
-                "ORDER_SYMBOL_PAIR": "BTCUSD",
+                "ORDER_SYMBOL_PAIR": "tBTCUSD",
                 "ORDER_RATE": 5000,
                 "ORDER_AMOUNT": 0.003,
                 "ORDER_EDITED_AMOUNT": 0.004
@@ -1229,7 +1217,7 @@
         {
             "_id": "env_720b09d90c90412b9c6a0327c4915465",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651253644513,
+            "modified": 1652143092487,
             "created": 1651252812172,
             "name": "Poloniex",
             "data": {
