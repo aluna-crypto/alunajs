@@ -27,7 +27,7 @@ describe(__filename, () => {
     expect(position).to.exist
 
     // TODO: add expectations for everything
-    // expect(order).to.deep.eq(...)
+    // expect(position).to.deep.eq(...)
 
   })
 })
