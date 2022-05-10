@@ -149,7 +149,7 @@ export class SampleHttp implements IAlunaHttp {
 
 
 
-// FIXME: Review interface properties
+// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   path: string
@@ -158,7 +158,7 @@ interface ISignedHashParams {
   body?: any
 }
 
-// FIXME: Review interface properties
+// TODO: Review interface properties
 export interface ISampleSignedHeaders {
   'Api-Timestamp': number
 }
@@ -169,7 +169,7 @@ export const generateAuthHeader = (
   _params: ISignedHashParams,
 ): ISampleSignedHeaders => {
 
-  // FIXME: Implement method (and rename `_params` to `params`)
+  // TODO: Implement method (and rename `_params` to `params`)
 
   // const {
   //   credentials,
