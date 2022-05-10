@@ -41,7 +41,7 @@ export const bittrexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
-    implemented: true,
+    implemented: false,
     mode: AlunaFeaturesModeEnum.READ,
     options: {
       rate: 1,
@@ -52,7 +52,7 @@ export const bittrexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.TRAILING_STOP,
     supported: true,
-    implemented: true,
+    implemented: false,
     mode: AlunaFeaturesModeEnum.READ,
     options: {
       rate: 1,
