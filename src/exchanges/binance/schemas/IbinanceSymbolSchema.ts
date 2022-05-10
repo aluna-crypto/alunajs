@@ -1,5 +1,5 @@
-// TODO: Describe symbol interface for binance exchange
-export interface IbinanceSymbolSchema {
+// TODO: Describe symbol interface for Binance exchange
+export interface IBinanceSymbolSchema {
   symbol: string
   name: string
   // ...

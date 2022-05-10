@@ -6,9 +6,9 @@ import {
   IAlunaKeyFetchDetailsParams,
   IAlunaKeyFetchDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceKeySchema } from '../../../schemas/IbinanceKeySchema'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
@@ -20,19 +20,19 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaKeyFetchDetailsParams = {},
 ): Promise<IAlunaKeyFetchDetailsReturns> => {
 
-  log('fetching binance key permissions')
+  log('fetching Binance key permissions')
 
   const {
     settings,
     credentials,
   } = exchange
 
-  const { http = new binanceHttp(settings) } = params
+  const { http = new BinanceHttp(settings) } = params
 
   // TODO: Implement proper request
-  const permissions = await http.authedRequest<IbinanceKeySchema>({
+  const permissions = await http.authedRequest<IBinanceKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getbinanceEndpoints(settings).key.fetchDetails,
+    url: getBinanceEndpoints(settings).key.fetchDetails,
     credentials,
   })
 

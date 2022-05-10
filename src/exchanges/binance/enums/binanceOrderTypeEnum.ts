@@ -1,4 +1,4 @@
-export enum binanceOrderTypeEnum {
+export enum BinanceOrderTypeEnum {
   LIMIT = 'LIMIT',
   MARKET = 'MARKET',
   CEILING_LIMIT = 'CEILING_LIMIT',

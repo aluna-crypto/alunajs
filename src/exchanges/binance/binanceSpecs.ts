@@ -66,7 +66,7 @@ export const binanceExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 
 export const binanceBaseSpecs: IAlunaExchangeSchema = {
   id: 'binance',
-  name: 'binance',
+  name: 'Binance',
   // TODO: Review 'signupUrl'
   signupUrl: 'https://binance.com/account/register',
   // TODO: Review 'connectApiUrl'
@@ -112,7 +112,7 @@ export const binanceBaseSpecs: IAlunaExchangeSchema = {
 
 
 
-export const buildbinanceSpecs = (params: {
+export const buildBinanceSpecs = (params: {
   settings: IAlunaSettingsSchema
 }) => {
 
@@ -132,7 +132,7 @@ export const buildbinanceSpecs = (params: {
 }
 
 
-export const getbinanceEndpoints = (
+export const getBinanceEndpoints = (
   settings: IAlunaSettingsSchema,
 ) => {
 
@@ -143,7 +143,7 @@ export const getbinanceEndpoints = (
     /*
       throw new AlunaError({
         code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'binance don't have a testnet.',
+        message: 'Binance don't have a testnet.',
       })
     */
   }

@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
-import { binance } from '../../../binance'
+import { Binance } from '../../../Binance'
 import { binanceBaseSpecs } from '../../../binanceSpecs'
 import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 
@@ -9,7 +9,7 @@ import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 
 describe.skip(__filename, () => {
 
-  it('should parse a binance symbol just fine (w/ alias)', async () => {
+  it('should parse a Binance symbol just fine (w/ alias)', async () => {
 
     // preparing data
     const rawSymbol = BINANCE_RAW_SYMBOLS[0] // first fixture
@@ -24,7 +24,7 @@ describe.skip(__filename, () => {
 
 
     // executing
-    const exchange = new binance({})
+    const exchange = new Binance({})
 
     const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
 
@@ -46,7 +46,7 @@ describe.skip(__filename, () => {
 
 
 
-  it('should parse a binance symbol just fine (w/o alias)', async () => {
+  it('should parse a Binance symbol just fine (w/o alias)', async () => {
 
     // preparing data
     const rawSymbol = BINANCE_RAW_SYMBOLS[1] // second fixture
@@ -59,7 +59,7 @@ describe.skip(__filename, () => {
 
 
     // executing
-    const exchange = new binance({})
+    const exchange = new Binance({})
 
     const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
 

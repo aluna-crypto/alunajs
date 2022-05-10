@@ -5,9 +5,9 @@ import {
   IAlunaSymbolListParams,
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceSymbolSchema } from '../../../schemas/IbinanceSymbolSchema'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
 
 
 
@@ -17,17 +17,17 @@ const log = debug('@alunajs:binance/symbol/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolListParams = {},
-): Promise<IAlunaSymbolListRawReturns<IbinanceSymbolSchema[]>> => {
+): Promise<IAlunaSymbolListRawReturns<IBinanceSymbolSchema[]>> => {
 
-  log('fetching binance raw symbols')
+  log('fetching Binance raw symbols')
 
   const { settings } = exchange
 
-  const { http = new binanceHttp(settings) } = params
+  const { http = new BinanceHttp(settings) } = params
 
   // TODO: Implement proper request
-  const rawSymbols = await http.publicRequest<IbinanceSymbolSchema[]>({
-    url: getbinanceEndpoints(settings).symbol.list,
+  const rawSymbols = await http.publicRequest<IBinanceSymbolSchema[]>({
+    url: getBinanceEndpoints(settings).symbol.list,
   })
 
   const { requestCount } = http

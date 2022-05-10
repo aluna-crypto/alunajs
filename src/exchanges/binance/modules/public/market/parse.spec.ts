@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
-import { binance } from '../../../binance'
+import { Binance } from '../../../Binance'
 import { BINANCE_RAW_MARKETS } from '../../../test/fixtures/binanceMarket'
 
 
 
 describe.skip(__filename, () => {
 
-  it('should parse a binance raw market just fine', async () => {
+  it('should parse a Binance raw market just fine', async () => {
 
     // preparing data
     const translatedSymbolId = 'BTC'
@@ -22,7 +22,7 @@ describe.skip(__filename, () => {
 
 
     // executing
-    const exchange = new binance({})
+    const exchange = new Binance({})
 
     const { market } = exchange.market.parse({
       rawMarket,

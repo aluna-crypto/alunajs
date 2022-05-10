@@ -1,11 +1,11 @@
-import { binanceOrderTypeEnum } from '../enums/binanceOrderTypeEnum'
+import { BinanceOrderTypeEnum } from '../enums/BinanceOrderTypeEnum'
 
 
 
-// TODO: Describe order interface for binance exchange
-export interface IbinanceOrderSchema {
+// TODO: Describe order interface for Binance exchange
+export interface IBinanceOrderSchema {
   id: string
   symbol: string
-  type: binanceOrderTypeEnum
+  type: BinanceOrderTypeEnum
   // ...
 }

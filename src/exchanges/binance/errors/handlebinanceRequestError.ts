@@ -19,7 +19,7 @@ export const binanceDownErrorPatterns: Array<RegExp | string> = [
 ]
 
 
-export const isbinanceKeyInvalid = (errorMessage: string) => {
+export const isBinanceKeyInvalid = (errorMessage: string) => {
 
   return some(binanceInvalidKeyPatterns, (pattern) => {
 
@@ -30,14 +30,14 @@ export const isbinanceKeyInvalid = (errorMessage: string) => {
 }
 
 
-export interface IHandlebinanceRequestErrorsParams {
+export interface IHandleBinanceRequestErrorsParams {
   error: AxiosError | Error
 }
 
 
 
-export const handlebinanceRequestError = (
-  params: IHandlebinanceRequestErrorsParams,
+export const handleBinanceRequestError = (
+  params: IHandleBinanceRequestErrorsParams,
 ): AlunaError => {
 
   const { error } = params
@@ -66,7 +66,7 @@ export const handlebinanceRequestError = (
   }
 
 
-  if (isbinanceKeyInvalid(message)) {
+  if (isBinanceKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
 

@@ -6,7 +6,7 @@ import {
   IAlunaKeyParsePermissionsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { IbinanceKeySchema } from '../../../schemas/IbinanceKeySchema'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
@@ -15,10 +15,10 @@ const log = debug('@alunajs:binance/key/parsePermissions')
 
 
 export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaKeyParsePermissionsParams<IbinanceKeySchema>,
+  params: IAlunaKeyParsePermissionsParams<IBinanceKeySchema>,
 ): IAlunaKeyParsePermissionsReturns => {
 
-  log('parsing binance key permissions', params)
+  log('parsing Binance key permissions', params)
 
   const { rawKey } = params
 

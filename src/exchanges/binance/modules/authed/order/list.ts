@@ -5,7 +5,7 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderListReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing orders', params)
 
-  const { http = new binanceHttp(exchange.settings) } = params
+  const { http = new BinanceHttp(exchange.settings) } = params
 
   const { rawOrders } = await exchange.order.listRaw({ http })
 

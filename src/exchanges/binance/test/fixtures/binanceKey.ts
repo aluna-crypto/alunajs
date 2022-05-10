@@ -1,8 +1,8 @@
-import { IbinanceKeySchema } from '../../schemas/IbinanceKeySchema'
+import { IBinanceKeySchema } from '../../schemas/IBinanceKeySchema'
 
 
 
-export const BINANCE_KEY_PERMISSIONS: IbinanceKeySchema = {
+export const BINANCE_KEY_PERMISSIONS: IBinanceKeySchema = {
   read: true,
   trade: true,
   withdraw: true,

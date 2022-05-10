@@ -16,14 +16,14 @@ import {
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
 import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import * as handlebinanceRequestErrorMod from './errors/handlebinanceRequestError'
-import * as binanceHttpMod from './binanceHttp'
+import * as handleBinanceRequestErrorMod from './errors/handleBinanceRequestError'
+import * as BinanceHttpMod from './BinanceHttp'
 
 
 
 describe.skip(__filename, () => {
 
-  const { binanceHttp } = binanceHttpMod
+  const { BinanceHttp } = BinanceHttpMod
 
   const url = 'https://binance.com/api/path'
   const response = 'response'
@@ -75,14 +75,14 @@ describe.skip(__filename, () => {
     } = params
 
     const generateAuthHeader = ImportMock.mockFunction(
-      binanceHttpMod,
+      BinanceHttpMod,
       'generateAuthHeader',
       signedHeader,
     )
 
-    const handlebinanceRequestError = ImportMock.mockFunction(
-      handlebinanceRequestErrorMod,
-      'handlebinanceRequestError',
+    const handleBinanceRequestError = ImportMock.mockFunction(
+      handleBinanceRequestErrorMod,
+      'handleBinanceRequestError',
     )
 
     if (!mockGenerateAuthHeader) {
@@ -102,7 +102,7 @@ describe.skip(__filename, () => {
       hashCacheKey,
       generateAuthHeader,
       assembleRequestConfig,
-      handlebinanceRequestError,
+      handleBinanceRequestError,
     }
 
   }
@@ -122,7 +122,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
     request.returns(Promise.resolve({ data: response }))
 
@@ -169,7 +169,7 @@ describe.skip(__filename, () => {
   it('should execute authed request just fine', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
 
     // mocking
@@ -229,7 +229,7 @@ describe.skip(__filename, () => {
   it('should properly increment request count on public requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -264,7 +264,7 @@ describe.skip(__filename, () => {
   it('should properly increment request count on authed requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
     const weight = random()
     const pubRequestCount = random()
@@ -300,7 +300,7 @@ describe.skip(__filename, () => {
   it('should properly handle request error on public requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -308,7 +308,7 @@ describe.skip(__filename, () => {
     // mocking
     const {
       request,
-      handlebinanceRequestError,
+      handleBinanceRequestError,
     } = mockDeps()
 
     request.returns(Promise.reject(throwedError))
@@ -326,14 +326,14 @@ describe.skip(__filename, () => {
 
     expect(request.callCount).to.be.eq(1)
 
-    expect(handlebinanceRequestError.callCount).to.be.eq(1)
+    expect(handleBinanceRequestError.callCount).to.be.eq(1)
 
   })
 
   it('should properly handle request error on authed requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
     const throwedError = new Error('unknown error')
 
@@ -341,7 +341,7 @@ describe.skip(__filename, () => {
     // mocking
     const {
       request,
-      handlebinanceRequestError,
+      handleBinanceRequestError,
     } = mockDeps()
 
     request.returns(Promise.reject(throwedError))
@@ -360,14 +360,14 @@ describe.skip(__filename, () => {
 
     expect(request.callCount).to.be.eq(1)
 
-    expect(handlebinanceRequestError.callCount).to.be.eq(1)
+    expect(handleBinanceRequestError.callCount).to.be.eq(1)
 
   })
 
   it('should properly use proxy settings on public requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
 
     // mocking
@@ -403,7 +403,7 @@ describe.skip(__filename, () => {
   it('should properly use proxy settings on authed requests', async () => {
 
     // preparing data
-    const binanceHttp = new binanceHttp({})
+    const binanceHttp = new BinanceHttp({})
 
 
     // mocking
@@ -454,7 +454,7 @@ describe.skip(__filename, () => {
     )
 
     // executing
-    const signedHash = binanceHttpMod.generateAuthHeader({
+    const signedHash = BinanceHttpMod.generateAuthHeader({
       credentials,
       path,
       verb,
@@ -482,7 +482,7 @@ describe.skip(__filename, () => {
         verb: AlunaHttpVerbEnum.GET,
       }
 
-      await new binanceHttp({}).publicRequest(params)
+      await new BinanceHttp({}).publicRequest(params)
 
     },
 

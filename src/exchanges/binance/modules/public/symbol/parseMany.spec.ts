@@ -3,7 +3,7 @@ import { each } from 'lodash'
 
 import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
-import { binance } from '../../../binance'
+import { Binance } from '../../../Binance'
 import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 import * as parseMod from './parse'
 
@@ -11,7 +11,7 @@ import * as parseMod from './parse'
 
 describe(__filename, () => {
 
-  it('should parse many binance symbols just fine', async () => {
+  it('should parse many Binance symbols just fine', async () => {
 
     // preparing data
     const { parse } = mockParse({ module: parseMod })
@@ -22,7 +22,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binance({})
+    const exchange = new Binance({})
 
     const { symbols } = exchange.symbol.parseMany({
       rawSymbols: BINANCE_RAW_SYMBOLS,

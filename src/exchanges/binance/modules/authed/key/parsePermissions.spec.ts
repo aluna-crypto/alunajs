@@ -2,19 +2,19 @@ import { expect } from 'chai'
 import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { IbinanceKeySchema } from '../../../schemas/IbinanceKeySchema'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
 describe(__filename, () => {
 
-  it('should parse binance key permissions just fine', async () => {
+  it('should parse Binance key permissions just fine', async () => {
 
     // preparing data
     const accountId = 'accountId'
 
-    const rawKey: IbinanceKeySchema = {
+    const rawKey: IBinanceKeySchema = {
       read: false,
       trade: false,
       withdraw: false,
@@ -27,7 +27,7 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
 
     // executing

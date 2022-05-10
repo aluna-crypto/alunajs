@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { binanceOrderSideEnum } from '../binanceOrderSideEnum'
+import { BinanceOrderSideEnum } from '../BinanceOrderSideEnum'
 
 
 
@@ -9,25 +9,25 @@ const errorMessagePrefix = 'Order side'
 
 
 export const translateOrderSideToAluna = buildAdapter<
-  binanceOrderSideEnum,
+  BinanceOrderSideEnum,
   AlunaOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [binanceOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [binanceOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
+    [BinanceOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+    [BinanceOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
   },
 })
 
 
 
-export const translateOrderSideTobinance = buildAdapter<
+export const translateOrderSideToBinance = buildAdapter<
   AlunaOrderSideEnum,
-  binanceOrderSideEnum
+  BinanceOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderSideEnum.BUY]: binanceOrderSideEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: binanceOrderSideEnum.SELL,
+    [AlunaOrderSideEnum.BUY]: BinanceOrderSideEnum.BUY,
+    [AlunaOrderSideEnum.SELL]: BinanceOrderSideEnum.SELL,
   },
 })

@@ -5,7 +5,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
+import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -14,7 +14,7 @@ import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams<IbinanceOrderSchema>,
+  params: IAlunaOrderParseParams<IBinanceOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
   // log('parse order', params)

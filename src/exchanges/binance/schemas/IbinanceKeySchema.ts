@@ -1,5 +1,5 @@
-// TODO: Describe key interface for binance exchange
-export interface IbinanceKeySchema {
+// TODO: Describe key interface for Binance exchange
+export interface IBinanceKeySchema {
   read: boolean
   trade: boolean
   withdraw: boolean

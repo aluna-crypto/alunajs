@@ -3,7 +3,7 @@ import { each } from 'lodash'
 
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
-import { binance } from '../../../binance'
+import { Binance } from '../../../Binance'
 import { BINANCE_RAW_MARKETS } from '../../../test/fixtures/binanceMarket'
 import * as parseMod from './parse'
 
@@ -11,7 +11,7 @@ import * as parseMod from './parse'
 
 describe(__filename, () => {
 
-  it('should parse many binance raw markets just fine', async () => {
+  it('should parse many Binance raw markets just fine', async () => {
 
     // preparing data
     const rawMarkets = BINANCE_RAW_MARKETS
@@ -25,7 +25,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binance({})
+    const exchange = new Binance({})
 
     const { markets } = exchange.market.parseMany({
       rawMarkets,

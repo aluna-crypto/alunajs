@@ -6,7 +6,7 @@ import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { IbinanceBalanceSchema } from '../../../schemas/IbinanceBalanceSchema'
+import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
 
 
 
@@ -15,7 +15,7 @@ const log = debug('@alunajs:binance/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IbinanceBalanceSchema>,
+  params: IAlunaBalanceParseManyParams<IBinanceBalanceSchema>,
 ): IAlunaBalanceParseManyReturns => {
 
   const { rawBalances } = params

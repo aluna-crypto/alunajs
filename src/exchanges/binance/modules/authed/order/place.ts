@@ -11,11 +11,11 @@ import {
 import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { translateOrderSideTobinance } from '../../../enums/adapters/binanceOrderSideAdapter'
-import { translateOrderTypeTobinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
+import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrderSideAdapter'
+import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -51,31 +51,31 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
-    http = new binanceHttp(settings),
+    http = new BinanceHttp(settings),
   } = params
 
-  const translatedOrderType = translateOrderTypeTobinance({
+  const translatedOrderType = translateOrderTypeToBinance({
     from: type,
   })
 
   // TODO: Validate all body properties
   const body = {
-    direction: translateOrderSideTobinance({ from: side }),
+    direction: translateOrderSideToBinance({ from: side }),
     marketSymbol: symbolPair,
     type: translatedOrderType,
     quantity: Number(amount),
     rate,
   }
 
-  log('placing new order for binance')
+  log('placing new order for Binance')
 
-  let placedOrder: IbinanceOrderSchema
+  let placedOrder: IBinanceOrderSchema
 
   try {
 
     // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IbinanceOrderSchema>({
-      url: getbinanceEndpoints(settings).order.place,
+    const orderResponse = await http.authedRequest<IBinanceOrderSchema>({
+      url: getBinanceEndpoints(settings).order.place,
       body,
       credentials,
     })

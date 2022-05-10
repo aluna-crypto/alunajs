@@ -4,7 +4,7 @@ import {
   IAlunaBalanceParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { IbinanceBalanceSchema } from '../../../schemas/IbinanceBalanceSchema'
+import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
 
 
 
@@ -13,7 +13,7 @@ import { IbinanceBalanceSchema } from '../../../schemas/IbinanceBalanceSchema'
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseParams<IbinanceBalanceSchema>,
+  params: IAlunaBalanceParseParams<IBinanceBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
   // log('parse balance', params)

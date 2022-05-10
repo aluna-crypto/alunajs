@@ -6,7 +6,7 @@ import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
-import { IbinanceSymbolSchema } from '../../../schemas/IbinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
 
 
 
@@ -15,7 +15,7 @@ const log = debug('@alunajs:binance/symbol/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaSymbolParseManyParams<IbinanceSymbolSchema[]>,
+  params: IAlunaSymbolParseManyParams<IBinanceSymbolSchema[]>,
 ): IAlunaSymbolParseManyReturns => {
 
   const { rawSymbols } = params
@@ -29,7 +29,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   })
 
-  log(`parsed ${symbols.length} symbols for binance`)
+  log(`parsed ${symbols.length} symbols for Binance`)
 
   return { symbols }
 

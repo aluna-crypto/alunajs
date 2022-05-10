@@ -6,9 +6,9 @@ import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceBalanceSchema } from '../../../schemas/IbinanceBalanceSchema'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
 
 
 
@@ -18,7 +18,7 @@ const log = debug('@alunajs:binance/balance/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
-): Promise<IAlunaBalanceListRawReturns<IbinanceBalanceSchema>> => {
+): Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema>> => {
 
   log('listing raw balances', params)
 
@@ -27,12 +27,12 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     credentials,
   } = exchange
 
-  const { http = new binanceHttp(settings) } = params
+  const { http = new BinanceHttp(settings) } = params
 
   // TODO: Implement balance 'listRaw'
-  const rawBalances = await http.authedRequest<IbinanceBalanceSchema[]>({
+  const rawBalances = await http.authedRequest<IBinanceBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getbinanceEndpoints(settings).balance.list,
+    url: getBinanceEndpoints(settings).balance.list,
     credentials,
   })
 

@@ -5,9 +5,9 @@ import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_KEY_PERMISSIONS } from '../../../test/fixtures/binanceKey'
 import * as parseDetailsMod from './parseDetails'
 
@@ -15,10 +15,10 @@ import * as parseDetailsMod from './parseDetails'
 
 describe(__filename, () => {
 
-  it('should fetch binance key details just fine', async () => {
+  it('should fetch Binance key details just fine', async () => {
 
     // preparing data
-    const http = new binanceHttp({})
+    const http = new BinanceHttp({})
 
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
@@ -37,7 +37,7 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     authedRequest.returns(Promise.resolve(BINANCE_KEY_PERMISSIONS))
 
@@ -50,7 +50,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ settings: {}, credentials })
+    const exchange = new BinanceAuthed({ settings: {}, credentials })
 
     const {
       key,
@@ -66,7 +66,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: getbinanceEndpoints(exchange.settings).key.fetchDetails,
+      url: getBinanceEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
 

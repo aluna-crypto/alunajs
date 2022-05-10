@@ -6,7 +6,7 @@ import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { IbinanceMarketSchema } from '../../../schemas/IbinanceMarketSchema'
+import { IBinanceMarketSchema } from '../../../schemas/IBinanceMarketSchema'
 
 
 
@@ -15,7 +15,7 @@ const log = debug('@alunajs:binance/market/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseManyParams<IbinanceMarketSchema[]>,
+  params: IAlunaMarketParseManyParams<IBinanceMarketSchema[]>,
 ): IAlunaMarketParseManyReturns => {
 
   const { rawMarkets } = params
@@ -31,7 +31,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   })
 
-  log(`parsed ${markets.length} markets for binance`)
+  log(`parsed ${markets.length} markets for Binance`)
 
   return { markets }
 

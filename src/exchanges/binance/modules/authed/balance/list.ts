@@ -5,7 +5,7 @@ import {
   IAlunaBalanceListParams,
   IAlunaBalanceListReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
@@ -19,7 +19,7 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   log('listing balances', params)
 
-  const { http = new binanceHttp(exchange.settings) } = params
+  const { http = new BinanceHttp(exchange.settings) } = params
 
   const { rawBalances } = await exchange.balance.listRaw({ http })
 

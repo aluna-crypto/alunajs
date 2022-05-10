@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { binance } from './binance'
+import { Binance } from './Binance'
 
 
 
@@ -13,7 +13,7 @@ describe(__filename, () => {
       referralCode: '123',
     }
 
-    const binance = new binance({ settings })
+    const binance = new Binance({ settings })
 
     expect(binance.id).to.eq('binance')
 

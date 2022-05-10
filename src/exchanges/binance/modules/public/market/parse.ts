@@ -4,12 +4,12 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
-import { IbinanceMarketSchema } from '../../../schemas/IbinanceMarketSchema'
+import { IBinanceMarketSchema } from '../../../schemas/IBinanceMarketSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseParams<IbinanceMarketSchema>,
+  params: IAlunaMarketParseParams<IBinanceMarketSchema>,
 ): IAlunaMarketParseReturns => {
 
   const { rawMarket } = params

@@ -8,9 +8,9 @@ import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import * as parseMod from './parse'
 
@@ -23,7 +23,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should cancel a binance order just fine', async () => {
+  it('should cancel a Binance order just fine', async () => {
 
     // preparing data
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
@@ -36,7 +36,7 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -46,7 +46,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { order } = await exchange.order.cancel({
       id,
@@ -62,14 +62,14 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getbinanceEndpoints(exchange.settings).order.cancel(id),
+      url: getBinanceEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
 
   })
 
-  it('should throw an error when canceling a binance order', async () => {
+  it('should throw an error when canceling a Binance order', async () => {
 
     // preparing data
     const id = 'id'
@@ -78,7 +78,7 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     const error = new AlunaError({
       code: AlunaOrderErrorCodes.CANCEL_FAILED,
@@ -91,7 +91,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { error: responseError } = await executeAndCatch(
       () => exchange.order.cancel({
@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getbinanceEndpoints(exchange.settings).order.cancel(id),
+      url: getBinanceEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

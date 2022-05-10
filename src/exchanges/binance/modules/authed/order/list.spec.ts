@@ -1,6 +1,6 @@
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { testList } from '../../../../../../test/macros/testList'
-import { binanceAuthed } from '../../../binanceAuthed'
+import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
@@ -10,7 +10,7 @@ import * as parseManyMod from './parseMany'
 describe(__filename, () => {
 
   testList({
-    AuthedClass: binanceAuthed,
+    AuthedClass: BinanceAuthed,
     exchangeId: 'binance',
     methodModuleName: 'order',
     listModule: listRawMod,

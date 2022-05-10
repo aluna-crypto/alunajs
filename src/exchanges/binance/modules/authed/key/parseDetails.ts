@@ -6,7 +6,7 @@ import {
   IAlunaKeyParseDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { IbinanceKeySchema } from '../../../schemas/IbinanceKeySchema'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
@@ -15,10 +15,10 @@ const log = debug('@alunajs:binance/key/parseDetails')
 
 
 export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaKeyParseDetailsParams<IbinanceKeySchema>,
+  params: IAlunaKeyParseDetailsParams<IBinanceKeySchema>,
 ): IAlunaKeyParseDetailsReturns => {
 
-  log('parsing binance key details')
+  log('parsing Binance key details')
 
   const { rawKey } = params
 

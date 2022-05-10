@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
-import { binanceOrderStatusEnum } from '../binanceOrderStatusEnum'
+import { BinanceOrderStatusEnum } from '../BinanceOrderStatusEnum'
 
 
 
@@ -10,13 +10,13 @@ export const translateOrderStatusToAluna = (
   params: {
       fillQuantity: string
       quantity: string
-      from: binanceOrderStatusEnum
+      from: BinanceOrderStatusEnum
     },
 ): AlunaOrderStatusEnum => {
 
   const { fillQuantity, quantity, from } = params
 
-  const isOpen = from === binanceOrderStatusEnum.OPEN
+  const isOpen = from === BinanceOrderStatusEnum.OPEN
 
   if (isOpen) {
 
@@ -45,15 +45,15 @@ export const translateOrderStatusToAluna = (
 
 
 
-export const translateOrderStatusTobinance = buildAdapter<
+export const translateOrderStatusToBinance = buildAdapter<
   AlunaOrderStatusEnum,
-  binanceOrderStatusEnum
+  BinanceOrderStatusEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderStatusEnum.OPEN]: binanceOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: binanceOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: binanceOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: binanceOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.OPEN]: BinanceOrderStatusEnum.OPEN,
+    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: BinanceOrderStatusEnum.OPEN,
+    [AlunaOrderStatusEnum.FILLED]: BinanceOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.CANCELED]: BinanceOrderStatusEnum.CLOSED,
   },
 })

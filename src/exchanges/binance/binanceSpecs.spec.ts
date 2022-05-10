@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import { getbinanceEndpoints } from './binanceSpecs'
+import { getBinanceEndpoints } from './binanceSpecs'
 
 
 
@@ -13,7 +13,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => getbinanceEndpoints({ useTestNet: false }))
+    } = await executeAndCatch(() => getBinanceEndpoints({ useTestNet: false }))
 
     // validating
     expect(error).not.to.be.ok
@@ -27,7 +27,7 @@ describe(__filename, () => {
     const {
       error,
       result,
-    } = await executeAndCatch(() => getbinanceEndpoints({ useTestNet: true }))
+    } = await executeAndCatch(() => getBinanceEndpoints({ useTestNet: true }))
 
     // validating
     expect(error).not.to.be.ok

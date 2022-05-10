@@ -3,13 +3,13 @@ import { IAlunaMarketModule } from '../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaSymbolModule } from '../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { buildbinanceSpecs } from './binanceSpecs'
+import { buildBinanceSpecs } from './binanceSpecs'
 import { market } from './modules/public/market'
 import { symbol } from './modules/public/symbol'
 
 
 
-export class binance implements IAlunaExchangePublic {
+export class Binance implements IAlunaExchangePublic {
 
   public id: string
   public specs: IAlunaExchangeSchema
@@ -27,7 +27,7 @@ export class binance implements IAlunaExchangePublic {
     const { settings = {} } = params
 
     this.settings = settings
-    this.specs = buildbinanceSpecs({ settings })
+    this.specs = buildBinanceSpecs({ settings })
     this.id = this.specs.id
 
     this.market = market(this)

@@ -1,9 +1,9 @@
-import { binance } from './binance'
-import { binanceAuthed } from './binanceAuthed'
+import { Binance } from './Binance'
+import { BinanceAuthed } from './BinanceAuthed'
 
 
 
 export const binance = {
-  PublicClass: binance,
-  AuthedClass: binanceAuthed,
+  PublicClass: Binance,
+  AuthedClass: BinanceAuthed,
 }

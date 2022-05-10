@@ -2,10 +2,10 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { binanceOrderSideEnum } from '../binanceOrderSideEnum'
+import { BinanceOrderSideEnum } from '../BinanceOrderSideEnum'
 import {
   translateOrderSideToAluna,
-  translateOrderSideTobinance,
+  translateOrderSideToBinance,
 } from './binanceOrderSideAdapter'
 
 
@@ -16,14 +16,14 @@ describe(__filename, () => {
 
 
 
-  it('should properly translate binance order sides to Aluna order sides', () => {
+  it('should properly translate Binance order sides to Aluna order sides', () => {
 
     expect(translateOrderSideToAluna({
-      from: binanceOrderSideEnum.BUY,
+      from: BinanceOrderSideEnum.BUY,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(translateOrderSideToAluna({
-      from: binanceOrderSideEnum.SELL,
+      from: BinanceOrderSideEnum.SELL,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
     let result
@@ -32,7 +32,7 @@ describe(__filename, () => {
     try {
 
       result = translateOrderSideToAluna({
-        from: notSupported as binanceOrderSideEnum,
+        from: notSupported as BinanceOrderSideEnum,
       })
 
     } catch (err) {
@@ -51,22 +51,22 @@ describe(__filename, () => {
 
 
 
-  it('should properly translate Aluna order sides to binance order sides', () => {
+  it('should properly translate Aluna order sides to Binance order sides', () => {
 
-    expect(translateOrderSideTobinance({
+    expect(translateOrderSideToBinance({
       from: AlunaOrderSideEnum.BUY,
-    })).to.be.eq(binanceOrderSideEnum.BUY)
+    })).to.be.eq(BinanceOrderSideEnum.BUY)
 
-    expect(translateOrderSideTobinance({
+    expect(translateOrderSideToBinance({
       from: AlunaOrderSideEnum.SELL,
-    })).to.be.eq(binanceOrderSideEnum.SELL)
+    })).to.be.eq(BinanceOrderSideEnum.SELL)
 
     let result
     let error
 
     try {
 
-      result = translateOrderSideTobinance({
+      result = translateOrderSideToBinance({
         from: notSupported as AlunaOrderSideEnum,
       })
 

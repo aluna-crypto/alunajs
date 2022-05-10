@@ -6,9 +6,9 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -18,21 +18,21 @@ const log = debug('@alunajs:binance/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<IbinanceOrderSchema[]>> => {
+): Promise<IAlunaOrderListRawReturns<IBinanceOrderSchema[]>> => {
 
-  log('fetching binance open orders', params)
+  log('fetching Binance open orders', params)
 
   const {
     settings,
     credentials,
   } = exchange
 
-  const { http = new binanceHttp(settings) } = params
+  const { http = new BinanceHttp(settings) } = params
 
   // TODO: Implement proper request
-  const rawOrders = await http.authedRequest<IbinanceOrderSchema[]>({
+  const rawOrders = await http.authedRequest<IBinanceOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getbinanceEndpoints(settings).order.list,
+    url: getBinanceEndpoints(settings).order.list,
     credentials,
   })
 

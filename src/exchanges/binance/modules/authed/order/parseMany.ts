@@ -5,7 +5,7 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
+import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -14,7 +14,7 @@ const log = debug('@alunajs:binance/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams<IbinanceOrderSchema[]>,
+  params: IAlunaOrderParseManyParams<IBinanceOrderSchema[]>,
 ): IAlunaOrderParseManyReturns => {
 
   const { rawOrders } = params

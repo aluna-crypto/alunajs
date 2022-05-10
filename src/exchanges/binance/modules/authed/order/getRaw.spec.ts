@@ -3,9 +3,9 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 
 
@@ -17,7 +17,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should get a binance raw order just fine', async () => {
+  it('should get a Binance raw order just fine', async () => {
 
     // preparing data
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
@@ -29,13 +29,13 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { rawOrder } = await exchange.order.getRaw({
       id,
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getbinanceEndpoints(exchange.settings).order.get(id),
+      url: getBinanceEndpoints(exchange.settings).order.get(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

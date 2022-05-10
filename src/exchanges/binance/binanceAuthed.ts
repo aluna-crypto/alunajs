@@ -9,11 +9,11 @@ import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
 
-import { binance } from './binance'
+import { Binance } from './Binance'
 
 
 
-export class binanceAuthed extends binance implements IAlunaExchangeAuthed {
+export class BinanceAuthed extends Binance implements IAlunaExchangeAuthed {
 
   public credentials: IAlunaCredentialsSchema
 

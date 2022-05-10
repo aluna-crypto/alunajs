@@ -8,9 +8,9 @@ import {
   IAlunaOrderCancelParams,
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
-import { IbinanceOrderSchema } from '../../../schemas/IbinanceOrderSchema'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -31,15 +31,15 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    http = new binanceHttp(settings),
+    http = new BinanceHttp(settings),
   } = params
 
   try {
 
     // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IbinanceOrderSchema>({
+    const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getbinanceEndpoints(settings).order.get(id),
+      url: getBinanceEndpoints(settings).order.get(id),
       credentials,
     })
 

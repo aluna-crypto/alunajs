@@ -4,16 +4,16 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
-import * as handlebinanceMod from './handlebinanceRequestError'
+import * as handleBinanceMod from './handleBinanceRequestError'
 
 
 
 describe(__filename, () => {
 
   const {
-    isbinanceKeyInvalid,
-    handlebinanceRequestError,
-  } = handlebinanceMod
+    isBinanceKeyInvalid,
+    handleBinanceRequestError,
+  } = handleBinanceMod
 
   const requestMessage = 'Error while executing request.'
 
@@ -29,21 +29,21 @@ describe(__filename, () => {
       isInvalid,
     } = params
 
-    const isbinanceKeyInvalidMock = ImportMock.mockFunction(
-      handlebinanceMod,
-      'isbinanceKeyInvalid',
+    const isBinanceKeyInvalidMock = ImportMock.mockFunction(
+      handleBinanceMod,
+      'isBinanceKeyInvalid',
       isInvalid,
     )
 
     return {
-      isbinanceKeyInvalidMock,
+      isBinanceKeyInvalidMock,
     }
 
   }
 
-  it('should return binance key invalid error when applicable', async () => {
+  it('should return Binance key invalid error when applicable', async () => {
 
-    const { isbinanceKeyInvalidMock } = mockDeps({ isInvalid: true })
+    const { isBinanceKeyInvalidMock } = mockDeps({ isInvalid: true })
 
     const dummyError = 'Key is invalid'
 
@@ -57,9 +57,9 @@ describe(__filename, () => {
       },
     } as AxiosError
 
-    const alunaError = handlebinanceRequestError({ error: axiosError1 })
+    const alunaError = handleBinanceRequestError({ error: axiosError1 })
 
-    expect(isbinanceKeyInvalidMock.callCount).to.be.eq(1)
+    expect(isBinanceKeyInvalidMock.callCount).to.be.eq(1)
 
     expect(alunaError).to.deep.eq({
       code: AlunaKeyErrorCodes.INVALID,
@@ -68,12 +68,12 @@ describe(__filename, () => {
       metadata: axiosError1.response?.data,
     })
 
-    expect(isbinanceKeyInvalidMock.callCount).to.be.eq(1)
-    expect(isbinanceKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
+    expect(isBinanceKeyInvalidMock.callCount).to.be.eq(1)
+    expect(isBinanceKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
 
   })
 
-  it('should ensure binance request error is being handle', async () => {
+  it('should ensure Binance request error is being handle', async () => {
 
     const dummyError = 'dummy-error'
 
@@ -87,7 +87,7 @@ describe(__filename, () => {
       },
     } as AxiosError
 
-    let alunaError = handlebinanceRequestError({ error: axiosError1 })
+    let alunaError = handleBinanceRequestError({ error: axiosError1 })
 
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
@@ -106,7 +106,7 @@ describe(__filename, () => {
       },
     } as AxiosError
 
-    alunaError = handlebinanceRequestError({ error: axiosError2 })
+    alunaError = handleBinanceRequestError({ error: axiosError2 })
 
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
@@ -120,7 +120,7 @@ describe(__filename, () => {
       isAxiosError: true,
     } as AxiosError
 
-    alunaError = handlebinanceRequestError({ error: axiosError3 })
+    alunaError = handleBinanceRequestError({ error: axiosError3 })
 
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
@@ -133,7 +133,7 @@ describe(__filename, () => {
       message: dummyError,
     } as Error
 
-    alunaError = handlebinanceRequestError({ error })
+    alunaError = handleBinanceRequestError({ error })
 
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
@@ -145,7 +145,7 @@ describe(__filename, () => {
 
     const unknown = {} as any
 
-    alunaError = handlebinanceRequestError({ error: unknown })
+    alunaError = handleBinanceRequestError({ error: unknown })
 
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
@@ -157,11 +157,11 @@ describe(__filename, () => {
   })
 
   it(
-    'should ensure binance invalid api patterns work as expected',
+    'should ensure Binance invalid api patterns work as expected',
     async () => {
 
       const message = 'api-invalid'
-      expect(isbinanceKeyInvalid(message)).to.be.ok
+      expect(isBinanceKeyInvalid(message)).to.be.ok
 
     },
   )

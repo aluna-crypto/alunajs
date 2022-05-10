@@ -10,8 +10,8 @@ import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnu
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { BinanceHttp } from '../../../BinanceHttp'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import * as cancelMod from './cancel'
 import * as placeMod from './place'
@@ -25,10 +25,10 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should edit a binance order just fine', async () => {
+  it('should edit a Binance order just fine', async () => {
 
     // preparing data
-    const http = new binanceHttp({})
+    const http = new BinanceHttp({})
 
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
@@ -37,7 +37,7 @@ describe(__filename, () => {
 
 
     // mocking
-    mockHttp({ classPrototype: binanceHttp.prototype })
+    mockHttp({ classPrototype: BinanceHttp.prototype })
 
     const { cancel } = mockOrderCancel({ module: cancelMod })
 
@@ -48,7 +48,7 @@ describe(__filename, () => {
     mockValidateParams()
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const params: IAlunaOrderEditParams = {
       id,

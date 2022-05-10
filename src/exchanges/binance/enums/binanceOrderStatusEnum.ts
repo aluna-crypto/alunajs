@@ -1,4 +1,4 @@
-export enum binanceOrderStatusEnum {
+export enum BinanceOrderStatusEnum {
   OPEN = 'OPEN',
   CLOSED = 'CLOSED'
 }

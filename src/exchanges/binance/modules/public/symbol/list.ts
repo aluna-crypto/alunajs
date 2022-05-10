@@ -5,7 +5,7 @@ import {
   IAlunaSymbolListParams,
   IAlunaSymbolListReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
@@ -17,9 +17,9 @@ export const list = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolListParams = {},
 ): Promise<IAlunaSymbolListReturns> => {
 
-  log('listing binance symbols')
+  log('listing Binance symbols')
 
-  const { http = new binanceHttp(exchange.settings) } = params
+  const { http = new BinanceHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

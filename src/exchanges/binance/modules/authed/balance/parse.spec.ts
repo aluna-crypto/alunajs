@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
-import { binanceAuthed } from '../../../binanceAuthed'
+import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BINANCE_RAW_BALANCES } from '../../../test/fixtures/binanceBalances'
 
 
@@ -14,10 +14,10 @@ describe.skip(__filename, () => {
     secret: 'secret',
   }
 
-  it('should parse a binance raw balance just fine', async () => {
+  it('should parse a Binance raw balance just fine', async () => {
 
     // preparing data
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const rawBalance = BINANCE_RAW_BALANCES[0]
 

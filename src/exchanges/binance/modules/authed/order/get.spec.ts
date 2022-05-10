@@ -5,7 +5,7 @@ import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockPar
 import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { binanceAuthed } from '../../../binanceAuthed'
+import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
@@ -19,7 +19,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should get a binance order just fine', async () => {
+  it('should get a Binance order just fine', async () => {
 
     // preparing data
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
@@ -44,7 +44,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { order } = await exchange.order.get({
       id,

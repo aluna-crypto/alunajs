@@ -2,10 +2,10 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
-import { binanceOrderTypeEnum } from '../binanceOrderTypeEnum'
+import { BinanceOrderTypeEnum } from '../BinanceOrderTypeEnum'
 import {
   translateOrderTypeToAluna,
-  translateOrderTypeTobinance,
+  translateOrderTypeToBinance,
 } from './binanceOrderTypeAdapter'
 
 
@@ -16,22 +16,22 @@ describe(__filename, () => {
 
 
 
-  it('should properly translate binance order types to Aluna order types', () => {
+  it('should properly translate Binance order types to Aluna order types', () => {
 
     expect(translateOrderTypeToAluna({
-      from: binanceOrderTypeEnum.LIMIT,
+      from: BinanceOrderTypeEnum.LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     expect(translateOrderTypeToAluna({
-      from: binanceOrderTypeEnum.MARKET,
+      from: BinanceOrderTypeEnum.MARKET,
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(translateOrderTypeToAluna({
-      from: binanceOrderTypeEnum.CEILING_LIMIT,
+      from: BinanceOrderTypeEnum.CEILING_LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
 
     expect(translateOrderTypeToAluna({
-      from: binanceOrderTypeEnum.CEILING_MARKET,
+      from: BinanceOrderTypeEnum.CEILING_MARKET,
     })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
 
     let result
@@ -40,7 +40,7 @@ describe(__filename, () => {
     try {
 
       result = translateOrderTypeToAluna({
-        from: notSupported as binanceOrderTypeEnum,
+        from: notSupported as BinanceOrderTypeEnum,
       })
 
     } catch (err) {
@@ -60,30 +60,30 @@ describe(__filename, () => {
 
 
 
-  it('should properly translate Aluna order types to binance order types', () => {
+  it('should properly translate Aluna order types to Binance order types', () => {
 
-    expect(translateOrderTypeTobinance({
+    expect(translateOrderTypeToBinance({
       from: AlunaOrderTypesEnum.LIMIT,
-    })).to.be.eq(binanceOrderTypeEnum.LIMIT)
+    })).to.be.eq(BinanceOrderTypeEnum.LIMIT)
 
-    expect(translateOrderTypeTobinance({
+    expect(translateOrderTypeToBinance({
       from: AlunaOrderTypesEnum.MARKET,
-    })).to.be.eq(binanceOrderTypeEnum.MARKET)
+    })).to.be.eq(BinanceOrderTypeEnum.MARKET)
 
-    expect(translateOrderTypeTobinance({
+    expect(translateOrderTypeToBinance({
       from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(binanceOrderTypeEnum.CEILING_LIMIT)
+    })).to.be.eq(BinanceOrderTypeEnum.CEILING_LIMIT)
 
-    expect(translateOrderTypeTobinance({
+    expect(translateOrderTypeToBinance({
       from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(binanceOrderTypeEnum.CEILING_MARKET)
+    })).to.be.eq(BinanceOrderTypeEnum.CEILING_MARKET)
 
     let result
     let error
 
     try {
 
-      translateOrderTypeTobinance({
+      translateOrderTypeToBinance({
         from: notSupported as AlunaOrderTypesEnum,
       })
 

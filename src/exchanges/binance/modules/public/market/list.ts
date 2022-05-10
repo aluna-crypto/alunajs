@@ -5,7 +5,7 @@ import {
   IAlunaMarketListParams,
   IAlunaMarketListReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
@@ -16,9 +16,9 @@ export const list = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
 ): Promise<IAlunaMarketListReturns> => {
 
-  log('listing binance markets')
+  log('listing Binance markets')
 
-  const { http = new binanceHttp(exchange.settings) } = params
+  const { http = new BinanceHttp(exchange.settings) } = params
 
   const { requestCount } = http
 

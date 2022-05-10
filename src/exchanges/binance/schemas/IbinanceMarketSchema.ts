@@ -1,12 +1,12 @@
-import { binanceMarketStatusEnum } from '../enums/binanceMarketStatusEnum'
+import { BinanceMarketStatusEnum } from '../enums/BinanceMarketStatusEnum'
 
 
 
-// TODO: Describe market interface for binance exchange
-export interface IbinanceMarketSchema {
+// TODO: Describe market interface for Binance exchange
+export interface IBinanceMarketSchema {
   symbol: string
   volume: string
   quoteVolume: string
-  status: binanceMarketStatusEnum
+  status: BinanceMarketStatusEnum
   // ...
 }

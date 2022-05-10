@@ -1,9 +1,9 @@
-import { IbinanceBalanceSchema } from '../../schemas/IbinanceBalanceSchema'
+import { IBinanceBalanceSchema } from '../../schemas/IBinanceBalanceSchema'
 
 
 
 // TODO: Review fixtures
-export const BINANCE_RAW_BALANCES: IbinanceBalanceSchema[] = [
+export const BINANCE_RAW_BALANCES: IBinanceBalanceSchema[] = [
   {
     total: '1500.00000000',
     available: '1500.00000000',

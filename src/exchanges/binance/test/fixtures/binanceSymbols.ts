@@ -1,9 +1,9 @@
-import { IbinanceSymbolSchema } from '../../schemas/IbinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../../schemas/IBinanceSymbolSchema'
 
 
 
 // TODO: Review fixtures
-export const BINANCE_RAW_SYMBOLS: IbinanceSymbolSchema[] = [
+export const BINANCE_RAW_SYMBOLS: IBinanceSymbolSchema[] = [
   {
     symbol: 'BTC',
     name: 'Bitcoin',

@@ -1,4 +1,4 @@
-export enum binanceOrderSideEnum {
+export enum BinanceOrderSideEnum {
   BUY = 'BUY',
   SELL = 'SELL'
 }

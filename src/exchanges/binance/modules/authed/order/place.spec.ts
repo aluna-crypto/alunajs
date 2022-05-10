@@ -14,11 +14,11 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
-import { translateOrderSideTobinance } from '../../../enums/adapters/binanceOrderSideAdapter'
-import { translateOrderTypeTobinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { binanceHttp } from '../../../binanceHttp'
-import { getbinanceEndpoints } from '../../../binanceSpecs'
+import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrderSideAdapter'
+import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { BinanceHttp } from '../../../BinanceHttp'
+import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import * as parseMod from './parse'
 
@@ -31,7 +31,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should place a binance limit order just fine', async () => {
+  it('should place a Binance limit order just fine', async () => {
 
     // preparing data
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
@@ -40,8 +40,8 @@ describe(__filename, () => {
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.LIMIT
 
-    const translatedOrderSide = translateOrderSideTobinance({ from: side })
-    const translatedOrderType = translateOrderTypeTobinance({ from: type })
+    const translatedOrderSide = translateOrderSideToBinance({ from: side })
+    const translatedOrderType = translateOrderTypeToBinance({ from: type })
 
     const body = {
       direction: translatedOrderSide,
@@ -50,14 +50,14 @@ describe(__filename, () => {
       quantity: 0.01,
       rate: 0,
       // limit: 0,
-      // timeInForce: binanceOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      // timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
     }
 
     // mocking
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -71,7 +71,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const params: IAlunaOrderPlaceParams = {
       symbolPair: '',
@@ -93,7 +93,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: getbinanceEndpoints(exchange.settings).order.place,
+      url: getBinanceEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -102,7 +102,7 @@ describe(__filename, () => {
 
   })
 
-  it('should place a binance market order just fine', async () => {
+  it('should place a Binance market order just fine', async () => {
 
     // preparing data
 
@@ -112,8 +112,8 @@ describe(__filename, () => {
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
 
-    const translatedOrderSide = translateOrderSideTobinance({ from: side })
-    const translatedOrderType = translateOrderTypeTobinance({ from: type })
+    const translatedOrderSide = translateOrderSideToBinance({ from: side })
+    const translatedOrderType = translateOrderTypeToBinance({ from: type })
 
     const body = {
       direction: translatedOrderSide,
@@ -121,14 +121,14 @@ describe(__filename, () => {
       type: translatedOrderType,
       quantity: 0.01,
       rate: 0,
-      // timeInForce: binanceOrderTimeInForceEnum.FILL_OR_KILL,
+      // timeInForce: BinanceOrderTimeInForceEnum.FILL_OR_KILL,
     }
 
     // mocking
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -142,7 +142,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { order } = await exchange.order.place({
       symbolPair: '',
@@ -162,7 +162,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: getbinanceEndpoints(exchange.settings).order.place,
+      url: getBinanceEndpoints(exchange.settings).order.place,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -196,7 +196,7 @@ describe(__filename, () => {
       const {
         publicRequest,
         authedRequest,
-      } = mockHttp({ classPrototype: binanceHttp.prototype })
+      } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
       authedRequest.returns(Promise.reject(alunaError))
 
@@ -206,7 +206,7 @@ describe(__filename, () => {
 
 
       // executing
-      const exchange = new binanceAuthed({ credentials })
+      const exchange = new BinanceAuthed({ credentials })
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
@@ -258,7 +258,7 @@ describe(__filename, () => {
       const {
         publicRequest,
         authedRequest,
-      } = mockHttp({ classPrototype: binanceHttp.prototype })
+      } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
       authedRequest.returns(Promise.reject(alunaError))
 
@@ -268,7 +268,7 @@ describe(__filename, () => {
 
 
       // executing
-      const exchange = new binanceAuthed({ credentials })
+      const exchange = new BinanceAuthed({ credentials })
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
@@ -313,7 +313,7 @@ describe(__filename, () => {
     const {
       publicRequest,
       authedRequest,
-    } = mockHttp({ classPrototype: binanceHttp.prototype })
+    } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     authedRequest.returns(Promise.reject(alunaError))
 
@@ -323,7 +323,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { error } = await executeAndCatch(() => exchange.order.place({
       symbolPair: '',

@@ -6,12 +6,12 @@ import {
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { binanceBaseSpecs } from '../../../binanceSpecs'
-import { IbinanceSymbolSchema } from '../../../schemas/IbinanceSymbolSchema'
+import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaSymbolParseParams<IbinanceSymbolSchema>,
+  params: IAlunaSymbolParseParams<IBinanceSymbolSchema>,
 ): IAlunaSymbolParseReturns => {
 
   const { rawSymbol } = params

@@ -7,7 +7,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { binanceHttp } from '../../../binanceHttp'
+import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
@@ -26,7 +26,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     schema: editOrderParamsSchema,
   })
 
-  log('editing order for binance')
+  log('editing order for Binance')
 
   const {
     id,
@@ -36,7 +36,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     account,
     symbolPair,
-    http = new binanceHttp(exchange.settings),
+    http = new BinanceHttp(exchange.settings),
   } = params
 
   await exchange.order.cancel({

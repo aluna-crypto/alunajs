@@ -11,15 +11,15 @@ import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSche
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { handlebinanceRequestError } from './errors/handlebinanceRequestError'
+import { handleBinanceRequestError } from './errors/handleBinanceRequestError'
 
 
 
-export const BINANCE_HTTP_CACHE_KEY_PREFIX = 'binanceHttp.publicRequest'
+export const BINANCE_HTTP_CACHE_KEY_PREFIX = 'BinanceHttp.publicRequest'
 
 
 
-export class binanceHttp implements IAlunaHttp {
+export class BinanceHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
   public requestCount: IAlunaHttpRequestCount
@@ -81,7 +81,7 @@ export class binanceHttp implements IAlunaHttp {
 
     } catch (error) {
 
-      throw handlebinanceRequestError({ error })
+      throw handleBinanceRequestError({ error })
 
     }
 
@@ -128,7 +128,7 @@ export class binanceHttp implements IAlunaHttp {
 
     } catch (error) {
 
-      throw handlebinanceRequestError({ error })
+      throw handleBinanceRequestError({ error })
 
     }
 
@@ -148,7 +148,7 @@ interface ISignedHashParams {
 }
 
 // FIXME: Review interface properties
-export interface IbinanceSignedHeaders {
+export interface IBinanceSignedHeaders {
   'Api-Timestamp': number
 }
 
@@ -156,7 +156,7 @@ export interface IbinanceSignedHeaders {
 
 export const generateAuthHeader = (
   _params: ISignedHashParams,
-): IbinanceSignedHeaders => {
+): IBinanceSignedHeaders => {
 
   // FIXME: Implement method (and rename `_params` to `params`)
 

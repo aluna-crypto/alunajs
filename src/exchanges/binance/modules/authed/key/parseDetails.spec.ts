@@ -4,20 +4,20 @@ import { omit } from 'lodash'
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { binanceAuthed } from '../../../binanceAuthed'
-import { IbinanceKeySchema } from '../../../schemas/IbinanceKeySchema'
+import { BinanceAuthed } from '../../../BinanceAuthed'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
 
 describe(__filename, () => {
 
-  it('should parse binance key details just fine', async () => {
+  it('should parse Binance key details just fine', async () => {
 
     // preparing data
     const accountId = 'accountId'
 
-    const rawKey: IbinanceKeySchema = {
+    const rawKey: IBinanceKeySchema = {
       read: false,
       trade: false,
       withdraw: false,
@@ -46,7 +46,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { key } = exchange.key.parseDetails({ rawKey })
 

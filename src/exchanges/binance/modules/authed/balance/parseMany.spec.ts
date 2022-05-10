@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { binanceAuthed } from '../../../binanceAuthed'
+import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BINANCE_RAW_BALANCES } from '../../../test/fixtures/binanceBalances'
 import * as parseMod from './parse'
 
@@ -17,7 +17,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should parse many binance raw balances just fine', async () => {
+  it('should parse many Binance raw balances just fine', async () => {
 
     // preparing data
     const rawBalances = BINANCE_RAW_BALANCES
@@ -32,7 +32,7 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new binanceAuthed({ credentials })
+    const exchange = new BinanceAuthed({ credentials })
 
     const { balances } = exchange.balance.parseMany({ rawBalances })
 
