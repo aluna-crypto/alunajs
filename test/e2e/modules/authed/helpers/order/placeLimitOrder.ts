@@ -9,24 +9,23 @@ export const placeLimitOrder = async (
   params: IAuthedParams,
 ) => {
 
-  const {
-    exchangeAuthed,
-    exchangeConfigs,
-  } = params
 
   const {
-    symbolPair,
-    orderAccount,
-    orderAmount,
-    orderRate,
-  } = exchangeConfigs
+    exchangeAuthed,
+    exchangeConfigs: {
+      symbolPair,
+      orderAccount,
+      orderAmount,
+      orderRate,
+    },
+  } = params
 
   return exchangeAuthed.order.place({
     symbolPair,
     account: orderAccount || AlunaAccountEnum.EXCHANGE,
-    rate: orderRate,
     amount: orderAmount,
     side: AlunaOrderSideEnum.BUY,
+    rate: orderRate,
     type: AlunaOrderTypesEnum.LIMIT,
   })
 
