@@ -26,7 +26,7 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   const { rawPosition } = await exchange.position!.getRaw({ id, http })
 
-  const { position } = await exchange.position!.parse({ rawPosition })
+  const { position } = exchange.position!.parse({ rawPosition })
 
   const { requestCount } = http
 
