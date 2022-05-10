@@ -137,8 +137,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(valrHttp.requestCount.public).to.be.eq(1)
-    expect(valrHttp.requestCount.authed).to.be.eq(0)
+    expect(valrHttp.requestWeight.public).to.be.eq(1)
+    expect(valrHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -195,8 +195,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(valrHttp.requestCount.public).to.be.eq(0)
-    expect(valrHttp.requestCount.authed).to.be.eq(1)
+    expect(valrHttp.requestWeight.public).to.be.eq(0)
+    expect(valrHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -234,8 +234,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    valrHttp.requestCount.public = pubRequestCount
-    valrHttp.requestCount.authed = authRequestCount
+    valrHttp.requestWeight.public = pubRequestCount
+    valrHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -253,8 +253,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(valrHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
-    expect(valrHttp.requestCount.authed).to.be.eq(authRequestCount)
+    expect(valrHttp.requestWeight.public).to.be.eq(pubRequestCount + weight)
+    expect(valrHttp.requestWeight.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
 
@@ -269,8 +269,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    valrHttp.requestCount.public = pubRequestCount
-    valrHttp.requestCount.authed = authRequestCount
+    valrHttp.requestWeight.public = pubRequestCount
+    valrHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -289,8 +289,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(valrHttp.requestCount.public).to.be.eq(pubRequestCount)
-    expect(valrHttp.requestCount.authed).to.be.eq(authRequestCount + weight)
+    expect(valrHttp.requestWeight.public).to.be.eq(pubRequestCount)
+    expect(valrHttp.requestWeight.authed).to.be.eq(authRequestCount + weight)
 
     expect(request.callCount).to.be.eq(1)
 

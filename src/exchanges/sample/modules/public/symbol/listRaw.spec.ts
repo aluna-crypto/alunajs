@@ -26,14 +26,14 @@ describe(__filename, () => {
 
     const {
       rawSymbols,
-      requestCount,
+      requestWeight,
     } = await exchange.symbol.listRaw()
 
 
     // validating
     expect(rawSymbols).to.deep.eq(SAMPLE_RAW_SYMBOLS)
 
-    expect(requestCount).to.be.ok
+    expect(requestWeight).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(1)
 

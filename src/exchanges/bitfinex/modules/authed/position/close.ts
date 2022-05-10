@@ -59,11 +59,11 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
     closedAt: new Date(),
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     position: closedPosition,
-    requestCount,
+    requestWeight,
   }
 
 }

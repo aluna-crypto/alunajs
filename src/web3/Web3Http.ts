@@ -28,13 +28,13 @@ export const WEB3_CACHE_KEY_PREFIX = 'Web3.publicRequest'
 export class Web3Http implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
-  public requestCount: IAlunaHttpRequestCount
+  public requestWeight: IAlunaHttpRequestCount
 
 
 
   constructor(settings: IAlunaSettingsSchema) {
 
-    this.requestCount = {
+    this.requestWeight = {
       authed: 0,
       public: 0,
     }
@@ -83,7 +83,7 @@ export class Web3Http implements IAlunaHttp {
       return AlunaCache.cache.get<T>(cacheKey) as T
     }
 
-    this.requestCount.public += weight
+    this.requestWeight.public += weight
 
     try {
 

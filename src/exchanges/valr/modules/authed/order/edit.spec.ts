@@ -65,14 +65,14 @@ describe(__filename, () => {
 
     const {
       order,
-      requestCount,
+      requestWeight,
     } = await exchange.order.edit(params)
 
 
     // validating
     expect(order).to.deep.eq(mockedParsedOrder)
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(cancel.callCount).to.be.eq(1)
 

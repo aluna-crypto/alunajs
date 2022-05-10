@@ -112,8 +112,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(web3Http.requestCount.public).to.be.eq(1)
-    expect(web3Http.requestCount.authed).to.be.eq(0)
+    expect(web3Http.requestWeight.public).to.be.eq(1)
+    expect(web3Http.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({

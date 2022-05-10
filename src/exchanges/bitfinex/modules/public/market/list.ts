@@ -20,7 +20,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new BitfinexHttp(exchange.settings) } = params
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   const { rawMarkets } = await exchange.market.listRaw({ http })
 
@@ -28,7 +28,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   return {
     markets,
-    requestCount,
+    requestWeight,
   }
 
 }

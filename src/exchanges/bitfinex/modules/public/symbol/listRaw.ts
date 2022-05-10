@@ -40,10 +40,10 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     currenciesNames,
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    requestCount,
+    requestWeight,
     rawSymbols,
   }
 

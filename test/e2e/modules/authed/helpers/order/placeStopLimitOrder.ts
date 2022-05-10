@@ -5,7 +5,7 @@ import { IAuthedParams } from '../../../IAuthedParams'
 
 
 
-export const placeLimitOrder = async (
+export const placeStopLimitOrder = async (
   params: IAuthedParams,
 ) => {
 
@@ -16,7 +16,8 @@ export const placeLimitOrder = async (
       symbolPair,
       orderAccount,
       orderAmount,
-      orderRate,
+      orderStopRate,
+      orderLimitRate,
     },
   } = params
 
@@ -25,8 +26,9 @@ export const placeLimitOrder = async (
     account: orderAccount || AlunaAccountEnum.EXCHANGE,
     amount: orderAmount,
     side: AlunaOrderSideEnum.BUY,
-    rate: orderRate,
-    type: AlunaOrderTypesEnum.LIMIT,
+    limitRate: orderLimitRate,
+    stopRate: orderStopRate,
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
   })
 
 }

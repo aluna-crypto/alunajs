@@ -50,11 +50,11 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     tickers,
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawMarkets,
-    requestCount,
+    requestWeight,
   }
 
 }

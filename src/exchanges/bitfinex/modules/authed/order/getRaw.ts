@@ -67,11 +67,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const [rawOrder] = orders
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawOrder,
-    requestCount,
+    requestWeight,
   }
 
 }

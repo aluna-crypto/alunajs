@@ -80,11 +80,11 @@ export const getTradableBalance = (exchange: IAlunaExchangeAuthed) => async (
     },
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     tradableBalance,
-    requestCount,
+    requestWeight,
   }
 
 }

@@ -38,11 +38,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     url: getBittrexEndpoints(settings).order.get(id),
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawOrder,
-    requestCount,
+    requestWeight,
   }
 
 }

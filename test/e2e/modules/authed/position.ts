@@ -15,13 +15,13 @@ export function position(params: IAuthedParams) {
 
     const {
       positions,
-      requestCount,
+      requestWeight,
     } = await exchangeAuthed.position!.list()
 
     expect(positions).to.exist
 
-    expect(requestCount.authed).to.be.greaterThan(1)
-    expect(requestCount.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.greaterThan(1)
+    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -29,13 +29,13 @@ export function position(params: IAuthedParams) {
 
     const {
       rawPositions,
-      requestCount,
+      requestWeight,
     } = await exchangeAuthed.position!.listRaw()
 
     expect(rawPositions).to.exist
 
-    expect(requestCount.authed).to.be.greaterThan(1)
-    expect(requestCount.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.greaterThan(1)
+    expect(requestWeight.public).to.be.eq(0)
 
   })
 

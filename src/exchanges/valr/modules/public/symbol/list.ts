@@ -21,7 +21,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new ValrHttp(exchange.settings) } = params
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   const { rawSymbols } = await exchange.symbol.listRaw({ http })
 
@@ -29,7 +29,7 @@ export const list = (exchange: IAlunaExchangePublic) => async (
 
   return {
     symbols,
-    requestCount,
+    requestWeight,
   }
 
 }

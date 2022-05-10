@@ -20,14 +20,14 @@ export const list = (exchange: IAlunaExchangePublic) => async (
   log('listing Bittrex symbols')
 
   const { http = new BittrexHttp(exchange.settings) } = params
-  const { requestCount } = http
+  const { requestWeight } = http
 
   const { rawSymbols } = await exchange.symbol.listRaw({ http })
   const { symbols } = exchange.symbol.parseMany({ rawSymbols })
 
   return {
     symbols,
-    requestCount,
+    requestWeight,
   }
 
 }
