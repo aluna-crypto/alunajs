@@ -82,7 +82,7 @@ export function getConfig() {
         secret: env.BITFINEX_API_SECRET,
         passphrase: env.BITFINEX_API_PASSPHRASE,
         symbolPair: 'tBTCUSD',
-        delayBetweenTests: 500,
+        delayBetweenTests: 1000,
         orderRate: 1000,
         orderStopRate: 150000,
         orderLimitRate: 1000,
