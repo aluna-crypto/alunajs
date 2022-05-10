@@ -23,13 +23,13 @@ export const GATE_HTTP_CACHE_KEY_PREFIX = 'GateHttp.publicRequest'
 export class GateHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
-  public requestCount: IAlunaHttpRequestCount
+  public requestWeight: IAlunaHttpRequestCount
 
 
 
   constructor(settings: IAlunaSettingsSchema) {
 
-    this.requestCount = {
+    this.requestWeight = {
       authed: 0,
       public: 0,
     }
@@ -76,7 +76,7 @@ export class GateHttp implements IAlunaHttp {
       proxySettings,
     })
 
-    this.requestCount.public += weight
+    this.requestWeight.public += weight
 
     try {
 
@@ -130,7 +130,7 @@ export class GateHttp implements IAlunaHttp {
       proxySettings,
     })
 
-    this.requestCount.authed += weight
+    this.requestWeight.authed += weight
 
     try {
 

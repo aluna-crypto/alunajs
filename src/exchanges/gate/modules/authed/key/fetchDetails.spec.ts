@@ -75,7 +75,7 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails()
 
 
@@ -85,7 +85,7 @@ describe(__filename, () => {
     expect(key.permissions.trade).to.be.ok
     expect(key.permissions.withdraw).to.be.ok
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
@@ -165,7 +165,7 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails()
 
 
@@ -175,7 +175,7 @@ describe(__filename, () => {
     expect(key.permissions.trade).not.to.be.ok
     expect(key.permissions.withdraw).not.to.be.ok
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
@@ -255,7 +255,7 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails()
 
 
@@ -265,7 +265,7 @@ describe(__filename, () => {
     expect(key.permissions.trade).not.to.be.ok
     expect(key.permissions.withdraw).not.to.be.ok
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({

@@ -27,11 +27,11 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   const { balances } = exchange.balance.parseMany({ rawBalances })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     balances,
-    requestCount,
+    requestWeight,
   }
 
 }

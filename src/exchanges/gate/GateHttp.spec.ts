@@ -139,8 +139,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(gateHttp.requestCount.public).to.be.eq(1)
-    expect(gateHttp.requestCount.authed).to.be.eq(0)
+    expect(gateHttp.requestWeight.public).to.be.eq(1)
+    expect(gateHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -197,8 +197,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(gateHttp.requestCount.public).to.be.eq(0)
-    expect(gateHttp.requestCount.authed).to.be.eq(1)
+    expect(gateHttp.requestWeight.public).to.be.eq(0)
+    expect(gateHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -236,8 +236,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    gateHttp.requestCount.public = pubRequestCount
-    gateHttp.requestCount.authed = authRequestCount
+    gateHttp.requestWeight.public = pubRequestCount
+    gateHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -255,8 +255,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(gateHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
-    expect(gateHttp.requestCount.authed).to.be.eq(authRequestCount)
+    expect(gateHttp.requestWeight.public).to.be.eq(pubRequestCount + weight)
+    expect(gateHttp.requestWeight.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
 
@@ -271,8 +271,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    gateHttp.requestCount.public = pubRequestCount
-    gateHttp.requestCount.authed = authRequestCount
+    gateHttp.requestWeight.public = pubRequestCount
+    gateHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -291,8 +291,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(gateHttp.requestCount.public).to.be.eq(pubRequestCount)
-    expect(gateHttp.requestCount.authed).to.be.eq(authRequestCount + weight)
+    expect(gateHttp.requestWeight.public).to.be.eq(pubRequestCount)
+    expect(gateHttp.requestWeight.authed).to.be.eq(authRequestCount + weight)
 
     expect(request.callCount).to.be.eq(1)
 

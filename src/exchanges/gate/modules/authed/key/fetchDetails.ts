@@ -9,7 +9,10 @@ import {
 import { GateOrderSideEnum } from '../../../enums/GateOrderSideEnum'
 import { GateHttp } from '../../../GateHttp'
 import { getGateEndpoints } from '../../../gateSpecs'
-import { IGateKeyAccountResponseSchema, IGateKeySchema } from '../../../schemas/IGateKeySchema'
+import {
+  IGateKeyAccountResponseSchema,
+  IGateKeySchema,
+} from '../../../schemas/IGateKeySchema'
 
 
 
@@ -115,11 +118,11 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { key } = exchange.key.parseDetails({ rawKey })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     key,
-    requestCount,
+    requestWeight,
   }
 
 }

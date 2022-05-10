@@ -43,11 +43,11 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     url: getGateEndpoints(settings).order.get(id, query.toString()),
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawOrder,
-    requestCount,
+    requestWeight,
   }
 
 }
