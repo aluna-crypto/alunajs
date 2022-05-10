@@ -6,7 +6,7 @@ import { BinanceOrderTypeEnum } from '../BinanceOrderTypeEnum'
 import {
   translateOrderTypeToAluna,
   translateOrderTypeToBinance,
-} from './binanceOrderTypeAdapter'
+} from './BinanceOrderTypeAdapter'
 
 
 

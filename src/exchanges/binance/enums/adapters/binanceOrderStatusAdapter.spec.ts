@@ -6,7 +6,7 @@ import { BinanceOrderStatusEnum } from '../BinanceOrderStatusEnum'
 import {
   translateOrderStatusToAluna,
   translateOrderStatusToBinance,
-} from './binanceOrderStatusAdapter'
+} from './BinanceOrderStatusAdapter'
 
 
 

@@ -6,7 +6,7 @@ import { BinanceOrderSideEnum } from '../BinanceOrderSideEnum'
 import {
   translateOrderSideToAluna,
   translateOrderSideToBinance,
-} from './binanceOrderSideAdapter'
+} from './BinanceOrderSideAdapter'
 
 
 
