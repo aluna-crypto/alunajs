@@ -382,7 +382,7 @@ export function order(params: IAuthedParams) {
   if (isStopLimitOrderSupported) {
 
 
-    describe.only('type:stopLimit', () => {
+    describe('type:stopLimit', () => {
 
       it('place', async () => {
 
