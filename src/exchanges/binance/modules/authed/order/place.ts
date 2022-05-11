@@ -1,9 +1,9 @@
 import { debug } from 'debug'
+import { find } from 'lodash'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -11,10 +11,12 @@ import {
 import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrderSideAdapter'
-import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
+import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrderSideAdapter'
+import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
+import { BinanceOrderTimeInForceEnum } from '../../../enums/BinanceOrderTimeInForceEnum'
+import { BinanceOrderTypeEnum } from '../../../enums/BinanceOrderTypeEnum'
 import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
@@ -58,13 +60,22 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  // TODO: Validate all body properties
+  const traslatedOrderSide = translateOrderSideToBinance({ from: side })
+
   const body = {
-    direction: translateOrderSideToBinance({ from: side }),
-    marketSymbol: symbolPair,
+    side: traslatedOrderSide,
+    symbol: symbolPair,
     type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    quantity: amount,
+  }
+
+  if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
+
+    Object.assign(body, {
+      price: rate,
+      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
+    })
+
   }
 
   log('placing new order for Binance')
@@ -73,7 +84,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IBinanceOrderSchema>({
       url: getBinanceEndpoints(settings).order.place,
       body,
@@ -91,19 +101,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { metadata } = err
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (metadata.code === -2010) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
@@ -115,7 +117,16 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
+  const { rawSymbols } = await exchange.symbol.listRaw()
+
+  const rawSymbol = find(rawSymbols, { symbolPair })
+
+  const rawOrderRequest = {
+    rawSymbol,
+    rawOrder: placedOrder,
+  }
+
+  const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
 
   const { requestWeight } = http
 
