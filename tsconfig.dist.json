@@ -11,7 +11,8 @@
     ".playground",
     "**/*.spec.ts",
     "**/*.mock.ts",
-    "**/fixtures/*.ts",
-    "**/mocks/*.ts",
+    "**/test/**",
+    "**/fixtures/**",
+    "**/mocks/**",
   ]
 }

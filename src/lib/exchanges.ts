@@ -1,3 +1,5 @@
+import { bitmex } from '../exchanges/bitmex'
+import { bitmexBaseSpecs } from '../exchanges/bitmex/bitmexSpecs'
 import { bitfinex } from '../exchanges/bitfinex'
 import { bitfinexBaseSpecs } from '../exchanges/bitfinex/bitfinexSpecs'
 import { bittrex } from '../exchanges/bittrex'
@@ -10,6 +12,7 @@ import { valrBaseSpecs } from '../exchanges/valr/valrSpecs'
 
 
 export const exchanges = {
+  [bitmexBaseSpecs.id]: bitmex,
   [bitfinexBaseSpecs.id]: bitfinex,
   [bittrexBaseSpecs.id]: bittrex,
   [valrBaseSpecs.id]: valr,

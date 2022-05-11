@@ -13,7 +13,7 @@ describe(__filename, () => {
 
   it('should parse many Sample symbols just fine', async () => {
 
-    // preparing data
+    // mocking
     const { parse } = mockParse({ module: parseMod })
 
     each(PARSED_SYMBOLS, (symbol, index) => {

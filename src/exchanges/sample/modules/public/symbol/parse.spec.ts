@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { IAlunaSettingsSchema } from '../../../../../lib/schemas/IAlunaSettingsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Sample } from '../../../Sample'
 import { sampleBaseSpecs } from '../../../sampleSpecs'
@@ -24,22 +25,25 @@ describe(__filename, () => {
 
 
     // executing
-    const exchange = new Sample({})
+    const settings: IAlunaSettingsSchema = {
+      symbolMappings: {},
+    }
+    const exchange = new Sample({ settings })
 
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(sampleBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(rawSymbol.symbol) // should be equal
-    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
+    expect(symbol.exchangeId).to.be.eq(sampleBaseSpecs.id)
+    expect(symbol.id).to.be.eq(translatedSymbolId)
+    expect(symbol.name).to.be.eq(rawSymbol.name)
+    expect(symbol.alias).to.be.eq(rawSymbol.symbol) // should be equal
+    expect(symbol.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
       exchangeSymbolId: rawSymbol.symbol,
-      symbolMappings: undefined,
+      symbolMappings: settings.symbolMappings,
     })
 
   })
@@ -61,15 +65,15 @@ describe(__filename, () => {
     // executing
     const exchange = new Sample({})
 
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(sampleBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(rawSymbol.symbol)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
-    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
+    expect(symbol.exchangeId).to.be.eq(sampleBaseSpecs.id)
+    expect(symbol.id).to.be.eq(rawSymbol.symbol)
+    expect(symbol.name).to.be.eq(rawSymbol.name)
+    expect(symbol.alias).to.be.eq(undefined) // different = undefined
+    expect(symbol.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
 

@@ -36,10 +36,15 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const id = Number(stringId)
 
+  const body = {
+    id: [id],
+    limit: 1,
+  }
+
   let orders = await http.authedRequest<IBitfinexOrderSchema[]>({
     credentials,
     url: getBitfinexEndpoints(settings).order.get(symbolPair),
-    body: { id: [id] },
+    body,
   })
 
   if (!orders.length) {
@@ -47,7 +52,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     orders = await http.authedRequest<IBitfinexOrderSchema[]>({
       credentials,
       url: getBitfinexEndpoints(settings).order.getHistory(symbolPair),
-      body: { id: [id] },
+      body,
     })
 
     if (!orders.length) {
