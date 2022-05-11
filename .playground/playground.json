@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-10T01:55:58.067Z",
-    "__export_source": "insomnia.desktop.app:v2022.2.1",
+    "__export_date": "2022-05-11T12:18:48.421Z",
+    "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -217,7 +217,7 @@
         {
             "_id": "req_c284cfcbcce94ecf865cfb5da8ea9e9f",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652147731307,
+            "modified": 1652271480791,
             "created": 1651252547687,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -1132,7 +1132,7 @@
         {
             "_id": "env_3d45543920134e1fb6c24379f15ccd13",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651928810079,
+            "modified": 1652271428192,
             "created": 1651252130131,
             "name": "Bittrex",
             "data": {
@@ -1286,19 +1286,27 @@
         {
             "_id": "env_52e41578196c4f5289d52dd763b105e1",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651253691878,
+            "modified": 1652271480235,
             "created": 1651252828907,
             "name": "Gate",
             "data": {
                 "EXCHANGE_ID": "Gate",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'GATE_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATE_API_SECRET' %}"
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATE_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "DOGE_USDT",
+                "ORDER_RATE": 0.03,
+                "ORDER_AMOUNT": 35,
+                "ORDER_EDITED_AMOUNT": 35.01
             },
             "dataPropertyOrder": {
                 "&": [
                     "EXCHANGE_ID",
                     "KEY",
-                    "SECRET"
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
                 ]
             },
             "color": "#e64e62",
