@@ -1,9 +1,10 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
+import { each } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BitmexAuthed } from '../../../BitmexAuthed'
-import { IBitmexKeySchema } from '../../../schemas/IBitmexKeySchema'
+import { BITMEX_RAW_PERMISSIONS } from '../../../test/fixtures/bitmexKey'
 
 
 
@@ -12,30 +13,33 @@ describe(__filename, () => {
   it('should parse Bitmex key permissions just fine', async () => {
 
     // preparing data
-    const accountId = 'accountId'
-
-    const rawKey: IBitmexKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
-
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
       secret: 'secret',
       passphrase: 'passphrase',
     }
 
-    const exchange = new BitmexAuthed({ credentials })
+    const expectedPermissions: IAlunaKeyPermissionSchema[] = [
+      { read: true, withdraw: false, trade: false },
+      { read: true, trade: false, withdraw: true },
+      { read: true, trade: true, withdraw: false },
+    ]
 
 
     // executing
-    const { permissions } = exchange.key.parsePermissions({ rawKey })
+    const exchange = new BitmexAuthed({ credentials })
+
+    each(BITMEX_RAW_PERMISSIONS, (rawPermission, i) => {
+
+      const { permissions } = exchange.key.parsePermissions({
+        rawKey: rawPermission,
+      })
 
 
-    // validating
-    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
+      // validating
+      expect(permissions).to.deep.eq(expectedPermissions[i])
+
+    })
 
   })
 
