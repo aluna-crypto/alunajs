@@ -1,6 +1,8 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 
+import { AlunaAccountEnum } from '../../../../src/lib/enums/AlunaAccountEnum'
+import { AlunaOrderSideEnum } from '../../../../src/lib/enums/AlunaOrderSideEnum'
 import { IAuthedParams } from '../IAuthedParams'
 import { isGetTradableBalanceImplemented } from './helpers/utils/isGetTradableBalanceImplemented'
 
@@ -8,7 +10,10 @@ import { isGetTradableBalanceImplemented } from './helpers/utils/isGetTradableBa
 
 export function balance(params: IAuthedParams) {
 
-  const { exchangeAuthed } = params
+  const {
+    exchangeAuthed,
+    exchangeConfigs,
+  } = params
 
   it('list', async () => {
 
@@ -55,8 +60,30 @@ export function balance(params: IAuthedParams) {
 
   if (isGetTradableBalanceImplemented(exchangeAuthed)) {
 
-    it('getTradableBalance', () => {
-      expect(exchangeAuthed).to.be.ok
+    it('getTradableBalance', async () => {
+
+      const {
+        orderRate,
+        symbolPair,
+        orderAccount,
+      } = exchangeConfigs
+
+      const {
+        tradableBalance,
+        requestWeight,
+      } = await exchangeAuthed.balance.getTradableBalance!({
+        symbolPair,
+        rate: orderRate,
+        side: AlunaOrderSideEnum.BUY,
+        account: orderAccount || AlunaAccountEnum.MARGIN,
+      })
+
+      expect(tradableBalance).to.be.greaterThan(0)
+      expect(tradableBalance).to.exist
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+      expect(requestWeight.public).to.be.eq(0)
+
     })
 
   }
