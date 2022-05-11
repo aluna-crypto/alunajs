@@ -12,25 +12,25 @@ describe(__filename, () => {
   it('should parse Sample key permissions just fine', async () => {
 
     // preparing data
-    const accountId = 'accountId'
-
-    const rawKey: ISampleKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
-
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
       secret: 'secret',
       passphrase: 'passphrase',
     }
 
-    const exchange = new SampleAuthed({ credentials })
+    const accountId = 'accountId'
+
+    const rawKey: ISampleKeySchema = {
+      accountId,
+      read: false,
+      trade: false,
+      withdraw: false,
+    }
 
 
     // executing
+    const exchange = new SampleAuthed({ credentials })
+
     const { permissions } = exchange.key.parsePermissions({ rawKey })
 
 

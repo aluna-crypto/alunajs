@@ -15,6 +15,12 @@ describe(__filename, () => {
   it('should parse Sample key details just fine', async () => {
 
     // preparing data
+    const credentials: IAlunaCredentialsSchema = {
+      key: 'key',
+      secret: 'secret',
+      passphrase: 'passphrase',
+    }
+
     const accountId = 'accountId'
 
     const rawKey: ISampleKeySchema = {
@@ -22,12 +28,6 @@ describe(__filename, () => {
       trade: false,
       withdraw: false,
       accountId,
-    }
-
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-      passphrase: 'passphrase',
     }
 
     const rawKeyWithoutAccId = omit(rawKey, 'accountId')

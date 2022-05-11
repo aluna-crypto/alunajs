@@ -18,8 +18,6 @@ describe(__filename, () => {
   it('should fetch Sample key details just fine', async () => {
 
     // preparing data
-    const http = new SampleHttp({})
-
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
       secret: 'secret',
@@ -34,13 +32,14 @@ describe(__filename, () => {
     }
 
     // mocking
+    const http = new SampleHttp({})
+
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: SampleHttp.prototype })
 
     authedRequest.returns(Promise.resolve(SAMPLE_KEY_PERMISSIONS))
-
 
     const { parseDetails } = mockParseDetails({
       module: parseDetailsMod,
