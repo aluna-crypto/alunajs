@@ -19,7 +19,10 @@ export const removePositionFeatures = (
     log,
     settings,
     paths: { DESTINATION },
-    configs: { exchangeName },
+    configs: {
+      exchangeName,
+      exchangeLower,
+    },
   } = params
 
   const { tradingFeatures } = settings
@@ -40,18 +43,18 @@ export const removePositionFeatures = (
     const methodsDir = join(DESTINATION, 'modules', 'authed', 'position')
     const moduleFile = join(DESTINATION, 'modules', 'authed', 'position.ts')
     const schemaFile = join(DESTINATION, 'schemas', `I${exchangeName}PositionSchema.ts`)
+    const fixturesFile = join(DESTINATION, 'test', 'fixtures', `${exchangeLower}Positions.ts`)
 
     shell.rm('-rf', methodsDir)
     shell.rm('-f', moduleFile)
     shell.rm('-f', schemaFile)
+    shell.rm('-f', fixturesFile)
 
-    const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
-    const entryAuthedClassSpecPath = join(
-      DESTINATION,
-      `${exchangeName}Authed.spec.ts`,
-    )
 
     log('removing position mentions from authed class')
+
+    const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
+    const entryAuthedClassSpecPath = join(DESTINATION, `${exchangeName}Authed.spec.ts`)
 
     const positionSearch = /^.*position.*[\r\n]{1}/img
     const positionReplace = ''

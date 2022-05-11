@@ -6,7 +6,7 @@ import { BITMEX_RAW_ORDERS } from '../../../test/fixtures/bitmexOrders'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -20,8 +20,7 @@ describe.skip(__filename, () => {
 
     const exchange = new BitmexAuthed({ credentials })
 
-    const { order } = exchange.order.parse({ rawOrder })
-
+    const order = exchange.order.parse({ rawOrder })
 
     // validating
     expect(order).to.exist

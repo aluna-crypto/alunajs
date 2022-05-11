@@ -17,8 +17,6 @@ describe(__filename, () => {
   it('should parse a Sample raw balance just fine', async () => {
 
     // preparing data
-    const exchange = new SampleAuthed({ credentials })
-
     const rawBalance = SAMPLE_RAW_BALANCES[0]
 
 
@@ -27,6 +25,8 @@ describe(__filename, () => {
     translateSymbolId.returns(rawBalance.currencySymbol)
 
     // executing
+    const exchange = new SampleAuthed({ credentials })
+
     const { balance } = exchange.balance.parse({ rawBalance })
 
 

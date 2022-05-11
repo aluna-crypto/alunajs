@@ -15,12 +15,12 @@ import {
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
 import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import * as handleBitmexRequestErrorMod from './errors/handleBitmexRequestError'
 import * as BitmexHttpMod from './BitmexHttp'
+import * as handleBitmexRequestErrorMod from './errors/handleBitmexRequestError'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { BitmexHttp } = BitmexHttpMod
 
