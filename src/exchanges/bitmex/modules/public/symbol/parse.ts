@@ -16,27 +16,25 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbol } = params
 
-  const {
-    name,
-    symbol,
-  } = rawSymbol
+  const { rootSymbol } = rawSymbol
 
   const id = translateSymbolId({
-    exchangeSymbolId: symbol,
+    exchangeSymbolId: rootSymbol,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  const alias = (id !== symbol ? symbol : undefined)
+  const alias = id !== rootSymbol
+    ? rootSymbol
+    : undefined
 
-  // TODO: Review symbol assembling
-  const parsedSymbol: IAlunaSymbolSchema = {
+
+  const symbol: IAlunaSymbolSchema = {
     id,
-    name,
     alias,
     exchangeId: bitmexBaseSpecs.id,
     meta: rawSymbol,
   }
 
-  return { symbol: parsedSymbol }
+  return { symbol }
 
 }
