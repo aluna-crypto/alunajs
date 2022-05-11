@@ -1,11 +1,15 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import {
+  each,
+  values,
+} from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
 import { IBitmexSymbolSchema } from '../../../schemas/IBitmexSymbolSchema'
 
 
@@ -20,14 +24,39 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbols } = params
 
-  // TODO: Review implementation
-  const symbols = map(rawSymbols, (rawSymbol) => {
+  const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    const { symbol } = exchange.symbol.parse({ rawSymbol })
+  each(rawSymbols, (rawSymbol) => {
 
-    return symbol
+    const {
+      rootSymbol,
+      quoteCurrency,
+    } = rawSymbol
+
+    if (!parsedSymbolsDict[rootSymbol]) {
+
+      const { symbol } = exchange.symbol.parse({ rawSymbol })
+
+      parsedSymbolsDict[rootSymbol] = symbol
+
+    }
+
+    if (!parsedSymbolsDict[quoteCurrency]) {
+
+      const { symbol } = exchange.symbol.parse({
+        rawSymbol: {
+          ...rawSymbol,
+          rootSymbol: quoteCurrency,
+        },
+      })
+
+      parsedSymbolsDict[quoteCurrency] = symbol
+
+    }
 
   })
+
+  const symbols = values(parsedSymbolsDict)
 
   log(`parsed ${symbols.length} symbols for Bitmex`)
 
