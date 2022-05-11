@@ -50,13 +50,11 @@ export const removePositionFeatures = (
     shell.rm('-f', schemaFile)
     shell.rm('-f', fixturesFile)
 
-    const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
-    const entryAuthedClassSpecPath = join(
-      DESTINATION,
-      `${exchangeName}Authed.spec.ts`,
-    )
 
     log('removing position mentions from authed class')
+
+    const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
+    const entryAuthedClassSpecPath = join(DESTINATION, `${exchangeName}Authed.spec.ts`)
 
     const positionSearch = /^.*position.*[\r\n]{1}/img
     const positionReplace = ''
