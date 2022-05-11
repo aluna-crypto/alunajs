@@ -2,26 +2,41 @@ import { AxiosError } from 'axios'
 import { some } from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
+import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
 export const bitmexInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
-  new RegExp(/api-invalid/mi),
+  /Invalid API Key/mi,
+  /Signature not valid/mi,
+  /This key is disabled/mi,
+  /Your account has been disabled/mi,
 ]
 
 
 
-export const bitmexDownErrorPatterns: Array<RegExp | string> = [
-  // Add bitmex exchange down errors
+export const bitmexDownErrorPatterns: Array<RegExp> = [
+  /downtime in progress/mi,
+  /down for maintenance/mi,
 ]
+
 
 
 export const isBitmexKeyInvalid = (errorMessage: string) => {
 
   return some(bitmexInvalidKeyPatterns, (pattern) => {
+
+    return pattern.test(errorMessage)
+
+  })
+
+}
+
+export const isBitmexDown = (errorMessage: string) => {
+
+  return some(bitmexDownErrorPatterns, (pattern) => {
 
     return pattern.test(errorMessage)
 
@@ -52,8 +67,7 @@ export const handleBitmexRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.error?.message || message
 
     httpStatusCode = response?.status || httpStatusCode
 
@@ -69,6 +83,10 @@ export const handleBitmexRequestError = (
   if (isBitmexKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+
+  } else if (isBitmexDown(message)) {
+
+    code = AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN
 
   }
 
