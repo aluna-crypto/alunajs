@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { IAlunaSettingsSchema } from '../../../../../lib/schemas/IAlunaSettingsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Bitmex } from '../../../Bitmex'
 import { bitmexBaseSpecs } from '../../../bitmexSpecs'
@@ -7,44 +8,44 @@ import { BITMEX_RAW_SYMBOLS } from '../../../test/fixtures/bitmexSymbols'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   it('should parse a Bitmex symbol just fine (w/ alias)', async () => {
 
     // preparing data
-    const rawSymbol = BITMEX_RAW_SYMBOLS[0] // first fixture
-
-    const translatedSymbolId = 'XBT'
+    const rawSymbol = BITMEX_RAW_SYMBOLS[0]
+    const translatedSymbolId = 'XYZ'
 
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
-
     translateSymbolId.returns(translatedSymbolId)
 
 
     // executing
-    const exchange = new Bitmex({})
 
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const settings: IAlunaSettingsSchema = {
+      symbolMappings: {},
+    }
+    const exchange = new Bitmex({ settings })
+
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(bitmexBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(translatedSymbolId)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(rawSymbol.symbol) // should be equal
-    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
+    expect(symbol.exchangeId).to.be.eq(bitmexBaseSpecs.id)
+    expect(symbol.id).to.be.eq(translatedSymbolId)
+    expect(symbol.name).not.to.be.ok
+    expect(symbol.alias).to.be.eq(rawSymbol.rootSymbol)
+    expect(symbol.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
-      exchangeSymbolId: rawSymbol.symbol,
-      symbolMappings: undefined,
+      exchangeSymbolId: rawSymbol.rootSymbol,
+      symbolMappings: settings.symbolMappings,
     })
 
   })
-
-
 
   it('should parse a Bitmex symbol just fine (w/o alias)', async () => {
 
@@ -54,27 +55,25 @@ describe.skip(__filename, () => {
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
-
-    translateSymbolId.returns(rawSymbol.symbol)
+    translateSymbolId.returns(rawSymbol.rootSymbol)
 
 
     // executing
     const exchange = new Bitmex({})
-
-    const { symbol: parsedSymbol1 } = exchange.symbol.parse({ rawSymbol })
+    const { symbol } = exchange.symbol.parse({ rawSymbol })
 
 
     // validating
-    expect(parsedSymbol1.exchangeId).to.be.eq(bitmexBaseSpecs.id)
-    expect(parsedSymbol1.id).to.be.eq(rawSymbol.symbol)
-    expect(parsedSymbol1.name).to.be.eq(rawSymbol.name)
-    expect(parsedSymbol1.alias).to.be.eq(undefined) // different = undefined
-    expect(parsedSymbol1.meta).to.be.eq(rawSymbol)
+    expect(symbol.exchangeId).to.be.eq(bitmexBaseSpecs.id)
+    expect(symbol.id).to.be.eq(rawSymbol.rootSymbol)
+    expect(symbol.name).not.to.be.ok
+    expect(symbol.alias).to.be.eq(undefined) // different = undefined
+    expect(symbol.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
 
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
-      exchangeSymbolId: rawSymbol.symbol,
+      exchangeSymbolId: rawSymbol.rootSymbol,
       symbolMappings: undefined,
     })
 
