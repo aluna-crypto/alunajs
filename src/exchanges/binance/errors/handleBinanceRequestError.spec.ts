@@ -160,8 +160,14 @@ describe(__filename, () => {
     'should ensure Binance invalid api patterns work as expected',
     async () => {
 
-      const message = 'api-invalid'
-      expect(isBinanceKeyInvalid(message)).to.be.ok
+      let pattern = 'Invalid API-key, IP, or permissions for action.'
+      expect(isBinanceKeyInvalid(pattern)).to.be.ok
+
+      pattern = 'Signature for this request is not valid.'
+      expect(isBinanceKeyInvalid(pattern)).to.be.ok
+
+      pattern = 'API-key format invalid.'
+      expect(isBinanceKeyInvalid(pattern)).to.be.ok
 
     },
   )

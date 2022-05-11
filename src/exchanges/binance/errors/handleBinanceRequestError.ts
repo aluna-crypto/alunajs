@@ -8,7 +8,6 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const binanceInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
   new RegExp(/Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi),
 ]
 
