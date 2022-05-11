@@ -151,7 +151,7 @@ export const getBitmexEndpoints = (
       list: `${baseUrl}/instrument/active`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/apiKey`,
     },
     balance: {
       list: `${baseUrl}/<desired-method>`,
