@@ -25,7 +25,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Bitmex markets')
 
-  // TODO: Implement proper request
   const rawMarkets = await http.publicRequest<IBitmexMarketSchema[]>({
     url: getBitmexEndpoints(settings).market.list,
   })
