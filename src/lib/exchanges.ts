@@ -13,6 +13,7 @@ export const exchanges = {
   [binanceBaseSpecs.id]: binance,
   [binanceBaseSpecs.id]: binance,
   [binanceBaseSpecs.id]: binance,
+  [binanceBaseSpecs.id]: binance,
   [bitfinexBaseSpecs.id]: bitfinex,
   [bittrexBaseSpecs.id]: bittrex,
   [valrBaseSpecs.id]: valr,
