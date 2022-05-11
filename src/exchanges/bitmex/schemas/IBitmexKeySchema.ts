@@ -1,8 +1,12 @@
-// TODO: Describe key interface for Bitmex exchange
 export interface IBitmexKeySchema {
-  read: boolean
-  trade: boolean
-  withdraw: boolean
-  accountId?: string
-  // ...
+  id: string
+  secret?: string
+  name: string
+  nonce: number
+  cidr: string
+  permissions: string[] // 'withdraw', ('order' || 'orderCancel')
+  enabled: boolean
+  userId: number
+  created: string
 }
+
