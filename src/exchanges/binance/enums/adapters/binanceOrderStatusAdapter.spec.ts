@@ -17,34 +17,49 @@ describe(__filename, () => {
 
   it('should translate Binance order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+    expect(translateOrderStatusToAluna({
+      from: BinanceOrderStatusEnum.NEW,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: BinanceOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
-
-    expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: BinanceOrderStatusEnum.CLOSED,
+      from: BinanceOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: BinanceOrderStatusEnum.CLOSED,
+      from: BinanceOrderStatusEnum.FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: BinanceOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: BinanceOrderStatusEnum.REJECTED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BinanceOrderStatusEnum.CANCELED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BinanceOrderStatusEnum.EXPIRED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    let error
+    let result
+
+    try {
+
+      result = translateOrderStatusToAluna({
+        from: notSupported as BinanceOrderStatusEnum,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
@@ -54,19 +69,19 @@ describe(__filename, () => {
 
     expect(translateOrderStatusToBinance({
       from: AlunaOrderStatusEnum.OPEN,
-    })).to.be.eq(BinanceOrderStatusEnum.OPEN)
+    })).to.be.eq(BinanceOrderStatusEnum.NEW)
 
     expect(translateOrderStatusToBinance({
       from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
-    })).to.be.eq(BinanceOrderStatusEnum.OPEN)
+    })).to.be.eq(BinanceOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToBinance({
       from: AlunaOrderStatusEnum.FILLED,
-    })).to.be.eq(BinanceOrderStatusEnum.CLOSED)
+    })).to.be.eq(BinanceOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToBinance({
       from: AlunaOrderStatusEnum.CANCELED,
-    })).to.be.eq(BinanceOrderStatusEnum.CLOSED)
+    })).to.be.eq(BinanceOrderStatusEnum.CANCELED)
 
     let result
     let error

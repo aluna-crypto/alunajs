@@ -27,11 +27,23 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(translateOrderTypeToAluna({
-      from: BinanceOrderTypeEnum.CEILING_LIMIT,
-    })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
+      from: BinanceOrderTypeEnum.STOP_LOSS_LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToAluna({
-      from: BinanceOrderTypeEnum.CEILING_MARKET,
+      from: BinanceOrderTypeEnum.STOP_LOSS,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
+
+    expect(translateOrderTypeToAluna({
+      from: BinanceOrderTypeEnum.TAKE_PROFIT_LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
+
+    expect(translateOrderTypeToAluna({
+      from: BinanceOrderTypeEnum.LIMIT_MAKER,
+    })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
+
+    expect(translateOrderTypeToAluna({
+      from: BinanceOrderTypeEnum.TAKE_PROFIT,
     })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
 
     let result
@@ -71,12 +83,20 @@ describe(__filename, () => {
     })).to.be.eq(BinanceOrderTypeEnum.MARKET)
 
     expect(translateOrderTypeToBinance({
-      from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(BinanceOrderTypeEnum.CEILING_LIMIT)
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+    })).to.be.eq(BinanceOrderTypeEnum.STOP_LOSS_LIMIT)
+
+    expect(translateOrderTypeToBinance({
+      from: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+    })).to.be.eq(BinanceOrderTypeEnum.TAKE_PROFIT_LIMIT)
 
     expect(translateOrderTypeToBinance({
       from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(BinanceOrderTypeEnum.CEILING_MARKET)
+    })).to.be.eq(BinanceOrderTypeEnum.TAKE_PROFIT)
+
+    expect(translateOrderTypeToBinance({
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+    })).to.be.eq(BinanceOrderTypeEnum.STOP_LOSS)
 
     let result
     let error

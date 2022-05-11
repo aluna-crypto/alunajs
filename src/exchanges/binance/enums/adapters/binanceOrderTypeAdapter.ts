@@ -15,9 +15,14 @@ export const translateOrderTypeToAluna = buildAdapter<
   errorMessagePrefix,
   mappings: {
     [BinanceOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
+    [BinanceOrderTypeEnum.STOP_LOSS_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
+    [BinanceOrderTypeEnum.STOP_LOSS]: AlunaOrderTypesEnum.STOP_MARKET,
     [BinanceOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [BinanceOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [BinanceOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [BinanceOrderTypeEnum.LIMIT_MAKER]: AlunaOrderTypesEnum.LIMIT,
+    [BinanceOrderTypeEnum.TAKE_PROFIT]:
+      AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [BinanceOrderTypeEnum.TAKE_PROFIT_LIMIT]:
+      AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
   },
 })
 
@@ -31,7 +36,11 @@ export const translateOrderTypeToBinance = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: BinanceOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: BinanceOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: BinanceOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: BinanceOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.STOP_LIMIT]: BinanceOrderTypeEnum.STOP_LOSS_LIMIT,
+    [AlunaOrderTypesEnum.STOP_MARKET]: BinanceOrderTypeEnum.STOP_LOSS,
+    [AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT]:
+      BinanceOrderTypeEnum.TAKE_PROFIT_LIMIT,
+    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]:
+      BinanceOrderTypeEnum.TAKE_PROFIT,
   },
 })
