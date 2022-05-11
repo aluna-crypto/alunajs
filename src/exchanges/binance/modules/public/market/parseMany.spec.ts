@@ -5,6 +5,7 @@ import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Binance } from '../../../Binance'
 import { BINANCE_RAW_MARKETS } from '../../../test/fixtures/binanceMarket'
+import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 import * as parseMod from './parse'
 
 
@@ -14,12 +15,19 @@ describe(__filename, () => {
   it('should parse many Binance raw markets just fine', async () => {
 
     // preparing data
-    const rawMarkets = BINANCE_RAW_MARKETS
+    const rawTickers = BINANCE_RAW_MARKETS
+    const rawSymbols = BINANCE_RAW_SYMBOLS
+    const parsedMarkets = PARSED_MARKETS.slice(0, 2)
+
+    const rawMarkets = {
+      rawTickers,
+      rawSymbols,
+    }
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
 
-    each(PARSED_MARKETS, (market, index) => {
+    each(parsedMarkets, (market, index) => {
       parse.onCall(index).returns({ market })
     })
 
@@ -33,8 +41,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(parse.callCount).to.be.eq(PARSED_MARKETS.length)
-    expect(markets).to.deep.eq(PARSED_MARKETS)
+    expect(parse.callCount).to.be.eq(parsedMarkets.length)
+    expect(markets).to.deep.eq(parsedMarkets)
 
   })
 
