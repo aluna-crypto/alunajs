@@ -7,7 +7,7 @@ import { BITMEX_RAW_BALANCES } from '../../../test/fixtures/bitmexBalances'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -17,8 +17,6 @@ describe.skip(__filename, () => {
   it('should parse a Bitmex raw balance just fine', async () => {
 
     // preparing data
-    const exchange = new BitmexAuthed({ credentials })
-
     const rawBalance = BITMEX_RAW_BALANCES[0]
 
 
@@ -26,7 +24,10 @@ describe.skip(__filename, () => {
     const { translateSymbolId } = mockTranslateSymbolId()
     translateSymbolId.returns(rawBalance.currencySymbol)
 
+
     // executing
+    const exchange = new BitmexAuthed({ credentials })
+
     const { balance } = exchange.balance.parse({ rawBalance })
 
 
