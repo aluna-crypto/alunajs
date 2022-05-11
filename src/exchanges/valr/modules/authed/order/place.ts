@@ -118,11 +118,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     order,
-    requestCount,
+    requestWeight,
   }
 
 }

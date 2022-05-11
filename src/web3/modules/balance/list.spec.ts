@@ -32,7 +32,7 @@ describe(__filename, () => {
     const { parseMany: balanceParseMany } = mockBalanceParseMany()
 
     const totalBalance: IWeb3GetRawTotalBalanceReturns = {
-      requestCount: {
+      requestWeight: {
         authed: 0,
         public: 0,
       },
@@ -52,7 +52,7 @@ describe(__filename, () => {
 
     const {
       balances,
-      requestCount,
+      requestWeight,
     } = await web3.balance.list({
       address,
     })
@@ -74,8 +74,8 @@ describe(__filename, () => {
       chainId: 'eth',
     })
 
-    expect(requestCount.authed).to.exist
-    expect(requestCount.public).to.exist
+    expect(requestWeight.authed).to.exist
+    expect(requestWeight.public).to.exist
 
     expect(balances).to.deep.eq(parsedBalances)
 

@@ -3,10 +3,7 @@ import { Agent } from 'http'
 
 import { testCache } from '../../test/macros/testCache'
 import { mockAxiosRequest } from '../../test/mocks/axios/request'
-import {
-  IAlunaHttpAuthedParams,
-  IAlunaHttpPublicParams,
-} from '../lib/core/IAlunaHttp'
+import { IAlunaHttpAuthedParams } from '../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../lib/enums/AlunaProxyAgentEnum'
 import { AlunaExchangeErrorCodes } from '../lib/errors/AlunaExchangeErrorCodes'
@@ -115,8 +112,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(web3Http.requestCount.public).to.be.eq(1)
-    expect(web3Http.requestCount.authed).to.be.eq(0)
+    expect(web3Http.requestWeight.public).to.be.eq(1)
+    expect(web3Http.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -261,21 +258,7 @@ describe(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({
-    cacheResult: response,
-    callMethod: async () => {
-
-      const params: IAlunaHttpPublicParams = {
-        url,
-        body,
-        verb: AlunaHttpVerbEnum.GET,
-      }
-
-      await new Web3Http({}).publicRequest(params)
-
-    },
-
-  })
+  testCache({ HttpClass: Web3Http })
 
 
 

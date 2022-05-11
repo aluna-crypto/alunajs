@@ -30,11 +30,11 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     url: getSampleEndpoints(settings).market.list,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawMarkets,
-    requestCount,
+    requestWeight,
   }
 
 }

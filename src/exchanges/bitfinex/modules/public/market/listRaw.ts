@@ -43,11 +43,11 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     enabledMarginCurrencies,
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawMarkets,
-    requestCount,
+    requestWeight,
   }
 
 }

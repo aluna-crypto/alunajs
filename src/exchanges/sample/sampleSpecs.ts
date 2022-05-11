@@ -11,7 +11,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// FIXME: set proper urls
+// TODO: set proper urls
 export const SAMPLE_PRODUCTION_URL = 'https://api.sample.com/v3'
 export const SAMPLE_TESTNET_URL = 'https://testnet.api.sample.com/v3'
 

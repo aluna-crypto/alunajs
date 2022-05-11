@@ -35,11 +35,11 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     url: getBitfinexEndpoints(settings).position.list,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawPositions,
-    requestCount,
+    requestWeight,
   }
 
 }

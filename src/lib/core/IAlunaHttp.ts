@@ -29,7 +29,7 @@ export interface IAlunaHttpRequestCount {
 }
 
 export interface IAlunaHttp {
-  requestCount: IAlunaHttpRequestCount
+  requestWeight: IAlunaHttpRequestCount
   publicRequest<T>(params: IAlunaHttpPublicParams): Promise<T>
   authedRequest<T>(params: IAlunaHttpAuthedParams): Promise<T>
 }

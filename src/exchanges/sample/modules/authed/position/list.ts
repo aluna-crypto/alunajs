@@ -23,13 +23,13 @@ export const list = (exchange: IAlunaExchangeAuthed) => async (
 
   const { rawPositions } = await exchange.position!.listRaw({ http })
 
-  const { positions } = await exchange.position!.parseMany({ rawPositions })
+  const { positions } = exchange.position!.parseMany({ rawPositions })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     positions,
-    requestCount,
+    requestWeight,
   }
 
 }

@@ -66,14 +66,14 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails()
 
 
     // validating
     expect(key).to.be.eq(key)
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({

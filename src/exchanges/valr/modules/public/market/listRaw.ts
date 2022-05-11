@@ -42,11 +42,11 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     pairs,
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawMarkets,
-    requestCount,
+    requestWeight,
   }
 
 }

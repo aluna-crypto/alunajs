@@ -39,7 +39,7 @@ describe(__filename, () => {
 
     const {
       rawMarkets,
-      requestCount,
+      requestWeight,
     } = await exchange.market.listRaw()
 
 
@@ -50,7 +50,7 @@ describe(__filename, () => {
       tickers,
     })
 
-    expect(requestCount).to.be.ok
+    expect(requestWeight).to.be.ok
 
     expect(publicRequest.callCount).to.be.eq(3)
 

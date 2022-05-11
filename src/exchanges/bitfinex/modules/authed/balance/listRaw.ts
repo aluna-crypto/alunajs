@@ -33,11 +33,11 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     credentials,
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawBalances,
-    requestCount,
+    requestWeight,
   }
 
 }

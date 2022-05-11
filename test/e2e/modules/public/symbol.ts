@@ -12,7 +12,7 @@ export function symbol(params: IPublicParams) {
 
     const {
       rawSymbols,
-      requestCount,
+      requestWeight,
     } = await exchangePublic.symbol.listRaw()
 
     expect(rawSymbols).to.exist
@@ -21,8 +21,8 @@ export function symbol(params: IPublicParams) {
       expect(rawSymbols.length).to.be.greaterThan(0)
     }
 
-    expect(requestCount.public).to.be.greaterThan(0)
-    expect(requestCount.authed).to.be.eq(0)
+    expect(requestWeight.public).to.be.greaterThan(0)
+    expect(requestWeight.authed).to.be.eq(0)
 
   })
 
@@ -30,13 +30,13 @@ export function symbol(params: IPublicParams) {
 
     const {
       symbols,
-      requestCount,
+      requestWeight,
     } = await exchangePublic.symbol.list()
 
     expect(symbols.length).to.be.greaterThan(0)
 
-    expect(requestCount.public).to.be.eq(0)
-    expect(requestCount.authed).to.be.eq(0)
+    expect(requestWeight.public).to.be.eq(0)
+    expect(requestWeight.authed).to.be.eq(0)
 
   })
 

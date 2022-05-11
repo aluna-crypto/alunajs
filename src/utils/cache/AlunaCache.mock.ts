@@ -21,6 +21,7 @@ export const mockAlunaCache = (
     get: spy(() => get),
     set: spy(() => set),
     has: spy(() => has),
+    // del: spy(() => 1),
   }
 
   ImportMock.mockOther(AlunaCache, 'cache', cache)

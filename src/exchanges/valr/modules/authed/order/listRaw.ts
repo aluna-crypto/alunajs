@@ -48,11 +48,11 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     pairs,
   }
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
     rawOrders: rawOrdersResponse,
-    requestCount,
+    requestWeight,
   }
 
 }

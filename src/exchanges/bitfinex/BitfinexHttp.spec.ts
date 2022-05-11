@@ -7,7 +7,6 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
-import { IAlunaHttpPublicParams } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
@@ -140,8 +139,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(bitfinexHttp.requestCount.public).to.be.eq(1)
-    expect(bitfinexHttp.requestCount.authed).to.be.eq(0)
+    expect(bitfinexHttp.requestWeight.public).to.be.eq(1)
+    expect(bitfinexHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -198,8 +197,8 @@ describe(__filename, () => {
     // validating
     expect(responseData).to.be.eq(response)
 
-    expect(bitfinexHttp.requestCount.public).to.be.eq(0)
-    expect(bitfinexHttp.requestCount.authed).to.be.eq(1)
+    expect(bitfinexHttp.requestWeight.public).to.be.eq(0)
+    expect(bitfinexHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
     expect(request.args[0][0]).to.deep.eq({
@@ -235,8 +234,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    bitfinexHttp.requestCount.public = pubRequestCount
-    bitfinexHttp.requestCount.authed = authRequestCount
+    bitfinexHttp.requestWeight.public = pubRequestCount
+    bitfinexHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -254,8 +253,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(bitfinexHttp.requestCount.public).to.be.eq(pubRequestCount + weight)
-    expect(bitfinexHttp.requestCount.authed).to.be.eq(authRequestCount)
+    expect(bitfinexHttp.requestWeight.public).to.be.eq(pubRequestCount + weight)
+    expect(bitfinexHttp.requestWeight.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
 
@@ -270,8 +269,8 @@ describe(__filename, () => {
     const pubRequestCount = random()
     const authRequestCount = random()
 
-    bitfinexHttp.requestCount.public = pubRequestCount
-    bitfinexHttp.requestCount.authed = authRequestCount
+    bitfinexHttp.requestWeight.public = pubRequestCount
+    bitfinexHttp.requestWeight.authed = authRequestCount
 
 
     // mocking
@@ -290,8 +289,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(bitfinexHttp.requestCount.public).to.be.eq(pubRequestCount)
-    expect(bitfinexHttp.requestCount.authed).to.be.eq(authRequestCount + weight)
+    expect(bitfinexHttp.requestWeight.public).to.be.eq(pubRequestCount)
+    expect(bitfinexHttp.requestWeight.authed).to.be.eq(authRequestCount + weight)
 
     expect(request.callCount).to.be.eq(1)
 
@@ -491,21 +490,7 @@ describe(__filename, () => {
 
   /**
    * Executes macro test.
-   * */
-  testCache({
-    cacheResult: response,
-    callMethod: async () => {
-
-      const params: IAlunaHttpPublicParams = {
-        url,
-        body,
-        verb: AlunaHttpVerbEnum.GET,
-      }
-
-      await new BitfinexHttp({}).publicRequest(params)
-
-    },
-
-  })
+   */
+  testCache({ HttpClass: BitfinexHttp })
 
 })

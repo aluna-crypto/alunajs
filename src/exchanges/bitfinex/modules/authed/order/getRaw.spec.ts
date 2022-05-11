@@ -58,7 +58,10 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       url: getBitfinexEndpoints(exchange.settings).order.get(symbolPair),
-      body: { id: [id] },
+      body: {
+        id: [id],
+        limit: 1,
+      },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -104,12 +107,18 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       url: getBitfinexEndpoints(exchange.settings).order.get(symbolPair),
-      body: { id: [id] },
+      body: {
+        id: [id],
+        limit: 1,
+      },
     })
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
       credentials,
       url: getBitfinexEndpoints(exchange.settings).order.getHistory(symbolPair),
-      body: { id: [id] },
+      body: {
+        id: [id],
+        limit: 1,
+      },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

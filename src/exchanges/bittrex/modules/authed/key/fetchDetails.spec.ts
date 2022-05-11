@@ -81,14 +81,14 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails({ http })
 
 
     // validating
     expect(key).to.be.eq(key)
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(authedRequest.callCount).to.be.eq(3)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
@@ -195,14 +195,14 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails({ http })
 
 
     // validating
     expect(key).to.be.eq(key)
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
       rawKey: {
@@ -272,14 +272,14 @@ describe(__filename, () => {
 
     const {
       key,
-      requestCount,
+      requestWeight,
     } = await exchange.key.fetchDetails({ http })
 
 
     // validating
     expect(key).to.be.eq(key)
 
-    expect(requestCount).to.deep.eq(http.requestCount)
+    expect(requestWeight).to.deep.eq(http.requestWeight)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
       rawKey: {

@@ -10,5 +10,5 @@ export interface IAlunaModuleParams {
 }
 
 export interface IAlunaModuleReturns {
-  requestCount: IAlunaHttpRequestCount
+  requestWeight: IAlunaHttpRequestCount
 }

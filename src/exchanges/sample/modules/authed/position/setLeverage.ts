@@ -26,23 +26,24 @@ export const setLeverage = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
+    leverage,
     http = new SampleHttp(settings),
   } = params
 
   log('setting leverage', { id, symbolPair })
 
   // TODO: Implement proper getter
-  const leverage = await http.authedRequest<number>({
+  const settedLeverage = await http.authedRequest<number>({
     credentials,
     url: getSampleEndpoints(settings).position.setLeverage,
-    body: { id, symbolPair },
+    body: { id, symbolPair, leverage },
   })
 
-  const { requestCount } = http
+  const { requestWeight } = http
 
   return {
-    leverage,
-    requestCount,
+    leverage: settedLeverage,
+    requestWeight,
   }
 
 }

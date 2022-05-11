@@ -1,4 +1,7 @@
-import { filter } from 'lodash'
+import {
+  filter,
+  some,
+} from 'lodash'
 import { join } from 'path'
 import shell from 'shelljs'
 
@@ -19,7 +22,18 @@ export const removePositionFeatures = (
     configs: { exchangeName },
   } = params
 
-  if (!settings.tradingFeatures.includes(AlunaAccountEnum.MARGIN)) {
+  const { tradingFeatures } = settings
+
+  const margin = AlunaAccountEnum.MARGIN
+  const derivatives = AlunaAccountEnum.DERIVATIVES
+
+  const supportsPositions = some(tradingFeatures, (account) => {
+
+    return (account === margin) || account === derivatives
+
+  })
+
+  if (!supportsPositions) {
 
     log('removing position modules')
 
@@ -32,6 +46,10 @@ export const removePositionFeatures = (
     shell.rm('-f', schemaFile)
 
     const entryAuthedClassPath = join(DESTINATION, `${exchangeName}Authed.ts`)
+    const entryAuthedClassSpecPath = join(
+      DESTINATION,
+      `${exchangeName}Authed.spec.ts`,
+    )
 
     log('removing position mentions from authed class')
 
@@ -40,6 +58,12 @@ export const removePositionFeatures = (
 
     replaceSync({
       filepath: entryAuthedClassPath,
+      search: positionSearch,
+      replace: positionReplace,
+    })
+
+    replaceSync({
+      filepath: entryAuthedClassSpecPath,
       search: positionSearch,
       replace: positionReplace,
     })

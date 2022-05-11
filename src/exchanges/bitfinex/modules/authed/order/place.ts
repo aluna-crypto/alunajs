@@ -142,11 +142,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { order } = exchange.order.parse({ rawOrder })
 
-    const { requestCount } = http
+    const { requestWeight } = http
 
     return {
       order,
-      requestCount,
+      requestWeight,
     }
 
   } catch (err) {
