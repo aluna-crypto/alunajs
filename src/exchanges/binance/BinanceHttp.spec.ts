@@ -15,8 +15,8 @@ import {
 import { mockAssembleRequestConfig } from '../../utils/axios/assembleRequestConfig.mock'
 import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
-import * as handleBinanceRequestErrorMod from './errors/handleBinanceRequestError'
 import * as BinanceHttpMod from './BinanceHttp'
+import * as handleBinanceRequestErrorMod from './errors/handleBinanceRequestError'
 
 
 
@@ -455,8 +455,6 @@ describe.skip(__filename, () => {
     // executing
     const signedHash = BinanceHttpMod.generateAuthHeader({
       credentials,
-      path,
-      verb,
       body,
       url,
     })
