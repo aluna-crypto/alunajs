@@ -5,6 +5,7 @@ import { Binance } from '../../../Binance'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_MARKETS } from '../../../test/fixtures/binanceMarket'
+import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 
 
 
@@ -12,17 +13,28 @@ describe(__filename, () => {
 
   it('should list Binance raw markets just fine', async () => {
 
+    // preparing data
+
+    const rawTickers = BINANCE_RAW_MARKETS
+    const rawSymbols = BINANCE_RAW_SYMBOLS
+
+    const rawMarketsResponse = {
+      rawTickers,
+      rawSymbols,
+    }
+
+    const exchange = new Binance({})
+
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
-    publicRequest.returns(Promise.resolve(BINANCE_RAW_MARKETS))
-
+    publicRequest.onFirstCall().returns(Promise.resolve(rawTickers))
+    publicRequest.onSecondCall().returns(Promise.resolve(rawSymbols))
 
     // executing
-    const exchange = new Binance({})
 
     const {
       rawMarkets,
@@ -31,15 +43,16 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawMarkets).to.deep.eq(BINANCE_RAW_MARKETS)
+    expect(rawMarkets).to.deep.eq(rawMarketsResponse)
 
     expect(requestWeight).to.be.ok
 
-    expect(publicRequest.callCount).to.be.eq(1)
+    expect(publicRequest.callCount).to.be.eq(2)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
       url: getBinanceEndpoints(exchange.settings).market.list,
     })
+
 
     expect(authedRequest.callCount).to.be.eq(0)
 

@@ -7,7 +7,10 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { IBinanceMarketSchema } from '../../../schemas/IBinanceMarketSchema'
+import {
+  IBinanceMarketSchema,
+  IBinanceMarketsResponseSchema,
+} from '../../../schemas/IBinanceMarketSchema'
 
 
 
@@ -17,7 +20,7 @@ const log = debug('@alunajs:binance/market/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IBinanceMarketSchema[]>> => {
+): Promise<IAlunaMarketListRawReturns<IBinanceMarketsResponseSchema>> => {
 
   const { settings } = exchange
 
@@ -25,10 +28,18 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Binance markets')
 
-  // TODO: Implement proper request
-  const rawMarkets = await http.publicRequest<IBinanceMarketSchema[]>({
+  const rawTickers = await http.publicRequest<IBinanceMarketSchema[]>({
     url: getBinanceEndpoints(settings).market.list,
   })
+
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
+
+  const rawMarkets: IBinanceMarketsResponseSchema = {
+    rawTickers,
+    rawSymbols,
+  }
 
   const { requestWeight } = http
 
