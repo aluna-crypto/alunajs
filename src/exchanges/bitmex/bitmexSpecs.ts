@@ -12,8 +12,8 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 // TODO: set proper urls
-export const BITMEX_PRODUCTION_URL = 'https://api.bitmex.com/v3'
-export const BITMEX_TESTNET_URL = 'https://testnet.api.bitmex.com/v3'
+export const BITMEX_PRODUCTION_URL = 'https://www.bitmex.com/api/v1'
+export const BITMEX_TESTNET_URL = 'https://testnet.bitmex.com/api/v1'
 
 
 
@@ -140,22 +140,15 @@ export const getBitmexEndpoints = (
 
   if (settings.useTestNet) {
     baseUrl = BITMEX_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Bitmex don't have a testnet.',
-      })
-    */
   }
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/instrument/active`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      get: (symbolPair: string) => `${baseUrl}/instrument?symbol=${symbolPair}`,
+      list: `${baseUrl}/instrument/active`,
     },
     key: {
       fetchDetails: `${baseUrl}/<desired-method>`,
