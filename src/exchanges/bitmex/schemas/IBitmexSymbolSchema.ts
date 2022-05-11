@@ -1,6 +1,5 @@
-// TODO: Describe symbol interface for Bitmex exchange
-export interface IBitmexSymbolSchema {
-  symbol: string
-  name: string
-  // ...
-}
+import { IBitmexMarketSchema } from './IBitmexMarketSchema'
+
+
+
+export interface IBitmexSymbolSchema extends IBitmexMarketSchema {}
