@@ -1,11 +1,16 @@
 import { debug } from 'debug'
+import {
+  forEach,
+  map,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
+import { IBinanceOrdersResponseSchema } from '../../../schemas/IBinanceOrderSchema'
+import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
 
 
 
@@ -14,14 +19,42 @@ const log = debug('@alunajs:binance/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams<IBinanceOrderSchema[]>,
+  params: IAlunaOrderParseManyParams<IBinanceOrdersResponseSchema>,
 ): IAlunaOrderParseManyReturns => {
 
-  const { rawOrders } = params
+  const {
+    rawOrders: rawOrdersRequest,
+  } = params
 
-  const parsedOrders = rawOrders.map((rawOrder) => {
+  const {
+    rawOrders,
+    rawSymbols,
+  } = rawOrdersRequest
 
-    const { order } = exchange.order.parse({ rawOrder })
+  const pairSymbolsDictionary: { [key:string]: IBinanceSymbolSchema } = {}
+
+  forEach(rawSymbols, (pair) => {
+
+    const { symbol } = pair
+
+    pairSymbolsDictionary[symbol] = pair
+
+  })
+
+  const parsedOrders = map(rawOrders, (rawOrder) => {
+
+    const {
+      symbol,
+    } = rawOrder
+
+    const rawSymbol = pairSymbolsDictionary[symbol]
+
+    const rawOrderRequest = {
+      rawOrder,
+      rawSymbol,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
 
     return order
 

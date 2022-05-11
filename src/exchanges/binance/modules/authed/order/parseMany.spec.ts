@@ -6,6 +6,7 @@ import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockPar
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
+import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 import * as parseMod from './parse'
 
 
@@ -22,7 +23,12 @@ describe(__filename, () => {
     // preparing data
     const parsedOrders = PARSED_ORDERS
     const rawOrders = BINANCE_RAW_ORDERS
+    const rawSymbols = BINANCE_RAW_SYMBOLS
 
+    const rawOrdersRequest = {
+      rawOrders,
+      rawSymbols,
+    }
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
@@ -35,7 +41,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
-    const { orders } = exchange.order.parseMany({ rawOrders })
+    const { orders } = exchange.order.parseMany({ rawOrders: rawOrdersRequest })
 
 
     // validating
