@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { forEach } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -6,6 +7,7 @@ import {
   IAlunaKeyParsePermissionsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
+import { BinanceApiKeyPermissionsEnum } from '../../../enums/BinanceApiKeyPermissionsEnum'
 import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
@@ -22,12 +24,37 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawKey } = params
 
-  const permissions: IAlunaKeyPermissionSchema = {
-    read: rawKey.read,
-    trade: rawKey.trade,
-    withdraw: rawKey.withdraw,
+  const {
+    permissions,
+    canTrade,
+    canWithdraw,
+  } = rawKey
+
+  const alunaPermissions: IAlunaKeyPermissionSchema = {
+    read: false,
+    trade: false,
+    withdraw: false,
   }
 
-  return { permissions }
+  forEach(permissions, (permission) => {
+
+    switch (permission) {
+
+      case BinanceApiKeyPermissionsEnum.SPOT:
+        alunaPermissions.read = true
+        alunaPermissions.trade = canTrade
+        alunaPermissions.withdraw = canWithdraw
+        break
+
+      default:
+
+        log(`Unknown permission '${permission}' found on Binance`)
+        break
+
+    }
+
+  })
+
+  return { permissions: alunaPermissions }
 
 }
