@@ -1,11 +1,11 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BinanceAuthed } from '../../../BinanceAuthed'
 import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
+import { BINANCE_KEY_PERMISSIONS } from '../../../test/fixtures/binanceKey'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
@@ -15,13 +15,9 @@ describe(__filename, () => {
   it('should parse Binance key details just fine', async () => {
 
     // preparing data
-    const accountId = 'accountId'
-
     const rawKey: IBinanceKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
+      ...BINANCE_KEY_PERMISSIONS,
+      permissions: [],
     }
 
     const credentials: IAlunaCredentialsSchema = {
@@ -30,10 +26,10 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const rawKeyWithoutAccId = omit(rawKey, 'accountId')
-
     const permissions: IAlunaKeyPermissionSchema = {
-      ...rawKeyWithoutAccId,
+      read: false,
+      trade: false,
+      withdraw: false,
     }
 
 
@@ -53,7 +49,7 @@ describe(__filename, () => {
 
     // validating
     expect(key).to.deep.eq({
-      accountId,
+      accountId: undefined,
       permissions,
       meta: rawKey,
     })
