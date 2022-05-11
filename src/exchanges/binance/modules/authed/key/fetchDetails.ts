@@ -29,7 +29,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BinanceHttp(settings) } = params
 
-  // TODO: Implement proper request
   const permissions = await http.authedRequest<IBinanceKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).key.fetchDetails,

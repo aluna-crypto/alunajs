@@ -29,7 +29,11 @@ describe(__filename, () => {
 
     const parsedKey: IAlunaKeySchema = {
       accountId,
-      permissions: BINANCE_KEY_PERMISSIONS,
+      permissions: {
+        read: true,
+        trade: true,
+        withdraw: true,
+      },
       meta: {},
     }
 
