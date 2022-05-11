@@ -35,7 +35,7 @@ export function symbol(params: IPublicParams) {
 
     expect(symbols.length).to.be.greaterThan(0)
 
-    expect(requestWeight.public).to.be.eq(0)
+    expect(requestWeight.public).to.be.greaterThan(0)
     expect(requestWeight.authed).to.be.eq(0)
 
   })
