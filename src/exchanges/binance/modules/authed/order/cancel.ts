@@ -31,19 +31,29 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new BinanceHttp(settings),
   } = params
 
   try {
 
-    // TODO: Implement proper request
+    const body = {
+      orderId: id,
+      symbol: symbolPair,
+    }
+
     const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getBinanceEndpoints(settings).order.get(id),
+      url: getBinanceEndpoints(settings).order.get,
       credentials,
+      body,
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const { order } = await exchange.order.get({
+      id: rawOrder.orderId.toString(),
+      symbolPair,
+      http,
+    })
 
     const { requestWeight } = http
 

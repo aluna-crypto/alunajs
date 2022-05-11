@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -12,7 +12,7 @@ import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -29,8 +29,12 @@ describe(__filename, () => {
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderId } = mockedRawOrder
 
+    const body = {
+      orderId: orderId.toString(),
+      symbol: '',
+    }
 
     // mocking
     const {
@@ -38,18 +42,18 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    const { get } = mockOrderGet({ module: getMod })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
+    get.returns(Promise.resolve({ order: mockedParsedOrder }))
 
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
     const { order } = await exchange.order.cancel({
-      id,
+      id: orderId.toString(),
       symbolPair: '',
     })
 
@@ -62,7 +66,8 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.cancel(id),
+      url: getBinanceEndpoints(exchange.settings).order.cancel,
+      body,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -73,6 +78,12 @@ describe(__filename, () => {
 
     // preparing data
     const id = 'id'
+    const symbolPair = 'symbolPair'
+
+    const body = {
+      orderId: id,
+      symbol: symbolPair,
+    }
 
     // mocking
     const {
@@ -109,7 +120,8 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.cancel(id),
+      body,
+      url: getBinanceEndpoints(exchange.settings).order.cancel,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
