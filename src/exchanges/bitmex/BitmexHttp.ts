@@ -1,4 +1,5 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
 import {
   IAlunaHttp,
@@ -116,7 +117,6 @@ export class BitmexHttp implements IAlunaHttp {
       path: new URL(url).pathname,
       credentials,
       body,
-      url,
     })
 
     const { proxySettings } = settings
@@ -125,7 +125,7 @@ export class BitmexHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings,
     })
 
@@ -149,44 +149,55 @@ export class BitmexHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
   path: string
   credentials: IAlunaCredentialsSchema
-  url: string
   body?: any
 }
 
-// TODO: Review interface properties
+
+
 export interface IBitmexSignedHeaders {
-  'Api-Timestamp': number
+  'api-expires': string
+  'api-key': string
+  'api-signature': string
 }
 
 
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IBitmexSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    path,
+    verb,
+    body,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    key,
+    secret,
+  } = credentials
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const nonce = Date.now().toString()
 
-  const timestamp = Date.now()
+  const signature = crypto
+    .createHmac('sha256', secret)
+    .update(verb.toUpperCase())
+    .update(`${path}`)
+    .update(nonce)
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
 
-  return {
-    'Api-Timestamp': timestamp,
+  const signedHeaders: IBitmexSignedHeaders = {
+    'api-expires': nonce,
+    'api-key': key,
+    'api-signature': signature,
   }
+
+  return signedHeaders
 
 }
