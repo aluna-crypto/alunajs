@@ -440,8 +440,6 @@ describe.skip(__filename, () => {
   it('should generate signed auth header just fine', async () => {
 
     // preparing data
-    const path = 'path'
-    const verb = 'verb' as AlunaHttpVerbEnum
 
     const currentDate = Date.now()
 
