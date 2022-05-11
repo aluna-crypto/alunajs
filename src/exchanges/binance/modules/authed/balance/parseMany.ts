@@ -16,7 +16,7 @@ const log = debug('@alunajs:binance/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IBinanceBalanceSchema>,
+  params: IAlunaBalanceParseManyParams<IBinanceBalanceSchema[]>,
 ): IAlunaBalanceParseManyReturns => {
 
   const { rawBalances } = params

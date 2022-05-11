@@ -19,7 +19,7 @@ const log = debug('@alunajs:binance/balance/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
-): Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema>> => {
+): Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema[]>> => {
 
   log('listing raw balances', params)
 
