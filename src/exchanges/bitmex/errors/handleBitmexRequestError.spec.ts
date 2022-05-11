@@ -1,7 +1,11 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
-import { ImportMock } from 'ts-mock-imports'
+import {
+  each,
+  map,
+} from 'lodash'
 
+import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 import * as handleBitmexMod from './handleBitmexRequestError'
@@ -11,65 +15,87 @@ import * as handleBitmexMod from './handleBitmexRequestError'
 describe(__filename, () => {
 
   const {
-    isBitmexKeyInvalid,
+    bitmexInvalidKeyPatterns,
     handleBitmexRequestError,
+    bitmexDownErrorPatterns,
   } = handleBitmexMod
 
   const requestMessage = 'Error while executing request.'
 
-  const mockDeps = (
-    params: {
-      isInvalid: boolean
-    } = {
-      isInvalid: false,
-    },
-  ) => {
-
-    const {
-      isInvalid,
-    } = params
-
-    const isBitmexKeyInvalidMock = ImportMock.mockFunction(
-      handleBitmexMod,
-      'isBitmexKeyInvalid',
-      isInvalid,
-    )
-
-    return {
-      isBitmexKeyInvalidMock,
-    }
-
-  }
 
   it('should return Bitmex key invalid error when applicable', async () => {
 
-    const { isBitmexKeyInvalidMock } = mockDeps({ isInvalid: true })
+    // preparing data
+    const stringsPatterns = map(bitmexInvalidKeyPatterns, (p) => p.toString())
 
-    const dummyError = 'Key is invalid'
+    each(stringsPatterns, (stringPattern) => {
 
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          exchangeErroMsg: dummyError,
+      const message = 'Lorem Ipsum is simply '.concat(stringPattern)
+
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            error: {
+              message,
+            },
+          },
         },
-      },
-    } as AxiosError
+      } as AxiosError
 
-    const alunaError = handleBitmexRequestError({ error: axiosError1 })
 
-    expect(isBitmexKeyInvalidMock.callCount).to.be.eq(1)
+      // executing
+      const alunaError = handleBitmexRequestError({ error: axiosError })
 
-    expect(alunaError).to.deep.eq({
-      code: AlunaKeyErrorCodes.INVALID,
-      message: dummyError,
-      httpStatusCode: axiosError1.response?.status,
-      metadata: axiosError1.response?.data,
+
+      // validating
+      expect(alunaError).to.deep.eq({
+        code: AlunaKeyErrorCodes.INVALID,
+        message,
+        httpStatusCode: axiosError.response!.status,
+        metadata: axiosError.response!.data,
+      })
+
     })
 
-    expect(isBitmexKeyInvalidMock.callCount).to.be.eq(1)
-    expect(isBitmexKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
+  })
+
+  it('should return Bitmex down error when applicable', async () => {
+
+    // preparing data
+    const stringsPatterns = map(bitmexDownErrorPatterns, (p) => p.toString())
+
+    each(stringsPatterns, (stringPattern) => {
+
+      const message = 'Lorem Ipsum is simply '.concat(stringPattern)
+
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            error: {
+              message,
+            },
+          },
+        },
+      } as AxiosError
+
+
+      // executing
+      const alunaError = handleBitmexRequestError({ error: axiosError })
+
+
+      // validating
+      expect(alunaError).to.deep.eq({
+        code: AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN,
+        message,
+        httpStatusCode: axiosError.response!.status,
+        metadata: axiosError.response!.data,
+      })
+
+    })
 
   })
 
@@ -82,7 +108,9 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          error: {
+            message: dummyError,
+          },
         },
       },
     } as AxiosError
@@ -92,8 +120,8 @@ describe(__filename, () => {
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: dummyError,
-      httpStatusCode: axiosError1.response?.status,
-      metadata: axiosError1.response?.data,
+      httpStatusCode: axiosError1.response!.status,
+      metadata: axiosError1.response!.data,
     })
 
 
@@ -102,6 +130,7 @@ describe(__filename, () => {
       response: {
         status: 500,
         data: {
+          message: {},
         },
       },
     } as AxiosError
@@ -111,13 +140,16 @@ describe(__filename, () => {
     expect(alunaError).to.deep.eq({
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: requestMessage,
-      httpStatusCode: axiosError2.response?.status,
-      metadata: axiosError2.response?.data,
+      httpStatusCode: axiosError2.response!.status,
+      metadata: axiosError2.response!.data,
     })
-
 
     const axiosError3 = {
       isAxiosError: true,
+      response: {
+        status: 500,
+        data: {},
+      },
     } as AxiosError
 
     alunaError = handleBitmexRequestError({ error: axiosError3 })
@@ -126,8 +158,23 @@ describe(__filename, () => {
       code: AlunaHttpErrorCodes.REQUEST_ERROR,
       message: requestMessage,
       httpStatusCode: 500,
-      metadata: axiosError3,
+      metadata: axiosError3.response!.data,
     })
+
+
+    const axiosError4 = {
+      isAxiosError: true,
+    } as AxiosError
+
+    alunaError = handleBitmexRequestError({ error: axiosError4 })
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: requestMessage,
+      httpStatusCode: 500,
+      metadata: axiosError4,
+    })
+
 
     const error = {
       message: dummyError,
@@ -155,15 +202,5 @@ describe(__filename, () => {
     })
 
   })
-
-  it(
-    'should ensure Bitmex invalid api patterns work as expected',
-    async () => {
-
-      const message = 'api-invalid'
-      expect(isBitmexKeyInvalid(message)).to.be.ok
-
-    },
-  )
 
 })
