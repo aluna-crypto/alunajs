@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 
+import { PARSED_KEY } from '../../../../../../test/fixtures/parsedKey'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/key/mockParseDetails'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { BITMEX_KEY_PERMISSIONS } from '../../../test/fixtures/bitmexKey'
+import { BITMEX_RAW_KEY } from '../../../test/fixtures/bitmexKey'
 import * as parseDetailsMod from './parseDetails'
 
 
@@ -18,34 +18,26 @@ describe(__filename, () => {
   it('should fetch Bitmex key details just fine', async () => {
 
     // preparing data
-    const http = new BitmexHttp({})
-
     const credentials: IAlunaCredentialsSchema = {
       key: 'key',
       secret: 'secret',
     }
+    const parsedKey = PARSED_KEY
 
-    const accountId = 'accountId'
-
-    const parsedKey: IAlunaKeySchema = {
-      accountId,
-      permissions: BITMEX_KEY_PERMISSIONS,
-      meta: {},
-    }
 
     // mocking
+    const http = new BitmexHttp({})
+
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(BITMEX_KEY_PERMISSIONS))
-
+    authedRequest.returns(Promise.resolve(BITMEX_RAW_KEY))
 
     const { parseDetails } = mockParseDetails({
       module: parseDetailsMod,
     })
-
     parseDetails.returns({ key: parsedKey })
 
 
@@ -59,7 +51,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(key).to.be.eq(key)
+    expect(key).to.be.eq(parsedKey)
 
     expect(requestWeight).to.deep.eq(http.requestWeight)
 
@@ -74,7 +66,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: BITMEX_KEY_PERMISSIONS,
+      rawKey: BITMEX_RAW_KEY,
     })
 
   })

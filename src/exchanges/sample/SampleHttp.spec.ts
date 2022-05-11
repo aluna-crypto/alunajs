@@ -141,7 +141,7 @@ describe(__filename, () => {
     expect(sampleHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
       data: body,
@@ -154,7 +154,7 @@ describe(__filename, () => {
     expect(cache.get.callCount).to.be.eq(0)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
       data: body,
@@ -199,7 +199,7 @@ describe(__filename, () => {
     expect(sampleHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
@@ -209,7 +209,7 @@ describe(__filename, () => {
     expect(assembleRequestConfig.callCount).to.be.eq(1)
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
-    expect(generateAuthHeader.args[0][0]).to.deep.eq({
+    expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
       path: new URL(url).pathname,
       credentials,
@@ -390,7 +390,7 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.GET,
       data: body,
@@ -427,7 +427,7 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,

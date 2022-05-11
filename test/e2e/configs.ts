@@ -94,7 +94,7 @@ export function getConfig() {
         key: env.BITMEX_API_KEY,
         secret: env.BITMEX_API_SECRET,
         passphrase: env.BITMEX_API_PASSPHRASE,
-        symbolPair: 'bitmex/BTC/USD:XBTUSD',
+        symbolPair: 'XBTUSD',
         delayBetweenTests: 200,
         orderRate: 1000,
         orderStopRate: 150000,

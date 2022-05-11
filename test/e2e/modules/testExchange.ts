@@ -2,6 +2,7 @@ import sleep from 'sleep-promise'
 
 import { aluna } from '../../../src/aluna'
 import { IAlunaCredentialsSchema } from '../../../src/lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaSettingsSchema } from '../../../src/lib/schemas/IAlunaSettingsSchema'
 import { getConfig } from '../configs'
 import { balance } from './authed/balance'
 import { key } from './authed/key'
@@ -32,7 +33,9 @@ export const testExchange = (exchangeId: string) => {
     passphrase: exchangeConfigs.passphrase,
   }
 
-  const exchangePublic = aluna(exchangeId)
+  const settings: IAlunaSettingsSchema = { disableCache: true }
+
+  const exchangePublic = aluna(exchangeId, { settings })
   const exchangeAuthed = aluna(exchangeId, { credentials })
 
 

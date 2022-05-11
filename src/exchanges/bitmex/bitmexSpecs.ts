@@ -151,10 +151,11 @@ export const getBitmexEndpoints = (
       list: `${baseUrl}/instrument/active`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/apiKey`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      assets: `${baseUrl}/user/margin`,
+      assetsDetails: `${baseUrl}/wallet/assets`,
     },
     order: {
       get: (id: string) => `${baseUrl}/<desired-method>/${id}`,

@@ -1,12 +1,18 @@
 import { debug } from 'debug'
-import { map } from 'lodash'
+import {
+  keyBy,
+  map,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { IBitmexBalanceSchema } from '../../../schemas/IBitmexBalanceSchema'
+import {
+  IBitmexBalanceSchema,
+  IBitmexBalancesSchema,
+} from '../../../schemas/IBitmexBalanceSchema'
 
 
 
@@ -15,13 +21,26 @@ const log = debug('@alunajs:bitmex/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IBitmexBalanceSchema>,
+  params: IAlunaBalanceParseManyParams<IBitmexBalancesSchema>,
 ): IAlunaBalanceParseManyReturns => {
 
   const { rawBalances } = params
 
-  // TODO: Review map implementation
-  const parsedBalances = map(rawBalances, (rawBalance) => {
+  const {
+    assets,
+    assetsDetails,
+  } = rawBalances
+
+  const assetsDetailsDict = keyBy(assetsDetails, 'currency')
+
+  const balances = map(assets, (asset) => {
+
+    const { currency } = asset
+
+    const rawBalance: IBitmexBalanceSchema = {
+      asset,
+      assetDetails: assetsDetailsDict[currency],
+    }
 
     const { balance } = exchange.balance.parse({ rawBalance })
 
@@ -29,8 +48,8 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   })
 
-  log(`parsed ${parsedBalances.length} balances`)
+  log(`parsed ${balances.length} balances`)
 
-  return { balances: parsedBalances }
+  return { balances }
 
 }

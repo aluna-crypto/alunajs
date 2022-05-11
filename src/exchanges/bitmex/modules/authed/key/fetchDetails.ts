@@ -29,14 +29,13 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BitmexHttp(settings) } = params
 
-  // TODO: Implement proper request
-  const permissions = await http.authedRequest<IBitmexKeySchema>({
+  const rawKey = await http.authedRequest<IBitmexKeySchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getBitmexEndpoints(settings).key.fetchDetails,
     credentials,
   })
 
-  const { key } = exchange.key.parseDetails({ rawKey: permissions })
+  const { key } = exchange.key.parseDetails({ rawKey })
 
   const { requestWeight } = http
 

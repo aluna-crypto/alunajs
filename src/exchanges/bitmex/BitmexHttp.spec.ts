@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import { spy } from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
@@ -22,7 +24,10 @@ import * as handleBitmexRequestErrorMod from './errors/handleBitmexRequestError'
 
 describe(__filename, () => {
 
-  const { BitmexHttp } = BitmexHttpMod
+  const {
+    BitmexHttp,
+    generateAuthHeader,
+  } = BitmexHttpMod
 
   const url = 'https://bitmex.com/api/path'
   const response = 'response'
@@ -141,11 +146,12 @@ describe(__filename, () => {
     expect(bitmexHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
       data: body,
     })
+
 
     expect(hashCacheKey.callCount).to.be.eq(1)
 
@@ -154,7 +160,7 @@ describe(__filename, () => {
     expect(cache.get.callCount).to.be.eq(0)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
       data: body,
@@ -199,7 +205,7 @@ describe(__filename, () => {
     expect(bitmexHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
@@ -209,12 +215,11 @@ describe(__filename, () => {
     expect(assembleRequestConfig.callCount).to.be.eq(1)
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
-    expect(generateAuthHeader.args[0][0]).to.deep.eq({
+    expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
       path: new URL(url).pathname,
       credentials,
       body,
-      url,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(0)
@@ -390,7 +395,7 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.GET,
       data: body,
@@ -427,7 +432,7 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
@@ -437,33 +442,111 @@ describe(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine (w/ body)', async () => {
 
-    // preparing data
+    // mocking
+    const createHmacSpy = spy(crypto, 'createHmac')
+    const updateSpy = spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = spy(crypto.Hmac.prototype, 'digest')
+
+    const mockedNonce = Date.now().toString()
+    const dateNowToStringMock = { toString: () => mockedNonce }
+    const dateNowMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      dateNowToStringMock,
+    )
+
+    const stringifyBody = 'stringify-body'
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+      stringifyBody,
+    )
+
+
+    // executing
     const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
 
-    const currentDate = Date.now()
-
-    // mocking
-    const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
-      currentDate,
-    )
-
-    // executing
-    const signedHash = BitmexHttpMod.generateAuthHeader({
-      credentials,
+    const signedHash = generateAuthHeader({
       path,
       verb,
       body,
-      url,
+      credentials,
     })
 
+
     // validating
-    expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+    expect(dateNowMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(4)
+    expect(updateSpy.calledWith(mockedNonce)).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(stringifyBody)).to.be.ok
+
+    expect(stringfyMock.callCount).to.be.eq(1)
+    expect(stringfyMock.calledWith(body)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['api-expires']).to.deep.eq(mockedNonce)
+    expect(signedHash['api-key']).to.deep.eq(credentials.key)
+    expect(signedHash['api-signature']).to.deep.eq(digestSpy.returnValues[0])
+
+  })
+
+  it('should generate signed auth header just fine (w/o body)', async () => {
+
+    // mocking
+    const createHmacSpy = spy(crypto, 'createHmac')
+    const updateSpy = spy(crypto.Hmac.prototype, 'update')
+    const digestSpy = spy(crypto.Hmac.prototype, 'digest')
+
+    const mockedNonce = Date.now().toString()
+    const dateNowToStringMock = { toString: () => mockedNonce }
+    const dateNowMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      dateNowToStringMock,
+    )
+
+    const stringfyMock = ImportMock.mockFunction(
+      JSON,
+      'stringify',
+    )
+
+
+    // executing
+    const path = 'path'
+    const verb = 'verb' as AlunaHttpVerbEnum
+
+    const signedHash = generateAuthHeader({
+      credentials,
+      path,
+      verb,
+    })
+
+
+    // validating
+    expect(dateNowMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+
+    expect(stringfyMock.callCount).to.be.eq(0)
+
+    expect(updateSpy.callCount).to.be.eq(4)
+
+    expect(digestSpy.callCount).to.be.eq(1)
+
+    expect(signedHash['api-expires']).to.deep.eq(mockedNonce)
+    expect(signedHash['api-key']).to.deep.eq(credentials.key)
+    expect(signedHash['api-signature']).to.deep.eq(digestSpy.returnValues[0])
 
   })
 
