@@ -1,8 +1,17 @@
-// TODO: Describe key interface for Binance exchange
+import { IBinanceBalanceSchema } from './IBinanceBalanceSchema'
+
+
+
 export interface IBinanceKeySchema {
-  read: boolean
-  trade: boolean
-  withdraw: boolean
-  accountId?: string
-  // ...
+  makerCommission: number
+  takerCommission: number
+  buyerCommission: number
+  sellerCommission: number
+  canTrade: boolean
+  canWithdraw: boolean
+  canDeposit: boolean
+  updateTime: number
+  accountType: string
+  balances: IBinanceBalanceSchema[]
+  permissions: string[]
 }
