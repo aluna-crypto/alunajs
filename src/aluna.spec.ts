@@ -51,11 +51,7 @@ describe(__filename, () => {
 
     const exchangeIds = Object.keys(exchanges)
 
-<<<<<<< HEAD
-    expect(exchangeIds.length).to.eq(7)
-=======
     expect(exchangeIds.length).to.eq(4)
->>>>>>> origin/feature/revamping-architecture
 
     each(exchangeIds, (exchangeId) => {
 
