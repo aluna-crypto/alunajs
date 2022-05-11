@@ -30,8 +30,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(parse.callCount).to.be.eq(BINANCE_RAW_SYMBOLS.length)
-    expect(symbols.length).to.be.eq(BINANCE_RAW_SYMBOLS.length)
+    expect(parse.callCount).to.be.eq(BINANCE_RAW_SYMBOLS.length + 1)
+    expect(symbols.length).to.be.eq(BINANCE_RAW_SYMBOLS.length + 1)
 
   })
 
