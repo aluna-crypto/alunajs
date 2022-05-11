@@ -25,7 +25,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new BinanceHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IBinanceSymbolSchema[]>({
     url: getBinanceEndpoints(settings).symbol.list,
   })
