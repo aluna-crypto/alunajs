@@ -1,20 +1,6 @@
 import { IBitmexSymbolSchema } from '../../schemas/IBitmexSymbolSchema'
+import { BITMEX_RAW_MARKETS } from './bitmexMarket'
 
 
 
-// TODO: Review fixtures
-export const BITMEX_RAW_SYMBOLS: IBitmexSymbolSchema[] = [
-  {
-    symbol: 'BTC',
-    name: 'Bitcoin',
-  },
-  {
-    symbol: 'LTC',
-    name: 'Litecoin',
-  },
-  {
-    symbol: 'ETH',
-    name: 'Ethereum',
-  },
-]
-
+export const BITMEX_RAW_SYMBOLS: IBitmexSymbolSchema[] = BITMEX_RAW_MARKETS
