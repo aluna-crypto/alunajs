@@ -1,4 +1,8 @@
 import { debug } from 'debug'
+import {
+  find,
+  omit,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -15,21 +19,29 @@ const log = debug('@alunajs:bitmex/key/parseDetails')
 
 
 export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaKeyParseDetailsParams<IBitmexKeySchema>,
+  params: IAlunaKeyParseDetailsParams<IBitmexKeySchema[]>,
 ): IAlunaKeyParseDetailsReturns => {
 
   log('parsing Bitmex key details')
 
   const { rawKey } = params
 
-  const { accountId } = rawKey
+  const { credentials } = exchange
 
-  const { permissions } = exchange.key.parsePermissions({ rawKey })
+  const [{ userId }] = rawKey
+
+  const singleKey = find(rawKey, { id: credentials.key })!
+
+  const { permissions: rawPermissions } = singleKey
+
+  const { permissions } = exchange.key.parsePermissions({
+    rawKey: rawPermissions,
+  })
 
   const key: IAlunaKeySchema = {
-    accountId,
+    accountId: userId.toString(),
     permissions,
-    meta: rawKey,
+    meta: omit(singleKey, 'secret', 'id'),
   }
 
   return { key }
