@@ -64,7 +64,7 @@ export interface IAlunaMarketListReturns extends IAlunaModuleReturns, IAlunaMark
  */
 
 export interface IAlunaMarketGetParams extends IAlunaModuleParams {
-  id: string
+  symbolPair: string
 }
 
 export interface IAlunaMarketGetRawReturns <T> extends IAlunaModuleReturns {
