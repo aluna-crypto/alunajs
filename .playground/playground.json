@@ -1288,11 +1288,11 @@
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
             "modified": 1651253691878,
             "created": 1651252828907,
-            "name": "GateIO",
+            "name": "Gate",
             "data": {
-                "EXCHANGE_ID": "GateIO",
-                "KEY": "{% dotenv _.ALUNAJS_RC, 'GATEIO_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATEIO_API_SECRET' %}"
+                "EXCHANGE_ID": "Gate",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'GATE_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATE_API_SECRET' %}"
             },
             "dataPropertyOrder": {
                 "&": [

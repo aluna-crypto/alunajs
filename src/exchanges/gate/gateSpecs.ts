@@ -28,38 +28,6 @@ export const gateExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
-  {
-    type: AlunaOrderTypesEnum.MARKET,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
-  },
-  {
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
-  {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
 ]
 
 

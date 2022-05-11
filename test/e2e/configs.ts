@@ -136,15 +136,15 @@ export function getConfig() {
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
-      gateio: {
-        key: env.GATEIO_API_KEY,
-        secret: env.GATEIO_API_SECRET,
-        passphrase: env.GATEIO_API_PASSPHRASE,
-        symbolPair: 'gateio/ETH/BTC',
+      gate: {
+        key: env.GATE_API_KEY,
+        secret: env.GATE_API_SECRET,
+        passphrase: env.GATE_API_PASSPHRASE,
+        symbolPair: 'DOGE_USDT',
         delayBetweenTests: 200,
-        orderRate: 0.005,
-        orderAmount: 0.05,
-        orderInsufficientAmount: 1000,
+        orderRate: 0.03,
+        orderAmount: 35,
+        orderInsufficientAmount: 5000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
       valr: {
