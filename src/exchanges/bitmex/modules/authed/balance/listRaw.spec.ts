@@ -6,7 +6,10 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { BITMEX_RAW_BALANCES } from '../../../test/fixtures/bitmexBalances'
+import {
+  BITMEX_ASSETS,
+  BITMEX_ASSETS_DETAILS,
+} from '../../../test/fixtures/bitmexBalances'
 
 
 
@@ -20,7 +23,8 @@ describe(__filename, () => {
   it('should list Bitmex raw balances just fine', async () => {
 
     // preparing data
-    const mockedBalances = BITMEX_RAW_BALANCES
+    const assets = BITMEX_ASSETS
+    const assetsDetails = BITMEX_ASSETS_DETAILS
 
 
     // mocking
@@ -29,7 +33,8 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedBalances))
+    authedRequest.onFirstCall().returns(Promise.resolve(assets))
+    authedRequest.onSecondCall().returns(Promise.resolve(assetsDetails))
 
 
     // executing
@@ -39,13 +44,22 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawBalances).to.deep.eq(mockedBalances)
+    expect(rawBalances).to.deep.eq({
+      assets,
+      assetsDetails,
+    })
 
-    expect(authedRequest.callCount).to.be.eq(1)
-
+    expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: getBitmexEndpoints(exchange.settings).balance.list,
+      url: getBitmexEndpoints(exchange.settings).balance.assets,
+      body: { currency: 'all' },
+      credentials,
+    })
+
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      url: getBitmexEndpoints(exchange.settings).balance.assetsDetails,
       credentials,
     })
 
