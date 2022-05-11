@@ -38,7 +38,7 @@ export interface IAlunaBalanceParseReturns {
 
 
 export interface IAlunaBalanceParseManyParams <T = any> {
-  rawBalances: T[]
+  rawBalances: T
 }
 
 export interface IAlunaBalanceParseManyReturns {
@@ -54,7 +54,7 @@ export interface IAlunaBalanceParseManyReturns {
 export interface IAlunaBalanceListParams extends IAlunaModuleParams {}
 
 export interface IAlunaBalanceListRawReturns <T = any> extends IAlunaModuleReturns {
-  rawBalances: T[]
+  rawBalances: T
 }
 
 export interface IAlunaBalanceListReturns extends IAlunaBalanceParseManyReturns, IAlunaModuleReturns {}

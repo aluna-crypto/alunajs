@@ -1,9 +1,6 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
-import {
-  each,
-  map,
-} from 'lodash'
+import { each } from 'lodash'
 
 import { AlunaExchangeErrorCodes } from '../../../lib/errors/AlunaExchangeErrorCodes'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -15,9 +12,7 @@ import * as handleBitmexMod from './handleBitmexRequestError'
 describe(__filename, () => {
 
   const {
-    bitmexInvalidKeyPatterns,
     handleBitmexRequestError,
-    bitmexDownErrorPatterns,
   } = handleBitmexMod
 
   const requestMessage = 'Error while executing request.'
@@ -26,11 +21,16 @@ describe(__filename, () => {
   it('should return Bitmex key invalid error when applicable', async () => {
 
     // preparing data
-    const stringsPatterns = map(bitmexInvalidKeyPatterns, (p) => p.toString())
+    const matchingString = [
+      'Invalid API Key',
+      'Signature not valid',
+      'This key is disabled',
+      'Your account has been disabled',
+    ]
 
-    each(stringsPatterns, (stringPattern) => {
+    each(matchingString, (string) => {
 
-      const message = 'Lorem Ipsum is simply '.concat(stringPattern)
+      const message = 'Lorem Ipsum is simply '.concat(string)
 
       const axiosError = {
         isAxiosError: true,
@@ -64,11 +64,14 @@ describe(__filename, () => {
   it('should return Bitmex down error when applicable', async () => {
 
     // preparing data
-    const stringsPatterns = map(bitmexDownErrorPatterns, (p) => p.toString())
+    const matchingString = [
+      'downtime in progress',
+      'down for maintenance',
+    ]
 
-    each(stringsPatterns, (stringPattern) => {
+    each(matchingString, (string) => {
 
-      const message = 'Lorem Ipsum is simply '.concat(stringPattern)
+      const message = 'Lorem Ipsum is simply '.concat(string)
 
       const axiosError = {
         isAxiosError: true,

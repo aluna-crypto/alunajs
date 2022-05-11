@@ -16,7 +16,7 @@ const log = debug('@alunajs:bittrex/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IBittrexBalanceSchema>,
+  params: IAlunaBalanceParseManyParams<IBittrexBalanceSchema[]>,
 ): IAlunaBalanceParseManyReturns => {
 
   const { rawBalances } = params

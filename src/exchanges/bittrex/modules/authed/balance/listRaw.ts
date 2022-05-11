@@ -18,7 +18,7 @@ const log = debug('@alunajs:bittrex/balance/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
-): Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema>> => {
+): Promise<IAlunaBalanceListRawReturns<IBittrexBalanceSchema[]>> => {
 
   log('listing balances', params)
 

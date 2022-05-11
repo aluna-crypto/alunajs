@@ -40,6 +40,8 @@ describe(__filename, () => {
     // validating
     expect(balances).to.deep.eq(PARSED_BALANCES)
 
+    expect(parse.callCount).to.be.eq(PARSED_BALANCES.length)
+
   })
 
 })

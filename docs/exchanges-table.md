@@ -8,6 +8,6 @@ Full list of currently supported exchanges.
 |Bitfinex|v2|✅ |✅|✅|
 |BitMEX|?|—|—|✅|
 |Bittrex|v3|✅ |—|—|
-|GateIO|?|✅ |❌|❌|
+|Gate|?|✅ |❌|❌|
 |Poloniex|?|✅ |—|—|
 |Valr|v1|✅ |—|—|
