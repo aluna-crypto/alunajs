@@ -18,7 +18,7 @@ const log = debug('@alunajs:gate/balance/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
-): Promise<IAlunaBalanceListRawReturns<IGateBalanceSchema>> => {
+): Promise<IAlunaBalanceListRawReturns<IGateBalanceSchema[]>> => {
 
   log('listing raw balances', params)
 

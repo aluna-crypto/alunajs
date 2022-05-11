@@ -16,7 +16,7 @@ const log = debug('@alunajs:gate/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IGateBalanceSchema>,
+  params: IAlunaBalanceParseManyParams<IGateBalanceSchema[]>,
 ): IAlunaBalanceParseManyReturns => {
 
   const { rawBalances } = params
