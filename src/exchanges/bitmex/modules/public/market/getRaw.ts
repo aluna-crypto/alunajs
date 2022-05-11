@@ -2,8 +2,8 @@ import debug from 'debug'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
-  IAlunaMarketListParams,
-  IAlunaMarketListRawReturns,
+  IAlunaMarketGetParams,
+  IAlunaMarketGetRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
@@ -15,24 +15,27 @@ const log = debug('@alunajs:bitmex/market/listRaw')
 
 
 
-export const listRaw = (exchange: IAlunaExchangePublic) => async (
-  params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IBitmexMarketSchema[]>> => {
+export const getRaw = (exchange: IAlunaExchangePublic) => async (
+  params: IAlunaMarketGetParams,
+): Promise<IAlunaMarketGetRawReturns<IBitmexMarketSchema>> => {
 
   const { settings } = exchange
 
-  const { http = new BitmexHttp(settings) } = params
+  const {
+    symbolPair,
+    http = new BitmexHttp(settings),
+  } = params
 
   log('fetching Bitmex markets')
 
-  const rawMarkets = await http.publicRequest<IBitmexMarketSchema[]>({
-    url: getBitmexEndpoints(settings).market.list,
+  const [rawMarket] = await http.publicRequest<IBitmexMarketSchema[]>({
+    url: getBitmexEndpoints(settings).market.get(symbolPair),
   })
 
   const { requestWeight } = http
 
   return {
-    rawMarkets,
+    rawMarket,
     requestWeight,
   }
 
