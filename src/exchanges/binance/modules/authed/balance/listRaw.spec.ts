@@ -22,6 +22,9 @@ describe(__filename, () => {
     // preparing data
     const mockedBalances = BINANCE_RAW_BALANCES
 
+    const requestResponse = {
+      balances: mockedBalances,
+    }
 
     // mocking
     const {
@@ -29,7 +32,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedBalances))
+    authedRequest.returns(Promise.resolve(requestResponse))
 
 
     // executing

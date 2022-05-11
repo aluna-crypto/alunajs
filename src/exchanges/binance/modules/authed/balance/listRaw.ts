@@ -9,6 +9,7 @@ import {
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
+import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
@@ -29,8 +30,9 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BinanceHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
-  const rawBalances = await http.authedRequest<IBinanceBalanceSchema[]>({
+  const {
+    balances: rawBalances,
+  } = await http.authedRequest<IBinanceKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).balance.list,
     credentials,
