@@ -13,6 +13,8 @@ describe(__filename, () => {
 
   it('should parse many Binance symbols just fine', async () => {
 
+    const rawSymbols = [...BINANCE_RAW_SYMBOLS, BINANCE_RAW_SYMBOLS[0]]
+
     // preparing data
     const { parse } = mockParse({ module: parseMod })
 
@@ -25,13 +27,13 @@ describe(__filename, () => {
     const exchange = new Binance({})
 
     const { symbols } = exchange.symbol.parseMany({
-      rawSymbols: BINANCE_RAW_SYMBOLS,
+      rawSymbols,
     })
 
 
     // validating
-    expect(parse.callCount).to.be.eq(BINANCE_RAW_SYMBOLS.length + 1)
-    expect(symbols.length).to.be.eq(BINANCE_RAW_SYMBOLS.length + 1)
+    expect(parse.callCount).to.be.eq(rawSymbols.length)
+    expect(symbols.length).to.be.eq(rawSymbols.length)
 
   })
 

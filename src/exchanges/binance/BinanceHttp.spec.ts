@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
@@ -20,9 +22,11 @@ import * as handleBinanceRequestErrorMod from './errors/handleBinanceRequestErro
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { BinanceHttp } = BinanceHttpMod
+
+  const initialQueryParams = 'recvWindow=60000&timestamp='
 
   const url = 'https://binance.com/api/path'
   const response = 'response'
@@ -35,7 +39,10 @@ describe.skip(__filename, () => {
     passphrase: 'key',
   }
   const signedHeader = {
-    'Api-Key': 'apikey',
+    signedHeader: {
+      Dummy: 'Dummy',
+    },
+    signedUrl: url,
   }
   const proxySettings: IAlunaProxySchema = {
     host: 'host',
@@ -203,18 +210,17 @@ describe.skip(__filename, () => {
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
-      headers: signedHeader,
+      headers: signedHeader.signedHeader,
     })
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.args[0][0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
+      query: undefined,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(0)
@@ -431,17 +437,23 @@ describe.skip(__filename, () => {
       url,
       method: AlunaHttpVerbEnum.POST,
       data: body,
-      headers: signedHeader,
+      headers: signedHeader.signedHeader,
       proxySettings: settings.proxySettings,
     })
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine w/o body and query', async () => {
 
     // preparing data
 
     const currentDate = Date.now()
+
+    const queryParams = `${initialQueryParams}${currentDate}`
+
+    const signedHeader: BinanceHttpMod.IBinanceSignedHeaders = {
+      'X-MBX-APIKEY': credentials.key,
+    }
 
     // mocking
     const dateMock = ImportMock.mockFunction(
@@ -450,16 +462,110 @@ describe.skip(__filename, () => {
       currentDate,
     )
 
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
     // executing
     const signedHash = BinanceHttpMod.generateAuthHeader({
       credentials,
-      body,
       url,
     })
 
     // validating
     expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy
+      .firstCall
+      .calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(3)
+    expect(updateSpy.calledWith(queryParams)).to.be.ok
+
+    expect(updateSpy.calledWith('')).to.be.ok
+
+    expect(digestHmacSpy.callCount).to.be.eq(1)
+    expect(digestHmacSpy.calledWith('hex')).to.be.ok
+
+    const urlParams = new URLSearchParams(
+      `${queryParams}&signature=${digestHmacSpy.returnValues[0]}`,
+    )
+
+    const signedUrl = `${url}?${urlParams.toString()}`
+
+    expect(signedHash.signedHeader).to.deep.eq(signedHeader)
+    expect(signedHash.signedUrl).to.deep.eq(signedUrl)
+
+  })
+
+  it('should generate signed auth header just fine w/o body and query', async () => {
+
+    // preparing data
+
+    const currentDate = Date.now()
+
+    const query = '&dummy=dummy'
+
+    const queryParams = `${initialQueryParams}${currentDate}`
+
+    const stringifiedBody = BinanceHttpMod.formatBodyToBinance(body)
+
+    const signedHeader: BinanceHttpMod.IBinanceSignedHeaders = {
+      'X-MBX-APIKEY': credentials.key,
+    }
+
+    // mocking
+    const dateMock = ImportMock.mockFunction(
+      Date,
+      'now',
+      currentDate,
+    )
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    // executing
+    const signedHash = BinanceHttpMod.generateAuthHeader({
+      credentials,
+      url,
+      body,
+      query,
+    })
+
+    // validating
+    expect(dateMock.callCount).to.be.eq(1)
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy
+      .firstCall
+      .calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(3)
+    expect(updateSpy.calledWith(queryParams)).to.be.ok
+
+    expect(updateSpy.calledWith(query)).to.be.ok
+
+    expect(updateSpy.calledWith(stringifiedBody)).to.be.ok
+
+    expect(digestHmacSpy.callCount).to.be.eq(1)
+    expect(digestHmacSpy.calledWith('hex')).to.be.ok
+
+    const urlParams = new URLSearchParams(
+      `${queryParams}${query}${stringifiedBody}&signature=${digestHmacSpy.returnValues[0]}`,
+    )
+
+    const signedUrl = `${url}?${urlParams.toString()}`
+
+    expect(signedHash.signedHeader).to.deep.eq(signedHeader)
+    expect(signedHash.signedUrl).to.deep.eq(signedUrl)
+
+  })
+
+  it('should format a body to binance format', async () => {
+
+    const formattedBody = BinanceHttpMod.formatBodyToBinance(body)
+
+    expect(formattedBody).to.be.eq('&data=some-data')
 
   })
 
