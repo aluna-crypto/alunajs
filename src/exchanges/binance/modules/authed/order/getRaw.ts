@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { find } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
@@ -8,7 +9,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
+import {
+  IBinanceOrderResponseSchema,
+  IBinanceOrderSchema,
+} from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -18,7 +22,7 @@ const log = debug('@alunajs:binance/order/getRaw')
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
-): Promise<IAlunaOrderGetRawReturns<IBinanceOrderSchema>> => {
+): Promise<IAlunaOrderGetRawReturns<IBinanceOrderResponseSchema>> => {
 
   log('getting raw order', params)
 
@@ -29,20 +33,39 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new BinanceHttp(settings),
   } = params
 
-  // TODO: Implement proper request
-  const rawOrder = await http.authedRequest<any>({
+  const query = new URLSearchParams()
+
+  query.append('orderId', id)
+  query.append('symbol', symbolPair)
+
+  const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).order.get(id),
+    url: getBinanceEndpoints(settings).order.get,
+    query: `&${query.toString()}`,
   })
+
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
+
+  const rawSymbol = find(rawSymbols, {
+    symbol: symbolPair,
+  })
+
+  const rawOrderResponse = {
+    rawOrder,
+    rawSymbol,
+  }
 
   const { requestWeight } = http
 
   return {
-    rawOrder,
+    rawOrder: rawOrderResponse,
     requestWeight,
   }
 

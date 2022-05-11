@@ -33,7 +33,9 @@ describe(__filename, () => {
     const mockedRawOrder = BINANCE_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderId } = mockedRawOrder
+
+    const id = orderId.toString()
 
 
     // mocking
