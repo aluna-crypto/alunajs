@@ -20,7 +20,7 @@ describe(__filename, () => {
 
     const exchangeIds = Object.keys(exchanges)
 
-    expect(exchangeIds.length).to.eq(4)
+    expect(exchangeIds.length).to.eq(5)
 
     each(exchangeIds, (exchangeId) => {
 
