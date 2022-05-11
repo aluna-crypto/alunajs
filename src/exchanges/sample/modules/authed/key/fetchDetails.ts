@@ -30,13 +30,13 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
   const { http = new SampleHttp(settings) } = params
 
   // TODO: Implement proper request
-  const permissions = await http.authedRequest<ISampleKeySchema>({
+  const rawKey = await http.authedRequest<ISampleKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
     url: getSampleEndpoints(settings).key.fetchDetails,
     credentials,
   })
 
-  const { key } = exchange.key.parseDetails({ rawKey: permissions })
+  const { key } = exchange.key.parseDetails({ rawKey })
 
   const { requestWeight } = http
 
