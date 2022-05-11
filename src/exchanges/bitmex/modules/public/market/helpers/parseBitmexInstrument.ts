@@ -11,9 +11,15 @@ import { resolveSymbolsIds } from './resolveSymbolsIds'
 
 
 
+export interface IParseBitmexInstrumentReturns {
+  instrument: IAlunaInstrumentSchema
+}
+
+
+
 export const parseBitmexInstrument = (params: {
     rawMarket: IBitmexMarketSchema
-  }): IAlunaInstrumentSchema => {
+  }): IParseBitmexInstrumentReturns => {
 
   const { rawMarket } = params
 
@@ -106,6 +112,6 @@ export const parseBitmexInstrument = (params: {
     usdPricePerUnit,
   }
 
-  return instrument
+  return { instrument }
 
 }

@@ -112,7 +112,7 @@ describe(__filename, () => {
         ? AlunaInstrumentStateEnum.OPEN
         : AlunaInstrumentStateEnum.CLOSED
 
-      const instrument = parseBitmexInstrument({ rawMarket })
+      const { instrument } = parseBitmexInstrument({ rawMarket })
 
       expect(instrument.name).to.be.eq(symbol)
       expect(instrument.splittedName).to.be.eq(expectedSplittedName)
