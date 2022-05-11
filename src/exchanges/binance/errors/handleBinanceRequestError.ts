@@ -9,7 +9,7 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 export const binanceInvalidKeyPatterns: Array<RegExp> = [
   // TODO: Review exchange invalid api key error patterns
-  new RegExp(/api-invalid/mi),
+  new RegExp(/Invalid.+API-key|API-key.+invalid|Signature.+is not valid./mi),
 ]
 
 
@@ -52,8 +52,7 @@ export const handleBinanceRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.msg || message
 
     httpStatusCode = response?.status || httpStatusCode
 

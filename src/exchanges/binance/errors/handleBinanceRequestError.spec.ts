@@ -52,7 +52,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          msg: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          msg: dummyError,
         },
       },
     } as AxiosError

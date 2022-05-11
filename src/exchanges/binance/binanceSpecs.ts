@@ -12,8 +12,8 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 // TODO: set proper urls
-export const BINANCE_PRODUCTION_URL = 'https://api.binance.com/v3'
-export const BINANCE_TESTNET_URL = 'https://testnet.api.binance.com/v3'
+export const BINANCE_PRODUCTION_URL = 'https://api.binance.com'
+export const BINANCE_TESTNET_URL = 'https://testnet.binance.vision'
 
 
 
@@ -50,7 +50,29 @@ export const binanceExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.READ,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
+    type: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.READ,
@@ -67,21 +89,17 @@ export const binanceExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const binanceBaseSpecs: IAlunaExchangeSchema = {
   id: 'binance',
   name: 'Binance',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://binance.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://binance.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://accounts.binance.com/en/register',
+  connectApiUrl: 'https://www.binance.com/en/my/settings/api-management',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 300,
+    perIp: 300,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,
@@ -150,32 +168,22 @@ export const getBinanceEndpoints = (
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/api/v3/exchangeInfo`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/api/v3/ticker/24hr`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/api/v3/account`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/api/v3/account`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
-    },
-    position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
-      getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
+      get: `${baseUrl}/api/v3/order`,
+      list: `${baseUrl}/api/v3/openOrders`,
+      place: `${baseUrl}/api/v3/order`,
+      cancel: `${baseUrl}/api/v3/order`,
     },
   }
 }
