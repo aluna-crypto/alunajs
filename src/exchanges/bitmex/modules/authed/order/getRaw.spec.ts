@@ -22,7 +22,7 @@ describe(__filename, () => {
     // preparing data
     const mockedRawOrder = BITMEX_RAW_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { id } = mockedRawOrder as any
 
 
     // mocking

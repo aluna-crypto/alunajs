@@ -11,11 +11,11 @@ import {
 import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { translateOrderSideToBitmex } from '../../../enums/adapters/bitmexOrderSideAdapter'
-import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrderSchema } from '../../../schemas/IBitmexOrderSchema'
+import { translateOrderSideToBitmex } from '../../../enums/adapters/bitmexOrderSideAdapter'
+import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
+import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -69,12 +69,12 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing new order for Bitmex')
 
-  let placedOrder: IBitmexOrderSchema
+  let placedOrder: IBitmexOrder
 
   try {
 
     // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IBitmexOrderSchema>({
+    const orderResponse = await http.authedRequest<IBitmexOrder>({
       url: getBitmexEndpoints(settings).order.place,
       body,
       credentials,

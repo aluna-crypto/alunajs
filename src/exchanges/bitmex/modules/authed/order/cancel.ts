@@ -10,7 +10,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrderSchema } from '../../../schemas/IBitmexOrderSchema'
+import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -37,7 +37,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IBitmexOrderSchema>({
+    const rawOrder = await http.authedRequest<IBitmexOrder>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: getBitmexEndpoints(settings).order.get(id),
       credentials,

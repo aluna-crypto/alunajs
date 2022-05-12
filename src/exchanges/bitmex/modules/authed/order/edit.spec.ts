@@ -33,7 +33,7 @@ describe(__filename, () => {
     const mockedRawOrder = BITMEX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { id } = mockedRawOrder as any
 
 
     // mocking

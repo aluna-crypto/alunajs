@@ -8,7 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrderSchema } from '../../../schemas/IBitmexOrderSchema'
+import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -18,7 +18,7 @@ const log = debug('@alunajs:bitmex/order/getRaw')
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
-): Promise<IAlunaOrderGetRawReturns<IBitmexOrderSchema>> => {
+): Promise<IAlunaOrderGetRawReturns<IBitmexOrder>> => {
 
   log('getting raw order', params)
 
