@@ -159,7 +159,7 @@ export const getBitmexEndpoints = (
     },
     order: {
       get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/order`,
       place: `${baseUrl}/<desired-method>`,
       cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
       edit: `${baseUrl}/<desired-method>`,
