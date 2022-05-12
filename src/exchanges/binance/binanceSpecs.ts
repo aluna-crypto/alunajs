@@ -11,7 +11,6 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
 export const BINANCE_PRODUCTION_URL = 'https://api.binance.com'
 export const BINANCE_TESTNET_URL = 'https://testnet.binance.vision'
 

@@ -70,7 +70,6 @@ describe(__filename, () => {
     // validating
     expect(order).to.exist
 
-    // TODO -> Need to validate other properties
     expect(order.id).to.be.eq(orderId.toString())
     expect(order.symbolPair).to.be.eq(symbol.toString())
     expect(order.exchangeId).to.be.eq(exchange.id)

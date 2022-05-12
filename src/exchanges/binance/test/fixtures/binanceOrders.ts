@@ -5,7 +5,6 @@ import { IBinanceOrderSchema } from '../../schemas/IBinanceOrderSchema'
 
 
 
-// TODO: Review fixtures
 export const BINANCE_RAW_ORDERS: IBinanceOrderSchema[] = [
   {
     symbol: 'ETHBTC',
