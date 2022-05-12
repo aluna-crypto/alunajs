@@ -39,7 +39,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IPoloniexOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getPoloniexEndpoints(settings).order.get(id),
+      url: getPoloniexEndpoints(settings).order.cancel,
       credentials,
     })
 

@@ -38,7 +38,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: getPoloniexEndpoints(exchange.settings).symbol.list,
+      url: getPoloniexEndpoints(exchange.settings).symbol.list(''),
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

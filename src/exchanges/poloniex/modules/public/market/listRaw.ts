@@ -27,7 +27,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   // TODO: Implement proper request
   const rawMarkets = await http.publicRequest<IPoloniexMarketSchema[]>({
-    url: getPoloniexEndpoints(settings).market.list,
+    url: getPoloniexEndpoints(settings).market.list(''),
   })
 
   const { requestWeight } = http

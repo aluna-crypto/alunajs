@@ -27,7 +27,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IPoloniexSymbolSchema[]>({
-    url: getPoloniexEndpoints(settings).symbol.list,
+    url: getPoloniexEndpoints(settings).symbol.list(''),
   })
 
   const { requestWeight } = http

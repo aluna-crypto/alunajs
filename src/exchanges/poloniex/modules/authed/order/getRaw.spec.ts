@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getPoloniexEndpoints(exchange.settings).order.get(id),
+      url: getPoloniexEndpoints(exchange.settings).order.get,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

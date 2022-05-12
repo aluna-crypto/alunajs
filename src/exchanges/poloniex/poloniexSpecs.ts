@@ -11,25 +11,13 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
-export const POLONIEX_PRODUCTION_URL = 'https://api.poloniex.com/v3'
-export const POLONIEX_TESTNET_URL = 'https://testnet.api.poloniex.com/v3'
+export const POLONIEX_PRODUCTION_URL = 'https://poloniex.com'
 
 
 
 export const poloniexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.LIMIT,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
-  },
-  {
-    type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
     mode: AlunaFeaturesModeEnum.WRITE,
@@ -49,17 +37,6 @@ export const poloniexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       limitRate: 1,
     },
   },
-  {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
 ]
 
 
@@ -67,21 +44,17 @@ export const poloniexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const poloniexBaseSpecs: IAlunaExchangeSchema = {
   id: 'poloniex',
   name: 'Poloniex',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://poloniex.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://poloniex.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://poloniex.com/signup/',
+  connectApiUrl: 'https://poloniex.com/apiKeys',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 60,
+    perIp: 60,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.EXCHANGE,
       supported: true,
@@ -133,49 +106,29 @@ export const buildPoloniexSpecs = (params: {
 
 
 export const getPoloniexEndpoints = (
-  settings: IAlunaSettingsSchema,
+  _settings: IAlunaSettingsSchema,
 ) => {
 
-  let baseUrl = POLONIEX_PRODUCTION_URL
-
-  if (settings.useTestNet) {
-    baseUrl = POLONIEX_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Poloniex don't have a testnet.',
-      })
-    */
-  }
+  const baseUrl = POLONIEX_PRODUCTION_URL
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: (query: string) => `${baseUrl}/public?${query}`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: (query: string) => `${baseUrl}/public?${query}`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/tradingApi`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/tradingApi`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
-    },
-    position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
-      getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
+      get: `${baseUrl}/tradingApi`,
+      list: `${baseUrl}/tradingApi`,
+      place: `${baseUrl}/tradingApi`,
+      cancel: `${baseUrl}/tradingApi`,
     },
   }
 }

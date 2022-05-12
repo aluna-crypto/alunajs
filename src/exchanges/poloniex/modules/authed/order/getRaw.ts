@@ -36,7 +36,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const rawOrder = await http.authedRequest<any>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getPoloniexEndpoints(settings).order.get(id),
+    url: getPoloniexEndpoints(settings).order.get,
   })
 
   const { requestWeight } = http
