@@ -10,11 +10,17 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
+import {
+  IBitmexOrder,
+  IBitmexOrderSchema,
+} from '../../../schemas/IBitmexOrderSchema'
 
 
 
 const log = debug('@alunajs:bitmex/order/cancel')
+export interface IErrorResponse {
+  error: string
+}
 
 
 
@@ -36,12 +42,38 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IBitmexOrder>({
+    const [cancelOrderResponse] = await http.authedRequest<Array<IBitmexOrder | IErrorResponse>>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getBitmexEndpoints(settings).order.get(id),
+      url: getBitmexEndpoints(settings).order.cancel,
+      body: { orderID: id },
       credentials,
     })
+
+    if ((cancelOrderResponse as IErrorResponse).error!) {
+
+      const { error } = cancelOrderResponse as IErrorResponse
+
+      const alunaError = new AlunaError({
+        code: AlunaOrderErrorCodes.CANCEL_FAILED,
+        message: error,
+        metadata: error,
+      })
+
+      throw alunaError
+
+    }
+
+    const bitmexOrder = cancelOrderResponse as IBitmexOrder
+
+    const { market } = await exchange.market.get!({
+      http,
+      symbolPair: bitmexOrder.symbol,
+    })
+
+    const rawOrder: IBitmexOrderSchema = {
+      market,
+      bitmexOrder,
+    }
 
     const { order } = exchange.order.parse({ rawOrder })
 
@@ -56,13 +88,23 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
     const {
       metadata,
+      message,
       httpStatusCode,
     } = err
 
+
+    let code = AlunaOrderErrorCodes.CANCEL_FAILED
+
+    if (/Invalid orderID/.test(message)) {
+
+      code = AlunaOrderErrorCodes.NOT_FOUND
+
+    }
+
     const error = new AlunaError({
-      message: 'Something went wrong, order not canceled',
+      message,
       httpStatusCode,
-      code: AlunaOrderErrorCodes.CANCEL_FAILED,
+      code,
       metadata,
     })
 
