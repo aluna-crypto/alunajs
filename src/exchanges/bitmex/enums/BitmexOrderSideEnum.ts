@@ -1,4 +1,4 @@
 export enum BitmexOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'Buy',
+  SELL = 'Sell',
 }
