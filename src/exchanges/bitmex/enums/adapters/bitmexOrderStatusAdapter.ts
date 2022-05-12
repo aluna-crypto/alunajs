@@ -6,54 +6,34 @@ import { BitmexOrderStatusEnum } from '../BitmexOrderStatusEnum'
 
 const errorMessagePrefix = 'Order status'
 
-export const translateOrderStatusToAluna = (
-  params: {
-      fillQuantity: string
-      quantity: string
-      from: BitmexOrderStatusEnum
-    },
-): AlunaOrderStatusEnum => {
-
-  const { fillQuantity, quantity, from } = params
-
-  const isOpen = from === BitmexOrderStatusEnum.OPEN
-
-  if (isOpen) {
-
-    return AlunaOrderStatusEnum.OPEN
-
-  }
-
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
-
-  if (parsedQty === parsedFillQty) {
-
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
-
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
-
-  }
-
-  return AlunaOrderStatusEnum.CANCELED
-
-}
 
 
-
-export const translateOrderStatusToBitmex = buildAdapter<
-  AlunaOrderStatusEnum,
-  BitmexOrderStatusEnum
->({
+export const translateOrderStatusToAluna = buildAdapter<BitmexOrderStatusEnum, AlunaOrderStatusEnum>({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderStatusEnum.OPEN]: BitmexOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: BitmexOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: BitmexOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: BitmexOrderStatusEnum.CLOSED,
+    [BitmexOrderStatusEnum.NEW]: AlunaOrderStatusEnum.OPEN,
+    [BitmexOrderStatusEnum.PARTIALLY_FILLED]:
+          AlunaOrderStatusEnum.PARTIALLY_FILLED,
+    [BitmexOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+    [BitmexOrderStatusEnum.CANCELED]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.REJECTED]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.EXPIRED]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.DONE_FOR_DAY]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.PENDING_CANCEL]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.PENDING_NEW]: AlunaOrderStatusEnum.CANCELED,
+    [BitmexOrderStatusEnum.STOPPED]: AlunaOrderStatusEnum.CANCELED,
   },
 })
+
+
+export const translateOrderStatusToBitmex = buildAdapter<AlunaOrderStatusEnum, BitmexOrderStatusEnum>({
+  errorMessagePrefix,
+  mappings: {
+    [AlunaOrderStatusEnum.OPEN]: BitmexOrderStatusEnum.NEW,
+    [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
+          BitmexOrderStatusEnum.PARTIALLY_FILLED,
+    [AlunaOrderStatusEnum.FILLED]: BitmexOrderStatusEnum.FILLED,
+    [AlunaOrderStatusEnum.CANCELED]: BitmexOrderStatusEnum.CANCELED,
+  },
+})
+
