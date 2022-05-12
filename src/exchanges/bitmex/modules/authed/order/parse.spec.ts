@@ -26,8 +26,12 @@ import { mockComputeOrderTotal } from './helpers/computeOrderTotal.mock'
 
 describe(__filename, () => {
 
-  const bitmexOrder = cloneDeep(BITMEX_RAW_ORDERS[0])
+  const credentials: IAlunaCredentialsSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
 
+  const bitmexOrder = cloneDeep(BITMEX_RAW_ORDERS[0])
 
   const testsCasesArr = [
     ['(OPEN)', 'ordStatus', BitmexOrderStatusEnum.NEW],
@@ -50,11 +54,6 @@ describe(__filename, () => {
       bitmexOrder[orderPropName] = orderPropValue
 
       // preparing data
-      const credentials: IAlunaCredentialsSchema = {
-        key: 'key',
-        secret: 'secret',
-      }
-
       const expectedUICustonDisplay = {} as IAlunaUICustomDisplaySchema
       const baseSymbolId = 'XBT'
       const quoteSymbolId = 'USD'

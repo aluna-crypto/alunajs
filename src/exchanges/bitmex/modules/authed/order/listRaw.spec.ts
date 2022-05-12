@@ -16,14 +16,14 @@ import * as listMod from '../../public/market/list'
 
 describe(__filename, () => {
 
+  const credentials: IAlunaCredentialsSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
+
   it('should list Bitmex raw orders just fine', async () => {
 
     // mocking
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
     const {
       publicRequest,
       authedRequest,
