@@ -8,7 +8,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
+import {
+  IBitmexOrder,
+  IBitmexOrderSchema,
+} from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -18,7 +21,7 @@ const log = debug('@alunajs:bitmex/order/getRaw')
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
-): Promise<IAlunaOrderGetRawReturns<IBitmexOrder>> => {
+): Promise<IAlunaOrderGetRawReturns<IBitmexOrderSchema>> => {
 
   log('getting raw order', params)
 
@@ -32,12 +35,24 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     http = new BitmexHttp(settings),
   } = params
 
-  // TODO: Implement proper request
-  const rawOrder = await http.authedRequest<any>({
+  const bitmexOrder = await http.authedRequest<IBitmexOrder>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getBitmexEndpoints(settings).order.get(id),
+    url: getBitmexEndpoints(settings).order.get,
+    body: { filter: { orderID: id } },
   })
+
+  const { symbol } = bitmexOrder
+
+  const { market } = await exchange.market.get!({
+    symbolPair: symbol,
+    http,
+  })
+
+  const rawOrder: IBitmexOrderSchema = {
+    bitmexOrder,
+    market,
+  }
 
   const { requestWeight } = http
 
