@@ -8,16 +8,23 @@ import { IBitmexOrder } from '../../../../schemas/IBitmexOrderSchema'
 
 
 
+export interface IAssembleUiCustomDisplayParams {
+  instrument: IAlunaInstrumentSchema
+  bitmexOrder: IBitmexOrder
+  computedPrice: number
+  computedAmount: number
+  computedTotal: number
+}
+
 export interface IAssembleUiCustomDisplayReturns {
   uiCustomDisplay: IAlunaOrderUICustomDisplay
 }
-export const assembleUiCustomDisplay = (params: {
-    instrument: IAlunaInstrumentSchema
-    bitmexOrder: IBitmexOrder
-    computedPrice: number
-    computedAmount: number
-    computedTotal: number
-  }): IAssembleUiCustomDisplayReturns => {
+
+
+
+export const assembleUiCustomDisplay = (
+  params: IAssembleUiCustomDisplayParams,
+): IAssembleUiCustomDisplayReturns => {
 
   const {
     instrument,

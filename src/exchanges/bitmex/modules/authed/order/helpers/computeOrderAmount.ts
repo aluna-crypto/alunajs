@@ -4,11 +4,23 @@ import { IAlunaInstrumentSchema } from '../../../../../../lib/schemas/IAlunaInst
 
 
 
-export const computeOrderAmount = (params: {
-    orderQty: number
-    computedPrice: number
-    instrument: IAlunaInstrumentSchema
-  }): number => {
+export interface IComputeOrderAmountParams {
+  orderQty: number
+  computedPrice: number
+  instrument: IAlunaInstrumentSchema
+}
+
+
+
+export interface IComputeOrderAmountReturns {
+  amount: number
+}
+
+
+
+export const computeOrderAmount = (
+  params: IComputeOrderAmountParams,
+): IComputeOrderAmountReturns => {
 
   const {
     orderQty,
@@ -22,15 +34,15 @@ export const computeOrderAmount = (params: {
     isTradedByUnitsOfContract,
   } = instrument
 
+  let amount = orderQty
+
   if (isTradedByUnitsOfContract) {
 
-    return orderQty
+    return { amount }
 
   }
 
   const bigNumber = new BigNumber(orderQty)
-
-  let amount: number
 
   if (isInverse) {
 
@@ -46,7 +58,7 @@ export const computeOrderAmount = (params: {
 
   }
 
-  return amount
+  return { amount }
 
 
 }

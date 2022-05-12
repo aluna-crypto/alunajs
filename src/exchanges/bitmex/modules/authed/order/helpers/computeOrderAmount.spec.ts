@@ -23,7 +23,7 @@ describe(__filename, () => {
 
 
     // executing
-    const computedAmount = computeOrderAmount({
+    const { amount } = computeOrderAmount({
       computedPrice,
       instrument,
       orderQty,
@@ -35,7 +35,7 @@ describe(__filename, () => {
       .div(computedPrice)
       .toNumber()
 
-    expect(computedAmount).to.be.eq(expectedAmount)
+    expect(amount).to.be.eq(expectedAmount)
 
   })
 
@@ -54,7 +54,7 @@ describe(__filename, () => {
 
 
     // executing
-    const computedAmount = computeOrderAmount({
+    const { amount } = computeOrderAmount({
       computedPrice,
       instrument,
       orderQty,
@@ -64,7 +64,7 @@ describe(__filename, () => {
     // validating
     const expectedAmount = orderQty
 
-    expect(computedAmount).to.be.eq(expectedAmount)
+    expect(amount).to.be.eq(expectedAmount)
 
   })
 
@@ -85,7 +85,7 @@ describe(__filename, () => {
 
 
       // executing
-      const computedAmount = computeOrderAmount({
+      const { amount } = computeOrderAmount({
         computedPrice,
         instrument,
         orderQty,
@@ -97,7 +97,7 @@ describe(__filename, () => {
         .times(instrument.contractValue)
         .toNumber()
 
-      expect(computedAmount).to.be.eq(expectedAmount)
+      expect(amount).to.be.eq(expectedAmount)
 
     },
   )

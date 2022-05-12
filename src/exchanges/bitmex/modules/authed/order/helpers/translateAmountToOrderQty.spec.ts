@@ -24,7 +24,7 @@ describe(__filename, () => {
 
 
       // executing
-      const orderQty = translateAmountToOrderQty({
+      const { orderQty } = translateAmountToOrderQty({
         amount,
         instrument,
       })
@@ -53,7 +53,7 @@ describe(__filename, () => {
 
 
       // executing
-      const orderQty = translateAmountToOrderQty({
+      const { orderQty } = translateAmountToOrderQty({
         amount,
         instrument,
       })
@@ -83,7 +83,7 @@ describe(__filename, () => {
 
 
       // executing
-      const orderQty = translateAmountToOrderQty({
+      const { orderQty } = translateAmountToOrderQty({
         amount,
         instrument,
       })

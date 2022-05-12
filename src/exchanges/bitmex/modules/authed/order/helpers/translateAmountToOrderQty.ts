@@ -4,10 +4,23 @@ import { IAlunaInstrumentSchema } from '../../../../../../lib/schemas/IAlunaInst
 
 
 
+export interface ITranslateAmountToOrderQtyParams {
+  amount: number
+  instrument: IAlunaInstrumentSchema
+}
+
+
+
+export interface ITranslateAmountToOrderQtyReturns {
+  orderQty: number
+}
+
+
+
 export const translateAmountToOrderQty = (params: {
     amount: number
     instrument: IAlunaInstrumentSchema
-  }): number => {
+  }): ITranslateAmountToOrderQtyReturns => {
 
   const {
     amount,
@@ -20,18 +33,20 @@ export const translateAmountToOrderQty = (params: {
     isTradedByUnitsOfContract,
   } = instrument
 
+  let orderQty = amount
+
   const orderQtyIsCorrect = isTradedByUnitsOfContract || isInverse
 
   if (orderQtyIsCorrect) {
 
-    return amount
+    return { orderQty }
 
   }
 
-  const orderQty = new BigNumber(amount)
+  orderQty = new BigNumber(amount)
     .div(contractValue)
     .toNumber()
 
-  return orderQty
+  return { orderQty }
 
 }

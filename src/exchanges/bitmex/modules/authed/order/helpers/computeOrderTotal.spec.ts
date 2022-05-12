@@ -25,7 +25,7 @@ describe(__filename, () => {
 
 
     // executing
-    const computedTotal = computeOrderTotal({
+    const { total } = computeOrderTotal({
       computedPrice,
       computedAmount,
       instrument,
@@ -36,7 +36,7 @@ describe(__filename, () => {
     // validating
     const expectedTotal = orderQty
 
-    expect(computedTotal).to.be.eq(expectedTotal)
+    expect(total).to.be.eq(expectedTotal)
 
   })
 
@@ -56,7 +56,7 @@ describe(__filename, () => {
 
 
     // executing
-    const computedTotal = computeOrderTotal({
+    const { total } = computeOrderTotal({
       computedPrice,
       orderQty,
       computedAmount,
@@ -77,7 +77,7 @@ describe(__filename, () => {
       .times(pricePerContract)
       .toNumber()
 
-    expect(computedTotal).to.be.eq(expectedTotal)
+    expect(total).to.be.eq(expectedTotal)
 
   })
 
@@ -99,7 +99,7 @@ describe(__filename, () => {
 
 
       // executing
-      const computedTotal = computeOrderTotal({
+      const { total } = computeOrderTotal({
         computedPrice,
         computedAmount,
         instrument,
@@ -112,7 +112,7 @@ describe(__filename, () => {
         .times(computedPrice)
         .toNumber()
 
-      expect(computedTotal).to.be.eq(expectedTotal)
+      expect(total).to.be.eq(expectedTotal)
 
     },
   )
