@@ -14,8 +14,6 @@ describe(__filename, () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Bitmex order types to Aluna order types', () => {
 
     expect(translateOrderTypeToAluna({
@@ -27,12 +25,12 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(translateOrderTypeToAluna({
-      from: BitmexOrderTypeEnum.CEILING_LIMIT,
-    })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
+      from: BitmexOrderTypeEnum.STOP_LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToAluna({
-      from: BitmexOrderTypeEnum.CEILING_MARKET,
-    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
+      from: BitmexOrderTypeEnum.STOP_MARKET,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
 
     let result
     let error
@@ -58,8 +56,6 @@ describe(__filename, () => {
 
   })
 
-
-
   it('should properly translate Aluna order types to Bitmex order types', () => {
 
     expect(translateOrderTypeToBitmex({
@@ -71,12 +67,12 @@ describe(__filename, () => {
     })).to.be.eq(BitmexOrderTypeEnum.MARKET)
 
     expect(translateOrderTypeToBitmex({
-      from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(BitmexOrderTypeEnum.CEILING_LIMIT)
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+    })).to.be.eq(BitmexOrderTypeEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToBitmex({
-      from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(BitmexOrderTypeEnum.CEILING_MARKET)
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+    })).to.be.eq(BitmexOrderTypeEnum.STOP_MARKET)
 
     let result
     let error
@@ -92,7 +88,6 @@ describe(__filename, () => {
       error = err
 
     }
-
 
     expect(result).not.to.be.ok
     expect(error instanceof AlunaError).to.be.ok
