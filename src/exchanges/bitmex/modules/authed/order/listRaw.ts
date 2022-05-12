@@ -8,7 +8,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrderSchema } from '../../../schemas/IBitmexOrderSchema'
+import {
+  IBitmexOrder,
+  IBitmexOrdersSchema,
+} from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -18,7 +21,7 @@ const log = debug('@alunajs:bitmex/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<IBitmexOrderSchema[]>> => {
+): Promise<IAlunaOrderListRawReturns<IBitmexOrdersSchema>> => {
 
   log('fetching Bitmex open orders', params)
 
@@ -29,14 +32,21 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BitmexHttp(settings) } = params
 
-  // TODO: Implement proper request
-  const rawOrders = await http.authedRequest<IBitmexOrderSchema[]>({
+  const bitmexOrders = await http.authedRequest<IBitmexOrder[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getBitmexEndpoints(settings).order.list,
     credentials,
+    body: { filter: { open: true } },
   })
 
+  const { markets } = await exchange.market.list({ http })
+
   const { requestWeight } = http
+
+  const rawOrders: IBitmexOrdersSchema = {
+    bitmexOrders,
+    markets,
+  }
 
   return {
     rawOrders,
