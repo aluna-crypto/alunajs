@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 
+import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -12,6 +15,7 @@ import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
 import { BITMEX_RAW_ORDERS } from '../../../test/fixtures/bitmexOrders'
+import * as getMod from '../../public/market/get'
 import * as parseMod from './parse'
 
 
@@ -26,10 +30,11 @@ describe(__filename, () => {
   it('should cancel a Bitmex order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = BITMEX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+    const parsedOrder = PARSED_ORDERS[0]
+    const parsedMarket = PARSED_MARKETS[0]
 
-    const { id } = mockedRawOrder as any
+    const { orderID } = bitmexOrder
 
 
     // mocking
@@ -37,82 +42,172 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
+    authedRequest.returns(Promise.resolve([bitmexOrder]))
+
+    const { get } = mockGet({ module: getMod })
+    get.returns(Promise.resolve({ market: parsedMarket }))
 
     const { parse } = mockParse({ module: parseMod })
+    parse.returns({ order: parsedOrder })
 
-    parse.returns({ order: mockedParsedOrder })
-
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
 
     // executing
     const exchange = new BitmexAuthed({ credentials })
 
     const { order } = await exchange.order.cancel({
-      id,
+      id: orderID,
       symbolPair: '',
     })
 
 
     // validating
-    expect(order).to.deep.eq(mockedParsedOrder)
+    expect(order).to.deep.eq(parsedOrder)
 
     expect(authedRequest.callCount).to.be.eq(1)
-
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
+      url: getBitmexEndpoints(exchange.settings).order.cancel,
+      body: { orderID },
       credentials,
-      url: getBitmexEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
 
+    expect(get.callCount).to.be.eq(1)
+    expect(get.firstCall.args[0]).to.deep.eq({
+      http: new BitmexHttp({}),
+      symbolPair: bitmexOrder.symbol,
+    })
+
+    expect(parse.callCount).to.be.eq(1)
+    expect(parse.firstCall.args[0]).to.deep.eq({
+      rawOrder: {
+        bitmexOrder,
+        market: parsedMarket,
+      },
+    })
+
   })
 
-  it('should throw an error when canceling a Bitmex order', async () => {
+  it('should throw error if request returns error for invalid order id', async () => {
 
     // preparing data
-    const id = 'id'
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+
+    const { orderID } = bitmexOrder
+
+    const error = 'Invalid orderID'
+
 
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
+    authedRequest.returns(Promise.resolve([{ error }]))
 
-    const error = new AlunaError({
-      code: AlunaOrderErrorCodes.CANCEL_FAILED,
-      message: 'Something went wrong, order not canceled',
-      httpStatusCode: 401,
-      metadata: {},
-    })
+    const { get } = mockGet({ module: getMod })
 
-    authedRequest.returns(Promise.reject(error))
+    const { parse } = mockParse({ module: parseMod })
 
 
     // executing
     const exchange = new BitmexAuthed({ credentials })
 
-    const { error: responseError } = await executeAndCatch(
-      () => exchange.order.cancel({
-        id,
-        symbolPair: 'symbolPair',
-      }),
-    )
+    const {
+      error: returnedError,
+      result,
+    } = await executeAndCatch(() => exchange.order.cancel({
+      id: orderID,
+      symbolPair: '',
+    }))
 
 
     // validating
-    expect(responseError).to.deep.eq(error)
+    expect(result).not.to.be.ok
+
+    expect(returnedError!.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
+    expect(returnedError!.message).to.be.eq(error)
+    expect(returnedError!.httpStatusCode).to.be.eq(400)
+    expect(returnedError!.metadata).to.be.eq(error)
 
     expect(authedRequest.callCount).to.be.eq(1)
-
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
+      url: getBitmexEndpoints(exchange.settings).order.cancel,
+      body: { orderID },
       credentials,
-      url: getBitmexEndpoints(exchange.settings).order.cancel(id),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(get.callCount).to.be.eq(0)
+
+    expect(parse.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw error if request throws', async () => {
+
+    // preparing data
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+
+    const { orderID } = bitmexOrder
+
+    const alunaError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: 'error',
+      httpStatusCode: 500,
+      metadata: {},
+    })
+
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: BitmexHttp.prototype })
+    authedRequest.returns(Promise.reject(alunaError))
+
+    const { get } = mockGet({ module: getMod })
+
+    const { parse } = mockParse({ module: parseMod })
+
+
+    // executing
+    const exchange = new BitmexAuthed({ credentials })
+
+    const {
+      error: returnedError,
+      result,
+    } = await executeAndCatch(() => exchange.order.cancel({
+      id: orderID,
+      symbolPair: '',
+    }))
+
+
+    // validating
+    expect(result).not.to.be.ok
+
+    expect(returnedError!.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
+    expect(returnedError!.message).to.be.eq(alunaError.message)
+    expect(returnedError!.httpStatusCode).to.be.eq(500)
+    expect(returnedError!.metadata).to.deep.eq(alunaError.metadata)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.DELETE,
+      url: getBitmexEndpoints(exchange.settings).order.cancel,
+      body: { orderID },
+      credentials,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(get.callCount).to.be.eq(0)
+
+    expect(parse.callCount).to.be.eq(0)
 
   })
 
