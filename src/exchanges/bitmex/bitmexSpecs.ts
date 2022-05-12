@@ -158,11 +158,11 @@ export const getBitmexEndpoints = (
       assetsDetails: `${baseUrl}/wallet/assets`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
+      get: `${baseUrl}/order`,
       list: `${baseUrl}/order`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
+      place: `${baseUrl}/order`,
+      cancel: `${baseUrl}/order`,
+      edit: `${baseUrl}/order`,
     },
     position: {
       list: `${baseUrl}/<desired-method>`,
