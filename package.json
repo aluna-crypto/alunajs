@@ -30,7 +30,7 @@
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "playground": "nodemon -w src -e ts -x 'DEBUG=@alunajs:* ts-node .playground/index.ts'",
     "add-exchange": "ts-node .scaffolding/addExchange.ts",
-    "add-stub-exchanges": "yarn add-exchange -e BitMEX -t derivatives -a edit-order;yarn add-exchange -e Binance -t exchange -a edit-order;yarn add-exchange -e Poloniex -t exchange -a edit-order;yarn add-exchange -e Gate -t exchange -a edit-order"
+    "add-stub-exchanges": "yarn add-exchange -e BitMEX -t derivatives -a edit-order;yarn add-exchange -e Binance -t exchange -a edit-order;yarn add-exchange -e Poloniex -t exchange -a edit-order"
   },
   "dependencies": {
     "axios": "^0.21.1",
