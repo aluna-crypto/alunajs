@@ -30,7 +30,6 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   } = exchange
 
   const {
-    id,
     http = new PoloniexHttp(settings),
   } = params
 

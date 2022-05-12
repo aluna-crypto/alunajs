@@ -28,7 +28,6 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   } = exchange
 
   const {
-    id,
     http = new PoloniexHttp(settings),
   } = params
 
