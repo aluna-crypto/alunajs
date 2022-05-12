@@ -66,13 +66,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     side: traslatedOrderSide,
     symbol: symbolPair,
     type: translatedOrderType,
-    quantity: amount,
+    quantity: Number(amount),
   }
 
   if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
     Object.assign(body, {
-      price: rate,
+      price: Number(rate),
       timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
     })
 
@@ -119,7 +119,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   const { rawSymbols } = await exchange.symbol.listRaw()
 
-  const rawSymbol = find(rawSymbols, { symbolPair })
+  const rawSymbol = find(rawSymbols, { symbol: symbolPair })
 
   const rawOrderRequest = {
     rawSymbol,

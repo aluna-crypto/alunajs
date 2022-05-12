@@ -293,4 +293,70 @@ describe(__filename, () => {
 
   })
 
+  it('should parse a Binance canceled raw order just fine', async () => {
+
+    // preparing data
+    const rawOrder = cloneDeep(BINANCE_RAW_ORDERS[0])
+    const rawSymbol = BINANCE_RAW_SYMBOLS[0]
+
+    const rawOrderRequest = {
+      rawOrder,
+      rawSymbol,
+    }
+
+    const {
+      baseAsset,
+      quoteAsset,
+    } = rawSymbol
+
+
+    rawOrder.status = BinanceOrderStatusEnum.FILLED
+
+    const {
+      side,
+      orderId,
+      symbol,
+      type,
+      status,
+      price,
+      updateTime,
+    } = rawOrder
+
+    const rate = parseFloat(price)
+
+    const filledAt = new Date(updateTime!)
+
+    const orderStatus = translateOrderStatusToAluna({ from: status })
+    const orderSide = translateOrderSideToAluna({ from: side })
+    const orderType = translateOrderTypeToAluna({ from: type })
+
+    const exchange = new BinanceAuthed({ credentials })
+
+    // mocking
+
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId.onFirstCall().returns(baseAsset)
+    translateSymbolId.onSecondCall().returns(quoteAsset)
+
+    // executing
+    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
+
+    // validating
+    expect(order).to.exist
+
+    expect(order.id).to.be.eq(orderId.toString())
+    expect(order.symbolPair).to.be.eq(symbol.toString())
+    expect(order.exchangeId).to.be.eq(exchange.id)
+    expect(order.baseSymbolId).to.be.eq(baseAsset)
+    expect(order.quoteSymbolId).to.be.eq(quoteAsset)
+    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.rate).to.be.eq(rate)
+    expect(order.status).to.be.eq(orderStatus)
+    expect(order.side).to.be.eq(orderSide)
+    expect(order.type).to.be.eq(orderType)
+    expect(order.filledAt?.getTime()).to.be.eq(filledAt.getTime())
+
+  })
+
 })

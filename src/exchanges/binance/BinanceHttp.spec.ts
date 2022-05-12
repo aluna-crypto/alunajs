@@ -209,7 +209,6 @@ describe(__filename, () => {
     expect(request.args[0][0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
-      data: body,
       headers: signedHeader.signedHeader,
     })
 
@@ -436,7 +435,6 @@ describe(__filename, () => {
     expect(assembleRequestConfig.args[0][0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
-      data: body,
       headers: signedHeader.signedHeader,
       proxySettings: settings.proxySettings,
     })

@@ -130,7 +130,6 @@ export class BinanceHttp implements IAlunaHttp {
     const { requestConfig } = assembleRequestConfig({
       url: signedUrl,
       method: verb,
-      data: body,
       headers: signedHeader,
       proxySettings,
     })

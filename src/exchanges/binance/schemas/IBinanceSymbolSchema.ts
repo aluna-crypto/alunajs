@@ -36,3 +36,6 @@ export interface IBinanceSymbolFilterSchema {
   maxNumAlgoOrders?: number
 }
 
+export interface IBinanceSymbolListResponseSchema {
+  symbols: IBinanceSymbolSchema[]
+}

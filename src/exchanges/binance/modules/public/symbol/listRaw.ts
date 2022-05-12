@@ -7,7 +7,10 @@ import {
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
+import {
+  IBinanceSymbolListResponseSchema,
+  IBinanceSymbolSchema,
+} from '../../../schemas/IBinanceSymbolSchema'
 
 
 
@@ -25,15 +28,15 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new BinanceHttp(settings) } = params
 
-  const rawSymbols = await http.publicRequest<IBinanceSymbolSchema[]>({
+  const { symbols } = await http.publicRequest<IBinanceSymbolListResponseSchema>({
     url: getBinanceEndpoints(settings).symbol.list,
   })
 
   const { requestWeight } = http
 
   return {
+    rawSymbols: symbols,
     requestWeight,
-    rawSymbols,
   }
 
 }

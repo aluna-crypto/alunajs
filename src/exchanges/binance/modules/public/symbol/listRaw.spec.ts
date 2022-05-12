@@ -18,7 +18,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
-    publicRequest.returns(Promise.resolve(BINANCE_RAW_SYMBOLS))
+    publicRequest.returns(Promise.resolve({ symbols: BINANCE_RAW_SYMBOLS }))
 
 
     // executing

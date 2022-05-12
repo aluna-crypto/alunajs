@@ -1,11 +1,13 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
 import { Binance } from '../../../Binance'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { BINANCE_RAW_MARKETS } from '../../../test/fixtures/binanceMarket'
 import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
+import * as listRawMod from '../symbol/listRaw'
 
 
 
@@ -32,7 +34,11 @@ describe(__filename, () => {
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
     publicRequest.onFirstCall().returns(Promise.resolve(rawTickers))
-    publicRequest.onSecondCall().returns(Promise.resolve(rawSymbols))
+    publicRequest.onSecondCall().returns(Promise.resolve({ symbols: rawSymbols }))
+
+    const { listRaw: listRawSymbols } = mockListRaw({ module: listRawMod })
+
+    listRawSymbols.returns(Promise.resolve({ rawSymbols }))
 
     // executing
 
