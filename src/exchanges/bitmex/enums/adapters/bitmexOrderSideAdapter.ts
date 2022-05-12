@@ -4,7 +4,7 @@ import { BitmexOrderSideEnum } from '../BitmexOrderSideEnum'
 
 
 
-const errorMessagePrefix = 'Side'
+const errorMessagePrefix = 'Order side'
 
 
 
