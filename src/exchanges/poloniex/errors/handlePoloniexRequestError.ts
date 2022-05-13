@@ -7,9 +7,11 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
-export const poloniexInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
-  /api-invalid/mi,
+export const poloniexInvalidKeyPatterns: Array<RegExp | string> = [
+  /Invalid API key\/secret pair|Permission denied/mi,
+  'Trading has ended for Poloniex US customers',
+  'this account is frozen for trading',
+  'needs further verification',
 ]
 
 
@@ -23,7 +25,7 @@ export const isPoloniexKeyInvalid = (errorMessage: string) => {
 
   return some(poloniexInvalidKeyPatterns, (pattern) => {
 
-    return pattern.test(errorMessage)
+    return new RegExp(pattern).test(errorMessage)
 
   })
 
@@ -52,8 +54,7 @@ export const handlePoloniexRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.error || response?.data?.result?.error || message
 
     httpStatusCode = response?.status || httpStatusCode
 

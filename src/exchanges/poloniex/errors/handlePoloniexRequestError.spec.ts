@@ -1,5 +1,10 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
+import {
+  each,
+  filter,
+  random,
+} from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -13,6 +18,7 @@ describe(__filename, () => {
   const {
     isPoloniexKeyInvalid,
     handlePoloniexRequestError,
+    poloniexInvalidKeyPatterns,
   } = handlePoloniexMod
 
   const requestMessage = 'Error while executing request.'
@@ -52,7 +58,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          error: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +88,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          error: dummyError,
         },
       },
     } as AxiosError
@@ -160,7 +166,34 @@ describe(__filename, () => {
     'should ensure Poloniex invalid api patterns work as expected',
     async () => {
 
-      const message = 'api-invalid'
+      // Testing all string patterns
+      let message = 'Lorem Ipsum is simply dummy text of the printing'
+
+      const strPatters = filter(poloniexInvalidKeyPatterns, (p) => {
+
+        return !(p instanceof RegExp)
+
+      })
+
+      each(strPatters, (pattern) => {
+
+        const insertPos = random(0, message.length - 1)
+
+        const msgWithInjectedPattern = message.slice(0, insertPos)
+          .concat(pattern as string)
+          .concat(message.slice(insertPos))
+
+        message = msgWithInjectedPattern
+
+        expect(isPoloniexKeyInvalid(message)).to.be.ok
+
+      })
+
+      // Manualy testing saved regex patterns
+      message = 'Lorem Invalid API key/secret pair Ipsum'
+      expect(isPoloniexKeyInvalid(message)).to.be.ok
+
+      message = 'Lorem Ipsum is simply Permission denied'
       expect(isPoloniexKeyInvalid(message)).to.be.ok
 
     },

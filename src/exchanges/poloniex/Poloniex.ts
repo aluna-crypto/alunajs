@@ -3,9 +3,9 @@ import { IAlunaMarketModule } from '../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaSymbolModule } from '../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
-import { buildPoloniexSpecs } from './poloniexSpecs'
 import { market } from './modules/public/market'
 import { symbol } from './modules/public/symbol'
+import { buildPoloniexSpecs } from './poloniexSpecs'
 
 
 
