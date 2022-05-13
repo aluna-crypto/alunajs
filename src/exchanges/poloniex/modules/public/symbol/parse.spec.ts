@@ -8,15 +8,14 @@ import { POLONIEX_RAW_SYMBOLS } from '../../../test/fixtures/poloniexSymbols'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   it('should parse a Poloniex symbol just fine (w/ alias)', async () => {
 
     // preparing data
     const rawSymbol = POLONIEX_RAW_SYMBOLS[0] // first fixture
 
-    const translatedSymbolId = 'XBT'
-
+    const translatedSymbolId = 'BTC'
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
@@ -32,17 +31,16 @@ describe.skip(__filename, () => {
 
     const { symbol } = exchange.symbol.parse({ rawSymbol })
 
-
     // validating
     expect(symbol.exchangeId).to.be.eq(poloniexBaseSpecs.id)
     expect(symbol.id).to.be.eq(translatedSymbolId)
     expect(symbol.name).to.be.eq(rawSymbol.name)
-    expect(symbol.alias).to.be.eq(rawSymbol.symbol) // should be equal
+    expect(symbol.alias).to.be.eq(rawSymbol.currency) // should be equal
     expect(symbol.meta).to.be.eq(rawSymbol)
 
     expect(translateSymbolId.callCount).to.be.eq(1)
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
-      exchangeSymbolId: rawSymbol.symbol,
+      exchangeSymbolId: rawSymbol.currency,
       symbolMappings: settings.symbolMappings,
     })
 
@@ -59,7 +57,7 @@ describe.skip(__filename, () => {
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.returns(rawSymbol.symbol)
+    translateSymbolId.returns(rawSymbol.currency)
 
 
     // executing
@@ -70,7 +68,7 @@ describe.skip(__filename, () => {
 
     // validating
     expect(symbol.exchangeId).to.be.eq(poloniexBaseSpecs.id)
-    expect(symbol.id).to.be.eq(rawSymbol.symbol)
+    expect(symbol.id).to.be.eq(rawSymbol.currency)
     expect(symbol.name).to.be.eq(rawSymbol.name)
     expect(symbol.alias).to.be.eq(undefined) // different = undefined
     expect(symbol.meta).to.be.eq(rawSymbol)
@@ -78,7 +76,7 @@ describe.skip(__filename, () => {
     expect(translateSymbolId.callCount).to.be.eq(1)
 
     expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
-      exchangeSymbolId: rawSymbol.symbol,
+      exchangeSymbolId: rawSymbol.currency,
       symbolMappings: undefined,
     })
 
