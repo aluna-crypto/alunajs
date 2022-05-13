@@ -18,6 +18,7 @@ export interface IE2EExchange {
   orderLimitRate?: number
   orderStopRate?: number
   orderAmount: number
+  orderEditAmount: number
   orderInsufficientAmount: number
   orderAccount?: AlunaAccountEnum
 }
@@ -87,6 +88,7 @@ export function getConfig() {
         orderStopRate: 150000,
         orderLimitRate: 1000,
         orderAmount: 0.0001,
+        orderEditAmount: 0.00012,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.MARGIN,
       },
@@ -100,6 +102,7 @@ export function getConfig() {
         orderStopRate: 150000,
         orderLimitRate: 1000,
         orderAmount: 100,
+        orderEditAmount: 200,
         orderInsufficientAmount: 2000000,
         orderAccount: AlunaAccountEnum.DERIVATIVES,
       },
@@ -111,6 +114,7 @@ export function getConfig() {
         delayBetweenTests: 200,
         orderRate: 0.04,
         orderAmount: 3,
+        orderEditAmount: 3.1,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
@@ -122,6 +126,7 @@ export function getConfig() {
         delayBetweenTests: 500,
         orderRate: 0.002,
         orderAmount: 0.05,
+        orderEditAmount: 0.051,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
@@ -129,10 +134,11 @@ export function getConfig() {
         key: env.BINANCE_API_KEY,
         secret: env.BINANCE_API_SECRET,
         passphrase: env.BINANCE_API_PASSPHRASE,
-        symbolPair: 'DOGEBUSD',
+        symbolPair: 'BTCBUSD',
         delayBetweenTests: 200,
-        orderRate: 0.02,
-        orderAmount: 550,
+        orderRate: 10000,
+        orderAmount: 0.001,
+        orderEditAmount: 0.0011,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
@@ -144,6 +150,7 @@ export function getConfig() {
         delayBetweenTests: 200,
         orderRate: 0.03,
         orderAmount: 35,
+        orderEditAmount: 35.1,
         orderInsufficientAmount: 5000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
@@ -155,6 +162,7 @@ export function getConfig() {
         delayBetweenTests: 500,
         orderRate: 100000,
         orderAmount: 0.0001,
+        orderEditAmount: 0.00011,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.EXCHANGE,
       },
