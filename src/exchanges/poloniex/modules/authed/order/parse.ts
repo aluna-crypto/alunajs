@@ -102,7 +102,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     side: orderSide,
     status: orderStatus,
     rate: Number(rate),
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     placedAt: new Date(date),
     type: AlunaOrderTypesEnum.LIMIT, // Poloniex only supports LIMIT orders
     filledAt,

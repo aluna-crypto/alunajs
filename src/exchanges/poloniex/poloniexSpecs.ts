@@ -56,7 +56,7 @@ export const poloniexBaseSpecs: IAlunaExchangeSchema = {
   },
   accounts: [
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: poloniexExchangeOrderTypes,

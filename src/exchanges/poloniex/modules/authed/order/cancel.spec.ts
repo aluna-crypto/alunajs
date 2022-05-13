@@ -4,7 +4,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -52,7 +52,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: PoloniexHttp.prototype })
 
-    const { get } = mockOrderGet({ module: getMod })
+    const { get } = mockGet({ module: getMod })
 
     get.returns({ order: mockedParsedOrder })
 
@@ -108,7 +108,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: PoloniexHttp.prototype })
 
-    const { get } = mockOrderGet({ module: getMod })
+    const { get } = mockGet({ module: getMod })
 
     get.returns({ order: true })
 

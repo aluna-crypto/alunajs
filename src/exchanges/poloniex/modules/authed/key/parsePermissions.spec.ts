@@ -29,7 +29,11 @@ describe(__filename, () => {
 
 
     // validating
-    expect(permissions).to.deep.eq(rawKey)
+    expect(permissions).to.deep.eq({
+      ...rawKey,
+      trade: true,
+      withdraw: false,
+    })
 
   })
 

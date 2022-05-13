@@ -83,7 +83,7 @@ describe(__filename, () => {
     expect(order.placedAt.getTime()).to.be.eq(new Date(date).getTime())
     expect(order.rate).to.be.eq(Number(rate))
     expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
 
     expect(order.meta).to.be.eq(rawOrder)
 
@@ -156,7 +156,7 @@ describe(__filename, () => {
     expect(order.id).to.be.eq(orderNumber)
     expect(order.rate).to.be.eq(Number(rate))
     expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
     expect(order.filledAt).to.be.eq(mockedDate)
 
     expect(order.meta).to.be.eq(rawOrder)
@@ -234,7 +234,7 @@ describe(__filename, () => {
     expect(order.id).to.be.eq(orderNumber)
     expect(order.rate).to.be.eq(Number(rate))
     expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
-    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
     expect(order.canceledAt).to.be.eq(mockedDate)
 
     expect(order.meta).to.be.eq(rawOrder)
