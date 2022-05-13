@@ -2,13 +2,11 @@ import { IAlunaExchangeAuthed } from '../../lib/core/IAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/authed/IAlunaOrderModule'
-
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
-
 import { Poloniex } from './Poloniex'
 
 
@@ -20,7 +18,6 @@ export class PoloniexAuthed extends Poloniex implements IAlunaExchangeAuthed {
   public key: IAlunaKeyModule
   public order: IAlunaOrderWriteModule
   public balance: IAlunaBalanceModule
-
 
 
 
@@ -41,7 +38,6 @@ export class PoloniexAuthed extends Poloniex implements IAlunaExchangeAuthed {
     this.key = key(this)
     this.balance = balance(this)
     this.order = order(this)
-
 
     return this
 
