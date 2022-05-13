@@ -5,6 +5,8 @@ import {
 } from 'lodash'
 
 import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
+import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import { IAlunaPositionGetLeverageParams } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitmexAuthed } from '../../../BitmexAuthed'
@@ -39,7 +41,7 @@ describe(__filename, () => {
 
       // mocking
       const { getRaw } = mockGetRaw({ module: getRawMod })
-      getRaw.returns({ rawPosition: { bitmexPosition } })
+      getRaw.returns(Promise.resolve({ rawPosition: { bitmexPosition } }))
 
 
       // executing
@@ -70,5 +72,49 @@ describe(__filename, () => {
     })
 
   })
+
+  it(
+    'should return leverage 0 if no position was found for given symbolPair',
+    async () => {
+
+      // preparing data
+      const bitmexPosition = BITMEX_RAW_POSITIONS[0]
+
+      // preparing data
+      const alunaError = new AlunaError({
+        code: AlunaPositionErrorCodes.NOT_FOUND,
+        message: 'Position not found',
+        httpStatusCode: 400,
+      })
+
+
+      // mocking
+      const { getRaw } = mockGetRaw({ module: getRawMod })
+      getRaw.returns(Promise.reject(alunaError))
+
+
+      // executing
+      const exchange = new BitmexAuthed({
+        credentials,
+      })
+
+      const params: IAlunaPositionGetLeverageParams = {
+        symbolPair: bitmexPosition.symbol,
+      }
+
+      const { leverage } = await exchange.position!.getLeverage!(params)
+
+
+      // validating
+      expect(leverage).to.deep.eq(0)
+
+      expect(getRaw.callCount).to.be.eq(1)
+      expect(getRaw.firstCall.args[0]).to.deep.eq({
+        http: new BitmexHttp({}),
+        symbolPair: bitmexPosition.symbol,
+      })
+
+    },
+  )
 
 })

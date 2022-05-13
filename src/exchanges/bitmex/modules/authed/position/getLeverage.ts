@@ -1,12 +1,13 @@
 import debug from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionGetLeverageParams,
   IAlunaPositionGetLeverageReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { BitmexHttp } from '../../../BitmexHttp'
-import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
+import { IBitmexPosition } from '../../../schemas/IBitmexPositionSchema'
 
 
 
@@ -27,21 +28,44 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting leverage', { symbolPair })
 
-  const { rawPosition } = await exchange.position!.getRaw({
-    http,
-    symbolPair,
-  })
+  let leverage: number
+  let bitmexPosition: IBitmexPosition | undefined
 
-  const { bitmexPosition } = rawPosition as IBitmexPositionSchema
+  try {
 
-  const {
-    leverage: positionLeverage,
-    crossMargin,
-  } = bitmexPosition
+    const { rawPosition } = await exchange.position!.getRaw({
+      http,
+      symbolPair,
+    })
 
-  const leverage = crossMargin
-    ? 0
-    : positionLeverage
+    bitmexPosition = rawPosition.bitmexPosition
+
+  } catch (err) {
+
+    if (err.code !== AlunaPositionErrorCodes.NOT_FOUND) {
+
+      throw err
+
+    }
+
+  }
+
+  if (bitmexPosition) {
+
+    const {
+      leverage: positionLeverage,
+      crossMargin,
+    } = bitmexPosition
+
+    leverage = crossMargin
+      ? 0
+      : positionLeverage
+
+  } else {
+
+    leverage = 0
+
+  }
 
   const { requestWeight } = http
 
