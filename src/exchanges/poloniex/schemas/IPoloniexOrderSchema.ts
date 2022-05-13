@@ -1,3 +1,6 @@
+import { IAlunaHttp } from '../../../lib/core/IAlunaHttp'
+import { IAlunaCredentialsSchema } from '../../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaSettingsSchema } from '../../../lib/schemas/IAlunaSettingsSchema'
 import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
 import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 
@@ -33,7 +36,30 @@ export interface IPoloniexOrderPlaceResponseSchema {
   currencyPair: string
 }
 
-export interface IPoloniexOrderStatusInfo extends IPoloniexOrderInfo {
+export interface IPoloniexOrderStatusInfoSchema extends IPoloniexOrderInfo {
   status: PoloniexOrderStatusEnum
   currencyPair: string
 }
+
+export interface IPoloniexFetchOrderDetailsParams {
+  id: string
+  http: IAlunaHttp
+  credentials: IAlunaCredentialsSchema
+  settings: IAlunaSettingsSchema
+}
+
+export interface IPoloniexOrderErrorResultSchema {
+  result: { error: string }
+}
+
+export interface IPoloniexOrderStatusSchema {
+  result: {
+    [key: string]: IPoloniexOrderStatusInfoSchema
+  }
+}
+
+export type TGetOrderStatusResponse =
+  IPoloniexOrderStatusSchema | IPoloniexOrderErrorResultSchema
+
+export type TGetOrderTradesResponse =
+  IPoloniexOrderInfo[] | { error: string }

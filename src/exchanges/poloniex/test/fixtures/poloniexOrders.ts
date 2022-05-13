@@ -4,7 +4,7 @@ import {
   IPoloniexOrderInfo,
   IPoloniexOrderResponseSchema,
   IPoloniexOrderSchema,
-  IPoloniexOrderStatusInfo,
+  IPoloniexOrderStatusInfoSchema,
 } from '../../schemas/IPoloniexOrderSchema'
 
 
@@ -23,7 +23,7 @@ export const POLONIEX_RAW_ORDER_INFO: IPoloniexOrderInfo[] = [
   },
 ]
 
-export const POLONIEX_RAW_ORDER_STATUS_INFO: IPoloniexOrderStatusInfo[] = [
+export const POLONIEX_RAW_ORDER_STATUS_INFO: IPoloniexOrderStatusInfoSchema[] = [
   {
     orderNumber: '3810998527',
     type: PoloniexOrderTypeEnum.SELL,

@@ -16,7 +16,7 @@ import {
 import { PoloniexOrderSideEnum } from '../../../enums/PoloniexOrderSideEnum'
 import {
   IPoloniexOrderSchema,
-  IPoloniexOrderStatusInfo,
+  IPoloniexOrderStatusInfoSchema,
 } from '../../../schemas/IPoloniexOrderSchema'
 
 
@@ -26,7 +26,7 @@ import {
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams<IPoloniexOrderSchema | IPoloniexOrderStatusInfo>,
+  params: IAlunaOrderParseParams<IPoloniexOrderSchema | IPoloniexOrderStatusInfoSchema>,
 ): IAlunaOrderParseReturns => {
 
   // log('parse order', params)
@@ -57,7 +57,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   })
 
   const translatedPoloniexStatus = translatePoloniexOrderStatus({
-    status: (rawOrder as IPoloniexOrderStatusInfo).status,
+    status: (rawOrder as IPoloniexOrderStatusInfoSchema).status,
     amount,
     startingAmount,
   })
