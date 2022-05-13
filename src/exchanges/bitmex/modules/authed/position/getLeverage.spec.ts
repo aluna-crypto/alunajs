@@ -1,12 +1,16 @@
 import { expect } from 'chai'
+import {
+  cloneDeep,
+  each,
+} from 'lodash'
 
-import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
 import { IAlunaPositionGetLeverageParams } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
-import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { getLeverage } from './getLeverage'
+import { BITMEX_RAW_POSITIONS } from '../../../test/fixtures/bitmexPositions'
+import * as getRawMod from './getRaw'
 
 
 
@@ -17,46 +21,53 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should get leverage just fine', async () => {
+  const testsCasesParams: Array<[string, boolean]> = [
+    ['(LEVERAGE)', true],
+    ['(W/O LEVERAGE)', false],
+  ]
 
-    // preparing data
-    const mockedLeverage = 10
+  each(testsCasesParams, (params) => {
+
+    const [testCase, crossMargin] = params
+
+    it(`should get leverage just fine ${testCase}`, async () => {
+
+      // preparing data
+      const bitmexPosition = cloneDeep(BITMEX_RAW_POSITIONS[0])
+      bitmexPosition.crossMargin = crossMargin
 
 
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: BitmexHttp.prototype })
-
-    authedRequest.returns(Promise.resolve(mockedLeverage))
-    expect(getLeverage).to.exist
+      // mocking
+      const { getRaw } = mockGetRaw({ module: getRawMod })
+      getRaw.returns({ rawPosition: { bitmexPosition } })
 
 
-    // executing
-    const exchange = new BitmexAuthed({
-      credentials,
+      // executing
+      const exchange = new BitmexAuthed({
+        credentials,
+      })
+
+      const params: IAlunaPositionGetLeverageParams = {
+        symbolPair: bitmexPosition.symbol,
+      }
+
+      const { leverage } = await exchange.position!.getLeverage!(params)
+
+
+      // validating
+      const expectedLeverage = crossMargin
+        ? 0
+        : bitmexPosition.leverage
+
+      expect(leverage).to.deep.eq(expectedLeverage)
+
+      expect(getRaw.callCount).to.be.eq(1)
+      expect(getRaw.firstCall.args[0]).to.deep.eq({
+        http: new BitmexHttp({}),
+        symbolPair: bitmexPosition.symbol,
+      })
+
     })
-
-    const params: IAlunaPositionGetLeverageParams = {
-      id: 'id',
-      symbolPair: 'symbolPair',
-    }
-
-    const { leverage } = await exchange.position!.getLeverage!(params)
-
-
-    // validating
-    expect(leverage).to.deep.eq(mockedLeverage)
-
-    expect(authedRequest.callCount).to.be.eq(1)
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      credentials,
-      url: getBitmexEndpoints({}).position.getLeverage,
-      body: params,
-    })
-
-    expect(publicRequest.callCount).to.be.eq(0)
 
   })
 
