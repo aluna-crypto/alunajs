@@ -18,4 +18,4 @@ Adding support for ***{EXCHANGE_NAME}***.
  - [ ] _Build is **passing**_
  - [ ] _Coverage is at **100%**_
  - [ ] _Integration tests  are **passing** (*important one!*)_
- - [ ] _Configs **added** to Insomnia `playground.json` file_
+ - [ ] _Configs **added** to Insomnia `aluna-spec.json` file_

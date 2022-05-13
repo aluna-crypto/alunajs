@@ -11,7 +11,6 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
 export const BITMEX_PRODUCTION_URL = 'https://www.bitmex.com/api/v1'
 export const BITMEX_TESTNET_URL = 'https://testnet.bitmex.com/api/v1'
 
@@ -42,7 +41,7 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -50,10 +49,10 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
+    type: AlunaOrderTypesEnum.STOP_MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -81,21 +80,20 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: true,
       orderTypes: bitmexExchangeOrderTypes,
     },
     {
-      type: AlunaAccountEnum.MARGIN,
+      type: AlunaAccountEnum.EXCHANGE,
       supported: false,
       implemented: false,
       orderTypes: [],
     },
     {
-      type: AlunaAccountEnum.DERIVATIVES,
+      type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
       orderTypes: [],
@@ -158,18 +156,18 @@ export const getBitmexEndpoints = (
       assetsDetails: `${baseUrl}/wallet/assets`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
+      get: `${baseUrl}/order`,
+      list: `${baseUrl}/order`,
+      place: `${baseUrl}/order`,
+      cancel: `${baseUrl}/order`,
+      edit: `${baseUrl}/order`,
     },
     position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/position`,
+      get: `${baseUrl}/position`,
+      close: `${baseUrl}/order`,
       getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
+      setLeverage: `${baseUrl}/position/leverage`,
     },
   }
 }

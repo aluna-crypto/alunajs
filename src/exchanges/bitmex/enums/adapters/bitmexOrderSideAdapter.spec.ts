@@ -14,8 +14,6 @@ describe(__filename, () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Bitmex order sides to Aluna order sides', () => {
 
     expect(translateOrderSideToAluna({
@@ -48,8 +46,6 @@ describe(__filename, () => {
       .to.be.eq(`Order side not supported: ${notSupported}`)
 
   })
-
-
 
   it('should properly translate Aluna order sides to Bitmex order sides', () => {
 

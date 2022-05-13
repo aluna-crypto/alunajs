@@ -40,7 +40,7 @@ export interface IAlunaPositionParseReturns {
 
 
 export interface IAlunaPositionParseManyParams <T> extends IAlunaModuleParams {
-  rawPositions: T[]
+  rawPositions: T
 }
 
 export interface IAlunaPositionParseManyReturns {

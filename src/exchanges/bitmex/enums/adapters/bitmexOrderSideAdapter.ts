@@ -8,10 +8,7 @@ const errorMessagePrefix = 'Order side'
 
 
 
-export const translateOrderSideToAluna = buildAdapter<
-  BitmexOrderSideEnum,
-  AlunaOrderSideEnum
->({
+export const translateOrderSideToAluna = buildAdapter<BitmexOrderSideEnum, AlunaOrderSideEnum>({
   errorMessagePrefix,
   mappings: {
     [BitmexOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
@@ -20,11 +17,7 @@ export const translateOrderSideToAluna = buildAdapter<
 })
 
 
-
-export const translateOrderSideToBitmex = buildAdapter<
-  AlunaOrderSideEnum,
-  BitmexOrderSideEnum
->({
+export const translateOrderSideToBitmex = buildAdapter<AlunaOrderSideEnum, BitmexOrderSideEnum>({
   errorMessagePrefix,
   mappings: {
     [AlunaOrderSideEnum.BUY]: BitmexOrderSideEnum.BUY,

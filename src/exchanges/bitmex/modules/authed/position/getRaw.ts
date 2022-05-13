@@ -2,6 +2,8 @@ import debug from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionGetParams,
@@ -9,7 +11,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
+import {
+  IBitmexPosition,
+  IBitmexPositionSchema,
+} from '../../../schemas/IBitmexPositionSchema'
 
 
 
@@ -27,28 +32,50 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   } = exchange
 
   const {
-    id,
     symbolPair,
     http = new BitmexHttp(settings),
   } = params
 
-  log('getting raw position', { id })
+  if (!symbolPair) {
 
-  // TODO: Implement proper request
-  const rawPosition = await http.authedRequest<IBitmexPositionSchema>({
+    const error = new AlunaError({
+      code: AlunaGenericErrorCodes.PARAM_ERROR,
+      message: 'Position symbol is required to get Bitmex positions',
+      httpStatusCode: 400,
+    })
+
+    log(error)
+
+    throw error
+
+  }
+
+  log('getting raw position', { symbolPair })
+
+  const [bitmexPosition] = await http.authedRequest<IBitmexPosition[]>({
     credentials,
     url: getBitmexEndpoints(settings).position.get,
-    body: { id, symbolPair },
+    body: { filter: { symbol: symbolPair } },
+    verb: AlunaHttpVerbEnum.GET,
   })
 
-  if (!rawPosition) {
+  if (!bitmexPosition) {
 
     throw new AlunaError({
       code: AlunaPositionErrorCodes.NOT_FOUND,
       message: 'Position not found',
-      httpStatusCode: 200,
     })
 
+  }
+
+  const { market } = await exchange.market.get!({
+    http,
+    symbolPair,
+  })
+
+  const rawPosition: IBitmexPositionSchema = {
+    bitmexPosition,
+    market,
   }
 
   const { requestWeight } = http

@@ -1,4 +1,4 @@
-export enum BitmexMarketStatusEnum {
+export enum BinanceMarketStatusEnum {
   ONLINE = 'ONLINE',
   OFFLINE = 'OFFLINE',
 }

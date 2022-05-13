@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../../src/lib/enums/AlunaAccountEnum'
@@ -31,7 +30,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
       liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
@@ -52,7 +50,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       }
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -70,7 +67,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(orders[0].symbolPair).to.be.eq(orderSymbolPair)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -92,7 +88,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(rawOrder).to.exist
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -115,7 +110,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -128,11 +122,10 @@ export const testLimitOrder = (params: IAuthedParams) => {
 
       const {
         orderAccount,
-        orderAmount,
         orderRate,
+        orderAmount,
+        orderEditAmount,
       } = exchangeConfigs
-
-      const newAmount = new BigNumber(orderAmount).times(1.02).toNumber()
 
       const {
         order,
@@ -142,20 +135,19 @@ export const testLimitOrder = (params: IAuthedParams) => {
         symbolPair: orderSymbolPair!,
         account: orderAccount || AlunaAccountEnum.EXCHANGE,
         rate: orderRate,
-        amount: newAmount,
+        amount: orderEditAmount,
         side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(order).to.exist
-      expect(order.amount).to.be.eq(newAmount)
+      expect(order.amount).not.to.be.eq(orderAmount)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
       liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
-      liveData.orderEditedAmount = newAmount
+      liveData.orderEditedAmount = order.amount
 
     })
 
@@ -180,7 +172,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.amount).to.be.eq(orderEditedAmount)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -203,7 +194,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -226,7 +216,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 

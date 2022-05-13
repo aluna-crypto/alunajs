@@ -17,56 +17,65 @@ describe(__filename, () => {
 
   it('should translate Bitmex order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.NEW,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: BitmexOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
-
-    expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: BitmexOrderStatusEnum.CLOSED,
+      from: BitmexOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: BitmexOrderStatusEnum.CLOSED,
+      from: BitmexOrderStatusEnum.FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: BitmexOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: BitmexOrderStatusEnum.CANCELED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.REJECTED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.EXPIRED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.DONE_FOR_DAY,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.PENDING_CANCEL,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.PENDING_NEW,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: BitmexOrderStatusEnum.STOPPED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
-
-
 
   it('should translate Aluna order status to Bitmex order status', () => {
 
     expect(translateOrderStatusToBitmex({
       from: AlunaOrderStatusEnum.OPEN,
-    })).to.be.eq(BitmexOrderStatusEnum.OPEN)
+    })).to.be.eq(BitmexOrderStatusEnum.NEW)
 
     expect(translateOrderStatusToBitmex({
       from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
-    })).to.be.eq(BitmexOrderStatusEnum.OPEN)
+    })).to.be.eq(BitmexOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToBitmex({
       from: AlunaOrderStatusEnum.FILLED,
-    })).to.be.eq(BitmexOrderStatusEnum.CLOSED)
+    })).to.be.eq(BitmexOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToBitmex({
       from: AlunaOrderStatusEnum.CANCELED,
-    })).to.be.eq(BitmexOrderStatusEnum.CLOSED)
+    })).to.be.eq(BitmexOrderStatusEnum.CANCELED)
 
     let result
     let error

@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
 
 import { AlunaAccountEnum } from '../../../../../src/lib/enums/AlunaAccountEnum'
@@ -31,7 +30,6 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
       liveData.stopMarketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
@@ -57,7 +55,6 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -70,11 +67,10 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
 
       const {
         orderAccount,
-        orderAmount,
         orderStopRate,
+        orderEditAmount,
+        orderAmount,
       } = exchangeConfigs
-
-      const newAmount = new BigNumber(orderAmount).times(1.02).toNumber()
 
       const {
         order,
@@ -84,20 +80,19 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
         symbolPair: orderSymbolPair!,
         account: orderAccount || AlunaAccountEnum.EXCHANGE,
         stopRate: orderStopRate,
-        amount: newAmount,
+        amount: orderEditAmount,
         side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.STOP_MARKET,
       })
 
       expect(order).to.exist
-      expect(order.amount).to.be.eq(newAmount)
+      expect(order.amount).not.to.be.eq(orderEditAmount)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
       liveData.stopMarketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
-      liveData.orderEditedAmount = newAmount
+      liveData.orderEditedAmount = order.amount
 
     })
 
@@ -122,7 +117,6 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order.amount).to.be.eq(orderEditedAmount)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -144,7 +138,6 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order).to.exist
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -167,7 +160,6 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 

@@ -18,16 +18,18 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 ): Promise<IAlunaPositionGetReturns> => {
 
   const {
-    id,
     symbolPair,
     http = new BitmexHttp(exchange.settings),
   } = params
 
-  log('getting position', { id, symbolPair })
+  log('getting position', { symbolPair })
 
-  const { rawPosition } = await exchange.position!.getRaw({ id, http })
+  const { rawPosition } = await exchange.position!.getRaw({
+    http,
+    symbolPair,
+  })
 
-  const { position } = await exchange.position!.parse({ rawPosition })
+  const { position } = exchange.position!.parse({ rawPosition })
 
   const { requestWeight } = http
 

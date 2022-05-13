@@ -22,34 +22,29 @@ describe(__filename, () => {
   it('should get a Bitmex order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = BITMEX_RAW_ORDERS[0]
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderID } = bitmexOrder
 
     const params: IAlunaOrderGetParams = {
-      id,
+      id: orderID,
       symbolPair: '',
     }
 
 
     // mocking
     const { getRaw } = mockOrderGetRaw({ module: getRawMod })
-
-    getRaw.returns(Promise.resolve({ rawOrder: mockedRawOrder }))
+    getRaw.returns(Promise.resolve({ rawOrder: bitmexOrder }))
 
     const { parse } = mockParse({ module: parseMod })
-
     parse.returns({ order: mockedParsedOrder })
 
 
     // executing
     const exchange = new BitmexAuthed({ credentials })
 
-    const { order } = await exchange.order.get({
-      id,
-      symbolPair: '',
-    })
+    const { order } = await exchange.order.get(params)
 
 
     // validating
@@ -60,7 +55,7 @@ describe(__filename, () => {
 
     expect(parse.callCount).to.be.eq(1)
     expect(parse.firstCall.args[0]).to.deep.eq({
-      rawOrder: mockedRawOrder,
+      rawOrder: bitmexOrder,
     })
 
   })

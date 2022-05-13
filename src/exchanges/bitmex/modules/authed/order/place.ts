@@ -11,11 +11,13 @@ import {
 import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
-import { translateOrderSideToBitmex } from '../../../enums/adapters/bitmexOrderSideAdapter'
-import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexOrderSchema } from '../../../schemas/IBitmexOrderSchema'
+import {
+  IBitmexOrder,
+  IBitmexOrderSchema,
+} from '../../../schemas/IBitmexOrderSchema'
+import { assembleRequestBody } from './helpers/assembleRequestBody'
 
 
 
@@ -46,82 +48,63 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   const {
-    amount,
-    rate,
     symbolPair,
-    side,
-    type,
     http = new BitmexHttp(settings),
   } = params
 
-  const translatedOrderType = translateOrderTypeToBitmex({
-    from: type,
+  const { market } = await exchange.market.get!({
+    symbolPair,
+    http,
   })
 
-  // TODO: Validate all body properties
-  const body = {
-    direction: translateOrderSideToBitmex({ from: side }),
-    marketSymbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
-  }
+  const { body } = assembleRequestBody({
+    action: 'place',
+    instrument: market.instrument!,
+    orderParams: params,
+    settings,
+  })
 
   log('placing new order for Bitmex')
 
-  let placedOrder: IBitmexOrderSchema
-
   try {
 
-    // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IBitmexOrderSchema>({
+    const bitmexOrder = await http.authedRequest<IBitmexOrder>({
       url: getBitmexEndpoints(settings).order.place,
       body,
       credentials,
     })
 
-    placedOrder = orderResponse
+    const rawOrder: IBitmexOrderSchema = {
+      bitmexOrder,
+      market,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
+    const { requestWeight } = http
+
+    return {
+      order,
+      requestWeight,
+    }
 
   } catch (err) {
 
-    let {
-      code,
-      message,
-    } = err
+    const { message } = err
 
-    const { metadata } = err
+    let code = AlunaOrderErrorCodes.PLACE_FAILED
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (/insufficient Available Balance/i.test(message)) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
-      message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
     throw new AlunaError({
       ...err,
       code,
-      message,
     })
 
-  }
-
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
-
-  const { requestWeight } = http
-
-  return {
-    order,
-    requestWeight,
   }
 
 }

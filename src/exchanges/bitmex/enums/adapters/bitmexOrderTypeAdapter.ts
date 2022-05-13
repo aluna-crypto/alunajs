@@ -8,30 +8,23 @@ const errorMessagePrefix = 'Order type'
 
 
 
-export const translateOrderTypeToAluna = buildAdapter<
-  BitmexOrderTypeEnum,
-  AlunaOrderTypesEnum
->({
+export const translateOrderTypeToAluna = buildAdapter<BitmexOrderTypeEnum, AlunaOrderTypesEnum>({
   errorMessagePrefix,
   mappings: {
     [BitmexOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [BitmexOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [BitmexOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [BitmexOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [BitmexOrderTypeEnum.STOP_MARKET]: AlunaOrderTypesEnum.STOP_MARKET,
+    [BitmexOrderTypeEnum.STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
   },
 })
 
 
-
-export const translateOrderTypeToBitmex = buildAdapter<
-  AlunaOrderTypesEnum,
-  BitmexOrderTypeEnum
->({
+export const translateOrderTypeToBitmex = buildAdapter<AlunaOrderTypesEnum, BitmexOrderTypeEnum>({
   errorMessagePrefix,
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: BitmexOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: BitmexOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: BitmexOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: BitmexOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.STOP_MARKET]: BitmexOrderTypeEnum.STOP_MARKET,
+    [AlunaOrderTypesEnum.STOP_LIMIT]: BitmexOrderTypeEnum.STOP_LIMIT,
   },
 })
