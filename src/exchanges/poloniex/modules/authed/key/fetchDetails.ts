@@ -1,7 +1,8 @@
 import { debug } from 'debug'
 
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../../../../lib/errors/AlunaKeyErrorCodes'
 import {
   IAlunaKeyFetchDetailsParams,
   IAlunaKeyFetchDetailsReturns,
@@ -29,12 +30,44 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new PoloniexHttp(settings) } = params
 
-  // TODO: Implement proper request
-  const rawKey = await http.authedRequest<IPoloniexKeySchema>({
-    verb: AlunaHttpVerbEnum.GET,
-    url: getPoloniexEndpoints(settings).key.fetchDetails,
-    credentials,
-  })
+  const rawKey: IPoloniexKeySchema = {
+    read: false,
+  }
+
+  try {
+
+    const timestamp = new Date().getTime()
+    const body = new URLSearchParams()
+
+    body.append('command', 'returnOpenOrders')
+    body.append('currencyPair', 'all')
+    body.append('nonce', timestamp.toString())
+
+    await http.authedRequest<IPoloniexKeySchema>({
+      url: getPoloniexEndpoints(settings).key.fetchDetails,
+      credentials,
+      body,
+    })
+
+    rawKey.read = true
+
+  } catch (err) {
+
+    const {
+      httpStatusCode,
+      metadata,
+    } = err
+
+    const error = new AlunaError({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: 'Invalid API key/secret pair.',
+      httpStatusCode,
+      metadata,
+    })
+
+    throw error
+
+  }
 
   const { key } = exchange.key.parseDetails({ rawKey })
 

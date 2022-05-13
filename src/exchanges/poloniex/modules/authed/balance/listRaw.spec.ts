@@ -22,6 +22,10 @@ describe(__filename, () => {
     // preparing data
     const mockedBalances = POLONIEX_RAW_BALANCES
 
+    const searchParams = new URLSearchParams()
+
+    searchParams.append('command', 'returnCompleteBalances')
+    searchParams.append('nonce', '123456')
 
     // mocking
     const {
@@ -52,7 +56,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       url: getPoloniexEndpoints(exchange.settings).balance.list,
       credentials,
-      body: 'command=returnCompleteBalances&nonce=123456',
+      body: searchParams,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
