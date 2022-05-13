@@ -15,7 +15,6 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToPoloniex } from '../../../enums/adapters/poloniexOrderSideAdapter'
-import { translateOrderTypeToPoloniex } from '../../../enums/adapters/poloniexOrderTypeAdapter'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
@@ -41,12 +40,10 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.LIMIT
 
     const translatedOrderSide = translateOrderSideToPoloniex({ from: side })
-    const translatedOrderType = translateOrderTypeToPoloniex({ from: type })
 
     const body = {
       direction: translatedOrderSide,
       marketSymbol: '',
-      type: translatedOrderType,
       quantity: 0.01,
       rate: 0,
       // limit: 0,
@@ -113,12 +110,10 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.MARKET
 
     const translatedOrderSide = translateOrderSideToPoloniex({ from: side })
-    const translatedOrderType = translateOrderTypeToPoloniex({ from: type })
 
     const body = {
       direction: translatedOrderSide,
       marketSymbol: '',
-      type: translatedOrderType,
       quantity: 0.01,
       rate: 0,
       // timeInForce: PoloniexOrderTimeInForceEnum.FILL_OR_KILL,
