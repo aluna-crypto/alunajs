@@ -3,8 +3,8 @@ import { filter } from 'lodash'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
-import { mockOrderGetRaw } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGetRaw'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -48,7 +48,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-    const { getRaw } = mockOrderGetRaw({ module: getRawMod })
+    const { getRaw } = mockGetRaw({ module: getRawMod })
     const { parse } = mockParse({ module: parseMod })
 
     parse.returns({ order: mockedParsedOrder })
@@ -108,7 +108,7 @@ describe(__filename, () => {
       metadata: canceledOrder,
     })
 
-    const { getRaw } = mockOrderGetRaw({ module: getRawMod })
+    const { getRaw } = mockGetRaw({ module: getRawMod })
 
     getRaw.returns(Promise.resolve({ rawOrder: canceledOrder }))
     authedRequest.returns(Promise.resolve({}))

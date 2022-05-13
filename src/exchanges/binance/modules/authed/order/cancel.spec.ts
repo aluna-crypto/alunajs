@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -43,7 +43,7 @@ describe(__filename, () => {
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
 
-    const { get } = mockOrderGet({ module: getMod })
+    const { get } = mockGet({ module: getMod })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
