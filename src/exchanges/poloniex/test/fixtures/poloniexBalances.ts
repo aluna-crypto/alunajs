@@ -1,23 +1,48 @@
-import { IPoloniexBalanceSchema } from '../../schemas/IPoloniexBalanceSchema'
+import {
+  IPoloniexBalanceInfoSchema,
+  IPoloniexBalanceResponseSchema,
+  IPoloniexBalanceSchema,
+} from '../../schemas/IPoloniexBalanceSchema'
 
 
 
-// TODO: Review fixtures
+export const POLONIEX_RAW_BALANCES_INFO: IPoloniexBalanceInfoSchema[] = [
+  {
+    available: '3.00000000',
+    onOrders: '2.00000000',
+    btcValue: '0.00000000',
+  },
+  {
+    available: '5.00000000',
+    onOrders: '0.00000000',
+    btcValue: '0.00000000',
+  },
+  {
+    available: '0.00000000',
+    onOrders: '0.00000000',
+    btcValue: '0.00000000',
+  },
+]
+
+
+export const POLONIEX_RAW_BALANCES_RESPONSE: IPoloniexBalanceResponseSchema = {
+  BNB: POLONIEX_RAW_BALANCES_INFO[0],
+  ETH: POLONIEX_RAW_BALANCES_INFO[1],
+  BTC: POLONIEX_RAW_BALANCES_INFO[2],
+}
+
 export const POLONIEX_RAW_BALANCES: IPoloniexBalanceSchema[] = [
   {
-    total: '1500.00000000',
-    available: '1500.00000000',
-    currencySymbol: 'BTC',
+    currency: 'BNB',
+    ...POLONIEX_RAW_BALANCES_INFO[0],
   },
   {
-    total: '32.00000000',
-    available: '32.00000000',
-    currencySymbol: 'BTC',
+    currency: 'ETH',
+    ...POLONIEX_RAW_BALANCES_INFO[1],
   },
   {
-    total: '11.00000000',
-    available: '11.00000000',
-    currencySymbol: 'BTC',
+    currency: 'BTC',
+    ...POLONIEX_RAW_BALANCES_INFO[2],
   },
 ]
 

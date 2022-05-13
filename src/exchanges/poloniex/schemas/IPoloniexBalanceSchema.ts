@@ -1,7 +1,13 @@
-// TODO: Describe balance interface for Poloniex exchange
-export interface IPoloniexBalanceSchema {
-  total: string
+export interface IPoloniexBalanceInfoSchema {
   available: string
-  currencySymbol: string
-  // ...
+  onOrders: string
+  btcValue: string
+}
+
+export interface IPoloniexBalanceResponseSchema {
+  [key: string]: IPoloniexBalanceInfoSchema
+}
+
+export interface IPoloniexBalanceSchema extends IPoloniexBalanceInfoSchema {
+  currency: string
 }
