@@ -32,7 +32,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balance.wallet).to.be.eq(AlunaWalletEnum.EXCHANGE)
+    expect(balance.wallet).to.be.eq(AlunaWalletEnum.SPOT)
     expect(balance.symbolId).to.be.eq(rawBalance.currencySymbol)
     expect(balance.available).to.be.eq(Number(rawBalance.available))
     expect(balance.total).to.be.eq(Number(rawBalance.total))

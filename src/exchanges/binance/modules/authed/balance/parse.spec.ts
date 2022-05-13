@@ -45,7 +45,7 @@ describe(__filename, () => {
     expect(balance.available).to.be.eq(available)
     expect(balance.total).to.be.eq(total)
     expect(balance.symbolId).to.be.eq(asset)
-    expect(balance.wallet).to.be.eq(AlunaWalletEnum.EXCHANGE)
+    expect(balance.wallet).to.be.eq(AlunaWalletEnum.SPOT)
 
     expect(balance.meta).to.be.eq(rawBalance)
 

@@ -20,7 +20,7 @@ describe(__filename, () => {
 
     expect(translateWalletToAluna({
       from: BitfinexAccountsEnum.EXCHANGE,
-    })).to.be.eq(AlunaWalletEnum.EXCHANGE)
+    })).to.be.eq(AlunaWalletEnum.SPOT)
 
     expect(translateWalletToAluna({
       from: BitfinexAccountsEnum.FUNDING,
@@ -59,7 +59,7 @@ describe(__filename, () => {
     let error
 
     expect(translateWalletToBitfinex({
-      from: AlunaWalletEnum.EXCHANGE,
+      from: AlunaWalletEnum.SPOT,
     })).to.be.eq(BitfinexAccountsEnum.EXCHANGE)
 
     expect(translateWalletToBitfinex({

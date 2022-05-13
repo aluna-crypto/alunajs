@@ -34,7 +34,7 @@ describe(__filename, () => {
       available: Number(available),
       total: Number(total),
       meta: rawBalance,
-      wallet: AlunaWalletEnum.EXCHANGE,
+      wallet: AlunaWalletEnum.SPOT,
     }
 
 
