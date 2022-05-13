@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-13T15:56:52.558Z",
-    "__export_source": "insomnia.desktop.app:v2022.2.1",
+    "__export_date": "2022-05-13T23:57:18.577Z",
+    "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652456961110,
+            "modified": 1652486191296,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -853,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652456985498,
+            "modified": 1652486145096,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -1225,19 +1225,25 @@
         {
             "_id": "env_720b09d90c90412b9c6a0327c4915465",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652457389028,
+            "modified": 1652486190215,
             "created": 1651252812172,
             "name": "Poloniex",
             "data": {
                 "EXCHANGE_ID": "poloniex",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'POLONIEX_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'POLONIEX_API_SECRET' %}"
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'POLONIEX_API_SECRET' %}",
+                "ORDER_RATE": 0.02,
+                "ORDER_AMOUNT": 55,
+                "ORDER_SYMBOL_PAIR": "USDT_DOGE"
             },
             "dataPropertyOrder": {
                 "&": [
                     "EXCHANGE_ID",
                     "KEY",
-                    "SECRET"
+                    "SECRET",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_SYMBOL_PAIR"
                 ]
             },
             "color": "#56c6af",
