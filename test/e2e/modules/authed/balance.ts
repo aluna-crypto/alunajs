@@ -50,12 +50,6 @@ export function balance(params: IAuthedParams) {
 
     expect(rawBalances).to.exist
 
-    if (rawBalances.length) {
-
-      expect(rawBalances.length).to.be.greaterThan(0)
-
-    }
-
     expect(requestWeight.authed).to.be.greaterThan(0)
 
   })

@@ -45,10 +45,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
 
       expect(rawOrders).to.exist
 
-      if (rawOrders.length) {
-        expect(rawOrders.length).to.be.greaterThan(0)
-      }
-
       expect(requestWeight.authed).to.be.greaterThan(0)
 
     })
@@ -133,7 +129,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.edit({
         id: limitOrderId!,
         symbolPair: orderSymbolPair!,
-        account: orderAccount || AlunaAccountEnum.EXCHANGE,
+        account: orderAccount || AlunaAccountEnum.SPOT,
         rate: orderRate,
         amount: orderEditAmount,
         side: AlunaOrderSideEnum.BUY,

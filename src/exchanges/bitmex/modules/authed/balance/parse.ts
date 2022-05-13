@@ -48,7 +48,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   } else {
 
-    const multiplier = 10 ** (-scale)
+    const multiplier = new BigNumber(10).pow(-scale)
 
     computedAvailable = new BigNumber(availableMargin)
       .times(multiplier)

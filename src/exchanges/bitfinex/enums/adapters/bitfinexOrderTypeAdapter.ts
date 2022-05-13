@@ -43,7 +43,7 @@ export const translateOrderTypeToBitfinex = (params: {
     account,
   } = params
 
-  if (account === AlunaAccountEnum.EXCHANGE) {
+  if (account === AlunaAccountEnum.SPOT) {
 
     return buildAdapter<AlunaOrderTypesEnum, BitfinexOrderTypeEnum>({
       errorMessagePrefix,

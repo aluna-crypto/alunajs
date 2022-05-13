@@ -19,7 +19,7 @@ describe('BitfinexAccountsAdapter', () => {
 
     expect(translateAccountToAluna({
       value: BitfinexOrderTypeEnum.EXCHANGE_STOP,
-    })).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    })).to.be.eq(AlunaAccountEnum.SPOT)
 
     expect(translateAccountToAluna({
       value: BitfinexOrderTypeEnum.MARKET,
@@ -27,7 +27,7 @@ describe('BitfinexAccountsAdapter', () => {
 
     expect(translateAccountToAluna({
       value: BitfinexAccountsEnum.EXCHANGE,
-    })).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    })).to.be.eq(AlunaAccountEnum.SPOT)
 
     expect(translateAccountToAluna({
       value: BitfinexAccountsEnum.MARGIN,
@@ -40,7 +40,7 @@ describe('BitfinexAccountsAdapter', () => {
     let error
 
     expect(translateToBitfinex({
-      from: AlunaAccountEnum.EXCHANGE,
+      from: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexAccountsEnum.EXCHANGE)
 
     expect(translateToBitfinex({

@@ -154,7 +154,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     rate,
     stopRate,
     limitRate,
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     side: translateOrderSideToAluna({ from: side }),
     status: alnOrderStatus,
     type: alnOrderType,

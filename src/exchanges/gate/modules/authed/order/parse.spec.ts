@@ -1,7 +1,10 @@
 import { expect } from 'chai'
-import { cloneDeep, filter } from 'lodash'
-import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import {
+  cloneDeep,
+  filter,
+} from 'lodash'
 
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { translateOrderSideToAluna } from '../../../enums/adapters/gateOrderSideAdapter'
@@ -63,7 +66,7 @@ describe(__filename, () => {
     // executing
     const { order } = exchange.order.parse({ rawOrder })
 
-    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
     expect(order.amount).to.be.eq(amount)
     expect(order.symbolPair).to.be.eq(currencyPair)
     expect(order.baseSymbolId).to.be.eq(baseCurrency)

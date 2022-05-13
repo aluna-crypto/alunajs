@@ -1,5 +1,5 @@
 export enum AlunaWalletEnum {
-  EXCHANGE = 'exchange',
+  SPOT = 'spot',
   MARGIN = 'margin',
   DERIVATIVES = 'derivatives',
   FUNDING = 'funding',

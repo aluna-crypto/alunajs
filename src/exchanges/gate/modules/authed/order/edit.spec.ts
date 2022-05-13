@@ -55,7 +55,7 @@ describe(__filename, () => {
     const params: IAlunaOrderEditParams = {
       id,
       symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: Number(amount),
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,

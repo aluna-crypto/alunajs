@@ -34,7 +34,6 @@ export function position(params: IAuthedParams) {
     expect(rawPositions).to.exist
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -49,7 +48,6 @@ export function position(params: IAuthedParams) {
     expect(positions.length).to.greaterThan(0)
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
     liveData.positionId = positions[0].id
     liveData.positionSymbolPair = positions[0].symbolPair
@@ -69,7 +67,6 @@ export function position(params: IAuthedParams) {
     expect(rawPosition).to.exist
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -87,7 +84,6 @@ export function position(params: IAuthedParams) {
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.OPEN)
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -105,7 +101,6 @@ export function position(params: IAuthedParams) {
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.CLOSED)
 
     expect(requestWeight.authed).to.be.greaterThan(1)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -123,7 +118,6 @@ export function position(params: IAuthedParams) {
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.CLOSED)
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 

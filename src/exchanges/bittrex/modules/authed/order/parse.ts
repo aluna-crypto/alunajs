@@ -105,7 +105,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     exchangeId,
     baseSymbolId,
     quoteSymbolId,
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     side: translateOrderSideToAluna({ from: direction }),
     status: orderStatus,
     type: translateOrderTypeToAluna({ from: orderType }),

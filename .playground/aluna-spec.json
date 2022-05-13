@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-12T01:08:06.132Z",
-    "__export_source": "insomnia.desktop.app:v2022.3.0",
+    "__export_date": "2022-05-13T15:56:52.558Z",
+    "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -661,7 +661,7 @@
         {
             "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147724740,
+            "modified": 1652457394388,
             "created": 1651519029538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652316870884,
+            "modified": 1652456961110,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -821,7 +821,7 @@
         {
             "_id": "req_14b8a678fd9347e4b378d68441c5fee9",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147722053,
+            "modified": 1652456969064,
             "created": 1651595618759,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "edit",
@@ -829,7 +829,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.edit\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n  \"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"id\": \"ed85fca7-c383-4865-9021-64723149aae3\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n  \"amount\": \"{{ _.ORDER_EDITED_AMOUNT }}\"\n}\n"
+                "text": "{\n\t\"method\": \"order.edit\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n  \"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"id\": \"4921329930\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n  \"amount\": \"{{ _.ORDER_EDITED_AMOUNT }}\"\n}\n"
             },
             "parameters": [],
             "headers": [
@@ -853,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147721700,
+            "modified": 1652456985498,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -861,7 +861,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"226fb8e2-394d-41ed-9bc5-75f9f8d0421c\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
+                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"4921331648\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
             },
             "parameters": [],
             "headers": [
@@ -1057,7 +1057,7 @@
         {
             "_id": "env_0294ce45850974a6280b61215be346094da99682",
             "parentId": "wrk_c410cf8f299748d49a8201c84597a282",
-            "modified": 1651597616680,
+            "modified": 1652457386053,
             "created": 1651251253382,
             "name": "Base Environment",
             "data": {
@@ -1132,7 +1132,7 @@
         {
             "_id": "env_3d45543920134e1fb6c24379f15ccd13",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652315358231,
+            "modified": 1652457390684,
             "created": 1651252130131,
             "name": "Bittrex",
             "data": {
@@ -1163,7 +1163,7 @@
         {
             "_id": "env_b3fcde421b4f4a79864800943e4c5340",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652143102757,
+            "modified": 1652457390202,
             "created": 1651252159834,
             "name": "Bitfinex",
             "data": {
@@ -1194,19 +1194,27 @@
         {
             "_id": "env_99d05146a17d4383817a9d4befb0a61b",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651508971186,
+            "modified": 1652457389692,
             "created": 1651252806794,
             "name": "BitMEX",
             "data": {
                 "EXCHANGE_ID": "bitmex",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'BITMEX_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'BITMEX_API_SECRET' %}"
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'BITMEX_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "XBTUSD",
+                "ORDER_RATE": 1000,
+                "ORDER_AMOUNT": 100,
+                "ORDER_EDITED_AMOUNT": 200
             },
             "dataPropertyOrder": {
                 "&": [
                     "EXCHANGE_ID",
                     "KEY",
-                    "SECRET"
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
                 ]
             },
             "color": "#ff0504",
@@ -1217,7 +1225,7 @@
         {
             "_id": "env_720b09d90c90412b9c6a0327c4915465",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652143092487,
+            "modified": 1652457389028,
             "created": 1651252812172,
             "name": "Poloniex",
             "data": {
@@ -1240,17 +1248,17 @@
         {
             "_id": "env_5aa9c059ec04471882d40db1ad92f012",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652316870390,
+            "modified": 1652457388423,
             "created": 1651252813639,
             "name": "Binance",
             "data": {
                 "EXCHANGE_ID": "binance",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'BINANCE_API_KEY' %}",
                 "SECRET": "{% dotenv _.ALUNAJS_RC, 'BINANCE_API_SECRET' %}",
-                "ORDER_RATE": 0.02,
-                "ORDER_AMOUNT": 550,
-                "ORDER_EDITED_AMOUNT": 550.01,
-                "ORDER_SYMBOL_PAIR": "DOGEBUSD"
+                "ORDER_RATE": 10000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.0011,
+                "ORDER_SYMBOL_PAIR": "BTCBUSD"
             },
             "dataPropertyOrder": {
                 "&": [
@@ -1271,19 +1279,27 @@
         {
             "_id": "env_e4f221428ce843379ea223026246458c",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651928824744,
+            "modified": 1652457387702,
             "created": 1651252814772,
             "name": "Valr",
             "data": {
                 "EXCHANGE_ID": "valr",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'VALR_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'VALR_API_SECRET' %}"
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'VALR_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "BTCUSDC",
+                "ORDER_RATE": 10000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.001
             },
             "dataPropertyOrder": {
                 "&": [
                     "EXCHANGE_ID",
                     "KEY",
-                    "SECRET"
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
                 ]
             },
             "color": "#376fff",
@@ -1294,7 +1310,7 @@
         {
             "_id": "env_52e41578196c4f5289d52dd763b105e1",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652271480235,
+            "modified": 1652457386978,
             "created": 1651252828907,
             "name": "Gate",
             "data": {

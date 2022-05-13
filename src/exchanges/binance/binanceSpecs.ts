@@ -100,7 +100,7 @@ export const binanceBaseSpecs: IAlunaExchangeSchema = {
   },
   accounts: [
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: binanceExchangeOrderTypes,

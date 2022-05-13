@@ -17,7 +17,7 @@ export const translateAccountToAluna = (params: {
 
   if (/^exchange/i.test(value)) {
 
-    translatedAccount = AlunaAccountEnum.EXCHANGE
+    translatedAccount = AlunaAccountEnum.SPOT
 
   } else {
 
@@ -34,10 +34,9 @@ export const translateAccountToAluna = (params: {
 export const translateToBitfinex = buildAdapter<AlunaAccountEnum, BitfinexAccountsEnum>({
   errorMessagePrefix,
   mappings: {
-    [AlunaAccountEnum.EXCHANGE]: BitfinexAccountsEnum.EXCHANGE,
+    [AlunaAccountEnum.SPOT]: BitfinexAccountsEnum.EXCHANGE,
     [AlunaAccountEnum.MARGIN]: BitfinexAccountsEnum.MARGIN,
     [AlunaAccountEnum.LENDING]: BitfinexAccountsEnum.FUNDING,
     [AlunaAccountEnum.DERIVATIVES]: BitfinexAccountsEnum.DERIVATIVES,
   },
 })
-

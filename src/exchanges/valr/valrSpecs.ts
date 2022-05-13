@@ -79,7 +79,7 @@ export const valrBaseSpecs: IAlunaExchangeSchema = {
   },
   accounts: [
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: valrExchangeOrderTypes,

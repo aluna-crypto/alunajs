@@ -3,22 +3,22 @@ import { ImportMock } from 'ts-mock-imports'
 
 
 
-export const mockOrderGet = (params: {
+export const mockGetLeverage = (params: {
   module: any
 }) => {
 
   const { module } = params
 
-  const get = stub()
+  const getLeverage = stub()
 
   const wrapper = ImportMock.mockFunction(
     module,
-    'get',
-    get,
+    'getLeverage',
+    getLeverage,
   )
 
   return {
-    get,
+    getLeverage,
     wrapper,
   }
 

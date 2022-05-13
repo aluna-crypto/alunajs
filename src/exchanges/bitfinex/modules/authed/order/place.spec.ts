@@ -34,7 +34,7 @@ describe(__filename, () => {
   }
 
   const commonOrderParams: IAlunaOrderPlaceParams = {
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     amount: 10,
     side: AlunaOrderSideEnum.BUY,
     symbolPair: 'tBTCETH',

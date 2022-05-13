@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { GateAuthed } from '../../../GateAuthed'
@@ -44,7 +44,7 @@ describe(__filename, () => {
 
     expect(balance.available).to.be.eq(Number(available))
     expect(balance.total).to.be.eq(total)
-    expect(balance.wallet).to.be.eq(AlunaWalletEnum.EXCHANGE)
+    expect(balance.wallet).to.be.eq(AlunaWalletEnum.SPOT)
     expect(balance.exchangeId).to.be.eq(gateBaseSpecs.id)
     expect(balance.symbolId).to.be.eq(currency)
     expect(balance.meta).to.deep.eq(rawBalance)

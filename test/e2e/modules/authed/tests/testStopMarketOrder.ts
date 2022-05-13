@@ -78,7 +78,7 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.edit({
         id: stopMarketOrderId!,
         symbolPair: orderSymbolPair!,
-        account: orderAccount || AlunaAccountEnum.EXCHANGE,
+        account: orderAccount || AlunaAccountEnum.SPOT,
         stopRate: orderStopRate,
         amount: orderEditAmount,
         side: AlunaOrderSideEnum.BUY,

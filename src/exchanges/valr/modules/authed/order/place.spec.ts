@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
@@ -64,7 +64,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-    const { get } = mockOrderGet({ module: getMod })
+    const { get } = mockGet({ module: getMod })
 
     get.returns({ order: mockedParsedOrder })
 
@@ -80,7 +80,7 @@ describe(__filename, () => {
 
     const params: IAlunaOrderPlaceParams = {
       symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: Number(quantity),
       side,
       type,
@@ -136,7 +136,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-    const { get } = mockOrderGet({ module: getMod })
+    const { get } = mockGet({ module: getMod })
 
     get.returns({ order: mockedParsedOrder })
 
@@ -152,7 +152,7 @@ describe(__filename, () => {
 
     const { order } = await exchange.order.place({
       symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: Number(quantity),
       side,
       type,
@@ -212,7 +212,7 @@ describe(__filename, () => {
         authedRequest,
       } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-      const { get } = mockOrderGet(
+      const { get } = mockGet(
         {
           module: getMod,
         },
@@ -231,7 +231,7 @@ describe(__filename, () => {
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
         amount: Number(quantity),
         side,
         type,
@@ -288,7 +288,7 @@ describe(__filename, () => {
         authedRequest,
       } = mockHttp({ classPrototype: ValrHttp.prototype })
 
-      const { get } = mockOrderGet(
+      const { get } = mockGet(
         {
           module: getMod,
         },
@@ -307,7 +307,7 @@ describe(__filename, () => {
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
         amount: Number(quantity),
         side,
         type,

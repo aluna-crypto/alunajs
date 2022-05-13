@@ -3,7 +3,7 @@ import { ImportMock } from 'ts-mock-imports'
 
 
 
-export const mockOrderGetRaw = (params: {
+export const mockGetRaw = (params: {
   module: any
 }) => {
 

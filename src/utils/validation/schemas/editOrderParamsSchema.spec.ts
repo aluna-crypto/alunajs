@@ -132,7 +132,7 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
-    const msg = '"account" must be one of [exchange, margin, derivatives, '
+    const msg = '"account" must be one of [spot, margin, derivatives, '
       .concat('lending]')
 
     expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)

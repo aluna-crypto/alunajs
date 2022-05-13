@@ -87,7 +87,7 @@ const accountIsSupported = async (params: {
     'accounts',
     [
       {
-        type: AlunaAccountEnum.EXCHANGE,
+        type: AlunaAccountEnum.SPOT,
         supported: false,
         implemented: true,
         orderTypes: [],
@@ -95,7 +95,7 @@ const accountIsSupported = async (params: {
     ],
   )
 
-  const account = AlunaAccountEnum.EXCHANGE
+  const account = AlunaAccountEnum.SPOT
 
   try {
 

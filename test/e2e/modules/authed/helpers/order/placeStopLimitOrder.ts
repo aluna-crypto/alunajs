@@ -23,7 +23,7 @@ export const placeStopLimitOrder = async (
 
   return exchangeAuthed.order.place({
     symbolPair,
-    account: orderAccount || AlunaAccountEnum.EXCHANGE,
+    account: orderAccount || AlunaAccountEnum.SPOT,
     amount: orderAmount,
     side: AlunaOrderSideEnum.BUY,
     limitRate: orderLimitRate,

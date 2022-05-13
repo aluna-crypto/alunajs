@@ -14,7 +14,7 @@ export const translateWalletToAluna = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [BitfinexAccountsEnum.EXCHANGE]: AlunaWalletEnum.EXCHANGE,
+    [BitfinexAccountsEnum.EXCHANGE]: AlunaWalletEnum.SPOT,
     [BitfinexAccountsEnum.MARGIN]: AlunaWalletEnum.MARGIN,
     [BitfinexAccountsEnum.DERIVATIVES]: AlunaWalletEnum.DERIVATIVES,
     [BitfinexAccountsEnum.FUNDING]: AlunaWalletEnum.FUNDING,
@@ -29,7 +29,7 @@ export const translateWalletToBitfinex = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaWalletEnum.EXCHANGE]: BitfinexAccountsEnum.EXCHANGE,
+    [AlunaWalletEnum.SPOT]: BitfinexAccountsEnum.EXCHANGE,
     [AlunaWalletEnum.MARGIN]: BitfinexAccountsEnum.MARGIN,
     [AlunaWalletEnum.DERIVATIVES]: BitfinexAccountsEnum.DERIVATIVES,
     [AlunaWalletEnum.FUNDING]: BitfinexAccountsEnum.FUNDING,
