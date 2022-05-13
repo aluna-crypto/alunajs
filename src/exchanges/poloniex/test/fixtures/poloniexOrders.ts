@@ -1,18 +1,36 @@
 import { PoloniexOrderTypeEnum } from '../../enums/PoloniexOrderTypeEnum'
-import { IPoloniexOrderSchema } from '../../schemas/IPoloniexOrderSchema'
+import {
+  IPoloniexOrderInfo,
+  IPoloniexOrderResponseSchema,
+  IPoloniexOrderSchema,
+} from '../../schemas/IPoloniexOrderSchema'
 
 
+
+export const POLONIEX_RAW_ORDER_INFO: IPoloniexOrderInfo[] = [
+  {
+    orderNumber: '3810998527',
+    type: PoloniexOrderTypeEnum.SELL,
+    rate: '500.00000000',
+    startingAmount: '0.00500000',
+    amount: '0.00500000',
+    total: '2.50000000',
+    date: '2022-02-21 13:48:46',
+    margin: 0,
+    clientOrderId: '1234',
+  },
+]
+
+export const POLONIEX_RAW_ORDERS_RESPONSE: IPoloniexOrderResponseSchema = {
+  BUSD_BNB: POLONIEX_RAW_ORDER_INFO,
+}
 
 // TODO: Review fixtures
 export const POLONIEX_RAW_ORDERS: IPoloniexOrderSchema[] = [
   {
-    id: '8bc1e59c-77fa-4554-bd11-966e360e4eb7',
-    symbol: 'BTC/USD',
-    type: PoloniexOrderTypeEnum.LIMIT,
-  },
-  {
-    id: '8bc1e59c-77fa-4554-bd11-966e360e4eb8',
-    symbol: 'ETH/USD',
-    type: PoloniexOrderTypeEnum.MARKET,
+    ...POLONIEX_RAW_ORDER_INFO[0],
+    currencyPair: 'BUSD_BNB',
+    baseCurrency: 'BUSD',
+    quoteCurrency: 'BNB',
   },
 ]
