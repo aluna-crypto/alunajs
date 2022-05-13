@@ -16,7 +16,7 @@ const log = debug('@alunajs:bitfinex/position/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaPositionParseManyParams<IBitfinexPositionSchema>,
+  params: IAlunaPositionParseManyParams<IBitfinexPositionSchema[]>,
 ): IAlunaPositionParseManyReturns => {
 
   const { rawPositions } = params
