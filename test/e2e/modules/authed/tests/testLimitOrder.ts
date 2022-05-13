@@ -45,10 +45,6 @@ export const testLimitOrder = (params: IAuthedParams) => {
 
       expect(rawOrders).to.exist
 
-      if (rawOrders.length) {
-        expect(rawOrders.length).to.be.greaterThan(0)
-      }
-
       expect(requestWeight.authed).to.be.greaterThan(0)
 
     })
