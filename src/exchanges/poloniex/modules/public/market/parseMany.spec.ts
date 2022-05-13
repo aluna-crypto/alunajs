@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Poloniex } from '../../../Poloniex'
-import { POLONIEX_RAW_MARKETS } from '../../../test/fixtures/poloniexMarket'
+import { POLONIEX_RAW_MARKETS_RESPONSE } from '../../../test/fixtures/poloniexMarket'
 import * as parseMod from './parse'
 
 
@@ -14,7 +14,7 @@ describe(__filename, () => {
   it('should parse many Poloniex raw markets just fine', async () => {
 
     // preparing data
-    const rawMarkets = POLONIEX_RAW_MARKETS
+    const rawMarkets = POLONIEX_RAW_MARKETS_RESPONSE
 
     // mocking
     const { parse } = mockParse({ module: parseMod })

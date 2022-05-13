@@ -1,12 +1,18 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import {
+  forOwn,
+  map,
+} from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { IPoloniexMarketSchema } from '../../../schemas/IPoloniexMarketSchema'
+import {
+  IPoloniexMarketResponseSchema,
+  IPoloniexMarketSchema,
+} from '../../../schemas/IPoloniexMarketSchema'
 
 
 
@@ -15,12 +21,28 @@ const log = debug('@alunajs:poloniex/market/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseManyParams<IPoloniexMarketSchema[]>,
+  params: IAlunaMarketParseManyParams<IPoloniexMarketResponseSchema>,
 ): IAlunaMarketParseManyReturns => {
 
-  const { rawMarkets } = params
+  const {
+    rawMarkets: rawMarketsResponse,
+  } = params
 
-  // TODO: Review implementation
+  const rawMarkets: IPoloniexMarketSchema[] = []
+
+  forOwn(rawMarketsResponse, (value, key) => {
+
+    const [quoteCurrency, baseCurrency] = key.split('_')
+
+    rawMarkets.push({
+      currencyPair: key,
+      quoteCurrency,
+      baseCurrency,
+      ...value,
+    })
+
+  })
+
   const markets = map(rawMarkets, (rawMarket) => {
 
     const { market } = exchange.market.parse({
