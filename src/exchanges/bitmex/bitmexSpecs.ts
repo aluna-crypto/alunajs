@@ -11,7 +11,6 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
 export const BITMEX_PRODUCTION_URL = 'https://www.bitmex.com/api/v1'
 export const BITMEX_TESTNET_URL = 'https://testnet.bitmex.com/api/v1'
 
@@ -42,7 +41,7 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -50,10 +49,10 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     },
   },
   {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
+    type: AlunaOrderTypesEnum.STOP_MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,
@@ -81,21 +80,20 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: true,
       orderTypes: bitmexExchangeOrderTypes,
     },
     {
-      type: AlunaAccountEnum.MARGIN,
+      type: AlunaAccountEnum.EXCHANGE,
       supported: false,
       implemented: false,
       orderTypes: [],
     },
     {
-      type: AlunaAccountEnum.DERIVATIVES,
+      type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
       orderTypes: [],
