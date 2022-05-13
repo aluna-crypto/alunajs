@@ -3,7 +3,6 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -12,9 +11,10 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToPoloniex } from '../../../enums/adapters/poloniexOrderSideAdapter'
+import { PoloniexOrderTimeInForceEnum } from '../../../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
-import { IPoloniexOrderSchema } from '../../../schemas/IPoloniexOrderSchema'
+import { IPoloniexOrderPlaceResponseSchema } from '../../../schemas/IPoloniexOrderSchema'
 
 
 
@@ -52,22 +52,27 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     http = new PoloniexHttp(settings),
   } = params
 
-  // TODO: Validate all body properties
-  const body = {
-    direction: translateOrderSideToPoloniex({ from: side }),
-    marketSymbol: symbolPair,
-    quantity: Number(amount),
-    rate,
-  }
-
   log('placing new order for Poloniex')
 
-  let placedOrder: IPoloniexOrderSchema
+  let placedOrder: IPoloniexOrderPlaceResponseSchema
 
   try {
 
-    // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IPoloniexOrderSchema>({
+    const translatedOrderType = translateOrderSideToPoloniex({
+      from: side,
+    })
+
+    const timestamp = new Date().getTime()
+    const body = new URLSearchParams()
+
+    body.append('command', translatedOrderType)
+    body.append('currencyPair', symbolPair)
+    body.append('amount', amount.toString())
+    body.append('rate', rate!.toString())
+    body.append(PoloniexOrderTimeInForceEnum.POST_ONLY, '1')
+    body.append('nonce', timestamp.toString())
+
+    const orderResponse = await http.authedRequest<IPoloniexOrderPlaceResponseSchema>({
       url: getPoloniexEndpoints(settings).order.place,
       body,
       credentials,
@@ -82,21 +87,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       message,
     } = err
 
-    const { metadata } = err
+    const isInsufficientBalanceError = err.message.includes('Not enough')
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (isInsufficientBalanceError) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
@@ -108,7 +105,12 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
+  const { orderNumber, currencyPair } = placedOrder
+
+  const { order } = await exchange.order.get({
+    id: orderNumber,
+    symbolPair: currencyPair,
+  })
 
   const { requestWeight } = http
 

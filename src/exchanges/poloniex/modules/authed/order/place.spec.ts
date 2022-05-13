@@ -1,8 +1,9 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockOrderGet } from '../../../../../../test/mocks/exchange/modules/order/mockOrderGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
@@ -15,11 +16,12 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToPoloniex } from '../../../enums/adapters/poloniexOrderSideAdapter'
+import { PoloniexOrderTimeInForceEnum } from '../../../enums/PoloniexOrderTimeInForceEnum'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
 import { POLONIEX_RAW_ORDERS } from '../../../test/fixtures/poloniexOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -37,28 +39,37 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
+
+    const translatedOrderType = translateOrderSideToPoloniex({
+      from: side,
+    })
+
+    const body = new URLSearchParams()
+
+    body.append('command', translatedOrderType)
+    body.append('currencyPair', '')
+    body.append('amount', '0.01')
+    body.append('rate', '0')
+    body.append(PoloniexOrderTimeInForceEnum.POST_ONLY, '1')
+    body.append('nonce', '123456')
+
     const type = AlunaOrderTypesEnum.LIMIT
 
-    const translatedOrderSide = translateOrderSideToPoloniex({ from: side })
-
-    const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      quantity: 0.01,
-      rate: 0,
-      // limit: 0,
-      // timeInForce: PoloniexOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
-    }
-
     // mocking
+    ImportMock.mockFunction(
+      Date.prototype,
+      'getTime',
+      123456,
+    )
+
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: PoloniexHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockOrderGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -99,71 +110,6 @@ describe(__filename, () => {
 
   })
 
-  it('should place a Poloniex market order just fine', async () => {
-
-    // preparing data
-
-    const mockedRawOrder = POLONIEX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
-
-    const side = AlunaOrderSideEnum.BUY
-    const type = AlunaOrderTypesEnum.MARKET
-
-    const translatedOrderSide = translateOrderSideToPoloniex({ from: side })
-
-    const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      quantity: 0.01,
-      rate: 0,
-      // timeInForce: PoloniexOrderTimeInForceEnum.FILL_OR_KILL,
-    }
-
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: PoloniexHttp.prototype })
-
-    const { parse } = mockParse({ module: parseMod })
-
-    parse.returns({ order: mockedParsedOrder })
-
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
-
-    mockValidateParams()
-
-    mockEnsureOrderIsSupported()
-
-
-    // executing
-    const exchange = new PoloniexAuthed({ credentials })
-
-    const { order } = await exchange.order.place({
-      symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    })
-
-
-    // validating
-    expect(order).to.deep.eq(mockedParsedOrder)
-
-    expect(authedRequest.callCount).to.be.eq(1)
-
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
-      credentials,
-      url: getPoloniexEndpoints(exchange.settings).order.place,
-    })
-
-    expect(publicRequest.callCount).to.be.eq(0)
-
-  })
-
   it(
     'should throw error for insufficient funds when placing new poloniex order',
     async () => {
@@ -179,7 +125,7 @@ describe(__filename, () => {
       const expectedCode = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       const alunaError = new AlunaError({
-        message: 'dummy-error',
+        message: 'Not enough',
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         httpStatusCode: 401,
         metadata: {
@@ -226,70 +172,7 @@ describe(__filename, () => {
     },
   )
 
-  it(
-    'should throw an error placing for minimum size placing new poloniex order',
-    async () => {
-
-      // preparing data
-      // const mockedRawOrder = POLONIEX_RAW_ORDERS[0]
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-
-      const expectedMessage = 'The trade was smaller than the min '
-        .concat('trade size quantity for the market')
-      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
-
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'MIN_TRADE_REQUIREMENT_NOT_MET',
-        },
-      })
-
-      // mocking
-      const {
-        publicRequest,
-        authedRequest,
-      } = mockHttp({ classPrototype: PoloniexHttp.prototype })
-
-      authedRequest.returns(Promise.reject(alunaError))
-
-      mockValidateParams()
-
-      mockEnsureOrderIsSupported()
-
-
-      // executing
-      const exchange = new PoloniexAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: '',
-        account: AlunaAccountEnum.EXCHANGE,
-        amount: 0.01,
-        side,
-        type,
-        rate: 0,
-      }))
-
-      // validating
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.code).to.be.eq(expectedCode)
-      expect(error?.message).to.be.eq(expectedMessage)
-
-      expect(authedRequest.callCount).to.be.eq(1)
-
-      expect(publicRequest.callCount).to.be.eq(0)
-
-    },
-  )
-
   it('should throw an error placing new poloniex order', async () => {
-
-    // preparing data
-    // const mockedRawOrder = POLONIEX_RAW_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
