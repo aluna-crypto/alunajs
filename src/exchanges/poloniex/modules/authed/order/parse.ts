@@ -1,11 +1,23 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
   IAlunaOrderParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { IPoloniexOrderSchema } from '../../../schemas/IPoloniexOrderSchema'
+import { translateOrderSideToAluna } from '../../../enums/adapters/poloniexOrderSideAdapter'
+import {
+  translateOrderStatusToAluna,
+  translatePoloniexOrderStatus,
+} from '../../../enums/adapters/poloniexOrderStatusAdapter'
+import { PoloniexOrderSideEnum } from '../../../enums/PoloniexOrderSideEnum'
+import {
+  IPoloniexOrderSchema,
+  IPoloniexOrderStatusInfo,
+} from '../../../schemas/IPoloniexOrderSchema'
 
 
 
@@ -14,14 +26,25 @@ import { IPoloniexOrderSchema } from '../../../schemas/IPoloniexOrderSchema'
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseParams<IPoloniexOrderSchema>,
+  params: IAlunaOrderParseParams<IPoloniexOrderSchema | IPoloniexOrderStatusInfo>,
 ): IAlunaOrderParseReturns => {
 
   // log('parse order', params)
 
   const { rawOrder } = params
 
-  const { baseCurrency, quoteCurrency } = rawOrder
+  const {
+    amount,
+    currencyPair,
+    date,
+    orderNumber,
+    rate,
+    total,
+    type,
+    startingAmount,
+  } = rawOrder
+
+  const [quoteCurrency, baseCurrency] = currencyPair.split('_')
 
   const baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseCurrency,
@@ -33,19 +56,59 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings: exchange.settings.symbolMappings,
   })
 
+  const translatedPoloniexStatus = translatePoloniexOrderStatus({
+    status: (rawOrder as IPoloniexOrderStatusInfo).status,
+    amount,
+    startingAmount,
+  })
+
+  // @TODO -> need to verify type property
+  const orderSide = translateOrderSideToAluna({
+    from: type as unknown as PoloniexOrderSideEnum,
+  })
+
+  const orderStatus = translateOrderStatusToAluna({
+    from: translatedPoloniexStatus,
+  })
+
+  const orderAmount = startingAmount
+    ? Number(startingAmount)
+    : Number(amount)
+
+  let canceledAt: Date | undefined
+
+  if (orderStatus === AlunaOrderStatusEnum.CANCELED) {
+
+    canceledAt = new Date()
+
+  }
+
+  let filledAt: Date | undefined
+
+  if (orderStatus === AlunaOrderStatusEnum.FILLED) {
+
+    filledAt = new Date()
+
+  }
+
   const order: IAlunaOrderSchema = {
-    id: rawOrder.orderNumber,
-    symbolPair: rawOrder.currencyPair,
+    id: orderNumber,
+    symbolPair: currencyPair,
     exchangeId: exchange.specs.id,
     baseSymbolId,
     quoteSymbolId,
-    // total: rawOrder.total,
-    // amount: rawOrder.amount,
-    // account: AlunaAccountEnum.MARGIN,
-    // status: rawOrder.status,
-    // side: rawOrder.side,
+    total: Number(total),
+    amount: orderAmount,
+    side: orderSide,
+    status: orderStatus,
+    rate: Number(rate),
+    account: AlunaAccountEnum.EXCHANGE,
+    placedAt: new Date(date),
+    type: AlunaOrderTypesEnum.LIMIT, // Poloniex only supports LIMIT orders
+    filledAt,
+    canceledAt,
     meta: rawOrder,
-  } as any // TODO: Remove casting to any
+  }
 
   return { order }
 
