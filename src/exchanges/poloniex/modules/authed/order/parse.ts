@@ -21,27 +21,21 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawOrder } = params
 
-  const { symbol } = rawOrder
+  const { baseCurrency, quoteCurrency } = rawOrder
 
-  let [
-    baseSymbolId,
-    quoteSymbolId,
-  ] = symbol.split('/')
-
-  baseSymbolId = translateSymbolId({
-    exchangeSymbolId: baseSymbolId,
+  const baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseCurrency,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  quoteSymbolId = translateSymbolId({
-    exchangeSymbolId: quoteSymbolId,
+  const quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteCurrency,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  // TODO: Implement proper parser
   const order: IAlunaOrderSchema = {
-    id: rawOrder.id,
-    symbolPair: rawOrder.id,
+    id: rawOrder.orderNumber,
+    symbolPair: rawOrder.currencyPair,
     exchangeId: exchange.specs.id,
     baseSymbolId,
     quoteSymbolId,
