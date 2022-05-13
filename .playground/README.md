@@ -9,7 +9,7 @@ Live API explorer:
 # TL;DR
 
 ```bash
-yarn playgropund
+yarn playground
 ```
 
 ## AlunaRC
@@ -26,7 +26,7 @@ Let's get started:.
 1. Download and install [Insomnia](https://insomnia.rest/)
 1. Install the [dotenv](https://insomnia.rest/plugins/insomnia-plugin-dotenv) plugin
 2. Then go to `Data` -> `Import Data` -> `From File`
-3. Import the file `<repo-root>/.playground/playground.json` file
+3. Import the file `<repo-root>/.playground/aluna-spec.json` file
 4. Voilà
 
 
@@ -35,7 +35,7 @@ Let's get started:.
 This will start the Playground http server:
 
 ```bash
-yarn playgropund
+yarn playground
 ```
 
 # Explore API
