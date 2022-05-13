@@ -2,7 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -30,21 +30,38 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   } = exchange
 
   const {
+    id,
+    symbolPair,
     http = new PoloniexHttp(settings),
   } = params
 
+  const timestamp = new Date().getTime()
+  const body = new URLSearchParams()
+
+  body.append('command', 'cancelOrder')
+  body.append('orderNumber', id)
+  body.append('nonce', timestamp.toString())
+
+  const {
+    order,
+  } = await exchange.order.get({
+    id,
+    symbolPair,
+    http,
+  })
+
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IPoloniexOrderSchema>({
-      verb: AlunaHttpVerbEnum.DELETE,
+    await http.authedRequest<IPoloniexOrderSchema>({
       url: getPoloniexEndpoints(settings).order.cancel,
       credentials,
+      body,
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
-
     const { requestWeight } = http
+
+    // Poloniex doesn't return canceled/closed orders
+    order.status = AlunaOrderStatusEnum.CANCELED
 
     return {
       order,

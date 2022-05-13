@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getPoloniexEndpoints(exchange.settings).order.cancel(id),
+      url: getPoloniexEndpoints(exchange.settings).order.cancel,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
