@@ -9,7 +9,7 @@ Live API explorer:
 # TL;DR
 
 ```bash
-yarn playgropund
+yarn playground
 ```
 
 ## AlunaRC
@@ -35,7 +35,7 @@ Let's get started:.
 This will start the Playground http server:
 
 ```bash
-yarn playgropund
+yarn playground
 ```
 
 # Explore API
