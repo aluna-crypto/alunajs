@@ -1,3 +1,4 @@
+import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
 import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 
 
@@ -22,4 +23,17 @@ export interface IPoloniexOrderSchema extends IPoloniexOrderInfo {
 
 export interface IPoloniexOrderResponseSchema {
   [key: string]: IPoloniexOrderInfo[]
+}
+
+export interface IPoloniexOrderPlaceResponseSchema {
+  orderNumber: string
+  resultingTrades: IPoloniexOrderInfo[]
+  fee: string
+  clientOrderId: string
+  currencyPair: string
+}
+
+export interface IPoloniexOrderStatusInfo extends IPoloniexOrderInfo {
+  status: PoloniexOrderStatusEnum
+  currencyPair: string
 }
