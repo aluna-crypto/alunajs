@@ -27,24 +27,21 @@ describe(__filename, () => {
   it('should close position just fine', async () => {
 
     // preparing data
-    const mockedPosition = cloneDeep(PARSED_POSITIONS[0])
-    mockedPosition.status = AlunaPositionStatusEnum.OPEN
-    const {
-      id,
-      symbolPair,
-    } = mockedPosition
+    const bitmexPosition = cloneDeep(PARSED_POSITIONS[0])
+    bitmexPosition.status = AlunaPositionStatusEnum.OPEN
+    const { symbolPair } = bitmexPosition
 
 
     // mocking
     const { get } = mockGet({ module: getMod })
-    get.returns(Promise.resolve({ position: mockedPosition }))
+    get.returns(Promise.resolve({ position: bitmexPosition }))
 
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedPosition))
+    authedRequest.returns(Promise.resolve(bitmexPosition))
 
     const mockedDate = new Date()
 
@@ -59,7 +56,6 @@ describe(__filename, () => {
     const exchange = new BitmexAuthed({ credentials })
 
     const params: IAlunaPositionCloseParams = {
-      id,
       symbolPair,
     }
 
@@ -75,7 +71,6 @@ describe(__filename, () => {
 
     expect(get.callCount).to.be.eq(1)
     expect(get.firstCall.args[0]).to.deep.eq({
-      id: params.id,
       symbolPair: params.symbolPair,
       http: new BitmexHttp(exchange.settings),
     })
@@ -83,8 +78,8 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: getBitmexEndpoints({}).position.get,
-      body: { id, symbolPair },
+      url: getBitmexEndpoints({}).position.close,
+      body: { execInst: 'Close', symbol: symbolPair },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -96,10 +91,7 @@ describe(__filename, () => {
     // preparing data
     const mockedPosition = cloneDeep(PARSED_POSITIONS[0])
     mockedPosition.status = AlunaPositionStatusEnum.CLOSED
-    const {
-      id,
-      symbolPair,
-    } = mockedPosition
+    const { symbolPair } = mockedPosition
 
 
     // mocking
@@ -118,7 +110,6 @@ describe(__filename, () => {
     const exchange = new BitmexAuthed({ credentials })
 
     const params: IAlunaPositionCloseParams = {
-      id,
       symbolPair,
     }
 
@@ -133,11 +124,10 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.ALREADY_CLOSED)
     expect(error!.message).to.be.eq('Position is already closed')
-    expect(error!.httpStatusCode).to.be.eq(200)
+    expect(error!.httpStatusCode).to.be.eq(400)
 
     expect(get.callCount).to.be.eq(1)
     expect(get.firstCall.args[0]).to.deep.eq({
-      id: params.id,
       symbolPair: params.symbolPair,
       http: new BitmexHttp(exchange.settings),
     })
