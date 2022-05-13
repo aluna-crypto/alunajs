@@ -1,4 +1,6 @@
 export enum PoloniexOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  OPEN = 'Open',
+  PARTIALLY_FILLED = 'Partially filled',
+  FILLED = 'Filled',
+  CANCELED = 'Canceled'
 }

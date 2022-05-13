@@ -1,4 +1,4 @@
 export enum PoloniexOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }

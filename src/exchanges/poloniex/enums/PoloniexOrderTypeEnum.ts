@@ -1,6 +1,4 @@
 export enum PoloniexOrderTypeEnum {
-  LIMIT = 'LIMIT',
-  MARKET = 'MARKET',
-  CEILING_LIMIT = 'CEILING_LIMIT',
-  CEILING_MARKET = 'CEILING_MARKET'
+  BUY = 'buy',
+  SELL = 'sell'
 }

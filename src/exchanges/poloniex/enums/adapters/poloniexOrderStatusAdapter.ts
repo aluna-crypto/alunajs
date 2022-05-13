@@ -6,43 +6,50 @@ import { PoloniexOrderStatusEnum } from '../PoloniexOrderStatusEnum'
 
 const errorMessagePrefix = 'Order status'
 
-export const translateOrderStatusToAluna = (
-  params: {
-      fillQuantity: string
-      quantity: string
-      from: PoloniexOrderStatusEnum
-    },
-): AlunaOrderStatusEnum => {
+export const translateOrderStatusToAluna = buildAdapter<
+PoloniexOrderStatusEnum,
+AlunaOrderStatusEnum
+>({
+  errorMessagePrefix,
+  mappings: {
+    [PoloniexOrderStatusEnum.OPEN]: AlunaOrderStatusEnum.OPEN,
+    [PoloniexOrderStatusEnum.PARTIALLY_FILLED]:
+      AlunaOrderStatusEnum.PARTIALLY_FILLED,
+    [PoloniexOrderStatusEnum.FILLED]:
+      AlunaOrderStatusEnum.FILLED,
+    [PoloniexOrderStatusEnum.CANCELED]:
+      AlunaOrderStatusEnum.CANCELED,
+  },
+})
 
-  const { fillQuantity, quantity, from } = params
+export const translatePoloniexOrderStatus = (params: {
+  status?: PoloniexOrderStatusEnum
+  startingAmount: string
+  amount: string
+}): PoloniexOrderStatusEnum => {
 
-  const isOpen = from === PoloniexOrderStatusEnum.OPEN
+  const {
+    startingAmount, amount, status,
+  } = params
 
-  if (isOpen) {
+  if (status) {
 
-    return AlunaOrderStatusEnum.OPEN
+    return status
 
   }
 
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
+  const isPartiallyFilled = parseFloat(startingAmount)
+      !== parseFloat(amount)
 
-  if (parsedQty === parsedFillQty) {
+  if (isPartiallyFilled) {
 
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
-
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
+    return PoloniexOrderStatusEnum.PARTIALLY_FILLED
 
   }
 
-  return AlunaOrderStatusEnum.CANCELED
+  return PoloniexOrderStatusEnum.OPEN
 
 }
-
 
 
 export const translateOrderStatusToPoloniex = buildAdapter<
@@ -52,8 +59,11 @@ export const translateOrderStatusToPoloniex = buildAdapter<
   errorMessagePrefix,
   mappings: {
     [AlunaOrderStatusEnum.OPEN]: PoloniexOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: PoloniexOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: PoloniexOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: PoloniexOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
+      PoloniexOrderStatusEnum.PARTIALLY_FILLED,
+    [AlunaOrderStatusEnum.CANCELED]:
+      PoloniexOrderStatusEnum.CANCELED,
+    [AlunaOrderStatusEnum.FILLED]:
+      PoloniexOrderStatusEnum.FILLED,
   },
 })
