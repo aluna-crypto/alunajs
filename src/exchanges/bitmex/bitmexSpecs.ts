@@ -166,6 +166,7 @@ export const getBitmexEndpoints = (
       list: `${baseUrl}/position`,
       get: `${baseUrl}/position`,
       close: `${baseUrl}/order`,
+      getLeverage: `${baseUrl}/<desired-method>`,
       setLeverage: `${baseUrl}/position/leverage`,
     },
   }
