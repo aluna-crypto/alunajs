@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
@@ -18,13 +17,8 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const accountId = 'accountId'
-
     const rawKey: IPoloniexKeySchema = {
-      accountId,
       read: false,
-      trade: false,
-      withdraw: false,
     }
 
 
@@ -35,7 +29,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
+    expect(permissions).to.deep.eq(rawKey)
 
   })
 
