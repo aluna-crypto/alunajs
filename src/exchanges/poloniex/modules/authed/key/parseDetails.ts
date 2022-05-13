@@ -22,12 +22,10 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawKey } = params
 
-  const { accountId } = rawKey
-
   const { permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
-    accountId,
+    accountId: undefined, // Poloniex doesn't give accountId
     permissions,
     meta: rawKey,
   }
