@@ -79,6 +79,40 @@ describe(__filename, () => {
 
   })
 
+  it('should return Poloniex key invalid error when applicable', async () => {
+
+    const { isPoloniexKeyInvalidMock } = mockDeps({ isInvalid: true })
+
+    const dummyError = 'Key is invalid'
+
+    const axiosError1 = {
+      isAxiosError: true,
+      response: {
+        status: 400,
+        data: {
+          result: {
+            error: dummyError,
+          },
+        },
+      },
+    } as AxiosError
+
+    const alunaError = handlePoloniexRequestError({ error: axiosError1 })
+
+    expect(isPoloniexKeyInvalidMock.callCount).to.be.eq(1)
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: dummyError,
+      httpStatusCode: axiosError1.response?.status,
+      metadata: axiosError1.response?.data,
+    })
+
+    expect(isPoloniexKeyInvalidMock.callCount).to.be.eq(1)
+    expect(isPoloniexKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
+
+  })
+
   it('should ensure Poloniex request error is being handle', async () => {
 
     const dummyError = 'dummy-error'
