@@ -7,7 +7,7 @@ import {
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
-import { IPoloniexSymbolSchema } from '../../../schemas/IPoloniexSymbolSchema'
+import { IPoloniexSymbolResponseSchema } from '../../../schemas/IPoloniexSymbolSchema'
 
 
 
@@ -17,7 +17,7 @@ const log = debug('@alunajs:poloniex/symbol/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaSymbolListParams = {},
-): Promise<IAlunaSymbolListRawReturns<IPoloniexSymbolSchema[]>> => {
+): Promise<IAlunaSymbolListRawReturns<IPoloniexSymbolResponseSchema>> => {
 
   log('fetching Poloniex raw symbols')
 
@@ -25,16 +25,19 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new PoloniexHttp(settings) } = params
 
-  // TODO: Implement proper request
-  const rawSymbols = await http.publicRequest<IPoloniexSymbolSchema[]>({
-    url: getPoloniexEndpoints(settings).symbol.list(''),
+  const query = new URLSearchParams()
+
+  query.append('command', 'returnCurrencies')
+
+  const rawSymbols = await http.publicRequest<IPoloniexSymbolResponseSchema>({
+    url: getPoloniexEndpoints(settings).symbol.list(query.toString()),
   })
 
   const { requestWeight } = http
 
   return {
-    requestWeight,
     rawSymbols,
+    requestWeight,
   }
 
 }
