@@ -9,6 +9,7 @@ import {
   IAlunaOrderCancelReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { IValrOrderGetResponseSchema } from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
 import { getValrEndpoints } from '../../../valrSpecs'
 
@@ -55,14 +56,15 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       http,
     })
 
+    const { order: valrOrder } = rawOrder as IValrOrderGetResponseSchema
 
-    if (rawOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
+    if (valrOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 
       const error = new AlunaError({
         httpStatusCode: 500,
         message: 'Something went wrong, order not canceled',
         code: AlunaOrderErrorCodes.CANCEL_FAILED,
-        metadata: rawOrder,
+        metadata: valrOrder,
       })
 
       throw error
