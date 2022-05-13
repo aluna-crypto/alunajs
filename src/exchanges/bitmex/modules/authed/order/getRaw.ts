@@ -35,7 +35,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     http = new BitmexHttp(settings),
   } = params
 
-  const bitmexOrder = await http.authedRequest<IBitmexOrder>({
+  const [bitmexOrder] = await http.authedRequest<IBitmexOrder[]>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
     url: getBitmexEndpoints(settings).order.get,

@@ -37,7 +37,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BitmexHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(bitmexOrder))
+    authedRequest.returns(Promise.resolve([bitmexOrder]))
 
     const { get } = mockGet({ module: getMod })
     get.returns({ market })
