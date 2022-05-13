@@ -6,7 +6,7 @@ import {
   IAlunaPositionGetLeverageReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { BitmexHttp } from '../../../BitmexHttp'
-import { getBitmexEndpoints } from '../../../bitmexSpecs'
+import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
 
 
 
@@ -18,25 +18,30 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaPositionGetLeverageParams,
 ): Promise<IAlunaPositionGetLeverageReturns> => {
 
-  const {
-    settings,
-    credentials,
-  } = exchange
+  const { settings } = exchange
 
   const {
-    id,
     symbolPair,
     http = new BitmexHttp(settings),
   } = params
 
-  log('getting leverage', { id, symbolPair })
+  log('getting leverage', { symbolPair })
 
-  // TODO: Implement proper getter
-  const leverage = await http.authedRequest<number>({
-    credentials,
-    url: getBitmexEndpoints(settings).position.getLeverage,
-    body: { id, symbolPair },
+  const { rawPosition } = await exchange.position!.getRaw({
+    http,
+    symbolPair,
   })
+
+  const { bitmexPosition } = rawPosition as IBitmexPositionSchema
+
+  const {
+    leverage: positionLeverage,
+    crossMargin,
+  } = bitmexPosition
+
+  const leverage = crossMargin
+    ? 0
+    : positionLeverage
 
   const { requestWeight } = http
 
