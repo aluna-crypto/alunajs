@@ -1,7 +1,7 @@
 import { expect } from 'chai'
+import { ImportMock } from 'ts-mock-imports'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
 import { PoloniexHttp } from '../../../PoloniexHttp'
@@ -31,6 +31,12 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.resolve(mockedBalances))
 
+    ImportMock.mockFunction(
+      Date.prototype,
+      'getTime',
+      123456,
+    )
+
 
     // executing
     const exchange = new PoloniexAuthed({ credentials })
@@ -44,9 +50,9 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
       url: getPoloniexEndpoints(exchange.settings).balance.list,
       credentials,
+      body: 'command=returnCompleteBalances&nonce=123456',
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

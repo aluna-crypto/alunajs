@@ -1,7 +1,6 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaBalanceListParams,
   IAlunaBalanceListRawReturns,
@@ -29,11 +28,16 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new PoloniexHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
+  const timestamp = new Date().getTime()
+  const searchParams = new URLSearchParams()
+
+  searchParams.append('command', 'returnCompleteBalances')
+  searchParams.append('nonce', timestamp.toString())
+
   const rawBalances = await http.authedRequest<IPoloniexBalanceSchema[]>({
-    verb: AlunaHttpVerbEnum.GET,
     url: getPoloniexEndpoints(settings).balance.list,
     credentials,
+    body: searchParams,
   })
 
   const { requestWeight } = http
