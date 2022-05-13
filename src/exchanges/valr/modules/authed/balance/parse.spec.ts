@@ -1,11 +1,11 @@
 import { expect } from 'chai'
 
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
+import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
-import { ValrAuthed } from '../../../ValrAuthed'
 import { VALR_RAW_BALANCES } from '../../../test/fixtures/valrBalances'
-import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
-import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
+import { ValrAuthed } from '../../../ValrAuthed'
 
 
 

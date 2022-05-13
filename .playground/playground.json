@@ -1,7 +1,7 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-11T12:18:48.421Z",
+    "__export_date": "2022-05-12T01:08:06.132Z",
     "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
@@ -149,7 +149,7 @@
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652147730806,
+            "modified": 1652316606203,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -217,7 +217,7 @@
         {
             "_id": "req_c284cfcbcce94ecf865cfb5da8ea9e9f",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652271480791,
+            "modified": 1652315175668,
             "created": 1651252547687,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -249,7 +249,7 @@
         {
             "_id": "req_2d1b222f29d147369089c3008f5b1ec8",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652147731811,
+            "modified": 1652315187132,
             "created": 1651252550996,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -313,7 +313,7 @@
         {
             "_id": "req_069acff72d9d4c0bb863897b2ffa4549",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1652147734423,
+            "modified": 1652315191065,
             "created": 1651252596523,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -453,7 +453,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1652147727468,
+            "modified": 1652315210566,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "fetchDetails",
@@ -509,7 +509,7 @@
         {
             "_id": "req_e147340c7ecd4eb785265d1b060ff2a6",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652147726659,
+            "modified": 1652315223460,
             "created": 1652142980199,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getTradableBalance",
@@ -553,7 +553,7 @@
         {
             "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652147726260,
+            "modified": 1652315224393,
             "created": 1651516666747,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -585,7 +585,7 @@
         {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652147725674,
+            "modified": 1652315228824,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -617,7 +617,7 @@
         {
             "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147725135,
+            "modified": 1652315325535,
             "created": 1651505373653,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -725,7 +725,7 @@
         {
             "_id": "req_4944714ffe964c12a008929b3214f0c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147723875,
+            "modified": 1652315342012,
             "created": 1651519053540,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652147723382,
+            "modified": 1652316870884,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -1132,7 +1132,7 @@
         {
             "_id": "env_3d45543920134e1fb6c24379f15ccd13",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652271428192,
+            "modified": 1652315358231,
             "created": 1651252130131,
             "name": "Bittrex",
             "data": {
@@ -1240,19 +1240,27 @@
         {
             "_id": "env_5aa9c059ec04471882d40db1ad92f012",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1651253660862,
+            "modified": 1652316870390,
             "created": 1651252813639,
             "name": "Binance",
             "data": {
                 "EXCHANGE_ID": "binance",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'BINANCE_API_KEY' %}",
-                "SECRET": "{% dotenv _.ALUNAJS_RC, 'BINANCE_API_SECRET' %}"
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'BINANCE_API_SECRET' %}",
+                "ORDER_RATE": 0.02,
+                "ORDER_AMOUNT": 550,
+                "ORDER_EDITED_AMOUNT": 550.01,
+                "ORDER_SYMBOL_PAIR": "DOGEBUSD"
             },
             "dataPropertyOrder": {
                 "&": [
                     "EXCHANGE_ID",
                     "KEY",
-                    "SECRET"
+                    "SECRET",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT",
+                    "ORDER_SYMBOL_PAIR"
                 ]
             },
             "color": "#f0b90b",
