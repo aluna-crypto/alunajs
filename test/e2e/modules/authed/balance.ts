@@ -38,7 +38,6 @@ export function balance(params: IAuthedParams) {
     })
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -51,10 +50,13 @@ export function balance(params: IAuthedParams) {
 
     expect(rawBalances).to.exist
 
-    expect(rawBalances.length).to.be.greaterThan(0)
+    if (rawBalances.length) {
+
+      expect(rawBalances.length).to.be.greaterThan(0)
+
+    }
 
     expect(requestWeight.authed).to.be.greaterThan(0)
-    expect(requestWeight.public).to.be.eq(0)
 
   })
 
@@ -82,7 +84,6 @@ export function balance(params: IAuthedParams) {
       expect(tradableBalance).to.exist
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
