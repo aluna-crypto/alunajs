@@ -1,4 +1,5 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
 import {
   IAlunaHttp,
@@ -112,11 +113,8 @@ export class PoloniexHttp implements IAlunaHttp {
     const settings = (params.settings || this.settings)
 
     const signedHash = generateAuthHeader({
-      verb,
-      path: new URL(url).pathname,
       credentials,
       body,
-      url,
     })
 
     const { proxySettings } = settings
@@ -125,7 +123,7 @@ export class PoloniexHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings,
     })
 
@@ -149,44 +147,41 @@ export class PoloniexHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
-  verb: AlunaHttpVerbEnum
-  path: string
   credentials: IAlunaCredentialsSchema
-  url: string
   body?: any
 }
-
-// TODO: Review interface properties
 export interface IPoloniexSignedHeaders {
-  'Api-Timestamp': number
+  'Key': string
+  'Sign': string
+  'Content-Type': string
 }
 
 
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IPoloniexSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    body,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    key,
+    secret,
+  } = credentials
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
-
-  const timestamp = Date.now()
+  const signedHeader = crypto
+    .createHmac('sha512', secret)
+    .update(body ? body.toString() : '')
+    .digest('hex')
 
   return {
-    'Api-Timestamp': timestamp,
+    Key: key,
+    Sign: signedHeader,
+    'Content-Type': 'application/x-www-form-urlencoded',
   }
 
 }

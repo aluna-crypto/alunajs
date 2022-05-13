@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
@@ -20,22 +22,22 @@ import * as PoloniexHttpMod from './PoloniexHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { PoloniexHttp } = PoloniexHttpMod
 
   const url = 'https://poloniex.com/api/path'
   const response = 'response'
-  const body = {
-    data: 'some-data',
-  }
+  const body = new URLSearchParams('some=data')
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
     secret: 'key',
     passphrase: 'key',
   }
   const signedHeader = {
-    'Api-Key': 'apikey',
+    Key: credentials.key,
+    Sign: '123456',
+    'Content-Type': 'application/x-www-form-urlencoded',
   }
   const proxySettings: IAlunaProxySchema = {
     host: 'host',
@@ -210,11 +212,8 @@ describe.skip(__filename, () => {
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
-      url,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(0)
@@ -440,30 +439,69 @@ describe.skip(__filename, () => {
   it('should generate signed auth header just fine', async () => {
 
     // preparing data
-    const path = 'path'
-    const verb = 'verb' as AlunaHttpVerbEnum
-
-    const currentDate = Date.now()
 
     // mocking
-    const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
-      currentDate,
-    )
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
 
     // executing
     const signedHash = PoloniexHttpMod.generateAuthHeader({
       credentials,
-      path,
-      verb,
       body,
-      url,
     })
 
     // validating
-    expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(
+      createHmacSpy.calledWith('sha512', credentials.secret),
+    ).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(
+      updateSpy.calledWith(body.toString()),
+    ).to.be.ok
+
+    expect(signedHash.Key).to.be.eq(credentials.key)
+    expect(signedHash.Sign).to.be.eq(digestHmacSpy.returnValues[0])
+    expect(signedHash['Content-Type']).to.be.eq('application/x-www-form-urlencoded')
+
+  })
+
+  it('should generate signed auth header just fine w/o body', async () => {
+
+    // preparing data
+
+    // mocking
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestHmacSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    // executing
+    const signedHash = PoloniexHttpMod.generateAuthHeader({
+      credentials,
+    })
+
+    // validating
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(
+      createHmacSpy.calledWith('sha512', credentials.secret),
+    ).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(
+      updateSpy.calledWith(''),
+    ).to.be.ok
+
+    expect(signedHash.Key).to.be.eq(credentials.key)
+    expect(signedHash.Sign).to.be.eq(digestHmacSpy.returnValues[0])
+    expect(signedHash['Content-Type']).to.be.eq('application/x-www-form-urlencoded')
 
   })
 
