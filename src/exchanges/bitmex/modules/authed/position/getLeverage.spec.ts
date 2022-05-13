@@ -6,9 +6,11 @@ import {
 
 import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import { IAlunaPositionGetLeverageParams } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { BITMEX_RAW_POSITIONS } from '../../../test/fixtures/bitmexPositions'
@@ -116,5 +118,52 @@ describe(__filename, () => {
 
     },
   )
+
+  it('should throw error if getRaw throws somehow', async () => {
+
+    // preparing data
+    const bitmexPosition = BITMEX_RAW_POSITIONS[0]
+
+
+    // preparing data
+    const alunaError = new AlunaError({
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: 'unknown',
+      httpStatusCode: 500,
+    })
+
+
+    // mocking
+    const { getRaw } = mockGetRaw({ module: getRawMod })
+    getRaw.returns(Promise.reject(alunaError))
+
+
+    // executing
+    const exchange = new BitmexAuthed({
+      credentials,
+    })
+
+    const params: IAlunaPositionGetLeverageParams = {
+      symbolPair: bitmexPosition.symbol,
+    }
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => exchange.position!.getLeverage!(params))
+
+
+    // validating
+    expect(result).not.to.be.ok
+
+    expect(error).to.deep.eq(alunaError)
+
+    expect(getRaw.callCount).to.be.eq(1)
+    expect(getRaw.firstCall.args[0]).to.deep.eq({
+      http: new BitmexHttp({}),
+      symbolPair: bitmexPosition.symbol,
+    })
+
+  })
 
 })
