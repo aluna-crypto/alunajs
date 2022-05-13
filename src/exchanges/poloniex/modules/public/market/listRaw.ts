@@ -7,7 +7,7 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
-import { IPoloniexMarketSchema } from '../../../schemas/IPoloniexMarketSchema'
+import { IPoloniexMarketResponseSchema } from '../../../schemas/IPoloniexMarketSchema'
 
 
 
@@ -17,17 +17,20 @@ const log = debug('@alunajs:poloniex/market/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IPoloniexMarketSchema[]>> => {
+): Promise<IAlunaMarketListRawReturns<IPoloniexMarketResponseSchema>> => {
 
   const { settings } = exchange
 
   const { http = new PoloniexHttp(settings) } = params
 
+  const query = new URLSearchParams()
+
+  query.append('command', 'returnTicker')
+
   log('fetching Poloniex markets')
 
-  // TODO: Implement proper request
-  const rawMarkets = await http.publicRequest<IPoloniexMarketSchema[]>({
-    url: getPoloniexEndpoints(settings).market.list(''),
+  const rawMarkets = await http.publicRequest<IPoloniexMarketResponseSchema>({
+    url: getPoloniexEndpoints(settings).market.list(query.toString()),
   })
 
   const { requestWeight } = http
