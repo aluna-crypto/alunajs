@@ -29,31 +29,31 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
   } = exchange
 
   const {
-    id,
     symbolPair,
     http = new BitmexHttp(settings),
   } = params
 
-  log('closing position', { id, symbolPair })
+  log('closing position', { symbolPair })
 
-  const { position } = await exchange.position!.get({ id, symbolPair, http })
+  const { position } = await exchange.position!.get({
+    symbolPair,
+    http,
+  })
 
   if (position.status === AlunaPositionStatusEnum.CLOSED) {
 
     throw new AlunaError({
       code: AlunaPositionErrorCodes.ALREADY_CLOSED,
       message: 'Position is already closed',
-      httpStatusCode: 200,
       metadata: position,
     })
 
   }
 
-  // TODO: Properly close position
   await http.authedRequest<IBitmexPositionSchema>({
     credentials,
     url: getBitmexEndpoints(settings).position.close,
-    body: { id, symbolPair },
+    body: { execInst: 'Close', symbol: symbolPair },
   })
 
   const closedPosition: IAlunaPositionSchema = {
