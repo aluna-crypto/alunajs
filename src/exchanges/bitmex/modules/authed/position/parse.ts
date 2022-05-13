@@ -1,15 +1,19 @@
+import BigNumber from 'bignumber.js'
+
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaPositionStatusEnum } from '../../../../../lib/enums/AlunaPositionStatusEnum'
 import {
   IAlunaPositionParseParams,
   IAlunaPositionParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
-import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { translatePositionSideToAluna } from '../../../enums/adapters/bitmexPositionSideAdapter'
+import { BitmexSettlementCurrencyEnum } from '../../../enums/BitmexSettlementCurrencyEnum'
 import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
-
-
-
-// const log = debug('@alunajs:bitmex/position/parse')
+import { computeOrderAmount } from '../order/helpers/computeOrderAmount'
+import { computeOrderTotal } from '../order/helpers/computeOrderTotal'
+import { assembleUIPositionCustomDisplay } from './helpers/assembleUIPositionCustomDisplay'
 
 
 
@@ -19,47 +23,117 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawPosition } = params
 
-  const { symbolPair } = rawPosition
+  const {
+    market,
+    bitmexPosition,
+  } = rawPosition
 
-  let [
+  const {
     baseSymbolId,
     quoteSymbolId,
-  ] = symbolPair.split('/')
+  } = market
+
+  const instrument = market.instrument!
+
+  const { totalSymbolId } = instrument
+
+  const {
+    currentQty,
+    avgCostPrice,
+    avgEntryPrice,
+    homeNotional,
+    liquidationPrice,
+    unrealisedPnl,
+    unrealisedRoePcnt,
+    symbol,
+    leverage,
+    crossMargin,
+    openingTimestamp,
+    prevClosePrice,
+    isOpen,
+  } = bitmexPosition
 
 
-  baseSymbolId = translateSymbolId({
-    exchangeSymbolId: baseSymbolId,
-    symbolMappings: exchange.settings.symbolMappings,
+  const openedAt = new Date(openingTimestamp)
+
+  let status: AlunaPositionStatusEnum
+  let closedAt: Date | undefined
+  let closePrice: number | undefined
+
+  if (isOpen) {
+
+    status = AlunaPositionStatusEnum.OPEN
+
+  } else {
+
+    closedAt = new Date()
+
+    status = AlunaPositionStatusEnum.CLOSED
+
+    closePrice = prevClosePrice
+
+  }
+
+  const basePrice = avgCostPrice
+  const openPrice = avgEntryPrice
+
+  const bigNumber = new BigNumber(unrealisedPnl)
+  const pl = totalSymbolId === BitmexSettlementCurrencyEnum.BTC
+    ? bigNumber.times(10 ** -8).toNumber()
+    : bigNumber.times(10 ** -6).toNumber()
+
+  const side = translatePositionSideToAluna({
+    homeNotional,
   })
 
-  quoteSymbolId = translateSymbolId({
-    exchangeSymbolId: quoteSymbolId,
-    symbolMappings: exchange.settings.symbolMappings,
+  const computeLeverage = crossMargin
+    ? undefined
+    : leverage
+
+  const { amount } = computeOrderAmount({
+    computedPrice: avgCostPrice,
+    instrument,
+    orderQty: Math.abs(currentQty),
   })
 
-  // TODO: Implement proper parser
+  const { total } = computeOrderTotal({
+    computedPrice: avgCostPrice,
+    instrument,
+    orderQty: Math.abs(currentQty),
+    computedAmount: amount,
+  })
+
+  const { uiCustomDisplay } = assembleUIPositionCustomDisplay({
+    amount,
+    total,
+    instrument,
+    pl,
+    bitmexPosition,
+  })
+
   const position: IAlunaPositionSchema = {
-    // id: rawPosition.id,
-    symbolPair: rawPosition.symbolPair,
-    // exchangeId: exchange.specs.id,
+    exchangeId: exchange.id,
+    symbolPair: symbol,
     baseSymbolId,
     quoteSymbolId,
-    // total: rawPosition.total,
-    // amount: rawPosition.amount,
-    // account: AlunaAccountEnum.MARGIN,
-    // status: rawPosition.status,
-    // side: rawPosition.side,
-    // basePrice: rawPosition.basePrice,
-    // openPrice: rawPosition.openPrice,
-    // pl: rawPosition.pl,
-    // plPercentage: rawPosition.plPercentage,
-    // leverage: rawPosition.leverage,
-    // liquidationPrice: rawPosition.liquidationPrice,
-    // openedAt: rawPosition.openedAt,
-    // closedAt: rawPosition.closedAt,
-    // closePrice: rawPosition.closePrice,
-    // meta: rawPosition,
-  } as any // TODO: Remove casting to any
+    total,
+    amount,
+    basePrice,
+    openPrice,
+    closePrice,
+    liquidationPrice,
+    account: AlunaAccountEnum.DERIVATIVES,
+    side,
+    status,
+    pl,
+    plPercentage: unrealisedRoePcnt,
+    leverage: computeLeverage,
+    crossMargin: !!crossMargin,
+    openedAt,
+    closedAt,
+    uiCustomDisplay,
+    meta: rawPosition,
+  }
 
   return { position }
 
