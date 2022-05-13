@@ -22,7 +22,7 @@ describe(__filename, () => {
     // preparing data
     const mockedRawOrder = POLONIEX_RAW_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderNumber: id } = mockedRawOrder
 
 
     // mocking

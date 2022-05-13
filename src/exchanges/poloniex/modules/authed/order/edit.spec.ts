@@ -33,7 +33,7 @@ describe(__filename, () => {
     const mockedRawOrder = POLONIEX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { orderNumber: id } = mockedRawOrder
 
 
     // mocking
