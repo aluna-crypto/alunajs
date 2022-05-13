@@ -30,7 +30,7 @@ describe(__filename, () => {
   const params: IAlunaBalanceGetTradableBalanceParams = {
     rate: 50,
     side: AlunaOrderSideEnum.BUY,
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     symbolPair: 'tBTCETH',
   }
 

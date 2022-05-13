@@ -24,7 +24,7 @@ const questions = [
     message: 'Select trading options:"',
     name: 'tradingFeatures',
     choices: [
-      { name: 'Exchange', value: AlunaAccountEnum.EXCHANGE },
+      { name: 'Exchange', value: AlunaAccountEnum.SPOT },
       { name: 'Margin', value: AlunaAccountEnum.MARGIN },
       { name: 'Derivatives', value: AlunaAccountEnum.DERIVATIVES },
     ],

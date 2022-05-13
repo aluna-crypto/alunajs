@@ -87,7 +87,7 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
       orderTypes: bitmexExchangeOrderTypes,
     },
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: false,
       implemented: false,
       orderTypes: [],

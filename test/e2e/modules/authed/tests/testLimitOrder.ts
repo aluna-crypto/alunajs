@@ -129,7 +129,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.edit({
         id: limitOrderId!,
         symbolPair: orderSymbolPair!,
-        account: orderAccount || AlunaAccountEnum.EXCHANGE,
+        account: orderAccount || AlunaAccountEnum.SPOT,
         rate: orderRate,
         amount: orderEditAmount,
         side: AlunaOrderSideEnum.BUY,

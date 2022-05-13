@@ -1,18 +1,24 @@
 import { expect } from 'chai'
+import {
+  cloneDeep,
+  filter,
+} from 'lodash'
 
-import { cloneDeep, filter } from 'lodash'
-import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { ValrAuthed } from '../../../ValrAuthed'
-import { VALR_RAW_GET_ORDERS, VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
-import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
-import { valrBaseSpecs } from '../../../valrSpecs'
-import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
-import { translateOrderSideToAluna } from '../../../enums/adapters/valrOrderSideAdapter'
-import { translateOrderTypeToAluna } from '../../../enums/adapters/valrOrderTypeAdapter'
-import { translateOrderStatusToAluna } from '../../../enums/adapters/valrOrderStatusAdapter'
+import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
+import { translateOrderSideToAluna } from '../../../enums/adapters/valrOrderSideAdapter'
+import { translateOrderStatusToAluna } from '../../../enums/adapters/valrOrderStatusAdapter'
+import { translateOrderTypeToAluna } from '../../../enums/adapters/valrOrderTypeAdapter'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
+import {
+  VALR_RAW_GET_ORDERS,
+  VALR_RAW_ORDERS,
+} from '../../../test/fixtures/valrOrders'
+import { ValrAuthed } from '../../../ValrAuthed'
+import { valrBaseSpecs } from '../../../valrSpecs'
 
 
 
@@ -68,7 +74,7 @@ describe(__filename, () => {
       amount,
       limitRate: Number(price),
       stopRate: Number(stopPrice),
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       side: translateOrderSideToAluna({ from: side }),
       status: alnOrderStatus,
       type: alnOrderType,
@@ -143,7 +149,7 @@ describe(__filename, () => {
       amount,
       limitRate: Number(originalPrice),
       stopRate: Number(stopPrice),
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       side: alnOrderSide,
       status: alnOrderStatus,
       type: alnOrderType,
@@ -222,7 +228,7 @@ describe(__filename, () => {
       amount,
       limitRate: undefined,
       stopRate: undefined,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       side: alnOrderSide,
       status: alnOrderStatus,
       type: alnOrderType,

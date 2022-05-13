@@ -80,7 +80,7 @@ describe(__filename, () => {
 
     const params: IAlunaOrderPlaceParams = {
       symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: Number(quantity),
       side,
       type,
@@ -152,7 +152,7 @@ describe(__filename, () => {
 
     const { order } = await exchange.order.place({
       symbolPair: '',
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: Number(quantity),
       side,
       type,
@@ -231,7 +231,7 @@ describe(__filename, () => {
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
         amount: Number(quantity),
         side,
         type,
@@ -307,7 +307,7 @@ describe(__filename, () => {
 
       const { error } = await executeAndCatch(() => exchange.order.place({
         symbolPair: '',
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
         amount: Number(quantity),
         side,
         type,

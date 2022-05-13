@@ -50,7 +50,7 @@ export const gateBaseSpecs: IAlunaExchangeSchema = {
   accounts: [
     // TODO: Review supported/implemented accounts
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: gateExchangeOrderTypes,

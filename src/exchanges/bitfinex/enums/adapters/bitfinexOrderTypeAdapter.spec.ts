@@ -100,7 +100,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.LIMIT,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_LIMIT)
 
     expect(translateOrderTypeToBitfinex({
@@ -110,7 +110,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_MARKET)
 
     expect(translateOrderTypeToBitfinex({
@@ -120,7 +120,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.STOP_MARKET,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_STOP)
 
     expect(translateOrderTypeToBitfinex({
@@ -130,7 +130,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.STOP_LIMIT,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_STOP_LIMIT)
 
     expect(translateOrderTypeToBitfinex({
@@ -140,7 +140,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.FILL_OF_KILL,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_FOK)
 
     expect(translateOrderTypeToBitfinex({
@@ -150,7 +150,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
     expect(translateOrderTypeToBitfinex({
       from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
     })).to.be.eq(BitfinexOrderTypeEnum.EXCHANGE_IOC)
 
     expect(translateOrderTypeToBitfinex({
@@ -162,7 +162,7 @@ describe('BitfinexOrderTypeAdapter', () => {
 
       translateOrderTypeToBitfinex({
         from: notSupported as AlunaOrderTypesEnum,
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
       })
 
     } catch (err) {

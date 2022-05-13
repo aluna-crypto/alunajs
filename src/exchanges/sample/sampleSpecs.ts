@@ -83,7 +83,7 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
   accounts: [
     // TODO: Review supported/implemented accounts
     {
-      type: AlunaAccountEnum.EXCHANGE,
+      type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: sampleExchangeOrderTypes,

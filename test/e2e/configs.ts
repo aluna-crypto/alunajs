@@ -116,7 +116,7 @@ export function getConfig() {
         orderAmount: 3,
         orderEditAmount: 3.1,
         orderInsufficientAmount: 2000,
-        orderAccount: AlunaAccountEnum.EXCHANGE,
+        orderAccount: AlunaAccountEnum.SPOT,
       },
       poloniex: {
         key: env.POLONIEX_API_KEY,
@@ -128,7 +128,7 @@ export function getConfig() {
         orderAmount: 0.05,
         orderEditAmount: 0.051,
         orderInsufficientAmount: 2000,
-        orderAccount: AlunaAccountEnum.EXCHANGE,
+        orderAccount: AlunaAccountEnum.SPOT,
       },
       binance: {
         key: env.BINANCE_API_KEY,
@@ -140,7 +140,7 @@ export function getConfig() {
         orderAmount: 0.001,
         orderEditAmount: 0.0011,
         orderInsufficientAmount: 2000,
-        orderAccount: AlunaAccountEnum.EXCHANGE,
+        orderAccount: AlunaAccountEnum.SPOT,
       },
       gate: {
         key: env.GATE_API_KEY,
@@ -152,7 +152,7 @@ export function getConfig() {
         orderAmount: 35,
         orderEditAmount: 35.1,
         orderInsufficientAmount: 5000,
-        orderAccount: AlunaAccountEnum.EXCHANGE,
+        orderAccount: AlunaAccountEnum.SPOT,
       },
       valr: {
         key: env.VALR_API_KEY,
@@ -164,7 +164,7 @@ export function getConfig() {
         orderAmount: 0.001,
         orderEditAmount: 0.0011,
         orderInsufficientAmount: 2000,
-        orderAccount: AlunaAccountEnum.EXCHANGE,
+        orderAccount: AlunaAccountEnum.SPOT,
       },
     },
   }

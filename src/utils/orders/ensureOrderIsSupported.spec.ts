@@ -47,7 +47,7 @@ describe(__filename, () => {
   }
 
   const defaultOrderPlaceParams: IAlunaOrderPlaceParams = {
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     type: AlunaOrderTypesEnum.LIMIT,
     side: AlunaOrderSideEnum.BUY,
     symbolPair: 'BTC_ETH',

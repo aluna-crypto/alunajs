@@ -58,7 +58,7 @@ describe(__filename, () => {
     const { order } = exchange.order.parse({ rawOrder })
 
     // validating
-    expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+    expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
     expect(order.amount).to.be.eq(amount)
     expect(order.symbolPair).to.be.eq(rawOrder.marketSymbol)
     expect(order.baseSymbolId).to.be.eq(baseCurrency)
@@ -116,7 +116,7 @@ describe(__filename, () => {
       const { order } = exchange.order.parse({ rawOrder })
 
       // validating
-      expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+      expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
       expect(order.amount).to.be.eq(amount)
       expect(order.placedAt.getTime()).to.be.eq(placedAt.getTime())
       expect(order.status).to.be.eq(translatedOrderStatus)
@@ -160,7 +160,7 @@ describe(__filename, () => {
       const { order } = exchange.order.parse({ rawOrder })
 
       // validating
-      expect(order.account).to.be.eq(AlunaAccountEnum.EXCHANGE)
+      expect(order.account).to.be.eq(AlunaAccountEnum.SPOT)
       expect(order.amount).to.be.eq(amount)
       expect(order.placedAt.getTime()).to.be.eq(placedAt.getTime())
       expect(order.status).to.be.eq(translatedOrderStatus)

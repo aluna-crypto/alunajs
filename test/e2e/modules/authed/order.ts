@@ -30,7 +30,7 @@ export function order(params: IAuthedParams) {
    * Market Orders
    */
   const isMarketOrderSupported = isOrderTypeSupportedAndImplemented({
-    account: orderAccount || AlunaAccountEnum.EXCHANGE,
+    account: orderAccount || AlunaAccountEnum.SPOT,
     exchangeAuthed,
     orderType: AlunaOrderTypesEnum.MARKET,
   })
@@ -45,7 +45,7 @@ export function order(params: IAuthedParams) {
    * Stop Limit Orders
    */
   const isStopLimitOrderSupported = isOrderTypeSupportedAndImplemented({
-    account: orderAccount || AlunaAccountEnum.EXCHANGE,
+    account: orderAccount || AlunaAccountEnum.SPOT,
     exchangeAuthed,
     orderType: AlunaOrderTypesEnum.STOP_LIMIT,
   })
@@ -62,7 +62,7 @@ export function order(params: IAuthedParams) {
    * Stop Market Orders
    */
   const isStopMarketOrderSupported = isOrderTypeSupportedAndImplemented({
-    account: orderAccount || AlunaAccountEnum.EXCHANGE,
+    account: orderAccount || AlunaAccountEnum.SPOT,
     exchangeAuthed,
     orderType: AlunaOrderTypesEnum.STOP_MARKET,
   })

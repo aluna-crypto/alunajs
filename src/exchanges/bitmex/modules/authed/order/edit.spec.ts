@@ -76,7 +76,7 @@ describe(__filename, () => {
     const params: IAlunaOrderEditParams = {
       id: bitmexOrder.orderID,
       symbolPair: bitmexOrder.symbol,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: 0.01,
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
@@ -178,7 +178,7 @@ describe(__filename, () => {
       const params: IAlunaOrderEditParams = {
         id: bitmexOrder.orderID,
         symbolPair: bitmexOrder.symbol,
-        account: AlunaAccountEnum.EXCHANGE,
+        account: AlunaAccountEnum.SPOT,
         amount: 0.01,
         side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.LIMIT,
@@ -272,7 +272,7 @@ describe(__filename, () => {
     const params: IAlunaOrderEditParams = {
       id: bitmexOrder.orderID,
       symbolPair: bitmexOrder.symbol,
-      account: AlunaAccountEnum.EXCHANGE,
+      account: AlunaAccountEnum.SPOT,
       amount: 0.01,
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,

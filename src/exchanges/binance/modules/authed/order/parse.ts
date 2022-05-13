@@ -131,7 +131,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     rate,
     total: amount * rate,
     amount,
-    account: AlunaAccountEnum.EXCHANGE,
+    account: AlunaAccountEnum.SPOT,
     status: orderStatus,
     side: orderSide,
     type: orderType,
