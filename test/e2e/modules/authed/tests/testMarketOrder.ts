@@ -31,7 +31,6 @@ export const testMarketOrder = (params: IAuthedParams) => {
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
       liveData.marketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
@@ -58,7 +57,6 @@ export const testMarketOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
@@ -76,7 +74,6 @@ export const testMarketOrder = (params: IAuthedParams) => {
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
-      expect(requestWeight.public).to.be.eq(0)
 
     })
 
