@@ -26,6 +26,8 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   const permissions: IAlunaKeyPermissionSchema = {
     read,
+    trade: true,
+    withdraw: false,
   }
 
   return { permissions }

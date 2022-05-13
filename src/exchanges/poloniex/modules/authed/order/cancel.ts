@@ -35,13 +35,6 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     http = new PoloniexHttp(settings),
   } = params
 
-  const timestamp = new Date().getTime()
-  const body = new URLSearchParams()
-
-  body.append('command', 'cancelOrder')
-  body.append('orderNumber', id)
-  body.append('nonce', timestamp.toString())
-
   const {
     order,
   } = await exchange.order.get({
@@ -51,6 +44,13 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   try {
+
+    const timestamp = new Date().getTime()
+    const body = new URLSearchParams()
+
+    body.append('command', 'cancelOrder')
+    body.append('orderNumber', id)
+    body.append('nonce', timestamp.toString())
 
     await http.authedRequest<IPoloniexOrderSchema>({
       url: getPoloniexEndpoints(settings).order.cancel,
