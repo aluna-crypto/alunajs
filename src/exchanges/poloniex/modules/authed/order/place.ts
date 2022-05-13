@@ -12,7 +12,6 @@ import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderI
 import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToPoloniex } from '../../../enums/adapters/poloniexOrderSideAdapter'
-import { translateOrderTypeToPoloniex } from '../../../enums/adapters/poloniexOrderTypeAdapter'
 import { PoloniexHttp } from '../../../PoloniexHttp'
 import { getPoloniexEndpoints } from '../../../poloniexSpecs'
 import { IPoloniexOrderSchema } from '../../../schemas/IPoloniexOrderSchema'
@@ -50,19 +49,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     rate,
     symbolPair,
     side,
-    type,
     http = new PoloniexHttp(settings),
   } = params
-
-  const translatedOrderType = translateOrderTypeToPoloniex({
-    from: type,
-  })
 
   // TODO: Validate all body properties
   const body = {
     direction: translateOrderSideToPoloniex({ from: side }),
     marketSymbol: symbolPair,
-    type: translatedOrderType,
     quantity: Number(amount),
     rate,
   }
