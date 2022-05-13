@@ -25,9 +25,13 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting position', { id, symbolPair })
 
-  const { rawPosition } = await exchange.position!.getRaw({ id, http })
+  const { rawPosition } = await exchange.position!.getRaw({
+    id,
+    http,
+    symbolPair,
+  })
 
-  const { position } = await exchange.position!.parse({ rawPosition })
+  const { position } = exchange.position!.parse({ rawPosition })
 
   const { requestWeight } = http
 

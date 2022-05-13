@@ -55,6 +55,7 @@ describe(__filename, () => {
     expect(getRaw.callCount).to.be.eq(1)
     expect(getRaw.firstCall.args[0]).to.deep.eq({
       id,
+      symbolPair: mockedRawPosition[0],
       http: new SampleHttp({}),
     })
 
