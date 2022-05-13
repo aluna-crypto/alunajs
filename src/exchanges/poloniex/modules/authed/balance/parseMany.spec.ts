@@ -5,7 +5,7 @@ import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
-import { POLONIEX_RAW_BALANCES } from '../../../test/fixtures/poloniexBalances'
+import { POLONIEX_RAW_BALANCES_RESPONSE } from '../../../test/fixtures/poloniexBalances'
 import * as parseMod from './parse'
 
 
@@ -20,7 +20,7 @@ describe(__filename, () => {
   it('should parse many Poloniex raw balances just fine', async () => {
 
     // preparing data
-    const rawBalances = POLONIEX_RAW_BALANCES
+    const rawBalances = POLONIEX_RAW_BALANCES_RESPONSE
 
 
     // mocking

@@ -1,12 +1,18 @@
 import { debug } from 'debug'
-import { map } from 'lodash'
+import {
+  forOwn,
+  map,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
-import { IPoloniexBalanceSchema } from '../../../schemas/IPoloniexBalanceSchema'
+import {
+  IPoloniexBalanceResponseSchema,
+  IPoloniexBalanceSchema,
+} from '../../../schemas/IPoloniexBalanceSchema'
 
 
 
@@ -15,12 +21,25 @@ const log = debug('@alunajs:poloniex/balance/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseManyParams<IPoloniexBalanceSchema[]>,
+  params: IAlunaBalanceParseManyParams<IPoloniexBalanceResponseSchema>,
 ): IAlunaBalanceParseManyReturns => {
 
-  const { rawBalances } = params
+  const {
+    rawBalances: rawBalancesResponse,
+  } = params
 
-  // TODO: Review map implementation
+  const rawBalances: IPoloniexBalanceSchema[] = []
+
+
+  forOwn(rawBalancesResponse, (value, key) => {
+
+    rawBalances.push({
+      currency: key,
+      ...value,
+    })
+
+  })
+
   const parsedBalances = map(rawBalances, (rawBalance) => {
 
     const { balance } = exchange.balance.parse({ rawBalance })
