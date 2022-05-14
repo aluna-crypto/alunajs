@@ -13,7 +13,6 @@ import {
   translateOrderStatusToAluna,
   translatePoloniexOrderStatus,
 } from '../../../enums/adapters/poloniexOrderStatusAdapter'
-import { PoloniexOrderSideEnum } from '../../../enums/PoloniexOrderSideEnum'
 import {
   IPoloniexOrderSchema,
   IPoloniexOrderStatusInfoSchema,
@@ -62,9 +61,8 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     startingAmount,
   })
 
-  // @TODO -> need to verify type property
   const orderSide = translateOrderSideToAluna({
-    from: type as unknown as PoloniexOrderSideEnum,
+    from: type,
   })
 
   const orderStatus = translateOrderStatusToAluna({

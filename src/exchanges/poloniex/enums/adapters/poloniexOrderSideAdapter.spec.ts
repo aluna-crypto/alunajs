@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { PoloniexOrderSideEnum } from '../PoloniexOrderSideEnum'
+import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
 import {
   translateOrderSideToAluna,
   translateOrderSideToPoloniex,
@@ -19,11 +19,11 @@ describe(__filename, () => {
   it('should properly translate Poloniex order sides to Aluna order sides', () => {
 
     expect(translateOrderSideToAluna({
-      from: PoloniexOrderSideEnum.BUY,
+      from: PoloniexOrderTypeEnum.BUY,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(translateOrderSideToAluna({
-      from: PoloniexOrderSideEnum.SELL,
+      from: PoloniexOrderTypeEnum.SELL,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
     let result
@@ -32,7 +32,7 @@ describe(__filename, () => {
     try {
 
       result = translateOrderSideToAluna({
-        from: notSupported as PoloniexOrderSideEnum,
+        from: notSupported as PoloniexOrderTypeEnum,
       })
 
     } catch (err) {
@@ -55,11 +55,11 @@ describe(__filename, () => {
 
     expect(translateOrderSideToPoloniex({
       from: AlunaOrderSideEnum.BUY,
-    })).to.be.eq(PoloniexOrderSideEnum.BUY)
+    })).to.be.eq(PoloniexOrderTypeEnum.BUY)
 
     expect(translateOrderSideToPoloniex({
       from: AlunaOrderSideEnum.SELL,
-    })).to.be.eq(PoloniexOrderSideEnum.SELL)
+    })).to.be.eq(PoloniexOrderTypeEnum.SELL)
 
     let result
     let error

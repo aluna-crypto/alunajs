@@ -11,7 +11,6 @@ import {
   translateOrderStatusToAluna,
   translatePoloniexOrderStatus,
 } from '../../../enums/adapters/poloniexOrderStatusAdapter'
-import { PoloniexOrderSideEnum } from '../../../enums/PoloniexOrderSideEnum'
 import { PoloniexOrderStatusEnum } from '../../../enums/PoloniexOrderStatusEnum'
 import { PoloniexAuthed } from '../../../PoloniexAuthed'
 import {
@@ -63,9 +62,9 @@ describe(__filename, () => {
       from: translatedPoloniexStatus,
     })
 
-    // @TODO -> need to verify type property
+
     const orderSide = translateOrderSideToAluna({
-      from: type as unknown as PoloniexOrderSideEnum,
+      from: type,
     })
 
     const orderAmount = Number(startingAmount)
@@ -119,9 +118,9 @@ describe(__filename, () => {
       from: translatedPoloniexStatus,
     })
 
-    // @TODO -> need to verify type property
+
     const orderSide = translateOrderSideToAluna({
-      from: type as unknown as PoloniexOrderSideEnum,
+      from: type,
     })
 
     const orderAmount = Number(startingAmount)
@@ -197,9 +196,8 @@ describe(__filename, () => {
       from: translatedPoloniexStatus,
     })
 
-    // @TODO -> need to verify type property
     const orderSide = translateOrderSideToAluna({
-      from: type as unknown as PoloniexOrderSideEnum,
+      from: type,
     })
 
     const orderAmount = Number(amount)

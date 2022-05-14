@@ -43,7 +43,6 @@ export const POLONIEX_RAW_ORDERS_RESPONSE: IPoloniexOrderResponseSchema = {
   BUSD_BNB: POLONIEX_RAW_ORDER_INFO,
 }
 
-// TODO: Review fixtures
 export const POLONIEX_RAW_ORDERS: IPoloniexOrderSchema[] = [
   {
     ...POLONIEX_RAW_ORDER_INFO[0],
