@@ -57,6 +57,7 @@ describe(__filename, () => {
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
       url: getBinanceEndpoints(exchange.settings).market.list,
+      weight: 40,
     })
 
 

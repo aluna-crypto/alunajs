@@ -36,6 +36,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).balance.list,
     credentials,
+    weight: 10,
   })
 
   const { requestWeight } = http

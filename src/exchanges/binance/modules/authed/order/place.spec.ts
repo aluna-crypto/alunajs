@@ -102,6 +102,7 @@ describe(__filename, () => {
       body,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.place,
+      weight: 1,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -174,6 +175,7 @@ describe(__filename, () => {
       body,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.place,
+      weight: 1,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

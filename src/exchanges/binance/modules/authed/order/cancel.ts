@@ -47,6 +47,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       url: getBinanceEndpoints(settings).order.get,
       credentials,
       body,
+      weight: 2,
     })
 
     const { order } = await exchange.order.get({
