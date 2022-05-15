@@ -32,6 +32,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   forOwn(rawMarketsResponse, (value, key) => {
 
+    // Poloniex 'base' and 'quote' currency are inverted
     const [quoteCurrency, baseCurrency] = key.split('_')
 
     rawMarkets.push({
