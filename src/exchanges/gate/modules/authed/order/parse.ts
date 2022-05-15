@@ -15,15 +15,10 @@ import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
 
-// const log = debug('@alunajs:gate/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IGateOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('params', params)
 
   const { rawOrder } = params
 

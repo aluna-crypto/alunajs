@@ -14,15 +14,10 @@ import { IBinanceOrderResponseSchema } from '../../../schemas/IBinanceOrderSchem
 
 
 
-// const log = debug('@alunajs:binance/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBinanceOrderResponseSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const {
     rawOrder: rawOrderRequest,

@@ -10,15 +10,10 @@ import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
 
 
-// const log = debug('@alunajs:exchanges/valr/balance/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseParams<IValrBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
-  // log('parse balance', params)
 
   const { rawBalance } = params
 

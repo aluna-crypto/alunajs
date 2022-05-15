@@ -10,15 +10,10 @@ import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
 
 
 
-// const log = debug('@alunajs:exchanges/binance/balance/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseParams<IBinanceBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
-  // log('parse balance', params)
 
   const {
     rawBalance,

@@ -9,15 +9,10 @@ import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
 
-// const log = debug('@alunajs:sample/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<ISampleOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const { rawOrder } = params
 

@@ -9,10 +9,6 @@ import { ISamplePositionSchema } from '../../../schemas/ISamplePositionSchema'
 
 
 
-// const log = debug('@alunajs:sample/position/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaPositionParseParams<ISamplePositionSchema>,
 ): IAlunaPositionParseReturns => {

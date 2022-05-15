@@ -11,15 +11,10 @@ import { IGateBalanceSchema } from '../../../schemas/IGateBalanceSchema'
 
 
 
-// const log = debug('@alunajs:exchanges/gate/balance/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaBalanceParseParams<IGateBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
-  // log('parse balance', params)
 
   const {
     rawBalance,

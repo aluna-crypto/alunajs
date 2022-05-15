@@ -23,15 +23,10 @@ import { valrBaseSpecs } from '../../../valrSpecs'
 
 
 
-// const log = debug('@alunajs:valr/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IValrOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const { rawOrder } = params
 
