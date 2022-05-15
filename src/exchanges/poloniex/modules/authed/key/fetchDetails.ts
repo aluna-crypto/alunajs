@@ -51,6 +51,15 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     rawKey.read = true
 
+    const { key } = exchange.key.parseDetails({ rawKey })
+
+    const { requestWeight } = http
+
+    return {
+      key,
+      requestWeight,
+    }
+
   } catch (err) {
 
     const {
@@ -67,15 +76,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
     throw error
 
-  }
-
-  const { key } = exchange.key.parseDetails({ rawKey })
-
-  const { requestWeight } = http
-
-  return {
-    key,
-    requestWeight,
   }
 
 }
