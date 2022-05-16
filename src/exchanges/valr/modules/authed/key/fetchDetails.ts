@@ -12,7 +12,7 @@ import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
-const log = debug('@alunajs:valr/key/fetchDetails')
+const log = debug('alunajs:valr/key/fetchDetails')
 
 
 

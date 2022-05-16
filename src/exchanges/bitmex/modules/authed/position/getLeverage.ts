@@ -11,7 +11,7 @@ import { IBitmexPosition } from '../../../schemas/IBitmexPositionSchema'
 
 
 
-const log = debug('@alunajs:bitmex/position/getLeverage')
+const log = debug('alunajs:bitmex/position/getLeverage')
 
 
 

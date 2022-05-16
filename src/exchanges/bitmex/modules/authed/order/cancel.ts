@@ -17,7 +17,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitmex/order/cancel')
+const log = debug('alunajs:bitmex/order/cancel')
 export interface IErrorResponse {
   error: string
 }

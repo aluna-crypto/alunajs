@@ -12,7 +12,7 @@ import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 
 
 
-const log = debug('@alunajs:bittrex/balance/listRaw')
+const log = debug('alunajs:bittrex/balance/listRaw')
 
 
 

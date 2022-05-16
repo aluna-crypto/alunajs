@@ -10,7 +10,7 @@ import { getSampleEndpoints } from '../../../sampleSpecs'
 
 
 
-const log = debug('@alunajs:sample/position/setLeverage')
+const log = debug('alunajs:sample/position/setLeverage')
 
 
 

@@ -14,7 +14,7 @@ import { TBitfinexEditCancelOrderResponse } from '../../../schemas/IBitfinexOrde
 
 
 
-const log = debug('@alunajs:bitfinex/order/cancel')
+const log = debug('alunajs:bitfinex/order/cancel')
 
 
 

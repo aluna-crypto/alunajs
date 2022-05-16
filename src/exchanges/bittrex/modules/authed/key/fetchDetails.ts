@@ -16,7 +16,7 @@ import { IBittrexKeySchema } from '../../../schemas/IBittrexKeySchema'
 
 
 
-const log = debug('@alunajs:bittrex/key/fetchDetails')
+const log = debug('alunajs:bittrex/key/fetchDetails')
 
 
 

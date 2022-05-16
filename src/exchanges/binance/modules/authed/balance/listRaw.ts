@@ -13,7 +13,7 @@ import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
-const log = debug('@alunajs:binance/balance/listRaw')
+const log = debug('alunajs:binance/balance/listRaw')
 
 
 

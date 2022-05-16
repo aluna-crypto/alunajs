@@ -9,7 +9,7 @@ import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
 
-const log = debug('@alunajs:sample/order/parseMany')
+const log = debug('alunajs:sample/order/parseMany')
 
 
 

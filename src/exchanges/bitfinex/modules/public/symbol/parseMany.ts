@@ -17,7 +17,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitfinex/symbol/parseMany')
+const log = debug('alunajs:bitfinex/symbol/parseMany')
 
 
 

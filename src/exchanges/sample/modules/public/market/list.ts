@@ -9,7 +9,7 @@ import { SampleHttp } from '../../../SampleHttp'
 
 
 
-const log = debug('@alunajs:sample/market/list')
+const log = debug('alunajs:sample/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

@@ -17,7 +17,7 @@ import {
 
 
 
-const log = debug('@alunajs:poloniex/balance/parseMany')
+const log = debug('alunajs:poloniex/balance/parseMany')
 
 
 

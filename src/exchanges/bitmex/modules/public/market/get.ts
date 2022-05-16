@@ -9,7 +9,7 @@ import { BitmexHttp } from '../../../BitmexHttp'
 
 
 
-const log = debug('@alunajs:bitmex/symbol/list')
+const log = debug('alunajs:bitmex/symbol/list')
 
 
 
@@ -38,4 +38,3 @@ export const get = (exchange: IAlunaExchangePublic) => async (
   }
 
 }
-

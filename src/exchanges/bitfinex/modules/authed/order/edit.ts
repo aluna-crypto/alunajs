@@ -22,7 +22,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitfinex/order/edit')
+const log = debug('alunajs:bitfinex/order/edit')
 
 
 

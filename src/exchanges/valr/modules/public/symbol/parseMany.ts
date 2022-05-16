@@ -10,7 +10,7 @@ import { IValrSymbolSchema } from '../../../schemas/IValrSymbolSchema'
 
 
 
-const log = debug('@alunajs:valr/symbol/parseMany')
+const log = debug('alunajs:valr/symbol/parseMany')
 
 
 

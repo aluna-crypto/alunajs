@@ -14,7 +14,7 @@ import { throwPositionIdRequiredFor } from './helpers/throwPositionIdRequiredFor
 
 
 
-const log = debug('@alunajs:bitfinex/position/getRaw')
+const log = debug('alunajs:bitfinex/position/getRaw')
 
 
 

@@ -10,7 +10,7 @@ import { ISampleBalanceSchema } from '../../../schemas/ISampleBalanceSchema'
 
 
 
-const log = debug('@alunajs:sample/balance/parseMany')
+const log = debug('alunajs:sample/balance/parseMany')
 
 
 

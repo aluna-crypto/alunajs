@@ -10,7 +10,7 @@ import { IGateOrderListResponseSchema, IGateOrderSchema } from '../../../schemas
 
 
 
-const log = debug('@alunajs:gate/order/parseMany')
+const log = debug('alunajs:gate/order/parseMany')
 
 
 

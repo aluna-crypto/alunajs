@@ -11,7 +11,7 @@ import { ISamplePositionSchema } from '../../../schemas/ISamplePositionSchema'
 
 
 
-const log = debug('@alunajs:sample/position/listRaw')
+const log = debug('alunajs:sample/position/listRaw')
 
 
 

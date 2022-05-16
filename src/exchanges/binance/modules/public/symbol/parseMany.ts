@@ -11,7 +11,7 @@ import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
 
 
 
-const log = debug('@alunajs:binance/symbol/parseMany')
+const log = debug('alunajs:binance/symbol/parseMany')
 
 
 

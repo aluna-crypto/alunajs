@@ -10,7 +10,7 @@ import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeyS
 
 
 
-const log = debug('@alunajs:bitmex/key/parsePermissions')
+const log = debug('alunajs:bitmex/key/parsePermissions')
 
 
 

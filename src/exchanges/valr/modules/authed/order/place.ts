@@ -25,7 +25,7 @@ import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
-const log = debug('@alunajs:valr/order/place')
+const log = debug('alunajs:valr/order/place')
 
 
 

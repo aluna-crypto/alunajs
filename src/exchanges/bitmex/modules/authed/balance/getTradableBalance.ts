@@ -12,7 +12,7 @@ import { BitmexHttp } from '../../../BitmexHttp'
 
 
 
-const log = debug('@alunajs:bitmex/balance/getTradableBalance')
+const log = debug('alunajs:bitmex/balance/getTradableBalance')
 
 
 

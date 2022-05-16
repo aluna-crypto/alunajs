@@ -21,7 +21,7 @@ import { assembleRequestBody } from './helpers/assembleRequestBody'
 
 
 
-const log = debug('@alunajs:bitmex/order/place')
+const log = debug('alunajs:bitmex/order/place')
 
 
 

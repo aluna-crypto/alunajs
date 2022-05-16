@@ -11,7 +11,7 @@ import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
 
 
 
-const log = debug('@alunajs:binance/balance/parseMany')
+const log = debug('alunajs:binance/balance/parseMany')
 
 
 

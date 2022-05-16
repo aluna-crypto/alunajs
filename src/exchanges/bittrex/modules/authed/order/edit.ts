@@ -11,7 +11,7 @@ import { BittrexHttp } from '../../../BittrexHttp'
 
 
 
-const log = debug('@alunajs:bittrex/order/edit')
+const log = debug('alunajs:bittrex/order/edit')
 
 
 

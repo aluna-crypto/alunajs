@@ -9,7 +9,7 @@ import { GateHttp } from '../../../GateHttp'
 
 
 
-const log = debug('@alunajs:gate/market/list')
+const log = debug('alunajs:gate/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

@@ -18,7 +18,7 @@ import { IPoloniexOrderPlaceResponseSchema } from '../../../schemas/IPoloniexOrd
 
 
 
-const log = debug('@alunajs:poloniex/order/place')
+const log = debug('alunajs:poloniex/order/place')
 
 
 

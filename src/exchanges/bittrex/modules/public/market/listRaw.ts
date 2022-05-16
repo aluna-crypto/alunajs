@@ -16,7 +16,7 @@ import {
 
 
 
-const log = debug('@alunajs:bittrex/market/listRaw')
+const log = debug('alunajs:bittrex/market/listRaw')
 
 
 

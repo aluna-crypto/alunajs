@@ -10,7 +10,7 @@ import { IGateMarketSchema } from '../../../schemas/IGateMarketSchema'
 
 
 
-const log = debug('@alunajs:gate/market/parseMany')
+const log = debug('alunajs:gate/market/parseMany')
 
 
 

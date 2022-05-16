@@ -9,7 +9,7 @@ import { BitfinexHttp } from '../../../BitfinexHttp'
 
 
 
-const log = debug('@alunajs:bitfinex/order/get')
+const log = debug('alunajs:bitfinex/order/get')
 
 
 

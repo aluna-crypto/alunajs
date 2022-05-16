@@ -13,7 +13,7 @@ import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
-const log = debug('@alunajs:bitfinex/order/getRaw')
+const log = debug('alunajs:bitfinex/order/getRaw')
 
 
 

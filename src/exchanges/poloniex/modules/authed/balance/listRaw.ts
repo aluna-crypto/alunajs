@@ -11,7 +11,7 @@ import { IPoloniexBalanceSchema } from '../../../schemas/IPoloniexBalanceSchema'
 
 
 
-const log = debug('@alunajs:poloniex/balance/listRaw')
+const log = debug('alunajs:poloniex/balance/listRaw')
 
 
 

@@ -9,7 +9,7 @@ import { PoloniexHttp } from '../../../PoloniexHttp'
 
 
 
-const log = debug('@alunajs:poloniex/symbol/list')
+const log = debug('alunajs:poloniex/symbol/list')
 
 
 

@@ -14,7 +14,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitfinex/market/listRaw')
+const log = debug('alunajs:bitfinex/market/listRaw')
 
 
 

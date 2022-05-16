@@ -15,7 +15,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitmex/position/listRaw')
+const log = debug('alunajs:bitmex/position/listRaw')
 
 
 

@@ -8,7 +8,7 @@ import {
 
 
 
-const log = debug('@alunajs:valr/order/get')
+const log = debug('alunajs:valr/order/get')
 
 
 

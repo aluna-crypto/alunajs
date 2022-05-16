@@ -11,7 +11,7 @@ import { IBittrexBalanceSchema } from '../../../schemas/IBittrexBalanceSchema'
 
 
 
-const log = debug('@alunajs:bittrex/balance/parseMany')
+const log = debug('alunajs:bittrex/balance/parseMany')
 
 
 

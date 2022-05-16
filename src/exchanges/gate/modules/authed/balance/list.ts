@@ -9,7 +9,7 @@ import { GateHttp } from '../../../GateHttp'
 
 
 
-const log = debug('@alunajs:gate/balance/list')
+const log = debug('alunajs:gate/balance/list')
 
 
 

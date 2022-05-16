@@ -9,7 +9,7 @@ import { PoloniexHttp } from '../../../PoloniexHttp'
 
 
 
-const log = debug('@alunajs:poloniex/market/list')
+const log = debug('alunajs:poloniex/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

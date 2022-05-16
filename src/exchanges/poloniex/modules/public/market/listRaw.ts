@@ -11,7 +11,7 @@ import { IPoloniexMarketResponseSchema } from '../../../schemas/IPoloniexMarketS
 
 
 
-const log = debug('@alunajs:poloniex/market/listRaw')
+const log = debug('alunajs:poloniex/market/listRaw')
 
 
 

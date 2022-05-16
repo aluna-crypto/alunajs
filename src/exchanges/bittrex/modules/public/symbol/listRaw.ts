@@ -11,7 +11,7 @@ import { IBittrexSymbolSchema } from '../../../schemas/IBittrexSymbolSchema'
 
 
 
-const log = debug('@alunajs:bittrex/symbol/listRaw')
+const log = debug('alunajs:bittrex/symbol/listRaw')
 
 
 

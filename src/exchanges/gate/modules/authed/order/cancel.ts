@@ -14,7 +14,7 @@ import { IGateOrderSchema } from '../../../schemas/IGateOrderSchema'
 
 
 
-const log = debug('@alunajs:gate/order/cancel')
+const log = debug('alunajs:gate/order/cancel')
 
 
 

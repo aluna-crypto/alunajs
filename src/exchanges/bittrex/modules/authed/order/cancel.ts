@@ -14,7 +14,7 @@ import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
-const log = debug('@alunajs:bittrex/order/cancel')
+const log = debug('alunajs:bittrex/order/cancel')
 
 
 

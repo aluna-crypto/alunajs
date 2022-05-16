@@ -18,7 +18,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitfinex/market/parseMany')
+const log = debug('alunajs:bitfinex/market/parseMany')
 
 
 

@@ -11,7 +11,7 @@ import { IPoloniexSymbolResponseSchema } from '../../../schemas/IPoloniexSymbolS
 
 
 
-const log = debug('@alunajs:poloniex/symbol/listRaw')
+const log = debug('alunajs:poloniex/symbol/listRaw')
 
 
 

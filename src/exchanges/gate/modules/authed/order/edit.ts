@@ -11,7 +11,7 @@ import { GateHttp } from '../../../GateHttp'
 
 
 
-const log = debug('@alunajs:gate/order/edit')
+const log = debug('alunajs:gate/order/edit')
 
 
 

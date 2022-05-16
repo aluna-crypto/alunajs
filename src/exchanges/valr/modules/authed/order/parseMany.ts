@@ -13,7 +13,7 @@ import {
 
 
 
-const log = debug('@alunajs:valr/order/parseMany')
+const log = debug('alunajs:valr/order/parseMany')
 
 
 

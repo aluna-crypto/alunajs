@@ -12,7 +12,7 @@ import { ISampleKeySchema } from '../../../schemas/ISampleKeySchema'
 
 
 
-const log = debug('@alunajs:sample/key/fetchDetails')
+const log = debug('alunajs:sample/key/fetchDetails')
 
 
 

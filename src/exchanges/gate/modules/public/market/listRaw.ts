@@ -11,7 +11,7 @@ import { IGateMarketSchema } from '../../../schemas/IGateMarketSchema'
 
 
 
-const log = debug('@alunajs:gate/market/listRaw')
+const log = debug('alunajs:gate/market/listRaw')
 
 
 

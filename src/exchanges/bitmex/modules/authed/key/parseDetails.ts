@@ -14,7 +14,7 @@ import { IBitmexKeySchema } from '../../../schemas/IBitmexKeySchema'
 
 
 
-const log = debug('@alunajs:bitmex/key/parseDetails')
+const log = debug('alunajs:bitmex/key/parseDetails')
 
 
 

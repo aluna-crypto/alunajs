@@ -13,7 +13,7 @@ import { Web3 } from '../../Web3'
 
 
 
-const log = debug('@alunajs:web3/balance/parseMany')
+const log = debug('alunajs:web3/balance/parseMany')
 
 
 

@@ -14,7 +14,7 @@ import { IPoloniexOrderSchema } from '../../../schemas/IPoloniexOrderSchema'
 
 
 
-const log = debug('@alunajs:poloniex/order/cancel')
+const log = debug('alunajs:poloniex/order/cancel')
 
 
 

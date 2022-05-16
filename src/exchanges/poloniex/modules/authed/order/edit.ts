@@ -11,7 +11,7 @@ import { PoloniexHttp } from '../../../PoloniexHttp'
 
 
 
-const log = debug('@alunajs:poloniex/order/edit')
+const log = debug('alunajs:poloniex/order/edit')
 
 
 

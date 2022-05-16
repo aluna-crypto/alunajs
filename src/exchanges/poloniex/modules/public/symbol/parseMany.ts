@@ -16,7 +16,7 @@ import {
 
 
 
-const log = debug('@alunajs:poloniex/symbol/parseMany')
+const log = debug('alunajs:poloniex/symbol/parseMany')
 
 
 

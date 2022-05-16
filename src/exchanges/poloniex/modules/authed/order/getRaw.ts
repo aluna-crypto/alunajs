@@ -18,7 +18,7 @@ import { fetchOrderTrades } from './helpers/fetchOrderTrades'
 
 
 
-const log = debug('@alunajs:poloniex/order/getRaw')
+const log = debug('alunajs:poloniex/order/getRaw')
 
 
 

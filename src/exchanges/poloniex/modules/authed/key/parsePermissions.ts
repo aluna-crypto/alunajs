@@ -10,7 +10,7 @@ import { IPoloniexKeySchema } from '../../../schemas/IPoloniexKeySchema'
 
 
 
-const log = debug('@alunajs:poloniex/key/parsePermissions')
+const log = debug('alunajs:poloniex/key/parsePermissions')
 
 
 

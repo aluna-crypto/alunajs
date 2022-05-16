@@ -18,7 +18,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitmex/order/parseMany')
+const log = debug('alunajs:bitmex/order/parseMany')
 
 
 

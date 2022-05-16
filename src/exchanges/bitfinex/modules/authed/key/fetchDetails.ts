@@ -14,7 +14,7 @@ import {
 
 
 
-const log = debug('@alunajs:bitfinex/key/fetchDetails')
+const log = debug('alunajs:bitfinex/key/fetchDetails')
 
 
 

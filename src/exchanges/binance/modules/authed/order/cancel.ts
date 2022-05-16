@@ -14,7 +14,7 @@ import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
-const log = debug('@alunajs:binance/order/cancel')
+const log = debug('alunajs:binance/order/cancel')
 
 
 

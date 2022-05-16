@@ -13,7 +13,7 @@ import {
 
 
 
-const log = debug('@alunajs:poloniex/order/parseMany')
+const log = debug('alunajs:poloniex/order/parseMany')
 
 
 

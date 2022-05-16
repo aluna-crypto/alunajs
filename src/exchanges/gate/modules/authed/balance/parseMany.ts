@@ -11,7 +11,7 @@ import { IGateBalanceSchema } from '../../../schemas/IGateBalanceSchema'
 
 
 
-const log = debug('@alunajs:gate/balance/parseMany')
+const log = debug('alunajs:gate/balance/parseMany')
 
 
 

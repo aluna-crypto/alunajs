@@ -10,7 +10,7 @@ import { IPoloniexBalanceSchema } from '../../../schemas/IPoloniexBalanceSchema'
 
 
 
-// const log = debug('@alunajs:exchanges/poloniex/balance/parse')
+// const log = debug('alunajs:exchanges/poloniex/balance/parse')
 
 
 

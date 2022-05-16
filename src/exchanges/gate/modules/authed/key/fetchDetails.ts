@@ -16,7 +16,7 @@ import {
 
 
 
-const log = debug('@alunajs:gate/key/fetchDetails')
+const log = debug('alunajs:gate/key/fetchDetails')
 
 
 
