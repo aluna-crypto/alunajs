@@ -21,6 +21,7 @@ export interface IE2EExchange {
   orderEditAmount: number
   orderInsufficientAmount: number
   orderAccount?: AlunaAccountEnum
+  supportsGetCanceledOrders?: boolean
 }
 
 export interface IE2ELiveData {
@@ -122,13 +123,14 @@ export function getConfig() {
         key: env.POLONIEX_API_KEY,
         secret: env.POLONIEX_API_SECRET,
         passphrase: env.POLONIEX_API_PASSPHRASE,
-        symbolPair: 'USDT_DOGE',
+        symbolPair: 'USDC_BTC',
         delayBetweenTests: 500,
-        orderRate: 0.02,
-        orderAmount: 55,
-        orderEditAmount: 56,
+        orderRate: 10000,
+        orderAmount: 0.001,
+        orderEditAmount: 0.0012,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.SPOT,
+        supportsGetCanceledOrders: false,
       },
       binance: {
         key: env.BINANCE_API_KEY,
