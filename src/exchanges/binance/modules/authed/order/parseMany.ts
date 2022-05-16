@@ -1,7 +1,7 @@
 import { debug } from 'debug'
 import {
-  forEach,
-  map,
+  keyBy,
+  reduce,
 } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
@@ -9,8 +9,12 @@ import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IBinanceOrdersResponseSchema } from '../../../schemas/IBinanceOrderSchema'
-import { IBinanceSymbolSchema } from '../../../schemas/IBinanceSymbolSchema'
+import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
+import {
+  IBinanceOrderResponseSchema,
+  IBinanceOrderSchema,
+  IBinanceOrdersResponseSchema,
+} from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -22,46 +26,47 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams<IBinanceOrdersResponseSchema>,
 ): IAlunaOrderParseManyReturns => {
 
-  const {
-    rawOrders: rawOrdersRequest,
-  } = params
+  const { rawOrders } = params
 
   const {
-    rawOrders,
     rawSymbols,
-  } = rawOrdersRequest
+    binanceOrders,
+  } = rawOrders
 
-  const pairSymbolsDictionary: { [key:string]: IBinanceSymbolSchema } = {}
+  const symbolsDict = keyBy(rawSymbols, 'symbol')
 
-  forEach(rawSymbols, (pair) => {
+  type TSrc = IBinanceOrderSchema
+  type TAcc = IAlunaOrderSchema[]
 
-    const { symbol } = pair
-
-    pairSymbolsDictionary[symbol] = pair
-
-  })
-
-  const parsedOrders = map(rawOrders, (rawOrder) => {
+  const orders = reduce<TSrc, TAcc>(binanceOrders, (acc, binanceOrder) => {
 
     const {
       symbol,
-    } = rawOrder
+      isIsolated,
+    } = binanceOrder
 
-    const rawSymbol = pairSymbolsDictionary[symbol]
+    // Skipping Isolated Margin Orders for now
+    if (isIsolated) {
 
-    const rawOrderRequest = {
-      rawOrder,
-      rawSymbol,
+      return acc
+
     }
 
-    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
+    const rawOrder: IBinanceOrderResponseSchema = {
+      binanceOrder,
+      rawSymbol: symbolsDict[symbol],
+    }
 
-    return order
+    const { order } = exchange.order.parse({ rawOrder })
 
-  })
+    acc.push(order)
 
-  log(`parsed ${parsedOrders.length} orders`)
+    return acc
 
-  return { orders: parsedOrders }
+  }, [])
+
+  log(`parsed ${orders.length} orders`)
+
+  return { orders }
 
 }
