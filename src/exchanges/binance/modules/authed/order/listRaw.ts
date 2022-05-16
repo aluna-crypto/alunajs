@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { concat } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
@@ -32,24 +33,32 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new BinanceHttp(settings) } = params
 
-  const rawOrders = await http.authedRequest<IBinanceOrderSchema[]>({
+  const spotOrders = await http.authedRequest<IBinanceOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).order.list,
+    url: getBinanceEndpoints(settings).order.listSpot,
     credentials,
     weight: 40,
+  })
+
+  const marginOrders = await http.authedRequest<IBinanceOrderSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: getBinanceEndpoints(settings).order.listMargin,
+    credentials,
+    weight: 10,
   })
 
   const { rawSymbols } = await exchange.symbol.listRaw({
     http,
   })
 
-  const rawOrdersResponse = {
-    rawOrders,
+  const binanceOrders = concat(spotOrders, marginOrders)
+
+  const rawOrdersResponse: IBinanceOrdersResponseSchema = {
+    binanceOrders,
     rawSymbols,
   }
 
   const { requestWeight } = http
-
 
   return {
     rawOrders: rawOrdersResponse,
