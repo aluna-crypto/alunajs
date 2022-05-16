@@ -1,7 +1,7 @@
 {
   "name": "alunajs",
   "version": "0.0.1",
-  "description": "Aluna exchanges hub.",
+  "description": "Standardizing CryptoTrading APIs across multiple exchanges",
   "main": "dist/index.js",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
