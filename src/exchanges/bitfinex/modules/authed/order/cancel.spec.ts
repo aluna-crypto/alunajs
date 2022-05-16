@@ -3,7 +3,6 @@ import { cloneDeep } from 'lodash'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -11,11 +10,7 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
-import {
-  BITFINEX_CANCEL_ORDER_RESPONSE,
-  BITFINEX_RAW_ORDERS,
-} from '../../../test/fixtures/bitfinexOrders'
-import * as getMod from './get'
+import { BITFINEX_CANCEL_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
 
 
@@ -30,20 +25,19 @@ describe(__filename, () => {
   it('should cancel a Bitfinex order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = BITFINEX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
-    const mockedRequestResponse = BITFINEX_CANCEL_ORDER_RESPONSE
-
+    const parsedOrder = PARSED_ORDERS[0]
+    const requestResponse = cloneDeep(BITFINEX_CANCEL_ORDER_RESPONSE)
+    const rawOrder = requestResponse[4]
 
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-    authedRequest.returns(Promise.resolve(mockedRequestResponse))
+    authedRequest.returns(Promise.resolve(requestResponse))
 
-    const { get } = mockGet({ module: getMod })
-    get.returns({ order: mockedParsedOrder })
+    const { parse } = mockParse({ module: parseMod })
+    parse.returns({ order: parsedOrder })
 
 
     // executing
@@ -54,7 +48,7 @@ describe(__filename, () => {
       _gid,
       _cid,
       symbolPair,
-    ] = mockedRawOrder
+    ] = rawOrder
 
     const { order } = await exchange.order.cancel({
       id: id.toString(),
@@ -63,7 +57,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(order).to.deep.eq(mockedParsedOrder)
+    expect(order).to.deep.eq(parsedOrder)
 
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
@@ -74,11 +68,11 @@ describe(__filename, () => {
 
     expect(publicRequest.callCount).to.be.eq(0)
 
-    expect(get.callCount).to.be.eq(1)
-    expect(get.firstCall.args[0]).to.deep.eq({
-      id: id.toString(),
-      symbolPair,
-      http: new BitfinexHttp({}),
+    rawOrder[13] = 'CANCELED'
+
+    expect(parse.callCount).to.be.eq(1)
+    expect(parse.firstCall.args[0]).to.deep.eq({
+      rawOrder,
     })
 
   })
@@ -86,10 +80,10 @@ describe(__filename, () => {
   it('should throw an error if cancel request does not succeeds', async () => {
 
     // preparing data
-    const mockedRawOrder = BITFINEX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
-    const mockedRequestResponse = cloneDeep(BITFINEX_CANCEL_ORDER_RESPONSE)
-    mockedRequestResponse[6] = 'ERROR'
+    const parsedOrder = PARSED_ORDERS[0]
+    const requestResponse = cloneDeep(BITFINEX_CANCEL_ORDER_RESPONSE)
+    const rawOrder = requestResponse[4]
+    requestResponse[6] = 'ERROR'
 
 
     // mocking
@@ -97,10 +91,10 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-    authedRequest.returns(Promise.resolve(mockedRequestResponse))
+    authedRequest.returns(Promise.resolve(requestResponse))
 
     const { parse } = mockParse({ module: parseMod })
-    parse.returns({ order: mockedParsedOrder })
+    parse.returns({ order: parsedOrder })
 
 
     // executing
@@ -111,7 +105,7 @@ describe(__filename, () => {
       _gid,
       _cid,
       symbolPair,
-    ] = mockedRawOrder
+    ] = rawOrder
 
     const {
       error,
@@ -127,9 +121,9 @@ describe(__filename, () => {
     expect(result).not.to.be.ok
 
     expect(error!.code).to.be.eq(AlunaOrderErrorCodes.CANCEL_FAILED)
-    expect(error!.message).to.be.eq(mockedRequestResponse[7])
+    expect(error!.message).to.be.eq(requestResponse[7])
     expect(error!.httpStatusCode).to.be.eq(500)
-    expect(error!.metadata).to.be.eq(mockedRequestResponse)
+    expect(error!.metadata).to.be.eq(requestResponse)
 
     expect(authedRequest.callCount).to.be.eq(1)
 
