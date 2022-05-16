@@ -1,8 +1,15 @@
-import { IBinanceBalanceSchema } from './IBinanceBalanceSchema'
+import {
+  IBinanceMarginBalanceSchema,
+  IBinanceSpotBalanceSchema,
+} from './IBinanceBalanceSchema'
 
 
 
-export interface IBinanceKeySchema {
+export interface IBinanceKeySchema extends IBinanceSpotAccountInfo {}
+
+
+
+export interface IBinanceSpotAccountInfo {
   makerCommission: number
   takerCommission: number
   buyerCommission: number
@@ -12,6 +19,19 @@ export interface IBinanceKeySchema {
   canDeposit: boolean
   updateTime: number
   accountType: string
-  balances: IBinanceBalanceSchema[]
+  balances: IBinanceSpotBalanceSchema[]
   permissions: string[]
+}
+
+
+
+export interface IBinanceMarginAccountInfo {
+  tradeEnabled: boolean
+  transferEnabled: boolean
+  borrowEnabled: boolean
+  marginLevel: string
+  totalAssetOfBtc: string
+  totalLiabilityOfBtc: string
+  totalNetAssetOfBtc: string
+  userAssets: IBinanceMarginBalanceSchema[]
 }
