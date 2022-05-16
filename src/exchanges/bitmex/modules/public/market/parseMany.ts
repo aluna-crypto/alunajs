@@ -1,11 +1,13 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { BitmexInstrumentStateEnum } from '../../../enums/BitmexInstrumentStateEnum'
 import { IBitmexMarketSchema } from '../../../schemas/IBitmexMarketSchema'
 
 
@@ -20,15 +22,31 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawMarkets } = params
 
-  const markets = map(rawMarkets, (rawMarket) => {
+  type TSrc = IBitmexMarketSchema
+  type TAcc = IAlunaMarketSchema[]
 
-    const { market } = exchange.market.parse({
-      rawMarket,
-    })
+  const markets = reduce<TSrc, TAcc>(rawMarkets, (acc, rawMarket) => {
 
-    return market
+    const {
+      state,
+      symbol,
+    } = rawMarket
 
-  })
+    const isSpotInstrument = /_/.test(symbol)
+
+    if (state !== BitmexInstrumentStateEnum.OPEN || isSpotInstrument) {
+
+      return acc
+
+    }
+
+    const { market } = exchange.market.parse({ rawMarket })
+
+    acc.push(market)
+
+    return acc
+
+  }, [])
 
   log(`parsed ${markets.length} markets for Bitmex`)
 
