@@ -56,6 +56,7 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.list,
+      weight: 40,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

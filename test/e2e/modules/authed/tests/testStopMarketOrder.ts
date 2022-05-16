@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sleep from 'sleep-promise'
 
 import { AlunaAccountEnum } from '../../../../../src/lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../src/lib/enums/AlunaOrderSideEnum'
@@ -36,6 +37,9 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       liveData.stopMarketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
 
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
+
     })
 
     it('get:placedOrder', async () => {
@@ -70,8 +74,8 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       const {
         orderAccount,
         orderStopRate,
-        orderEditAmount,
         orderAmount,
+        orderEditAmount,
       } = exchangeConfigs
 
       const {
@@ -88,13 +92,16 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       })
 
       expect(order).to.exist
-      expect(order.amount).not.to.be.eq(orderEditAmount)
+      expect(order.amount).not.to.be.eq(orderAmount)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
       liveData.stopMarketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
       liveData.orderEditedAmount = order.amount
+
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
 
     })
 
@@ -140,6 +147,9 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       expect(order).to.exist
 
       expect(requestWeight.authed).to.be.greaterThan(0)
+
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
 
     })
 

@@ -22,7 +22,7 @@ describe(__filename, () => {
   it('should properly parse Bitmex instrument', () => {
 
     // preparing data
-    const rawMarkets = cloneDeep(BITMEX_RAW_MARKETS.slice(0, 3))
+    const rawMarkets = cloneDeep(BITMEX_RAW_MARKETS)
 
     rawMarkets[0].isQuanto = true
     rawMarkets[0].expiry = '2016-05-13T12:00:00.000Z'
@@ -139,7 +139,7 @@ describe(__filename, () => {
 
     })
 
-    const { length } = BITMEX_RAW_MARKETS
+    const { length } = rawMarkets
 
     expect(computeContractValueMock.callCount).to.be.eq(length)
     expect(computeContractCurrencyMock.callCount).to.be.eq(length)

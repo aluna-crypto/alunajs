@@ -36,6 +36,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).order.list,
     credentials,
+    weight: 40,
   })
 
   const { rawSymbols } = await exchange.symbol.listRaw({

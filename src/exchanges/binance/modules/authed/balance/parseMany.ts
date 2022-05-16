@@ -25,30 +25,27 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   type TSrc = IBinanceBalanceSchema
   type TAcc = IAlunaBalanceSchema[]
 
-  const parsedBalances = reduce<TSrc, TAcc>(
-    rawBalances, (accumulator, rawBalance) => {
+  const parsedBalances = reduce<TSrc, TAcc>(rawBalances, (acc, rawBalance) => {
 
-      const {
-        free,
-        locked,
-      } = rawBalance
+    const {
+      free,
+      locked,
+    } = rawBalance
 
-      const total = parseFloat(free) + parseFloat(locked)
+    const total = parseFloat(free) + parseFloat(locked)
 
-      if (total > 0) {
+    if (total > 0) {
 
-        const { balance } = exchange.balance.parse({ rawBalance })
+      const { balance } = exchange.balance.parse({ rawBalance })
 
-        accumulator.push(balance)
+      acc.push(balance)
 
-      }
+    }
 
 
-      return accumulator
+    return acc
 
-    },
-    [],
-  )
+  }, [])
 
   log(`parsed ${parsedBalances.length} balances`)
 

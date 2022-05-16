@@ -30,6 +30,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { symbols } = await http.publicRequest<IBinanceSymbolListResponseSchema>({
     url: getBinanceEndpoints(settings).symbol.list,
+    weight: 10,
   })
 
   const { requestWeight } = http

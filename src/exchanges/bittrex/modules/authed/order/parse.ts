@@ -16,15 +16,10 @@ import { IBittrexOrderSchema } from '../../../schemas/IBittrexOrderSchema'
 
 
 
-// const log = debug('@alunajs:bittrex/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBittrexOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const { rawOrder } = params
 

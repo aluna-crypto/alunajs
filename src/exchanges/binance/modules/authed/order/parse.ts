@@ -14,15 +14,10 @@ import { IBinanceOrderResponseSchema } from '../../../schemas/IBinanceOrderSchem
 
 
 
-// const log = debug('@alunajs:binance/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IBinanceOrderResponseSchema>,
 ): IAlunaOrderParseReturns => {
 
-  // log('parse order', params)
 
   const {
     rawOrder: rawOrderRequest,
@@ -68,9 +63,9 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const amount = parseFloat(origQty)
 
   /**
-     * It seems Binance does not return the price for filled orders, but it does
-     * return a 'fills' prop when the placed order is filled immediately.
-     */
+   * It seems Binance does not return the price for filled orders, but it does
+   * return a 'fills' prop when the placed order is filled immediately.
+   */
   let rate = parseFloat(price)
 
   if (fills?.length) {

@@ -88,6 +88,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       url: getBinanceEndpoints(settings).order.place,
       body,
       credentials,
+      weight: 1,
     })
 
     placedOrder = orderResponse
@@ -117,7 +118,9 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { rawSymbols } = await exchange.symbol.listRaw()
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
 
   const rawSymbol = find(rawSymbols, { symbol: symbolPair })
 

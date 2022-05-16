@@ -70,6 +70,7 @@ describe(__filename, () => {
       credentials,
       query: `&${query.toString()}`,
       url: getBinanceEndpoints(exchange.settings).order.get,
+      weight: 2,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

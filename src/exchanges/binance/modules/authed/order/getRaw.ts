@@ -47,6 +47,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).order.get,
     query: `&${query.toString()}`,
+    weight: 2,
   })
 
   const { rawSymbols } = await exchange.symbol.listRaw({

@@ -39,6 +39,7 @@ describe(__filename, () => {
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
       url: getBinanceEndpoints(exchange.settings).symbol.list,
+      weight: 10,
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

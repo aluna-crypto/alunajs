@@ -9,6 +9,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
+import { BitfinexOrderStatusEnum } from '../../../enums/BitfinexOrderStatusEnum'
 import { TBitfinexEditCancelOrderResponse } from '../../../schemas/IBitfinexOrderSchema'
 
 
@@ -30,7 +31,6 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
-    symbolPair,
     http = new BitfinexHttp(settings),
   } = params
 
@@ -47,7 +47,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       _type,
       _messageId,
       _placeHolder,
-      _canceledOrder, // Bitfinex do not return the order with canceled status
+      canceledOrder, // Bitfinex do not return the order with canceled status
       _code,
       status,
       text,
@@ -64,11 +64,9 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
     }
 
-    const { order } = await exchange.order.get({
-      id,
-      symbolPair,
-      http,
-    })
+    canceledOrder[13] = BitfinexOrderStatusEnum.CANCELED
+
+    const { order } = exchange.order.parse({ rawOrder: canceledOrder })
 
     const { requestWeight } = http
 

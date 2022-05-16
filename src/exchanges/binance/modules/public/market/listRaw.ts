@@ -30,6 +30,7 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const rawTickers = await http.publicRequest<IBinanceMarketSchema[]>({
     url: getBinanceEndpoints(settings).market.list,
+    weight: 40,
   })
 
   const { rawSymbols } = await exchange.symbol.listRaw({
