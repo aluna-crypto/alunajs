@@ -42,7 +42,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   query.append('orderId', id)
   query.append('symbol', symbolPair)
 
-  const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
+  const binanceOrder = await http.authedRequest<IBinanceOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).order.get,
@@ -58,15 +58,15 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     symbol: symbolPair,
   })
 
-  const rawOrderResponse = {
-    rawOrder,
+  const rawOrder: IBinanceOrderResponseSchema = {
+    binanceOrder,
     rawSymbol,
   }
 
   const { requestWeight } = http
 
   return {
-    rawOrder: rawOrderResponse,
+    rawOrder,
     requestWeight,
   }
 
