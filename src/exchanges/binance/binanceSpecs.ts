@@ -157,12 +157,6 @@ export const getBinanceEndpoints = (
 
   if (settings.useTestNet) {
     baseUrl = BINANCE_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Binance don't have a testnet.',
-      })
-    */
   }
 
   return {
@@ -176,11 +170,13 @@ export const getBinanceEndpoints = (
       fetchDetails: `${baseUrl}/api/v3/account`,
     },
     balance: {
-      list: `${baseUrl}/api/v3/account`,
+      listSpot: `${baseUrl}/api/v3/account`,
+      listMargin: `${baseUrl}/sapi/v1/margin/account`,
     },
     order: {
       get: `${baseUrl}/api/v3/order`,
-      list: `${baseUrl}/api/v3/openOrders`,
+      listSpot: `${baseUrl}/api/v3/openOrders`,
+      listMargin: `${baseUrl}/sapi/v1/margin/openOrders`,
       place: `${baseUrl}/api/v3/order`,
       cancel: `${baseUrl}/api/v3/order`,
     },
