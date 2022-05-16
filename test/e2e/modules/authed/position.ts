@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sleep from 'sleep-promise'
 
 import { AlunaOrderSideEnum } from '../../../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../src/lib/enums/AlunaPositionStatusEnum'
@@ -21,6 +22,8 @@ export function position(params: IAuthedParams) {
       authed: params,
       side: AlunaOrderSideEnum.BUY,
     })
+
+    await sleep(1000)
 
   })
 
@@ -101,6 +104,9 @@ export function position(params: IAuthedParams) {
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.CLOSED)
 
     expect(requestWeight.authed).to.be.greaterThan(1)
+
+    // Wait to ensure exchange server has processed the operation
+    await sleep(1000)
 
   })
 

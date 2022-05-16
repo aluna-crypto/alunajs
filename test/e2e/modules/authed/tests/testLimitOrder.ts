@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sleep from 'sleep-promise'
 
 import { AlunaAccountEnum } from '../../../../../src/lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../src/lib/enums/AlunaOrderSideEnum'
@@ -33,6 +34,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
 
       liveData.limitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
+
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
 
     })
 
@@ -145,6 +149,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
       liveData.orderSymbolPair = order.symbolPair
       liveData.orderEditedAmount = order.amount
 
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
+
     })
 
     it('get:editedOrder', async () => {
@@ -190,6 +197,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
+
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
 
     })
 

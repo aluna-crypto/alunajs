@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import sleep from 'sleep-promise'
 
 import { AlunaOrderSideEnum } from '../../../../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../../src/lib/enums/AlunaOrderStatusEnum'
@@ -34,6 +35,9 @@ export const testMarketOrder = (params: IAuthedParams) => {
 
       liveData.marketOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
+
+      // Wait to ensure server has processed the operation
+      await sleep(1000)
 
     })
 
