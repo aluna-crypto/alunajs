@@ -28,9 +28,8 @@
     "test-ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
-    "playground": "nodemon -w src -e ts -x 'DEBUG=@alunajs:* ts-node .playground/index.ts'",
-    "add-exchange": "ts-node .scaffolding/addExchange.ts",
-    "add-stub-exchanges": "yarn add-exchange -e Poloniex -t exchange -a edit-order"
+    "playground": "nodemon -w src -e ts -x 'DEBUG=alunajs:* ts-node .playground/index.ts'",
+    "add-exchange": "ts-node .scaffolding/addExchange.ts"
   },
   "dependencies": {
     "axios": "^0.21.1",
