@@ -8,12 +8,15 @@ import { bittrex } from '../exchanges/bittrex'
 import { bittrexBaseSpecs } from '../exchanges/bittrex/bittrexSpecs'
 import { gate } from '../exchanges/gate'
 import { gateBaseSpecs } from '../exchanges/gate/gateSpecs'
+import { poloniex } from '../exchanges/poloniex'
+import { poloniexBaseSpecs } from '../exchanges/poloniex/poloniexSpecs'
 import { valr } from '../exchanges/valr'
 import { valrBaseSpecs } from '../exchanges/valr/valrSpecs'
 
 
 
 export const exchanges = {
+  [poloniexBaseSpecs.id]: poloniex,
   [binanceBaseSpecs.id]: binance,
   [bitmexBaseSpecs.id]: bitmex,
   [bitfinexBaseSpecs.id]: bitfinex,

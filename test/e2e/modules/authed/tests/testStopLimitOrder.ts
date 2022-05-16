@@ -18,6 +18,8 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
     exchangeConfigs,
   } = params
 
+  const { supportsGetCanceledOrders = true } = exchangeConfigs
+
   describe('type:stopLimit', () => {
 
     it('place', async () => {
@@ -153,27 +155,32 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
 
     })
 
-    it('get:canceledOrder', async () => {
+    if (supportsGetCanceledOrders) {
 
-      const {
-        stopLimitOrderId,
-        orderSymbolPair,
-      } = liveData
+      it('get:canceledOrder', async () => {
 
-      const {
-        order,
-        requestWeight,
-      } = await exchangeAuthed.order.get({
-        symbolPair: orderSymbolPair!,
-        id: stopLimitOrderId!,
+        const {
+          stopLimitOrderId,
+          orderSymbolPair,
+        } = liveData
+
+        const {
+          order,
+          requestWeight,
+        } = await exchangeAuthed.order.get({
+          symbolPair: orderSymbolPair!,
+          id: stopLimitOrderId!,
+        })
+
+        expect(order).to.exist
+        expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+        expect(requestWeight.authed).to.be.greaterThan(0)
+
       })
 
-      expect(order).to.exist
-      expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+    }
 
-      expect(requestWeight.authed).to.be.greaterThan(0)
-
-    })
 
   })
 

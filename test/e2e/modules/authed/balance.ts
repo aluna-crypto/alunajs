@@ -15,6 +15,19 @@ export function balance(params: IAuthedParams) {
     exchangeConfigs,
   } = params
 
+  it('listRaw', async () => {
+
+    const {
+      rawBalances,
+      requestWeight,
+    } = await exchangeAuthed.balance.listRaw()
+
+    expect(rawBalances).to.exist
+
+    expect(requestWeight.authed).to.be.greaterThan(0)
+
+  })
+
   it('list', async () => {
 
     const {
@@ -32,23 +45,10 @@ export function balance(params: IAuthedParams) {
       expect(balance.symbolId).to.exist
       expect(balance.wallet).to.exist
       expect(balance.available).to.exist
-      expect(balance.total).to.exist
+      expect(balance.total).to.be.greaterThan(0)
       expect(balance.meta).to.exist
 
     })
-
-    expect(requestWeight.authed).to.be.greaterThan(0)
-
-  })
-
-  it('listRaw', async () => {
-
-    const {
-      rawBalances,
-      requestWeight,
-    } = await exchangeAuthed.balance.listRaw()
-
-    expect(rawBalances).to.exist
 
     expect(requestWeight.authed).to.be.greaterThan(0)
 
