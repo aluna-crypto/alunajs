@@ -8,8 +8,11 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
-import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
+import { IBinanceBalancesSchema } from '../../../schemas/IBinanceBalanceSchema'
+import {
+  IBinanceMarginAccountInfo,
+  IBinanceSpotAccountInfo,
+} from '../../../schemas/IBinanceKeySchema'
 
 
 
@@ -19,7 +22,7 @@ const log = debug('@alunajs:binance/balance/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaBalanceListParams = {},
-): Promise<IAlunaBalanceListRawReturns<IBinanceBalanceSchema[]>> => {
+): Promise<IAlunaBalanceListRawReturns<IBinanceBalancesSchema>> => {
 
   log('listing raw balances', params)
 
@@ -31,13 +34,27 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   const { http = new BinanceHttp(settings) } = params
 
   const {
-    balances: rawBalances,
-  } = await http.authedRequest<IBinanceKeySchema>({
+    balances: spotBalances,
+  } = await http.authedRequest<IBinanceSpotAccountInfo>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).balance.list,
+    url: getBinanceEndpoints(settings).balance.listSpot,
     credentials,
     weight: 10,
   })
+
+  const {
+    userAssets: marginBalances,
+  } = await http.authedRequest<IBinanceMarginAccountInfo>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: getBinanceEndpoints(settings).balance.listMargin,
+    credentials,
+    weight: 10,
+  })
+
+  const rawBalances: IBinanceBalancesSchema = {
+    spotBalances,
+    marginBalances,
+  }
 
   const { requestWeight } = http
 

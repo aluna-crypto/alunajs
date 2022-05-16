@@ -6,7 +6,7 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { BINANCE_RAW_BALANCES } from '../../../test/fixtures/binanceBalances'
+import { BINANCE_RAW_SPOT_BALANCES } from '../../../test/fixtures/binanceBalances'
 
 
 
@@ -20,7 +20,7 @@ describe(__filename, () => {
   it('should list Binance raw balances just fine', async () => {
 
     // preparing data
-    const mockedBalances = BINANCE_RAW_BALANCES
+    const mockedBalances = BINANCE_RAW_SPOT_BALANCES
 
     const requestResponse = {
       balances: mockedBalances,
@@ -48,7 +48,7 @@ describe(__filename, () => {
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: getBinanceEndpoints(exchange.settings).balance.list,
+      url: getBinanceEndpoints(exchange.settings).balance.listSpot,
       credentials,
       weight: 10,
     })
