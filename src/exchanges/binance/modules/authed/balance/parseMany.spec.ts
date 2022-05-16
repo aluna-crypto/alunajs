@@ -5,7 +5,7 @@ import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BinanceAuthed } from '../../../BinanceAuthed'
-import { BINANCE_RAW_BALANCES } from '../../../test/fixtures/binanceBalances'
+import { BINANCE_RAW_SPOT_BALANCES } from '../../../test/fixtures/binanceBalances'
 import * as parseMod from './parse'
 
 
@@ -20,7 +20,7 @@ describe(__filename, () => {
   it('should parse many Binance raw balances just fine', async () => {
 
     // preparing data
-    const rawBalances = BINANCE_RAW_BALANCES
+    const rawBalances = BINANCE_RAW_SPOT_BALANCES
 
 
     // mocking
