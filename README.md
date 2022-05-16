@@ -27,7 +27,6 @@ const settings: IAlunaSettingsSchema = {
   // orderAnnotation?: string,
   // referralCode?: string,
   // proxySettings?: IAlunaProxySchema,
-  // mappings?: Record<string, string>,
   mappings: { XBT: 'BTC' },
 }
 
