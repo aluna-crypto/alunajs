@@ -73,6 +73,10 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 60,
     perIp: 60,
   },
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,

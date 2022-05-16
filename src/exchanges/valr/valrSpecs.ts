@@ -73,6 +73,10 @@ export const valrBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 180,
     perIp: 360,
   },
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
@@ -144,11 +148,9 @@ export const getValrEndpoints = (settings: IAlunaSettingsSchema) => {
 
   return {
     symbol: {
-      // get: `${baseUrl}/<desired-method>`,
       list: `${baseUrl}/public/currencies`,
     },
     market: {
-      // get: `${baseUrl}/<desired-method>`,
       summaries: `${baseUrl}/public/marketsummary`,
       pairs: `${baseUrl}/public/pairs`,
     },
@@ -163,7 +165,6 @@ export const getValrEndpoints = (settings: IAlunaSettingsSchema) => {
       list: `${baseUrl}/orders/open`,
       place: (orderType: string) => `${baseUrl}/orders/${orderType}`,
       cancel: `${baseUrl}/orders/order`,
-      // edit: `${baseUrl}/<desired-method>`,
     },
   }
 
