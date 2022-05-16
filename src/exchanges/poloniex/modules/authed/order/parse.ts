@@ -20,15 +20,9 @@ import {
 
 
 
-// const log = debug('@alunajs:poloniex/order/parse')
-
-
-
 export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IPoloniexOrderSchema | IPoloniexOrderStatusInfoSchema>,
 ): IAlunaOrderParseReturns => {
-
-  // log('parse order', params)
 
   const { rawOrder } = params
 

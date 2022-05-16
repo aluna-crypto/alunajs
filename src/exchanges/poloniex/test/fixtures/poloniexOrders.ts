@@ -1,5 +1,5 @@
+import { PoloniexOrderSideEnum } from '../../enums/PoloniexOrderSideEnum'
 import { PoloniexOrderStatusEnum } from '../../enums/PoloniexOrderStatusEnum'
-import { PoloniexOrderTypeEnum } from '../../enums/PoloniexOrderTypeEnum'
 import {
   IPoloniexOrderInfo,
   IPoloniexOrderResponseSchema,
@@ -12,7 +12,7 @@ import {
 export const POLONIEX_RAW_ORDER_INFO: IPoloniexOrderInfo[] = [
   {
     orderNumber: '3810998527',
-    type: PoloniexOrderTypeEnum.SELL,
+    type: PoloniexOrderSideEnum.SELL,
     rate: '500.00000000',
     startingAmount: '0.00500000',
     amount: '0.00500000',
@@ -26,7 +26,7 @@ export const POLONIEX_RAW_ORDER_INFO: IPoloniexOrderInfo[] = [
 export const POLONIEX_RAW_ORDER_STATUS_INFO: IPoloniexOrderStatusInfoSchema[] = [
   {
     orderNumber: '3810998527',
-    type: PoloniexOrderTypeEnum.SELL,
+    type: PoloniexOrderSideEnum.SELL,
     rate: '500.00000000',
     startingAmount: '0.00500000',
     amount: '0.00500000',

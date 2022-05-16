@@ -21,12 +21,13 @@ describe(__filename, () => {
 
     // preparing data
     const rawBalances = POLONIEX_RAW_BALANCES_RESPONSE
+    const parsedBalances = PARSED_BALANCES.slice(0, 2)
 
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
 
-    each(PARSED_BALANCES, (balance, i) => {
+    each(parsedBalances, (balance, i) => {
       parse.onCall(i).returns({ balance })
     })
 
@@ -38,7 +39,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq(PARSED_BALANCES)
+    expect(balances).to.deep.eq(parsedBalances)
 
   })
 

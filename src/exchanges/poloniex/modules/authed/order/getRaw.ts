@@ -9,94 +9,17 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { PoloniexOrderStatusEnum } from '../../../enums/PoloniexOrderStatusEnum'
 import { PoloniexHttp } from '../../../PoloniexHttp'
-import { getPoloniexEndpoints } from '../../../poloniexSpecs'
 import {
-  IPoloniexFetchOrderDetailsParams,
   IPoloniexOrderInfo,
   IPoloniexOrderStatusInfoSchema,
-  TGetOrderStatusResponse,
-  TGetOrderTradesResponse,
 } from '../../../schemas/IPoloniexOrderSchema'
+import { fetchOrderStatus } from './helpers/fetchOrderStatus'
+import { fetchOrderTrades } from './helpers/fetchOrderTrades'
 
 
 
 const log = debug('@alunajs:poloniex/order/getRaw')
 
-export const fetchOrderStatus = async (
-  params: IPoloniexFetchOrderDetailsParams,
-): Promise<IPoloniexOrderStatusInfoSchema> => {
-
-  const {
-    id,
-    http,
-    credentials,
-    settings,
-  } = params
-
-  const timestamp = new Date().getTime()
-  const statusParams = new URLSearchParams()
-
-  statusParams.append('command', 'returnOrderStatus')
-  statusParams.append('orderNumber', id)
-  statusParams.append('nonce', timestamp.toString())
-
-  const { result } = await http.authedRequest<TGetOrderStatusResponse>({
-    credentials,
-    url: getPoloniexEndpoints(settings).order.get,
-    body: statusParams,
-  })
-
-  if (result.error) {
-
-    throw new AlunaError({
-      code: AlunaOrderErrorCodes.NOT_FOUND,
-      message: result.error as string,
-      httpStatusCode: 404,
-      metadata: result.error,
-    })
-
-  }
-
-  return result[id]
-}
-
-export const fetchOrderTrades = async (
-  params: IPoloniexFetchOrderDetailsParams,
-): Promise<IPoloniexOrderInfo[]> => {
-
-  const {
-    id,
-    http,
-    credentials,
-    settings,
-  } = params
-
-  const timestamp = new Date().getTime()
-  const statusParams = new URLSearchParams()
-
-  statusParams.append('command', 'returnOrderTrades')
-  statusParams.append('orderNumber', id)
-  statusParams.append('nonce', timestamp.toString())
-
-  const rawOrderTrades = await http.authedRequest<TGetOrderTradesResponse>({
-    credentials,
-    url: getPoloniexEndpoints(settings).order.get,
-    body: statusParams,
-  })
-
-  if ('error' in rawOrderTrades) {
-
-    throw new AlunaError({
-      code: AlunaOrderErrorCodes.NOT_FOUND,
-      message: rawOrderTrades.error as string,
-      httpStatusCode: 404,
-      metadata: rawOrderTrades,
-    })
-
-  }
-
-  return rawOrderTrades
-}
 
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (

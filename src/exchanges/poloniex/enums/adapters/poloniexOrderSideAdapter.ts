@@ -1,6 +1,6 @@
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
-import { PoloniexOrderTypeEnum } from '../PoloniexOrderTypeEnum'
+import { PoloniexOrderSideEnum } from '../PoloniexOrderSideEnum'
 
 
 
@@ -9,13 +9,13 @@ const errorMessagePrefix = 'Order side'
 
 
 export const translateOrderSideToAluna = buildAdapter<
-  PoloniexOrderTypeEnum,
+  PoloniexOrderSideEnum,
   AlunaOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [PoloniexOrderTypeEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [PoloniexOrderTypeEnum.SELL]: AlunaOrderSideEnum.SELL,
+    [PoloniexOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
+    [PoloniexOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
   },
 })
 
@@ -23,11 +23,11 @@ export const translateOrderSideToAluna = buildAdapter<
 
 export const translateOrderSideToPoloniex = buildAdapter<
   AlunaOrderSideEnum,
-  PoloniexOrderTypeEnum
+  PoloniexOrderSideEnum
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderSideEnum.BUY]: PoloniexOrderTypeEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: PoloniexOrderTypeEnum.SELL,
+    [AlunaOrderSideEnum.BUY]: PoloniexOrderSideEnum.BUY,
+    [AlunaOrderSideEnum.SELL]: PoloniexOrderSideEnum.SELL,
   },
 })

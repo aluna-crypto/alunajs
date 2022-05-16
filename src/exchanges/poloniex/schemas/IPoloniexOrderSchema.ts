@@ -1,14 +1,14 @@
 import { IAlunaHttp } from '../../../lib/core/IAlunaHttp'
 import { IAlunaCredentialsSchema } from '../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../../lib/schemas/IAlunaSettingsSchema'
+import { PoloniexOrderSideEnum } from '../enums/PoloniexOrderSideEnum'
 import { PoloniexOrderStatusEnum } from '../enums/PoloniexOrderStatusEnum'
-import { PoloniexOrderTypeEnum } from '../enums/PoloniexOrderTypeEnum'
 
 
 
 export interface IPoloniexOrderInfo {
   orderNumber: string
-  type: PoloniexOrderTypeEnum
+  type: PoloniexOrderSideEnum
   rate: string
   startingAmount: string
   amount: string
