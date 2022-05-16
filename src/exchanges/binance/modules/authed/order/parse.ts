@@ -19,14 +19,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 ): IAlunaOrderParseReturns => {
 
 
-  const {
-    rawOrder: rawOrderRequest,
-  } = params
+  const { rawOrder } = params
 
   const {
-    rawOrder,
     rawSymbol,
-  } = rawOrderRequest
+    binanceOrder,
+  } = rawOrder
 
   const {
     baseAsset,
@@ -45,7 +43,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     updateTime,
     transactTime,
     fills,
-  } = rawOrder
+    isIsolated,
+  } = binanceOrder
+
+  const account = isIsolated === undefined
+    ? AlunaAccountEnum.SPOT
+    : AlunaAccountEnum.MARGIN
 
   const { symbolMappings } = exchange.settings
 
@@ -126,7 +129,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     rate,
     total: amount * rate,
     amount,
-    account: AlunaAccountEnum.SPOT,
+    account,
     status: orderStatus,
     side: orderSide,
     type: orderType,
