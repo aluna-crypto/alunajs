@@ -6,12 +6,15 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { IBinanceBalanceSchema } from '../../../schemas/IBinanceBalanceSchema'
+import {
+  IBinanceMarginBalanceSchema,
+  IBinanceSpotBalanceSchema,
+} from '../../../schemas/IBinanceBalanceSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaBalanceParseParams<IBinanceBalanceSchema>,
+  params: IAlunaBalanceParseParams<IBinanceSpotBalanceSchema | IBinanceMarginBalanceSchema>,
 ): IAlunaBalanceParseReturns => {
 
 
@@ -32,15 +35,30 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings,
   })
 
+  let total: number
+  let wallet: AlunaWalletEnum
+
   const available = Number(free)
 
-  const total = available + Number(locked)
+  const marginTotal = (rawBalance as IBinanceMarginBalanceSchema).netAsset
+
+  if (marginTotal) {
+
+    total = Number(marginTotal)
+    wallet = AlunaWalletEnum.MARGIN
+
+  } else {
+
+    total = available + Number(locked)
+    wallet = AlunaWalletEnum.SPOT
+
+  }
 
   const balance: IAlunaBalanceSchema = {
     symbolId,
     available,
     total,
-    wallet: AlunaWalletEnum.SPOT,
+    wallet,
     meta: rawBalance,
   }
 

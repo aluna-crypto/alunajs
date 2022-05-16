@@ -4,7 +4,7 @@ import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { BinanceAuthed } from '../../../BinanceAuthed'
-import { BINANCE_RAW_BALANCES } from '../../../test/fixtures/binanceBalances'
+import { BINANCE_RAW_SPOT_BALANCES } from '../../../test/fixtures/binanceBalances'
 
 
 
@@ -20,7 +20,7 @@ describe(__filename, () => {
     // preparing data
     const exchange = new BinanceAuthed({ credentials })
 
-    const rawBalance = BINANCE_RAW_BALANCES[0]
+    const rawBalance = BINANCE_RAW_SPOT_BALANCES[0]
 
     const {
       asset,
