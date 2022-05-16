@@ -26,6 +26,7 @@ export interface IBinanceOrderSchema {
   isWorking?: boolean
   origQuoteOrderQty?: string
   fills?: IBinanceOrderFills[]
+  isIsolated?: true
 }
 
 export interface IBinanceOrderFills {
@@ -37,11 +38,11 @@ export interface IBinanceOrderFills {
 }
 
 export interface IBinanceOrdersResponseSchema {
-  rawOrders: IBinanceOrderSchema[]
+  binanceOrders: IBinanceOrderSchema[]
   rawSymbols: IBinanceSymbolSchema[]
 }
 
 export interface IBinanceOrderResponseSchema {
-  rawOrder: IBinanceOrderSchema
+  binanceOrder: IBinanceOrderSchema
   rawSymbol: IBinanceSymbolSchema
 }
