@@ -2,17 +2,19 @@
   "name": "alunajs",
   "version": "0.0.1",
   "description": "Standardizing CryptoTrading APIs across multiple exchanges",
+  "files": ["dist"],
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
     "Sergio Torres<sergio@aluna.social>"
   ],
   "license": "MIT",
-  "private": false,
   "engines": {
     "node": "^16.14"
   },
   "scripts": {
+    "prepublish": "yarn build",
     "prepare": "husky install",
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
