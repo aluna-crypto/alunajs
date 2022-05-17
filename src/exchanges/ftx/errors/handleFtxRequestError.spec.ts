@@ -45,14 +45,14 @@ describe(__filename, () => {
 
     const { isFtxKeyInvalidMock } = mockDeps({ isInvalid: true })
 
-    const dummyError = 'Key is invalid'
+    const dummyError = 'Not logged in: Invalid signature'
 
     const axiosError1 = {
       isAxiosError: true,
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          error: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          error: dummyError,
         },
       },
     } as AxiosError
@@ -160,7 +160,7 @@ describe(__filename, () => {
     'should ensure Ftx invalid api patterns work as expected',
     async () => {
 
-      const message = 'api-invalid'
+      const message = 'Not logged in: Invalid signature'
       expect(isFtxKeyInvalid(message)).to.be.ok
 
     },

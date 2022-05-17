@@ -9,7 +9,9 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 export const ftxInvalidKeyPatterns: Array<RegExp> = [
   // TODO: Review exchange invalid api key error patterns
-  /api-invalid/mi,
+  new RegExp('Not logged in: Invalid signature'),
+  new RegExp('Not logged in: Invalid API key'),
+  new RegExp('Not logged in: Timestamp too far from current time'),
 ]
 
 
@@ -52,8 +54,7 @@ export const handleFtxRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.error || message
 
     httpStatusCode = response?.status || httpStatusCode
 
