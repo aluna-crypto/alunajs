@@ -1,7 +1,8 @@
-// TODO: Describe balance interface for Ftx exchange
 export interface IFtxBalanceSchema {
-  total: string
-  available: string
-  currencySymbol: string
-  // ...
+  coin: string
+  free: number
+  spotBorrow: number
+  total: number
+  usdValue: number
+  availableWithoutBorrow: number
 }

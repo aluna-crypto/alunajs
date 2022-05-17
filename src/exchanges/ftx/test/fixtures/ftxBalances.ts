@@ -2,22 +2,38 @@ import { IFtxBalanceSchema } from '../../schemas/IFtxBalanceSchema'
 
 
 
-// TODO: Review fixtures
 export const FTX_RAW_BALANCES: IFtxBalanceSchema[] = [
   {
-    total: '1500.00000000',
-    available: '1500.00000000',
-    currencySymbol: 'BTC',
+    coin: 'USD',
+    total: 3,
+    free: 3,
+    availableWithoutBorrow: 3,
+    usdValue: 3,
+    spotBorrow: 0,
   },
   {
-    total: '32.00000000',
-    available: '32.00000000',
-    currencySymbol: 'BTC',
+    coin: 'USDT',
+    total: 12,
+    free: 12,
+    availableWithoutBorrow: 12,
+    usdValue: 12,
+    spotBorrow: 0,
   },
   {
-    total: '11.00000000',
-    available: '11.00000000',
-    currencySymbol: 'BTC',
+    coin: 'BNB',
+    total: 4,
+    free: 2,
+    availableWithoutBorrow: 2,
+    usdValue: 2,
+    spotBorrow: 0,
+  },
+  {
+    coin: 'BTC',
+    total: 0,
+    free: 0,
+    availableWithoutBorrow: 0,
+    usdValue: 0,
+    spotBorrow: 0,
   },
 ]
 
