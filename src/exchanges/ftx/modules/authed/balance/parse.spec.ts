@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaWalletEnum } from '../../../../../lib/enums/AlunaWalletEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { FtxAuthed } from '../../../FtxAuthed'
@@ -7,7 +8,7 @@ import { FTX_RAW_BALANCES } from '../../../test/fixtures/ftxBalances'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -19,10 +20,15 @@ describe.skip(__filename, () => {
     // preparing data
     const rawBalance = FTX_RAW_BALANCES[0]
 
+    const {
+      free,
+      total,
+      coin,
+    } = rawBalance
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
-    translateSymbolId.returns(rawBalance.currencySymbol)
+    translateSymbolId.returns(rawBalance.coin)
 
     // executing
     const exchange = new FtxAuthed({ credentials })
@@ -33,8 +39,12 @@ describe.skip(__filename, () => {
     // validating
     expect(balance).to.exist
 
-    // TODO: add expectations for everything
-    // expect(balance).to.deep.eq(...)
+    expect(balance.available).to.be.eq(free)
+    expect(balance.total).to.be.eq(total)
+    expect(balance.symbolId).to.be.eq(coin)
+    expect(balance.exchangeId).to.be.eq(exchange.specs.id)
+    expect(balance.wallet).to.be.eq(AlunaWalletEnum.SPOT)
+    expect(balance.meta).to.deep.eq(rawBalance)
 
   })
 
