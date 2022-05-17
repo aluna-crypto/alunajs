@@ -4,7 +4,7 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { Ftx } from '../../../Ftx'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
-import { FTX_RAW_SYMBOLS } from '../../../test/fixtures/ftxSymbols'
+import { FTX_RAW_MARKETS } from '../../../test/fixtures/ftxMarket'
 
 
 
@@ -18,8 +18,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
 
-    publicRequest.returns(Promise.resolve(FTX_RAW_SYMBOLS))
-
+    publicRequest.returns(Promise.resolve(FTX_RAW_MARKETS))
 
     // executing
     const exchange = new Ftx({})
@@ -31,7 +30,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawSymbols).to.deep.eq(FTX_RAW_SYMBOLS)
+    expect(rawSymbols).to.deep.eq(FTX_RAW_MARKETS)
 
     expect(requestWeight).to.be.ok
 
