@@ -15,7 +15,7 @@ export interface IAlunaHttpPublicParams {
   body?: Record<string, any>
   options?: IAlunaHttpOptions
   settings?: IAlunaSettingsSchema
-  query?: string
+  query?: URLSearchParams
   weight?: number
 }
 
