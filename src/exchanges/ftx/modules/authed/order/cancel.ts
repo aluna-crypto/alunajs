@@ -31,19 +31,19 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new FtxHttp(settings),
   } = params
 
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IFtxOrderSchema>({
+    await http.authedRequest<IFtxOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: getFtxEndpoints(settings).order.get(id),
       credentials,
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const { order } = await exchange.order.get({ id, symbolPair })
 
     const { requestWeight } = http
 

@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -12,7 +12,7 @@ import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -38,9 +38,9 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -49,7 +49,7 @@ describe(__filename, () => {
     const exchange = new FtxAuthed({ credentials })
 
     const { order } = await exchange.order.cancel({
-      id,
+      id: id.toString(),
       symbolPair: '',
     })
 
@@ -62,7 +62,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getFtxEndpoints(exchange.settings).order.cancel(id),
+      url: getFtxEndpoints(exchange.settings).order.cancel(id.toString()),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
