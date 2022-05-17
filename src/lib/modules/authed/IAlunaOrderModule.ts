@@ -81,6 +81,7 @@ export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns, IAl
 export interface IAlunaOrderGetParams extends IAlunaModuleParams {
   id: string
   symbolPair: string
+  account?: AlunaAccountEnum
 }
 
 export interface IAlunaOrderGetRawReturns <T = any> extends IAlunaModuleReturns {
