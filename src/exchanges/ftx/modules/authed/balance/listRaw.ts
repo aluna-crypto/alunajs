@@ -29,7 +29,6 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new FtxHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
   const rawBalances = await http.authedRequest<IFtxBalanceSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getFtxEndpoints(settings).balance.list,
