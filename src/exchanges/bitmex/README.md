@@ -24,7 +24,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const bitmex = aluna('bitmex', { settings })
+const bitmex = aluna('bitmex', { settings, credentials })
 
 bitmex.symbol.list()
 ```

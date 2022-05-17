@@ -23,7 +23,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const poloniex = aluna('poloniex', { settings })
+const poloniex = aluna('poloniex', { settings, credentials })
 
 poloniex.symbol.list()
 ```

@@ -23,7 +23,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const valr = aluna('valr', { settings })
+const valr = aluna('valr', { settings, credentials })
 
 valr.symbol.list()
 ```

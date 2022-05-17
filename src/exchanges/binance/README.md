@@ -19,7 +19,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const binance = aluna('binance')
+const binance = aluna('binance', { credentials })
 
 binance.symbol.list()
 ```

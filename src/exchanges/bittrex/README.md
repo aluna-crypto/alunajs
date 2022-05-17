@@ -19,7 +19,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const bittrex = aluna('bittrex', { settings })
+const bittrex = aluna('bittrex', { settings, credentials })
 
 bittrex.symbol.list()
 ```

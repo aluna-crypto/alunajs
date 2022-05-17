@@ -24,7 +24,7 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const bitfinex = aluna('bitfinex', { settings })
+const bitfinex = aluna('bitfinex', { settings, credentials })
 
 bitfinex.symbol.list()
 ```
