@@ -29,5 +29,8 @@ valr.symbol.list()
 ```
 
 ## Features
-  - [ ] `offersOrderEditing`
-  - [ ] `offersPositionId`
+
+| Functionality | Supported |
+| -- | :-: |
+| `offersOrderEditing` | ❌ |
+| `offersPositionId` | ❌ |

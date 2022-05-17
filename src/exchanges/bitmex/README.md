@@ -30,5 +30,8 @@ bitmex.symbol.list()
 ```
 
 ## Features
-  - [x] `offersOrderEditing`
-  - [x] `offersPositionId`
+
+| Functionality | Supported |
+| -- | :-: |
+| `offersOrderEditing` | ✅ |
+| `offersPositionId` | ✅ |
