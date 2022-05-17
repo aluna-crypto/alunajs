@@ -22,10 +22,24 @@ export const parsePermissions = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawKey } = params
 
+  const { readOnly, withdrawalEnabled } = rawKey
+
   const permissions: IAlunaKeyPermissionSchema = {
-    read: rawKey.read,
-    trade: rawKey.trade,
-    withdraw: rawKey.withdraw,
+    read: true,
+    trade: false,
+    withdraw: false,
+  }
+
+  if (!readOnly) {
+
+    permissions.trade = true
+
+  }
+
+  if (withdrawalEnabled) {
+
+    permissions.withdraw = true
+
   }
 
   return { permissions }
