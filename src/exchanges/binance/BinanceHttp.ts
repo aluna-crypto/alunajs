@@ -46,7 +46,6 @@ export class BinanceHttp implements IAlunaHttp {
 
     const {
       url,
-      body,
       verb = AlunaHttpVerbEnum.GET,
       weight = 1,
     } = params
@@ -72,7 +71,6 @@ export class BinanceHttp implements IAlunaHttp {
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
-      data: body,
       proxySettings,
     })
 
@@ -104,7 +102,6 @@ export class BinanceHttp implements IAlunaHttp {
 
     const {
       url,
-      body,
       verb = AlunaHttpVerbEnum.POST,
       credentials,
       weight = 1,
@@ -115,7 +112,6 @@ export class BinanceHttp implements IAlunaHttp {
 
     const signedHash = generateAuthHeader({
       credentials,
-      body,
       url,
       query,
     })
@@ -157,8 +153,7 @@ export class BinanceHttp implements IAlunaHttp {
 interface ISignedHashParams {
   credentials: IAlunaCredentialsSchema
   url: string
-  body?: any
-  query?: string
+  query?: URLSearchParams
 }
 
 
@@ -171,24 +166,6 @@ export interface IBinanceSignedSignature {
   signedHeader: IBinanceSignedHeaders
 }
 
-export const formatBodyToBinance = (body: Record<string, any>): string => {
-
-  const formattedBody = new URLSearchParams()
-
-  Object.keys(body).map((key) => {
-
-    formattedBody.append(key, body[key])
-
-    return key
-
-  })
-
-  const bodyStringified = `&${formattedBody.toString()}`
-
-  return bodyStringified
-
-}
-
 
 
 export const generateAuthHeader = (
@@ -197,8 +174,7 @@ export const generateAuthHeader = (
 
   const {
     credentials,
-    body,
-    query,
+    query = new URLSearchParams(),
     url,
   } = params
 
@@ -207,28 +183,17 @@ export const generateAuthHeader = (
     secret,
   } = credentials
 
-  const queryParams = `recvWindow=60000&timestamp=${Date.now()}`
-
-  const stringifiedBody = body ? formatBodyToBinance(body) : ''
+  query.append('recvWindow', '60000')
+  query.append('timestamp', `${Date.now()}`)
 
   const signedRequest = crypto
     .createHmac('sha256', secret)
-    .update(queryParams)
-    .update(query || '')
-    .update(stringifiedBody)
+    .update(query.toString())
     .digest('hex')
 
-  const queryParamsWithQuery = query
-    ? queryParams + query
-    : queryParams
+  query.append('signature', signedRequest)
 
-  const urlParams = new URLSearchParams(
-    `${queryParamsWithQuery}${stringifiedBody}`,
-  )
-
-  urlParams.append('signature', signedRequest)
-
-  const signedUrl = `${url}?${urlParams.toString()}`
+  const signedUrl = `${url}?${query.toString()}`
 
   const signedHeader: IBinanceSignedHeaders = {
     'X-MBX-APIKEY': key,
