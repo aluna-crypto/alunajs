@@ -62,18 +62,17 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings,
   })
 
-  const updatedAt = updateTime ? new Date(updateTime) : undefined
-  const amount = parseFloat(origQty)
+  const amount = Number(origQty)
 
   /**
    * It seems Binance does not return the price for filled orders, but it does
    * return a 'fills' prop when the placed order is filled immediately.
    */
-  let rate = parseFloat(price)
+  let rate = Number(price)
 
   if (fills?.length) {
 
-    rate = parseFloat(fills[0].price)
+    rate = Number(fills[0].price)
 
 
   }
@@ -85,6 +84,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   let createdAt: Date
   let filledAt: Date | undefined
   let canceledAt: Date | undefined
+  const updatedAt = updateTime ? new Date(updateTime) : undefined
 
   if (time) {
 
