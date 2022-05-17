@@ -16,8 +16,6 @@ export const translateOrderTypeToAluna = buildAdapter<
   mappings: {
     [FtxOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [FtxOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [FtxOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [FtxOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
   },
 })
 
@@ -31,7 +29,5 @@ export const translateOrderTypeToFtx = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: FtxOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: FtxOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: FtxOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: FtxOrderTypeEnum.CEILING_MARKET,
   },
 })
