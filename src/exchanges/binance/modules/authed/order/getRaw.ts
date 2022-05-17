@@ -46,7 +46,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     credentials,
     verb: AlunaHttpVerbEnum.GET,
     url: getBinanceEndpoints(settings).order.get,
-    query: `&${query.toString()}`,
+    query,
     weight: 2,
   })
 

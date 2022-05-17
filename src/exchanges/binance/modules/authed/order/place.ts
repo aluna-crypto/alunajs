@@ -17,7 +17,10 @@ import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrde
 import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
 import { BinanceOrderTimeInForceEnum } from '../../../enums/BinanceOrderTimeInForceEnum'
 import { BinanceOrderTypeEnum } from '../../../enums/BinanceOrderTypeEnum'
-import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
+import {
+  IBinanceOrderResponseSchema,
+  IBinanceOrderSchema,
+} from '../../../schemas/IBinanceOrderSchema'
 
 
 
@@ -62,36 +65,53 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   const traslatedOrderSide = translateOrderSideToBinance({ from: side })
 
-  const body = {
-    side: traslatedOrderSide,
-    symbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-  }
+  const query = new URLSearchParams()
+
+  query.append('side', traslatedOrderSide)
+  query.append('symbol', symbolPair)
+  query.append('type', translatedOrderType)
+  query.append('quantity', amount.toString())
+
 
   if (translatedOrderType === BinanceOrderTypeEnum.LIMIT) {
 
-    Object.assign(body, {
-      price: Number(rate),
-      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
-    })
+    query.append('price', rate!.toString())
+    query.append('timeInForce', BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED)
 
   }
 
   log('placing new order for Binance')
 
-  let placedOrder: IBinanceOrderSchema
+  let binanceOrder: IBinanceOrderSchema
 
   try {
 
-    const orderResponse = await http.authedRequest<IBinanceOrderSchema>({
+    binanceOrder = await http.authedRequest<IBinanceOrderSchema>({
       url: getBinanceEndpoints(settings).order.place,
-      body,
+      query,
       credentials,
       weight: 1,
     })
 
-    placedOrder = orderResponse
+    const { rawSymbols } = await exchange.symbol.listRaw({
+      http,
+    })
+
+    const rawSymbol = find(rawSymbols, { symbol: symbolPair })
+
+    const rawOrderRequest: IBinanceOrderResponseSchema = {
+      rawSymbol,
+      binanceOrder,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
+
+    const { requestWeight } = http
+
+    return {
+      order,
+      requestWeight,
+    }
 
   } catch (err) {
 
@@ -116,26 +136,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       message,
     })
 
-  }
-
-  const { rawSymbols } = await exchange.symbol.listRaw({
-    http,
-  })
-
-  const rawSymbol = find(rawSymbols, { symbol: symbolPair })
-
-  const rawOrderRequest = {
-    rawSymbol,
-    rawOrder: placedOrder,
-  }
-
-  const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
-
-  const { requestWeight } = http
-
-  return {
-    order,
-    requestWeight,
   }
 
 }

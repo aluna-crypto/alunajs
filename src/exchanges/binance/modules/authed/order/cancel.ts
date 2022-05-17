@@ -37,16 +37,16 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    const body = {
-      orderId: id,
-      symbol: symbolPair,
-    }
+    const query = new URLSearchParams()
+
+    query.append('orderId', id)
+    query.append('symbol', symbolPair)
 
     const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
       url: getBinanceEndpoints(settings).order.get,
       credentials,
-      body,
+      query,
       weight: 2,
     })
 
