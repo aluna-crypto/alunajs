@@ -32,6 +32,7 @@
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "playground": "nodemon -w src -e ts -x 'DEBUG=alunajs:* ts-node .playground/index.ts'",
     "add-exchange": "ts-node .scaffolding/addExchange.ts",
+    "release": "np --test-script=test-cover",
     "prepublish": "yarn build",
     "prepare": "husky install"
   },
