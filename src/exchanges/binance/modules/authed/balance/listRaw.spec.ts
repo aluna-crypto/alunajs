@@ -6,7 +6,10 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
-import { BINANCE_RAW_SPOT_BALANCES } from '../../../test/fixtures/binanceBalances'
+import {
+  BINANCE_RAW_MARGIN_BALANCES,
+  BINANCE_RAW_SPOT_BALANCES,
+} from '../../../test/fixtures/binanceBalances'
 
 
 
@@ -20,11 +23,9 @@ describe(__filename, () => {
   it('should list Binance raw balances just fine', async () => {
 
     // preparing data
-    const mockedBalances = BINANCE_RAW_SPOT_BALANCES
+    const balances = BINANCE_RAW_SPOT_BALANCES
+    const userAssets = BINANCE_RAW_MARGIN_BALANCES
 
-    const requestResponse = {
-      balances: mockedBalances,
-    }
 
     // mocking
     const {
@@ -32,7 +33,8 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(requestResponse))
+    authedRequest.onFirstCall().returns(Promise.resolve({ balances }))
+    authedRequest.onSecondCall().returns(Promise.resolve({ userAssets }))
 
 
     // executing
@@ -42,13 +44,23 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawBalances).to.deep.eq(mockedBalances)
+    expect(rawBalances).to.deep.eq({
+      spotBalances: balances,
+      marginBalances: userAssets,
+    })
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       url: getBinanceEndpoints(exchange.settings).balance.listSpot,
+      credentials,
+      weight: 10,
+    })
+
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      url: getBinanceEndpoints(exchange.settings).balance.listMargin,
       credentials,
       weight: 10,
     })
