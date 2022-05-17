@@ -63,11 +63,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  const traslatedOrderSide = translateOrderSideToBinance({ from: side })
+  const translatedOrderSide = translateOrderSideToBinance({ from: side })
 
   const query = new URLSearchParams()
 
-  query.append('side', traslatedOrderSide)
+  query.append('side', translatedOrderSide)
   query.append('symbol', symbolPair)
   query.append('type', translatedOrderType)
   query.append('quantity', amount.toString())

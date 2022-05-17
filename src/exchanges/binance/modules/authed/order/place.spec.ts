@@ -20,7 +20,6 @@ import { BinanceHttp } from '../../../BinanceHttp'
 import { getBinanceEndpoints } from '../../../binanceSpecs'
 import { translateOrderSideToBinance } from '../../../enums/adapters/binanceOrderSideAdapter'
 import { translateOrderTypeToBinance } from '../../../enums/adapters/binanceOrderTypeAdapter'
-import { BinanceOrderTimeInForceEnum } from '../../../enums/BinanceOrderTimeInForceEnum'
 import { BINANCE_RAW_ORDERS } from '../../../test/fixtures/binanceOrders'
 import { BINANCE_RAW_SYMBOLS } from '../../../test/fixtures/binanceSymbols'
 import * as listRawMod from '../../public/symbol/listRaw'
@@ -48,30 +47,34 @@ describe(__filename, () => {
     const translatedOrderSide = translateOrderSideToBinance({ from: side })
     const translatedOrderType = translateOrderTypeToBinance({ from: type })
 
-    const body = {
-      side: translatedOrderSide,
-      symbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
-      price: 0,
-      timeInForce: BinanceOrderTimeInForceEnum.GOOD_TIL_CANCELED,
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: 'BTCETH',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
     }
+
+    const query = new URLSearchParams()
+    query.append('side', translatedOrderSide)
+    query.append('symbol', params.symbolPair)
+    query.append('type', translatedOrderType)
+    query.append('quantity', params.amount.toString())
+
 
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
     const { listRaw } = mockListRaw({ module: listRawMod })
-
     listRaw.returns(Promise.resolve({ rawSymbols: [mockedRawSymbol] }))
 
     const { parse } = mockParse({ module: parseMod })
-
     parse.returns({ order: mockedParsedOrder })
-
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
     mockValidateParams()
 
@@ -81,14 +84,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
-    const params: IAlunaOrderPlaceParams = {
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    }
+
 
     const { order } = await exchange.order.place(params)
 
@@ -99,7 +95,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
+      query,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.place,
       weight: 1,
@@ -125,28 +121,33 @@ describe(__filename, () => {
     const translatedOrderSide = translateOrderSideToBinance({ from: side })
     const translatedOrderType = translateOrderTypeToBinance({ from: type })
 
-    const body = {
-      side: translatedOrderSide,
-      symbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
     }
+
+    const query = new URLSearchParams()
+    query.append('side', translatedOrderSide)
+    query.append('symbol', params.symbolPair)
+    query.append('type', translatedOrderType)
+    query.append('quantity', params.amount.toString())
 
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
     const { listRaw } = mockListRaw({ module: listRawMod })
-
     listRaw.returns(Promise.resolve({ rawSymbols: [mockedRawSymbol] }))
 
     const { parse } = mockParse({ module: parseMod })
-
     parse.returns({ order: mockedParsedOrder })
-
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
     mockValidateParams()
 
@@ -156,14 +157,7 @@ describe(__filename, () => {
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
-    const { order } = await exchange.order.place({
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    })
+    const { order } = await exchange.order.place(params)
 
 
     // validating
@@ -172,8 +166,8 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
       credentials,
+      query,
       url: getBinanceEndpoints(exchange.settings).order.place,
       weight: 1,
     })

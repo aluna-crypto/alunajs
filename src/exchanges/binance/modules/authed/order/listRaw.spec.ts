@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { cloneDeep } from 'lodash'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
@@ -23,20 +24,24 @@ describe(__filename, () => {
   it('should list Binance raw orders just fine', async () => {
 
     // preparing data
-    const mockedRawOrders = BINANCE_RAW_ORDERS
-    const mockedRawSymbols = BINANCE_RAW_SYMBOLS
+    const spotOrders = cloneDeep([BINANCE_RAW_ORDERS[0]])
+    const marginOrders = cloneDeep([BINANCE_RAW_ORDERS[1]])
+
+    const rawSymbols = BINANCE_RAW_SYMBOLS
+    const binanceOrders = spotOrders.concat(marginOrders)
+
 
     // mocking
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: BinanceHttp.prototype })
+    authedRequest.onFirstCall().returns(Promise.resolve(spotOrders))
+    authedRequest.onSecondCall().returns(Promise.resolve(marginOrders))
 
     const { listRaw } = mockListRaw({ module: listRawMod })
+    listRaw.returns(Promise.resolve({ rawSymbols }))
 
-    listRaw.returns(Promise.resolve({ rawSymbols: mockedRawSymbols }))
-
-    authedRequest.returns(Promise.resolve(mockedRawOrders))
 
     // executing
     const exchange = new BinanceAuthed({ credentials })
@@ -46,17 +51,29 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrders).to.deep.eq({
-      rawOrders: mockedRawOrders,
-      rawSymbols: mockedRawSymbols,
+      binanceOrders,
+      rawSymbols,
     })
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.listSpot,
       weight: 40,
+    })
+
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      credentials,
+      url: getBinanceEndpoints(exchange.settings).order.listMargin,
+      weight: 10,
+    })
+
+    expect(listRaw.callCount).to.be.eq(1)
+    expect(listRaw.firstCall.args[0]).to.deep.eq({
+      http: new BinanceHttp({}),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

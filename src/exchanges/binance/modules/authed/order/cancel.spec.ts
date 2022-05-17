@@ -6,6 +6,7 @@ import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
+import { IAlunaOrderCancelParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BinanceAuthed } from '../../../BinanceAuthed'
@@ -31,10 +32,15 @@ describe(__filename, () => {
 
     const { orderId } = mockedRawOrder
 
-    const body = {
-      orderId: orderId.toString(),
-      symbol: '',
+    const params: IAlunaOrderCancelParams = {
+      id: orderId.toString(),
+      symbolPair: '',
     }
+
+    const query = new URLSearchParams()
+    query.append('orderId', params.id)
+    query.append('symbol', params.symbolPair)
+
 
     // mocking
     const {
@@ -49,13 +55,11 @@ describe(__filename, () => {
 
     get.returns(Promise.resolve({ order: mockedParsedOrder }))
 
+
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
-    const { order } = await exchange.order.cancel({
-      id: orderId.toString(),
-      symbolPair: '',
-    })
+    const { order } = await exchange.order.cancel(params)
 
 
     // validating
@@ -63,11 +67,13 @@ describe(__filename, () => {
 
     expect(authedRequest.callCount).to.be.eq(1)
 
+
+
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
       url: getBinanceEndpoints(exchange.settings).order.cancel,
-      body,
+      query,
       weight: 2,
     })
 
@@ -78,13 +84,15 @@ describe(__filename, () => {
   it('should throw an error when canceling a Binance order', async () => {
 
     // preparing data
-    const id = 'id'
-    const symbolPair = 'symbolPair'
-
-    const body = {
-      orderId: id,
-      symbol: symbolPair,
+    const params: IAlunaOrderCancelParams = {
+      id: 'id',
+      symbolPair: 'symbolPair',
     }
+
+    const query = new URLSearchParams()
+    query.append('orderId', params.id)
+    query.append('symbol', params.symbolPair)
+
 
     // mocking
     const {
@@ -105,12 +113,12 @@ describe(__filename, () => {
     // executing
     const exchange = new BinanceAuthed({ credentials })
 
-    const { error: responseError } = await executeAndCatch(
-      () => exchange.order.cancel({
-        id,
-        symbolPair: 'symbolPair',
-      }),
-    )
+    const {
+      error: responseError,
+    } = await executeAndCatch(() => exchange.order.cancel({
+      id: params.id,
+      symbolPair: params.symbolPair,
+    }))
 
 
     // validating
@@ -121,7 +129,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      body,
+      query,
       url: getBinanceEndpoints(exchange.settings).order.cancel,
       weight: 2,
     })

@@ -1,11 +1,18 @@
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  cloneDeep,
+  each,
+} from 'lodash'
 
 import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BinanceAuthed } from '../../../BinanceAuthed'
-import { BINANCE_RAW_SPOT_BALANCES } from '../../../test/fixtures/binanceBalances'
+import { IBinanceBalancesSchema } from '../../../schemas/IBinanceBalanceSchema'
+import {
+  BINANCE_RAW_MARGIN_BALANCES,
+  BINANCE_RAW_SPOT_BALANCES,
+} from '../../../test/fixtures/binanceBalances'
 import * as parseMod from './parse'
 
 
@@ -20,16 +27,25 @@ describe(__filename, () => {
   it('should parse many Binance raw balances just fine', async () => {
 
     // preparing data
-    const rawBalances = BINANCE_RAW_SPOT_BALANCES
+    const spotBalances = cloneDeep(BINANCE_RAW_SPOT_BALANCES).splice(0, 2)
+    spotBalances[1].free = '0'
+    spotBalances[1].locked = '0'
+
+    const marginBalances = [BINANCE_RAW_MARGIN_BALANCES[0]]
+
+    const rawBalances: IBinanceBalancesSchema = {
+      spotBalances,
+      marginBalances,
+    }
+
+    const parsedBalances = cloneDeep(PARSED_BALANCES).slice(0, 2)
 
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
-
-    each(PARSED_BALANCES, (balance, i) => {
-      parse.onCall(i).returns({ balance })
+    each(parsedBalances, (parsed, index) => {
+      parse.onCall(index).returns({ balance: parsed })
     })
-
 
     // executing
     const exchange = new BinanceAuthed({ credentials })
@@ -38,7 +54,8 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq(PARSED_BALANCES)
+    expect(balances).to.deep.eq(parsedBalances)
+    expect(parse.callCount).to.be.eq(parsedBalances.length)
 
   })
 
