@@ -60,14 +60,14 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.listSpot,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       weight: 40,
     })
 
     expect(authedRequest.secondCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.listMargin,
+      url: getBinanceEndpoints(exchange.settings).order.margin,
       weight: 10,
     })
 

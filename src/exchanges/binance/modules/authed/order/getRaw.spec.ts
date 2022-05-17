@@ -68,7 +68,7 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       query,
-      url: getBinanceEndpoints(exchange.settings).order.get,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       weight: 2,
     })
 

@@ -174,11 +174,8 @@ export const getBinanceEndpoints = (
       listMargin: `${baseUrl}/sapi/v1/margin/account`,
     },
     order: {
-      get: `${baseUrl}/api/v3/order`,
-      listSpot: `${baseUrl}/api/v3/openOrders`,
-      listMargin: `${baseUrl}/sapi/v1/margin/openOrders`,
-      place: `${baseUrl}/api/v3/order`,
-      cancel: `${baseUrl}/api/v3/order`,
+      spot: `${baseUrl}/api/v3/order`,
+      margin: `${baseUrl}/sapi/v1/margin/order`,
     },
   }
 }

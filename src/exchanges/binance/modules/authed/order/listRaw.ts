@@ -35,14 +35,14 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const spotOrders = await http.authedRequest<IBinanceOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).order.listSpot,
+    url: getBinanceEndpoints(settings).order.spot,
     credentials,
     weight: 40,
   })
 
   const marginOrders = await http.authedRequest<IBinanceOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).order.listMargin,
+    url: getBinanceEndpoints(settings).order.margin,
     credentials,
     weight: 10,
   })

@@ -45,7 +45,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const binanceOrder = await http.authedRequest<IBinanceOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getBinanceEndpoints(settings).order.get,
+    url: getBinanceEndpoints(settings).order.spot,
     query,
     weight: 2,
   })

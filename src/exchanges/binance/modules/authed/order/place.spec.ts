@@ -97,7 +97,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       query,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.place,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       weight: 1,
     })
 
@@ -168,7 +168,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       query,
-      url: getBinanceEndpoints(exchange.settings).order.place,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       weight: 1,
     })
 

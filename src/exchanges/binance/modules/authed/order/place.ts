@@ -87,7 +87,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     binanceOrder = await http.authedRequest<IBinanceOrderSchema>({
-      url: getBinanceEndpoints(settings).order.place,
+      url: getBinanceEndpoints(settings).order.spot,
       query,
       credentials,
       weight: 1,

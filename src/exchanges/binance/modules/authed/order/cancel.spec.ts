@@ -72,7 +72,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getBinanceEndpoints(exchange.settings).order.cancel,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       query,
       weight: 2,
     })
@@ -130,7 +130,7 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.DELETE,
       credentials,
       query,
-      url: getBinanceEndpoints(exchange.settings).order.cancel,
+      url: getBinanceEndpoints(exchange.settings).order.spot,
       weight: 2,
     })
 
