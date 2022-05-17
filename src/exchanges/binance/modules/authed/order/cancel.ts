@@ -2,7 +2,9 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -31,11 +33,43 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    account,
     symbolPair,
     http = new BinanceHttp(settings),
   } = params
 
+  if (!account) {
+
+    const error = new AlunaError({
+      code: AlunaGenericErrorCodes.PARAM_ERROR,
+      message: 'Order account is required to cancel Binance orders',
+      httpStatusCode: 400,
+    })
+
+    log(error)
+
+    throw error
+
+  }
+
   try {
+
+    const orderEndpoints = getBinanceEndpoints(settings).order
+
+    let url: string
+    let weight: number
+
+    if (account === AlunaAccountEnum.SPOT) {
+
+      url = orderEndpoints.spot
+      weight = 1
+
+    } else {
+
+      url = orderEndpoints.margin
+      weight = 10
+
+    }
 
     const query = new URLSearchParams()
 
@@ -44,10 +78,10 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
     const rawOrder = await http.authedRequest<IBinanceOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getBinanceEndpoints(settings).order.get,
+      url,
       credentials,
       query,
-      weight: 2,
+      weight,
     })
 
     const { order } = await exchange.order.get({
