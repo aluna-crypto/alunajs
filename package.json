@@ -15,6 +15,7 @@
   "engines": {
     "node": "^16.14"
   },
+  "repository": "alunacrypto/alunajs",
   "scripts": {
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
