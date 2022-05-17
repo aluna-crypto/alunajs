@@ -1,11 +1,10 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { FtxAuthed } from '../../../FtxAuthed'
 import { IFtxKeySchema } from '../../../schemas/IFtxKeySchema'
+import { FTX_KEY_PERMISSIONS } from '../../../test/fixtures/ftxKey'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
@@ -21,28 +20,20 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const accountId = 'accountId'
+    const rawKey: IFtxKeySchema = FTX_KEY_PERMISSIONS
 
-    const rawKey: IFtxKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
-      accountId,
-    }
-
-    const rawKeyWithoutAccId = omit(rawKey, 'accountId')
-
-    const permissions: IAlunaKeyPermissionSchema = {
-      ...rawKeyWithoutAccId,
-    }
-
+    const {
+      account: {
+        accountIdentifier,
+      },
+    } = rawKey
 
     // mocking
     const { parsePermissions } = mockParsePermissions({
       module: mockParsePermissionsMod,
     })
 
-    parsePermissions.returns({ permissions })
+    parsePermissions.returns({ permissions: rawKey })
 
 
     // executing
@@ -53,8 +44,8 @@ describe(__filename, () => {
 
     // validating
     expect(key).to.deep.eq({
-      accountId,
-      permissions,
+      accountId: accountIdentifier.toString(),
+      permissions: rawKey,
       meta: rawKey,
     })
 

@@ -22,12 +22,14 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawKey } = params
 
-  const { accountId } = rawKey
+  const { account } = rawKey
+
+  const { accountIdentifier } = account
 
   const { permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
-    accountId,
+    accountId: accountIdentifier.toString(),
     permissions,
     meta: rawKey,
   }
