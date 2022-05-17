@@ -1,7 +1,7 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-16T15:22:35.405Z",
+    "__export_date": "2022-05-17T11:42:11.131Z",
     "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
@@ -661,7 +661,7 @@
         {
             "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632765634,
+            "modified": 1652787270298,
             "created": 1651519029538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -1045,6 +1045,70 @@
             ],
             "authentication": {},
             "metaSortKey": -1642139601835.5625,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_1aceb5256fa34c14b2bb8c2191d0340c",
+            "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
+            "modified": 1652787653706,
+            "created": 1652787328202,
+            "url": "{{ _.PLAYGROUND_URL }}/exchanges",
+            "name": "getLeverage",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"position.getLeverage\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1642139601785.5625,
+            "isPrivate": false,
+            "settingStoreCookies": true,
+            "settingSendCookies": true,
+            "settingDisableRenderRequestBody": false,
+            "settingEncodeUrl": true,
+            "settingRebuildPath": true,
+            "settingFollowRedirects": "global",
+            "_type": "request"
+        },
+        {
+            "_id": "req_7b87a38e7bc641629387e9ede6d3ef9e",
+            "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
+            "modified": 1652787663654,
+            "created": 1652787288178,
+            "url": "{{ _.PLAYGROUND_URL }}/exchanges",
+            "name": "setLeverage",
+            "description": "",
+            "method": "GET",
+            "body": {
+                "mimeType": "application/json",
+                "text": "{\n\t\"method\": \"position.setLeverage\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"leverage\": 0\n}"
+            },
+            "parameters": [],
+            "headers": [
+                {
+                    "name": "Content-Type",
+                    "value": "application/json",
+                    "id": "pair_90baf7d104734ae78c9d56f732640381"
+                }
+            ],
+            "authentication": {},
+            "metaSortKey": -1642139601735.5625,
             "isPrivate": false,
             "settingStoreCookies": true,
             "settingSendCookies": true,
