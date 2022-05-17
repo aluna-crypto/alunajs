@@ -1,4 +1,4 @@
 export enum FtxOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }
