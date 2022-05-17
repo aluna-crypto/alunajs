@@ -10,7 +10,7 @@ import { IGateSymbolSchema } from '../../../schemas/IGateSymbolSchema'
 
 
 
-const log = debug('@alunajs:gate/symbol/parseMany')
+const log = debug('alunajs:gate/symbol/parseMany')
 
 
 

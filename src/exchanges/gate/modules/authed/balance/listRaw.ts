@@ -12,7 +12,7 @@ import { IGateBalanceSchema } from '../../../schemas/IGateBalanceSchema'
 
 
 
-const log = debug('@alunajs:gate/balance/listRaw')
+const log = debug('alunajs:gate/balance/listRaw')
 
 
 

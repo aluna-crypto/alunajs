@@ -17,3 +17,5 @@ Others:
  - [ ] *Coverage is at **100%***
  - [ ] *[Integration tests](../../test/e2e) are **passing** (*important one!*)*
  - [ ] *Configs **added** to Insomnia [`aluna-spec.json`](../../.playground/aluna-spec.json) file*
+ - [ ] Exchange has `README.md`
+ - [ ] Exchange was added to main `exchanges-table.md` document

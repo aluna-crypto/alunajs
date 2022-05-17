@@ -12,7 +12,7 @@ import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
 
-const log = debug('@alunajs:sample/order/getRaw')
+const log = debug('alunajs:sample/order/getRaw')
 
 
 

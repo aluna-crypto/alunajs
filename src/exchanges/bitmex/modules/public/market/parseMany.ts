@@ -12,7 +12,7 @@ import { IBitmexMarketSchema } from '../../../schemas/IBitmexMarketSchema'
 
 
 
-const log = debug('@alunajs:bitmex/market/parseMany')
+const log = debug('alunajs:bitmex/market/parseMany')
 
 
 

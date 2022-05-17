@@ -14,7 +14,7 @@ import { ISampleOrderSchema } from '../../../schemas/ISampleOrderSchema'
 
 
 
-const log = debug('@alunajs:sample/order/cancel')
+const log = debug('alunajs:sample/order/cancel')
 
 
 

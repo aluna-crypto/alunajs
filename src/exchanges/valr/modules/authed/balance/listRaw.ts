@@ -12,7 +12,7 @@ import { getValrEndpoints } from '../../../valrSpecs'
 
 
 
-const log = debug('@alunajs:valr/balance/listRaw')
+const log = debug('alunajs:valr/balance/listRaw')
 
 
 

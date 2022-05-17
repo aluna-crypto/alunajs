@@ -1,6 +1,10 @@
-# AlunaJS - Changelog
+# 1.0.0 (May 17, 2022)
 
-## 2022-06-01
-
- - First release
-   - Hello world
+ - Initial public release, includes:
+   - Binance
+   - Bitfinex
+   - Bitmex
+   - Bittrex
+   - Gate
+   - Poloniex
+   - Valr

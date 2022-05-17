@@ -10,7 +10,7 @@ import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
 
 
-const log = debug('@alunajs:valr/balance/parseMany')
+const log = debug('alunajs:valr/balance/parseMany')
 
 
 

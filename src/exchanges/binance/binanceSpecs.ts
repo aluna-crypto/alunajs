@@ -94,6 +94,10 @@ export const binanceBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 300,
     perIp: 300,
   },
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,

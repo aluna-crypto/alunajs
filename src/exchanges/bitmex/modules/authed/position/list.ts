@@ -9,7 +9,7 @@ import { BitmexHttp } from '../../../BitmexHttp'
 
 
 
-const log = debug('@alunajs:bitmex/position/list')
+const log = debug('alunajs:bitmex/position/list')
 
 
 

@@ -9,7 +9,7 @@ import { ValrHttp } from '../../../ValrHttp'
 
 
 
-const log = debug('@alunajs:valr/market/list')
+const log = debug('alunajs:valr/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

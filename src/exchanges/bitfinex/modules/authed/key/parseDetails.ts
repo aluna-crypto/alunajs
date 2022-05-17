@@ -10,7 +10,7 @@ import { IBitfinexKeySchema } from '../../../schemas/IBitfinexKeySchema'
 
 
 
-const log = debug('@alunajs:bitfinex/key/parseDetails')
+const log = debug('alunajs:bitfinex/key/parseDetails')
 
 
 

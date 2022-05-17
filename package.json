@@ -1,19 +1,22 @@
 {
   "name": "alunajs",
-  "version": "0.0.1",
-  "description": "Aluna exchanges hub.",
+  "version": "1.0.0",
+  "description": "Standardizing CryptoTrading APIs across multiple exchanges",
+  "files": [
+    "dist"
+  ],
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Anderson Arboleya<anderson@aluna.social>",
   "contributors": [
     "Sergio Torres<sergio@aluna.social>"
   ],
   "license": "MIT",
-  "private": false,
   "engines": {
     "node": "^16.14"
   },
+  "repository": "alunacrypto/alunajs",
   "scripts": {
-    "prepare": "husky install",
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
     "build": "yarn clean && yarn build-index && tsc -p tsconfig.dist.json && yarn clean-index",
@@ -28,9 +31,11 @@
     "test-ci": "nyc mocha --bail --forbid-only --reporter dot",
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
-    "playground": "nodemon -w src -e ts -x 'DEBUG=@alunajs:* ts-node .playground/index.ts'",
+    "playground": "nodemon -w src -e ts -x 'DEBUG=alunajs:* ts-node .playground/index.ts'",
     "add-exchange": "ts-node .scaffolding/addExchange.ts",
-    "add-stub-exchanges": "yarn add-exchange -e Poloniex -t exchange -a edit-order"
+    "release": "np --test-script=test-cover",
+    "prepublish": "yarn build",
+    "prepare": "husky install"
   },
   "dependencies": {
     "axios": "^0.21.1",

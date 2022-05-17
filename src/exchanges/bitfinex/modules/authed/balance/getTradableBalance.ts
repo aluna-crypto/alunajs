@@ -16,7 +16,7 @@ import { translateToBitfinex } from '../../../enums/adapters/bitfinexAccountsAda
 
 
 
-const log = debug('@alunajs:bitfinex/balance/getTradableBalance')
+const log = debug('alunajs:bitfinex/balance/getTradableBalance')
 
 
 

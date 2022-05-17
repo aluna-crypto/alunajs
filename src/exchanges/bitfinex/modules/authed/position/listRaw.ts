@@ -11,7 +11,7 @@ import { IBitfinexPositionSchema } from '../../../schemas/IBitfinexPositionSchem
 
 
 
-const log = debug('@alunajs:bitfinex/position/listRaw')
+const log = debug('alunajs:bitfinex/position/listRaw')
 
 
 

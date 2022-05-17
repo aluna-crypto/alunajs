@@ -11,7 +11,7 @@ import { IValrKeySchema, ValrApiKeyPermissionsEnum } from '../../../schemas/IVal
 
 
 
-const log = debug('@alunajs:valr/key/parsePermissions')
+const log = debug('alunajs:valr/key/parsePermissions')
 
 
 

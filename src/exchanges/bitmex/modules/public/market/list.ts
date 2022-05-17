@@ -9,7 +9,7 @@ import { BitmexHttp } from '../../../BitmexHttp'
 
 
 
-const log = debug('@alunajs:bitmex/market/list')
+const log = debug('alunajs:bitmex/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

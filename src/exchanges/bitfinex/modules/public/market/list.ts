@@ -9,7 +9,7 @@ import { BitfinexHttp } from '../../../BitfinexHttp'
 
 
 
-const log = debug('@alunajs:bitfinex/market/list')
+const log = debug('alunajs:bitfinex/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

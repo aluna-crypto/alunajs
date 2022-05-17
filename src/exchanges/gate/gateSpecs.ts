@@ -36,19 +36,20 @@ export const gateBaseSpecs: IAlunaExchangeSchema = {
   id: 'gate',
   name: 'Gate',
   signupUrl: 'https://www.gate.io/signup',
-  // TODO: Review 'connectApiUrl'
   connectApiUrl: 'https://www.gate.io/myaccount/apiv4keys',
-  // TODO: Review exchange rates limits
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 50,
+    perIp: 50,
+  },
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.SPOT,
       supported: true,
@@ -130,7 +131,6 @@ export const getGateEndpoints = (settings: IAlunaSettingsSchema) => {
       list: `${baseUrl}/spot/open_orders`,
       place: `${baseUrl}/spot/orders`,
       cancel: (id: string, query: string) => `${baseUrl}/spot/orders/${id}?${query}`,
-      // edit: `${baseUrl}/<desired-method>`,
     },
   }
 }

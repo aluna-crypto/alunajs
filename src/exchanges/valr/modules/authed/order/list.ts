@@ -9,7 +9,7 @@ import { ValrHttp } from '../../../ValrHttp'
 
 
 
-const log = debug('@alunajs:valr/order/list')
+const log = debug('alunajs:valr/order/list')
 
 
 

@@ -9,7 +9,7 @@ import { GateHttp } from '../../../GateHttp'
 
 
 
-const log = debug('@alunajs:gate/symbol/list')
+const log = debug('alunajs:gate/symbol/list')
 
 
 

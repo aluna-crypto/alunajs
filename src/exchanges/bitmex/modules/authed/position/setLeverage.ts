@@ -12,7 +12,7 @@ import { getBitmexEndpoints } from '../../../bitmexSpecs'
 
 
 
-const log = debug('@alunajs:bitmex/position/setLeverage')
+const log = debug('alunajs:bitmex/position/setLeverage')
 
 
 

@@ -10,7 +10,7 @@ import { IGateKeySchema } from '../../../schemas/IGateKeySchema'
 
 
 
-const log = debug('@alunajs:gate/key/parsePermissions')
+const log = debug('alunajs:gate/key/parsePermissions')
 
 
 

@@ -76,6 +76,11 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 0,
     perIp: 0,
   },
+  // TODO: Review supported features
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,

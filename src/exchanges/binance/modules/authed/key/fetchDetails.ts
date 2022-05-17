@@ -12,7 +12,7 @@ import { IBinanceKeySchema } from '../../../schemas/IBinanceKeySchema'
 
 
 
-const log = debug('@alunajs:binance/key/fetchDetails')
+const log = debug('alunajs:binance/key/fetchDetails')
 
 
 

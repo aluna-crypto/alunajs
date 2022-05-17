@@ -12,7 +12,7 @@ import { IBitfinexBalanceSchema } from '../../../schemas/IBitfinexBalanceSchema'
 
 
 
-const log = debug('@alunajs:exchanges/bitfinex/balance/parse')
+const log = debug('alunajs:exchanges/bitfinex/balance/parse')
 
 
 

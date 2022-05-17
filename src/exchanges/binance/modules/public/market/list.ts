@@ -9,7 +9,7 @@ import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
-const log = debug('@alunajs:binance/market/list')
+const log = debug('alunajs:binance/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

@@ -11,7 +11,7 @@ import { IValrMarketsSchema, IValrMarketSummarySchema } from '../../../schemas/I
 
 
 
-const log = debug('@alunajs:valr/market/parseMany')
+const log = debug('alunajs:valr/market/parseMany')
 
 
 

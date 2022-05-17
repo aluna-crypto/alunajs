@@ -11,7 +11,7 @@ import { ISampleMarketSchema } from '../../../schemas/ISampleMarketSchema'
 
 
 
-const log = debug('@alunajs:sample/market/listRaw')
+const log = debug('alunajs:sample/market/listRaw')
 
 
 

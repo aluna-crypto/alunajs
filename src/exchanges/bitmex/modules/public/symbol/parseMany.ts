@@ -14,7 +14,7 @@ import { IBitmexSymbolSchema } from '../../../schemas/IBitmexSymbolSchema'
 
 
 
-const log = debug('@alunajs:bitmex/symbol/parseMany')
+const log = debug('alunajs:bitmex/symbol/parseMany')
 
 
 

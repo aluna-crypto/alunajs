@@ -12,7 +12,7 @@ import { IBitmexKeySchema } from '../../../schemas/IBitmexKeySchema'
 
 
 
-const log = debug('@alunajs:bitmex/key/fetchDetails')
+const log = debug('alunajs:bitmex/key/fetchDetails')
 
 
 

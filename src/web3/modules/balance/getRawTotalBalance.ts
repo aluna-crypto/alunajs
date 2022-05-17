@@ -15,7 +15,7 @@ import { DEBANK_API_URL } from '../../web3Settings'
 
 
 
-const log = debug('@alunajs:web3/balance/getRawTotalBalance')
+const log = debug('alunajs:web3/balance/getRawTotalBalance')
 
 
 

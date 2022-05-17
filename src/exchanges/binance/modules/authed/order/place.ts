@@ -21,7 +21,7 @@ import { IBinanceOrderSchema } from '../../../schemas/IBinanceOrderSchema'
 
 
 
-const log = debug('@alunajs:binance/order/place')
+const log = debug('alunajs:binance/order/place')
 
 
 

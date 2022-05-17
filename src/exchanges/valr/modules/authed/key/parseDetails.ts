@@ -10,7 +10,7 @@ import { IValrKeySchema } from '../../../schemas/IValrKeySchema'
 
 
 
-const log = debug('@alunajs:valr/key/parseDetails')
+const log = debug('alunajs:valr/key/parseDetails')
 
 
 

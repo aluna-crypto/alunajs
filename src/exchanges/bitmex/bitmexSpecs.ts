@@ -66,14 +66,15 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const bitmexBaseSpecs: IAlunaExchangeSchema = {
   id: 'bitmex',
   name: 'Bitmex',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://bitmex.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://bitmex.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://www.bitmex.com/register',
+  connectApiUrl: 'https://www.bitmex.com/app/apiKeys',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 120,
+    perIp: 5,
+  },
+  features: {
+    offersOrderEditing: true,
+    offersPositionId: true,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,

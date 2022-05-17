@@ -11,7 +11,7 @@ import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
-const log = debug('@alunajs:binance/order/edit')
+const log = debug('alunajs:binance/order/edit')
 
 
 

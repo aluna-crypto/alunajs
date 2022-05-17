@@ -15,7 +15,7 @@ import {
 
 
 
-const log = debug('@alunajs:binance/order/listRaw')
+const log = debug('alunajs:binance/order/listRaw')
 
 
 

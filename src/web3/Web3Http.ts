@@ -17,7 +17,7 @@ import { AlunaCache } from '../utils/cache/AlunaCache'
 
 
 
-const log = debug('@alunajs:web3/http')
+const log = debug('alunajs:web3/http')
 
 
 

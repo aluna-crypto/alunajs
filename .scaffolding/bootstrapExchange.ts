@@ -21,7 +21,7 @@ import { skipTests } from './boostrap/skipTests'
 
 
 
-const log = debug('@alunajs:scaffold/generate')
+const log = debug('alunajs:scaffold/generate')
 
 
 

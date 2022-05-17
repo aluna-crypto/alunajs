@@ -11,7 +11,7 @@ import { IBitfinexOrderSchema } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
-const log = debug('@alunajs:bitfinex/order/parseMany')
+const log = debug('alunajs:bitfinex/order/parseMany')
 
 
 

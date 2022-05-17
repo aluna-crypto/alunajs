@@ -42,8 +42,9 @@ yarn playground
 
 On Insomnia, select the desired Exchange:
 
-`<image-here>`
+![exchanges](https://user-images.githubusercontent.com/26660/168837163-10561c7e-e8f3-4ad2-b60a-2bcf59d985fb.png)
 
 Then try out all the available methods:
 
-`<image-here>`
+![methods](https://user-images.githubusercontent.com/26660/168837201-682e5a85-bc35-4c68-b119-910162222f21.png)
+

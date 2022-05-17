@@ -11,7 +11,7 @@ import { IGateSymbolSchema } from '../../../schemas/IGateSymbolSchema'
 
 
 
-const log = debug('@alunajs:gate/symbol/listRaw')
+const log = debug('alunajs:gate/symbol/listRaw')
 
 
 

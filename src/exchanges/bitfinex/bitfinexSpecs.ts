@@ -74,6 +74,10 @@ export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: -1,
     perIp: 70,
   },
+  features: {
+    offersOrderEditing: true,
+    offersPositionId: true,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,

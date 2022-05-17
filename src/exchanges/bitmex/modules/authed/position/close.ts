@@ -15,7 +15,7 @@ import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
 
 
 
-const log = debug('@alunajs:bitmex/position/close')
+const log = debug('alunajs:bitmex/position/close')
 
 
 

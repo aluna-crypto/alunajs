@@ -14,7 +14,7 @@ import { Web3Http } from '../../Web3Http'
 
 
 
-const log = debug('@alunajs:web3/balance/list')
+const log = debug('alunajs:web3/balance/list')
 
 
 

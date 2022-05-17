@@ -9,7 +9,7 @@ import { SampleHttp } from '../../../SampleHttp'
 
 
 
-const log = debug('@alunajs:sample/position/get')
+const log = debug('alunajs:sample/position/get')
 
 
 

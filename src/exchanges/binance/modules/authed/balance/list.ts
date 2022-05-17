@@ -9,7 +9,7 @@ import { BinanceHttp } from '../../../BinanceHttp'
 
 
 
-const log = debug('@alunajs:binance/balance/list')
+const log = debug('alunajs:binance/balance/list')
 
 
 

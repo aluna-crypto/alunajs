@@ -11,7 +11,7 @@ import { IBitmexMarketSchema } from '../../../schemas/IBitmexMarketSchema'
 
 
 
-const log = debug('@alunajs:bitmex/market/listRaw')
+const log = debug('alunajs:bitmex/market/listRaw')
 
 
 
