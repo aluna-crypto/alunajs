@@ -26,7 +26,7 @@ export interface IBinanceOrderSchema {
   isWorking?: boolean
   origQuoteOrderQty?: string
   fills?: IBinanceOrderFills[]
-  isIsolated?: true
+  isIsolated?: boolean
 }
 
 export interface IBinanceOrderFills {
