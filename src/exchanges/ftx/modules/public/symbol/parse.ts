@@ -6,32 +6,29 @@ import {
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { ftxBaseSpecs } from '../../../ftxSpecs'
-import { IFtxSymbolSchema } from '../../../schemas/IFtxSymbolSchema'
+import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaSymbolParseParams<IFtxSymbolSchema>,
+  params: IAlunaSymbolParseParams<IFtxMarketSchema>,
 ): IAlunaSymbolParseReturns => {
 
   const { rawSymbol } = params
 
   const {
-    name,
-    symbol,
+    baseCurrency,
   } = rawSymbol
 
   const id = translateSymbolId({
-    exchangeSymbolId: symbol,
+    exchangeSymbolId: baseCurrency,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  const alias = (id !== symbol ? symbol : undefined)
+  const alias = (id !== baseCurrency ? baseCurrency : undefined)
 
-  // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
-    name,
     alias,
     exchangeId: ftxBaseSpecs.id,
     meta: rawSymbol,
