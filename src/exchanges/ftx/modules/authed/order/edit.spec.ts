@@ -51,7 +51,7 @@ describe(__filename, () => {
     const exchange = new FtxAuthed({ credentials })
 
     const params: IAlunaOrderEditParams = {
-      id,
+      id: id.toString(),
       symbolPair: '',
       account: AlunaAccountEnum.SPOT,
       amount: 0.01,
@@ -75,7 +75,7 @@ describe(__filename, () => {
 
     expect(cancel.firstCall.args[0]).to.deep.eq({
       http,
-      id,
+      id: id.toString(),
       symbolPair: params.symbolPair,
     })
 

@@ -28,7 +28,7 @@ describe(__filename, () => {
     const { id } = mockedRawOrder
 
     const params: IAlunaOrderGetParams = {
-      id,
+      id: id.toString(),
       symbolPair: '',
     }
 
@@ -47,7 +47,7 @@ describe(__filename, () => {
     const exchange = new FtxAuthed({ credentials })
 
     const { order } = await exchange.order.get({
-      id,
+      id: id.toString(),
       symbolPair: '',
     })
 

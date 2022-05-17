@@ -38,7 +38,7 @@ describe(__filename, () => {
     const exchange = new FtxAuthed({ credentials })
 
     const { rawOrder } = await exchange.order.getRaw({
-      id,
+      id: id.toString(),
       symbolPair: '',
     })
 
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getFtxEndpoints(exchange.settings).order.get(id),
+      url: getFtxEndpoints(exchange.settings).order.get(id.toString()),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
