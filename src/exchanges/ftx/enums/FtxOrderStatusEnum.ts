@@ -1,4 +1,5 @@
 export enum FtxOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  NEW = 'new',
+  OPEN = 'open',
+  CLOSED = 'closed'
 }

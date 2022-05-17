@@ -8,38 +8,39 @@ const errorMessagePrefix = 'Order status'
 
 export const translateOrderStatusToAluna = (
   params: {
-      fillQuantity: string
-      quantity: string
+      filledSize: number
+      size: number
       from: FtxOrderStatusEnum
     },
 ): AlunaOrderStatusEnum => {
 
-  const { fillQuantity, quantity, from } = params
+  const { filledSize, size, from } = params
 
-  const isOpen = from === FtxOrderStatusEnum.OPEN
+  const isClosed = from === FtxOrderStatusEnum.CLOSED
 
-  if (isOpen) {
+  if (isClosed) {
 
-    return AlunaOrderStatusEnum.OPEN
+    const isFilled = filledSize === size
+
+    if (isFilled) {
+
+      return AlunaOrderStatusEnum.FILLED
+
+    }
+
+    return AlunaOrderStatusEnum.CANCELED
 
   }
 
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
+  const isPartiallyFilled = filledSize > 0 && filledSize < size
 
-  if (parsedQty === parsedFillQty) {
-
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
+  if (isPartiallyFilled) {
 
     return AlunaOrderStatusEnum.PARTIALLY_FILLED
 
   }
 
-  return AlunaOrderStatusEnum.CANCELED
+  return AlunaOrderStatusEnum.OPEN
 
 }
 

@@ -17,34 +17,40 @@ describe(__filename, () => {
 
   it('should translate Ftx order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+    const zeroedFilledAmount = 0
+    const partiallyFilledAmount = 2.5
+    const totalFilledAmount = 5
+    const size = 5
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: FtxOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+      from: FtxOrderStatusEnum.NEW,
+      filledSize: zeroedFilledAmount,
+      size,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: FtxOrderStatusEnum.CLOSED,
+      from: FtxOrderStatusEnum.OPEN,
+      filledSize: zeroedFilledAmount,
+      size,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+    expect(translateOrderStatusToAluna({
+      from: FtxOrderStatusEnum.OPEN,
+      filledSize: partiallyFilledAmount,
+      size,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
       from: FtxOrderStatusEnum.CLOSED,
+      filledSize: totalFilledAmount,
+      size,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: FtxOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: FtxOrderStatusEnum.CLOSED,
+      filledSize: zeroedFilledAmount,
+      size,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
   })
 
