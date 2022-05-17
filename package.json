@@ -16,8 +16,6 @@
     "node": "^16.14"
   },
   "scripts": {
-    "prepublish": "yarn build",
-    "prepare": "husky install",
     "clean": "rimraf dist",
     "clean-index": "rm -rf src/index.ts",
     "build": "yarn clean && yarn build-index && tsc -p tsconfig.dist.json && yarn clean-index",
@@ -33,7 +31,9 @@
     "test-e2e": "mocha -j 1 --config test/e2e/.mocharc.js test/e2e/index.ts",
     "test-e2e-watch": "mocha -j 1 --config test/e2e/.mocharc.js test/**/*.ts --watch",
     "playground": "nodemon -w src -e ts -x 'DEBUG=alunajs:* ts-node .playground/index.ts'",
-    "add-exchange": "ts-node .scaffolding/addExchange.ts"
+    "add-exchange": "ts-node .scaffolding/addExchange.ts",
+    "prepublish": "yarn build",
+    "prepare": "husky install"
   },
   "dependencies": {
     "axios": "^0.21.1",
