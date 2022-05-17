@@ -26,13 +26,14 @@ describe(__filename, () => {
 
   const { BinanceHttp } = BinanceHttpMod
 
-  const initialQueryParams = 'recvWindow=60000&timestamp='
-
   const url = 'https://binance.com/api/path'
   const response = 'response'
-  const body = {
-    data: 'some-data',
-  }
+
+  const query = new URLSearchParams()
+  query.append('data1', 'Hello Wolrd!')
+  query.append('data2', '10')
+
+
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
     secret: 'key',
@@ -137,7 +138,7 @@ describe(__filename, () => {
     const responseData = await binanceHttp.publicRequest({
       verb,
       url,
-      body,
+      query,
     })
 
 
@@ -148,10 +149,9 @@ describe(__filename, () => {
     expect(binanceHttp.requestWeight.authed).to.be.eq(0)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
-      data: body,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(1)
@@ -161,10 +161,9 @@ describe(__filename, () => {
     expect(cache.get.callCount).to.be.eq(0)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: verb,
-      data: body,
       proxySettings: undefined,
     })
 
@@ -194,7 +193,7 @@ describe(__filename, () => {
     const responseData = await binanceHttp.authedRequest({
       verb: AlunaHttpVerbEnum.POST,
       url,
-      body,
+      query,
       credentials,
     })
 
@@ -206,7 +205,7 @@ describe(__filename, () => {
     expect(binanceHttp.requestWeight.authed).to.be.eq(1)
 
     expect(request.callCount).to.be.eq(1)
-    expect(request.args[0][0]).to.deep.eq({
+    expect(request.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       headers: signedHeader.signedHeader,
@@ -217,9 +216,8 @@ describe(__filename, () => {
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.args[0][0]).to.deep.eq({
       credentials,
-      body,
+      query,
       url,
-      query: undefined,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(0)
@@ -252,7 +250,7 @@ describe(__filename, () => {
     // executing
     await binanceHttp.publicRequest({
       url,
-      body,
+      query,
       weight,
     })
 
@@ -287,7 +285,7 @@ describe(__filename, () => {
     // executing
     await binanceHttp.authedRequest({
       url,
-      body,
+      query,
       weight,
       credentials,
     })
@@ -321,7 +319,7 @@ describe(__filename, () => {
     // executing
     const publicRes = await executeAndCatch(() => binanceHttp.publicRequest({
       url,
-      body,
+      query,
     }))
 
 
@@ -354,7 +352,7 @@ describe(__filename, () => {
     // executing
     const autheRes = await executeAndCatch(() => binanceHttp.authedRequest({
       url,
-      body,
+      query,
       credentials,
     }))
 
@@ -386,7 +384,7 @@ describe(__filename, () => {
     // executing
     await binanceHttp.publicRequest({
       url,
-      body,
+      query,
       settings,
     })
 
@@ -395,10 +393,9 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.GET,
-      data: body,
       proxySettings: settings.proxySettings,
     })
 
@@ -422,7 +419,7 @@ describe(__filename, () => {
     // executing
     await binanceHttp.authedRequest({
       url,
-      body,
+      query,
       settings,
       credentials,
     })
@@ -432,7 +429,7 @@ describe(__filename, () => {
     expect(request.callCount).to.be.eq(1)
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
-    expect(assembleRequestConfig.args[0][0]).to.deep.eq({
+    expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
       url,
       method: AlunaHttpVerbEnum.POST,
       headers: signedHeader.signedHeader,
@@ -441,13 +438,14 @@ describe(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine w/o body and query', async () => {
+  it('should generate signed auth header just fine w/o query', async () => {
 
     // preparing data
-
     const currentDate = Date.now()
 
-    const queryParams = `${initialQueryParams}${currentDate}`
+    const timestampParams = new URLSearchParams()
+    timestampParams.append('recvWindow', '60000')
+    timestampParams.append('timestamp', `${currentDate}`)
 
     const signedHeader: BinanceHttpMod.IBinanceSignedHeaders = {
       'X-MBX-APIKEY': credentials.key,
@@ -477,36 +475,29 @@ describe(__filename, () => {
       .firstCall
       .calledWith('sha256', credentials.secret)).to.be.ok
 
-    expect(updateSpy.callCount).to.be.eq(3)
-    expect(updateSpy.calledWith(queryParams)).to.be.ok
-
-    expect(updateSpy.calledWith('')).to.be.ok
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(timestampParams.toString())).to.be.ok
 
     expect(digestHmacSpy.callCount).to.be.eq(1)
     expect(digestHmacSpy.calledWith('hex')).to.be.ok
 
-    const urlParams = new URLSearchParams(
-      `${queryParams}&signature=${digestHmacSpy.returnValues[0]}`,
-    )
+    timestampParams.append('signature', digestHmacSpy.returnValues[0])
 
-    const signedUrl = `${url}?${urlParams.toString()}`
+    const signedUrl = `${url}?${timestampParams.toString()}`
 
     expect(signedHash.signedHeader).to.deep.eq(signedHeader)
     expect(signedHash.signedUrl).to.deep.eq(signedUrl)
 
   })
 
-  it('should generate signed auth header just fine w/o body and query', async () => {
+  it('should generate signed auth header just fine w/ query', async () => {
 
     // preparing data
-
     const currentDate = Date.now()
 
-    const query = '&dummy=dummy'
-
-    const queryParams = `${initialQueryParams}${currentDate}`
-
-    const stringifiedBody = BinanceHttpMod.formatBodyToBinance(body)
+    const queryWithTimestampParams = new URLSearchParams(query)
+    queryWithTimestampParams.append('recvWindow', '60000')
+    queryWithTimestampParams.append('timestamp', `${currentDate}`)
 
     const signedHeader: BinanceHttpMod.IBinanceSignedHeaders = {
       'X-MBX-APIKEY': credentials.key,
@@ -527,7 +518,6 @@ describe(__filename, () => {
     const signedHash = BinanceHttpMod.generateAuthHeader({
       credentials,
       url,
-      body,
       query,
     })
 
@@ -538,35 +528,20 @@ describe(__filename, () => {
       .firstCall
       .calledWith('sha256', credentials.secret)).to.be.ok
 
-    expect(updateSpy.callCount).to.be.eq(3)
-    expect(updateSpy.calledWith(queryParams)).to.be.ok
-
-    expect(updateSpy.calledWith(query)).to.be.ok
-
-    expect(updateSpy.calledWith(stringifiedBody)).to.be.ok
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(queryWithTimestampParams.toString())).to.be.ok
 
     expect(digestHmacSpy.callCount).to.be.eq(1)
     expect(digestHmacSpy.calledWith('hex')).to.be.ok
 
-    const urlParams = new URLSearchParams(
-      `${queryParams}${query}${stringifiedBody}&signature=${digestHmacSpy.returnValues[0]}`,
-    )
+    queryWithTimestampParams.append('signature', digestHmacSpy.returnValues[0])
 
-    const signedUrl = `${url}?${urlParams.toString()}`
+    const signedUrl = `${url}?${queryWithTimestampParams.toString()}`
 
     expect(signedHash.signedHeader).to.deep.eq(signedHeader)
     expect(signedHash.signedUrl).to.deep.eq(signedUrl)
 
   })
-
-  it('should format a body to binance format', async () => {
-
-    const formattedBody = BinanceHttpMod.formatBodyToBinance(body)
-
-    expect(formattedBody).to.be.eq('&data=some-data')
-
-  })
-
 
   /**
    * Executes macro test.
