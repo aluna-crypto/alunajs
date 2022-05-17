@@ -3,7 +3,6 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -13,6 +12,7 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToFtx } from '../../../enums/adapters/ftxOrderSideAdapter'
 import { translateOrderTypeToFtx } from '../../../enums/adapters/ftxOrderTypeAdapter'
+import { FtxOrderTypeEnum } from '../../../enums/FtxOrderTypeEnum'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
@@ -54,17 +54,28 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     http = new FtxHttp(settings),
   } = params
 
+  const translatedOrderSide = translateOrderSideToFtx({
+    from: side,
+  })
+
   const translatedOrderType = translateOrderTypeToFtx({
     from: type,
   })
 
-  // TODO: Validate all body properties
   const body = {
-    direction: translateOrderSideToFtx({ from: side }),
-    marketSymbol: symbolPair,
+    side: translatedOrderSide,
+    market: symbolPair,
+    size: amount,
     type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    price: undefined,
+  }
+
+  if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
+
+    Object.assign(body, {
+      price: rate,
+    })
+
   }
 
   log('placing new order for Ftx')
@@ -73,7 +84,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IFtxOrderSchema>({
       url: getFtxEndpoints(settings).order.place,
       body,
@@ -89,21 +99,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       message,
     } = err
 
-    const { metadata } = err
+    const NOT_ENOUGH_BALANCE_MESSAGE = 'Not enough balances'
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (message === NOT_ENOUGH_BALANCE_MESSAGE) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
