@@ -29,7 +29,6 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new FtxHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawOrders = await http.authedRequest<IFtxOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getFtxEndpoints(settings).order.list,
