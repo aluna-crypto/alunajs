@@ -11,9 +11,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
-export const FTX_PRODUCTION_URL = 'https://api.ftx.com/v3'
-export const FTX_TESTNET_URL = 'https://testnet.api.ftx.com/v3'
+export const FTX_PRODUCTION_URL = 'https://ftx.com/api'
 
 
 
@@ -38,28 +36,6 @@ export const ftxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
-  {
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
-  {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
 ]
 
 
@@ -67,21 +43,17 @@ export const ftxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const ftxBaseSpecs: IAlunaExchangeSchema = {
   id: 'ftx',
   name: 'Ftx',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://ftx.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://ftx.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://ftx.com/onboarding/signup',
+  connectApiUrl: 'https://ftx.com/settings/api',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 60,
+    perIp: 60,
   },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.SPOT,
       supported: true,
@@ -133,42 +105,29 @@ export const buildFtxSpecs = (params: {
 
 
 export const getFtxEndpoints = (
-  settings: IAlunaSettingsSchema,
+  _settings: IAlunaSettingsSchema,
 ) => {
 
-  let baseUrl = FTX_PRODUCTION_URL
-
-  if (settings.useTestNet) {
-    baseUrl = FTX_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Ftx don't have a testnet.',
-      })
-    */
-  }
+  const baseUrl = FTX_PRODUCTION_URL
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/markets`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/markets`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/login_status`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/wallet/balances`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
+      get: (id: string) => `${baseUrl}/orders/${id}`,
+      list: `${baseUrl}/orders`,
+      place: `${baseUrl}/orders`,
+      cancel: (id: string) => `${baseUrl}/orders/${id}`,
     },
     position: {
       list: `${baseUrl}/<desired-method>`,

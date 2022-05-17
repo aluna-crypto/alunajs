@@ -21,18 +21,4 @@ describe(__filename, () => {
 
   })
 
-  it('should get testnet endpoints', async () => {
-
-    // executing
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => getFtxEndpoints({ useTestNet: true }))
-
-    // validating
-    expect(error).not.to.be.ok
-    expect(result).to.be.ok
-
-  })
-
 })
