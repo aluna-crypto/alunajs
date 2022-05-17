@@ -27,7 +27,11 @@ describe(__filename, () => {
 
     const parsedKey: IAlunaKeySchema = {
       accountId,
-      permissions: FTX_KEY_PERMISSIONS,
+      permissions: {
+        read: true,
+        trade: true,
+        withdraw: true,
+      },
       meta: {},
     }
 

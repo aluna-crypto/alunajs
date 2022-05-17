@@ -29,7 +29,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new FtxHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawKey = await http.authedRequest<IFtxKeySchema>({
     verb: AlunaHttpVerbEnum.GET,
     url: getFtxEndpoints(settings).key.fetchDetails,
