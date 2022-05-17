@@ -29,12 +29,12 @@ const bitfinex = aluna('bitfinex', { settings, credentials })
 bitfinex.symbol.list()
 ```
 
-## Features
+
 
 | Functionality | Supported |
 | -- | :-: |
 | `offersOrderEditing` | ✅ |
-| `offersPositionId` | ❌ |
+| `offersPositionId` | ✅ |
 
 
 ## Notes
