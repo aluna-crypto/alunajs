@@ -1,6 +1,8 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
@@ -20,7 +22,7 @@ import * as FtxHttpMod from './FtxHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { FtxHttp } = FtxHttpMod
 
@@ -35,7 +37,9 @@ describe.skip(__filename, () => {
     passphrase: 'key',
   }
   const signedHeader = {
-    'Api-Key': 'apikey',
+    'FTX-KEY': 'string',
+    'FTX-TS': 0,
+    'FTX-SIGN': 'string',
   }
   const proxySettings: IAlunaProxySchema = {
     host: 'host',
@@ -123,7 +127,7 @@ describe.skip(__filename, () => {
 
     const ftxHttp = new FtxHttp({})
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -180,7 +184,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -211,7 +215,6 @@ describe.skip(__filename, () => {
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -241,7 +244,7 @@ describe.skip(__filename, () => {
     // mocking
     const { request } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -276,7 +279,7 @@ describe.skip(__filename, () => {
     // mocking
     const { request } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -375,7 +378,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -411,7 +414,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { result: response } }))
 
 
     // executing
@@ -437,25 +440,30 @@ describe.skip(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine w/ body', async () => {
 
     // preparing data
-    const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
+    const path = new URL(url).pathname
 
-    const currentDate = Date.now()
+    const currentDate = new Date().getTime()
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
 
     // mocking
     const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
+      Date.prototype,
+      'getTime',
       currentDate,
     )
 
     // executing
     const signedHash = FtxHttpMod.generateAuthHeader({
       credentials,
-      path,
       verb,
       body,
       url,
@@ -463,7 +471,77 @@ describe.skip(__filename, () => {
 
     // validating
     expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(4)
+    expect(updateSpy.calledWith(currentDate.toString())).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(JSON.stringify(body))).to.be.ok
+    expect(updateSpy.calledWith('')).not.to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['FTX-KEY']).to.be.eq(credentials.key)
+    expect(signedHash['FTX-SIGN']).to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash['FTX-TS']).to.be.eq(currentDate)
+
+    Sinon.restore()
+
+  })
+
+  it('should generate signed auth header just fine w/o body', async () => {
+
+    // preparing data
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const path = new URL(url).pathname
+
+    const currentDate = new Date().getTime()
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    // mocking
+    const dateMock = ImportMock.mockFunction(
+      Date.prototype,
+      'getTime',
+      currentDate,
+    )
+
+    // executing
+    const signedHash = FtxHttpMod.generateAuthHeader({
+      credentials,
+      verb,
+      url,
+    })
+
+    // validating
+    expect(dateMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(4)
+    expect(updateSpy.calledWith(currentDate.toString())).to.be.ok
+    expect(updateSpy.calledWith(verb.toUpperCase())).to.be.ok
+    expect(updateSpy.calledWith(path)).to.be.ok
+    expect(updateSpy.calledWith(JSON.stringify(body))).not.to.be.ok
+    expect(updateSpy.calledWith('')).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('hex')).to.be.ok
+
+    expect(signedHash['FTX-KEY']).to.be.eq(credentials.key)
+    expect(signedHash['FTX-SIGN']).to.deep.eq(digestSpy.returnValues[0])
+    expect(signedHash['FTX-TS']).to.be.eq(currentDate)
+
+    Sinon.restore()
 
   })
 
@@ -471,6 +549,9 @@ describe.skip(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({ HttpClass: FtxHttp })
+  testCache({
+    HttpClass: FtxHttp,
+    useObjectAsResponse: true,
+  })
 
 })

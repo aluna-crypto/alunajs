@@ -1,4 +1,5 @@
 import axios from 'axios'
+import crypto from 'crypto'
 
 import {
   IAlunaHttp,
@@ -79,13 +80,17 @@ export class FtxHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data } = await axios
+        .create()
+        .request<IFtxResponseSchema<T>>(requestConfig)
+
+      const { result } = data
 
       if (!disableCache) {
-        AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
+        AlunaCache.cache.set<T>(cacheKey, result, cacheTtlInSeconds)
       }
 
-      return data
+      return result
 
     } catch (error) {
 
@@ -113,7 +118,6 @@ export class FtxHttp implements IAlunaHttp {
 
     const signedHash = generateAuthHeader({
       verb,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -125,7 +129,7 @@ export class FtxHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings,
     })
 
@@ -133,9 +137,13 @@ export class FtxHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data } = await axios
+        .create()
+        .request<IFtxResponseSchema<T>>(requestConfig)
 
-      return data
+      const { result } = data
+
+      return result
 
     } catch (error) {
 
@@ -149,44 +157,56 @@ export class FtxHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
-  path: string
   credentials: IAlunaCredentialsSchema
   url: string
   body?: any
 }
 
-// TODO: Review interface properties
 export interface IFtxSignedHeaders {
-  'Api-Timestamp': number
+  'FTX-KEY': string
+  'FTX-TS': number
+  'FTX-SIGN': string
 }
 
-
+export interface IFtxResponseSchema<T> {
+  success: boolean
+  result: T
+}
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IFtxSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    verb,
+    body,
+    url,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const path = new URL(url).pathname
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const {
+    key,
+    secret,
+  } = credentials
 
-  const timestamp = Date.now()
+  const timestamp = new Date().getTime()
+
+  const signedHeader = crypto
+    .createHmac('sha256', secret)
+    .update(timestamp.toString())
+    .update(verb.toUpperCase())
+    .update(path)
+    .update(body ? JSON.stringify(body) : '')
+    .digest('hex')
 
   return {
-    'Api-Timestamp': timestamp,
+    'FTX-KEY': key,
+    'FTX-SIGN': signedHeader,
+    'FTX-TS': timestamp,
   }
 
 }
