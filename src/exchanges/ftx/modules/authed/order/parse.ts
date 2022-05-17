@@ -1,10 +1,15 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 import {
   IAlunaOrderParseParams,
   IAlunaOrderParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { translateOrderSideToAluna } from '../../../enums/adapters/ftxOrderSideAdapter'
+import { translateOrderStatusToAluna } from '../../../enums/adapters/ftxOrderStatusAdapter'
+import { translateOrderTypeToAluna } from '../../../enums/adapters/ftxOrderTypeAdapter'
 import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
@@ -16,12 +21,23 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawOrder } = params
 
-  const { symbol } = rawOrder
+  const {
+    side,
+    price,
+    type,
+    status,
+    createdAt,
+    id,
+    market,
+    size,
+    filledSize,
+    avgFillPrice,
+  } = rawOrder
 
   let [
     baseSymbolId,
     quoteSymbolId,
-  ] = symbol.split('/')
+  ] = market.split('/')
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,
@@ -33,20 +49,73 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  // TODO: Implement proper parser
+  let total = size
+  let orderPrice: number | undefined
+
+  if (price) {
+
+    orderPrice = price
+    total = size * price
+
+  }
+
+  if (avgFillPrice) {
+
+    orderPrice = avgFillPrice
+    total = size * avgFillPrice
+
+  }
+
+  const orderType = translateOrderTypeToAluna({
+    from: type,
+  })
+
+  const orderSide = translateOrderSideToAluna({
+    from: side,
+  })
+
+  const orderStatus = translateOrderStatusToAluna({
+    from: status,
+    size,
+    filledSize,
+  })
+
+  let canceledAt: Date | undefined
+  let filledAt: Date | undefined
+
+  const isCanceled = orderStatus === AlunaOrderStatusEnum.CANCELED
+  const isFilled = orderStatus === AlunaOrderStatusEnum.FILLED
+
+  if (isCanceled) {
+
+    canceledAt = new Date()
+
+  }
+
+  if (isFilled) {
+
+    filledAt = new Date()
+
+  }
+
   const order: IAlunaOrderSchema = {
-    id: rawOrder.id,
-    symbolPair: rawOrder.id,
+    id: id.toString(),
+    symbolPair: market,
     exchangeId: exchange.specs.id,
     baseSymbolId,
     quoteSymbolId,
-    // total: rawOrder.total,
-    // amount: rawOrder.amount,
-    // account: AlunaAccountEnum.MARGIN,
-    // status: rawOrder.status,
-    // side: rawOrder.side,
+    amount: size,
+    rate: orderPrice,
+    total,
+    account: AlunaAccountEnum.SPOT,
+    side: orderSide,
+    status: orderStatus,
+    type: orderType,
+    placedAt: new Date(createdAt),
+    canceledAt,
+    filledAt,
     meta: rawOrder,
-  } as any // TODO: Remove casting to any
+  }
 
   return { order }
 
