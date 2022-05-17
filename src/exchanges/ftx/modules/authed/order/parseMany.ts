@@ -9,7 +9,7 @@ import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
 
-const log = debug('@alunajs:ftx/order/parseMany')
+const log = debug('alunajs:ftx/order/parseMany')
 
 
 

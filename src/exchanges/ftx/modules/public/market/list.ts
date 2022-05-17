@@ -9,7 +9,7 @@ import { FtxHttp } from '../../../FtxHttp'
 
 
 
-const log = debug('@alunajs:ftx/market/list')
+const log = debug('alunajs:ftx/market/list')
 
 
 export const list = (exchange: IAlunaExchangePublic) => async (

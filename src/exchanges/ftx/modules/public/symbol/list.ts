@@ -9,7 +9,7 @@ import { FtxHttp } from '../../../FtxHttp'
 
 
 
-const log = debug('@alunajs:ftx/symbol/list')
+const log = debug('alunajs:ftx/symbol/list')
 
 
 

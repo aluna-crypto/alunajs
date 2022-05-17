@@ -12,7 +12,7 @@ import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
 
-const log = debug('@alunajs:ftx/order/listRaw')
+const log = debug('alunajs:ftx/order/listRaw')
 
 
 

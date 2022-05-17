@@ -14,7 +14,7 @@ import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
 
-const log = debug('@alunajs:ftx/order/cancel')
+const log = debug('alunajs:ftx/order/cancel')
 
 
 

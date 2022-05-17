@@ -12,7 +12,7 @@ import { IFtxBalanceSchema } from '../../../schemas/IFtxBalanceSchema'
 
 
 
-const log = debug('@alunajs:ftx/balance/listRaw')
+const log = debug('alunajs:ftx/balance/listRaw')
 
 
 

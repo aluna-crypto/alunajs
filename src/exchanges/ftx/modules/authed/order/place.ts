@@ -19,7 +19,7 @@ import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
 
-const log = debug('@alunajs:ftx/order/place')
+const log = debug('alunajs:ftx/order/place')
 
 
 

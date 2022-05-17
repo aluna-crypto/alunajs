@@ -10,7 +10,7 @@ import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
 
-const log = debug('@alunajs:ftx/market/parseMany')
+const log = debug('alunajs:ftx/market/parseMany')
 
 
 

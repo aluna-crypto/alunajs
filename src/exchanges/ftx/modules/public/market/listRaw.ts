@@ -13,7 +13,7 @@ import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
 
-const log = debug('@alunajs:ftx/market/listRaw')
+const log = debug('alunajs:ftx/market/listRaw')
 
 
 

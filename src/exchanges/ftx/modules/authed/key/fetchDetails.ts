@@ -12,7 +12,7 @@ import { IFtxKeySchema } from '../../../schemas/IFtxKeySchema'
 
 
 
-const log = debug('@alunajs:ftx/key/fetchDetails')
+const log = debug('alunajs:ftx/key/fetchDetails')
 
 
 

@@ -14,7 +14,7 @@ import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
 
-const log = debug('@alunajs:ftx/symbol/parseMany')
+const log = debug('alunajs:ftx/symbol/parseMany')
 
 
 

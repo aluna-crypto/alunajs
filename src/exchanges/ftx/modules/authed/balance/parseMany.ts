@@ -11,7 +11,7 @@ import { IFtxBalanceSchema } from '../../../schemas/IFtxBalanceSchema'
 
 
 
-const log = debug('@alunajs:ftx/balance/parseMany')
+const log = debug('alunajs:ftx/balance/parseMany')
 
 
 
