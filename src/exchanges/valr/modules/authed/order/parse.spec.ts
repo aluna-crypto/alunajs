@@ -1,8 +1,5 @@
 import { expect } from 'chai'
-import {
-  cloneDeep,
-  filter,
-} from 'lodash'
+import { cloneDeep } from 'lodash'
 
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -12,10 +9,11 @@ import { translateOrderSideToAluna } from '../../../enums/adapters/valrOrderSide
 import { translateOrderStatusToAluna } from '../../../enums/adapters/valrOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/valrOrderTypeAdapter'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
+import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
 import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
 import {
-  VALR_RAW_GET_ORDERS,
-  VALR_RAW_ORDERS,
+  VALR_RAW_GET_RESPONSE_ORDERS,
+  VALR_RAW_LIST_RESPONSE_ORDERS,
 } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { valrBaseSpecs } from '../../../valrSpecs'
@@ -29,87 +27,35 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should parse a Valr raw order just fine', async () => {
+  it('should parse a Valr raw order just fine (GET TYPE RESPONSE)', async () => {
 
     // preparing data
-    const rawOrder = cloneDeep(VALR_RAW_ORDERS[0])
+    const valrOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
     const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
 
-    rawOrder.currencyPair = rawPair.symbol
+    valrOrder.currencyPair = rawPair.symbol
+    valrOrder.orderStatusType = ValrOrderStatusEnum.ACTIVE
 
-    const {
-      baseCurrency,
-      quoteCurrency,
-      symbol,
-    } = rawPair
-
-    const {
-      orderId,
-      originalQuantity,
-      price,
-      side,
-      type,
-      status,
-      createdAt,
-      updatedAt,
-      stopPrice,
-    } = rawOrder
-
-    const amount = Number(originalQuantity)
-    const alnOrderType = translateOrderTypeToAluna({ from: type })
-    const alnOrderStatus = translateOrderStatusToAluna({ from: status })
-
-    const rawOrderRequest = {
-      order: rawOrder,
-      pair: rawPair,
-    }
-
-    const expectedParsedOrder: IAlunaOrderSchema = {
-      id: orderId,
-      symbolPair: symbol,
-      exchangeId: valrBaseSpecs.id,
-      baseSymbolId: baseCurrency,
-      quoteSymbolId: quoteCurrency,
-      total: amount * Number(price),
-      amount,
-      limitRate: Number(price),
-      stopRate: Number(stopPrice),
-      account: AlunaAccountEnum.SPOT,
-      side: translateOrderSideToAluna({ from: side }),
-      status: alnOrderStatus,
-      type: alnOrderType,
-      placedAt: new Date(createdAt),
-      filledAt: new Date(updatedAt),
-      meta: rawOrderRequest,
-      canceledAt: undefined,
-      rate: undefined,
-    }
 
 
     // mocking
-    const exchange = new ValrAuthed({ credentials })
-
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.onFirstCall().returns(baseCurrency)
-    translateSymbolId.onSecondCall().returns(quoteCurrency)
+    translateSymbolId.onFirstCall().returns(rawPair.baseCurrency)
+    translateSymbolId.onSecondCall().returns(rawPair.quoteCurrency)
 
     // executing
-    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
+    const exchange = new ValrAuthed({ credentials })
+
+    const rawOrder = {
+      valrOrder,
+      pair: rawPair,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
 
     // validating
-    expect(order).to.deep.eq(expectedParsedOrder)
-
-  })
-
-  it('should parse a Valr raw order just fine', async () => {
-
-    // preparing data
-    const rawOrder = cloneDeep(VALR_RAW_GET_ORDERS[0])
-    const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
-
-    rawOrder.currencyPair = rawPair.symbol
-
     const {
       baseCurrency,
       quoteCurrency,
@@ -125,7 +71,7 @@ describe(__filename, () => {
       orderType,
       originalPrice,
       stopPrice,
-    } = rawOrder
+    } = valrOrder
 
     const amount = Number(originalQuantity)
     const alnOrderType = translateOrderTypeToAluna({ from: orderType })
@@ -133,11 +79,6 @@ describe(__filename, () => {
     const alnOrderStatus = translateOrderStatusToAluna(
       { from: orderStatusType },
     )
-
-    const rawOrderRequest = {
-      order: rawOrder,
-      pair: rawPair,
-    }
 
     const expectedParsedOrder: IAlunaOrderSchema = {
       id: orderId,
@@ -155,40 +96,121 @@ describe(__filename, () => {
       type: alnOrderType,
       placedAt: new Date(orderCreatedAt),
       filledAt: undefined,
-      meta: rawOrderRequest,
+      meta: valrOrder,
       canceledAt: undefined,
       rate: undefined,
     }
 
-
-    // mocking
-    const exchange = new ValrAuthed({ credentials })
-
-    const { translateSymbolId } = mockTranslateSymbolId()
-
-    translateSymbolId.onFirstCall().returns(baseCurrency)
-    translateSymbolId.onSecondCall().returns(quoteCurrency)
-
-    // executing
-    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
-
-    // validating
     expect(order).to.deep.eq(expectedParsedOrder)
 
   })
 
-  it('should parse a Valr canceled raw order just fine', async () => {
+  it('should parse a Valr raw order just fine (LIST TYPE RESPONSE)', async () => {
 
     // preparing data
-    const filterCanceledOrder = filter(VALR_RAW_GET_ORDERS, {
-      orderStatusType: ValrOrderStatusEnum.CANCELLED,
-    })[0]
-
-    const rawOrder = cloneDeep(filterCanceledOrder)
+    const valrOrder = cloneDeep(VALR_RAW_LIST_RESPONSE_ORDERS[0])
     const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
 
-    rawOrder.currencyPair = rawPair.symbol
+    valrOrder.status = ValrOrderStatusEnum.ACTIVE
+    valrOrder.currencyPair = rawPair.symbol
 
+
+    // mocking
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId.onFirstCall().returns(rawPair.baseCurrency)
+    translateSymbolId.onSecondCall().returns(rawPair.quoteCurrency)
+
+    // executing
+    const exchange = new ValrAuthed({ credentials })
+
+    const rawOrder = {
+      valrOrder,
+      pair: rawPair,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
+
+    // validating
+    const {
+      baseCurrency,
+      quoteCurrency,
+      symbol,
+    } = rawPair
+
+    const {
+      orderId,
+      originalQuantity,
+      side,
+      price,
+      status,
+      type,
+      createdAt,
+      stopPrice,
+    } = valrOrder
+
+    const amount = Number(originalQuantity)
+    const alnOrderType = translateOrderTypeToAluna({ from: type })
+    const alnOrderSide = translateOrderSideToAluna({ from: side })
+    const alnOrderStatus = translateOrderStatusToAluna(
+      { from: status },
+    )
+
+    const expectedParsedOrder: IAlunaOrderSchema = {
+      id: orderId,
+      symbolPair: symbol,
+      exchangeId: valrBaseSpecs.id,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
+      total: amount * Number(price),
+      amount,
+      limitRate: Number(price),
+      stopRate: Number(stopPrice),
+      account: AlunaAccountEnum.SPOT,
+      side: alnOrderSide,
+      status: alnOrderStatus,
+      type: alnOrderType,
+      placedAt: new Date(createdAt),
+      filledAt: undefined,
+      meta: valrOrder,
+      canceledAt: undefined,
+      rate: undefined,
+    }
+
+    expect(order).to.deep.eq(expectedParsedOrder)
+
+  })
+
+  it('should parse a Valr raw order just fine (CANCELED)', async () => {
+
+    // preparing data
+    const valrOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
+    valrOrder.orderStatusType = ValrOrderStatusEnum.CANCELLED
+
+    const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
+
+    valrOrder.currencyPair = rawPair.symbol
+
+
+    // mocking
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId.onFirstCall().returns(rawPair.baseCurrency)
+    translateSymbolId.onSecondCall().returns(rawPair.quoteCurrency)
+
+    // executing
+    const exchange = new ValrAuthed({ credentials })
+
+    const rawOrder = {
+      valrOrder,
+      pair: rawPair,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
+
+    // validating
     const {
       baseCurrency,
       quoteCurrency,
@@ -203,8 +225,9 @@ describe(__filename, () => {
       orderStatusType,
       orderType,
       originalPrice,
+      stopPrice,
       orderUpdatedAt,
-    } = rawOrder
+    } = valrOrder
 
     const amount = Number(originalQuantity)
     const alnOrderType = translateOrderTypeToAluna({ from: orderType })
@@ -212,11 +235,6 @@ describe(__filename, () => {
     const alnOrderStatus = translateOrderStatusToAluna(
       { from: orderStatusType },
     )
-
-    const rawOrderRequest = {
-      order: rawOrder,
-      pair: rawPair,
-    }
 
     const expectedParsedOrder: IAlunaOrderSchema = {
       id: orderId,
@@ -226,32 +244,176 @@ describe(__filename, () => {
       quoteSymbolId: quoteCurrency,
       total: amount * Number(originalPrice),
       amount,
-      limitRate: undefined,
-      stopRate: undefined,
+      limitRate: Number(originalPrice),
+      stopRate: Number(stopPrice),
       account: AlunaAccountEnum.SPOT,
       side: alnOrderSide,
       status: alnOrderStatus,
       type: alnOrderType,
       placedAt: new Date(orderCreatedAt),
       filledAt: undefined,
-      meta: rawOrderRequest,
+      meta: valrOrder,
       canceledAt: new Date(orderUpdatedAt),
-      rate: Number(originalPrice),
+      rate: undefined,
     }
+
+    expect(order).to.deep.eq(expectedParsedOrder)
+
+  })
+
+  it('should parse a Valr raw order just fine (FILLED)', async () => {
+
+    // preparing data
+    const valrOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
+    valrOrder.orderStatusType = ValrOrderStatusEnum.FILLED
+
+    const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
+
+    valrOrder.currencyPair = rawPair.symbol
 
 
     // mocking
-    const exchange = new ValrAuthed({ credentials })
-
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.onFirstCall().returns(baseCurrency)
-    translateSymbolId.onSecondCall().returns(quoteCurrency)
+    translateSymbolId.onFirstCall().returns(rawPair.baseCurrency)
+    translateSymbolId.onSecondCall().returns(rawPair.quoteCurrency)
 
     // executing
-    const { order } = exchange.order.parse({ rawOrder: rawOrderRequest })
+    const exchange = new ValrAuthed({ credentials })
+
+    const rawOrder = {
+      valrOrder,
+      pair: rawPair,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
 
     // validating
+    const {
+      baseCurrency,
+      quoteCurrency,
+      symbol,
+    } = rawPair
+
+    const {
+      orderId,
+      originalQuantity,
+      orderSide,
+      orderCreatedAt,
+      orderStatusType,
+      orderType,
+      originalPrice,
+      stopPrice,
+      orderUpdatedAt,
+    } = valrOrder
+
+    const amount = Number(originalQuantity)
+    const alnOrderType = translateOrderTypeToAluna({ from: orderType })
+    const alnOrderSide = translateOrderSideToAluna({ from: orderSide })
+    const alnOrderStatus = translateOrderStatusToAluna(
+      { from: orderStatusType },
+    )
+
+    const expectedParsedOrder: IAlunaOrderSchema = {
+      id: orderId,
+      symbolPair: symbol,
+      exchangeId: valrBaseSpecs.id,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
+      total: amount * Number(originalPrice),
+      amount,
+      limitRate: Number(originalPrice),
+      stopRate: Number(stopPrice),
+      account: AlunaAccountEnum.SPOT,
+      side: alnOrderSide,
+      status: alnOrderStatus,
+      type: alnOrderType,
+      placedAt: new Date(orderCreatedAt),
+      filledAt: new Date(orderUpdatedAt),
+      meta: valrOrder,
+      canceledAt: undefined,
+      rate: undefined,
+    }
+
+    expect(order).to.deep.eq(expectedParsedOrder)
+
+  })
+
+  it('should parse a Valr raw order just fine (LIMIT)', async () => {
+
+    // preparing data
+    const valrOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
+    valrOrder.orderType = ValrOrderTypeEnum.LIMIT
+    valrOrder.orderStatusType = ValrOrderStatusEnum.ACTIVE
+
+    const rawPair = cloneDeep(VALR_RAW_CURRENCY_PAIRS[0])
+
+    valrOrder.currencyPair = rawPair.symbol
+
+
+    // mocking
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId.onFirstCall().returns(rawPair.baseCurrency)
+    translateSymbolId.onSecondCall().returns(rawPair.quoteCurrency)
+
+    // executing
+    const exchange = new ValrAuthed({ credentials })
+
+    const rawOrder = {
+      valrOrder,
+      pair: rawPair,
+    }
+
+    const { order } = exchange.order.parse({ rawOrder })
+
+
+    // validating
+    const {
+      baseCurrency,
+      quoteCurrency,
+      symbol,
+    } = rawPair
+
+    const {
+      orderId,
+      originalQuantity,
+      orderSide,
+      orderCreatedAt,
+      orderStatusType,
+      orderType,
+      originalPrice,
+    } = valrOrder
+
+    const amount = Number(originalQuantity)
+    const alnOrderType = translateOrderTypeToAluna({ from: orderType })
+    const alnOrderSide = translateOrderSideToAluna({ from: orderSide })
+    const alnOrderStatus = translateOrderStatusToAluna(
+      { from: orderStatusType },
+    )
+
+    const expectedParsedOrder: IAlunaOrderSchema = {
+      id: orderId,
+      symbolPair: symbol,
+      exchangeId: valrBaseSpecs.id,
+      baseSymbolId: baseCurrency,
+      quoteSymbolId: quoteCurrency,
+      total: amount * Number(originalPrice),
+      amount,
+      rate: Number(originalPrice),
+      account: AlunaAccountEnum.SPOT,
+      side: alnOrderSide,
+      status: alnOrderStatus,
+      type: alnOrderType,
+      placedAt: new Date(orderCreatedAt),
+      meta: valrOrder,
+      canceledAt: undefined,
+      filledAt: undefined,
+      stopRate: undefined,
+      limitRate: undefined,
+    }
+
     expect(order).to.deep.eq(expectedParsedOrder)
 
   })
