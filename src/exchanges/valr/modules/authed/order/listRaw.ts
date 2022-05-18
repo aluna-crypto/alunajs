@@ -33,7 +33,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new ValrHttp(settings) } = params
 
-  const rawOrders = await http.authedRequest<IValrOrderListSchema[]>({
+  const valrOrders = await http.authedRequest<IValrOrderListSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getValrEndpoints(settings).order.list,
     credentials,
@@ -43,15 +43,15 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
     url: getValrEndpoints(settings).market.pairs,
   })
 
-  const rawOrdersResponse: IValrOrderListResponseSchema = {
-    orders: rawOrders,
+  const rawOrders: IValrOrderListResponseSchema = {
+    valrOrders,
     pairs,
   }
 
   const { requestWeight } = http
 
   return {
-    rawOrders: rawOrdersResponse,
+    rawOrders,
     requestWeight,
   }
 

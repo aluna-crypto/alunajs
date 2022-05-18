@@ -56,7 +56,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       http,
     })
 
-    const { order: valrOrder } = rawOrder as IValrOrderGetResponseSchema
+    const { valrOrder } = rawOrder as IValrOrderGetResponseSchema
 
     if (valrOrder.orderStatusType !== ValrOrderStatusEnum.CANCELLED) {
 

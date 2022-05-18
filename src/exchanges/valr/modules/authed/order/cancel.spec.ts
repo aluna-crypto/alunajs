@@ -11,7 +11,7 @@ import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorC
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
-import { VALR_RAW_GET_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_GET_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { getValrEndpoints } from '../../../valrSpecs'
@@ -30,7 +30,7 @@ describe(__filename, () => {
   it('should cancel a Valr order just fine', async () => {
 
     // preparing data
-    const canceledOrder = cloneDeep(VALR_RAW_GET_ORDERS[0])
+    const canceledOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
     canceledOrder.orderStatusType = ValrOrderStatusEnum.CANCELLED
 
     const mockedParsedOrder = PARSED_ORDERS[0]
@@ -49,7 +49,7 @@ describe(__filename, () => {
     const { parse } = mockParse({ module: parseMod })
 
     parse.returns({ order: mockedParsedOrder })
-    getRaw.returns({ rawOrder: { order: canceledOrder } })
+    getRaw.returns({ rawOrder: { valrOrder: canceledOrder } })
 
 
     // executing
@@ -84,7 +84,7 @@ describe(__filename, () => {
 
     // preparing data
     const id = 'id'
-    const canceledOrder = cloneDeep(VALR_RAW_GET_ORDERS[0])
+    const canceledOrder = cloneDeep(VALR_RAW_GET_RESPONSE_ORDERS[0])
     canceledOrder.orderStatusType = ValrOrderStatusEnum.ACTIVE
 
     const error = new AlunaError({
@@ -103,7 +103,7 @@ describe(__filename, () => {
     authedRequest.returns(Promise.resolve({}))
 
     const { getRaw } = mockGetRaw({ module: getRawMod })
-    getRaw.returns(Promise.resolve({ rawOrder: { order: canceledOrder } }))
+    getRaw.returns(Promise.resolve({ rawOrder: { valrOrder: canceledOrder } }))
 
 
     // executing

@@ -41,7 +41,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const urls = getValrEndpoints(settings)
 
-  const order = await http.authedRequest<IValrOrderGetSchema>({
+  const valrOrder = await http.authedRequest<IValrOrderGetSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
     url: urls.order.get(id, symbolPair),
@@ -51,13 +51,13 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     url: urls.market.pairs,
   })
 
-  const pair = pairs.find((p) => p.symbol === order.currencyPair)
+  const pair = pairs.find((p) => p.symbol === valrOrder.currencyPair)
 
   if (!pair) {
 
     throw new AlunaError({
       httpStatusCode: 200,
-      message: `No symbol pair found for ${order.currencyPair}`,
+      message: `No symbol pair found for ${valrOrder.currencyPair}`,
       code: AlunaGenericErrorCodes.PARSER_ERROR,
     })
 
@@ -65,7 +65,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const rawOrder: IValrOrderGetResponseSchema = {
     pair,
-    order,
+    valrOrder,
   }
 
   const { requestWeight } = http
