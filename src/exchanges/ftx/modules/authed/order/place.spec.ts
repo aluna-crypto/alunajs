@@ -115,7 +115,7 @@ describe(__filename, () => {
 
     const body = {
       market: '',
-      price: undefined,
+      price: null,
       side: translatedOrderSide,
       size: 0.01,
       type: translatedOrderType,

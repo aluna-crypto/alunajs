@@ -67,7 +67,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     market: symbolPair,
     size: amount,
     type: translatedOrderType,
-    price: undefined,
+    price: null,
   }
 
   if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {

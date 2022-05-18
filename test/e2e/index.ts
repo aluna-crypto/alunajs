@@ -12,7 +12,9 @@ describe('aluna', () => {
 
   each(exchangeIds, (exchangeId) => {
     describe(`— ${exchangeId}`, () => {
-      testExchange(exchangeId)
+      if (exchangeId === 'ftx') {
+        testExchange(exchangeId)
+      }
     })
   })
 

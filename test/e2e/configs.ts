@@ -168,6 +168,18 @@ export function getConfig() {
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.SPOT,
       },
+      ftx: {
+        key: env.FTX_API_KEY,
+        secret: env.FTX_API_SECRET,
+        passphrase: env.FTX_API_PASSPHRASE,
+        symbolPair: 'BTC/USD',
+        delayBetweenTests: 500,
+        orderRate: 1000,
+        orderAmount: 0.001,
+        orderEditAmount: 0.0011,
+        orderInsufficientAmount: 2000,
+        orderAccount: AlunaAccountEnum.SPOT,
+      },
     },
   }
 
