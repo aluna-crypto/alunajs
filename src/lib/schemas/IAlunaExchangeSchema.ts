@@ -14,7 +14,7 @@ export interface IAlunaExchangeSchema {
     perApiKey: number
     perIp: number
   }
-  features?: {
+  features: {
     offersPositionId?: boolean
     offersOrderEditing?: boolean
   }
