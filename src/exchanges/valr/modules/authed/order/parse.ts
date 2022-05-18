@@ -31,7 +31,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const { rawOrder } = params
 
   const {
-    order,
+    valrOrder,
     pair,
   } = rawOrder
 
@@ -39,7 +39,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     orderId,
     stopPrice,
     originalQuantity,
-  } = order
+  } = valrOrder
 
   const {
     symbol,
@@ -61,7 +61,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
    * will be returned, otherwise, it will return undefined. This is needed
    * because rawOrder can be of 2 possible types
    */
-  const isIValrOderListSchema = !!(<IValrOrderListSchema> order).side
+  const isIValrOderListSchema = !!(<IValrOrderListSchema> valrOrder).side
 
   if (isIValrOderListSchema) {
 
@@ -72,7 +72,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
       type,
       createdAt,
       updatedAt,
-    } = order as IValrOrderListSchema)
+    } = valrOrder as IValrOrderListSchema)
 
   } else {
 
@@ -83,7 +83,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
       orderStatusType: status,
       orderCreatedAt: createdAt,
       orderUpdatedAt: updatedAt,
-    } = order as IValrOrderGetSchema)
+    } = valrOrder as IValrOrderGetSchema)
 
   }
 
@@ -156,7 +156,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     placedAt: new Date(createdAt),
     filledAt,
     canceledAt,
-    meta: rawOrder,
+    meta: valrOrder,
   }
 
   return { order: parsedOrder }
