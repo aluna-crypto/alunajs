@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-17T11:42:11.131Z",
-    "__export_source": "insomnia.desktop.app:v2022.2.1",
+    "__export_date": "2022-05-18T00:21:37.001Z",
+    "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632774117,
+            "modified": 1652833280318,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -765,7 +765,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.SPOT }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
+                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -1289,7 +1289,7 @@
         {
             "_id": "env_720b09d90c90412b9c6a0327c4915465",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714532335,
+            "modified": 1652833238984,
             "created": 1651252812172,
             "name": "Poloniex",
             "data": {
@@ -1382,7 +1382,7 @@
         {
             "_id": "env_52e41578196c4f5289d52dd763b105e1",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714530920,
+            "modified": 1652833247269,
             "created": 1651252828907,
             "name": "Gate",
             "data": {
@@ -1408,6 +1408,37 @@
             "color": "#e64e62",
             "isPrivate": false,
             "metaSortKey": 7,
+            "_type": "environment"
+        },
+        {
+            "_id": "env_e524d6c1fb6247348832a850cae3e36d",
+            "parentId": "env_0294ce45850974a6280b61215be346094da99682",
+            "modified": 1652833279739,
+            "created": 1652833243571,
+            "name": "Ftx",
+            "data": {
+                "EXCHANGE_ID": "Ftx",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'GATE_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATE_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "BTC/USD",
+                "ORDER_RATE": 1000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.0011
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "EXCHANGE_ID",
+                    "KEY",
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
+                ]
+            },
+            "color": "#00ffd5",
+            "isPrivate": false,
+            "metaSortKey": 1652833243571,
             "_type": "environment"
         }
     ]
