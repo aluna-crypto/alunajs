@@ -1,4 +1,6 @@
 export enum OkxOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  CANCELED = 'canceled',
+  LIVE = 'live',
+  PARTIALLY_FILLED = 'partially_filled',
+  FILLED = 'filled'
 }
