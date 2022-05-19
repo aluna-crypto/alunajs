@@ -34,6 +34,7 @@ export interface IPoloniexOrderPlaceResponseSchema {
   fee: string
   clientOrderId: string
   currencyPair: string
+  error?: string
 }
 
 export interface IPoloniexOrderStatusInfoSchema extends IPoloniexOrderInfo {
