@@ -1126,7 +1126,7 @@
             "name": "Base Environment",
             "data": {
                 "ALUNAJS_RC": "~/.alunarc",
-                "PLAYGROUND_URL": "http://localhost:9000",
+                "PLAYGROUND_URL": "http://localhost:9090",
                 "PASSPHRASE": "",
                 "ACCOUNTS": {
                     "SPOT": "spot",
