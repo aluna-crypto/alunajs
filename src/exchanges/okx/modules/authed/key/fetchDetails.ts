@@ -8,7 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxKeySchema } from '../../../schemas/IOkxKeySchema'
+import { IOkxKeyAccountSchema, IOkxKeySchema } from '../../../schemas/IOkxKeySchema'
 
 
 
@@ -29,12 +29,63 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  // TODO: Implement proper request
-  const rawKey = await http.authedRequest<IOkxKeySchema>({
-    verb: AlunaHttpVerbEnum.GET,
-    url: getOkxEndpoints(settings).key.fetchDetails,
+  const INVALID_PERMISSION_CODE = '50030'
+  const INVALID_PARAM_CODE = '51116'
+
+  const rawKey: IOkxKeySchema = {
+    read: false,
+    trade: false,
+    withdraw: false,
+    accountId: undefined,
+  }
+
+  try {
+
+    const [
+      accountConfig,
+    ] = await http.authedRequest<IOkxKeyAccountSchema[]>({
+      verb: AlunaHttpVerbEnum.GET,
+      url: getOkxEndpoints(settings).key.fetchDetails,
+      credentials,
+    })
+
+    rawKey.read = true
+    rawKey.accountId = accountConfig.uid
+
+  } catch (err) {
+
+    if (err.metadata?.code === INVALID_PERMISSION_CODE) {
+
+      rawKey.read = false
+
+    } else {
+
+      throw err
+
+    }
+
+  }
+
+  const requestBody = {
+    instId: 'BTC-USDT',
+    tdMode: 'cash',
+    side: 'buy',
+    ordType: 'limit',
+    sz: '1',
+    px: '123123123123123',
+  }
+
+  const [order] = await http.authedRequest<{ sCode: string }[]>({
+    url: getOkxEndpoints(settings).order.place,
     credentials,
+    body: requestBody,
   })
+
+  if (order.sCode === INVALID_PARAM_CODE) {
+
+    rawKey.trade = true
+
+  }
 
   const { key } = exchange.key.parseDetails({ rawKey })
 
