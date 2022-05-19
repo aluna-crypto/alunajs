@@ -5,7 +5,7 @@ import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGe
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import * as getRawMod from './getRaw'
 import * as parseMod from './parse'
@@ -22,7 +22,7 @@ describe(__filename, () => {
   it('should get a Valr order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
+    const mockedRawOrder = VALR_RAW_LIST_RESPONSE_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const { orderId } = mockedRawOrder

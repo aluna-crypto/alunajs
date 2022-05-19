@@ -2,11 +2,14 @@ import { ValrOrderTimeInForceEnum } from '../../enums/ValrOderTimeInForceEnum'
 import { ValrOrderSideEnum } from '../../enums/ValrOrderSideEnum'
 import { ValrOrderStatusEnum } from '../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypeEnum } from '../../enums/ValrOrderTypeEnum'
-import { IValrOrderGetSchema, IValrOrderListSchema } from '../../schemas/IValrOrderSchema'
+import {
+  IValrOrderGetSchema,
+  IValrOrderListSchema,
+} from '../../schemas/IValrOrderSchema'
 
 
 
-export const VALR_RAW_ORDERS: IValrOrderListSchema[] = [
+export const VALR_RAW_LIST_RESPONSE_ORDERS: IValrOrderListSchema[] = [
   {
     orderId: 'e5e92066-b230-4389-b9d2-f56d826f1066',
     side: ValrOrderSideEnum.BUY,
@@ -81,7 +84,7 @@ export const VALR_RAW_ORDERS: IValrOrderListSchema[] = [
   },
 ]
 
-export const VALR_RAW_GET_ORDERS: IValrOrderGetSchema[] = [
+export const VALR_RAW_GET_RESPONSE_ORDERS: IValrOrderGetSchema[] = [
   {
     orderId: '446140fa-e4c5-489c-8e43-b431e080ad35',
     orderSide: ValrOrderSideEnum.BUY,

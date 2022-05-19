@@ -1,11 +1,14 @@
 import { expect } from 'chai'
-import { each } from 'lodash'
+import {
+  cloneDeep,
+  each,
+} from 'lodash'
 
 import { PARSED_BALANCES } from '../../../../../../test/fixtures/parsedBalances'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { ValrAuthed } from '../../../ValrAuthed'
 import { VALR_RAW_BALANCES } from '../../../test/fixtures/valrBalances'
+import { ValrAuthed } from '../../../ValrAuthed'
 import * as parseMod from './parse'
 
 
@@ -20,13 +23,15 @@ describe(__filename, () => {
   it('should parse many Valr raw balances just fine', async () => {
 
     // preparing data
-    const rawBalances = VALR_RAW_BALANCES
+    const parsedBalances = [PARSED_BALANCES[0]]
+    const rawBalances = cloneDeep(VALR_RAW_BALANCES).slice(0, 2)
+    rawBalances[1].total = '0'
 
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
 
-    each(PARSED_BALANCES, (balance, i) => {
+    each(parsedBalances, (balance, i) => {
       parse.onCall(i).returns({ balance })
     })
 
@@ -38,7 +43,9 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq(PARSED_BALANCES)
+    expect(balances).to.deep.eq(parsedBalances)
+
+    expect(parse.callCount).to.be.eq(parsedBalances.length)
 
   })
 

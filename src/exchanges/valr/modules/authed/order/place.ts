@@ -17,7 +17,7 @@ import { ValrOrderTimeInForceEnum } from '../../../enums/ValrOderTimeInForceEnum
 import { ValrOrderStatusEnum } from '../../../enums/ValrOrderStatusEnum'
 import { ValrOrderTypeEnum } from '../../../enums/ValrOrderTypeEnum'
 import {
-  IValrOrderGetSchema,
+  IValrOrderGetResponseSchema,
   IValrOrderPlaceResponseSchema,
 } from '../../../schemas/IValrOrderSchema'
 import { ValrHttp } from '../../../ValrHttp'
@@ -94,29 +94,34 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     credentials,
   })
 
-  const { order } = await exchange.order.get({
+  const { rawOrder } = await exchange.order.getRaw({
     id,
     symbolPair,
   })
 
-  const meta: IValrOrderGetSchema = (order.meta as IValrOrderGetSchema)
+  const { valrOrder } = rawOrder as IValrOrderGetResponseSchema
 
-  if (meta.orderStatusType === ValrOrderStatusEnum.FAILED) {
+  const { orderStatusType, failedReason } = valrOrder
+
+  if (orderStatusType === ValrOrderStatusEnum.FAILED) {
 
     let code = AlunaOrderErrorCodes.PLACE_FAILED
 
-    if (meta.failedReason === 'Insufficient Balance') {
+    if (failedReason === 'Insufficient Balance') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
     }
 
     throw new AlunaError({
-      message: meta.failedReason,
+      message: failedReason,
       code,
+      metadata: valrOrder,
     })
 
   }
+
+  const { order } = exchange.order.parse({ rawOrder })
 
   const { requestWeight } = http
 

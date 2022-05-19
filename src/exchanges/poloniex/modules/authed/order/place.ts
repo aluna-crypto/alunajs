@@ -3,6 +3,7 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -54,8 +55,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing new order for Poloniex')
 
-  let placedOrder: IPoloniexOrderPlaceResponseSchema
-
   try {
 
     const translatedOrderType = translateOrderSideToPoloniex({
@@ -78,45 +77,47 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       credentials,
     })
 
-    placedOrder = orderResponse
+    const { error } = orderResponse
 
-  } catch (err) {
+    if (error) {
 
-    let {
-      code,
-      message,
-    } = err
+      let code = AlunaOrderErrorCodes.PLACE_FAILED
 
-    const isInsufficientBalanceError = err.message.includes('Not enough')
+      if (/Not enough/.test(error)) {
 
-    if (isInsufficientBalanceError) {
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
-      code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      }
 
-      message = 'Account has insufficient balance for requested action.'
+      throw new AlunaError({
+        code,
+        message: error,
+        metadata: orderResponse,
+      })
 
     }
 
-    throw new AlunaError({
-      ...err,
-      code,
-      message,
+    const {
+      orderNumber,
+      currencyPair,
+    } = orderResponse
+
+    const { order } = await exchange.order.get({
+      id: orderNumber,
+      symbolPair: currencyPair,
     })
 
-  }
+    const { requestWeight } = http
 
-  const { orderNumber, currencyPair } = placedOrder
+    return {
+      order,
+      requestWeight,
+    }
 
-  const { order } = await exchange.order.get({
-    id: orderNumber,
-    symbolPair: currencyPair,
-  })
+  } catch (err) {
 
-  const { requestWeight } = http
+    throw new AlunaError(err)
 
-  return {
-    order,
-    requestWeight,
   }
 
 }
