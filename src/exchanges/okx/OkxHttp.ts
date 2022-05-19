@@ -1,4 +1,6 @@
 import axios from 'axios'
+import crypto from 'crypto'
+import { AlunaError } from '../../lib/core/AlunaError'
 
 import {
   IAlunaHttp,
@@ -7,6 +9,7 @@ import {
   IAlunaHttpRequestCount,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
@@ -79,13 +82,17 @@ export class OkxHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data } = await axios
+        .create()
+        .request<IOkxHttpResponse<T>>(requestConfig)
+
+      const { data: response } = data
 
       if (!disableCache) {
-        AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
+        AlunaCache.cache.set<T>(cacheKey, response, cacheTtlInSeconds)
       }
 
-      return data
+      return response
 
     } catch (error) {
 
@@ -113,7 +120,6 @@ export class OkxHttp implements IAlunaHttp {
 
     const signedHash = generateAuthHeader({
       verb,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -133,9 +139,13 @@ export class OkxHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data } = await axios
+        .create()
+        .request<IOkxHttpResponse<T>>(requestConfig)
 
-      return data
+      const { data: response } = data
+
+      return response
 
     } catch (error) {
 
@@ -149,44 +159,86 @@ export class OkxHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
-  path: string
   credentials: IAlunaCredentialsSchema
   url: string
   body?: any
 }
 
-// TODO: Review interface properties
 export interface IOkxSignedHeaders {
-  'Api-Timestamp': number
+  'OK-ACCESS-KEY': string
+  'OK-ACCESS-SIGN': string
+  'OK-ACCESS-TIMESTAMP': string
+  'OK-ACCESS-PASSPHRASE': string
+  'Content-Type': string
+}
+
+interface IOkxHttpResponse<T> {
+  code: string
+  msg: string
+  data: T
 }
 
 
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IOkxSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    verb,
+    body,
+    url,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    key,
+    secret,
+    passphrase,
+  } = credentials
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  if (!passphrase) {
 
-  const timestamp = Date.now()
+    throw new AlunaError({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: '\'passphrase\' is required for private requests',
+      httpStatusCode: 401,
+    })
+
+  }
+
+  const methodUrl = new URL(url)
+
+  const { pathname, search } = methodUrl
+
+  const timestamp = new Date().toISOString()
+
+  const pathWithQuery = search
+    ? `${pathname}${search}`
+    : pathname
+
+  const includeBody = body ? JSON.stringify(body) : ''
+
+  const meta = [
+    timestamp,
+    verb.toUpperCase(),
+    pathWithQuery,
+    includeBody,
+  ].join('')
+
+  const signedRequest = crypto
+    .createHmac('sha256', secret)
+    .update(meta)
+    .digest('base64')
 
   return {
-    'Api-Timestamp': timestamp,
+    'OK-ACCESS-KEY': key,
+    'OK-ACCESS-PASSPHRASE': passphrase,
+    'OK-ACCESS-SIGN': signedRequest,
+    'OK-ACCESS-TIMESTAMP': timestamp,
+    'Content-Type': 'application/json',
   }
 
 }

@@ -1,8 +1,10 @@
 import { expect } from 'chai'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import crypto from 'crypto'
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
@@ -20,7 +22,7 @@ import * as OkxHttpMod from './OkxHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { OkxHttp } = OkxHttpMod
 
@@ -29,13 +31,19 @@ describe.skip(__filename, () => {
   const body = {
     data: 'some-data',
   }
+
+  const date = new Date('2022-01-25T20:35:45.623Z')
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
     secret: 'key',
     passphrase: 'key',
   }
   const signedHeader = {
-    'Api-Key': 'apikey',
+    'OK-ACCESS-KEY': credentials.key,
+    'OK-ACCESS-PASSPHRASE': credentials.passphrase,
+    'OK-ACCESS-SIGN': 'dummy',
+    'OK-ACCESS-TIMESTAMP': date,
+    'Content-Type': 'application/json',
   }
   const proxySettings: IAlunaProxySchema = {
     host: 'host',
@@ -123,7 +131,7 @@ describe.skip(__filename, () => {
 
     const okxHttp = new OkxHttp({})
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -180,7 +188,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -211,7 +219,6 @@ describe.skip(__filename, () => {
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
@@ -437,25 +444,36 @@ describe.skip(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine w/ body', async () => {
 
     // preparing data
-    const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
+    const timestamp = date.toISOString()
 
-    const currentDate = Date.now()
+    const meta = [
+      timestamp,
+      verb.toUpperCase(),
+      new URL(url).pathname,
+      JSON.stringify(body),
+    ].join('')
 
     // mocking
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+
     const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
-      currentDate,
+      Date.prototype,
+      'toISOString',
+      timestamp,
     )
 
     // executing
     const signedHash = OkxHttpMod.generateAuthHeader({
       credentials,
-      path,
       verb,
       body,
       url,
@@ -463,7 +481,78 @@ describe.skip(__filename, () => {
 
     // validating
     expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
+    expect(signedHash['OK-ACCESS-KEY']).to.deep.eq(credentials.key)
+    expect(signedHash['OK-ACCESS-PASSPHRASE']).to.deep.eq(credentials.passphrase)
+    expect(signedHash['OK-ACCESS-TIMESTAMP']).to.deep.eq(timestamp)
+    expect(signedHash['OK-ACCESS-SIGN']).to.deep.eq(digestSpy.returnValues[0])
+
+    Sinon.restore()
+
+  })
+
+  it('should generate signed auth header just fine w/ query', async () => {
+
+    // preparing data
+    const verb = 'verb' as AlunaHttpVerbEnum
+    const timestamp = date.toISOString()
+
+    const urlWithQuery = new URL(`${url}?query=query`)
+
+    const meta = [
+      timestamp,
+      verb.toUpperCase(),
+      `${urlWithQuery.pathname}${urlWithQuery.search}`,
+    ].join('')
+
+    // mocking
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+
+    const dateMock = ImportMock.mockFunction(
+      Date.prototype,
+      'toISOString',
+      timestamp,
+    )
+
+    // executing
+    const signedHash = OkxHttpMod.generateAuthHeader({
+      credentials,
+      verb,
+      url: urlWithQuery.toString(),
+    })
+
+    // validating
+    expect(dateMock.callCount).to.be.eq(1)
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
+    expect(signedHash['OK-ACCESS-KEY']).to.deep.eq(credentials.key)
+    expect(signedHash['OK-ACCESS-PASSPHRASE']).to.deep.eq(credentials.passphrase)
+    expect(signedHash['OK-ACCESS-TIMESTAMP']).to.deep.eq(timestamp)
+    expect(signedHash['OK-ACCESS-SIGN']).to.deep.eq(digestSpy.returnValues[0])
+
+    Sinon.restore()
 
   })
 
@@ -471,6 +560,6 @@ describe.skip(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({ HttpClass: OkxHttp })
+  testCache({ HttpClass: OkxHttp, useObjectAsResponse: true })
 
 })
