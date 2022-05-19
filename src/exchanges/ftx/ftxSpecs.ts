@@ -128,6 +128,7 @@ export const getFtxEndpoints = (
       list: `${baseUrl}/orders`,
       place: `${baseUrl}/orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
+      edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
     },
   }
 }

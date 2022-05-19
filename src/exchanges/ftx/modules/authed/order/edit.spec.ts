@@ -2,8 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockOrderCancel } from '../../../../../../test/mocks/exchange/modules/order/mockOrderCancel'
-import { mockOrderPlace } from '../../../../../../test/mocks/exchange/modules/order/mockOrderPlace'
+import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
@@ -13,9 +12,9 @@ import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/e
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
+import { getFtxEndpoints } from '../../../ftxSpecs'
 import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
-import * as cancelMod from './cancel'
-import * as placeMod from './place'
+import * as parseMod from './parse'
 
 
 
@@ -38,13 +37,16 @@ describe(__filename, () => {
 
 
     // mocking
-    mockHttp({ classPrototype: FtxHttp.prototype })
+    const {
+      authedRequest,
+      publicRequest,
+    } = mockHttp({ classPrototype: FtxHttp.prototype })
 
-    const { cancel } = mockOrderCancel({ module: cancelMod })
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
 
-    const { place } = mockOrderPlace({ module: placeMod })
+    const { parse } = mockParse({ module: parseMod })
 
-    place.returns({ order: mockedParsedOrder })
+    parse.returns({ order: mockedParsedOrder })
 
     const { validateParamsMock } = mockValidateParams()
 
@@ -72,24 +74,14 @@ describe(__filename, () => {
 
     expect(requestWeight).to.deep.eq(http.requestWeight)
 
-    expect(cancel.callCount).to.be.eq(1)
-
-    expect(cancel.firstCall.args[0]).to.deep.eq({
-      http,
-      id: id.toString(),
-      symbolPair: params.symbolPair,
-    })
-
-    expect(place.callCount).to.be.eq(1)
-
-    expect(place.firstCall.args[0]).to.deep.eq({
-      http,
-      rate: params.rate,
-      side: params.side,
-      type: params.type,
-      amount: params.amount,
-      account: params.account,
-      symbolPair: params.symbolPair,
+    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      url: getFtxEndpoints(exchange.settings).order.edit(id.toString()),
+      credentials,
+      body: {
+        price: 0,
+        size: 0.01,
+      },
     })
 
     expect(validateParamsMock.callCount).to.be.eq(1)
@@ -97,6 +89,8 @@ describe(__filename, () => {
       params,
       schema: editOrderParamsSchema,
     })
+
+    expect(publicRequest.callCount).to.be.eq(0)
 
   })
 

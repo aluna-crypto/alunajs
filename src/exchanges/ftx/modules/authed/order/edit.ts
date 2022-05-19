@@ -8,6 +8,8 @@ import {
 import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { FtxHttp } from '../../../FtxHttp'
+import { getFtxEndpoints } from '../../../ftxSpecs'
+import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
 
 
 
@@ -29,36 +31,36 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   log('editing order for Ftx')
 
   const {
+    settings,
+    credentials,
+  } = exchange
+
+  const {
     id,
     rate,
-    side,
-    type,
     amount,
-    account,
-    symbolPair,
-    http = new FtxHttp(exchange.settings),
+    http = new FtxHttp(settings),
   } = params
 
-  await exchange.order.cancel({
-    id,
-    symbolPair,
-    http,
+  const body = {
+    price: rate,
+    size: amount,
+  }
+
+  const editedOrder = await http.authedRequest<IFtxOrderSchema>({
+    url: getFtxEndpoints(settings).order.edit(id),
+    credentials,
+    body,
   })
 
-  const { order: newOrder } = await exchange.order.place({
-    rate,
-    side,
-    type,
-    amount,
-    account,
-    symbolPair,
-    http,
+  const { order } = exchange.order.parse({
+    rawOrder: editedOrder,
   })
 
   const { requestWeight } = http
 
   return {
-    order: newOrder,
+    order,
     requestWeight,
   }
 
