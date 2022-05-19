@@ -17,6 +17,7 @@ describe(__filename, () => {
     const { parse } = mockParse({ module: parseMod })
 
     const parsedSymbols = [...PARSED_SYMBOLS, PARSED_SYMBOLS[0]]
+    const rawSymbols = OKX_RAW_SYMBOLS
 
     each(parsedSymbols, (symbol, index) => {
       parse.onCall(index).returns({ symbol })
@@ -27,13 +28,13 @@ describe(__filename, () => {
     const exchange = new Okx({})
 
     const { symbols } = exchange.symbol.parseMany({
-      rawSymbols: OKX_RAW_SYMBOLS,
+      rawSymbols,
     })
 
 
     // validating
-    expect(parse.callCount).to.be.eq(OKX_RAW_SYMBOLS.length - 1)
-    expect(symbols.length).to.be.eq(OKX_RAW_SYMBOLS.length - 1)
+    expect(parse.callCount).to.be.eq(rawSymbols.length)
+    expect(symbols.length).to.be.eq(rawSymbols.length)
 
   })
 

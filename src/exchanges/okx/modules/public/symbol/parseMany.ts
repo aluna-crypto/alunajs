@@ -30,9 +30,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const filteredRawActiveSymbols = filter(
     rawSymbols,
-    {
-      state: OkxSymbolStatusEnum.LIVE || OkxSymbolStatusEnum.PREOPEN,
-    },
+    (rawSymbol) => rawSymbol.state !== OkxSymbolStatusEnum.SUSPEND,
   )
 
   each(filteredRawActiveSymbols, (rawSymbol) => {
