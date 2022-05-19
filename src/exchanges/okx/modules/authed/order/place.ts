@@ -13,6 +13,7 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToOkx } from '../../../enums/adapters/okxOrderSideAdapter'
 import { translateOrderTypeToOkx } from '../../../enums/adapters/okxOrderTypeAdapter'
+import { OkxOrderTypeEnum } from '../../../enums/OkxOrderTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { IOkxOrderSchema } from '../../../schemas/IOkxOrderSchema'
@@ -58,13 +59,22 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  // TODO: Validate all body properties
+  const translatedOrderSide = translateOrderSideToOkx({ from: side })
+
   const body = {
-    direction: translateOrderSideToOkx({ from: side }),
-    marketSymbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    side: translatedOrderSide,
+    instId: symbolPair,
+    ordType: translatedOrderType,
+    sz: amount.toString(),
+    tdMode: 'cash',
+  }
+
+  if (translatedOrderType === OkxOrderTypeEnum.LIMIT) {
+
+    Object.assign(body, {
+      px: rate!.toString(),
+    })
+
   }
 
   log('placing new order for Okx')
@@ -73,7 +83,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    // TODO: Implement proper request
     const orderResponse = await http.authedRequest<IOkxOrderSchema>({
       url: getOkxEndpoints(settings).order.place,
       body,
@@ -92,18 +101,15 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     const { metadata } = err
 
     // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (metadata.code === '59200') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       message = 'Account has insufficient balance for requested action.'
 
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
+    } else {
 
       code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 

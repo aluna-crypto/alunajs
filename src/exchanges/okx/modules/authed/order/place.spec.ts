@@ -44,13 +44,12 @@ describe(__filename, () => {
     const translatedOrderType = translateOrderTypeToOkx({ from: type })
 
     const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
-      rate: 0,
-      // limit: 0,
-      // timeInForce: OkxOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      side: translatedOrderSide,
+      instId: '',
+      ordType: translatedOrderType,
+      sz: '0.01',
+      tdMode: 'cash',
+      px: '0',
     }
 
     // mocking
@@ -106,8 +105,8 @@ describe(__filename, () => {
 
     // preparing data
 
-    const mockedRawOrder = OKX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
+    const mockedRawOrder = OKX_RAW_ORDERS[1]
+    const mockedParsedOrder = PARSED_ORDERS[1]
 
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
@@ -116,12 +115,11 @@ describe(__filename, () => {
     const translatedOrderType = translateOrderTypeToOkx({ from: type })
 
     const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
-      rate: 0,
-      // timeInForce: OkxOrderTimeInForceEnum.FILL_OR_KILL,
+      side: translatedOrderSide,
+      instId: '',
+      ordType: translatedOrderType,
+      sz: '0.01',
+      tdMode: 'cash',
     }
 
     // mocking
@@ -188,7 +186,7 @@ describe(__filename, () => {
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         httpStatusCode: 401,
         metadata: {
-          code: 'INSUFFICIENT_FUNDS',
+          code: '59200',
         },
       })
 
@@ -220,66 +218,6 @@ describe(__filename, () => {
 
       // validating
 
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.code).to.be.eq(expectedCode)
-      expect(error?.message).to.be.eq(expectedMessage)
-
-      expect(authedRequest.callCount).to.be.eq(1)
-
-      expect(publicRequest.callCount).to.be.eq(0)
-
-    },
-  )
-
-  it(
-    'should throw an error placing for minimum size placing new okx order',
-    async () => {
-
-      // preparing data
-      // const mockedRawOrder = OKX_RAW_ORDERS[0]
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-
-      const expectedMessage = 'The trade was smaller than the min '
-        .concat('trade size quantity for the market')
-      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
-
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'MIN_TRADE_REQUIREMENT_NOT_MET',
-        },
-      })
-
-      // mocking
-      const {
-        publicRequest,
-        authedRequest,
-      } = mockHttp({ classPrototype: OkxHttp.prototype })
-
-      authedRequest.returns(Promise.reject(alunaError))
-
-      mockValidateParams()
-
-      mockEnsureOrderIsSupported()
-
-
-      // executing
-      const exchange = new OkxAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: '',
-        account: AlunaAccountEnum.SPOT,
-        amount: 0.01,
-        side,
-        type,
-        rate: 0,
-      }))
-
-      // validating
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(expectedCode)
       expect(error?.message).to.be.eq(expectedMessage)
