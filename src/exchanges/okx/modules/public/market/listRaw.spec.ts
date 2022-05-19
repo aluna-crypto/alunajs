@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { Okx } from '../../../Okx'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
@@ -11,6 +12,10 @@ import { OKX_RAW_MARKETS } from '../../../test/fixtures/okxMarket'
 describe(__filename, () => {
 
   it('should list Okx raw markets just fine', async () => {
+
+    // preparing data
+
+    const type = OkxSymbolTypeEnum.SPOT
 
     // mocking
     const {
@@ -38,7 +43,7 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.firstCall.args[0]).to.deep.eq({
-      url: getOkxEndpoints(exchange.settings).market.list,
+      url: getOkxEndpoints(exchange.settings).market.list(type),
     })
 
     expect(authedRequest.callCount).to.be.eq(0)

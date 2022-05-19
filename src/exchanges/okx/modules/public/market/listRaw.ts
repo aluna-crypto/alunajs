@@ -5,6 +5,7 @@ import {
   IAlunaMarketListParams,
   IAlunaMarketListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { IOkxMarketSchema } from '../../../schemas/IOkxMarketSchema'
@@ -25,9 +26,10 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Okx markets')
 
-  // TODO: Implement proper request
+  const type = OkxSymbolTypeEnum.SPOT
+
   const rawMarkets = await http.publicRequest<IOkxMarketSchema[]>({
-    url: getOkxEndpoints(settings).market.list,
+    url: getOkxEndpoints(settings).market.list(type),
   })
 
   const { requestWeight } = http
