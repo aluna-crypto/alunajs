@@ -2,9 +2,8 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -12,7 +11,7 @@ import { OkxAuthed } from '../../../OkxAuthed'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { OKX_RAW_ORDERS } from '../../../test/fixtures/okxOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -29,7 +28,12 @@ describe(__filename, () => {
     const mockedRawOrder = OKX_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { ordId: id } = mockedRawOrder
+
+    const body = {
+      ordId: id,
+      instId: '',
+    }
 
 
     // mocking
@@ -38,9 +42,9 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -60,9 +64,9 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getOkxEndpoints(exchange.settings).order.cancel(id),
+      url: getOkxEndpoints(exchange.settings).order.cancel,
+      body,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -73,6 +77,12 @@ describe(__filename, () => {
 
     // preparing data
     const id = 'id'
+    const symbolPair = 'symbolPair'
+
+    const body = {
+      ordId: id,
+      instId: symbolPair,
+    }
 
     // mocking
     const {
@@ -96,7 +106,7 @@ describe(__filename, () => {
     const { error: responseError } = await executeAndCatch(
       () => exchange.order.cancel({
         id,
-        symbolPair: 'symbolPair',
+        symbolPair,
       }),
     )
 
@@ -107,9 +117,9 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.DELETE,
       credentials,
-      url: getOkxEndpoints(exchange.settings).order.cancel(id),
+      url: getOkxEndpoints(exchange.settings).order.cancel,
+      body,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

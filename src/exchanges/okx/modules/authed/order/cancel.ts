@@ -2,7 +2,6 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -10,7 +9,6 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxOrderSchema } from '../../../schemas/IOkxOrderSchema'
 
 
 
@@ -31,19 +29,27 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new OkxHttp(settings),
   } = params
 
+  const body = {
+    ordId: id,
+    instId: symbolPair,
+  }
+
   try {
 
-    // TODO: Implement proper request
-    const rawOrder = await http.authedRequest<IOkxOrderSchema>({
-      verb: AlunaHttpVerbEnum.DELETE,
-      url: getOkxEndpoints(settings).order.get(id),
+    await http.authedRequest<void>({
+      url: getOkxEndpoints(settings).order.cancel,
       credentials,
+      body,
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const { order } = await exchange.order.get({
+      id,
+      symbolPair,
+    })
 
     const { requestWeight } = http
 
