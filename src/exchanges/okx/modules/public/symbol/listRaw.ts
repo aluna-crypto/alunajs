@@ -5,6 +5,7 @@ import {
   IAlunaSymbolListParams,
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { IOkxSymbolSchema } from '../../../schemas/IOkxSymbolSchema'
@@ -25,9 +26,10 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  // TODO: Implement proper request
+  const type = OkxSymbolTypeEnum.SPOT
+
   const rawSymbols = await http.publicRequest<IOkxSymbolSchema[]>({
-    url: getOkxEndpoints(settings).symbol.list,
+    url: getOkxEndpoints(settings).symbol.list(type),
   })
 
   const { requestWeight } = http
