@@ -27,9 +27,11 @@ describe(__filename, () => {
 
     // preparing data
     const rawBalances = cloneDeep(BITMEX_RAW_BALANCES)
+    const parsedBalances = [PARSED_BALANCES[0]]
 
     const bitmexAssets = cloneDeep(BITMEX_ASSETS.slice(0, 2))
-    bitmexAssets[0].walletBalance = 0
+    bitmexAssets[0].walletBalance = 10
+    bitmexAssets[1].walletBalance = 0
 
     rawBalances.assets = bitmexAssets
 
@@ -37,7 +39,7 @@ describe(__filename, () => {
     // mocking
     const { parse } = mockParse({ module: parseMod })
 
-    each(PARSED_BALANCES, (balance, i) => {
+    each(parsedBalances, (balance, i) => {
       parse.onCall(i).returns({ balance })
     })
 
@@ -49,9 +51,9 @@ describe(__filename, () => {
 
 
     // validating
-    expect(balances).to.deep.eq(PARSED_BALANCES)
+    expect(balances).to.deep.eq(parsedBalances)
 
-    expect(parse.callCount).to.be.eq(PARSED_BALANCES.length)
+    expect(parse.callCount).to.be.eq(parsedBalances.length)
 
   })
 
