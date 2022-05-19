@@ -176,16 +176,12 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
-    const permissions = cloneDeep(OKX_KEY_PERMISSIONS)
-
     // mocking
 
     const alunaError = new AlunaError({
       message: 'dummy-error',
       code: '',
-      metadata: {
-        code: 'non-existent',
-      },
+      metadata: null,
     })
 
     const {
