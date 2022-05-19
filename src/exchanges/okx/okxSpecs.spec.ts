@@ -30,8 +30,8 @@ describe(__filename, () => {
     } = await executeAndCatch(() => getOkxEndpoints({ useTestNet: true }))
 
     // validating
-    expect(error).not.to.be.ok
-    expect(result).to.be.ok
+    expect(result).not.to.be.ok
+    expect(error).to.be.ok
 
   })
 

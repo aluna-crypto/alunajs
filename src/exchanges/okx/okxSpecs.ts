@@ -1,19 +1,20 @@
 import { cloneDeep } from 'lodash'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
 } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { OkxSymbolTypeEnum } from './enums/OkxSymbolTypeEnum'
 
 
 
-// TODO: set proper urls
-export const OKX_PRODUCTION_URL = 'https://api.okx.com/v3'
-export const OKX_TESTNET_URL = 'https://testnet.api.okx.com/v3'
+export const OKX_PRODUCTION_URL = 'https://www.okx.com/api/v5'
 
 
 
@@ -38,28 +39,6 @@ export const okxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
-  {
-    type: AlunaOrderTypesEnum.STOP_LIMIT,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
-  {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
 ]
 
 
@@ -67,14 +46,11 @@ export const okxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const okxBaseSpecs: IAlunaExchangeSchema = {
   id: 'okx',
   name: 'Okx',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://okx.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://okx.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://www.okx.com/account/register',
+  connectApiUrl: 'https://www.okx.com/account/my-api',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 60,
+    perIp: 60,
   },
   // TODO: Review supported features
   features: {
@@ -86,7 +62,6 @@ export const okxBaseSpecs: IAlunaExchangeSchema = {
     order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.SPOT,
       supported: true,
@@ -141,46 +116,35 @@ export const getOkxEndpoints = (
   settings: IAlunaSettingsSchema,
 ) => {
 
-  let baseUrl = OKX_PRODUCTION_URL
+  const baseUrl = OKX_PRODUCTION_URL
 
   if (settings.useTestNet) {
-    baseUrl = OKX_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Okx don't have a testnet.',
-      })
-    */
+
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET,
+      message: 'Okx don\'t have a testnet.',
+    })
+
   }
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: (type: OkxSymbolTypeEnum) => `${baseUrl}/public/instruments?instType=${type}`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: (type: OkxSymbolTypeEnum) => `${baseUrl}/market/tickers?instType=${type}`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchDetails: `${baseUrl}/account/config`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/account/balance`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
-    },
-    position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
-      getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
+      get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
+      list: `${baseUrl}/trade/orders-pending`,
+      place: `${baseUrl}/trade/order`,
+      cancel: `${baseUrl}/trade/cancel-order`,
     },
   }
 }
