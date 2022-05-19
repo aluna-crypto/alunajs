@@ -19,11 +19,11 @@ describe(__filename, () => {
   it('should properly translate Okx order sides to Aluna order sides', () => {
 
     expect(translateOrderSideToAluna({
-      from: OkxOrderSideEnum.BUY,
+      from: OkxOrderSideEnum.LONG,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(translateOrderSideToAluna({
-      from: OkxOrderSideEnum.SELL,
+      from: OkxOrderSideEnum.SHORT,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
     let result
@@ -55,11 +55,11 @@ describe(__filename, () => {
 
     expect(translateOrderSideToOkx({
       from: AlunaOrderSideEnum.BUY,
-    })).to.be.eq(OkxOrderSideEnum.BUY)
+    })).to.be.eq(OkxOrderSideEnum.LONG)
 
     expect(translateOrderSideToOkx({
       from: AlunaOrderSideEnum.SELL,
-    })).to.be.eq(OkxOrderSideEnum.SELL)
+    })).to.be.eq(OkxOrderSideEnum.SHORT)
 
     let result
     let error

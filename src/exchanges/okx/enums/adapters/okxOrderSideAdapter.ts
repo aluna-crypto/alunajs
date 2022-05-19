@@ -14,8 +14,8 @@ export const translateOrderSideToAluna = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [OkxOrderSideEnum.BUY]: AlunaOrderSideEnum.BUY,
-    [OkxOrderSideEnum.SELL]: AlunaOrderSideEnum.SELL,
+    [OkxOrderSideEnum.LONG]: AlunaOrderSideEnum.BUY,
+    [OkxOrderSideEnum.SHORT]: AlunaOrderSideEnum.SELL,
   },
 })
 
@@ -27,7 +27,7 @@ export const translateOrderSideToOkx = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderSideEnum.BUY]: OkxOrderSideEnum.BUY,
-    [AlunaOrderSideEnum.SELL]: OkxOrderSideEnum.SELL,
+    [AlunaOrderSideEnum.BUY]: OkxOrderSideEnum.LONG,
+    [AlunaOrderSideEnum.SELL]: OkxOrderSideEnum.SHORT,
   },
 })
