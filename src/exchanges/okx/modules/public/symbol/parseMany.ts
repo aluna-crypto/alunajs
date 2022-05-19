@@ -1,11 +1,17 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import {
+  each,
+  filter,
+  values,
+} from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
+import { OkxSymbolStatusEnum } from '../../../enums/OkxSymbolStatusEnum'
 import { IOkxSymbolSchema } from '../../../schemas/IOkxSymbolSchema'
 
 
@@ -20,14 +26,46 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbols } = params
 
-  // TODO: Review implementation
-  const symbols = map(rawSymbols, (rawSymbol) => {
+  const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    const { symbol } = exchange.symbol.parse({ rawSymbol })
+  const filteredRawActiveSymbols = filter(
+    rawSymbols,
+    {
+      state: OkxSymbolStatusEnum.LIVE || OkxSymbolStatusEnum.PREOPEN,
+    },
+  )
 
-    return symbol
+  each(filteredRawActiveSymbols, (rawSymbol) => {
+
+    const {
+      baseCcy,
+      quoteCcy,
+    } = rawSymbol
+
+    if (!parsedSymbolsDict[baseCcy]) {
+
+      const { symbol } = exchange.symbol.parse({ rawSymbol })
+
+      parsedSymbolsDict[baseCcy] = symbol
+
+    }
+
+    if (!parsedSymbolsDict[quoteCcy]) {
+
+      const { symbol } = exchange.symbol.parse({
+        rawSymbol: {
+          ...rawSymbol,
+          baseCcy: quoteCcy,
+        },
+      })
+
+      parsedSymbolsDict[quoteCcy] = symbol
+
+    }
 
   })
+
+  const symbols = values(parsedSymbolsDict)
 
   log(`parsed ${symbols.length} symbols for Okx`)
 
