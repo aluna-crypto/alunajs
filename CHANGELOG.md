@@ -1,3 +1,8 @@
+# 1.0.2 (May 19, 2022)
+
+ - Filtering zeroed balances
+ - Fixing insufficient-balance error for Valr/Poloniex
+
 # 1.0.1 (May 18, 2022)
 
  - Adjustments in `IAlunaExchangeSchema` interface
