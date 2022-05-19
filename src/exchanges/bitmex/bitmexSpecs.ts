@@ -76,10 +76,6 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
     offersOrderEditing: true,
     offersPositionId: true,
   },
-  modes: {
-    balance: AlunaFeaturesModeEnum.READ,
-    order: AlunaFeaturesModeEnum.WRITE,
-  },
   accounts: [
     {
       type: AlunaAccountEnum.DERIVATIVES,

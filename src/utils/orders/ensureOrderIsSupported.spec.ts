@@ -33,11 +33,6 @@ describe(__filename, () => {
       perApiKey: 100,
       perIp: 100,
     },
-    modes: {
-      balance: AlunaFeaturesModeEnum.READ,
-      order: AlunaFeaturesModeEnum.WRITE,
-      position: AlunaFeaturesModeEnum.WRITE,
-    },
     features: {
       offersPositionId: false,
       offersOrderEditing: false,

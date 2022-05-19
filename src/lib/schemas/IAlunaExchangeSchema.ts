@@ -14,12 +14,7 @@ export interface IAlunaExchangeSchema {
     perApiKey: number
     perIp: number
   }
-  modes: {
-    balance: AlunaFeaturesModeEnum
-    order: AlunaFeaturesModeEnum
-    position?: AlunaFeaturesModeEnum
-  }
-  features?: {
+  features: {
     offersPositionId?: boolean
     offersOrderEditing?: boolean
   }
