@@ -6,44 +6,20 @@ import { OkxOrderStatusEnum } from '../OkxOrderStatusEnum'
 
 const errorMessagePrefix = 'Order status'
 
-export const translateOrderStatusToAluna = (
-  params: {
-      fillQuantity: string
-      quantity: string
-      from: OkxOrderStatusEnum
-    },
-): AlunaOrderStatusEnum => {
 
-  const { fillQuantity, quantity, from } = params
-
-  const isOpen = from === OkxOrderStatusEnum.OPEN
-
-  if (isOpen) {
-
-    return AlunaOrderStatusEnum.OPEN
-
-  }
-
-  const parsedFillQty = parseFloat(fillQuantity)
-  const parsedQty = parseFloat(quantity)
-
-  if (parsedQty === parsedFillQty) {
-
-    return AlunaOrderStatusEnum.FILLED
-
-  }
-
-  if (parsedFillQty > 0) {
-
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
-
-  }
-
-  return AlunaOrderStatusEnum.CANCELED
-
-}
-
-
+export const translateOrderStatusToAluna = buildAdapter<
+  OkxOrderStatusEnum,
+  AlunaOrderStatusEnum
+>({
+  errorMessagePrefix,
+  mappings: {
+    [OkxOrderStatusEnum.LIVE]: AlunaOrderStatusEnum.OPEN,
+    [OkxOrderStatusEnum.PARTIALLY_FILLED]:
+      AlunaOrderStatusEnum.PARTIALLY_FILLED,
+    [OkxOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+    [OkxOrderStatusEnum.CANCELED]: AlunaOrderStatusEnum.CANCELED,
+  },
+})
 
 export const translateOrderStatusToOkx = buildAdapter<
   AlunaOrderStatusEnum,
@@ -51,9 +27,10 @@ export const translateOrderStatusToOkx = buildAdapter<
 >({
   errorMessagePrefix,
   mappings: {
-    [AlunaOrderStatusEnum.OPEN]: OkxOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.PARTIALLY_FILLED]: OkxOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: OkxOrderStatusEnum.CLOSED,
-    [AlunaOrderStatusEnum.CANCELED]: OkxOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.OPEN]: OkxOrderStatusEnum.LIVE,
+    [AlunaOrderStatusEnum.PARTIALLY_FILLED]:
+          OkxOrderStatusEnum.PARTIALLY_FILLED,
+    [AlunaOrderStatusEnum.FILLED]: OkxOrderStatusEnum.FILLED,
+    [AlunaOrderStatusEnum.CANCELED]: OkxOrderStatusEnum.CANCELED,
   },
 })

@@ -17,34 +17,41 @@ describe(__filename, () => {
 
   it('should translate Okx order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+    expect(translateOrderStatusToAluna({
+      from: OkxOrderStatusEnum.LIVE,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: OkxOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
-
-    expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: OkxOrderStatusEnum.CLOSED,
+      from: OkxOrderStatusEnum.PARTIALLY_FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: OkxOrderStatusEnum.CLOSED,
+      from: OkxOrderStatusEnum.FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: OkxOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: OkxOrderStatusEnum.CANCELED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    let result
+    let error
+
+    try {
+
+      result = translateOrderStatusToAluna({
+        from: notSupported as OkxOrderStatusEnum,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
@@ -54,19 +61,19 @@ describe(__filename, () => {
 
     expect(translateOrderStatusToOkx({
       from: AlunaOrderStatusEnum.OPEN,
-    })).to.be.eq(OkxOrderStatusEnum.OPEN)
+    })).to.be.eq(OkxOrderStatusEnum.LIVE)
 
     expect(translateOrderStatusToOkx({
       from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
-    })).to.be.eq(OkxOrderStatusEnum.OPEN)
+    })).to.be.eq(OkxOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToOkx({
       from: AlunaOrderStatusEnum.FILLED,
-    })).to.be.eq(OkxOrderStatusEnum.CLOSED)
+    })).to.be.eq(OkxOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToOkx({
       from: AlunaOrderStatusEnum.CANCELED,
-    })).to.be.eq(OkxOrderStatusEnum.CLOSED)
+    })).to.be.eq(OkxOrderStatusEnum.CANCELED)
 
     let result
     let error
