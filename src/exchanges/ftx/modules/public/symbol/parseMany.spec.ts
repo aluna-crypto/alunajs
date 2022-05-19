@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Ftx } from '../../../Ftx'
-import { FTX_RAW_MARKETS, OKX_RAW_FUTURE_MARKET } from '../../../test/fixtures/ftxMarket'
+import { FTX_RAW_MARKETS, FTX_RAW_FUTURE_MARKET } from '../../../test/fixtures/ftxMarket'
 import * as parseMod from './parse'
 
 
@@ -18,7 +18,7 @@ describe(__filename, () => {
 
     const rawSymbols = [
       ...FTX_RAW_MARKETS,
-      OKX_RAW_FUTURE_MARKET,
+      FTX_RAW_FUTURE_MARKET,
       FTX_RAW_MARKETS[0]]
     const parsedSymbols = [...PARSED_SYMBOLS, PARSED_SYMBOLS[0]]
 

@@ -1,11 +1,12 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import { filter, map } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
+import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
@@ -20,7 +21,14 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawMarkets } = params
 
-  const markets = map(rawMarkets, (rawMarket) => {
+  const filteredSpotMarkets = filter(
+    rawMarkets,
+    {
+      type: FtxMarketTypeEnum.SPOT,
+    },
+  )
+
+  const markets = map(filteredSpotMarkets, (rawMarket) => {
 
     const { market } = exchange.market.parse({
       rawMarket,

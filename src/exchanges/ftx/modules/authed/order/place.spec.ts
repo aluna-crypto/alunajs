@@ -13,6 +13,7 @@ import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAluna
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
+import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToFtx } from '../../../enums/adapters/ftxOrderSideAdapter'
 import { translateOrderTypeToFtx } from '../../../enums/adapters/ftxOrderTypeAdapter'
@@ -63,7 +64,7 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
-    mockValidateParams()
+    const { validateParamsMock } = mockValidateParams()
 
     const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
@@ -98,6 +99,12 @@ describe(__filename, () => {
 
     expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
+      params,
+      schema: placeOrderParamsSchema,
+    })
+
   })
 
   it('should place a Ftx market order just fine', async () => {
@@ -121,6 +128,15 @@ describe(__filename, () => {
       type: translatedOrderType,
     }
 
+    const params = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
+    }
+
     // mocking
     const {
       publicRequest,
@@ -133,22 +149,15 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
-    mockValidateParams()
+    const { validateParamsMock } = mockValidateParams()
 
-    mockEnsureOrderIsSupported()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
 
     // executing
     const exchange = new FtxAuthed({ credentials })
 
-    const { order } = await exchange.order.place({
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    })
+    const { order } = await exchange.order.place(params)
 
 
     // validating
@@ -163,6 +172,18 @@ describe(__filename, () => {
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
+      exchangeSpecs: exchange.specs,
+      orderPlaceParams: params,
+    })
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
   })
 
@@ -187,6 +208,15 @@ describe(__filename, () => {
         metadata: {},
       })
 
+      const params = {
+        symbolPair: '',
+        account: AlunaAccountEnum.SPOT,
+        amount: 0.01,
+        side,
+        type,
+        rate: 0,
+      }
+
       // mocking
       const {
         publicRequest,
@@ -195,22 +225,17 @@ describe(__filename, () => {
 
       authedRequest.returns(Promise.reject(alunaError))
 
-      mockValidateParams()
+      const { validateParamsMock } = mockValidateParams()
 
-      mockEnsureOrderIsSupported()
+      const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
 
       // executing
       const exchange = new FtxAuthed({ credentials })
 
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: '',
-        account: AlunaAccountEnum.SPOT,
-        amount: 0.01,
-        side,
-        type,
-        rate: 0,
-      }))
+      const { error } = await executeAndCatch(
+        () => exchange.order.place(params),
+      )
 
 
       // validating
@@ -222,6 +247,19 @@ describe(__filename, () => {
       expect(authedRequest.callCount).to.be.eq(1)
 
       expect(publicRequest.callCount).to.be.eq(0)
+
+      expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+      expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
+        exchangeSpecs: exchange.specs,
+        orderPlaceParams: params,
+      })
+
+      expect(validateParamsMock.callCount).to.be.eq(1)
+      expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
+        params,
+        schema: placeOrderParamsSchema,
+      })
+
 
     },
   )
@@ -244,6 +282,15 @@ describe(__filename, () => {
       metadata: {},
     })
 
+    const params = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: Number(0),
+    }
+
     // mocking
     const {
       publicRequest,
@@ -252,22 +299,17 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.reject(alunaError))
 
-    mockValidateParams()
+    const { validateParamsMock } = mockValidateParams()
 
-    mockEnsureOrderIsSupported()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
 
     // executing
     const exchange = new FtxAuthed({ credentials })
 
-    const { error } = await executeAndCatch(() => exchange.order.place({
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: Number(0),
-    }))
+    const { error } = await executeAndCatch(
+      () => exchange.order.place(params),
+    )
 
     // validating
     expect(error instanceof AlunaError).to.be.ok
@@ -277,6 +319,18 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
+      exchangeSpecs: exchange.specs,
+      orderPlaceParams: params,
+    })
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
+      params,
+      schema: placeOrderParamsSchema,
+    })
 
   })
 

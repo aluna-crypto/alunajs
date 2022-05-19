@@ -33,6 +33,8 @@ describe(__filename, () => {
 
 
     // mocking
+    const http = new FtxHttp({})
+
     const {
       publicRequest,
       authedRequest,
@@ -67,6 +69,13 @@ describe(__filename, () => {
 
     expect(publicRequest.callCount).to.be.eq(0)
 
+    expect(get.callCount).to.be.eq(1)
+    expect(get.firstCall.args[0]).to.deep.eq({
+      id: id.toString(),
+      symbolPair: '',
+      http,
+    })
+
   })
 
   it('should throw an error when canceling a Ftx order', async () => {
@@ -75,6 +84,9 @@ describe(__filename, () => {
     const id = 'id'
 
     // mocking
+
+    const { get } = mockGet({ module: getMod })
+
     const {
       publicRequest,
       authedRequest,
@@ -113,6 +125,8 @@ describe(__filename, () => {
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(get.callCount).to.be.eq(0)
 
   })
 

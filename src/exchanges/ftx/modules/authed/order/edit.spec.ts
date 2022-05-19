@@ -9,6 +9,7 @@ import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
@@ -45,7 +46,7 @@ describe(__filename, () => {
 
     place.returns({ order: mockedParsedOrder })
 
-    mockValidateParams()
+    const { validateParamsMock } = mockValidateParams()
 
     // executing
     const exchange = new FtxAuthed({ credentials })
@@ -89,6 +90,12 @@ describe(__filename, () => {
       amount: params.amount,
       account: params.account,
       symbolPair: params.symbolPair,
+    })
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
+      params,
+      schema: editOrderParamsSchema,
     })
 
   })

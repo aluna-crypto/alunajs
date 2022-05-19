@@ -75,7 +75,7 @@ export const FTX_RAW_MARKETS: IFtxMarketSchema[] = [
   },
 ]
 
-export const OKX_RAW_FUTURE_MARKET = {
+export const FTX_RAW_FUTURE_MARKET = {
   name: 'LTC/USD',
   enabled: true,
   postOnly: false,

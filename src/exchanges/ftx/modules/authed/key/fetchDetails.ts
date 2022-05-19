@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
@@ -9,6 +10,7 @@ import {
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { IFtxKeySchema } from '../../../schemas/IFtxKeySchema'
+import { AlunaKeyErrorCodes } from '../../../../../lib/errors/AlunaKeyErrorCodes'
 
 
 
@@ -34,6 +36,17 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
     url: getFtxEndpoints(settings).key.fetchDetails,
     credentials,
   })
+
+  if (!rawKey.account) {
+
+    throw new AlunaError({
+      code: AlunaKeyErrorCodes.INVALID,
+      message: 'Invalid key provided',
+      httpStatusCode: 403,
+      metadata: rawKey,
+    })
+
+  }
 
   const { key } = exchange.key.parseDetails({ rawKey })
 

@@ -43,7 +43,11 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       credentials,
     })
 
-    const { order } = await exchange.order.get({ id, symbolPair })
+    const { order } = await exchange.order.get({
+      id,
+      symbolPair,
+      http,
+    })
 
     const { requestWeight } = http
 
