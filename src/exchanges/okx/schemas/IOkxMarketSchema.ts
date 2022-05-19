@@ -1,12 +1,18 @@
-import { OkxMarketStatusEnum } from '../enums/OkxMarketStatusEnum'
-
-
-
-// TODO: Describe market interface for Okx exchange
 export interface IOkxMarketSchema {
-  symbol: string
-  volume: string
-  quoteVolume: string
-  status: OkxMarketStatusEnum
-  // ...
+  instType: string
+  instId: string
+  last: string
+  lastSz: string
+  askPx: string
+  askSz: string
+  bidPx: string
+  bidSz: string
+  open24h: string
+  high24h: string
+  low24h: string
+  volCcy24h: string
+  vol24h: string
+  ts: string
+  sodUtc0: string
+  sodUtc8: string
 }
