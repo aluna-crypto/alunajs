@@ -26,14 +26,6 @@ describe(__filename, () => {
       from: OkxOrderTypeEnum.MARKET,
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
-    expect(translateOrderTypeToAluna({
-      from: OkxOrderTypeEnum.CEILING_LIMIT,
-    })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
-
-    expect(translateOrderTypeToAluna({
-      from: OkxOrderTypeEnum.CEILING_MARKET,
-    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
-
     let result
     let error
 
@@ -69,14 +61,6 @@ describe(__filename, () => {
     expect(translateOrderTypeToOkx({
       from: AlunaOrderTypesEnum.MARKET,
     })).to.be.eq(OkxOrderTypeEnum.MARKET)
-
-    expect(translateOrderTypeToOkx({
-      from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(OkxOrderTypeEnum.CEILING_LIMIT)
-
-    expect(translateOrderTypeToOkx({
-      from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(OkxOrderTypeEnum.CEILING_MARKET)
 
     let result
     let error

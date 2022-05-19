@@ -16,8 +16,6 @@ export const translateOrderTypeToAluna = buildAdapter<
   mappings: {
     [OkxOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [OkxOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [OkxOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [OkxOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
   },
 })
 
@@ -31,7 +29,5 @@ export const translateOrderTypeToOkx = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: OkxOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: OkxOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: OkxOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: OkxOrderTypeEnum.CEILING_MARKET,
   },
 })
