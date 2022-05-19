@@ -1,6 +1,7 @@
 import debug from 'debug'
 import {
   each,
+  filter,
   values,
 } from 'lodash'
 
@@ -10,6 +11,7 @@ import {
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
+import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
@@ -26,7 +28,14 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-  each(rawSymbols, (symbolPair) => {
+  const filteredSpotSymbols = filter(
+    rawSymbols,
+    {
+      type: FtxMarketTypeEnum.SPOT,
+    },
+  )
+
+  each(filteredSpotSymbols, (symbolPair) => {
 
     const {
       baseCurrency,

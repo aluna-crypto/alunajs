@@ -4,7 +4,7 @@ import { each } from 'lodash'
 import { PARSED_SYMBOLS } from '../../../../../../test/fixtures/parsedSymbols'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Ftx } from '../../../Ftx'
-import { FTX_RAW_MARKETS } from '../../../test/fixtures/ftxMarket'
+import { FTX_RAW_MARKETS, OKX_RAW_FUTURE_MARKET } from '../../../test/fixtures/ftxMarket'
 import * as parseMod from './parse'
 
 
@@ -16,7 +16,10 @@ describe(__filename, () => {
     // mocking
     const { parse } = mockParse({ module: parseMod })
 
-    const rawSymbols = [...FTX_RAW_MARKETS, FTX_RAW_MARKETS[0]]
+    const rawSymbols = [
+      ...FTX_RAW_MARKETS,
+      OKX_RAW_FUTURE_MARKET,
+      FTX_RAW_MARKETS[0]]
     const parsedSymbols = [...PARSED_SYMBOLS, PARSED_SYMBOLS[0]]
 
     each(parsedSymbols, (symbol, index) => {
@@ -33,8 +36,10 @@ describe(__filename, () => {
 
 
     // validating
-    expect(parse.callCount).to.be.eq(FTX_RAW_MARKETS.length + 1)
-    expect(symbols.length).to.be.eq(FTX_RAW_MARKETS.length + 1)
+    expect(parse.callCount).to.be.eq(rawSymbols.length - 1)
+    expect(symbols.length).to.be.eq(rawSymbols.length - 1)
+
+    expect(symbols).to.deep.eq(parsedSymbols)
 
   })
 

@@ -76,6 +76,7 @@ describe(__filename, () => {
 
     expect(publicRequest.callCount).to.be.eq(0)
 
+    expect(parseDetails.callCount).to.be.eq(1)
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
       rawKey: FTX_KEY_PERMISSIONS,
     })

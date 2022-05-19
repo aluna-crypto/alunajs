@@ -75,3 +75,26 @@ export const FTX_RAW_MARKETS: IFtxMarketSchema[] = [
   },
 ]
 
+export const OKX_RAW_FUTURE_MARKET = {
+  name: 'LTC/USD',
+  enabled: true,
+  postOnly: false,
+  priceIncrement: 0.1,
+  sizeIncrement: 0.001,
+  minProvideSize: 0.001,
+  last: 2911,
+  bid: 2910.9,
+  ask: 2911,
+  price: 2911,
+  type: FtxMarketTypeEnum.FUTURE,
+  baseCurrency: 'ETH',
+  quoteCurrency: 'USD',
+  underlying: 'btc',
+  restricted: false,
+  highLeverageFeeExempt: true,
+  change1h: 0.009677083694634247,
+  change24h: -0.031700096464092074,
+  changeBod: -0.009695526450076543,
+  quoteVolume24h: 400900371.3091,
+  volumeUsd24h: 400900371.3091,
+}

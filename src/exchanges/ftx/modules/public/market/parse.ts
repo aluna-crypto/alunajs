@@ -4,6 +4,7 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
@@ -31,6 +32,22 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const baseVolume = isUsdBaseCurrency ? volumeUsd24h : 0
 
+  const { settings, specs } = exchange
+
+  const { id: exchangeId } = specs
+
+  const { symbolMappings } = settings
+
+  const baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseCurrency,
+    symbolMappings,
+  })
+
+  const quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteCurrency,
+    symbolMappings,
+  })
+
   const ticker = {
     high: price,
     low: price,
@@ -44,10 +61,10 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   }
 
   const market: IAlunaMarketSchema = {
-    exchangeId: exchange.specs.id,
+    exchangeId,
     symbolPair: name,
-    baseSymbolId: baseCurrency,
-    quoteSymbolId: quoteCurrency,
+    baseSymbolId,
+    quoteSymbolId,
     ticker,
     spotEnabled: true,
     marginEnabled: false,

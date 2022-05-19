@@ -49,6 +49,10 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 60,
     perIp: 60,
   },
+  features: {
+    offersOrderEditing: false,
+    offersPositionId: false,
+  },
   modes: {
     balance: AlunaFeaturesModeEnum.READ,
     order: AlunaFeaturesModeEnum.WRITE,
@@ -128,13 +132,6 @@ export const getFtxEndpoints = (
       list: `${baseUrl}/orders`,
       place: `${baseUrl}/orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
-    },
-    position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
-      getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
     },
   }
 }

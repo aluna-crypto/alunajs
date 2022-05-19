@@ -12,14 +12,23 @@ describe(__filename, () => {
   it('should parse a Ftx raw market just fine', async () => {
 
     // preparing data
-    const translatedSymbolId = 'BTC'
     const rawMarket = FTX_RAW_MARKETS[0]
+
+    const {
+      baseCurrency,
+      quoteCurrency,
+    } = rawMarket
 
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
 
-    translateSymbolId.returns(translatedSymbolId)
+    translateSymbolId
+      .onFirstCall()
+      .returns(baseCurrency)
+    translateSymbolId
+      .onSecondCall()
+      .returns(quoteCurrency)
 
 
     // executing
@@ -35,8 +44,8 @@ describe(__filename, () => {
 
     expect(market.exchangeId).to.be.eq(exchange.specs.id)
     expect(market.symbolPair).to.be.eq(rawMarket.name)
-    expect(market.baseSymbolId).to.be.eq(rawMarket.baseCurrency)
-    expect(market.quoteSymbolId).to.be.eq(rawMarket.quoteCurrency)
+    expect(market.baseSymbolId).to.be.eq(baseCurrency)
+    expect(market.quoteSymbolId).to.be.eq(quoteCurrency)
 
     expect(market.ticker.high).to.be.eq(rawMarket.price)
     expect(market.ticker.low).to.be.eq(rawMarket.price)
@@ -54,6 +63,16 @@ describe(__filename, () => {
     expect(market.instrument).not.to.be.ok
     expect(market.leverageEnabled).not.to.be.ok
     expect(market.maxLeverage).not.to.be.ok
+
+    expect(translateSymbolId.callCount).to.be.eq(2)
+    expect(translateSymbolId.firstCall.args[0]).to.deep.eq({
+      exchangeSymbolId: baseCurrency,
+      symbolMappings: exchange.settings.symbolMappings,
+    })
+    expect(translateSymbolId.secondCall.args[0]).to.deep.eq({
+      exchangeSymbolId: quoteCurrency,
+      symbolMappings: exchange.settings.symbolMappings,
+    })
 
   })
 

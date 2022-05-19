@@ -46,6 +46,12 @@ describe(__filename, () => {
     expect(balance.wallet).to.be.eq(AlunaWalletEnum.SPOT)
     expect(balance.meta).to.deep.eq(rawBalance)
 
+    expect(translateSymbolId.callCount).to.be.eq(1)
+    expect(translateSymbolId.args[0][0]).to.deep.eq({
+      exchangeSymbolId: rawBalance.coin,
+      symbolMappings: exchange.settings.symbolMappings,
+    })
+
   })
 
 })

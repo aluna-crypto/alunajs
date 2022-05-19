@@ -1,12 +1,10 @@
 import debug from 'debug'
-import { filter } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolListParams,
   IAlunaSymbolListRawReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
-import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
@@ -31,17 +29,10 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     url: getFtxEndpoints(settings).symbol.list,
   })
 
-  const filteredSpotSymbols = filter(
-    rawSymbols,
-    {
-      type: FtxMarketTypeEnum.SPOT,
-    },
-  )
-
   const { requestWeight } = http
 
   return {
-    rawSymbols: filteredSpotSymbols,
+    rawSymbols,
     requestWeight,
   }
 
