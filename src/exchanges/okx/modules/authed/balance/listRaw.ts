@@ -8,7 +8,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxBalanceSchema } from '../../../schemas/IOkxBalanceSchema'
+import {
+  IOkxBalanceListSchema,
+  IOkxBalanceSchema,
+} from '../../../schemas/IOkxBalanceSchema'
 
 
 
@@ -29,12 +32,13 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
-  const rawBalances = await http.authedRequest<IOkxBalanceSchema[]>({
+  const rawBalanceInfo = await http.authedRequest<IOkxBalanceListSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getOkxEndpoints(settings).balance.list,
     credentials,
   })
+
+  const { details: rawBalances } = rawBalanceInfo[0]
 
   const { requestWeight } = http
 

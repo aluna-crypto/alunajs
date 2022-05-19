@@ -29,7 +29,9 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedBalances))
+    authedRequest.returns(Promise.resolve([{
+      details: mockedBalances,
+    }]))
 
 
     // executing
