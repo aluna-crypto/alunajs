@@ -1,4 +1,4 @@
 export enum OkxOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  LONG = 'long',
+  SHORT = 'short'
 }
