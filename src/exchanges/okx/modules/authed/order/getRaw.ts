@@ -29,14 +29,14 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new OkxHttp(settings),
   } = params
 
-  // TODO: Implement proper request
-  const rawOrder = await http.authedRequest<any>({
+  const rawOrder = await http.authedRequest<IOkxOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
-    url: getOkxEndpoints(settings).order.get(id),
+    url: getOkxEndpoints(settings).order.get(id, symbolPair),
   })
 
   const { requestWeight } = http

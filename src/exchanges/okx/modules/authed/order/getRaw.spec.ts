@@ -22,7 +22,7 @@ describe(__filename, () => {
     // preparing data
     const mockedRawOrder = OKX_RAW_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { ordId: id } = mockedRawOrder
 
 
     // mocking
@@ -51,7 +51,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getOkxEndpoints(exchange.settings).order.get(id),
+      url: getOkxEndpoints(exchange.settings).order.get(id, ''),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
