@@ -1,7 +1,7 @@
 import { debug } from 'debug'
 import {
   keyBy,
-  map,
+  reduce,
 } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
@@ -9,7 +9,9 @@ import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
+import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import {
+  IBitmexAsset,
   IBitmexBalanceSchema,
   IBitmexBalancesSchema,
 } from '../../../schemas/IBitmexBalanceSchema'
@@ -33,20 +35,32 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   const assetsDetailsDict = keyBy(assetsDetails, 'currency')
 
-  const balances = map(assets, (asset) => {
+  type TAcc = IAlunaBalanceSchema[]
+  type TSrc = IBitmexAsset
 
-    const { currency } = asset
+  const balances = reduce<TSrc, TAcc>(assets, (acc, asset) => {
 
-    const rawBalance: IBitmexBalanceSchema = {
-      asset,
-      assetDetails: assetsDetailsDict[currency],
+    const {
+      currency,
+      walletBalance,
+    } = asset
+
+    if (walletBalance > 0) {
+
+      const rawBalance: IBitmexBalanceSchema = {
+        asset,
+        assetDetails: assetsDetailsDict[currency],
+      }
+
+      const { balance } = exchange.balance.parse({ rawBalance })
+
+      acc.push(balance)
+
     }
 
-    const { balance } = exchange.balance.parse({ rawBalance })
+    return acc
 
-    return balance
-
-  })
+  }, [])
 
   log(`parsed ${balances.length} balances`)
 
