@@ -54,6 +54,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     side,
     type,
     stopRate,
+    limitRate,
     http = new OkxHttp(settings),
   } = params
 
@@ -84,17 +85,20 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (type === AlunaOrderTypesEnum.STOP_MARKET) {
 
       Object.assign(body, {
-        slOrdPx: '-1',
+        slTriggerPx: '-1',
       })
 
     } else {
 
       Object.assign(body, {
-        slOrdPx: stopRate!.toString(),
+        slTriggerPx: limitRate!.toString(),
       })
 
     }
 
+    Object.assign(body, {
+      slOrdPx: stopRate!.toString(),
+    })
 
   }
 
