@@ -110,7 +110,6 @@ describe(__filename, () => {
       ordType,
       ccy,
       tgtCcy,
-      uTime,
     } = rawOrder
 
     const amount = Number(sz)
