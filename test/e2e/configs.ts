@@ -168,6 +168,18 @@ export function getConfig() {
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.SPOT,
       },
+      okx: {
+        key: env.VALR_API_KEY,
+        secret: env.VALR_API_SECRET,
+        passphrase: env.VALR_API_PASSPHRASE,
+        symbolPair: 'BTCUSDC',
+        delayBetweenTests: 500,
+        orderRate: 1000,
+        orderAmount: 0.001,
+        orderEditAmount: 0.0011,
+        orderInsufficientAmount: 2000,
+        orderAccount: AlunaAccountEnum.SPOT,
+      },
     },
   }
 

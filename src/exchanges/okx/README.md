@@ -1,7 +1,7 @@
 # Sample
 
- - API vX:
-    - https://sample.com/api
+ - API v5:
+    - https://www.okx.com/api/v5
 
 ## Usage
 
@@ -15,7 +15,9 @@ import {
 
 
 const settings: IAlunaSettingsSchema = {
-  // ...
+  key: 'key',
+  secret: 'secret',
+  passphrase: 'passphrase'
 }
 
 const credentials: IAlunaCredentialsSchema = {
@@ -23,9 +25,9 @@ const credentials: IAlunaCredentialsSchema = {
   secret: 'yyy',
 }
 
-const sample = aluna('sample', { settings })
+const okx = aluna('okx', { settings })
 
-sample.symbol.list()
+okx.symbol.list()
 ```
 
 ## Features
@@ -34,14 +36,3 @@ sample.symbol.list()
 | -- | :-: |
 | `offersOrderEditing` | ✅ |
 | `offersPositionId` | ❌ |
-
-## Notes
-
-### API Rates
-  - ...
-
-### Orders
- - ...
-
-### Positions
- - ...

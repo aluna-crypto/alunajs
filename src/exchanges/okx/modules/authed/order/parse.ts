@@ -45,7 +45,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  const updatedAt = uTime ? new Date(Number(uTime)) : undefined
+  const updatedAt = uTime ? new Date(Number(uTime)) : new Date()
   const amount = Number(sz)
   const rate = Number(px)
   const total = amount * rate

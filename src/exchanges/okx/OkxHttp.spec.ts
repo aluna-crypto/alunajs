@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 import { Agent } from 'https'
-import { random } from 'lodash'
+import { omit, random } from 'lodash'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
@@ -19,6 +19,8 @@ import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
 import * as handleOkxRequestErrorMod from './errors/handleOkxRequestError'
 import * as OkxHttpMod from './OkxHttp'
+import { AlunaError } from '../../lib/core/AlunaError'
+import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 
 
 
@@ -553,6 +555,36 @@ describe(__filename, () => {
     expect(signedHash['OK-ACCESS-SIGN']).to.deep.eq(digestSpy.returnValues[0])
 
     Sinon.restore()
+
+  })
+
+  it('should throw an error generating signed auth header w/o passphrase', async () => {
+
+    // preparing data
+    const verb = 'verb' as AlunaHttpVerbEnum
+
+    const expectedErrorMessage = '\'passphrase\' is required for private requests'
+    const expectedErrorCode = AlunaKeyErrorCodes.INVALID
+    const expectedErrorStatus = 401
+
+    // executing
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => OkxHttpMod.generateAuthHeader({
+      credentials: omit(credentials, 'passphrase'),
+      verb,
+      url,
+    }))
+
+    // validating
+
+    expect(result).not.to.be.ok
+
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error?.message).to.be.eq(expectedErrorMessage)
+    expect(error?.code).to.be.eq(expectedErrorCode)
+    expect(error?.httpStatusCode).to.be.eq(expectedErrorStatus)
 
   })
 

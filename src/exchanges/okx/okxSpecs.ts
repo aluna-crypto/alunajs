@@ -52,14 +52,9 @@ export const okxBaseSpecs: IAlunaExchangeSchema = {
     perApiKey: 60,
     perIp: 60,
   },
-  // TODO: Review supported features
   features: {
     offersOrderEditing: false,
     offersPositionId: false,
-  },
-  modes: {
-    balance: AlunaFeaturesModeEnum.READ,
-    order: AlunaFeaturesModeEnum.WRITE,
   },
   accounts: [
     {
