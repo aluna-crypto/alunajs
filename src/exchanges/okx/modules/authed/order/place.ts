@@ -85,19 +85,19 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (type === AlunaOrderTypesEnum.STOP_MARKET) {
 
       Object.assign(body, {
-        slTriggerPx: '-1',
+        slOrdPx: '-1',
       })
 
     } else {
 
       Object.assign(body, {
-        slTriggerPx: limitRate!.toString(),
+        slOrdPx: limitRate!.toString(),
       })
 
     }
 
     Object.assign(body, {
-      slOrdPx: stopRate!.toString(),
+      slTriggerPx: stopRate!.toString(),
     })
 
   }
