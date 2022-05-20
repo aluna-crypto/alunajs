@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-19T15:38:33.998Z",
-    "__export_source": "insomnia.desktop.app:v2022.2.1",
+    "__export_date": "2022-05-20T15:20:36.520Z",
+    "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -149,7 +149,7 @@
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652316606203,
+            "modified": 1653053386793,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -453,7 +453,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1652632762679,
+            "modified": 1653053366612,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "fetchDetails",
@@ -509,7 +509,7 @@
         {
             "_id": "req_e147340c7ecd4eb785265d1b060ff2a6",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632757871,
+            "modified": 1653053200021,
             "created": 1652142980199,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getTradableBalance",
@@ -553,7 +553,7 @@
         {
             "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632759741,
+            "modified": 1653056431259,
             "created": 1651516666747,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -585,7 +585,7 @@
         {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632760923,
+            "modified": 1653053355581,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -617,7 +617,7 @@
         {
             "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632764897,
+            "modified": 1653053390709,
             "created": 1651505373653,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974669549,
+            "modified": 1653060021597,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -789,7 +789,7 @@
         {
             "_id": "req_8cc2810f054d4681914645b0e9324e2b",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974668889,
+            "modified": 1653060015308,
             "created": 1651597897328,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:market",
@@ -1408,6 +1408,39 @@
             "color": "#e64e62",
             "isPrivate": false,
             "metaSortKey": 7,
+            "_type": "environment"
+        },
+        {
+            "_id": "env_5120e1e15b634398bb1ca97c3b48b386",
+            "parentId": "env_0294ce45850974a6280b61215be346094da99682",
+            "modified": 1653060020939,
+            "created": 1653009615092,
+            "name": "Okx",
+            "data": {
+                "EXCHANGE_ID": "okx",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'OKX_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'OKX_API_SECRET' %}",
+                "PASSPHRASE": "{% dotenv _.ALUNAJS_RC, 'OKX_API_PASSPHRASE' %}",
+                "ORDER_SYMBOL_PAIR": "BTC-USDT",
+                "ORDER_RATE": 1000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.0011
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "EXCHANGE_ID",
+                    "KEY",
+                    "SECRET",
+                    "PASSPHRASE",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
+                ]
+            },
+            "color": "#0929aa",
+            "isPrivate": false,
+            "metaSortKey": 1653009615092,
             "_type": "environment"
         }
     ]
