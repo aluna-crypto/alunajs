@@ -186,7 +186,7 @@ describe(__filename, () => {
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         httpStatusCode: 401,
         metadata: {
-          code: '59200',
+          sCode: '51008',
         },
       })
 

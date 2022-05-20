@@ -1,4 +1,4 @@
 export enum OkxOrderTypeEnum {
-  LIMIT = 'LIMIT',
-  MARKET = 'MARKET',
+  LIMIT = 'limit',
+  MARKET = 'market',
 }

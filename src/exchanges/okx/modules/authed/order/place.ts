@@ -68,6 +68,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     sz: amount.toString(),
     tdMode: 'cash',
   }
+  console.log('🚀 ~ file: place.ts ~ line 71 ~ body', body)
 
   if (translatedOrderType === OkxOrderTypeEnum.LIMIT) {
 
@@ -76,6 +77,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     })
 
   }
+  console.log('🚀 ~ file: place.ts ~ line 71 ~ body', body)
 
   log('placing new order for Okx')
 
@@ -100,8 +102,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { metadata } = err
 
-    // TODO: Review error handlings
-    if (metadata.code === '59200') {
+    if (metadata.sCode === '51008') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 

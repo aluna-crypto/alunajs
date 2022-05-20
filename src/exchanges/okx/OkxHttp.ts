@@ -14,13 +14,11 @@ import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSche
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { handleOkxRequestError } from './errors/handleOkxRequestError'
+import { handleOkxRequestError, IOkxErrorSchema } from './errors/handleOkxRequestError'
 
 
 
 export const OKX_HTTP_CACHE_KEY_PREFIX = 'OkxHttp.publicRequest'
-
-
 
 export class OkxHttp implements IAlunaHttp {
 
@@ -139,13 +137,32 @@ export class OkxHttp implements IAlunaHttp {
 
     try {
 
+      type TOkxResponse = T | IOkxErrorSchema | IOkxErrorSchema[]
+
       const { data } = await axios
         .create()
-        .request<IOkxHttpResponse<T>>(requestConfig)
+        .request<IOkxHttpResponse<TOkxResponse>>(requestConfig)
 
       const { data: response } = data
 
-      return response
+      if (typeof response === 'object') {
+
+        if ('sCode' in response) {
+
+          throw response
+
+        }
+
+        if ('sCode' in response[0]) {
+
+          throw response[0]
+
+        }
+
+      }
+
+
+      return response as T
 
     } catch (error) {
 

@@ -52,7 +52,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          sMsg: dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          sMsg: dummyError,
         },
       },
     } as AxiosError
@@ -142,6 +142,20 @@ describe(__filename, () => {
       metadata: error,
     })
 
+
+    const okxError = {
+      sCode: '51000',
+      sMsg: requestMessage,
+    } as handleOkxMod.IOkxErrorSchema
+
+    alunaError = handleOkxRequestError({ error: okxError })
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: requestMessage,
+      httpStatusCode: 500,
+      metadata: okxError,
+    })
 
     const unknown = {} as any
 

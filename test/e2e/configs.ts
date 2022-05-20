@@ -169,9 +169,9 @@ export function getConfig() {
         orderAccount: AlunaAccountEnum.SPOT,
       },
       okx: {
-        key: env.VALR_API_KEY,
-        secret: env.VALR_API_SECRET,
-        passphrase: env.VALR_API_PASSPHRASE,
+        key: env.OKX_API_KEY,
+        secret: env.OKX_API_SECRET,
+        passphrase: env.OKX_API_PASSPHRASE,
         symbolPair: 'BTCUSDC',
         delayBetweenTests: 500,
         orderRate: 1000,

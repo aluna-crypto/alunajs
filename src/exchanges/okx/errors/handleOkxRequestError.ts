@@ -30,11 +30,14 @@ export const isOkxKeyInvalid = (errorMessage: string) => {
 }
 
 
-export interface IHandleOkxRequestErrorsParams {
-  error: AxiosError | Error
+export interface IOkxErrorSchema {
+  sCode: string
+  sMsg: string
 }
 
-
+export interface IHandleOkxRequestErrorsParams {
+  error: AxiosError | Error | IOkxErrorSchema
+}
 
 export const handleOkxRequestError = (
   params: IHandleOkxRequestErrorsParams,
@@ -52,16 +55,23 @@ export const handleOkxRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.sMsg || message
 
     httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else if ((error as IOkxErrorSchema).sMsg) {
+
+    const { sMsg } = error as IOkxErrorSchema
+
+    message = sMsg
+
   } else {
 
-    message = error.message || message
+    const { message: errorMsg } = error as Error
+
+    message = errorMsg || message
 
   }
 
