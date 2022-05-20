@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -52,6 +53,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
+    stopRate,
     http = new OkxHttp(settings),
   } = params
 
@@ -77,14 +79,28 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
+  if (translatedOrderType === OkxOrderTypeEnum.CONDITIONAL) {
+
+    Object.assign(body, {
+      slOrdPx: stopRate!.toString(),
+    })
+
+  }
+
   log('placing new order for Okx')
 
   let placedOrder: IOkxOrderSchema
 
   try {
 
+    const orderEndpoints = getOkxEndpoints(settings).order
+
+    const url = type === AlunaOrderTypesEnum.STOP_LIMIT
+      ? orderEndpoints.placeStopLimit
+      : orderEndpoints.place
+
     const orderResponse = await http.authedRequest<IOkxOrderSchema>({
-      url: getOkxEndpoints(settings).order.place,
+      url,
       body,
       credentials,
     })

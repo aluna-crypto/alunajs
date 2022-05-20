@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -33,23 +34,47 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     http = new OkxHttp(settings),
   } = params
 
+  const { order } = await exchange.order.get({
+    id,
+    symbolPair,
+  })
+
+  const { type } = order
+
+  const isStopLimitOrder = type === AlunaOrderTypesEnum.STOP_LIMIT
+
   const body = {
-    ordId: id,
     instId: symbolPair,
   }
 
+  if (isStopLimitOrder) {
+
+    Object.assign(body, {
+      algoId: id,
+    })
+
+  } else {
+
+    Object.assign(body, {
+      ordId: id,
+    })
+
+  }
+
   try {
+    const orderEndpoints = getOkxEndpoints(settings).order
+
+    const url = isStopLimitOrder
+      ? orderEndpoints.cancelStopLimit
+      : orderEndpoints.cancel
+
 
     await http.authedRequest<void>({
-      url: getOkxEndpoints(settings).order.cancel,
+      url,
       credentials,
       body,
     })
 
-    const { order } = await exchange.order.get({
-      id,
-      symbolPair,
-    })
 
     const { requestWeight } = http
 

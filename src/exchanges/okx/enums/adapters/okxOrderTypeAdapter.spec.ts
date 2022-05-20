@@ -26,6 +26,10 @@ describe(__filename, () => {
       from: OkxOrderTypeEnum.MARKET,
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
+    expect(translateOrderTypeToAluna({
+      from: OkxOrderTypeEnum.CONDITIONAL,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
+
     let result
     let error
 
@@ -61,6 +65,10 @@ describe(__filename, () => {
     expect(translateOrderTypeToOkx({
       from: AlunaOrderTypesEnum.MARKET,
     })).to.be.eq(OkxOrderTypeEnum.MARKET)
+
+    expect(translateOrderTypeToOkx({
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+    })).to.be.eq(OkxOrderTypeEnum.CONDITIONAL)
 
     let result
     let error

@@ -33,6 +33,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     ordType,
     ccy,
     tgtCcy,
+    slTriggerPx,
   } = rawOrder
 
   const baseSymbolId = translateSymbolId({
@@ -49,6 +50,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const amount = Number(sz)
   const rate = Number(px)
   const total = amount * rate
+  const stopRate = Number(slTriggerPx)
 
   const orderStatus = translateOrderStatusToAluna({ from: state })
   const orderSide = translateOrderSideToAluna({ from: side })
@@ -92,6 +94,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     canceledAt,
     filledAt,
     rate,
+    stopRate,
     account: AlunaAccountEnum.SPOT,
     type: orderType,
     status: orderStatus,

@@ -29,11 +29,21 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  const rawOrders = await http.authedRequest<IOkxOrderSchema[]>({
+  const orderEndpoints = getOkxEndpoints(settings).order
+
+  const rawNormalOrders = await http.authedRequest<IOkxOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getOkxEndpoints(settings).order.list,
+    url: orderEndpoints.list,
     credentials,
   })
+
+  const rawStopLimitOrders = await http.authedRequest<IOkxOrderSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: orderEndpoints.listStopLimit('conditional'),
+    credentials,
+  })
+
+  const rawOrders = [...rawNormalOrders, ...rawStopLimitOrders]
 
   const { requestWeight } = http
 

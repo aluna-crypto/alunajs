@@ -39,6 +39,16 @@ export const okxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
+  {
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
+    options: {
+      rate: 1,
+      amount: 1,
+    },
+  },
 ]
 
 
@@ -138,8 +148,11 @@ export const getOkxEndpoints = (
     order: {
       get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
       list: `${baseUrl}/trade/orders-pending`,
+      listStopLimit: (type: string) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
       place: `${baseUrl}/trade/order`,
+      placeStopLimit: `${baseUrl}/trade/order-algo`,
       cancel: `${baseUrl}/trade/cancel-order`,
+      cancelStopLimit: `${baseUrl}/trade/cancel-algos`,
     },
   }
 }
