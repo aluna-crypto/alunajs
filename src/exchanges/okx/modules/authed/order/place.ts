@@ -68,7 +68,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     sz: amount.toString(),
     tdMode: 'cash',
   }
-  console.log('🚀 ~ file: place.ts ~ line 71 ~ body', body)
 
   if (translatedOrderType === OkxOrderTypeEnum.LIMIT) {
 
@@ -77,7 +76,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     })
 
   }
-  console.log('🚀 ~ file: place.ts ~ line 71 ~ body', body)
 
   log('placing new order for Okx')
 
