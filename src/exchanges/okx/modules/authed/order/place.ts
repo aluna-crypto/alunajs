@@ -81,9 +81,20 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   if (translatedOrderType === OkxOrderTypeEnum.CONDITIONAL) {
 
-    Object.assign(body, {
-      slOrdPx: stopRate!.toString(),
-    })
+    if (type === AlunaOrderTypesEnum.STOP_MARKET) {
+
+      Object.assign(body, {
+        slOrdPx: '-1',
+      })
+
+    } else {
+
+      Object.assign(body, {
+        slOrdPx: stopRate!.toString(),
+      })
+
+    }
+
 
   }
 

@@ -70,6 +70,10 @@ describe(__filename, () => {
       from: AlunaOrderTypesEnum.STOP_LIMIT,
     })).to.be.eq(OkxOrderTypeEnum.CONDITIONAL)
 
+    expect(translateOrderTypeToOkx({
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+    })).to.be.eq(OkxOrderTypeEnum.CONDITIONAL)
+
     let result
     let error
 

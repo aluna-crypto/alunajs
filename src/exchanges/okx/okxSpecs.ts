@@ -49,6 +49,16 @@ export const okxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
+  {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
+    options: {
+      rate: 1,
+      amount: 1,
+    },
+  },
 ]
 
 
