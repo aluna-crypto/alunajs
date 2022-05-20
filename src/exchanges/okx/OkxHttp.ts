@@ -129,7 +129,7 @@ export class OkxHttp implements IAlunaHttp {
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers: signedHash,
       proxySettings,
     })
 

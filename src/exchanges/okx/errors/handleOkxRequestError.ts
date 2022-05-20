@@ -8,7 +8,6 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const okxInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
   /api-invalid/mi,
 ]
 

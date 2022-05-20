@@ -3,7 +3,6 @@ import { IOkxSymbolSchema } from '../../schemas/IOkxSymbolSchema'
 
 
 
-// TODO: Review fixtures
 export const OKX_RAW_SYMBOLS: IOkxSymbolSchema[] = [
   {
     alias: '',

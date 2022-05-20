@@ -48,7 +48,6 @@ describe(__filename, () => {
 
 
     // validating
-    // TODO: add proper validations
     expect(market).to.exist
 
 

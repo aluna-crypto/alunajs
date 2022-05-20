@@ -5,7 +5,6 @@ import { IOkxOrderSchema } from '../../schemas/IOkxOrderSchema'
 
 
 
-// TODO: Review fixtures
 export const OKX_RAW_ORDERS: IOkxOrderSchema[] = [
   {
     instType: 'SPOT',
