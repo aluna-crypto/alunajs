@@ -234,6 +234,75 @@ describe(__filename, () => {
 
   })
 
+  it('should execute authed request just fine', async () => {
+
+    // preparing data
+    const okxHttp = new OkxHttp({})
+
+
+    // mocking
+    const {
+      cache,
+      request,
+      hashCacheKey,
+      generateAuthHeader,
+      assembleRequestConfig,
+    } = mockDeps()
+
+    request.returns(Promise.resolve({
+      data: {
+        data: [
+          {
+            data: response,
+          },
+        ],
+      },
+    }))
+
+
+    // executing
+    const responseData = await okxHttp.authedRequest({
+      verb: AlunaHttpVerbEnum.POST,
+      url,
+      body,
+      credentials,
+    })
+
+
+    // validating
+    expect(responseData).to.deep.eq([{
+      data: response,
+    }])
+
+    expect(okxHttp.requestWeight.public).to.be.eq(0)
+    expect(okxHttp.requestWeight.authed).to.be.eq(1)
+
+    expect(request.callCount).to.be.eq(1)
+    expect(request.firstCall.args[0]).to.deep.eq({
+      url,
+      method: AlunaHttpVerbEnum.POST,
+      data: body,
+      headers: signedHeader,
+    })
+
+    expect(assembleRequestConfig.callCount).to.be.eq(1)
+
+    expect(generateAuthHeader.callCount).to.be.eq(1)
+    expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.POST,
+      credentials,
+      body,
+      url,
+    })
+
+    expect(hashCacheKey.callCount).to.be.eq(0)
+
+    expect(cache.has.callCount).to.be.eq(0)
+    expect(cache.get.callCount).to.be.eq(0)
+    expect(cache.set.callCount).to.be.eq(0)
+
+  })
+
   it('should properly increment request count on public requests', async () => {
 
     // preparing data
