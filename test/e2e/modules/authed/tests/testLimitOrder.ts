@@ -5,6 +5,8 @@ import { AlunaAccountEnum } from '../../../../../src/lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderStatusEnum } from '../../../../../src/lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../../src/lib/enums/AlunaOrderTypesEnum'
+import { AlunaBalanceErrorCodes } from '../../../../../src/lib/errors/AlunaBalanceErrorCodes'
+import { executeAndCatch } from '../../../../../src/utils/executeAndCatch'
 import { IAuthedParams } from '../../IAuthedParams'
 import { placeLimitOrder } from '../helpers/order/placeLimitOrder'
 
@@ -27,7 +29,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
       const {
         order,
         requestWeight,
-      } = await placeLimitOrder(params)
+      } = await placeLimitOrder({
+        authedParams: params,
+      })
 
       expect(order).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.LIMIT)
@@ -231,7 +235,23 @@ export const testLimitOrder = (params: IAuthedParams) => {
 
     }
 
-  })
+    it('place:insufficientAmount', async () => {
 
+      const {
+        error,
+        result,
+      } = await executeAndCatch(() => placeLimitOrder({
+        authedParams: params,
+        insufficientBalanceAmount: true,
+      }))
+
+      expect(result).not.to.be.ok
+
+      expect(error).to.exist
+      expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+
+    })
+
+  })
 
 }

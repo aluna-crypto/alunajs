@@ -2,7 +2,17 @@
 
 Full list of currently supported exchanges.
 
-|Exchange|Spot|Margin|Futures|
+----
+
+| Icon | State |
+| :--: | -- |
+| ✅ |  *Implemented* |
+| ❌ |  *Not implemented* |
+| — |  *Not supported* |
+
+----
+
+|Exchange|Spot|Margin|Derivatives|
 | -- | -- | -- | -- |
 |Binance|✅ v3|❌|❌|
 |Bitfinex|✅ v2|✅ v2|❌|

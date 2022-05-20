@@ -153,7 +153,7 @@ export function getConfig() {
         orderRate: 1000,
         orderAmount: 0.001,
         orderEditAmount: 0.0011,
-        orderInsufficientAmount: 5000,
+        orderInsufficientAmount: 100,
         orderAccount: AlunaAccountEnum.SPOT,
       },
       valr: {

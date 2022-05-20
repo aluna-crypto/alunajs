@@ -24,7 +24,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   const { rawOrders } = params
 
   const {
-    orders,
+    valrOrders: orders,
     pairs,
   } = rawOrders
 
@@ -35,7 +35,7 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
     const pair = pairsDict[rawOrder.currencyPair]
 
     const rawOrderParseRequest: IValrOrderSchema = {
-      order: rawOrder,
+      valrOrder: rawOrder,
       pair,
     }
 

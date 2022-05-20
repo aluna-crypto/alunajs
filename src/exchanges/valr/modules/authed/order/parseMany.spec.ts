@@ -4,10 +4,10 @@ import { each } from 'lodash'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
-import { ValrAuthed } from '../../../ValrAuthed'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
-import * as parseMod from './parse'
 import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
+import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
+import { ValrAuthed } from '../../../ValrAuthed'
+import * as parseMod from './parse'
 
 
 
@@ -22,11 +22,11 @@ describe(__filename, () => {
 
     // preparing data
     const parsedOrders = PARSED_ORDERS
-    const originalRawOrders = VALR_RAW_ORDERS.slice(0, 2)
+    const valrOrders = VALR_RAW_LIST_RESPONSE_ORDERS.slice(0, 2)
     const rawCurrencyPairs = VALR_RAW_CURRENCY_PAIRS
 
     const rawOrders = {
-      orders: originalRawOrders,
+      valrOrders,
       rawCurrencyPairs,
     }
 
@@ -48,7 +48,7 @@ describe(__filename, () => {
     // validating
     expect(orders).to.deep.eq(parsedOrders)
 
-    expect(parse.callCount).to.be.eq(rawOrders.orders.length)
+    expect(parse.callCount).to.be.eq(orders.length)
 
   })
 

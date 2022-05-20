@@ -8,7 +8,7 @@ import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericEr
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { VALR_RAW_CURRENCY_PAIRS } from '../../../test/fixtures/valrMarket'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import { getValrEndpoints } from '../../../valrSpecs'
@@ -25,7 +25,7 @@ describe(__filename, () => {
   it('should get a Valr raw order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
+    const mockedRawOrder = VALR_RAW_LIST_RESPONSE_ORDERS[0]
 
     const mockedRawPairs = cloneDeep(VALR_RAW_CURRENCY_PAIRS)[0]
 
@@ -55,7 +55,7 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrder).to.deep.eq({
-      order: mockedRawOrder,
+      valrOrder: mockedRawOrder,
       pair: mockedRawPairs,
     })
 
@@ -74,7 +74,7 @@ describe(__filename, () => {
   it('should throw an error when a currency pair is not found', async () => {
 
     // preparing data
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
+    const mockedRawOrder = VALR_RAW_LIST_RESPONSE_ORDERS[0]
 
     const mockedRawPairs = cloneDeep(VALR_RAW_CURRENCY_PAIRS)[0]
 

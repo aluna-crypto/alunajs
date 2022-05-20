@@ -1,7 +1,7 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-17T11:42:11.131Z",
+    "__export_date": "2022-05-19T15:38:33.998Z",
     "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632774117,
+            "modified": 1652974669549,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -789,7 +789,7 @@
         {
             "_id": "req_8cc2810f054d4681914645b0e9324e2b",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632775587,
+            "modified": 1652974668889,
             "created": 1651597897328,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:market",
@@ -821,7 +821,7 @@
         {
             "_id": "req_14b8a678fd9347e4b378d68441c5fee9",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632784373,
+            "modified": 1652974685964,
             "created": 1651595618759,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "edit",
@@ -853,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632783707,
+            "modified": 1652974671517,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -1126,7 +1126,7 @@
             "name": "Base Environment",
             "data": {
                 "ALUNAJS_RC": "~/.alunarc",
-                "PLAYGROUND_URL": "http://localhost:9000",
+                "PLAYGROUND_URL": "http://localhost:9090",
                 "PASSPHRASE": "",
                 "ACCOUNTS": {
                     "SPOT": "spot",
@@ -1196,7 +1196,7 @@
         {
             "_id": "env_3d45543920134e1fb6c24379f15ccd13",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714533721,
+            "modified": 1652974685483,
             "created": 1651252130131,
             "name": "Bittrex",
             "data": {
@@ -1227,7 +1227,7 @@
         {
             "_id": "env_b3fcde421b4f4a79864800943e4c5340",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714533304,
+            "modified": 1652974685014,
             "created": 1651252159834,
             "name": "Bitfinex",
             "data": {
@@ -1258,7 +1258,7 @@
         {
             "_id": "env_99d05146a17d4383817a9d4befb0a61b",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714532796,
+            "modified": 1652974684097,
             "created": 1651252806794,
             "name": "BitMEX",
             "data": {
@@ -1289,7 +1289,7 @@
         {
             "_id": "env_720b09d90c90412b9c6a0327c4915465",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714532335,
+            "modified": 1652974683582,
             "created": 1651252812172,
             "name": "Poloniex",
             "data": {
@@ -1320,7 +1320,7 @@
         {
             "_id": "env_5aa9c059ec04471882d40db1ad92f012",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714531840,
+            "modified": 1652974682655,
             "created": 1651252813639,
             "name": "Binance",
             "data": {
@@ -1351,7 +1351,7 @@
         {
             "_id": "env_e4f221428ce843379ea223026246458c",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714531426,
+            "modified": 1652974682200,
             "created": 1651252814772,
             "name": "Valr",
             "data": {
@@ -1382,11 +1382,11 @@
         {
             "_id": "env_52e41578196c4f5289d52dd763b105e1",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652714530920,
+            "modified": 1652974680082,
             "created": 1651252828907,
             "name": "Gate",
             "data": {
-                "EXCHANGE_ID": "Gate",
+                "EXCHANGE_ID": "gate",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'GATE_API_KEY' %}",
                 "SECRET": "{% dotenv _.ALUNAJS_RC, 'GATE_API_SECRET' %}",
                 "ORDER_SYMBOL_PAIR": "BTC_USD",

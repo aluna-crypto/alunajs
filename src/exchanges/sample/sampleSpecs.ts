@@ -81,10 +81,6 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
     offersOrderEditing: false,
     offersPositionId: false,
   },
-  modes: {
-    balance: AlunaFeaturesModeEnum.READ,
-    order: AlunaFeaturesModeEnum.WRITE,
-  },
   accounts: [
     // TODO: Review supported/implemented accounts
     {

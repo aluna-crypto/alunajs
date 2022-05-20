@@ -1,11 +1,12 @@
 import { debug } from 'debug'
-import { map } from 'lodash'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaBalanceParseManyParams,
   IAlunaBalanceParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
+import { IAlunaBalanceSchema } from '../../../../../lib/schemas/IAlunaBalanceSchema'
 import { IValrBalanceSchema } from '../../../schemas/IValrBalanceSchema'
 
 
@@ -20,13 +21,24 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawBalances } = params
 
-  const parsedBalances = map(rawBalances, (rawBalance) => {
+  type TAcc = IAlunaBalanceSchema[]
+  type TSrc = IValrBalanceSchema
 
-    const { balance } = exchange.balance.parse({ rawBalance })
+  const parsedBalances = reduce<TSrc, TAcc>(rawBalances, (acc, rawBalance) => {
 
-    return balance
+    const { total } = rawBalance
 
-  })
+    if (Number(total) > 0) {
+
+      const { balance } = exchange.balance.parse({ rawBalance })
+
+      acc.push(balance)
+
+    }
+
+    return acc
+
+  }, [])
 
   log(`parsed ${parsedBalances.length} balances`)
 

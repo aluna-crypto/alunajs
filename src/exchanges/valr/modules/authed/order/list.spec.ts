@@ -1,7 +1,7 @@
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { testList } from '../../../../../../test/macros/testList'
+import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
 import * as listRawMod from './listRaw'
 import * as parseManyMod from './parseMany'
 
@@ -15,7 +15,7 @@ describe(__filename, () => {
     methodModuleName: 'order',
     listModule: listRawMod,
     parseManyModule: parseManyMod,
-    rawList: { rawOrders: VALR_RAW_ORDERS },
+    rawList: { rawOrders: VALR_RAW_LIST_RESPONSE_ORDERS },
     parsedList: { orders: PARSED_ORDERS },
   })
 

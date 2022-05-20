@@ -7,17 +7,17 @@ import { IValrMarketCurrencyPairs } from './IValrMarketSchema'
 
 
 export interface IValrOrderSchema {
-  order: IValrOrderGetSchema | IValrOrderListSchema
+  valrOrder: IValrOrderGetSchema | IValrOrderListSchema
   pair: IValrMarketCurrencyPairs
 }
 
 export interface IValrOrderGetResponseSchema {
-  order: IValrOrderGetSchema
+  valrOrder: IValrOrderGetSchema
   pair: IValrMarketCurrencyPairs
 }
 
 export interface IValrOrderListResponseSchema {
-  orders: IValrOrderListSchema[]
+  valrOrders: IValrOrderListSchema[]
   pairs: IValrMarketCurrencyPairs[]
 }
 

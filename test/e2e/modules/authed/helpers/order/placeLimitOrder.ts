@@ -5,10 +5,20 @@ import { IAuthedParams } from '../../../IAuthedParams'
 
 
 
+export interface IPlaceLimitOrderParams {
+  authedParams: IAuthedParams
+  insufficientBalanceAmount?: boolean
+}
+
+
 export const placeLimitOrder = async (
-  params: IAuthedParams,
+  params: IPlaceLimitOrderParams,
 ) => {
 
+  const {
+    authedParams,
+    insufficientBalanceAmount,
+  } = params
 
   const {
     exchangeAuthed,
@@ -17,13 +27,18 @@ export const placeLimitOrder = async (
       orderAccount,
       orderAmount,
       orderRate,
+      orderInsufficientAmount,
     },
-  } = params
+  } = authedParams
+
+  const amount = insufficientBalanceAmount
+    ? orderInsufficientAmount
+    : orderAmount
 
   return exchangeAuthed.order.place({
     symbolPair,
     account: orderAccount || AlunaAccountEnum.SPOT,
-    amount: orderAmount,
+    amount,
     side: AlunaOrderSideEnum.BUY,
     rate: orderRate,
     type: AlunaOrderTypesEnum.LIMIT,

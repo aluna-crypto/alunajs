@@ -77,10 +77,6 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
     offersOrderEditing: false,
     offersPositionId: false,
   },
-  modes: {
-    balance: AlunaFeaturesModeEnum.READ,
-    order: AlunaFeaturesModeEnum.WRITE,
-  },
   accounts: [
     {
       type: AlunaAccountEnum.SPOT,

@@ -10,7 +10,7 @@ import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnu
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
-import { VALR_RAW_ORDERS } from '../../../test/fixtures/valrOrders'
+import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
 import { ValrAuthed } from '../../../ValrAuthed'
 import { ValrHttp } from '../../../ValrHttp'
 import * as cancelMod from './cancel'
@@ -30,7 +30,7 @@ describe(__filename, () => {
     // preparing data
     const http = new ValrHttp({})
 
-    const mockedRawOrder = VALR_RAW_ORDERS[0]
+    const mockedRawOrder = VALR_RAW_LIST_RESPONSE_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
