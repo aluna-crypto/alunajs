@@ -1,3 +1,7 @@
+# 1.0.3 (May 20, 2022)
+
+ - Fix Bitfinex position `openPrice` parse
+
 # 1.0.2 (May 19, 2022)
 
  - Filtering zeroed balances
