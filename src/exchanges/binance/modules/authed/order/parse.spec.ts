@@ -182,10 +182,7 @@ describe(__filename, () => {
       symbol,
       type,
       status,
-      updateTime,
     } = rawOrder
-
-    const updatedAt = new Date(updateTime!)
 
     const exchange = new BinanceAuthed({ credentials })
 
