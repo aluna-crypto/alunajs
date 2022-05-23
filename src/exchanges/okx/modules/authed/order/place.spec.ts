@@ -101,6 +101,152 @@ describe(__filename, () => {
 
   })
 
+  it('should place a Okx conditional stop limit order just fine', async () => {
+
+    // preparing data
+    const mockedRawOrder = OKX_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_LIMIT
+
+    const translatedOrderSide = translateOrderSideToOkx({ from: side })
+    const translatedOrderType = translateOrderTypeToOkx({ from: type })
+
+    const body = {
+      side: translatedOrderSide,
+      instId: '',
+      ordType: translatedOrderType,
+      sz: '0.01',
+      tdMode: 'cash',
+      slOrdPx: '2',
+      slTriggerPx: '1',
+    }
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: OkxHttp.prototype })
+
+    const { parse } = mockParse({ module: parseMod })
+
+    parse.returns({ order: mockedParsedOrder })
+
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    mockValidateParams()
+
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new OkxAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
+      stopRate: 1,
+      limitRate: 2,
+    }
+
+    const { order } = await exchange.order.place(params)
+
+
+    // validating
+    expect(order).to.deep.eq(mockedParsedOrder)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      body,
+      credentials,
+      url: getOkxEndpoints(exchange.settings).order.placeStop,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+  })
+
+  it('should place a Okx conditional stop market order just fine', async () => {
+
+    // preparing data
+    const mockedRawOrder = OKX_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_MARKET
+
+    const translatedOrderSide = translateOrderSideToOkx({ from: side })
+    const translatedOrderType = translateOrderTypeToOkx({ from: type })
+
+    const body = {
+      side: translatedOrderSide,
+      instId: '',
+      ordType: translatedOrderType,
+      sz: '0.01',
+      tdMode: 'cash',
+      slOrdPx: '-1',
+      slTriggerPx: '1',
+    }
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: OkxHttp.prototype })
+
+    const { parse } = mockParse({ module: parseMod })
+
+    parse.returns({ order: mockedParsedOrder })
+
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    mockValidateParams()
+
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new OkxAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
+      stopRate: 1,
+      limitRate: 2,
+    }
+
+    const { order } = await exchange.order.place(params)
+
+
+    // validating
+    expect(order).to.deep.eq(mockedParsedOrder)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      body,
+      credentials,
+      url: getOkxEndpoints(exchange.settings).order.placeStop,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+  })
+
   it('should place a Okx market order just fine', async () => {
 
     // preparing data

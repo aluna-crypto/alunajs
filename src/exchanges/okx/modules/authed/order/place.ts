@@ -110,8 +110,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const orderEndpoints = getOkxEndpoints(settings).order
 
-    const url = type === AlunaOrderTypesEnum.STOP_LIMIT
-      ? orderEndpoints.placeStopLimit
+    const url = translatedOrderType === OkxOrderTypeEnum.CONDITIONAL
+      ? orderEndpoints.placeStop
       : orderEndpoints.place
 
     const orderResponse = await http.authedRequest<IOkxOrderSchema>({

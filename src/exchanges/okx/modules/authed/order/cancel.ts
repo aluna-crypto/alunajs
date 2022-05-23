@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -65,7 +66,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     const orderEndpoints = getOkxEndpoints(settings).order
 
     const url = isStopLimitOrder
-      ? orderEndpoints.cancelStopLimit
+      ? orderEndpoints.cancelStop
       : orderEndpoints.cancel
 
 
@@ -75,6 +76,8 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       body,
     })
 
+    // assign canceled if the cancel request works fine
+    order.status = AlunaOrderStatusEnum.CANCELED
 
     const { requestWeight } = http
 

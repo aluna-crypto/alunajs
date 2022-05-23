@@ -6,6 +6,7 @@ import {
   IAlunaOrderListParams,
   IAlunaOrderListRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { OkxAlgoOrderTypeEnum } from '../../../enums/OkxAlgoOrderTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { IOkxOrderSchema } from '../../../schemas/IOkxOrderSchema'
@@ -39,7 +40,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const rawStopLimitOrders = await http.authedRequest<IOkxOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: orderEndpoints.listStopLimit('conditional'),
+    url: orderEndpoints.listStop(OkxAlgoOrderTypeEnum.CONDITIONAL),
     credentials,
   })
 

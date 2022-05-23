@@ -10,6 +10,7 @@ import {
   IAlunaExchangeSchema,
 } from '../../lib/schemas/IAlunaExchangeSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { OkxAlgoOrderTypeEnum } from './enums/OkxAlgoOrderTypeEnum'
 import { OkxSymbolTypeEnum } from './enums/OkxSymbolTypeEnum'
 
 
@@ -158,11 +159,11 @@ export const getOkxEndpoints = (
     order: {
       get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
       list: `${baseUrl}/trade/orders-pending`,
-      listStopLimit: (type: string) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
+      listStop: (type: OkxAlgoOrderTypeEnum) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
       place: `${baseUrl}/trade/order`,
-      placeStopLimit: `${baseUrl}/trade/order-algo`,
+      placeStop: `${baseUrl}/trade/order-algo`,
       cancel: `${baseUrl}/trade/cancel-order`,
-      cancelStopLimit: `${baseUrl}/trade/cancel-algos`,
+      cancelStop: `${baseUrl}/trade/cancel-algos`,
     },
   }
 }

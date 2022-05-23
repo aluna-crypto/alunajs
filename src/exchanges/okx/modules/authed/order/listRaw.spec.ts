@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
+import { OkxAlgoOrderTypeEnum } from '../../../enums/OkxAlgoOrderTypeEnum'
 import { OkxAuthed } from '../../../OkxAuthed'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
@@ -37,14 +38,21 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawOrders).to.deep.eq(mockedRawOrders)
+    expect(rawOrders).to.deep.eq([...mockedRawOrders, ...mockedRawOrders])
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getOkxEndpoints(exchange.settings).order.list,
+    })
+
+    // add enum to url type
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      credentials,
+      url: getOkxEndpoints(exchange.settings).order.listStop(OkxAlgoOrderTypeEnum.CONDITIONAL),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
