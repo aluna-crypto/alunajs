@@ -1,11 +1,13 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import { each, filter, values } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaSymbolParseManyParams,
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
+import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
+import { HuobiSymbolStatusEnum } from '../../../enums/HuobiSymbolStatusEnum'
 import { IHuobiSymbolSchema } from '../../../schemas/IHuobiSymbolSchema'
 
 
@@ -20,14 +22,49 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbols } = params
 
-  // TODO: Review implementation
-  const symbols = map(rawSymbols, (rawSymbol) => {
 
-    const { symbol } = exchange.symbol.parse({ rawSymbol })
+  const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-    return symbol
+  const filteredActiveSymbols = filter(
+    rawSymbols,
+    {
+      state: HuobiSymbolStatusEnum.ONLINE,
+    },
+  )
+
+  each(filteredActiveSymbols, (rawSymbol) => {
+
+    const {
+      bc: baseCurrency,
+      qc: quoteCurrency,
+    } = rawSymbol
+
+    if (!parsedSymbolsDict[baseCurrency]) {
+
+      const { symbol } = exchange.symbol.parse({ rawSymbol })
+
+      parsedSymbolsDict[baseCurrency] = symbol
+
+    }
+
+    if (!parsedSymbolsDict[quoteCurrency]) {
+
+      const { symbol } = exchange.symbol.parse(
+        {
+          rawSymbol: {
+            ...rawSymbol,
+            bc: quoteCurrency,
+          },
+        },
+      )
+
+      parsedSymbolsDict[quoteCurrency] = symbol
+
+    }
 
   })
+
+  const symbols = values(parsedSymbolsDict)
 
   log(`parsed ${symbols.length} symbols for Huobi`)
 
