@@ -25,7 +25,9 @@ describe(__filename, () => {
     const mockedRawOrder = HUOBI_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
 
-    const { id } = mockedRawOrder
+    const { id: rawId } = mockedRawOrder
+
+    const id = rawId.toString()
 
     const params: IAlunaOrderGetParams = {
       id,
