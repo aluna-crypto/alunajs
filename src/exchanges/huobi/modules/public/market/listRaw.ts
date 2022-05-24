@@ -7,7 +7,7 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiMarketSchema } from '../../../schemas/IHuobiMarketSchema'
+import { IHuobiMarketsSchema, IHuobiMarketTickerSchema } from '../../../schemas/IHuobiMarketSchema'
 
 
 
@@ -17,7 +17,7 @@ const log = debug('alunajs:huobi/market/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IHuobiMarketSchema[]>> => {
+): Promise<IAlunaMarketListRawReturns<IHuobiMarketsSchema>> => {
 
   const { settings } = exchange
 
@@ -25,12 +25,20 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   log('fetching Huobi markets')
 
-  // TODO: Implement proper request
-  const rawMarkets = await http.publicRequest<IHuobiMarketSchema[]>({
+  const rawMarketTickers = await http.publicRequest<IHuobiMarketTickerSchema[]>({
     url: getHuobiEndpoints(settings).market.list,
   })
 
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
+
   const { requestWeight } = http
+
+  const rawMarkets: IHuobiMarketsSchema = {
+    rawMarkets: rawMarketTickers,
+    rawSymbols,
+  }
 
   return {
     rawMarkets,
