@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
+import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { PARSED_POSITIONS } from '../../../../../../test/fixtures/parsedPositions'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaPositionStatusEnum } from '../../../../../lib/enums/AlunaPositionStatusEnum'
@@ -26,6 +27,7 @@ describe(__filename, () => {
   it('should close position just fine', async () => {
 
     // preparing data
+    const order = PARSED_ORDERS[0]
     const mockedPosition = cloneDeep(PARSED_POSITIONS[0])
     mockedPosition.status = AlunaPositionStatusEnum.OPEN
     const {
@@ -41,6 +43,8 @@ describe(__filename, () => {
     const {
       placeMarketOrderToClosePosition,
     } = mockPlaceMarketOrderToClosePosition()
+
+    placeMarketOrderToClosePosition.returns({ order })
 
     const mockedDate = new Date()
 

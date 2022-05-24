@@ -47,7 +47,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  await placeMarketOrderToClosePosition({
+  const { order } = await placeMarketOrderToClosePosition({
     http,
     exchange,
     position,
@@ -57,6 +57,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
     ...position,
     status: AlunaPositionStatusEnum.CLOSED,
     closedAt: new Date(),
+    closePrice: order.rate!,
   }
 
   const { requestWeight } = http
