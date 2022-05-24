@@ -8,7 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiOrderSchema } from '../../../schemas/IHuobiOrderSchema'
+import { IHuobiOrderSchema, IHuobiOrdersResponseSchema } from '../../../schemas/IHuobiOrderSchema'
 
 
 
@@ -18,7 +18,7 @@ const log = debug('alunajs:huobi/order/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderListParams = {},
-): Promise<IAlunaOrderListRawReturns<IHuobiOrderSchema[]>> => {
+): Promise<IAlunaOrderListRawReturns<IHuobiOrdersResponseSchema>> => {
 
   log('fetching Huobi open orders', params)
 
@@ -29,17 +29,25 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new HuobiHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawOrders = await http.authedRequest<IHuobiOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getHuobiEndpoints(settings).order.list,
     credentials,
   })
 
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
+
   const { requestWeight } = http
 
-  return {
+  const rawOrdersResponse: IHuobiOrdersResponseSchema = {
     rawOrders,
+    rawSymbols,
+  }
+
+  return {
+    rawOrders: rawOrdersResponse,
     requestWeight,
   }
 

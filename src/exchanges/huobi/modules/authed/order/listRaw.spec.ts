@@ -1,12 +1,15 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
 import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
+import { HUOBI_RAW_SYMBOLS } from '../../../test/fixtures/huobiSymbols'
+import * as listRawMod from '../../public/symbol/listRaw'
 
 
 
@@ -21,6 +24,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrders = HUOBI_RAW_ORDERS
+    const mockedRawSymbols = HUOBI_RAW_SYMBOLS
 
     // mocking
     const {
@@ -30,14 +34,24 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.resolve(mockedRawOrders))
 
+    const { listRaw: listRawSymbols } = mockListRaw({
+      module: listRawMod,
+    })
+
+    listRawSymbols.returns(Promise.resolve({
+      rawSymbols: mockedRawSymbols,
+    }))
+
     // executing
     const exchange = new HuobiAuthed({ credentials })
 
     const { rawOrders } = await exchange.order.listRaw()
 
-
     // validating
-    expect(rawOrders).to.deep.eq(mockedRawOrders)
+    expect(rawOrders).to.deep.eq({
+      rawOrders: mockedRawOrders,
+      rawSymbols: mockedRawSymbols,
+    })
 
     expect(authedRequest.callCount).to.be.eq(1)
 
