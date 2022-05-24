@@ -3,15 +3,28 @@ import { IAlunaHttp } from '../../../../../../lib/core/IAlunaHttp'
 import { AlunaOrderSideEnum } from '../../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaPositionSideEnum } from '../../../../../../lib/enums/AlunaPositionSideEnum'
+import { IAlunaOrderSchema } from '../../../../../../lib/schemas/IAlunaOrderSchema'
 import { IAlunaPositionSchema } from '../../../../../../lib/schemas/IAlunaPositionSchema'
 
 
 
-export const placeMarketOrderToClosePosition = async (params: {
+export interface IPlaceMarketOrderToClosePositionParams {
   http: IAlunaHttp
   exchange: IAlunaExchangeAuthed
   position: IAlunaPositionSchema
-}) => {
+}
+
+
+
+export interface IPlaceMarketOrderToClosePositionReturns {
+  order: IAlunaOrderSchema
+}
+
+
+
+export const placeMarketOrderToClosePosition = async (
+  params: IPlaceMarketOrderToClosePositionParams,
+): Promise<IPlaceMarketOrderToClosePositionReturns> => {
 
   const {
     http,
@@ -28,7 +41,7 @@ export const placeMarketOrderToClosePosition = async (params: {
     ? AlunaOrderSideEnum.SELL
     : AlunaOrderSideEnum.BUY
 
-  await exchange.order.place({
+  const { order } = await exchange.order.place({
     http,
     account,
     side: invertedOrderSide,
@@ -36,5 +49,7 @@ export const placeMarketOrderToClosePosition = async (params: {
     symbolPair,
     type: AlunaOrderTypesEnum.MARKET,
   })
+
+  return { order }
 
 }
