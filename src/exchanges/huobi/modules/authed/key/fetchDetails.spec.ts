@@ -9,7 +9,9 @@ import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
 import { HUOBI_KEY_PERMISSIONS } from '../../../test/fixtures/huobiKey'
+import { mockGetHuobiAccountId } from '../../../test/mocks/mockGetHuobiAccountId'
 import * as parseDetailsMod from './parseDetails'
+import * as getHuobiAccountIdMod from '../helpers/getHuobiAccountId'
 
 
 
@@ -23,13 +25,22 @@ describe(__filename, () => {
       secret: 'secret',
     }
 
+    const userId = 123456
+
     const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
       accountId,
-      permissions: HUOBI_KEY_PERMISSIONS,
+      permissions: {
+        read: true,
+        trade: true,
+        withdraw: true,
+      },
       meta: {},
     }
+
+    const query = new URLSearchParams()
+    query.append('uid', userId.toString())
 
     // mocking
     const http = new HuobiHttp({})
@@ -39,7 +50,16 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(HUOBI_KEY_PERMISSIONS))
+    authedRequest.onFirstCall().returns(Promise.resolve(123456))
+
+    authedRequest.onSecondCall().returns(Promise.resolve([HUOBI_KEY_PERMISSIONS]))
+
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
 
     const { parseDetails } = mockParseDetails({
       module: parseDetailsMod,
@@ -62,18 +82,28 @@ describe(__filename, () => {
 
     expect(requestWeight).to.deep.eq(http.requestWeight)
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
-      url: getHuobiEndpoints(exchange.settings).key.fetchDetails,
+      url: getHuobiEndpoints(exchange.settings).key.fetchUserId,
       credentials,
     })
 
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      url: getHuobiEndpoints(exchange.settings).key.fetchDetails,
+      credentials,
+      query: query.toString(),
+    })
 
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: HUOBI_KEY_PERMISSIONS,
+      rawKey: {
+        ...HUOBI_KEY_PERMISSIONS,
+        accountId,
+        userId,
+      },
     })
 
   })
