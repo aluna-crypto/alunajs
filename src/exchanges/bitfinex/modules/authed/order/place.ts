@@ -16,10 +16,8 @@ import { BitfinexHttp } from '../../../BitfinexHttp'
 import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
-import {
-  IBitfinexOrderSchema,
-  TBitfinexPlaceOrderResponse,
-} from '../../../schemas/IBitfinexOrderSchema'
+import { BitfinexOrderStatusEnum } from '../../../enums/BitfinexOrderStatusEnum'
+import { TBitfinexPlaceOrderResponse } from '../../../schemas/IBitfinexOrderSchema'
 
 
 
@@ -106,8 +104,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing new order for Bitfinex')
 
-  let rawOrder: IBitfinexOrderSchema
-
   try {
 
     const response = await http.authedRequest<TBitfinexPlaceOrderResponse>({
@@ -138,11 +134,23 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     }
 
-    rawOrder = placedOrder
+    /**
+     * Because Bitfinex does not return market orders with the updated status,
+     * and executing a request to get a market order (instantly filled)
+     * immediatily after placing it results (almost always) on the API returning
+     * an error because it didn't found the order, we then need to update the
+     * order status manually.
+     */
+    if (/MARKET/.test(placedOrder[8])) {
+      placedOrder[13] = BitfinexOrderStatusEnum.EXECUTED
+    }
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const { order } = exchange.order.parse({
+      rawOrder: placedOrder,
+    })
 
     const { requestWeight } = http
+
 
     return {
       order,
