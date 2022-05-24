@@ -7,7 +7,7 @@ import { HUOBI_RAW_BALANCES } from '../../../test/fixtures/huobiBalances'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -22,7 +22,7 @@ describe.skip(__filename, () => {
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
-    translateSymbolId.returns(rawBalance.currencySymbol)
+    translateSymbolId.returns(rawBalance.currency)
 
     // executing
     const exchange = new HuobiAuthed({ credentials })
