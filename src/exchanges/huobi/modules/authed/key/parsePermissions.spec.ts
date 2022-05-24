@@ -1,5 +1,4 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
@@ -18,15 +17,13 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const accountId = 'accountId'
+    const mockRest = {} as any
 
     const rawKey: IHuobiKeySchema = {
-      accountId,
-      read: false,
-      trade: false,
-      withdraw: false,
-    }
+      ...mockRest,
+      permission: 'trade,withdraw,readOnly,unknown',
 
+    }
 
     // executing
     const exchange = new HuobiAuthed({ credentials })
@@ -35,7 +32,9 @@ describe(__filename, () => {
 
 
     // validating
-    expect(permissions).to.deep.eq(omit(rawKey, 'accountId'))
+    expect(permissions.read).to.be.ok
+    expect(permissions.trade).to.be.ok
+    expect(permissions.withdraw).to.be.ok
 
   })
 
