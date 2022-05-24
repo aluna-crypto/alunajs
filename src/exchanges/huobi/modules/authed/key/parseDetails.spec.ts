@@ -1,11 +1,10 @@
 import { expect } from 'chai'
-import { omit } from 'lodash'
 
 import { mockParsePermissions } from '../../../../../../test/mocks/exchange/modules/key/mockParsePermissions'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeyPermissionSchema } from '../../../../../lib/schemas/IAlunaKeySchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
-import { IHuobiKeySchema } from '../../../schemas/IHuobiKeySchema'
+import { IHuobiRawKeySchema } from '../../../schemas/IHuobiKeySchema'
 import * as mockParsePermissionsMod from './parsePermissions'
 
 
@@ -21,21 +20,20 @@ describe(__filename, () => {
       passphrase: 'passphrase',
     }
 
-    const accountId = 'accountId'
+    const accountId = 123456
 
-    const rawKey: IHuobiKeySchema = {
-      read: false,
-      trade: false,
-      withdraw: false,
+    const mockRest = {} as any
+
+    const rawKey: IHuobiRawKeySchema = {
       accountId,
+      ...mockRest,
     }
-
-    const rawKeyWithoutAccId = omit(rawKey, 'accountId')
 
     const permissions: IAlunaKeyPermissionSchema = {
-      ...rawKeyWithoutAccId,
+      read: true,
+      trade: true,
+      withdraw: true,
     }
-
 
     // mocking
     const { parsePermissions } = mockParsePermissions({
@@ -53,7 +51,7 @@ describe(__filename, () => {
 
     // validating
     expect(key).to.deep.eq({
-      accountId,
+      accountId: accountId.toString(),
       permissions,
       meta: rawKey,
     })

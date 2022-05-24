@@ -6,7 +6,7 @@ import {
   IAlunaKeyParseDetailsReturns,
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
-import { IHuobiKeySchema } from '../../../schemas/IHuobiKeySchema'
+import { IHuobiRawKeySchema } from '../../../schemas/IHuobiKeySchema'
 
 
 
@@ -15,7 +15,7 @@ const log = debug('alunajs:huobi/key/parseDetails')
 
 
 export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaKeyParseDetailsParams<IHuobiKeySchema>,
+  params: IAlunaKeyParseDetailsParams<IHuobiRawKeySchema>,
 ): IAlunaKeyParseDetailsReturns => {
 
   log('parsing Huobi key details')
@@ -27,7 +27,7 @@ export const parseDetails = (exchange: IAlunaExchangeAuthed) => (
   const { permissions } = exchange.key.parsePermissions({ rawKey })
 
   const key: IAlunaKeySchema = {
-    accountId,
+    accountId: accountId.toString(),
     permissions,
     meta: rawKey,
   }
