@@ -1,12 +1,14 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import { forEach, reduce } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { IHuobiMarketSchema } from '../../../schemas/IHuobiMarketSchema'
+import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { IHuobiMarketSchema, IHuobiMarketsSchema, IHuobiMarketTickerSchema } from '../../../schemas/IHuobiMarketSchema'
+import { IHuobiSymbolSchema } from '../../../schemas/IHuobiSymbolSchema'
 
 
 
@@ -15,21 +17,59 @@ const log = debug('alunajs:huobi/market/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseManyParams<IHuobiMarketSchema[]>,
+  params: IAlunaMarketParseManyParams<IHuobiMarketsSchema>,
 ): IAlunaMarketParseManyReturns => {
 
-  const { rawMarkets } = params
+  const {
+    rawMarkets: rawMarketsInfo,
+  } = params
 
-  // TODO: Review implementation
-  const markets = map(rawMarkets, (rawMarket) => {
+  const {
+    rawMarkets,
+    rawSymbols,
+  } = rawMarketsInfo
 
-    const { market } = exchange.market.parse({
-      rawMarket,
-    })
+  const pairSymbolsDictionary: { [key:string]: IHuobiSymbolSchema } = {}
 
-    return market
+  forEach(rawSymbols, (pair) => {
+
+    const { symbol } = pair
+
+    pairSymbolsDictionary[symbol] = pair
 
   })
+
+  type TSrc = IHuobiMarketTickerSchema
+  type TAcc = IAlunaMarketSchema[]
+
+  const markets = reduce<TSrc, TAcc>(
+    rawMarkets,
+    (accumulator, rawMarket) => {
+
+      const { symbol } = rawMarket
+
+      const rawSymbol = pairSymbolsDictionary[symbol]
+
+      if (rawSymbol) {
+
+        const rawMarketRequest: IHuobiMarketSchema = {
+          rawMarket,
+          rawSymbol,
+        }
+
+        const { market } = exchange.market.parse({
+          rawMarket: rawMarketRequest,
+        })
+
+        accumulator.push(market)
+
+      }
+
+
+      return accumulator
+
+    }, [],
+  )
 
   log(`parsed ${markets.length} markets for Huobi`)
 
