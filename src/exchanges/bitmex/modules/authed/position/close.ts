@@ -11,7 +11,7 @@ import {
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
-import { IBitmexPositionSchema } from '../../../schemas/IBitmexPositionSchema'
+import { IBitmexOrder } from '../../../schemas/IBitmexOrderSchema'
 
 
 
@@ -50,7 +50,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  await http.authedRequest<IBitmexPositionSchema>({
+  const closeOrder = await http.authedRequest<IBitmexOrder>({
     credentials,
     url: getBitmexEndpoints(settings).position.close,
     body: { execInst: 'Close', symbol: symbolPair },
@@ -60,6 +60,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
     ...position,
     status: AlunaPositionStatusEnum.CLOSED,
     closedAt: new Date(),
+    closePrice: closeOrder.price!,
   }
 
   const { requestWeight } = http
