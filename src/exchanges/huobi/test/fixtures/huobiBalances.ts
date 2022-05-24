@@ -2,22 +2,30 @@ import { IHuobiBalanceSchema } from '../../schemas/IHuobiBalanceSchema'
 
 
 
-// TODO: Review fixtures
 export const HUOBI_RAW_BALANCES: IHuobiBalanceSchema[] = [
   {
-    total: '1500.00000000',
-    available: '1500.00000000',
-    currencySymbol: 'BTC',
+    currency: 'btc',
+    type: 'trade',
+    balance: '1500',
+    'seq-num': '0',
   },
   {
-    total: '32.00000000',
-    available: '32.00000000',
-    currencySymbol: 'BTC',
+    currency: 'eth',
+    type: 'trade',
+    balance: '39',
+    'seq-num': '0',
   },
   {
-    total: '11.00000000',
-    available: '11.00000000',
-    currencySymbol: 'BTC',
+    currency: 'bnb',
+    type: 'trade',
+    balance: '123',
+    'seq-num': '0',
+  },
+  {
+    currency: 'usdt',
+    type: 'trade',
+    balance: '0',
+    'seq-num': '0',
   },
 ]
 

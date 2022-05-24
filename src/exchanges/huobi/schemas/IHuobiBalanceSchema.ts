@@ -1,7 +1,13 @@
-// TODO: Describe balance interface for Huobi exchange
 export interface IHuobiBalanceSchema {
-  total: string
-  available: string
-  currencySymbol: string
-  // ...
+  currency: string
+  type: string
+  balance: string
+  'seq-num': string
+}
+
+export interface IHuobiBalanceListSchema {
+  id: number
+  type: string
+  state: string
+  list: IHuobiBalanceSchema[]
 }
