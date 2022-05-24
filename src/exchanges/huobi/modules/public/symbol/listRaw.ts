@@ -25,7 +25,6 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new HuobiHttp(settings) } = params
 
-  // TODO: Implement proper request
   const rawSymbols = await http.publicRequest<IHuobiSymbolSchema[]>({
     url: getHuobiEndpoints(settings).symbol.list,
   })
