@@ -4,6 +4,7 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { IHuobiMarketSchema } from '../../../schemas/IHuobiMarketSchema'
 
 
@@ -12,10 +13,70 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseParams<IHuobiMarketSchema>,
 ): IAlunaMarketParseReturns => {
 
-  const { rawMarket } = params
+  const { rawMarket: rawMarketInfo } = params
 
-  // TODO: Implement proper parser
-  const market: IAlunaMarketSchema = rawMarket as any
+  const {
+    rawMarket,
+    rawSymbol,
+  } = rawMarketInfo
+
+  const {
+    symbol,
+    high,
+    low,
+    ask,
+    bid,
+    close,
+    open,
+    amount: baseVolume,
+    vol: quoteVolume,
+  } = rawMarket
+
+  const {
+    bc: baseCurrency,
+    qc: quoteCurrency,
+  } = rawSymbol
+
+  const { settings, id: exchangeId } = exchange
+
+  const { symbolMappings } = settings
+
+  const baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseCurrency,
+    symbolMappings,
+  })
+
+  const quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteCurrency,
+    symbolMappings,
+  })
+
+  const change = open - close
+
+  const ticker = {
+    high,
+    low,
+    bid,
+    ask,
+    last: close,
+    date: new Date(),
+    change,
+    baseVolume,
+    quoteVolume,
+  }
+
+  const market: IAlunaMarketSchema = {
+    exchangeId,
+    symbolPair: symbol,
+    baseSymbolId,
+    quoteSymbolId,
+    ticker,
+    spotEnabled: true,
+    marginEnabled: false,
+    derivativesEnabled: false,
+    leverageEnabled: false,
+    meta: rawMarket,
+  }
 
   return { market }
 
