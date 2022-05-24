@@ -39,7 +39,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IHuobiOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getHuobiEndpoints(settings).order.get(id),
+      url: getHuobiEndpoints(settings).order.cancel(id),
       credentials,
     })
 
