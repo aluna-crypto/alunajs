@@ -6,6 +6,7 @@ import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockPar
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
+import { HUOBI_RAW_SYMBOLS } from '../../../test/fixtures/huobiSymbols'
 import * as parseMod from './parse'
 
 
@@ -22,7 +23,12 @@ describe(__filename, () => {
     // preparing data
     const parsedOrders = PARSED_ORDERS
     const rawOrders = HUOBI_RAW_ORDERS
+    const rawSymbols = HUOBI_RAW_SYMBOLS
 
+    const rawOrdersRequest = {
+      rawOrders,
+      rawSymbols,
+    }
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
@@ -31,12 +37,12 @@ describe(__filename, () => {
       parse.onCall(index).returns({ order })
     })
 
-
     // executing
     const exchange = new HuobiAuthed({ credentials })
 
-    const { orders } = exchange.order.parseMany({ rawOrders })
-
+    const { orders } = exchange.order.parseMany({
+      rawOrders: rawOrdersRequest,
+    })
 
     // validating
     expect(orders).to.deep.eq(parsedOrders)
