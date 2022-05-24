@@ -1,8 +1,10 @@
 import { cloneDeep } from 'lodash'
+import { AlunaError } from '../../lib/core/AlunaError'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -11,10 +13,7 @@ import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 
 
 
-// TODO: set proper urls
-export const HUOBI_PRODUCTION_URL = 'https://api.huobi.com/v3'
-export const HUOBI_TESTNET_URL = 'https://testnet.api.huobi.com/v3'
-
+export const HUOBI_PRODUCTION_URL = 'https://api.huobi.pro'
 
 
 export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
@@ -137,46 +136,39 @@ export const getHuobiEndpoints = (
   settings: IAlunaSettingsSchema,
 ) => {
 
-  let baseUrl = HUOBI_PRODUCTION_URL
+  const baseUrl = HUOBI_PRODUCTION_URL
 
   if (settings.useTestNet) {
-    baseUrl = HUOBI_TESTNET_URL
-    /*
-      throw new AlunaError({
-        code: ExchangeErrorCodes.EXCHANGE_DONT_PROVIDE_TESTNET,
-        message: 'Huobi don't have a testnet.',
-      })
-    */
+
+    throw new AlunaError({
+      code: AlunaExchangeErrorCodes.EXCHANGE_DONT_HAVE_TESTNET,
+      message: 'Huobi don\'t have a testnet.',
+    })
+
   }
 
   return {
     symbol: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/v1/settings/common/market-symbols`,
     },
     market: {
-      get: `${baseUrl}/<desired-method>`,
-      list: `${baseUrl}/<desired-method>`,
+      list: `${baseUrl}/market/tickers`,
     },
     key: {
-      fetchDetails: `${baseUrl}/<desired-method>`,
+      fetchUserId: `${baseUrl}/v2/user/uid`,
+      fetchDetails: `${baseUrl}/v2/user/api-key`,
     },
     balance: {
-      list: `${baseUrl}/<desired-method>`,
+      list: (accountId: number) => `${baseUrl}/v1/account/accounts/${accountId}/balance`,
     },
     order: {
-      get: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      list: `${baseUrl}/<desired-method>`,
-      place: `${baseUrl}/<desired-method>`,
-      cancel: (id: string) => `${baseUrl}/<desired-method>/${id}`,
-      edit: `${baseUrl}/<desired-method>`,
+      get: (id: string) => `${baseUrl}/v1/order/orders/${id}`,
+      list: `${baseUrl}/v1/order/openOrders`,
+      place: `${baseUrl}/v1/order/orders/place`,
+      cancel: (id: string) => `${baseUrl}/v1/order/orders/${id}/submitcancel`,
     },
-    position: {
-      list: `${baseUrl}/<desired-method>`,
-      get: `${baseUrl}/<desired-method>`,
-      close: `${baseUrl}/<desired-method>`,
-      getLeverage: `${baseUrl}/<desired-method>`,
-      setLeverage: `${baseUrl}/<desired-method>`,
+    helpers: {
+      listAccounts: `${baseUrl}/v1/account/accounts`,
     },
   }
 }
