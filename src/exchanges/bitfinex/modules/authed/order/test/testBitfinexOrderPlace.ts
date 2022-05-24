@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { cloneDeep } from 'lodash'
 
 import { PARSED_ORDERS } from '../../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../../test/mocks/exchange/Http'
@@ -11,6 +12,7 @@ import { mockValidateParams } from '../../../../../../utils/validation/validateP
 import { BitfinexAuthed } from '../../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../../BitfinexHttp'
 import { getBitfinexEndpoints } from '../../../../bitfinexSpecs'
+import { translateOrderTypeToBitfinex } from '../../../../enums/adapters/bitfinexOrderTypeAdapter'
 import { BITFINEX_PLACE_ORDER_RESPONSE } from '../../../../test/fixtures/bitfinexOrders'
 import * as parseMod from '../parse'
 import { getExpectedRequestBody } from './helpers/getExpectedRequestBody'
@@ -37,7 +39,12 @@ export const testBitfinexOrderPlace = (params: IAlunaOrderPlaceParams) => {
 
     // preparing data
     const mockedParsedOrder = PARSED_ORDERS[0]
-    const mockedRequestResponse = BITFINEX_PLACE_ORDER_RESPONSE
+    const mockedRequestResponse = cloneDeep(BITFINEX_PLACE_ORDER_RESPONSE)
+
+    mockedRequestResponse[4][0][8] = translateOrderTypeToBitfinex({
+      from: type,
+      account,
+    })
 
 
     // mocking
