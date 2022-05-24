@@ -1,6 +1,8 @@
 export enum HuobiOrderTypeEnum {
-  LIMIT = 'LIMIT',
-  MARKET = 'MARKET',
-  CEILING_LIMIT = 'CEILING_LIMIT',
-  CEILING_MARKET = 'CEILING_MARKET'
+  MARKET = 'market',
+  LIMIT = 'limit',
+  STOP_LIMIT = 'stop-limit',
+  LIMIT_MAKER = 'limit-maker',
+  IOC = 'ioc',
+  LIMIT_FOK = 'limit-fok'
 }

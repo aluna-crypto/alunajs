@@ -17,34 +17,45 @@ describe(__filename, () => {
 
   it('should translate Huobi order status to Aluna order status', () => {
 
-    const quantity = '5'
-    const zeroedfillQty = '0'
-    const partiallyFillQty = '3'
-    const totalFillQty = '5'
+    expect(translateOrderStatusToAluna({
+      from: HuobiOrderStatusEnum.CREATED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: zeroedfillQty,
-      quantity,
-      from: HuobiOrderStatusEnum.CLOSED,
-    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+      from: HuobiOrderStatusEnum.SUBMITTED,
+    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: partiallyFillQty,
-      quantity,
-      from: HuobiOrderStatusEnum.CLOSED,
+      from: HuobiOrderStatusEnum.PARTIAL_FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: HuobiOrderStatusEnum.CLOSED,
+      from: HuobiOrderStatusEnum.FILLED,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      fillQuantity: totalFillQty,
-      quantity,
-      from: HuobiOrderStatusEnum.OPEN,
-    })).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      from: HuobiOrderStatusEnum.CANCELED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    let result
+    let error
+
+    try {
+
+      result = translateOrderStatusToAluna({
+        from: notSupported as HuobiOrderStatusEnum,
+      })
+
+    } catch (err) {
+
+      error = err
+
+    }
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
@@ -54,19 +65,19 @@ describe(__filename, () => {
 
     expect(translateOrderStatusToHuobi({
       from: AlunaOrderStatusEnum.OPEN,
-    })).to.be.eq(HuobiOrderStatusEnum.OPEN)
+    })).to.be.eq(HuobiOrderStatusEnum.CREATED)
 
     expect(translateOrderStatusToHuobi({
       from: AlunaOrderStatusEnum.PARTIALLY_FILLED,
-    })).to.be.eq(HuobiOrderStatusEnum.OPEN)
+    })).to.be.eq(HuobiOrderStatusEnum.PARTIAL_FILLED)
 
     expect(translateOrderStatusToHuobi({
       from: AlunaOrderStatusEnum.FILLED,
-    })).to.be.eq(HuobiOrderStatusEnum.CLOSED)
+    })).to.be.eq(HuobiOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToHuobi({
       from: AlunaOrderStatusEnum.CANCELED,
-    })).to.be.eq(HuobiOrderStatusEnum.CLOSED)
+    })).to.be.eq(HuobiOrderStatusEnum.CANCELED)
 
     let result
     let error

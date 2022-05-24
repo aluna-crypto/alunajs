@@ -15,9 +15,11 @@ export const translateOrderTypeToAluna = buildAdapter<
   errorMessagePrefix,
   mappings: {
     [HuobiOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
+    [HuobiOrderTypeEnum.STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
     [HuobiOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
-    [HuobiOrderTypeEnum.CEILING_LIMIT]: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    [HuobiOrderTypeEnum.CEILING_MARKET]: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
+    [HuobiOrderTypeEnum.LIMIT_MAKER]: AlunaOrderTypesEnum.LIMIT,
+    [HuobiOrderTypeEnum.IOC]: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+    [HuobiOrderTypeEnum.LIMIT_FOK]: AlunaOrderTypesEnum.FILL_OF_KILL,
   },
 })
 
@@ -31,7 +33,8 @@ export const translateOrderTypeToHuobi = buildAdapter<
   mappings: {
     [AlunaOrderTypesEnum.LIMIT]: HuobiOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: HuobiOrderTypeEnum.MARKET,
-    [AlunaOrderTypesEnum.LIMIT_ORDER_BOOK]: HuobiOrderTypeEnum.CEILING_LIMIT,
-    [AlunaOrderTypesEnum.TAKE_PROFIT_MARKET]: HuobiOrderTypeEnum.CEILING_MARKET,
+    [AlunaOrderTypesEnum.STOP_LIMIT]: HuobiOrderTypeEnum.STOP_LIMIT,
+    [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: HuobiOrderTypeEnum.IOC,
+    [AlunaOrderTypesEnum.FILL_OF_KILL]: HuobiOrderTypeEnum.LIMIT_FOK,
   },
 })

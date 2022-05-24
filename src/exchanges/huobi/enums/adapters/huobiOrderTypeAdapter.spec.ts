@@ -27,12 +27,20 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
     expect(translateOrderTypeToAluna({
-      from: HuobiOrderTypeEnum.CEILING_LIMIT,
-    })).to.be.eq(AlunaOrderTypesEnum.LIMIT_ORDER_BOOK)
+      from: HuobiOrderTypeEnum.STOP_LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToAluna({
-      from: HuobiOrderTypeEnum.CEILING_MARKET,
-    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
+      from: HuobiOrderTypeEnum.IOC,
+    })).to.be.eq(AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL)
+
+    expect(translateOrderTypeToAluna({
+      from: HuobiOrderTypeEnum.LIMIT_FOK,
+    })).to.be.eq(AlunaOrderTypesEnum.FILL_OF_KILL)
+
+    expect(translateOrderTypeToAluna({
+      from: HuobiOrderTypeEnum.LIMIT_MAKER,
+    })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     let result
     let error
@@ -71,12 +79,16 @@ describe(__filename, () => {
     })).to.be.eq(HuobiOrderTypeEnum.MARKET)
 
     expect(translateOrderTypeToHuobi({
-      from: AlunaOrderTypesEnum.LIMIT_ORDER_BOOK,
-    })).to.be.eq(HuobiOrderTypeEnum.CEILING_LIMIT)
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+    })).to.be.eq(HuobiOrderTypeEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToHuobi({
-      from: AlunaOrderTypesEnum.TAKE_PROFIT_MARKET,
-    })).to.be.eq(HuobiOrderTypeEnum.CEILING_MARKET)
+      from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
+    })).to.be.eq(HuobiOrderTypeEnum.IOC)
+
+    expect(translateOrderTypeToHuobi({
+      from: AlunaOrderTypesEnum.FILL_OF_KILL,
+    })).to.be.eq(HuobiOrderTypeEnum.LIMIT_FOK)
 
     let result
     let error

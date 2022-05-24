@@ -1,4 +1,4 @@
 export enum HuobiOrderSideEnum {
-  BUY = 'BUY',
-  SELL = 'SELL'
+  BUY = 'buy',
+  SELL = 'sell'
 }

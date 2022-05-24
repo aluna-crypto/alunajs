@@ -1,4 +1,7 @@
 export enum HuobiOrderStatusEnum {
-  OPEN = 'OPEN',
-  CLOSED = 'CLOSED'
+  CREATED = 'created',
+  SUBMITTED = 'submitted',
+  PARTIAL_FILLED = 'partial-filled',
+  FILLED = 'filled',
+  CANCELED = 'canceled'
 }
