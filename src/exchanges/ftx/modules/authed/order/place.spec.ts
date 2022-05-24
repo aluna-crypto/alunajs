@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
@@ -21,7 +21,7 @@ import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -36,7 +36,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawOrder = FTX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
+    const mockedPlacedOrder = PARSED_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.LIMIT
@@ -57,12 +57,10 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
-
-    const { parse } = mockParse({ module: parseMod })
-
-    parse.returns({ order: mockedParsedOrder })
-
     authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    const { get } = mockGet({ module: getMod })
+    get.returns({ order: mockedPlacedOrder })
 
     const { validateParamsMock } = mockValidateParams()
 
@@ -85,7 +83,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(order).to.deep.eq(mockedParsedOrder)
+    expect(order).to.deep.eq(mockedPlacedOrder)
 
     expect(authedRequest.callCount).to.be.eq(1)
 
@@ -112,7 +110,7 @@ describe(__filename, () => {
     // preparing data
 
     const mockedRawOrder = FTX_RAW_ORDERS[0]
-    const mockedParsedOrder = PARSED_ORDERS[0]
+    const mockPlacedOrder = PARSED_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
     const type = AlunaOrderTypesEnum.MARKET
@@ -142,12 +140,10 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
-
-    const { parse } = mockParse({ module: parseMod })
-
-    parse.returns({ order: mockedParsedOrder })
-
     authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    const { get } = mockGet({ module: getMod })
+    get.returns({ order: mockPlacedOrder })
 
     const { validateParamsMock } = mockValidateParams()
 
@@ -161,7 +157,7 @@ describe(__filename, () => {
 
 
     // validating
-    expect(order).to.deep.eq(mockedParsedOrder)
+    expect(order).to.deep.eq(mockPlacedOrder)
 
     expect(authedRequest.callCount).to.be.eq(1)
 
@@ -225,6 +221,8 @@ describe(__filename, () => {
 
       authedRequest.returns(Promise.reject(alunaError))
 
+      const { get } = mockGet({ module: getMod })
+
       const { validateParamsMock } = mockValidateParams()
 
       const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
@@ -260,6 +258,7 @@ describe(__filename, () => {
         schema: placeOrderParamsSchema,
       })
 
+      expect(get.callCount).to.be.eq(0)
 
     },
   )
@@ -296,8 +295,9 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
-
     authedRequest.returns(Promise.reject(alunaError))
+
+    const { get } = mockGet({ module: getMod })
 
     const { validateParamsMock } = mockValidateParams()
 
@@ -331,6 +331,8 @@ describe(__filename, () => {
       params,
       schema: placeOrderParamsSchema,
     })
+
+    expect(get.callCount).to.be.eq(0)
 
   })
 

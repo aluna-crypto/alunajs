@@ -80,8 +80,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing new order for Ftx')
 
-  let placedOrder: IFtxOrderSchema
-
   try {
 
     const orderResponse = await http.authedRequest<IFtxOrderSchema>({
@@ -90,7 +88,18 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       credentials,
     })
 
-    placedOrder = orderResponse
+    const { order } = await exchange.order.get({
+      id: orderResponse.id.toString(),
+      symbolPair: params.symbolPair,
+      http,
+    })
+
+    const { requestWeight } = http
+
+    return {
+      order,
+      requestWeight,
+    }
 
   } catch (err) {
 
@@ -115,15 +124,6 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       message,
     })
 
-  }
-
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
-
-  const { requestWeight } = http
-
-  return {
-    order,
-    requestWeight,
   }
 
 }
