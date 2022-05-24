@@ -1,12 +1,28 @@
-import { HuobiMarketStatusEnum } from '../enums/HuobiMarketStatusEnum'
+import { IHuobiSymbolSchema } from './IHuobiSymbolSchema'
 
 
 
-// TODO: Describe market interface for Huobi exchange
-export interface IHuobiMarketSchema {
+export interface IHuobiMarketTickerSchema {
   symbol: string
-  volume: string
-  quoteVolume: string
-  status: HuobiMarketStatusEnum
-  // ...
+  open: number
+  high: number
+  low: number
+  close: number
+  amount: number
+  vol: number
+  count: number
+  bid: number
+  bidSize: number
+  ask: number
+  askSize: number
+}
+
+export interface IHuobiMarketsSchema {
+  rawMarkets: IHuobiMarketTickerSchema[]
+  rawSymbols: IHuobiSymbolSchema[]
+}
+
+export interface IHuobiMarketSchema {
+  rawMarket: IHuobiMarketTickerSchema
+  rawSymbol: IHuobiSymbolSchema
 }
