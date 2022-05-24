@@ -10,7 +10,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { placeMarketOrderToClosePosition } from './helpers/placeMarketOrderToClosePosition'
+import { placeMarketOrderToClosePosition } from '../../../../../utils/positions/placeMarketOrderToClosePosition'
 import { throwPositionIdRequiredFor } from './helpers/throwPositionIdRequiredFor'
 
 

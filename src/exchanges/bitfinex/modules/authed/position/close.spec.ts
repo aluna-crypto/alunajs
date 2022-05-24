@@ -13,7 +13,7 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import * as getMod from './get'
-import { mockPlaceMarketOrderToClosePosition } from './helpers/placeMarketOrderToClosePosition.mock'
+import { mockPlaceMarketOrderToClosePosition } from '../../../../../utils/positions/placeMarketOrderToClosePosition.mock'
 
 
 
