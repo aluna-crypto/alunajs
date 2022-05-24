@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import sleep from 'sleep-promise'
 
 import { AlunaOrderSideEnum } from '../../../../src/lib/enums/AlunaOrderSideEnum'
+import { AlunaPositionSideEnum } from '../../../../src/lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../src/lib/enums/AlunaPositionStatusEnum'
 import { IAuthedParams } from '../IAuthedParams'
 import { placeMarketOrder } from './helpers/order/placeMarketOrder'
@@ -12,8 +13,13 @@ export function position(params: IAuthedParams) {
 
   const {
     exchangeAuthed,
+    exchangeConfigs,
     liveData,
   } = params
+
+  const {
+    orderAccount,
+  } = exchangeConfigs
 
 
   before(async () => {
@@ -84,7 +90,24 @@ export function position(params: IAuthedParams) {
     })
 
     expect(position).to.exist
+
+    expect(position.symbolPair).to.exist
+    expect(position.exchangeId).to.exist
+    expect(position.baseSymbolId).to.exist
+    expect(position.quoteSymbolId).to.exist
+    expect(position.total).to.exist
+    expect(position.amount).to.exist
+    expect(position.basePrice).to.exist
+    expect(position.openPrice).to.exist
+    expect(position.quoteSymbolId).to.exist
+    expect(position.account).to.be.eq(orderAccount)
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.OPEN)
+    expect(position.side).to.be.eq(AlunaPositionSideEnum.LONG)
+    expect(position.pl).to.exist
+    expect(position.plPercentage).to.exist
+    expect(position.openedAt).to.exist
+    expect(position.plPercentage).to.exist
+    expect(position.meta).to.exist
 
     expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -101,6 +124,8 @@ export function position(params: IAuthedParams) {
     })
 
     expect(position).to.exist
+    expect(position.closedAt).to.exist
+    expect(position.closePrice).to.exist
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.CLOSED)
 
     expect(requestWeight.authed).to.be.greaterThan(1)
@@ -121,6 +146,8 @@ export function position(params: IAuthedParams) {
     })
 
     expect(position).to.exist
+    expect(position.closedAt).to.exist
+    expect(position.closePrice).to.exist
     expect(position.status).to.be.eq(AlunaPositionStatusEnum.CLOSED)
 
     expect(requestWeight.authed).to.be.greaterThan(0)
