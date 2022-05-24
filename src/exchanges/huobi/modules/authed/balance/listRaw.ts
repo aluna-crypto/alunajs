@@ -8,7 +8,8 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaBalanceModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiBalanceSchema } from '../../../schemas/IHuobiBalanceSchema'
+import { IHuobiBalanceListSchema, IHuobiBalanceSchema } from '../../../schemas/IHuobiBalanceSchema'
+import { getHuobiAccountId } from '../helpers/getHuobiAccountId'
 
 
 
@@ -29,10 +30,17 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new HuobiHttp(settings) } = params
 
-  // TODO: Implement balance 'listRaw'
-  const rawBalances = await http.authedRequest<IHuobiBalanceSchema[]>({
+  const { accountId } = await getHuobiAccountId({
+    credentials,
+    http,
+    settings,
+  })
+
+  const {
+    list: rawBalances,
+  } = await http.authedRequest<IHuobiBalanceListSchema>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getHuobiEndpoints(settings).balance.list,
+    url: getHuobiEndpoints(settings).balance.list(accountId),
     credentials,
   })
 
