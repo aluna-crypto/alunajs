@@ -2,8 +2,9 @@ import { IHuobiKeySchema } from '../../schemas/IHuobiKeySchema'
 
 
 
+const rest = {} as any
+
 export const HUOBI_KEY_PERMISSIONS: IHuobiKeySchema = {
-  read: true,
-  trade: true,
-  withdraw: true,
+  permission: 'readOnly,trade,withdraw',
+  ...rest,
 }

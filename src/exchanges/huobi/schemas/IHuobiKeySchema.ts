@@ -1,8 +1,15 @@
-// TODO: Describe key interface for Huobi exchange
 export interface IHuobiKeySchema {
-  read: boolean
-  trade: boolean
-  withdraw: boolean
-  accountId?: string
-  // ...
+  accessKey: string
+  status: string
+  note: string
+  permission: string
+  ipAddresses: string
+  validDays: number
+  createTime: number
+  updateTime: number
+}
+
+export interface IHuobiRawKeySchema extends IHuobiKeySchema {
+  accountId: number
+  userId: number
 }
