@@ -17,8 +17,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const { rawSymbol } = params
 
   const {
-    name,
-    symbol,
+    bc: symbol,
   } = rawSymbol
 
   const id = translateSymbolId({
@@ -28,10 +27,8 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const alias = (id !== symbol ? symbol : undefined)
 
-  // TODO: Review symbol assembling
   const parsedSymbol: IAlunaSymbolSchema = {
     id,
-    name,
     alias,
     exchangeId: huobiBaseSpecs.id,
     meta: rawSymbol,
