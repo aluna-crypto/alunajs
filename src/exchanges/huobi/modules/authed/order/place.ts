@@ -3,7 +3,6 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
-import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -13,9 +12,10 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToHuobi } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderTypeToHuobi } from '../../../enums/adapters/huobiOrderTypeAdapter'
+import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiOrderSchema } from '../../../schemas/IHuobiOrderSchema'
+import { getHuobiAccountId } from '../helpers/getHuobiAccountId'
 
 
 
@@ -58,29 +58,43 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  // TODO: Validate all body properties
+  const translatedOrderSide = translateOrderSideToHuobi({ from: side })
+
+  const {
+    accountId,
+  } = await getHuobiAccountId({
+    credentials,
+    http,
+    settings,
+  })
+
   const body = {
-    direction: translateOrderSideToHuobi({ from: side }),
-    marketSymbol: symbolPair,
-    type: translatedOrderType,
-    quantity: Number(amount),
-    rate,
+    symbol: symbolPair,
+    type: `${translatedOrderSide}-${translatedOrderType}`,
+    'account-id': accountId,
+    amount: amount.toString(),
+    source: 'spot-api',
+  }
+
+  if (translatedOrderType === HuobiOrderTypeEnum.LIMIT) {
+
+    Object.assign(body, {
+      price: rate!.toString(),
+    })
+
   }
 
   log('placing new order for Huobi')
 
-  let placedOrder: IHuobiOrderSchema
+  let placedOrderId: string
 
   try {
 
-    // TODO: Implement proper request
-    const orderResponse = await http.authedRequest<IHuobiOrderSchema>({
+    placedOrderId = await http.authedRequest<string>({
       url: getHuobiEndpoints(settings).order.place,
       body,
       credentials,
     })
-
-    placedOrder = orderResponse
 
   } catch (err) {
 
@@ -91,19 +105,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { metadata } = err
 
-    // TODO: Review error handlings
-    if (metadata.code === 'INSUFFICIENT_FUNDS') {
+    if (metadata.code === 'order-accountbalance-error') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
       message = 'Account has insufficient balance for requested action.'
-
-    } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
-
-      code = AlunaOrderErrorCodes.PLACE_FAILED
-
-      message = 'The trade was smaller than the min trade size quantity for '
-        .concat('the market')
 
     }
 
@@ -115,7 +121,10 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
+  const { order } = await exchange.order.get({
+    id: placedOrderId,
+    symbolPair,
+  })
 
   const { requestWeight } = http
 

@@ -2,7 +2,6 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
@@ -20,7 +19,10 @@ import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
 import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
-import * as parseMod from './parse'
+import { mockGetHuobiAccountId } from '../../../test/mocks/mockGetHuobiAccountId'
+import * as getMod from './get'
+import * as getHuobiAccountIdMod from '../helpers/getHuobiAccountId'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 
 
 
@@ -31,8 +33,9 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should place a Huobi limit order just fine', async () => {
+  const accountId = 123456
 
+  it('should place a Huobi limit order just fine', async () => {
     // preparing data
     const mockedRawOrder = HUOBI_RAW_ORDERS[0]
     const mockedParsedOrder = PARSED_ORDERS[0]
@@ -43,25 +46,32 @@ describe(__filename, () => {
     const translatedOrderSide = translateOrderSideToHuobi({ from: side })
     const translatedOrderType = translateOrderTypeToHuobi({ from: type })
 
+
+
     const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
-      rate: 0,
-      // limit: 0,
-      // timeInForce: HuobiOrderTimeInForceEnum.GOOD_TIL_CANCELLED,
+      symbol: '',
+      type: `${translatedOrderSide}-${translatedOrderType}`,
+      'account-id': accountId,
+      amount: '0.01',
+      source: 'spot-api',
+      price: '0',
     }
 
     // mocking
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
     const {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -116,12 +126,11 @@ describe(__filename, () => {
     const translatedOrderType = translateOrderTypeToHuobi({ from: type })
 
     const body = {
-      direction: translatedOrderSide,
-      marketSymbol: '',
-      type: translatedOrderType,
-      quantity: 0.01,
-      rate: 0,
-      // timeInForce: HuobiOrderTimeInForceEnum.FILL_OR_KILL,
+      symbol: '',
+      type: `${translatedOrderSide}-${translatedOrderType}`,
+      'account-id': accountId,
+      amount: '0.01',
+      source: 'spot-api',
     }
 
     // mocking
@@ -130,9 +139,15 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
 
-    parse.returns({ order: mockedParsedOrder })
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
+    const { get } = mockGet({ module: getMod })
+
+    get.returns({ order: mockedParsedOrder })
 
     authedRequest.returns(Promise.resolve(mockedRawOrder))
 
@@ -183,12 +198,18 @@ describe(__filename, () => {
         .concat('for requested action.')
       const expectedCode = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
+      const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+        module: getHuobiAccountIdMod,
+      })
+
+      getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
       const alunaError = new AlunaError({
         message: 'dummy-error',
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         httpStatusCode: 401,
         metadata: {
-          code: 'INSUFFICIENT_FUNDS',
+          code: 'order-accountbalance-error',
         },
       })
 
@@ -220,66 +241,6 @@ describe(__filename, () => {
 
       // validating
 
-      expect(error instanceof AlunaError).to.be.ok
-      expect(error?.code).to.be.eq(expectedCode)
-      expect(error?.message).to.be.eq(expectedMessage)
-
-      expect(authedRequest.callCount).to.be.eq(1)
-
-      expect(publicRequest.callCount).to.be.eq(0)
-
-    },
-  )
-
-  it(
-    'should throw an error placing for minimum size placing new huobi order',
-    async () => {
-
-      // preparing data
-      // const mockedRawOrder = HUOBI_RAW_ORDERS[0]
-
-      const side = AlunaOrderSideEnum.BUY
-      const type = AlunaOrderTypesEnum.MARKET
-
-      const expectedMessage = 'The trade was smaller than the min '
-        .concat('trade size quantity for the market')
-      const expectedCode = AlunaOrderErrorCodes.PLACE_FAILED
-
-      const alunaError = new AlunaError({
-        message: 'dummy-error',
-        code: AlunaOrderErrorCodes.PLACE_FAILED,
-        httpStatusCode: 401,
-        metadata: {
-          code: 'MIN_TRADE_REQUIREMENT_NOT_MET',
-        },
-      })
-
-      // mocking
-      const {
-        publicRequest,
-        authedRequest,
-      } = mockHttp({ classPrototype: HuobiHttp.prototype })
-
-      authedRequest.returns(Promise.reject(alunaError))
-
-      mockValidateParams()
-
-      mockEnsureOrderIsSupported()
-
-
-      // executing
-      const exchange = new HuobiAuthed({ credentials })
-
-      const { error } = await executeAndCatch(() => exchange.order.place({
-        symbolPair: '',
-        account: AlunaAccountEnum.SPOT,
-        amount: 0.01,
-        side,
-        type,
-        rate: 0,
-      }))
-
-      // validating
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(expectedCode)
       expect(error?.message).to.be.eq(expectedMessage)
@@ -316,6 +277,12 @@ describe(__filename, () => {
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
     authedRequest.returns(Promise.reject(alunaError))
+
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
 
     mockValidateParams()
 
