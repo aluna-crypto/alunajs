@@ -1,8 +1,10 @@
 import { expect } from 'chai'
 import { Agent } from 'https'
 import { random } from 'lodash'
+import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
+import crypto from 'crypto'
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
@@ -20,7 +22,7 @@ import * as HuobiHttpMod from './HuobiHttp'
 
 
 
-describe.skip(__filename, () => {
+describe(__filename, () => {
 
   const { HuobiHttp } = HuobiHttpMod
 
@@ -35,7 +37,7 @@ describe.skip(__filename, () => {
     passphrase: 'key',
   }
   const signedHeader = {
-    'Api-Key': 'apikey',
+    'Content-Type': 'application/json',
   }
   const proxySettings: IAlunaProxySchema = {
     host: 'host',
@@ -46,7 +48,8 @@ describe.skip(__filename, () => {
   const settings: IAlunaSettingsSchema = {
     proxySettings,
   }
-
+  const query = 'dummy=dummy'
+  const urlWithQuery = `${url}?${query}`
 
 
   const mockDeps = (
@@ -57,6 +60,7 @@ describe.skip(__filename, () => {
         has?: boolean
         set?: boolean
       }
+      signedHeaderResponse?: HuobiHttpMod.IHuobiSignedHeaders
     } = {},
   ) => {
 
@@ -71,12 +75,15 @@ describe.skip(__filename, () => {
         has: false,
         set: true,
       },
+      signedHeaderResponse = {
+        queryParamsWithSignature: new URLSearchParams(query),
+      },
     } = params
 
     const generateAuthHeader = ImportMock.mockFunction(
       HuobiHttpMod,
       'generateAuthHeader',
-      signedHeader,
+      signedHeaderResponse,
     )
 
     const handleHuobiRequestError = ImportMock.mockFunction(
@@ -123,7 +130,7 @@ describe.skip(__filename, () => {
 
     const huobiHttp = new HuobiHttp({})
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -180,7 +187,7 @@ describe.skip(__filename, () => {
       assembleRequestConfig,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -189,6 +196,7 @@ describe.skip(__filename, () => {
       url,
       body,
       credentials,
+      query,
     })
 
 
@@ -200,7 +208,7 @@ describe.skip(__filename, () => {
 
     expect(request.callCount).to.be.eq(1)
     expect(request.firstCall.args[0]).to.deep.eq({
-      url,
+      url: urlWithQuery,
       method: AlunaHttpVerbEnum.POST,
       data: body,
       headers: signedHeader,
@@ -211,10 +219,10 @@ describe.skip(__filename, () => {
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.POST,
-      path: new URL(url).pathname,
       credentials,
       body,
       url,
+      query,
     })
 
     expect(hashCacheKey.callCount).to.be.eq(0)
@@ -241,7 +249,7 @@ describe.skip(__filename, () => {
     // mocking
     const { request } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -276,7 +284,7 @@ describe.skip(__filename, () => {
     // mocking
     const { request } = mockDeps()
 
-    request.returns(Promise.resolve({ data: response }))
+    request.returns(Promise.resolve({ data: { data: response } }))
 
 
     // executing
@@ -428,7 +436,7 @@ describe.skip(__filename, () => {
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
     expect(assembleRequestConfig.firstCall.args[0]).to.deep.eq({
-      url,
+      url: urlWithQuery,
       method: AlunaHttpVerbEnum.POST,
       data: body,
       headers: signedHeader,
@@ -437,33 +445,135 @@ describe.skip(__filename, () => {
 
   })
 
-  it('should generate signed auth header just fine', async () => {
+  it('should generate signed auth header just fine w query', async () => {
 
     // preparing data
-    const path = 'path'
     const verb = 'verb' as AlunaHttpVerbEnum
 
-    const currentDate = Date.now()
+    const currentDate = new Date()
+
+    const path = new URL(url).pathname
+    const baseURL = new URL(url).host
+
+    const searchParams = new URLSearchParams()
+
+    searchParams.append('AccessKeyId', credentials.key)
+    searchParams.append('SignatureMethod', 'HmacSHA256')
+    searchParams.append('SignatureVersion', '2')
+    searchParams.append('Timestamp', currentDate.toISOString().slice(0, -5))
+
+    const searchParamsWithQuery = new URLSearchParams(`${searchParams.toString()}&${query}`)
+
+    const meta = [
+      verb.toUpperCase(),
+      baseURL,
+      path,
+      searchParamsWithQuery.toString(),
+    ].join('\n')
 
     // mocking
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
     const dateMock = ImportMock.mockFunction(
-      Date,
-      'now',
+      global,
+      'Date',
       currentDate,
     )
 
     // executing
     const signedHash = HuobiHttpMod.generateAuthHeader({
       credentials,
-      path,
       verb,
-      body,
+      url,
+      query,
+    })
+
+    searchParamsWithQuery.append('Signature', digestSpy.returnValues[0])
+    // validating
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
+    expect(dateMock.callCount).to.be.eq(1)
+    expect(signedHash.queryParamsWithSignature.toString()).to.be.eq(searchParamsWithQuery.toString())
+
+    Sinon.restore()
+
+  })
+
+  it('should generate signed auth header just fine w/o query', async () => {
+
+    // preparing data
+    const verb = 'verb' as AlunaHttpVerbEnum
+
+    const currentDate = new Date()
+
+    const path = new URL(url).pathname
+    const baseURL = new URL(url).host
+
+    const queryParams = new URLSearchParams()
+
+    queryParams.append('AccessKeyId', credentials.key)
+    queryParams.append('SignatureMethod', 'HmacSHA256')
+    queryParams.append('SignatureVersion', '2')
+    queryParams.append('Timestamp', currentDate.toISOString().slice(0, -5))
+
+
+    const meta = [
+      verb.toUpperCase(),
+      baseURL,
+      path,
+      queryParams.toString(),
+    ].join('\n')
+
+    // mocking
+
+    const createHmacSpy = Sinon.spy(crypto, 'createHmac')
+
+    const updateSpy = Sinon.spy(crypto.Hmac.prototype, 'update')
+
+    const digestSpy = Sinon.spy(crypto.Hmac.prototype, 'digest')
+
+    const dateMock = ImportMock.mockFunction(
+      global,
+      'Date',
+      currentDate,
+    )
+
+    // executing
+    const signedHash = HuobiHttpMod.generateAuthHeader({
+      credentials,
+      verb,
       url,
     })
 
+    queryParams.append('Signature', digestSpy.returnValues[0])
     // validating
+
+    expect(createHmacSpy.callCount).to.be.eq(1)
+    expect(createHmacSpy.calledWith('sha256', credentials.secret)).to.be.ok
+
+    expect(updateSpy.callCount).to.be.eq(1)
+    expect(updateSpy.calledWith(meta)).to.be.ok
+
+    expect(digestSpy.callCount).to.be.eq(1)
+    expect(digestSpy.calledWith('base64')).to.be.ok
+
     expect(dateMock.callCount).to.be.eq(1)
-    expect(signedHash['Api-Timestamp']).to.be.eq(currentDate)
+    expect(signedHash.queryParamsWithSignature.toString()).to.be.eq(queryParams.toString())
+
+    Sinon.restore()
 
   })
 
@@ -471,6 +581,9 @@ describe.skip(__filename, () => {
   /**
    * Executes macro test.
    * */
-  testCache({ HttpClass: HuobiHttp })
+  testCache({
+    HttpClass: HuobiHttp,
+    useObjectAsResponse: true,
+  })
 
 })

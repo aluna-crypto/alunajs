@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+import crypto from 'crypto'
 import {
   IAlunaHttp,
   IAlunaHttpAuthedParams,
@@ -79,7 +80,9 @@ export class HuobiHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data: { data } } = await axios
+        .create()
+        .request<IHuobiHttpResponse<T>>(requestConfig)
 
       if (!disableCache) {
         AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
@@ -102,30 +105,39 @@ export class HuobiHttp implements IAlunaHttp {
   ): Promise<T> {
 
     const {
-      url,
+      url: rawUrl,
       body,
       verb = AlunaHttpVerbEnum.POST,
       credentials,
+      query,
       weight = 1,
     } = params
 
     const settings = (params.settings || this.settings)
 
-    const signedHash = generateAuthHeader({
+    const aaa = generateAuthHeader({
       verb,
-      path: new URL(url).pathname,
       credentials,
       body,
-      url,
+      url: rawUrl,
+      query,
     })
 
+    const { queryParamsWithSignature } = aaa
+
     const { proxySettings } = settings
+
+    const url = `${rawUrl}?${queryParamsWithSignature.toString()}`
+
+    const headers = {
+      'Content-Type': 'application/json',
+    }
 
     const { requestConfig } = assembleRequestConfig({
       url,
       method: verb,
       data: body,
-      headers: signedHash, // TODO: Review headers injection
+      headers,
       proxySettings,
     })
 
@@ -133,7 +145,11 @@ export class HuobiHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios.create().request<T>(requestConfig)
+      const { data: request } = await axios
+        .create()
+        .request<IHuobiHttpResponse<T>>(requestConfig)
+
+      const { data } = request
 
       return data
 
@@ -149,44 +165,73 @@ export class HuobiHttp implements IAlunaHttp {
 
 
 
-// TODO: Review interface properties
 interface ISignedHashParams {
   verb: AlunaHttpVerbEnum
-  path: string
   credentials: IAlunaCredentialsSchema
   url: string
+  query?: string | undefined
   body?: any
 }
 
-// TODO: Review interface properties
 export interface IHuobiSignedHeaders {
-  'Api-Timestamp': number
+  queryParamsWithSignature: URLSearchParams
+}
+
+export interface IHuobiHttpResponse<T> {
+  data: T
+  ts: number
+  status: string
+  'err-code'?: string
+  'err-msg'?: string
 }
 
 
 
 export const generateAuthHeader = (
-  _params: ISignedHashParams,
+  params: ISignedHashParams,
 ): IHuobiSignedHeaders => {
 
-  // TODO: Implement method (and rename `_params` to `params`)
+  const {
+    credentials,
+    verb,
+    url,
+    query,
+  } = params
 
-  // const {
-  //   credentials,
-  //   verb,
-  //   body,
-  //   url,
-  // } = params
+  const {
+    key,
+    secret,
+  } = credentials
 
-  // const {
-  //   key,
-  //   secret,
-  // } = credentials
+  const timestamp = new Date().toISOString().slice(0, -5)
 
-  const timestamp = Date.now()
+  const queryParams = new URLSearchParams()
+
+  queryParams.append('AccessKeyId', key)
+  queryParams.append('SignatureMethod', 'HmacSHA256')
+  queryParams.append('SignatureVersion', '2')
+  queryParams.append('Timestamp', timestamp.toString())
+
+  const includeSearchQuery = query
+    ? new URLSearchParams(`${queryParams.toString()}&${query}`)
+    : queryParams
+
+  const path = new URL(url).pathname
+  const baseURL = new URL(url).host
+
+  const queryString = includeSearchQuery.toString()
+
+  const meta = [verb.toUpperCase(), baseURL, path, queryString].join('\n')
+
+  const signedRequest = crypto
+    .createHmac('sha256', secret)
+    .update(meta)
+    .digest('base64')
+
+  includeSearchQuery.append('Signature', signedRequest)
 
   return {
-    'Api-Timestamp': timestamp,
+    queryParamsWithSignature: includeSearchQuery,
   }
 
 }
