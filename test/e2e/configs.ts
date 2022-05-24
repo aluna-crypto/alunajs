@@ -86,7 +86,7 @@ export function getConfig() {
         symbolPair: 'tBTCUSD',
         delayBetweenTests: 1000,
         orderRate: 1000,
-        orderStopRate: 150000,
+        orderStopRate: 100000,
         orderLimitRate: 1000,
         orderAmount: 0.001,
         orderEditAmount: 0.0011,
