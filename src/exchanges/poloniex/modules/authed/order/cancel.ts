@@ -62,6 +62,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
     // Poloniex doesn't return canceled/closed orders
     order.status = AlunaOrderStatusEnum.CANCELED
+    order.canceledAt = new Date()
 
     return {
       order,
