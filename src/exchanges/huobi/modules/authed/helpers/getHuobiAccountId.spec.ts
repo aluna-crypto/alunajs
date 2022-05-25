@@ -3,6 +3,7 @@ import { filter, find } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../../../lib/errors/AlunaAccountsErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -74,6 +75,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getHuobiEndpoints(exchange.settings).helpers.listAccounts,
     })

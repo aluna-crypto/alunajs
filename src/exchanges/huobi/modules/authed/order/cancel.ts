@@ -2,7 +2,6 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -36,9 +35,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    // TODO: Implement proper request
     const rawOrder = await http.authedRequest<IHuobiOrderSchema>({
-      verb: AlunaHttpVerbEnum.DELETE,
       url: getHuobiEndpoints(settings).order.cancel(id),
       credentials,
     })

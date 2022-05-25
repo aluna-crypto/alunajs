@@ -22,3 +22,4 @@ Full list of currently supported exchanges.
 |Poloniex|✅ v1|—|—|
 |Valr|✅ v1|—|—|
 |Ftx|✅ v1|❌|❌|
+|Huobi|✅ v1/v2|❌|❌|

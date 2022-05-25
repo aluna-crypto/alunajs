@@ -1,5 +1,6 @@
 import { find } from 'lodash'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../../../lib/errors/AlunaAccountsErrorCodes'
 import { HuobiAccountTypeEnum } from '../../../enums/HuobiAccountTypeEnum'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
@@ -18,6 +19,7 @@ export const getHuobiAccountId = async (
   } = params
 
   const accounts = await http.authedRequest<IHuobiUserAccountSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
     credentials,
     url: getHuobiEndpoints(settings).helpers.listAccounts,
   })

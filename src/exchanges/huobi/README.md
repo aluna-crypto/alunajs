@@ -1,7 +1,7 @@
 # Sample
 
- - API vX:
-    - https://sample.com/api
+ - API v1/v2:
+    - https://api.huobi.pro
 
 ## Usage
 
@@ -32,16 +32,5 @@ sample.symbol.list()
 
 | Functionality | Supported |
 | -- | :-: |
-| `offersOrderEditing` | ✅ |
+| `offersOrderEditing` | ❌ |
 | `offersPositionId` | ❌ |
-
-## Notes
-
-### API Rates
-  - ...
-
-### Orders
- - ...
-
-### Positions
- - ...

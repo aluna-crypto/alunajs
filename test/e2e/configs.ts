@@ -180,6 +180,18 @@ export function getConfig() {
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.SPOT,
       },
+      huobi: {
+        key: env.HUOBI_API_KEY,
+        secret: env.HUOBI_API_SECRET,
+        passphrase: env.HUOBI_API_PASSPHRASE,
+        symbolPair: 'btcusdt',
+        delayBetweenTests: 500,
+        orderRate: 1000,
+        orderAmount: 0.001,
+        orderEditAmount: 0.0011,
+        orderInsufficientAmount: 2000,
+        orderAccount: AlunaAccountEnum.SPOT,
+      },
     },
   }
 

@@ -115,15 +115,13 @@ export class HuobiHttp implements IAlunaHttp {
 
     const settings = (params.settings || this.settings)
 
-    const aaa = generateAuthHeader({
+    const { queryParamsWithSignature } = generateAuthHeader({
       verb,
       credentials,
       body,
       url: rawUrl,
       query,
     })
-
-    const { queryParamsWithSignature } = aaa
 
     const { proxySettings } = settings
 

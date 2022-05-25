@@ -1,8 +1,8 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-19T15:38:33.998Z",
-    "__export_source": "insomnia.desktop.app:v2022.2.1",
+    "__export_date": "2022-05-25T13:23:11.662Z",
+    "__export_source": "insomnia.desktop.app:v2022.3.0",
     "resources": [
         {
             "_id": "req_638f9118078540b8a309cfcf9a6189ee",
@@ -149,7 +149,7 @@
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652316606203,
+            "modified": 1653484087008,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -217,7 +217,7 @@
         {
             "_id": "req_c284cfcbcce94ecf865cfb5da8ea9e9f",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652315175668,
+            "modified": 1653484107438,
             "created": 1651252547687,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -313,7 +313,7 @@
         {
             "_id": "req_069acff72d9d4c0bb863897b2ffa4549",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1652315191065,
+            "modified": 1653484108846,
             "created": 1651252596523,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -453,7 +453,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1652632762679,
+            "modified": 1653484369630,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "fetchDetails",
@@ -509,7 +509,7 @@
         {
             "_id": "req_e147340c7ecd4eb785265d1b060ff2a6",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632757871,
+            "modified": 1653484201012,
             "created": 1652142980199,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getTradableBalance",
@@ -553,7 +553,7 @@
         {
             "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632759741,
+            "modified": 1653484201784,
             "created": 1651516666747,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -585,7 +585,7 @@
         {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632760923,
+            "modified": 1653484349458,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -617,7 +617,7 @@
         {
             "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632764897,
+            "modified": 1653484144760,
             "created": 1651505373653,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -661,7 +661,7 @@
         {
             "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652787270298,
+            "modified": 1653484858515,
             "created": 1651519029538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -693,7 +693,7 @@
         {
             "_id": "req_61340a5851b040e09612c173691f44ba",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632766287,
+            "modified": 1653484169050,
             "created": 1651516690271,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -701,7 +701,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.getRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"ed85fca7-c383-4865-9021-64723149aae3\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
+                "text": "{\n\t\"method\": \"order.getRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"528128727322392\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -725,7 +725,7 @@
         {
             "_id": "req_4944714ffe964c12a008929b3214f0c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632767380,
+            "modified": 1653484887436,
             "created": 1651519053540,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -733,7 +733,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.get\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"ed85fca7-c383-4865-9021-64723149aae3\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
+                "text": "{\n\t\"method\": \"order.get\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"549900318712576\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974669549,
+            "modified": 1653484869077,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -765,7 +765,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
+                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"spot\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -853,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974671517,
+            "modified": 1653484877931,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -861,7 +861,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"507161317238\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
+                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"549900318712576\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
             },
             "parameters": [],
             "headers": [
@@ -1413,7 +1413,7 @@
         {
             "_id": "env_e524d6c1fb6247348832a850cae3e36d",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652964897280,
+            "modified": 1653483832630,
             "created": 1652833243571,
             "name": "Ftx",
             "data": {
@@ -1439,6 +1439,37 @@
             "color": "#00ffd5",
             "isPrivate": false,
             "metaSortKey": 1652833243571,
+            "_type": "environment"
+        },
+        {
+            "_id": "env_b71a4b1016d14736b1a952420585f358",
+            "parentId": "env_0294ce45850974a6280b61215be346094da99682",
+            "modified": 1653483911317,
+            "created": 1653483817092,
+            "name": "Huobi",
+            "data": {
+                "EXCHANGE_ID": "huobi",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "btcusdt",
+                "ORDER_RATE": 1000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.0011
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "EXCHANGE_ID",
+                    "KEY",
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
+                ]
+            },
+            "color": "#9a8ff0",
+            "isPrivate": false,
+            "metaSortKey": 1653483817092,
             "_type": "environment"
         }
     ]
