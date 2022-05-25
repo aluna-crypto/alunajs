@@ -61,7 +61,6 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.DELETE,
       credentials,
       url: getHuobiEndpoints(exchange.settings).order.cancel(id),
     })
