@@ -131,8 +131,9 @@ export const getFtxEndpoints = (
       edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
     },
     position: {
-      // list: `${baseUrl}/account`,
       list: `${baseUrl}/positions`,
+      getLeverage: `${baseUrl}/account`,
+      setLeverage: `${baseUrl}/account/leverage`,
     },
   }
 }
