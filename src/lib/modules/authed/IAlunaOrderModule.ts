@@ -104,6 +104,7 @@ export interface IAlunaOrderPlaceParams extends IAlunaModuleParams {
   limitRate?: number
   stopRate?: number
   amount: number
+  reduceOnly?: boolean
 }
 
 export interface IAlunaOrderPlaceReturns extends IAlunaOrderGetReturns {}

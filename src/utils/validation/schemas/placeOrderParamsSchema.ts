@@ -27,6 +27,9 @@ export const placeOrderParamsSchema = Joi.object<IAlunaOrderPlaceParams>({
   amount: Joi
     .number()
     .required(),
+  reduceOnly: Joi
+    .boolean()
+    .optional(),
   rate: Joi
     .number()
     .when('type', {
