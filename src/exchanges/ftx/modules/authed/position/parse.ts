@@ -8,11 +8,12 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { IFtxPositionSchema } from '../../../schemas/IFtxPositionSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaPositionParseParams<any>,
+  params: IAlunaPositionParseParams<IFtxPositionSchema>,
 ): IAlunaPositionParseReturns => {
 
   const { rawPosition } = params
@@ -21,17 +22,17 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     future,
     size,
     side,
-    _netSize,
-    _longOrderSize,
-    _shortOrderSize,
+    // netSize,
+    // longOrderSize,
+    // shortOrderSize,
     cost,
     entryPrice,
-    _unrealizedPnl,
+    // unrealizedPnl,
     realizedPnl,
     initialMarginRequirement,
-    _maintenanceMarginRequirement,
-    _openSize,
-    _collateralUsed,
+    // maintenanceMarginRequirement,
+    // openSize,
+    // collateralUsed,
     estimatedLiquidationPrice,
   } = rawPosition
 

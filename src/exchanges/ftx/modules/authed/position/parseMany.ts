@@ -7,6 +7,7 @@ import {
   IAlunaPositionParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
+import { IFtxPositionSchema } from '../../../schemas/IFtxPositionSchema'
 
 
 
@@ -15,7 +16,7 @@ const log = debug('alunajs:ftx/position/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaPositionParseManyParams<any[]>,
+  params: IAlunaPositionParseManyParams<IFtxPositionSchema[]>,
 ): IAlunaPositionParseManyReturns => {
 
   const { rawPositions } = params

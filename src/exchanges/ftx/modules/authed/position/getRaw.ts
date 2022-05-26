@@ -11,6 +11,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
+import { IFtxPositionSchema } from '../../../schemas/IFtxPositionSchema'
 
 
 
@@ -20,7 +21,7 @@ const log = debug('alunajs:bitfinex/position/getRaw')
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaPositionGetParams,
-): Promise<IAlunaPositionGetRawReturns<any>> => {
+): Promise<IAlunaPositionGetRawReturns<IFtxPositionSchema>> => {
 
   const {
     settings,
@@ -34,7 +35,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting raw position', { symbolPair })
 
-  const response = await http.authedRequest<any[]>({
+  const response = await http.authedRequest<IFtxPositionSchema[]>({
     credentials,
     url: getFtxEndpoints(settings).position.list,
     verb: AlunaHttpVerbEnum.GET,
