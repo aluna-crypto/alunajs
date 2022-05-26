@@ -65,12 +65,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const amount = Math.abs(size)
   const basePrice = entryPrice
-  const openPrice = (realizedPnl * -1) + entryPrice
+  const openPrice = entryPrice
 
   const total = Math.abs(cost)
 
   const pl = realizedPnl
-  const plPercentage = (openPrice * (realizedPnl / 100))
+  const plPercentage = (realizedPnl / 100)
   const liquidationPrice = estimatedLiquidationPrice
   const leverage = (1 / initialMarginRequirement)
 
