@@ -23,31 +23,31 @@ describe(__filename, () => {
     const size = 5
 
     expect(translateOrderStatusToAluna({
-      from: FtxOrderStatusEnum.NEW,
+      status: FtxOrderStatusEnum.NEW,
       filledSize: zeroedFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      from: FtxOrderStatusEnum.OPEN,
+      status: FtxOrderStatusEnum.OPEN,
       filledSize: zeroedFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
     expect(translateOrderStatusToAluna({
-      from: FtxOrderStatusEnum.OPEN,
+      status: FtxOrderStatusEnum.OPEN,
       filledSize: partiallyFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
-      from: FtxOrderStatusEnum.CLOSED,
+      status: FtxOrderStatusEnum.CLOSED,
       filledSize: totalFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
-      from: FtxOrderStatusEnum.CLOSED,
+      status: FtxOrderStatusEnum.CLOSED,
       filledSize: zeroedFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
