@@ -112,6 +112,85 @@ describe(__filename, () => {
 
   })
 
+  it('should place a stop Huobi stop limit order just fine', async () => {
+    // preparing data
+    const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_LIMIT
+
+    const translatedOrderSide = translateOrderSideToHuobi({ from: side })
+    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
+
+
+
+    const body = {
+      symbol: '',
+      type: `${translatedOrderSide}-${translatedOrderType}`,
+      'account-id': accountId,
+      amount: '0.01',
+      source: 'spot-api',
+      price: '0',
+      'stop-price': '1',
+    }
+
+    // mocking
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    const { get } = mockGet({ module: getMod })
+
+    get.returns({ order: mockedParsedOrder })
+
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    mockValidateParams()
+
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
+      stopRate: 1,
+    }
+
+    const { order } = await exchange.order.place(params)
+
+
+    // validating
+    expect(order).to.deep.eq(mockedParsedOrder)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      body,
+      credentials,
+      url: getHuobiEndpoints(exchange.settings).order.place,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+  })
+
   it('should place a Huobi market order just fine', async () => {
 
     // preparing data

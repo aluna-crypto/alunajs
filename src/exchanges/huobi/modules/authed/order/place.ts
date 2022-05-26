@@ -51,6 +51,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
+    stopRate,
     http = new HuobiHttp(settings),
   } = params
 
@@ -79,6 +80,15 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   if (translatedOrderType === HuobiOrderTypeEnum.LIMIT) {
 
     Object.assign(body, {
+      price: rate!.toString(),
+    })
+
+  }
+
+  if (translatedOrderType === HuobiOrderTypeEnum.STOP_LIMIT) {
+
+    Object.assign(body, {
+      'stop-price': stopRate!.toString(),
       price: rate!.toString(),
     })
 

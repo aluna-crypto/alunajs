@@ -48,17 +48,6 @@ export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       limitRate: 1,
     },
   },
-  {
-    type: AlunaOrderTypesEnum.TRAILING_STOP,
-    supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
-  },
 ]
 
 
@@ -66,22 +55,17 @@ export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
 export const huobiBaseSpecs: IAlunaExchangeSchema = {
   id: 'huobi',
   name: 'Huobi',
-  // TODO: Review 'signupUrl'
-  signupUrl: 'https://huobi.com/account/register',
-  // TODO: Review 'connectApiUrl'
-  connectApiUrl: 'https://huobi.com/manage?view=api',
-  // TODO: Review exchange rates limits
+  signupUrl: 'https://www.huobi.com/en-us/register/',
+  connectApiUrl: 'https://www.huobi.com/en-us/apikey/',
   rateLimitingPerMinute: {
-    perApiKey: 0,
-    perIp: 0,
+    perApiKey: 60,
+    perIp: 60,
   },
-  // TODO: Review supported features
   features: {
     offersOrderEditing: false,
     offersPositionId: false,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
     {
       type: AlunaAccountEnum.SPOT,
       supported: true,
