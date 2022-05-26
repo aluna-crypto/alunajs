@@ -10,13 +10,13 @@ export const translateOrderStatusToAluna = (
   params: {
       filledSize: number
       size: number
-      from: FtxOrderStatusEnum
+      status: FtxOrderStatusEnum
     },
 ): AlunaOrderStatusEnum => {
 
-  const { filledSize, size, from } = params
+  const { filledSize, size, status } = params
 
-  const isClosed = from === FtxOrderStatusEnum.CLOSED
+  const isClosed = status === FtxOrderStatusEnum.CLOSED
 
   if (isClosed) {
 
