@@ -68,9 +68,9 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      supported: true,
+      implemented: true,
+      orderTypes: ftxExchangeOrderTypes,
     },
     {
       type: AlunaAccountEnum.LENDING,
