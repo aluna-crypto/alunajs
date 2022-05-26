@@ -36,6 +36,28 @@ export const ftxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
       amount: 1,
     },
   },
+  {
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
+  {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+    mode: AlunaFeaturesModeEnum.WRITE,
+    options: {
+      rate: 1,
+      amount: 1,
+      limitRate: 1,
+    },
+  },
 ]
 
 
@@ -126,7 +148,10 @@ export const getFtxEndpoints = (
     order: {
       get: (id: string) => `${baseUrl}/orders/${id}`,
       list: `${baseUrl}/orders`,
+      listTriggerOrders: `${baseUrl}/conditional_orders`,
+      history: `${baseUrl}/orders/history`,
       place: `${baseUrl}/orders`,
+      placeTriggerOrder: `${baseUrl}/conditional_orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
       edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
     },
