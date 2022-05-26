@@ -1,7 +1,9 @@
 import { debug } from 'debug'
+import { assign } from 'lodash'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import {
   IAlunaOrderPlaceParams,
@@ -12,7 +14,6 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToFtx } from '../../../enums/adapters/ftxOrderSideAdapter'
 import { translateOrderTypeToFtx } from '../../../enums/adapters/ftxOrderTypeAdapter'
-import { FtxOrderTypeEnum } from '../../../enums/FtxOrderTypeEnum'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
@@ -51,6 +52,9 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
+    limitRate,
+    stopRate,
+    reduceOnly,
     http = new FtxHttp(settings),
   } = params
 
@@ -62,19 +66,41 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
+  let url: string
+
   const body = {
     side: translatedOrderSide,
     market: symbolPair,
     size: amount,
     type: translatedOrderType,
-    price: null,
+    ...(reduceOnly ? { reduceOnly } : {}),
   }
 
-  if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
+  switch (type) {
 
-    Object.assign(body, {
-      price: rate,
-    })
+    case AlunaOrderTypesEnum.LIMIT:
+      url = getFtxEndpoints(settings).order.place
+      assign(body, { price: rate })
+      break
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      url = getFtxEndpoints(settings).order.placeTriggerOrder
+      assign(body, { triggerPrice: stopRate })
+      break
+
+    case AlunaOrderTypesEnum.STOP_LIMIT:
+      url = getFtxEndpoints(settings).order.placeTriggerOrder
+      assign(body, {
+        triggerPrice: stopRate,
+        orderPrice: limitRate,
+      })
+
+      break
+
+    // Market orders
+    default:
+      url = getFtxEndpoints(settings).order.place
+      assign(body, { price: null })
 
   }
 
@@ -83,7 +109,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const orderResponse = await http.authedRequest<IFtxOrderSchema>({
-      url: getFtxEndpoints(settings).order.place,
+      url,
       body,
       credentials,
     })
