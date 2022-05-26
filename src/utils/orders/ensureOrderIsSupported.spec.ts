@@ -6,7 +6,6 @@ import {
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderSideEnum } from '../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCodes'
@@ -14,7 +13,6 @@ import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../lib/modules/authed/IAlunaOrderModule'
 import {
   IAlunaExchangeAccountSpecsSchema,
-  IAlunaExchangeOrderOptionsSchema,
   IAlunaExchangeSchema,
 } from '../../lib/schemas/IAlunaExchangeSchema'
 import { executeAndCatch } from '../executeAndCatch'
@@ -103,8 +101,6 @@ describe(__filename, () => {
               type,
               supported: true,
               implemented: true,
-              mode: AlunaFeaturesModeEnum.WRITE,
-              options: {} as IAlunaExchangeOrderOptionsSchema,
             },
           ],
         },
@@ -331,8 +327,6 @@ describe(__filename, () => {
             type,
             supported: false,
             implemented: true,
-            mode: AlunaFeaturesModeEnum.WRITE,
-            options: {} as IAlunaExchangeOrderOptionsSchema,
           },
         ],
       },
@@ -385,8 +379,6 @@ describe(__filename, () => {
             type,
             supported: true,
             implemented: false,
-            mode: AlunaFeaturesModeEnum.WRITE,
-            options: {} as IAlunaExchangeOrderOptionsSchema,
           },
         ],
       },
@@ -424,58 +416,5 @@ describe(__filename, () => {
 
   })
 
-  it('should ensure order type is in write mode', async () => {
-
-    // preparing data
-    const account = pickRandomOrderAccount()
-    const type = pickRandomOrderType()
-
-    const accounts: IAlunaExchangeAccountSpecsSchema[] = [
-      {
-        type: account,
-        supported: true,
-        implemented: true,
-        orderTypes: [
-          {
-            type,
-            supported: true,
-            implemented: true,
-            mode: AlunaFeaturesModeEnum.READ,
-            options: {} as IAlunaExchangeOrderOptionsSchema,
-          },
-        ],
-      },
-    ]
-
-
-    // mocking
-    mockDeps({ accounts })
-
-
-    // executing
-    const orderPlaceParams: IAlunaOrderPlaceParams = {
-      ...defaultOrderPlaceParams,
-      account,
-      type,
-    }
-
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => ensureOrderIsSupported({
-      exchangeSpecs,
-      orderPlaceParams,
-    }))
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' is in read mode`
-
-    expect(error!.code).to.be.eq(AlunaOrderErrorCodes.TYPE_IS_READ_ONLY)
-    expect(error!.message).to.be.eq(msg)
-
-  })
 
 })
