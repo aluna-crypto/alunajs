@@ -48,6 +48,7 @@ export interface IFtxTriggerOrderSchema {
   trailValue: number | null
   triggerPrice: number
   triggeredAt: string | null
+  cancelledAt: string | null
   orderType: FtxOrderTypeEnum
   retryUntilFilled: boolean
 }
