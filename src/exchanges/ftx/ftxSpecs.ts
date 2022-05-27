@@ -149,7 +149,7 @@ export const getFtxEndpoints = (
       get: (id: string) => `${baseUrl}/orders/${id}`,
       list: `${baseUrl}/orders`,
       listTriggerOrders: `${baseUrl}/conditional_orders`,
-      history: `${baseUrl}/orders/history`,
+      listTriggerOrdersHistory: `${baseUrl}/conditional_orders/history`,
       place: `${baseUrl}/orders`,
       placeTriggerOrder: `${baseUrl}/conditional_orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
