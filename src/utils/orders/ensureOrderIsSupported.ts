@@ -4,7 +4,10 @@ import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
-import { IAlunaOrderPlaceParams } from '../../lib/modules/authed/IAlunaOrderModule'
+import {
+  IAlunaOrderEditParams,
+  IAlunaOrderPlaceParams,
+} from '../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaExchangeSchema } from '../../lib/schemas/IAlunaExchangeSchema'
 
 
@@ -14,7 +17,7 @@ const log = debug('alunajs:utils/order/ensureOrderIsSupported')
 
 
 export interface IEnsureOrderIsSupportedParams {
-  orderPlaceParams: IAlunaOrderPlaceParams
+  orderParams: IAlunaOrderPlaceParams | IAlunaOrderEditParams
   exchangeSpecs: IAlunaExchangeSchema
 }
 
@@ -26,11 +29,7 @@ export const ensureOrderIsSupported = (
 
   const {
     exchangeSpecs,
-    orderPlaceParams: {
-      // amount,
-      // rate,
-      // symbolPair,
-      // side,
+    orderParams: {
       type,
       account,
     },

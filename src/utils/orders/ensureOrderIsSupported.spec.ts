@@ -124,7 +124,7 @@ describe(__filename, () => {
 
       const { error } = await executeAndCatch(() => ensureOrderIsSupported({
         exchangeSpecs,
-        orderPlaceParams,
+        orderParams: orderPlaceParams,
       }))
 
 
@@ -159,7 +159,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -205,7 +205,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -252,7 +252,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -300,7 +300,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -354,7 +354,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -409,7 +409,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
@@ -464,7 +464,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => ensureOrderIsSupported({
       exchangeSpecs,
-      orderPlaceParams,
+      orderParams: orderPlaceParams,
     }))
 
 
