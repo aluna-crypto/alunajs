@@ -41,6 +41,12 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
 
     expect(translateOrderStatusToAluna({
+      status: FtxOrderStatusEnum.CANCELLED,
+      filledSize: partiallyFilledAmount,
+      size,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
       status: FtxOrderStatusEnum.CLOSED,
       filledSize: totalFilledAmount,
       size,
@@ -51,6 +57,12 @@ describe(__filename, () => {
       filledSize: zeroedFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      status: FtxOrderStatusEnum.TRIGGERED,
+      filledSize: zeroedFilledAmount,
+      size,
+    })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
   })
 

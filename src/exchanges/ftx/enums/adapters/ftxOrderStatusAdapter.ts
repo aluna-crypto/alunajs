@@ -1,5 +1,7 @@
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaAdaptersErrorCodes } from '../../../../lib/errors/AlunaAdaptersErrorCodes'
 import { FtxOrderStatusEnum } from '../FtxOrderStatusEnum'
 
 
@@ -8,39 +10,64 @@ const errorMessagePrefix = 'Order status'
 
 export const translateOrderStatusToAluna = (
   params: {
-      filledSize: number
       size: number
       status: FtxOrderStatusEnum
+      filledSize: number
     },
 ): AlunaOrderStatusEnum => {
 
-  const { filledSize, size, status } = params
+  const {
+    size,
+    status,
+    filledSize,
+  } = params
 
-  const isClosed = status === FtxOrderStatusEnum.CLOSED
+  let alunaStatus: AlunaOrderStatusEnum
 
-  if (isClosed) {
-
-    const isFilled = filledSize === size
-
-    if (isFilled) {
-
-      return AlunaOrderStatusEnum.FILLED
-
-    }
-
-    return AlunaOrderStatusEnum.CANCELED
-
-  }
-
+  const isSizeFilled = filledSize === size
   const isPartiallyFilled = filledSize > 0 && filledSize < size
 
-  if (isPartiallyFilled) {
+  switch (status) {
 
-    return AlunaOrderStatusEnum.PARTIALLY_FILLED
+    case FtxOrderStatusEnum.NEW:
+      alunaStatus = AlunaOrderStatusEnum.OPEN
+      break
+
+    case FtxOrderStatusEnum.OPEN:
+      if (isPartiallyFilled) {
+        alunaStatus = AlunaOrderStatusEnum.PARTIALLY_FILLED
+      } else {
+        alunaStatus = AlunaOrderStatusEnum.OPEN
+      }
+      break
+
+    case FtxOrderStatusEnum.CANCELLED:
+      alunaStatus = AlunaOrderStatusEnum.CANCELED
+      break
+
+    case FtxOrderStatusEnum.CLOSED:
+      if (isSizeFilled) {
+        alunaStatus = AlunaOrderStatusEnum.FILLED
+      } else {
+        alunaStatus = AlunaOrderStatusEnum.CANCELED
+      }
+
+      break
+
+    case FtxOrderStatusEnum.TRIGGERED:
+      alunaStatus = AlunaOrderStatusEnum.FILLED
+      break
+
+    default:
+
+      throw new AlunaError({
+        message: `${errorMessagePrefix} not supported: ${status}`,
+        code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
+      })
 
   }
 
-  return AlunaOrderStatusEnum.OPEN
+  return alunaStatus
 
 }
 
@@ -54,7 +81,7 @@ export const translateOrderStatusToFtx = buildAdapter<
   mappings: {
     [AlunaOrderStatusEnum.OPEN]: FtxOrderStatusEnum.OPEN,
     [AlunaOrderStatusEnum.PARTIALLY_FILLED]: FtxOrderStatusEnum.OPEN,
-    [AlunaOrderStatusEnum.FILLED]: FtxOrderStatusEnum.CLOSED,
     [AlunaOrderStatusEnum.CANCELED]: FtxOrderStatusEnum.CLOSED,
+    [AlunaOrderStatusEnum.FILLED]: FtxOrderStatusEnum.CLOSED,
   },
 })
