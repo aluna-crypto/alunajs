@@ -154,6 +154,7 @@ export const getFtxEndpoints = (
       placeTriggerOrder: `${baseUrl}/conditional_orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
       edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
+      editTrigger: (id: string) => `${baseUrl}/conditional_orders/${id}/modify`,
     },
     position: {
       list: `${baseUrl}/positions`,
