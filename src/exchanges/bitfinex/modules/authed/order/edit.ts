@@ -10,6 +10,7 @@ import {
   IAlunaOrderEditParams,
   IAlunaOrderEditReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
+import { ensureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported'
 import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/editOrderParamsSchema'
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitfinexHttp } from '../../../BitfinexHttp'
@@ -33,6 +34,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   log('editing order', params)
 
   const {
+    specs,
     settings,
     credentials,
   } = exchange
@@ -40,6 +42,11 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   validateParams({
     params,
     schema: editOrderParamsSchema,
+  })
+
+  ensureOrderIsSupported({
+    exchangeSpecs: specs,
+    orderParams: params,
   })
 
   log('editing order for Bitfinex')
