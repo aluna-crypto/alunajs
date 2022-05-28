@@ -1,6 +1,7 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTriggerStatusEnum } from '../../../../../lib/enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
@@ -23,7 +24,6 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseParams<IFtxOrderSchema | IFtxTriggerOrderSchema>,
 ): IAlunaOrderParseReturns => {
 
-
   const { rawOrder } = params
 
   const {
@@ -45,9 +45,10 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     // trailStart,
     // trailValue,
     triggerPrice,
-    // triggeredAt,
+    triggeredAt,
     orderType,
     // retryUntilFilled,
+    cancelledAt,
   } = rawOrder as IFtxTriggerOrderSchema
 
   let {
@@ -79,7 +80,6 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     size,
     filledSize,
   })
-
 
   let total: number | undefined
   let rate: number | undefined
@@ -123,13 +123,28 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   if (isCanceled) {
 
-    canceledAt = new Date()
+    canceledAt = cancelledAt
+      ? new Date(cancelledAt)
+      : new Date()
 
   }
 
   if (isFilled) {
 
-    filledAt = new Date()
+    filledAt = triggeredAt
+      ? new Date(triggeredAt)
+      : new Date()
+
+  }
+
+  let triggerStatus: AlunaOrderTriggerStatusEnum | undefined
+
+  // 'orderType' prop exists only for trigger orders
+  if (orderType) {
+
+    triggerStatus = triggeredAt
+      ? AlunaOrderTriggerStatusEnum.TRIGGERED
+      : AlunaOrderTriggerStatusEnum.UNTRIGGERED
 
   }
 
@@ -141,6 +156,8 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     quoteSymbolId,
     amount: size,
     rate,
+    limitRate,
+    stopRate,
     total,
     account,
     side: computedOrderSide,
@@ -149,9 +166,8 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     placedAt: new Date(createdAt),
     canceledAt,
     filledAt,
+    triggerStatus,
     meta: rawOrder,
-    limitRate,
-    stopRate,
   }
 
   return { order }
