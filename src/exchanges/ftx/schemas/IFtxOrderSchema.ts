@@ -29,24 +29,27 @@ export interface IFtxOrderSchema {
 export interface IFtxTriggerOrderSchema {
   createdAt: string
   filledSize: number
-  future: string
+  future: string | null
   id: number
   market: string
   price: number | null
   avgFillPrice: number | null
-  remainingSize: number
+  remainingSize: number | null
   side: FtxOrderSideEnum
   size: number
   status: FtxOrderStatusEnum
+  orderId: null // DEPRECATED
+  error: null // DEPRECATED
+  cancelReason: string | null
   type: FtxTriggerOrderTypeEnum
   reduceOnly: boolean
-  ioc: boolean
-  postOnly: boolean
-  clientId: number
+  ioc: boolean | null
+  postOnly: boolean | null
+  clientId: number | null
   orderPrice: number | null
   trailStart: number | null
   trailValue: number | null
-  triggerPrice: number
+  triggerPrice: number | null
   triggeredAt: string | null
   cancelledAt: string | null
   orderType: FtxOrderTypeEnum
