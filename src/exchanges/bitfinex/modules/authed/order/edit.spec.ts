@@ -1,9 +1,7 @@
 import { expect } from 'chai'
-import {
-  cloneDeep,
-  each,
-} from 'lodash'
+import { cloneDeep } from 'lodash'
 
+import { testEditOrder } from '../../../../../../test/macros/testEditOrder'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -19,14 +17,15 @@ import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
-import { BITFINEX_CANCEL_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
+import {
+  BITFINEX_CANCEL_ORDER_RESPONSE,
+  BITFINEX_PLACE_ORDER_RESPONSE,
+} from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
-import { testBitfinexOrderEdit } from './test/testBitfinexOrderEdit'
 
 
 
-describe(__filename, () => {
+describe.only(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -45,51 +44,16 @@ describe(__filename, () => {
     limitRate: 15,
   }
 
-  const bitfinexAccounts = bitfinexBaseSpecs.accounts
 
-  each(bitfinexAccounts, (account) => {
-
-    const {
-      implemented,
-      orderTypes,
-      type: accountType,
-    } = account
-
-    if (implemented) {
-
-      each(orderTypes, (orderType) => {
-
-        const {
-          type,
-          implemented,
-        } = orderType
-
-        if (implemented && type !== AlunaOrderTypesEnum.MARKET) {
-
-          // Buy Order
-          const orderParams: IAlunaOrderEditParams = {
-            ...commonOrderParams,
-            account: accountType,
-            type,
-            amount: 10,
-          }
-
-          testBitfinexOrderEdit(orderParams)
-
-
-          // Sell Order
-          testBitfinexOrderEdit({
-            ...orderParams,
-            amount: -10,
-          })
-
-        }
-
-      })
-
-    }
-
+  testEditOrder({
+    ExchangeAuthed: BitfinexAuthed,
+    HttpClass: BitfinexHttp,
+    parseImportPath: parseMod,
+    authedRequestResponse: BITFINEX_PLACE_ORDER_RESPONSE,
+    credentials,
+    validateAuthedRequest: () => ({}),
   })
+
 
   it('should throw error if order edit request fails', async () => {
 
@@ -239,6 +203,5 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(0)
 
   })
-
 
 })
