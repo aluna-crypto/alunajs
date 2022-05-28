@@ -1,12 +1,14 @@
 import { expect } from 'chai'
 
-import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
-import { getFtxEndpoints } from '../../../ftxSpecs'
-import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
+import {
+  FTX_RAW_ORDERS,
+  FTX_TRIGGER_RAW_ORDERS,
+} from '../../../test/fixtures/ftxOrders'
+import { mockGetFtxOrdinaryOrder } from './helpers/getFtxOrdinaryOrder.mock'
+import { mockGetFtxTriggerOrder } from './helpers/getFtxTriggerOrder.mock'
 
 
 
@@ -17,21 +19,24 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should get a Ftx raw order just fine', async () => {
+  it('should get a Ftx ordinary raw order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = FTX_RAW_ORDERS[0]
+    const mockedOrdinaryOrder = FTX_RAW_ORDERS[0]
+    const mockedTriggerOrders = FTX_TRIGGER_RAW_ORDERS
 
-    const { id } = mockedRawOrder
+    const {
+      id,
+      market,
+    } = mockedOrdinaryOrder
 
 
     // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: FtxHttp.prototype })
+    const { getFtxOrdinaryOrder } = mockGetFtxOrdinaryOrder()
+    const { getFtxTriggerOrder } = mockGetFtxTriggerOrder()
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    getFtxOrdinaryOrder.returns(Promise.resolve(mockedOrdinaryOrder))
+    getFtxTriggerOrder.returns(Promise.resolve(mockedTriggerOrders))
 
 
     // executing
@@ -39,22 +44,69 @@ describe(__filename, () => {
 
     const { rawOrder } = await exchange.order.getRaw({
       id: id.toString(),
-      symbolPair: '',
+      symbolPair: market,
     })
 
 
     // validating
-    expect(rawOrder).to.deep.eq(mockedRawOrder)
+    expect(rawOrder).to.deep.eq(mockedOrdinaryOrder)
 
-    expect(authedRequest.callCount).to.be.eq(1)
-
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.GET,
-      credentials,
-      url: getFtxEndpoints(exchange.settings).order.get(id.toString()),
+    expect(getFtxOrdinaryOrder.callCount).to.be.eq(1)
+    expect(getFtxOrdinaryOrder.firstCall.args[0]).to.deep.eq({
+      exchange,
+      http: new FtxHttp({}),
+      id: id.toString(),
     })
 
-    expect(publicRequest.callCount).to.be.eq(0)
+    expect(getFtxTriggerOrder.callCount).to.be.eq(0)
+
+  })
+
+  it('should get a Ftx trigger raw order just fine', async () => {
+
+    // preparing data
+    const mockedTriggerOrder = FTX_TRIGGER_RAW_ORDERS[0]
+
+    const {
+      id,
+      market,
+    } = mockedTriggerOrder
+
+
+    // mocking
+    const { getFtxOrdinaryOrder } = mockGetFtxOrdinaryOrder()
+    const { getFtxTriggerOrder } = mockGetFtxTriggerOrder()
+
+    getFtxOrdinaryOrder.returns(Promise.resolve())
+    getFtxTriggerOrder.returns(Promise.resolve(mockedTriggerOrder))
+
+
+    // executing
+    const exchange = new FtxAuthed({ credentials })
+
+    const { rawOrder } = await exchange.order.getRaw({
+      id: id.toString(),
+      symbolPair: market,
+    })
+
+
+    // validating
+    expect(rawOrder).to.deep.eq(mockedTriggerOrder)
+
+    expect(getFtxOrdinaryOrder.callCount).to.be.eq(1)
+    expect(getFtxOrdinaryOrder.firstCall.args[0]).to.deep.eq({
+      exchange,
+      http: new FtxHttp({}),
+      id: id.toString(),
+    })
+
+    expect(getFtxTriggerOrder.callCount).to.be.eq(1)
+    expect(getFtxTriggerOrder.firstCall.args[0]).to.deep.eq({
+      exchange,
+      http: new FtxHttp({}),
+      id: id.toString(),
+      symbolPair: market,
+    })
 
   })
 
