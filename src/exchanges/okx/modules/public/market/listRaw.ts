@@ -8,7 +8,7 @@ import {
 import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxMarketSchema } from '../../../schemas/IOkxMarketSchema'
+import { IOkxMarketSchema, IOkxMarketsResponseSchema } from '../../../schemas/IOkxMarketSchema'
 
 
 
@@ -18,7 +18,7 @@ const log = debug('alunajs:okx/market/listRaw')
 
 export const listRaw = (exchange: IAlunaExchangePublic) => async (
   params: IAlunaMarketListParams = {},
-): Promise<IAlunaMarketListRawReturns<IOkxMarketSchema[]>> => {
+): Promise<IAlunaMarketListRawReturns<IOkxMarketsResponseSchema>> => {
 
   const { settings } = exchange
 
@@ -32,10 +32,19 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     url: getOkxEndpoints(settings).market.list(type),
   })
 
+  const { rawSymbols } = await exchange.symbol.listRaw({
+    http,
+  })
+
   const { requestWeight } = http
 
-  return {
+  const rawMarketsResponse: IOkxMarketsResponseSchema = {
     rawMarkets,
+    rawSymbols,
+  }
+
+  return {
+    rawMarkets: rawMarketsResponse,
     requestWeight,
   }
 

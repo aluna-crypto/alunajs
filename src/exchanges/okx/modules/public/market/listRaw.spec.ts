@@ -1,11 +1,14 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
 import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { Okx } from '../../../Okx'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
 import { OKX_RAW_MARKETS } from '../../../test/fixtures/okxMarket'
+import { OKX_RAW_SYMBOLS } from '../../../test/fixtures/okxSymbols'
+import * as listRawMod from '../symbol/listRaw'
 
 
 
@@ -18,6 +21,8 @@ describe(__filename, () => {
     const type = OkxSymbolTypeEnum.SPOT
 
     // mocking
+    const http = new OkxHttp({})
+
     const {
       publicRequest,
       authedRequest,
@@ -25,6 +30,14 @@ describe(__filename, () => {
 
     publicRequest.returns(Promise.resolve(OKX_RAW_MARKETS))
 
+
+    const { listRaw: listRawSymbols } = mockListRaw({
+      module: listRawMod,
+    })
+
+    listRawSymbols.returns(Promise.resolve({
+      rawSymbols: OKX_RAW_SYMBOLS,
+    }))
 
     // executing
     const exchange = new Okx({})
@@ -36,7 +49,16 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawMarkets).to.deep.eq(OKX_RAW_MARKETS)
+    expect(rawMarkets).to.deep.eq({
+      rawMarkets: OKX_RAW_MARKETS,
+      rawSymbols: OKX_RAW_SYMBOLS,
+    })
+
+    expect(listRawSymbols.callCount).to.be.eq(1)
+
+    expect(listRawSymbols.firstCall.args[0]).to.deep.eq({
+      http,
+    })
 
     expect(requestWeight).to.be.ok
 

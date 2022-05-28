@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Okx } from '../../../Okx'
 import { OKX_RAW_MARKETS } from '../../../test/fixtures/okxMarket'
+import { OKX_RAW_SYMBOLS } from '../../../test/fixtures/okxSymbols'
 
 
 
@@ -12,6 +13,13 @@ describe(__filename, () => {
 
     // preparing data
     const rawMarket = OKX_RAW_MARKETS[0]
+
+    const rawSpotSymbol = OKX_RAW_SYMBOLS[0]
+
+    const rawMarketRequest = {
+      rawMarket,
+      rawSpotSymbol,
+    }
 
     const {
       askPx,
@@ -43,13 +51,12 @@ describe(__filename, () => {
     const exchange = new Okx({})
 
     const { market } = exchange.market.parse({
-      rawMarket,
+      rawMarket: rawMarketRequest,
     })
 
 
     // validating
     expect(market).to.exist
-
 
     expect(market.exchangeId).to.be.eq(exchange.specs.id)
     expect(market.baseSymbolId).to.be.eq(baseCurrency)

@@ -7,8 +7,8 @@ import {
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { OkxSymbolTypeEnum } from '../../../enums/OkxSymbolTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
-import { getOkxEndpoints } from '../../../okxSpecs'
 import { IOkxSymbolSchema } from '../../../schemas/IOkxSymbolSchema'
+import { fetchInstruments } from '../helpers/fetchInstruments'
 
 
 
@@ -26,13 +26,25 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  const type = OkxSymbolTypeEnum.SPOT
+  const {
+    instruments: rawSpotSymbols,
+  } = await fetchInstruments({
+    http,
+    settings,
+    type: OkxSymbolTypeEnum.SPOT,
+  })
 
-  const rawSymbols = await http.publicRequest<IOkxSymbolSchema[]>({
-    url: getOkxEndpoints(settings).symbol.list(type),
+  const {
+    instruments: rawMarginSymbols,
+  } = await fetchInstruments({
+    http,
+    settings,
+    type: OkxSymbolTypeEnum.MARGIN,
   })
 
   const { requestWeight } = http
+
+  const rawSymbols = [...rawSpotSymbols, ...rawMarginSymbols]
 
   return {
     requestWeight,

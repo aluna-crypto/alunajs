@@ -5,15 +5,21 @@ import {
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { IOkxMarketSchema } from '../../../schemas/IOkxMarketSchema'
+import { IOkxMarketResponseSchema } from '../../../schemas/IOkxMarketSchema'
 
 
 
 export const parse = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseParams<IOkxMarketSchema>,
+  params: IAlunaMarketParseParams<IOkxMarketResponseSchema>,
 ): IAlunaMarketParseReturns => {
 
-  const { rawMarket } = params
+  const { rawMarket: rawMarketResponse } = params
+
+  const {
+    rawMarket,
+    rawMarginSymbol,
+    rawSpotSymbol,
+  } = rawMarketResponse
 
   const {
     askPx,
@@ -58,16 +64,19 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     quoteVolume: Number(volCcy24h),
   }
 
+  const spotEnabled = !!rawSpotSymbol
+  const marginEnabled = !!rawMarginSymbol
+
   const market: IAlunaMarketSchema = {
     symbolPair: instId,
     baseSymbolId,
     quoteSymbolId,
     ticker,
     exchangeId: exchange.specs.id,
-    spotEnabled: true,
+    spotEnabled,
+    marginEnabled,
     derivativesEnabled: false,
     leverageEnabled: false,
-    marginEnabled: false,
     meta: rawMarket,
   }
 

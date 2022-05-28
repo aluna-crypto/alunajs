@@ -5,6 +5,7 @@ import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Okx } from '../../../Okx'
 import { OKX_RAW_MARKETS } from '../../../test/fixtures/okxMarket'
+import { OKX_RAW_SYMBOLS } from '../../../test/fixtures/okxSymbols'
 import * as parseMod from './parse'
 
 
@@ -15,6 +16,13 @@ describe(__filename, () => {
 
     // preparing data
     const rawMarkets = OKX_RAW_MARKETS
+
+    const rawSymbols = OKX_RAW_SYMBOLS
+
+    const rawMarketsRequest = {
+      rawMarkets,
+      rawSymbols,
+    }
 
     // mocking
     const { parse } = mockParse({ module: parseMod })
@@ -28,7 +36,7 @@ describe(__filename, () => {
     const exchange = new Okx({})
 
     const { markets } = exchange.market.parseMany({
-      rawMarkets,
+      rawMarkets: rawMarketsRequest,
     })
 
 

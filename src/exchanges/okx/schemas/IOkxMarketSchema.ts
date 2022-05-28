@@ -1,3 +1,7 @@
+import { IOkxSymbolSchema } from './IOkxSymbolSchema'
+
+
+
 export interface IOkxMarketSchema {
   instType: string
   instId: string
@@ -15,4 +19,15 @@ export interface IOkxMarketSchema {
   ts: string
   sodUtc0: string
   sodUtc8: string
+}
+
+export interface IOkxMarketsResponseSchema {
+  rawMarkets: IOkxMarketSchema[]
+  rawSymbols: IOkxSymbolSchema[]
+}
+
+export interface IOkxMarketResponseSchema {
+  rawMarket: IOkxMarketSchema
+  rawSpotSymbol?: IOkxSymbolSchema
+  rawMarginSymbol?: IOkxSymbolSchema
 }

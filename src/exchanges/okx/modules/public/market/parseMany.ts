@@ -1,12 +1,12 @@
 import debug from 'debug'
-import { map } from 'lodash'
+import { find, map } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { IOkxMarketSchema } from '../../../schemas/IOkxMarketSchema'
+import { IOkxMarketResponseSchema, IOkxMarketsResponseSchema } from '../../../schemas/IOkxMarketSchema'
 
 
 
@@ -15,15 +15,36 @@ const log = debug('alunajs:okx/market/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangePublic) => (
-  params: IAlunaMarketParseManyParams<IOkxMarketSchema[]>,
+  params: IAlunaMarketParseManyParams<IOkxMarketsResponseSchema>,
 ): IAlunaMarketParseManyReturns => {
 
-  const { rawMarkets } = params
+  const { rawMarkets: rawMarketsResponse } = params
+
+  const {
+    rawMarkets,
+    rawSymbols,
+  } = rawMarketsResponse
 
   const markets = map(rawMarkets, (rawMarket) => {
 
-    const { market } = exchange.market.parse({
+    const { instId } = rawMarket
+
+    const rawSpotSymbol = find(rawSymbols, {
+      instId,
+    })
+
+    const rawMarginSymbol = find(rawSymbols, {
+      instId,
+    })
+
+    const rawMarketRequest: IOkxMarketResponseSchema = {
       rawMarket,
+      rawSpotSymbol,
+      rawMarginSymbol,
+    }
+
+    const { market } = exchange.market.parse({
+      rawMarket: rawMarketRequest,
     })
 
     return market
