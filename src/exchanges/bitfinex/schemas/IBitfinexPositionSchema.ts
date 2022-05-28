@@ -34,13 +34,13 @@ type TBitfinexPosition = [
   interface IBitfinexPositionMeta {
 
     /* eslint-disable camelcase */
-    reason: 'TRADE' // what more?
+    reason: 'TRADE' | 'FUNDING_ACCR' // what more?
     order_id: number
     liq_stage: null | number
     order_cid: null | number
     order_gid: null | number
-    trade_price: string
-    trade_amount: string
+    trade_price?: string
+    trade_amount?: string
     order_id_oppo: number
     /** eslint-enable camelcase */
 

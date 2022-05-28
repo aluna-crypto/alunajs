@@ -85,6 +85,31 @@ describe(__filename, () => {
 
   })
 
+  it('should parse Bitfinex position just fine (meta.trade_price UNDEFINED)', async () => {
+
+    // preparing data
+    const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
+    rawPosition[19].trade_price = undefined
+
+
+    // executing
+    runTest(rawPosition)
+
+  })
+
+  it('should parse Bitfinex position just fine (meta.trade_amount UNDEFINED)', async () => {
+
+    // preparing data
+    const rawPosition = cloneDeep(BITFINEX_RAW_POSITIONS[0])
+    rawPosition[2] = 0
+    rawPosition[19].trade_amount = undefined
+
+
+    // executing
+    runTest(rawPosition)
+
+  })
+
 
 
   const runTest = (rawPosition: IBitfinexPositionSchema) => {
@@ -121,6 +146,7 @@ describe(__filename, () => {
     const { position } = exchange.position!.parse({
       rawPosition,
     })
+
 
 
     // validating
@@ -209,7 +235,9 @@ describe(__filename, () => {
 
     if (amount === 0) {
 
-      expectedAmount = Math.abs(Number(meta.trade_amount))
+      expectedAmount = meta.trade_amount
+        ? Math.abs(Number(meta.trade_amount))
+        : 0
 
     } else {
 
@@ -218,7 +246,10 @@ describe(__filename, () => {
     }
 
     const expectedBasePrice = Number(basePrice)
-    const expectedOpenPrice = Number(meta.trade_price)
+    const expectedOpenPrice = meta.trade_price
+      ? Number(meta.trade_price)
+      : basePrice
+
 
     const expectedTotal = expectedAmount * expectedBasePrice
 

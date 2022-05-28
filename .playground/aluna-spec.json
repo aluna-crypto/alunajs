@@ -765,7 +765,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.SPOT }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
+                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -1440,7 +1440,37 @@
             },
             "color": "#0929aa",
             "isPrivate": false,
-            "metaSortKey": 1653009615092,
+            "metaSortKey": 1653009615092
+        },
+        {
+            "_id": "env_e524d6c1fb6247348832a850cae3e36d",
+            "parentId": "env_0294ce45850974a6280b61215be346094da99682",
+            "modified": 1652964897280,
+            "created": 1652833243571,
+            "name": "Ftx",
+            "data": {
+                "EXCHANGE_ID": "ftx",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'FTX_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'FTX_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "BTC/USD",
+                "ORDER_RATE": 1000,
+                "ORDER_AMOUNT": 0.001,
+                "ORDER_EDITED_AMOUNT": 0.0011
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "EXCHANGE_ID",
+                    "KEY",
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
+                ]
+            },
+            "color": "#00ffd5",
+            "isPrivate": false,
+            "metaSortKey": 1652833243571,
             "_type": "environment"
         }
     ]

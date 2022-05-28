@@ -1,3 +1,15 @@
+# 1.1.0 (May 24, 2022)
+
+ - Improved order and position integration tests
+ - Added FTX exchange, supporting spot trading
+ - Fixed parse for Poloniex orders
+ - Fixed parse for Bitfinex market orders
+ - Fixed parse for Bitmex/Bitfinex closed positions
+
+# 1.0.3 (May 20, 2022)
+
+ - Fix Bitfinex position `openPrice` parse
+
 # 1.0.2 (May 19, 2022)
 
  - Filtering zeroed balances

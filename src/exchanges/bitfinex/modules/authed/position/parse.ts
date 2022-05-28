@@ -70,7 +70,9 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   if (amount === 0) {
 
-    computedAmount = Math.abs(Number(meta.trade_amount))
+    computedAmount = meta.trade_amount
+      ? Math.abs(Number(meta.trade_amount))
+      : 0
 
   } else {
 
@@ -78,8 +80,11 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   }
 
-  const computedBasePrice = Number(basePrice)
-  const computedOpenPrice = Number(meta.trade_price)
+  const computedBasePrice = basePrice
+
+  const computedOpenPrice = meta.trade_price
+    ? Number(meta.trade_price)
+    : basePrice
 
   const total = computedAmount * computedBasePrice
 

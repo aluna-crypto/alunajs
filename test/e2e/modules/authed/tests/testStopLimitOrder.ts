@@ -18,7 +18,15 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
     exchangeConfigs,
   } = params
 
-  const { supportsGetCanceledOrders = true } = exchangeConfigs
+  const {
+    orderAccount,
+    orderAmount,
+    orderEditAmount,
+    orderLimitRate,
+    orderStopRate,
+    supportsGetCanceledOrders = true,
+  } = exchangeConfigs
+
 
   describe('type:stopLimit', () => {
 
@@ -29,8 +37,34 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         requestWeight,
       } = await placeStopLimitOrder(params)
 
-      expect(order).to.exist
+      expect(order.id).to.exist
+      expect(order.symbolPair).to.exist
+      expect(order.baseSymbolId).to.exist
+      expect(order.quoteSymbolId).to.exist
+      expect(order.stopRate).to.be.eq(orderStopRate)
+      expect(order.limitRate).to.be.eq(orderLimitRate)
+      expect(order.exchangeId).to.exist
+      expect(order.total).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
+      expect(order.side).to.be.eq(AlunaOrderSideEnum.BUY)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+      expect(order.account).to.be.eq(orderAccount)
+      expect(order.placedAt).to.exist
+      expect(order.meta).to.exist
+
+      expect(order.rate).not.to.exist
+      expect(order.filledAt).not.to.exist
+      expect(order.canceledAt).not.to.exist
+
+      if (order.uiCustomDisplay) {
+
+        expect(order.uiCustomDisplay.amount.value).to.be.eq(orderAmount)
+
+      } else {
+
+        expect(order.amount).to.be.eq(orderAmount)
+
+      }
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -57,7 +91,8 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         id: stopLimitOrderId!,
       })
 
-      expect(order).to.exist
+      expect(order.id).to.exist
+      expect(order.symbolPair).to.be.eq(orderSymbolPair)
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
@@ -70,14 +105,6 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         stopLimitOrderId,
         orderSymbolPair,
       } = liveData
-
-      const {
-        orderAccount,
-        orderLimitRate,
-        orderStopRate,
-        orderEditAmount,
-        orderAmount,
-      } = exchangeConfigs
 
       const {
         order,
@@ -94,7 +121,17 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       })
 
       expect(order).to.exist
-      expect(order.amount).not.to.be.eq(orderAmount)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
+
+      if (order.uiCustomDisplay) {
+
+        expect(order.uiCustomDisplay.amount.value).to.be.eq(orderEditAmount)
+
+      } else {
+
+        expect(order.amount).to.be.eq(orderEditAmount)
+
+      }
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -112,7 +149,6 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       const {
         stopLimitOrderId,
         orderSymbolPair,
-        orderEditedAmount,
       } = liveData
 
       const {
@@ -125,7 +161,16 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
 
       expect(order).to.exist
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.OPEN)
-      expect(order.amount).to.be.eq(orderEditedAmount)
+
+      if (order.uiCustomDisplay) {
+
+        expect(order.uiCustomDisplay.amount.value).to.be.eq(orderEditAmount)
+
+      } else {
+
+        expect(order.amount).to.be.eq(orderEditAmount)
+
+      }
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -147,6 +192,8 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       })
 
       expect(order).to.exist
+      expect(order.canceledAt).to.exist
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -173,6 +220,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         })
 
         expect(order).to.exist
+        expect(order.canceledAt).to.exist
         expect(order.status).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
         expect(requestWeight.authed).to.be.greaterThan(0)

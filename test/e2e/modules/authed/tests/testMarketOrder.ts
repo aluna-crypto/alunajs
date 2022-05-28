@@ -29,7 +29,10 @@ export const testMarketOrder = (params: IAuthedParams) => {
       })
 
       expect(order).to.exist
+      expect(order.placedAt).to.exist
+      expect(order.filledAt).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
+      expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
       expect(requestWeight.authed).to.be.greaterThan(0)
 
@@ -57,6 +60,8 @@ export const testMarketOrder = (params: IAuthedParams) => {
       })
 
       expect(order).to.exist
+      expect(order.placedAt).to.exist
+      expect(order.filledAt).to.exist
       expect(order.type).to.be.eq(AlunaOrderTypesEnum.MARKET)
       expect(order.status).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
