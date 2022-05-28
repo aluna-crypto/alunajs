@@ -1,5 +1,4 @@
 import { debug } from 'debug'
-import { assign } from 'lodash'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
@@ -43,7 +42,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -68,7 +67,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   let url: string
 
-  const body = {
+  const body: Record<string, any> = {
     side: translatedOrderSide,
     market: symbolPair,
     size: amount,
@@ -80,27 +79,24 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     case AlunaOrderTypesEnum.LIMIT:
       url = getFtxEndpoints(settings).order.place
-      assign(body, { price: rate })
+      body.price = rate
       break
 
     case AlunaOrderTypesEnum.STOP_MARKET:
       url = getFtxEndpoints(settings).order.placeTriggerOrder
-      assign(body, { triggerPrice: stopRate })
+      body.triggerPrice = stopRate
       break
 
     case AlunaOrderTypesEnum.STOP_LIMIT:
       url = getFtxEndpoints(settings).order.placeTriggerOrder
-      assign(body, {
-        triggerPrice: stopRate,
-        orderPrice: limitRate,
-      })
-
+      body.triggerPrice = stopRate
+      body.orderPrice = limitRate
       break
 
     // Market orders
     default:
       url = getFtxEndpoints(settings).order.place
-      assign(body, { price: null })
+      body.price = null
 
   }
 
