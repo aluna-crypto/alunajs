@@ -13,11 +13,14 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
+import { translateOrderSideToBitmex } from '../../../enums/adapters/bitmexOrderSideAdapter'
+import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
+import { BitmexOrderTypeEnum } from '../../../enums/BitmexOrderTypeEnum'
 import {
   IBitmexOrder,
   IBitmexOrderSchema,
 } from '../../../schemas/IBitmexOrderSchema'
-import { assembleRequestBody } from './helpers/assembleRequestBody'
+import { translateAmountToOrderQty } from './helpers/translateAmountToOrderQty'
 
 
 
@@ -48,7 +51,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   const {
+    amount,
     symbolPair,
+    side,
+    type,
+    rate,
+    limitRate,
+    stopRate,
     http = new BitmexHttp(settings),
   } = params
 
@@ -57,12 +66,54 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     http,
   })
 
-  const { body } = assembleRequestBody({
-    action: 'place',
-    instrument: market.instrument!,
-    orderParams: params,
-    settings,
+  const ordType = translateOrderTypeToBitmex({
+    from: type,
   })
+
+  const translatedSide = translateOrderSideToBitmex({
+    from: side,
+  })
+
+  const { orderQty } = translateAmountToOrderQty({
+    amount,
+    instrument: market.instrument!,
+  })
+
+
+  let price: number | undefined
+  let stopPx: number | undefined
+
+  switch (ordType) {
+
+    case BitmexOrderTypeEnum.LIMIT:
+      price = rate
+      break
+
+    case BitmexOrderTypeEnum.STOP_MARKET:
+      stopPx = stopRate
+      break
+
+    case BitmexOrderTypeEnum.STOP_LIMIT:
+      stopPx = stopRate
+      price = limitRate
+      break
+
+    // For market orders no prop is needed
+    default:
+
+  }
+
+  const { orderAnnotation } = settings
+
+  const body = {
+    orderQty,
+    ordType,
+    symbol: symbolPair,
+    side: translatedSide,
+    ...(price ? { price } : {}),
+    ...(stopPx ? { stopPx } : {}),
+    ...(orderAnnotation ? { text: orderAnnotation } : {}),
+  }
 
   log('placing new order for Bitmex')
 
