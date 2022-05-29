@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
+import { IModule } from 'ts-mock-imports/lib/types'
 
 import { AlunaOrderSideEnum } from '../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../src/lib/enums/AlunaOrderTypesEnum'
@@ -22,8 +23,8 @@ import {
 import {
   IMethodToMock,
   IPlaceValidationCallbackParams,
-  TExchangeAuthed,
-  TExchangeHttp,
+  TExchangeAuthedConstructuor,
+  TExchangeHttpConstructor,
 } from './testPlaceOrder'
 
 
@@ -35,9 +36,9 @@ export interface IEditValidationCallbackParams extends Omit<IPlaceValidationCall
 
 
 export const testEditOrder = async (params: {
-  ExchangeAuthed: TExchangeAuthed
-  HttpClass: TExchangeHttp
-  parseImportPath: any
+  ExchangeAuthed: TExchangeAuthedConstructuor
+  HttpClass: TExchangeHttpConstructor
+  parseImportPath: IModule
   mockedOrders: any[]
   credentials: IAlunaCredentialsSchema
   methodsToMock?: IMethodToMock[]
@@ -126,7 +127,7 @@ export const testEditOrder = async (params: {
 
             const {
               methodName,
-              methodPath,
+              methodImportModule: methodPath,
               methodResponse,
             } = methodToMock
 

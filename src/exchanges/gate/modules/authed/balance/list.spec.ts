@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: GateAuthed,
     exchangeId: 'gate',
     methodModuleName: 'balance',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawBalances: GATE_RAW_BALANCES },
     parsedList: { balances: PARSED_BALANCES },

@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: BitfinexAuthed,
     exchangeId: 'bitfinex',
     methodModuleName: 'balance',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawBalances: BITFINEX_RAW_BALANCES },
     parsedList: { balances: PARSED_BALANCES },

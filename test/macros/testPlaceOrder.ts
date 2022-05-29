@@ -25,7 +25,7 @@ import {
 
 
 
-export type TExchangeAuthed = {
+export type TExchangeAuthedConstructuor = {
   new (params: {
     credentials: IAlunaCredentialsSchema
     settings?: IAlunaSettingsSchema
@@ -34,7 +34,7 @@ export type TExchangeAuthed = {
 
 
 
-export type TExchangeHttp = {
+export type TExchangeHttpConstructor = {
   new (settings: IAlunaSettingsSchema): IAlunaHttp
 }
 
@@ -42,8 +42,8 @@ export type TExchangeHttp = {
 
 export interface IMethodToMock {
   methodName: string
-  methodPath: IModule
   methodResponse?: any
+  methodImportModule: IModule
 }
 
 
@@ -58,9 +58,9 @@ export interface IPlaceValidationCallbackParams {
 
 
 export const testPlaceOrder = async (params: {
-  ExchangeAuthed: TExchangeAuthed
-  HttpClass: TExchangeHttp
-  parseImportPath: any
+  ExchangeAuthed: TExchangeAuthedConstructuor
+  HttpClass: TExchangeHttpConstructor
+  parseImportPath: IModule
   mockedOrders: any[]
   credentials: IAlunaCredentialsSchema
   settings?: IAlunaSettingsSchema
@@ -147,12 +147,12 @@ export const testPlaceOrder = async (params: {
 
             const {
               methodName,
-              methodPath,
+              methodImportModule,
               methodResponse,
             } = methodToMock
 
             const stub = ImportMock.mockFunction(
-              methodPath,
+              methodImportModule,
               methodName,
               methodResponse,
             )

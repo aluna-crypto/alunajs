@@ -48,12 +48,12 @@ describe(__filename, () => {
   const methodsToMock: IMethodToMock[] = [
     {
       methodName: 'get',
-      methodPath: getMarketMod,
+      methodImportModule: getMarketMod,
       methodResponse: getMarketSpy,
     },
     {
       methodName: 'translateAmountToOrderQty',
-      methodPath: translateAmountToOrderQtyMod,
+      methodImportModule: translateAmountToOrderQtyMod,
       methodResponse: { orderQty: mockedOrderQty },
     },
   ]
