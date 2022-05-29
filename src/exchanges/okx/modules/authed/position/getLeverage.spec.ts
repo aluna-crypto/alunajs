@@ -20,7 +20,7 @@ describe(__filename, () => {
   it('should get leverage just fine', async () => {
 
     // preparing data
-    const mockedLeverage = 10
+    const mockedLeverage = '10'
 
 
     // mocking
@@ -29,7 +29,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedLeverage))
+    authedRequest.returns(Promise.resolve({ lever: mockedLeverage }))
     expect(getLeverage).to.exist
 
 
@@ -47,12 +47,12 @@ describe(__filename, () => {
 
 
     // validating
-    expect(leverage).to.deep.eq(mockedLeverage)
+    expect(leverage).to.deep.eq(Number(mockedLeverage))
 
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: getOkxEndpoints({}).position.getLeverage,
+      url: getOkxEndpoints({}).position.get('symbolPair'),
       body: params,
     })
 

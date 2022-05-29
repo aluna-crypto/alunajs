@@ -83,8 +83,8 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: getOkxEndpoints({}).position.get,
-      body: { id, symbolPair },
+      url: getOkxEndpoints({}).position.close,
+      body: { ordId: id, instId: symbolPair },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

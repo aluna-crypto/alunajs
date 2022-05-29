@@ -48,7 +48,6 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   const [rawPosition] = await http.authedRequest<IOkxPositionSchema[]>({
     credentials,
     url: getOkxEndpoints(settings).position.get(symbolPair),
-    body: { id, symbolPair },
   })
 
   if (!rawPosition) {

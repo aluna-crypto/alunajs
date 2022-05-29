@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -23,7 +24,7 @@ describe(__filename, () => {
     // preparing data
     const mockedRawPosition = OKX_RAW_POSITIONS[0]
 
-    const { id } = mockedRawPosition
+    const { posId: id } = mockedRawPosition
 
 
     // mocking
@@ -32,7 +33,7 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedRawPosition))
+    authedRequest.returns(Promise.resolve([mockedRawPosition]))
 
 
     // executing
@@ -42,7 +43,7 @@ describe(__filename, () => {
 
     const { rawPosition } = await exchange.position!.getRaw({
       id,
-      symbolPair: '',
+      symbolPair: 'symbolPair',
     })
 
 
@@ -52,11 +53,7 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: getOkxEndpoints({}).position.get,
-      body: {
-        id,
-        symbolPair: '',
-      },
+      url: getOkxEndpoints({}).position.get('symbolPair'),
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -67,7 +64,7 @@ describe(__filename, () => {
 
     // preparing data
     const mockedRawPosition = OKX_RAW_POSITIONS[0]
-    const { id } = mockedRawPosition
+    const { posId: id } = mockedRawPosition
 
 
     // mocking
@@ -75,7 +72,7 @@ describe(__filename, () => {
       publicRequest,
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
-    authedRequest.returns(Promise.resolve(undefined))
+    authedRequest.returns(Promise.resolve([undefined]))
 
 
     // executing
@@ -86,7 +83,7 @@ describe(__filename, () => {
       result,
     } = await executeAndCatch(() => exchange.position!.getRaw({
       id,
-      symbolPair: '',
+      symbolPair: 'symbolPair',
     }))
 
 
@@ -101,13 +98,40 @@ describe(__filename, () => {
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
-      url: getOkxEndpoints(exchange.settings).position.get,
-      body: {
-        id,
-        symbolPair: '',
-      },
+      url: getOkxEndpoints(exchange.settings).position.get('symbolPair'),
     })
 
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw error if param symbolPair not sent', async () => {
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: OkxHttp.prototype })
+
+
+    // executing
+    const exchange = new OkxAuthed({ credentials })
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => exchange.position!.getRaw({}))
+
+
+    // validating
+    expect(result).not.to.be.ok
+
+    expect(error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(error!.message).to.be.eq('Symbol is required to get okx position')
+    expect(error!.httpStatusCode).to.be.eq(400)
+
+
+    expect(authedRequest.callCount).to.be.eq(0)
     expect(publicRequest.callCount).to.be.eq(0)
 
   })

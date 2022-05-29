@@ -44,6 +44,12 @@ describe(__filename, () => {
       leverage: 10,
     }
 
+    const body = {
+      instId: 'symbolPair',
+      mgnMode: 'cross',
+      lever: '10',
+    }
+
     const { leverage } = await exchange.position!.setLeverage!(params)
 
 
@@ -54,7 +60,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       url: getOkxEndpoints({}).position.setLeverage,
-      body: params,
+      body,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
