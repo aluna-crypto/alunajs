@@ -11,7 +11,7 @@ import {
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxPositionSchema } from '../../../schemas/IOkxPositionSchema'
+import { IOkxPositionCloseResponseSchema } from '../../../schemas/IOkxPositionSchema'
 
 
 
@@ -49,11 +49,15 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  // TODO: Properly close position
-  await http.authedRequest<IOkxPositionSchema>({
+  const body = {
+    ordId: id,
+    instId: symbolPair,
+  }
+
+  await http.authedRequest<IOkxPositionCloseResponseSchema[]>({
     credentials,
     url: getOkxEndpoints(settings).position.close,
-    body: { id, symbolPair },
+    body,
   })
 
   const closedPosition: IAlunaPositionSchema = {
