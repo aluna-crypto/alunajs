@@ -1,10 +1,13 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
+import { AlunaPositionStatusEnum } from '../../../../../lib/enums/AlunaPositionStatusEnum'
 import {
   IAlunaPositionParseParams,
   IAlunaPositionParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { translatePositionSideToAluna } from '../../../enums/adapters/okxPositionSideAdapter'
 import { IOkxPositionSchema } from '../../../schemas/IOkxPositionSchema'
 
 
@@ -15,12 +18,24 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const { rawPosition } = params
 
-  const { symbolPair } = rawPosition
+  const {
+    instId,
+    posSide,
+    avgPx,
+    last,
+    posId,
+    upl,
+    uplRatio,
+    lever,
+    cTime,
+    baseBal,
+    liqPx,
+  } = rawPosition
 
   let [
     baseSymbolId,
     quoteSymbolId,
-  ] = symbolPair.split('/')
+  ] = instId.split('/')
 
 
   baseSymbolId = translateSymbolId({
@@ -33,29 +48,43 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  // TODO: Implement proper parser
+  const side = translatePositionSideToAluna({
+    from: posSide,
+  })
+
+  const basePrice = Number(last)
+  const openPrice = Number(avgPx)
+  const amount = Number(baseBal)
+  const total = amount * basePrice
+  const pl = parseFloat(upl)
+  const plPercentage = parseFloat(uplRatio)
+  const leverage = Number(lever)
+  const openedAt = new Date(Number(cTime))
+  const liquidationPrice = Number(liqPx)
+  const status = AlunaPositionStatusEnum.OPEN
+
   const position: IAlunaPositionSchema = {
-    // id: rawPosition.id,
-    symbolPair: rawPosition.symbolPair,
-    // exchangeId: exchange.specs.id,
+    id: posId,
+    symbolPair: instId,
+    exchangeId: exchange.specs.id,
     baseSymbolId,
     quoteSymbolId,
-    // total: rawPosition.total,
-    // amount: rawPosition.amount,
-    // account: AlunaAccountEnum.MARGIN,
-    // status: rawPosition.status,
-    // side: rawPosition.side,
-    // basePrice: rawPosition.basePrice,
-    // openPrice: rawPosition.openPrice,
-    // pl: rawPosition.pl,
-    // plPercentage: rawPosition.plPercentage,
-    // leverage: rawPosition.leverage,
-    // liquidationPrice: rawPosition.liquidationPrice,
-    // openedAt: rawPosition.openedAt,
-    // closedAt: rawPosition.closedAt,
-    // closePrice: rawPosition.closePrice,
-    // meta: rawPosition,
-  } as any // TODO: Remove casting to any
+    total,
+    amount,
+    account: AlunaAccountEnum.MARGIN,
+    status,
+    side,
+    basePrice,
+    openPrice,
+    pl,
+    plPercentage,
+    leverage,
+    liquidationPrice,
+    openedAt,
+    closedAt: undefined, // @TODO -> Verify value
+    closePrice: undefined, // @TODO -> Verify value
+    meta: rawPosition,
+  }
 
   return { position }
 
