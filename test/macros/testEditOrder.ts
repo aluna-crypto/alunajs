@@ -1,11 +1,12 @@
 import { expect } from 'chai'
 import { each } from 'lodash'
-import { SinonStub } from 'sinon'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaOrderSideEnum } from '../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../src/lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderEditParams } from '../../src/lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../src/lib/schemas/IAlunaCredentialsSchema'
+import { IAlunaSettingsSchema } from '../../src/lib/schemas/IAlunaSettingsSchema'
 import { mockEnsureOrderIsSupported } from '../../src/utils/orders/ensureOrderIsSupported.mock'
 import { editOrderParamsSchema } from '../../src/utils/validation/schemas/editOrderParamsSchema'
 import { mockValidateParams } from '../../src/utils/validation/validateParams.mock'
@@ -14,31 +15,45 @@ import { getImplementedAccounts } from '../helpers/getImplementedAccounts'
 import { getImplementedOrderTypes } from '../helpers/getImplementedOrderTypes'
 import { mockHttp } from '../mocks/exchange/Http'
 import { mockParse } from '../mocks/exchange/modules/mockParse'
+import {
+  commonEditParams,
+  orderTypesParamsDict,
+} from './fixtures'
+import {
+  IMethodToMock,
+  IPlaceValidationCallbackParams,
+  TExchangeAuthed,
+  TExchangeHttp,
+} from './testPlaceOrder'
 
 
 
-export interface IValidateAuthedRequestParams {
+export interface IEditValidationCallbackParams extends Omit<IPlaceValidationCallbackParams, 'placeParams'> {
   editParams: IAlunaOrderEditParams
-  stub: SinonStub
 }
 
 
+
 export const testEditOrder = async (params: {
-  ExchangeAuthed: any
-  HttpClass: any
+  ExchangeAuthed: TExchangeAuthed
+  HttpClass: TExchangeHttp
   parseImportPath: any
-  authedRequestResponse: any
+  mockedOrders: any[]
   credentials: IAlunaCredentialsSchema
-  validateAuthedRequest: (params: IValidateAuthedRequestParams) => void
+  methodsToMock?: IMethodToMock[]
+  settings?: IAlunaSettingsSchema
+  validationCallback: (params: IEditValidationCallbackParams) => void
 }) => {
 
   const {
     HttpClass,
     ExchangeAuthed,
     parseImportPath,
-    authedRequestResponse,
+    mockedOrders,
     credentials,
-    validateAuthedRequest,
+    validationCallback: validateAuthedRequest,
+    settings,
+    methodsToMock,
   } = params
 
   const exchange = new ExchangeAuthed({ credentials })
@@ -58,25 +73,12 @@ export const testEditOrder = async (params: {
     AlunaOrderSideEnum.SELL,
   ]
 
-  const commonParams: Partial<IAlunaOrderEditParams> = {
-    id: 'id',
-    amount: 100,
-    symbolPair: 'BTC/USD',
-  }
+  const mockedOrdersLength = mockedOrders.length
+  let testCount = 0
 
-  const orderTypesParamsDict = {
-    [AlunaOrderTypesEnum.LIMIT]: {
-      rate: 10,
-    },
-    [AlunaOrderTypesEnum.MARKET]: {},
-    [AlunaOrderTypesEnum.STOP_MARKET]: {
-      stopRate: 11,
-    },
-    [AlunaOrderTypesEnum.STOP_LIMIT]: {
-      stopRate: 11,
-      limitRate: 12,
-    },
-  }
+  afterEach(() => {
+    testCount += 1
+  })
 
   each(accounts, async (account) => {
 
@@ -91,10 +93,14 @@ export const testEditOrder = async (params: {
         it(`should edit a ${name} ${account} ${side} ${type} order just fine`, async () => {
 
           // preparing data
+          // index to use all items inside the array without exceeding its size
+          const mockedOrderIndex = (testCount % mockedOrdersLength)
+          const mockedOrder = mockedOrders[mockedOrderIndex]
+
           const mockedParsedOrder = PARSED_ORDERS[0]
 
           const params: IAlunaOrderEditParams = {
-            ...commonParams,
+            ...commonEditParams,
             ...orderTypesParamsDict[type],
             account,
             type,
@@ -107,18 +113,40 @@ export const testEditOrder = async (params: {
             authedRequest,
             publicRequest,
           } = mockHttp({ classPrototype: HttpClass.prototype })
-          authedRequest.returns(Promise.resolve(authedRequestResponse))
+          authedRequest.returns(Promise.resolve(mockedOrder))
 
           const { parse } = mockParse({ module: parseImportPath })
           parse.returns({ order: mockedParsedOrder })
 
-
           const { validateParamsMock } = mockValidateParams()
           const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
+          const mockedMethodsDictionary = {}
+          each(methodsToMock, (methodToMock) => {
+
+            const {
+              methodName,
+              methodPath,
+              methodResponse,
+            } = methodToMock
+
+            const stub = ImportMock.mockFunction(
+              methodPath,
+              methodName,
+              methodResponse,
+            )
+
+            mockedMethodsDictionary[methodName] = stub
+
+          })
+
 
           // executing
-          const exchange = new ExchangeAuthed({ credentials })
+          const exchange = new ExchangeAuthed({
+            credentials,
+            ...(testCount % 2 === 0 ? { settings } : {}),
+          })
+
           const { order } = await exchange.order.edit(params)
 
 
@@ -143,7 +171,9 @@ export const testEditOrder = async (params: {
 
           validateAuthedRequest({
             editParams: params,
-            stub: authedRequest,
+            authedRequestStub: authedRequest,
+            exchange,
+            mockedMethodsDictionary,
           })
 
         })
