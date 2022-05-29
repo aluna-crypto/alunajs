@@ -14,18 +14,18 @@ import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorC
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import {
-  BITFINEX_CANCEL_ORDER_RESPONSE,
-  BITFINEX_PLACE_ORDER_RESPONSE,
-} from '../../../test/fixtures/bitfinexOrders'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
+import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
+import { BITFINEX_CANCEL_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
 
 
 
-describe.only(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -44,14 +44,70 @@ describe.only(__filename, () => {
     limitRate: 15,
   }
 
-
   testEditOrder({
     ExchangeAuthed: BitfinexAuthed,
     HttpClass: BitfinexHttp,
     parseImportPath: parseMod,
-    authedRequestResponse: BITFINEX_PLACE_ORDER_RESPONSE,
+    mockedOrders: [BITFINEX_CANCEL_ORDER_RESPONSE],
     credentials,
-    validateAuthedRequest: () => ({}),
+    validationCallback: (params) => {
+
+      const {
+        editParams,
+        authedRequestStub: stub,
+      } = params
+
+      const {
+        type,
+        side,
+        amount,
+        rate,
+        limitRate,
+        stopRate,
+        id,
+      } = editParams
+
+      const translatedAmount = translateOrderSideToBitfinex({
+        amount: Number(amount),
+        side,
+      })
+
+      let price: undefined | string
+      let priceAuxLimit: undefined | string
+
+      switch (type) {
+
+        case AlunaOrderTypesEnum.LIMIT:
+          price = rate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_MARKET:
+          price = stopRate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_LIMIT:
+          price = stopRate!.toString()
+          priceAuxLimit = limitRate!.toString()
+          break
+
+        default:
+
+      }
+
+      const body: Record<string, any> = {
+        ...(price ? { price } : {}),
+        ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
+        amount: translatedAmount,
+        id: Number(id),
+      }
+
+      expect(stub.firstCall.args[0]).to.deep.eq({
+        url: getBitfinexEndpoints({}).order.edit,
+        body,
+        credentials,
+      })
+
+    },
   })
 
 
@@ -67,10 +123,10 @@ describe.only(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.resolve(mockedRequestResponse))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -93,7 +149,11 @@ describe.only(__filename, () => {
     expect(error!.metadata).to.be.eq(mockedRequestResponse)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
     expect(parse.callCount).to.be.eq(0)
+
+    expect(authedRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
@@ -118,10 +178,10 @@ describe.only(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.reject(throwedError))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -146,8 +206,11 @@ describe.only(__filename, () => {
     expect(error!.httpStatusCode).to.be.eq(400)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
     expect(parse.callCount).to.be.eq(0)
+
+    expect(authedRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
@@ -170,10 +233,10 @@ describe.only(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.reject(throwedError))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -197,9 +260,11 @@ describe.only(__filename, () => {
     expect(error!.httpStatusCode).to.be.eq(400)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
     expect(parse.callCount).to.be.eq(0)
 
+    expect(authedRequest.callCount).to.be.eq(1)
     expect(publicRequest.callCount).to.be.eq(0)
 
   })
