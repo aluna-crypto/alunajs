@@ -157,7 +157,7 @@ export const getOkxEndpoints = (
       list: `${baseUrl}/account/balance`,
     },
     order: {
-      get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
+      get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&instId=${symbolPair}`,
       list: `${baseUrl}/trade/orders-pending`,
       listStop: (type: OkxAlgoOrderTypeEnum) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
       place: `${baseUrl}/trade/order`,
@@ -166,13 +166,10 @@ export const getOkxEndpoints = (
       cancelStop: `${baseUrl}/trade/cancel-algos`,
     },
     position: {
-      get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
-      list: `${baseUrl}/trade/orders-pending`,
-      listStop: (type: OkxAlgoOrderTypeEnum) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
-      place: `${baseUrl}/trade/order`,
-      placeStop: `${baseUrl}/trade/order-algo`,
+      get: (symbolPair: string) => `${baseUrl}/account/positions&instId=${symbolPair}`,
+      list: `${baseUrl}/account/positions`,
       close: `${baseUrl}/trade/cancel-order`,
-      cancelStop: `${baseUrl}/trade/cancel-algos`,
+      setLeverage: `${baseUrl}/account/set-leverage`,
     },
   }
 }
