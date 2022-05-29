@@ -32,11 +32,16 @@ export const setLeverage = (exchange: IAlunaExchangeAuthed) => async (
 
   log('setting leverage', { id, symbolPair })
 
-  // TODO: Implement proper getter
+  const body = {
+    instId: symbolPair,
+    lever: leverage.toString(),
+    mgnMode: 'cross',
+  }
+
   const settedLeverage = await http.authedRequest<number>({
     credentials,
     url: getOkxEndpoints(settings).position.setLeverage,
-    body: { id, symbolPair, leverage },
+    body,
   })
 
   const { requestWeight } = http
