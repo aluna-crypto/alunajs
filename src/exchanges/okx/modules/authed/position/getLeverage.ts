@@ -7,6 +7,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
+import { IOkxPositionSchema } from '../../../schemas/IOkxPositionSchema'
 
 
 
@@ -31,14 +32,15 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting leverage', { id, symbolPair })
 
-  // TODO: Implement proper getter
-  const leverage = await http.authedRequest<number>({
+  const { lever } = await http.authedRequest<IOkxPositionSchema>({
     credentials,
-    url: getOkxEndpoints(settings).position.getLeverage,
+    url: getOkxEndpoints(settings).position.get(symbolPair),
     body: { id, symbolPair },
   })
 
   const { requestWeight } = http
+
+  const leverage = Number(lever)
 
   return {
     leverage,
