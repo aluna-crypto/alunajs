@@ -2,6 +2,7 @@ import debug from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionGetParams,
@@ -32,12 +33,21 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     http = new OkxHttp(settings),
   } = params
 
+  if (!symbolPair) {
+
+    throw new AlunaError({
+      code: AlunaGenericErrorCodes.PARAM_ERROR,
+      message: 'Symbol is required to get okx position',
+      httpStatusCode: 400,
+    })
+
+  }
+
   log('getting raw position', { id })
 
-  // TODO: Implement proper request
-  const rawPosition = await http.authedRequest<IOkxPositionSchema>({
+  const [rawPosition] = await http.authedRequest<IOkxPositionSchema[]>({
     credentials,
-    url: getOkxEndpoints(settings).position.get,
+    url: getOkxEndpoints(settings).position.get(symbolPair),
     body: { id, symbolPair },
   })
 

@@ -26,7 +26,7 @@ describe(__filename, () => {
     const mockedRawPosition = OKX_RAW_POSITIONS[0]
     const mockedParsedPosition = PARSED_POSITIONS[0]
 
-    const { id } = mockedRawPosition
+    const { posId: id } = mockedRawPosition
 
 
     // mocking
