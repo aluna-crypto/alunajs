@@ -23,7 +23,7 @@ import {
 import {
   IMethodToMock,
   IPlaceValidationCallbackParams,
-  TExchangeAuthedConstructuor,
+  TExchangeAuthedConstructor,
   TExchangeHttpConstructor,
 } from './testPlaceOrder'
 
@@ -36,10 +36,10 @@ export interface IEditValidationCallbackParams extends Omit<IPlaceValidationCall
 
 
 export const testEditOrder = async (params: {
-  ExchangeAuthed: TExchangeAuthedConstructuor
+  ExchangeAuthed: TExchangeAuthedConstructor
   HttpClass: TExchangeHttpConstructor
   parseImportPath: IModule
-  mockedOrders: any[]
+  rawOrders: any[]
   credentials: IAlunaCredentialsSchema
   methodsToMock?: IMethodToMock[]
   settings?: IAlunaSettingsSchema
@@ -50,14 +50,17 @@ export const testEditOrder = async (params: {
     HttpClass,
     ExchangeAuthed,
     parseImportPath,
-    mockedOrders,
+    rawOrders,
     credentials,
-    validationCallback: validateAuthedRequest,
+    validationCallback,
     settings,
     methodsToMock,
   } = params
 
-  const exchange = new ExchangeAuthed({ credentials })
+  const exchange = new ExchangeAuthed({
+    credentials,
+    settings,
+  })
 
   const { specs } = exchange
 
@@ -74,9 +77,9 @@ export const testEditOrder = async (params: {
     AlunaOrderSideEnum.SELL,
   ]
 
-  const mockedOrdersLength = mockedOrders.length
-  let testCount = 0
+  const rawOrdersLength = rawOrders.length
 
+  let testCount = 0
   afterEach(() => {
     testCount += 1
   })
@@ -95,12 +98,12 @@ export const testEditOrder = async (params: {
 
           // preparing data
           // index to use all items inside the array without exceeding its size
-          const mockedOrderIndex = (testCount % mockedOrdersLength)
-          const mockedOrder = mockedOrders[mockedOrderIndex]
+          const rawOrderIndex = (testCount % rawOrdersLength)
+          const rawOrder = rawOrders[rawOrderIndex]
 
-          const mockedParsedOrder = PARSED_ORDERS[0]
+          const parsedOrder = PARSED_ORDERS[0]
 
-          const params: IAlunaOrderEditParams = {
+          const editParams: IAlunaOrderEditParams = {
             ...commonEditParams,
             ...orderTypesParamsDict[type],
             account,
@@ -111,13 +114,13 @@ export const testEditOrder = async (params: {
 
           // mocking
           const {
-            authedRequest,
+            authedRequest: authedRequestStub,
             publicRequest,
           } = mockHttp({ classPrototype: HttpClass.prototype })
-          authedRequest.returns(Promise.resolve(mockedOrder))
+          authedRequestStub.returns(Promise.resolve(rawOrder))
 
           const { parse } = mockParse({ module: parseImportPath })
-          parse.returns({ order: mockedParsedOrder })
+          parse.returns({ order: parsedOrder })
 
           const { validateParamsMock } = mockValidateParams()
           const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
@@ -127,12 +130,12 @@ export const testEditOrder = async (params: {
 
             const {
               methodName,
-              methodImportModule: methodPath,
+              methodModule,
               methodResponse,
             } = methodToMock
 
             const stub = ImportMock.mockFunction(
-              methodPath,
+              methodModule,
               methodName,
               methodResponse,
             )
@@ -148,31 +151,31 @@ export const testEditOrder = async (params: {
             ...(testCount % 2 === 0 ? { settings } : {}),
           })
 
-          const { order } = await exchange.order.edit(params)
+          const { order } = await exchange.order.edit(editParams)
 
 
           // validating
-          expect(order).to.deep.eq(mockedParsedOrder)
+          expect(order).to.deep.eq(parsedOrder)
 
-          expect(authedRequest.callCount).to.be.eq(1)
+          expect(authedRequestStub.callCount).to.be.eq(1)
 
           expect(validateParamsMock.callCount).to.be.eq(1)
           expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
-            params,
+            params: editParams,
             schema: editOrderParamsSchema,
           })
 
           expect(ensureOrderIsSupported.callCount).to.be.eq(1)
           expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
             exchangeSpecs: exchange.specs,
-            orderParams: params,
+            orderParams: editParams,
           })
 
           expect(publicRequest.callCount).to.be.eq(0)
 
-          validateAuthedRequest({
-            editParams: params,
-            authedRequestStub: authedRequest,
+          validationCallback({
+            editParams,
+            authedRequestStub,
             exchange,
             mockedMethodsDictionary,
           })

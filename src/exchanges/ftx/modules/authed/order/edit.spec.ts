@@ -22,7 +22,7 @@ describe(__filename, () => {
     ExchangeAuthed: FtxAuthed,
     HttpClass: FtxHttp,
     parseImportPath: parseMod,
-    mockedOrders: [FTX_RAW_ORDERS[0]],
+    rawOrders: [FTX_RAW_ORDERS[0]],
     credentials,
     validationCallback: (params) => {
 

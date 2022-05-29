@@ -4,12 +4,12 @@ import { IModule } from 'ts-mock-imports/lib/types'
 import { IAlunaCredentialsSchema } from '../../src/lib/schemas/IAlunaCredentialsSchema'
 import { mockListRaw } from '../mocks/exchange/modules/mockListRaw'
 import { mockParseMany } from '../mocks/exchange/modules/mockParseMany'
-import { TExchangeAuthedConstructuor } from './testPlaceOrder'
+import { TExchangeAuthedConstructor } from './testPlaceOrder'
 
 
 
 export const testList = (params: {
-  AuthedClass: TExchangeAuthedConstructuor
+  AuthedClass: TExchangeAuthedConstructor
   exchangeId: string
   rawList: any
   parsedList: any

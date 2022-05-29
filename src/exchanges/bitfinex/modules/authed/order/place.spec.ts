@@ -50,7 +50,7 @@ describe(__filename, () => {
   const placedLimitOrder = cloneDeep(BITFINEX_PLACE_ORDER_RESPONSE)
   placedMarketOrder[4][0][8] = BitfinexOrderTypeEnum.LIMIT
 
-  const mockedOrders = [
+  const rawOrders = [
     placedMarketOrder,
     placedLimitOrder,
   ]
@@ -59,8 +59,8 @@ describe(__filename, () => {
   testPlaceOrder({
     ExchangeAuthed: BitfinexAuthed,
     HttpClass: BitfinexHttp,
-    parseImportPath: parseMod,
-    mockedOrders,
+    parseModule: parseMod,
+    rawOrders,
     credentials,
     validationCallback: (params) => {
 

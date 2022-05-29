@@ -51,12 +51,12 @@ describe(__filename, () => {
   const methodsToMock: IMethodToMock[] = [
     {
       methodName: 'get',
-      methodImportModule: getMarketMod,
+      methodModule: getMarketMod,
       methodResponse: getMarketSpy,
     },
     {
       methodName: 'translateAmountToOrderQty',
-      methodImportModule: translateAmountToOrderQtyMod,
+      methodModule: translateAmountToOrderQtyMod,
       methodResponse: { orderQty: mockedOrderQty },
     },
   ]
@@ -64,8 +64,8 @@ describe(__filename, () => {
   testPlaceOrder({
     ExchangeAuthed: BitmexAuthed,
     HttpClass: BitmexHttp,
-    parseImportPath: parseMod,
-    mockedOrders: [BITMEX_RAW_ORDERS[0]],
+    parseModule: parseMod,
+    rawOrders: [BITMEX_RAW_ORDERS[0]],
     credentials,
     methodsToMock,
     settings: mockedSettings,

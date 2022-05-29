@@ -48,7 +48,7 @@ describe(__filename, () => {
     ExchangeAuthed: BitfinexAuthed,
     HttpClass: BitfinexHttp,
     parseImportPath: parseMod,
-    mockedOrders: [BITFINEX_CANCEL_ORDER_RESPONSE],
+    rawOrders: [BITFINEX_CANCEL_ORDER_RESPONSE],
     credentials,
     validationCallback: (params) => {
 
