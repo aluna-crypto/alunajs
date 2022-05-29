@@ -47,7 +47,7 @@ describe(__filename, () => {
     ] = market.split('/')
 
     const orderType = translateOrderTypeToAluna({
-      from: type,
+      type,
     })
 
     const orderSide = translateOrderSideToAluna({
@@ -55,7 +55,7 @@ describe(__filename, () => {
     })
 
     const orderStatus = translateOrderStatusToAluna({
-      from: status,
+      status,
       size,
       filledSize,
     })
@@ -125,7 +125,7 @@ describe(__filename, () => {
     ] = market.split('/')
 
     const orderType = translateOrderTypeToAluna({
-      from: type,
+      type,
     })
 
     const orderSide = translateOrderSideToAluna({
@@ -133,7 +133,7 @@ describe(__filename, () => {
     })
 
     const orderStatus = translateOrderStatusToAluna({
-      from: status,
+      status,
       size,
       filledSize,
     })
