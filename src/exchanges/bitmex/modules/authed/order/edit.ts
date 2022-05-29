@@ -97,14 +97,11 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { orderAnnotation } = settings
-
   const body = {
     orderQty,
     orderID: id,
     ...(price ? { price } : {}),
     ...(stopPx ? { stopPx } : {}),
-    ...(orderAnnotation ? { text: orderAnnotation } : {}),
   }
 
   try {

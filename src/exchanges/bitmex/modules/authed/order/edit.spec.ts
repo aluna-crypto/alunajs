@@ -48,12 +48,12 @@ describe(__filename, () => {
   const methodsToMock: IMethodToMock[] = [
     {
       methodName: 'get',
-      methodImportModule: getMarketMod,
+      methodModule: getMarketMod,
       methodResponse: getMarketSpy,
     },
     {
       methodName: 'translateAmountToOrderQty',
-      methodImportModule: translateAmountToOrderQtyMod,
+      methodModule: translateAmountToOrderQtyMod,
       methodResponse: { orderQty: mockedOrderQty },
     },
   ]
@@ -64,7 +64,7 @@ describe(__filename, () => {
     ExchangeAuthed: BitmexAuthed,
     HttpClass: BitmexHttp,
     parseImportPath: parseMod,
-    mockedOrders: [BITMEX_RAW_ORDERS[0]],
+    rawOrders: [BITMEX_RAW_ORDERS[0]],
     credentials,
     methodsToMock,
     settings: mockedSettings,
@@ -119,14 +119,11 @@ describe(__filename, () => {
 
       }
 
-      const { orderAnnotation } = settings
-
       const body = {
         orderQty: mockedOrderQty,
         orderID: id,
         ...(price ? { price } : {}),
         ...(stopPx ? { stopPx } : {}),
-        ...(orderAnnotation ? { text: orderAnnotation } : {}),
       }
 
       expect(authedRequestStub.firstCall.args[0]).to.deep.eq({
