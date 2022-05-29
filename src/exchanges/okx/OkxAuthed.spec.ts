@@ -29,6 +29,7 @@ describe(__filename, () => {
     expect(okx.key).to.be.ok
     expect(okx.balance).to.be.ok
     expect(okx.order).to.be.ok
+    expect(okx.position).to.be.ok
 
     expect(okx.specs).to.be.ok
     expect(okx.settings).to.deep.eq(okx.settings)

@@ -165,5 +165,14 @@ export const getOkxEndpoints = (
       cancel: `${baseUrl}/trade/cancel-order`,
       cancelStop: `${baseUrl}/trade/cancel-algos`,
     },
+    position: {
+      get: (id: string, symbolPair: string) => `${baseUrl}/trade/order?ordId=${id}&$instId=${symbolPair}`,
+      list: `${baseUrl}/trade/orders-pending`,
+      listStop: (type: OkxAlgoOrderTypeEnum) => `${baseUrl}/trade/orders-algo-pending?ordType=${type}`,
+      place: `${baseUrl}/trade/order`,
+      placeStop: `${baseUrl}/trade/order-algo`,
+      close: `${baseUrl}/trade/cancel-order`,
+      cancelStop: `${baseUrl}/trade/cancel-algos`,
+    },
   }
 }
