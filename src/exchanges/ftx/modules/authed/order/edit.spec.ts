@@ -11,7 +11,7 @@ import * as parseMod from './parse'
 
 
 
-describe.only(__filename, () => {
+describe(__filename, () => {
 
   const credentials: IAlunaCredentialsSchema = {
     key: 'key',
@@ -22,13 +22,13 @@ describe.only(__filename, () => {
     ExchangeAuthed: FtxAuthed,
     HttpClass: FtxHttp,
     parseImportPath: parseMod,
-    authedRequestResponse: FTX_RAW_ORDERS[0],
+    mockedOrders: [FTX_RAW_ORDERS[0]],
     credentials,
-    validateAuthedRequest: (params) => {
+    validationCallback: (params) => {
 
       const {
         editParams,
-        stub,
+        authedRequestStub,
       } = params
 
       const {
@@ -67,7 +67,7 @@ describe.only(__filename, () => {
 
       }
 
-      expect(stub.firstCall.args[0]).to.deep.eq({
+      expect(authedRequestStub.firstCall.args[0]).to.deep.eq({
         url,
         credentials,
         body,
