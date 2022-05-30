@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
@@ -51,6 +52,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     rate,
     symbolPair,
+    account,
     side,
     type,
     stopRate,
@@ -64,12 +66,14 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   const translatedOrderSide = translateOrderSideToOkx({ from: side })
 
+  const tdMode = account === AlunaAccountEnum.MARGIN ? 'cross' : 'cash'
+
   const body = {
     side: translatedOrderSide,
     instId: symbolPair,
     ordType: translatedOrderType,
     sz: amount.toString(),
-    tdMode: 'cash',
+    tdMode,
   }
 
   if (translatedOrderType === OkxOrderTypeEnum.LIMIT) {
