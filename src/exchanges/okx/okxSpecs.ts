@@ -86,9 +86,9 @@ export const okxBaseSpecs: IAlunaExchangeSchema = {
     },
     {
       type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      supported: true,
+      implemented: true,
+      orderTypes: okxExchangeOrderTypes,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
