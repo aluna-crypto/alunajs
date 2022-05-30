@@ -5,4 +5,5 @@ export enum AlunaWalletEnum {
   FUNDING = 'funding',
   TRADING = 'trading',
   WEB3 = 'web3',
+  ACCOUNT = 'account',
 }
