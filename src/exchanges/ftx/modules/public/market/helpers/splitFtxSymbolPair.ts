@@ -13,7 +13,7 @@ export interface ISplitFtxSymbolPairReturns {
 
 export const splitFtxSymbolPair = (
   params: ISplitFtxSymbolPairParams,
-) => {
+): ISplitFtxSymbolPairReturns => {
 
   const { market } = params
 
