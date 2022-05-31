@@ -72,8 +72,8 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const pl = realizedPnl
   const plPercentage = (realizedPnl / 100)
-  const liquidationPrice = estimatedLiquidationPrice
-  const leverage = (1 / initialMarginRequirement)
+  const liquidationPrice = estimatedLiquidationPrice || -1
+  const leverage = Math.round((1 / initialMarginRequirement))
 
 
   const position: IAlunaPositionSchema = {
