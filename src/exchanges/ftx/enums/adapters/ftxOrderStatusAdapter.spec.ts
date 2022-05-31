@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderStatusEnum } from '../../../../lib/enums/AlunaOrderStatusEnum'
+import { executeAndCatch } from '../../../../utils/executeAndCatch'
 import { FtxOrderStatusEnum } from '../FtxOrderStatusEnum'
 import {
   translateOrderStatusToAluna,
@@ -15,7 +16,7 @@ describe(__filename, () => {
   const notSupported = 'not-supported'
 
 
-  it('should translate Ftx order status to Aluna order status', () => {
+  it('should translate Ftx order status to Aluna order status', async () => {
 
     const zeroedFilledAmount = 0
     const partiallyFilledAmount = 2.5
@@ -63,6 +64,20 @@ describe(__filename, () => {
       filledSize: zeroedFilledAmount,
       size,
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => translateOrderStatusToAluna({
+      status: notSupported as FtxOrderStatusEnum,
+      filledSize: zeroedFilledAmount,
+      size,
+    }))
+
+    expect(result).not.to.be.ok
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error!.message)
+      .to.be.eq(`Order status not supported: ${notSupported}`)
 
   })
 
