@@ -52,6 +52,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     side,
     type,
     stopRate,
+    limitRate,
     http = new HuobiHttp(settings),
   } = params
 
@@ -89,7 +90,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     Object.assign(body, {
       'stop-price': stopRate!.toString(),
-      price: rate!.toString(),
+      price: limitRate!.toString(),
+      operator: 'lte',
     })
 
   }
@@ -115,7 +117,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { metadata } = err
 
-    if (metadata.code === 'order-accountbalance-error') {
+    if (metadata['err-code'] === 'account-frozen-balance-insufficient-error') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 

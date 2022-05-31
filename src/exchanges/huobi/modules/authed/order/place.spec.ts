@@ -131,8 +131,9 @@ describe(__filename, () => {
       'account-id': accountId,
       amount: '0.01',
       source: 'spot-api',
-      price: '0',
+      price: '1',
       'stop-price': '1',
+      operator: 'lte',
     }
 
     // mocking
@@ -169,6 +170,7 @@ describe(__filename, () => {
       type,
       rate: 0,
       stopRate: 1,
+      limitRate: 1,
     }
 
     const { order } = await exchange.order.place(params)
@@ -288,7 +290,7 @@ describe(__filename, () => {
         code: AlunaOrderErrorCodes.PLACE_FAILED,
         httpStatusCode: 401,
         metadata: {
-          code: 'order-accountbalance-error',
+          'err-code': 'account-frozen-balance-insufficient-error',
         },
       })
 

@@ -52,7 +52,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          'err-msg': dummyError,
         },
       },
     } as AxiosError
@@ -82,7 +82,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          'err-msg': dummyError,
         },
       },
     } as AxiosError
@@ -142,6 +142,19 @@ describe(__filename, () => {
       metadata: error,
     })
 
+
+    const huobiError = {
+      'err-msg': dummyError,
+    } as handleHuobiMod.IHuobiErrorSchema
+
+    alunaError = handleHuobiRequestError({ error: huobiError })
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: dummyError,
+      httpStatusCode: 500,
+      metadata: huobiError,
+    })
 
     const unknown = {} as any
 

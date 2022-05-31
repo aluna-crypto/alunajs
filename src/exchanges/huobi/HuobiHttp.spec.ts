@@ -371,6 +371,45 @@ describe(__filename, () => {
 
   })
 
+  it('should properly handle request error on authed requests', async () => {
+
+    // preparing data
+    const huobiHttp = new HuobiHttp({})
+
+    const throwedError = {
+      status: 'error',
+    }
+
+
+    // mocking
+    const {
+      request,
+      handleHuobiRequestError,
+    } = mockDeps()
+
+    request.returns(Promise.resolve({ data: throwedError }))
+
+    // executing
+    const autheRes = await executeAndCatch(() => huobiHttp.authedRequest({
+      url,
+      body,
+      credentials,
+    }))
+
+
+    // validating
+    expect(autheRes.result).not.to.be.ok
+
+    expect(request.callCount).to.be.eq(1)
+
+    expect(handleHuobiRequestError.callCount).to.be.eq(1)
+
+    expect(handleHuobiRequestError.calledWith({
+      error: throwedError,
+    })).to.be.ok
+
+  })
+
   it('should properly use proxy settings on public requests', async () => {
 
     // preparing data

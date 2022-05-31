@@ -35,6 +35,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     'created-at': createdAt,
     amount,
     state,
+    'stop-price': stopPrice,
     id,
   } = rawOrder
 
@@ -82,12 +83,18 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const orderSide = type.split('-')[0] as HuobiOrderSideEnum
   const orderType = type.split('-')[1] as HuobiOrderTypeEnum
+  const orderTypeSecondArgument = type.split('-')[2] as HuobiOrderTypeEnum
+
+  const formattedRawOrderType = orderTypeSecondArgument ? `${orderType}-${orderTypeSecondArgument}` as HuobiOrderTypeEnum : orderType
+
   const translatedOrderSide = translateOrderSideToAluna({
     from: orderSide,
   })
+
   const translatedOrderType = translateOrderTypeToAluna({
-    from: orderType,
+    from: formattedRawOrderType,
   })
+
   const orderAmount = Number(amount)
   const rate = Number(price)
   const total = orderAmount * rate
@@ -104,6 +111,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     canceledAt,
     filledAt,
     rate,
+    stopRate: Number(stopPrice),
     amount: orderAmount,
     side: translatedOrderSide,
     status: orderStatus,

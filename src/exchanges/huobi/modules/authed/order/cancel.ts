@@ -9,7 +9,6 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiOrderSchema } from '../../../schemas/IHuobiOrderSchema'
 
 
 
@@ -30,17 +29,22 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    symbolPair,
     http = new HuobiHttp(settings),
   } = params
 
   try {
 
-    const rawOrder = await http.authedRequest<IHuobiOrderSchema>({
+    await http.authedRequest<string>({
       url: getHuobiEndpoints(settings).order.cancel(id),
       credentials,
     })
 
-    const { order } = exchange.order.parse({ rawOrder })
+    const { order } = await exchange.order.get({
+      id,
+      symbolPair,
+      http,
+    })
 
     const { requestWeight } = http
 

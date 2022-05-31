@@ -1452,9 +1452,9 @@
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_KEY' %}",
                 "SECRET": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_SECRET' %}",
                 "ORDER_SYMBOL_PAIR": "btcusdt",
-                "ORDER_RATE": 1000,
-                "ORDER_AMOUNT": 0.001,
-                "ORDER_EDITED_AMOUNT": 0.0011
+                "ORDER_RATE": 1,
+                "ORDER_AMOUNT": 1,
+                "ORDER_EDITED_AMOUNT": 1.1
             },
             "dataPropertyOrder": {
                 "&": [

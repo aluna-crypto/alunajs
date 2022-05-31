@@ -17,6 +17,7 @@ export interface IHuobiOrderSchema {
   id: number
   state: HuobiOrderStatusEnum
   type: string
+  'stop-price'?: string
 }
 
 export interface IHuobiOrdersResponseSchema {

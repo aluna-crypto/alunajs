@@ -147,6 +147,12 @@ export class HuobiHttp implements IAlunaHttp {
         .create()
         .request<IHuobiHttpResponse<T>>(requestConfig)
 
+      if (request.status === 'error') {
+
+        throw request
+
+      }
+
       const { data } = request
 
       return data

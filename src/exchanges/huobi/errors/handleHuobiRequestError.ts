@@ -29,11 +29,15 @@ export const isHuobiKeyInvalid = (errorMessage: string) => {
 
 }
 
-
-export interface IHandleHuobiRequestErrorsParams {
-  error: AxiosError | Error
+export interface IHuobiErrorSchema {
+  status: string
+  'err-code': string
+  'err-msg': string
 }
 
+export interface IHandleHuobiRequestErrorsParams {
+  error: AxiosError | Error | IHuobiErrorSchema
+}
 
 
 export const handleHuobiRequestError = (
@@ -52,16 +56,23 @@ export const handleHuobiRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.['err-msg'] || message
 
     httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
 
+  } else if ((error as IHuobiErrorSchema)['err-msg']) {
+
+    message = error['err-msg']
+
+    metadata = error
+
   } else {
 
-    message = error.message || message
+    const { message: errorMessage } = error as Error
+
+    message = errorMessage || message
 
   }
 

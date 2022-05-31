@@ -41,7 +41,7 @@ export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
+    mode: AlunaFeaturesModeEnum.WRITE,
     options: {
       rate: 1,
       amount: 1,

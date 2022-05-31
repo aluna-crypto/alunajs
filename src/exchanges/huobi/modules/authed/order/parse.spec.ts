@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { cloneDeep } from 'lodash'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
@@ -91,6 +92,89 @@ describe(__filename, () => {
     expect(order.amount).to.be.eq(orderAmount)
     expect(order.type).to.be.eq(translatedOrderType)
     expect(order.side).to.be.eq(translatedOrderSide)
+    expect(order.status).to.be.eq(orderStatus)
+    expect(order.placedAt.getTime()).to.be.eq(new Date(createdAt).getTime())
+    expect(order.canceledAt).to.be.ok
+    expect(order.filledAt).not.to.be.ok
+
+  })
+
+  it('should parse a Huobi raw stop limit order just fine', async () => {
+
+    // preparing data
+    const rawOrder = cloneDeep(HUOBI_RAW_ORDERS[0])
+    const rawSymbol = HUOBI_RAW_SYMBOLS[0]
+
+    rawOrder.type = `buy-${HuobiOrderTypeEnum.STOP_LIMIT}`
+
+    rawOrder['stop-price'] = '0.1'
+
+    const rawOrderRequest = {
+      rawOrder,
+      rawSymbol,
+    }
+
+    const {
+      symbol,
+      price,
+      type,
+      'created-at': createdAt,
+      amount,
+      state,
+      id,
+    } = rawOrder
+
+    const {
+      bc: baseSymbolId,
+      qc: quoteSymbolId,
+    } = rawSymbol
+
+    const orderStatus = translateOrderStatusToAluna({
+      from: state,
+    })
+    const orderSide = type.split('-')[0] as HuobiOrderSideEnum
+    const orderType = `${type.split('-')[1]}-${type.split('-')[2]}` as HuobiOrderTypeEnum
+    const translatedOrderSide = translateOrderSideToAluna({
+      from: orderSide,
+    })
+    const translatedOrderType = translateOrderTypeToAluna({
+      from: orderType,
+    })
+    const orderAmount = Number(amount)
+    const rate = Number(price)
+    const total = orderAmount * rate
+
+    // mocking
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId
+      .onFirstCall()
+      .returns(baseSymbolId)
+
+    translateSymbolId
+      .onSecondCall()
+      .returns(quoteSymbolId)
+
+    // executing
+    const { order } = exchange.order.parse({
+      rawOrder: rawOrderRequest,
+    })
+
+    // validating
+    expect(order).to.exist
+
+    expect(order.id).to.be.eq(id.toString())
+    expect(order.symbolPair).to.be.eq(symbol)
+    expect(order.baseSymbolId).to.be.eq(baseSymbolId)
+    expect(order.quoteSymbolId).to.be.eq(quoteSymbolId)
+    expect(order.total).to.be.eq(total)
+    expect(order.rate).to.be.eq(rate)
+    expect(order.amount).to.be.eq(orderAmount)
+    expect(order.type).to.be.eq(translatedOrderType)
+    expect(order.side).to.be.eq(translatedOrderSide)
+    expect(order.stopRate).to.be.eq(Number(rawOrder['stop-price']))
     expect(order.status).to.be.eq(orderStatus)
     expect(order.placedAt.getTime()).to.be.eq(new Date(createdAt).getTime())
     expect(order.canceledAt).to.be.ok

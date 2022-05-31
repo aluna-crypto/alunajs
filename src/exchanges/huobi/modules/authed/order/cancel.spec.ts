@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -11,7 +11,7 @@ import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
 import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
-import * as parseMod from './parse'
+import * as getMod from './get'
 
 
 
@@ -38,11 +38,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve(rawId))
 
 
     // executing
