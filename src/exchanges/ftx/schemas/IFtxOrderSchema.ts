@@ -8,7 +8,7 @@ import { FtxTriggerOrderTypeEnum } from '../enums/FtxTriggerOrderTypeEnum'
 export interface IFtxOrderSchema {
   createdAt: string
   filledSize: number
-  future: string
+  future: string | null
   id: number
   market: string
   price: number | null
