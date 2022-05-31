@@ -4,6 +4,7 @@ import { find } from 'lodash'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import {
   IAlunaPositionGetParams,
@@ -34,6 +35,20 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   } = params
 
   log('getting raw position', { symbolPair })
+
+  if (!symbolPair) {
+
+    const error = new AlunaError({
+      code: AlunaGenericErrorCodes.PARAM_ERROR,
+      message: 'Position symbol is required to get Ftx positions',
+      httpStatusCode: 400,
+    })
+
+    log(error)
+
+    throw error
+
+  }
 
   const response = await http.authedRequest<IFtxPositionSchema[]>({
     credentials,
