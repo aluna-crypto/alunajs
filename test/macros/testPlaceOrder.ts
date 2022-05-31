@@ -126,6 +126,7 @@ export const testPlaceOrder = async (params: {
             account,
             type,
             side,
+            ...(testCount % 2 === 0 ? { reduceOnly: true } : {}),
           }
 
 
