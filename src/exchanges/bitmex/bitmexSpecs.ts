@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
@@ -22,43 +21,21 @@ export const bitmexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.STOP_MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
   },
 ]
 
