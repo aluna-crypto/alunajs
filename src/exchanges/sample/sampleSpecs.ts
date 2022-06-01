@@ -19,6 +19,10 @@ export const SAMPLE_TESTNET_URL = 'https://testnet.api.sample.com/v3'
 
 
 export const sampleExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
+  /**
+   * TODO: Review if each order type is supported by the exchange, and if is
+   * not, remove the entry.
+  */
   {
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
@@ -83,31 +87,39 @@ export const sampleBaseSpecs: IAlunaExchangeSchema = {
     offersPositionId: false,
   },
   accounts: [
-    // TODO: Review supported/implemented accounts
+    /**
+     * TODO: Review if each account type is supported by the exchange, and if is
+     * not, remove the entry.
+     */
     {
       type: AlunaAccountEnum.SPOT,
       supported: true,
       implemented: true,
       orderTypes: sampleExchangeOrderTypes,
+      /**
+       * TODO: Review if exchange segregates wallets types between accounts
+       * types, e.g. Spot wallet for Spot trading. If the wallet is shared
+       * between all accounts types, use value 'AlunaWalletEnum.DEFAUT'
+       */
       wallet: AlunaWalletEnum.SPOT,
     },
     {
       type: AlunaAccountEnum.MARGIN,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
       wallet: AlunaWalletEnum.MARGIN,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
       wallet: AlunaWalletEnum.DERIVATIVES,
     },
     {
       type: AlunaAccountEnum.LENDING,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
       wallet: AlunaWalletEnum.FUNDING,

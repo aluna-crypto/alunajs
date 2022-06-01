@@ -103,7 +103,7 @@ export const bitfinexBaseSpecs: IAlunaExchangeSchema = {
     },
     {
       type: AlunaAccountEnum.LENDING,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
       wallet: AlunaWalletEnum.FUNDING,

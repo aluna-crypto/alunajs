@@ -86,27 +86,6 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
       orderTypes: bittrexExchangeOrderTypes,
       wallet: AlunaWalletEnum.SPOT,
     },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.MARGIN,
-    },
-    {
-      type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.DERIVATIVES,
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.FUNDING,
-    },
   ],
   settings: {},
 }

@@ -92,20 +92,6 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
       orderTypes: [],
       wallet: AlunaWalletEnum.DEFAULT,
     },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.DEFAULT,
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.DEFAULT,
-    },
   ],
   settings: {},
 }

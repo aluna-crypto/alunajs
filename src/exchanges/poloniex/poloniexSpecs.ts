@@ -30,7 +30,7 @@ export const poloniexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
-    implemented: true,
+    implemented: false,
     mode: AlunaFeaturesModeEnum.READ,
     options: {
       rate: 1,
@@ -64,25 +64,11 @@ export const poloniexBaseSpecs: IAlunaExchangeSchema = {
       wallet: AlunaWalletEnum.SPOT,
     },
     {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.MARGIN,
-    },
-    {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
       wallet: AlunaWalletEnum.DERIVATIVES,
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.FUNDING,
     },
   ],
   settings: {},

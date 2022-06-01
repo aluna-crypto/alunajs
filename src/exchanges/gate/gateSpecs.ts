@@ -55,13 +55,6 @@ export const gateBaseSpecs: IAlunaExchangeSchema = {
       wallet: AlunaWalletEnum.SPOT,
     },
     {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.MARGIN,
-    },
-    {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: false,

@@ -63,13 +63,6 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
       wallet: AlunaWalletEnum.DEFAULT,
     },
     {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-      wallet: AlunaWalletEnum.DEFAULT,
-    },
-    {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
       implemented: false,
