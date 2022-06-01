@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -59,24 +60,28 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: ftxExchangeOrderTypes,
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.LENDING,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
   ],
   settings: {},

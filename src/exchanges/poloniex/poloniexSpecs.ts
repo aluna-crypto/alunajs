@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -60,24 +61,28 @@ export const poloniexBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: poloniexExchangeOrderTypes,
+      wallet: AlunaWalletEnum.SPOT,
     },
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.MARGIN,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DERIVATIVES,
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.FUNDING,
     },
   ],
   settings: {},
