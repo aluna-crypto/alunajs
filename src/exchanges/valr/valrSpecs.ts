@@ -2,7 +2,6 @@ import { cloneDeep } from 'lodash'
 
 import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
@@ -22,43 +21,21 @@ export const valrExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.TRAILING_STOP,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
   },
 ]
 

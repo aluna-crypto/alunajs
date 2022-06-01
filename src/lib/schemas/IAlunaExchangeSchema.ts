@@ -1,5 +1,4 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
 import { IAlunaSettingsSchema } from './IAlunaSettingsSchema'
 
@@ -33,8 +32,6 @@ export interface IAlunaExchangeOrderSpecsSchema {
   type: AlunaOrderTypesEnum
   supported: boolean // supported by the exchange
   implemented: boolean // implemented by aluna
-  mode: AlunaFeaturesModeEnum
-  options: IAlunaExchangeOrderOptionsSchema
 }
 
 export interface IAlunaExchangeOrderOptionsSchema {
