@@ -43,10 +43,10 @@ describe(__filename, () => {
   ftxTriggerOrder.triggeredAt = null
 
   type TtestOrderProps = {
-      testLabel: string
-      orderProps: Partial<IFtxOrderSchema>
-      triggerOrderProps: Partial<IFtxTriggerOrderSchema>
-    }
+    testLabel: string
+    orderProps: Partial<IFtxOrderSchema>
+    triggerOrderProps: Partial<IFtxTriggerOrderSchema>
+  }
 
   const testOrdersProps: TtestOrderProps[] = [
     {

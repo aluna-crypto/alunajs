@@ -8,7 +8,9 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { FtxOrderSideEnum } from '../../../enums/FtxOrderSideEnum'
 import { IFtxPositionSchema } from '../../../schemas/IFtxPositionSchema'
+import { splitFtxSymbolPair } from '../../public/market/helpers/splitFtxSymbolPair'
 
 
 
@@ -36,31 +38,42 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     estimatedLiquidationPrice,
   } = rawPosition
 
-  let [baseSymbolId] = future.split('-')
-  const quoteSymbolId = 'USD'
+  let {
+    baseSymbolId,
+    quoteSymbolId,
+  } = splitFtxSymbolPair({ market: future })
 
   baseSymbolId = translateSymbolId({
     exchangeSymbolId: baseSymbolId,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
+  quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteSymbolId,
+    symbolMappings: exchange.settings.symbolMappings,
+  })
+
+
   const openedAt = new Date()
 
   let closedAt: Date | undefined
   let closePrice: number | undefined
+  let status: AlunaPositionStatusEnum
 
   if (size === 0) {
 
     closedAt = new Date()
     closePrice = entryPrice
+    status = AlunaPositionStatusEnum.CLOSED
+
+  } else {
+
+    status = AlunaPositionStatusEnum.OPEN
 
   }
 
-  const status = size === 0
-    ? AlunaPositionStatusEnum.CLOSED
-    : AlunaPositionStatusEnum.OPEN
 
-  const computedSide = side === 'buy'
+  const computedSide = side === FtxOrderSideEnum.BUY
     ? AlunaPositionSideEnum.LONG
     : AlunaPositionSideEnum.SHORT
 
