@@ -1,3 +1,12 @@
+# 1.1.1 (June 1, 2022)
+
+ - Add new value `default` for `AlunaWalletEnum` 
+ - Ajustments in `IAlunaExchangeAccountSpecsSchema` interface
+   - Add prop `wallet`
+ - Ajustments in `IAlunaExchangeOrderOptionsSchema` interface
+   - Removed obsolete specs: `mode` and `options`
+   - Changed prop `supported` type
+
 # 1.1.0 (May 24, 2022)
 
  - Improved order and position integration tests
