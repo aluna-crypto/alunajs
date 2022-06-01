@@ -1,5 +1,6 @@
 import { AlunaAccountEnum } from '../enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../enums/AlunaWalletEnum'
 import { IAlunaSettingsSchema } from './IAlunaSettingsSchema'
 
 
@@ -23,14 +24,15 @@ export interface IAlunaExchangeSchema {
 
 export interface IAlunaExchangeAccountSpecsSchema {
   type: AlunaAccountEnum
-  supported: boolean // supported by the exchange
+  supported: true // supported by the exchange
   implemented?: boolean // implemented by aluna
+  wallet: AlunaWalletEnum
   orderTypes: IAlunaExchangeOrderSpecsSchema[] // TODO: check prop requirement
 }
 
 export interface IAlunaExchangeOrderSpecsSchema {
   type: AlunaOrderTypesEnum
-  supported: boolean // supported by the exchange
+  supported: true // supported by the exchange
   implemented: boolean // implemented by aluna
 }
 

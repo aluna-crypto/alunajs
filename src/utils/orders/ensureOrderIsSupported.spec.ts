@@ -8,6 +8,7 @@ import { ImportMock } from 'ts-mock-imports'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../lib/modules/authed/IAlunaOrderModule'
@@ -96,6 +97,7 @@ describe(__filename, () => {
           type: account,
           supported: true,
           implemented: true,
+          wallet: AlunaWalletEnum.DEFAULT,
           orderTypes: [
             {
               type,
@@ -130,7 +132,7 @@ describe(__filename, () => {
     },
   )
 
-  it('should ensure order account is one of exchange accounts', async () => {
+  it('should ensure order account is supported by the Exchange', async () => {
 
     // preparing data
     const account = pickRandomOrderAccount()
@@ -169,7 +171,7 @@ describe(__filename, () => {
 
   })
 
-  it('should ensure order account is implemented', async () => {
+  it('should ensure order account is implemented on alunajs', async () => {
 
     // preparing data
     const account = pickRandomOrderAccount()
@@ -181,6 +183,7 @@ describe(__filename, () => {
         supported: true,
         implemented: false,
         orderTypes: [],
+        wallet: AlunaWalletEnum.DEFAULT,
       },
     ]
 
@@ -208,7 +211,7 @@ describe(__filename, () => {
     // validating
     expect(result).not.to.be.ok
 
-    const msg = `Account type '${account}' not supported/implemented `
+    const msg = `Account type '${account}' not implemented `
       .concat(`for ${exchangeSpecs.name}`)
 
     expect(error!.code).to.be.eq(AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED)
@@ -216,54 +219,7 @@ describe(__filename, () => {
 
   })
 
-  it('should ensure order account is supported', async () => {
-
-    // preparing data
-    const account = pickRandomOrderAccount()
-    const type = pickRandomOrderType()
-
-    const accounts: IAlunaExchangeAccountSpecsSchema[] = [
-      {
-        type: account,
-        supported: false,
-        implemented: true,
-        orderTypes: [],
-      },
-    ]
-
-
-    // mocking
-    mockDeps({ accounts })
-
-
-    // executing
-    const orderPlaceParams: IAlunaOrderPlaceParams = {
-      ...defaultOrderPlaceParams,
-      account,
-      type,
-    }
-
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => ensureOrderIsSupported({
-      exchangeSpecs,
-      orderPlaceParams,
-    }))
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    const msg = `Account type '${account}' not supported/implemented `
-      .concat(`for ${exchangeSpecs.name}`)
-
-    expect(error!.code).to.be.eq(AlunaAccountsErrorCodes.TYPE_NOT_SUPPORTED)
-    expect(error!.message).to.be.eq(msg)
-
-  })
-
-  it('should ensure order type is one of exchange order types', async () => {
+  it('should ensure order type is supported by the exchange', async () => {
 
     // preparing data
     const account = pickRandomOrderAccount()
@@ -275,6 +231,7 @@ describe(__filename, () => {
         supported: true,
         implemented: true,
         orderTypes: [],
+        wallet: AlunaWalletEnum.DEFAULT,
       },
     ]
 
@@ -303,7 +260,7 @@ describe(__filename, () => {
     // validating
     expect(result).not.to.be.ok
 
-    const msg = `Order type '${type}' not supported/implemented for `
+    const msg = `Order type '${type}' not implemented for `
       .concat(`${exchangeSpecs.name}`)
 
     expect(error!.code).to.be.eq(AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED)
@@ -311,7 +268,7 @@ describe(__filename, () => {
 
   })
 
-  it('should ensure order type is supported by exchange', async () => {
+  it('should ensure order type is implemented on alunajs', async () => {
 
     // preparing data
     const account = pickRandomOrderAccount()
@@ -322,58 +279,7 @@ describe(__filename, () => {
         type: account,
         supported: true,
         implemented: true,
-        orderTypes: [
-          {
-            type,
-            supported: false,
-            implemented: true,
-          },
-        ],
-      },
-    ]
-
-    // mocking
-    mockDeps({ accounts })
-
-
-    // executing
-    const orderPlaceParams: IAlunaOrderPlaceParams = {
-      ...defaultOrderPlaceParams,
-      account,
-      type,
-    }
-
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => ensureOrderIsSupported({
-      exchangeSpecs,
-      orderPlaceParams,
-    }))
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    const msg = `Order type '${type}' not supported/implemented for `
-      .concat(`${exchangeSpecs.name}`)
-
-    expect(error!.code).to.be.eq(AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED)
-    expect(error!.message).to.be.eq(msg)
-
-  })
-
-  it('should ensure order type is implemented by exchange', async () => {
-
-    // preparing data
-    const account = pickRandomOrderAccount()
-    const type = pickRandomOrderType()
-
-    const accounts: IAlunaExchangeAccountSpecsSchema[] = [
-      {
-        type: account,
-        supported: true,
-        implemented: true,
+        wallet: AlunaWalletEnum.DEFAULT,
         orderTypes: [
           {
             type,
@@ -408,13 +314,12 @@ describe(__filename, () => {
     // validating
     expect(result).not.to.be.ok
 
-    const msg = `Order type '${type}' not supported/implemented for `
+    const msg = `Order type '${type}' not implemented for `
       .concat(`${exchangeSpecs.name}`)
 
     expect(error!.code).to.be.eq(AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED)
     expect(error!.message).to.be.eq(msg)
 
   })
-
 
 })

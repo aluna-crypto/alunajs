@@ -1,6 +1,7 @@
 # AlunaJS
 
-Standardizing CryptoTrading APIs across multiple exchanges.
+![171418581-c760f68c-efd9-4505-922e-bda2a7ab17c3](https://user-images.githubusercontent.com/26660/171419028-0bed5667-0d5e-4d31-bb8d-b994c601e484.jpg)
+
 
 # Install
 

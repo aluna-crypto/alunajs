@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -59,24 +60,14 @@ export const bitmexBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: bitmexExchangeOrderTypes,
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.SPOT,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
-    },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
   ],
   settings: {},

@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
@@ -45,24 +46,21 @@ export const gateBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: gateExchangeOrderTypes,
-    },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.SPOT,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DERIVATIVES,
     },
     {
       type: AlunaAccountEnum.LENDING,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.FUNDING,
     },
   ],
   settings: {},

@@ -62,7 +62,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const balance: IAlunaBalanceSchema = {
     symbolId,
-    wallet: AlunaWalletEnum.TRADING,
+    wallet: AlunaWalletEnum.DEFAULT,
     available: computedAvailable,
     total: computedTotal,
     meta: rawBalance,

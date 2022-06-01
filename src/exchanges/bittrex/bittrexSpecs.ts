@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
@@ -60,25 +61,7 @@ export const bittrexBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: bittrexExchangeOrderTypes,
-    },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-
-    },
-    {
-      type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.SPOT,
     },
   ],
   settings: {},
