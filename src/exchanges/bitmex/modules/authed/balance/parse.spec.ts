@@ -84,7 +84,7 @@ describe(__filename, () => {
 
 
       expect(balance.symbolId).to.be.eq(mockedTranslatedSymbolId)
-      expect(balance.wallet).to.be.eq(AlunaWalletEnum.TRADING)
+      expect(balance.wallet).to.be.eq(AlunaWalletEnum.DEFAULT)
       expect(balance.available).to.be.eq(expectedAvailable)
       expect(balance.total).to.be.eq(expectedTotal)
       expect(balance.meta).to.deep.eq(rawBalance)
