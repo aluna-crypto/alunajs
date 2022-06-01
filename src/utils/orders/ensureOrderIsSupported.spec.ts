@@ -9,6 +9,7 @@ import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderSideEnum } from '../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderPlaceParams } from '../../lib/modules/authed/IAlunaOrderModule'
@@ -98,6 +99,7 @@ describe(__filename, () => {
           type: account,
           supported: true,
           implemented: true,
+          wallet: AlunaWalletEnum.DEFAULT,
           orderTypes: [
             {
               type,
@@ -185,6 +187,7 @@ describe(__filename, () => {
         supported: true,
         implemented: false,
         orderTypes: [],
+        wallet: AlunaWalletEnum.DEFAULT,
       },
     ]
 
@@ -232,6 +235,7 @@ describe(__filename, () => {
         supported: false,
         implemented: true,
         orderTypes: [],
+        wallet: AlunaWalletEnum.DEFAULT,
       },
     ]
 
@@ -279,6 +283,7 @@ describe(__filename, () => {
         supported: true,
         implemented: true,
         orderTypes: [],
+        wallet: AlunaWalletEnum.DEFAULT,
       },
     ]
 
@@ -326,6 +331,7 @@ describe(__filename, () => {
         type: account,
         supported: true,
         implemented: true,
+        wallet: AlunaWalletEnum.DEFAULT,
         orderTypes: [
           {
             type,
@@ -380,6 +386,7 @@ describe(__filename, () => {
         type: account,
         supported: true,
         implemented: true,
+        wallet: AlunaWalletEnum.DEFAULT,
         orderTypes: [
           {
             type,
@@ -435,6 +442,7 @@ describe(__filename, () => {
         type: account,
         supported: true,
         implemented: true,
+        wallet: AlunaWalletEnum.DEFAULT,
         orderTypes: [
           {
             type,
