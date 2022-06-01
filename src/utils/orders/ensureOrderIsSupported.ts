@@ -53,6 +53,8 @@ export const ensureOrderIsSupported = (
 
     }
 
+    const { name } = exchangeSpecs
+
     const {
       supported,
       implemented,
@@ -61,8 +63,7 @@ export const ensureOrderIsSupported = (
 
     if (!supported || !implemented) {
 
-      message = `Account type '${account}' not supported/implemented `
-        .concat(`for ${exchangeSpecs.name}`)
+      message = `Account type '${account}' not implemented for ${name}`
 
       throw new AlunaError({
         message,
@@ -73,10 +74,9 @@ export const ensureOrderIsSupported = (
 
     const orderType = orderTypes.find((o) => o.type === type)
 
-    if (!orderType || !orderType.implemented || !orderType.supported) {
+    if (!orderType || !orderType.implemented) {
 
-      message = `Order type '${type}' not supported/implemented for `
-        .concat(`${exchangeSpecs.name}`)
+      message = `Order type '${type}' not implemented for ${name}`
 
       throw new AlunaError({
         message,
@@ -101,4 +101,5 @@ export const ensureOrderIsSupported = (
     throw error
 
   }
+
 }
