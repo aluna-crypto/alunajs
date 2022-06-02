@@ -53,40 +53,59 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-
-  const openedAt = new Date()
-
   let closedAt: Date | undefined
   let closePrice: number | undefined
   let status: AlunaPositionStatusEnum
 
-  if (size === 0) {
+  let basePrice: number
+  let openPrice: number
+  let amount: number
+  let total: number
+  let pl: number
+  let plPercentage: number
+  let liquidationPrice: number
+  let leverage: number
 
-    closedAt = new Date()
-    closePrice = entryPrice
-    status = AlunaPositionStatusEnum.CLOSED
+  const openedAt = new Date()
+  const isOpen = size !== 0
 
-  } else {
+  if (isOpen) {
 
     status = AlunaPositionStatusEnum.OPEN
 
-  }
+    total = Math.abs(cost)
+    amount = Math.abs(size)
 
+    basePrice = entryPrice
+    openPrice = (cost - realizedPnl) / size
+
+    pl = realizedPnl
+    plPercentage = (((basePrice - openPrice) / openPrice) * 100)
+    liquidationPrice = estimatedLiquidationPrice || -1
+    leverage = Math.round((1 / initialMarginRequirement))
+
+  } else {
+
+    status = AlunaPositionStatusEnum.CLOSED
+    closedAt = new Date()
+    closePrice = entryPrice
+
+    total = -1
+    amount = -1
+
+    basePrice = -1
+    openPrice = -1
+
+    pl = -1
+    plPercentage = -1
+    liquidationPrice = -1
+    leverage = -1
+
+  }
 
   const computedSide = side === FtxOrderSideEnum.BUY
     ? AlunaPositionSideEnum.LONG
     : AlunaPositionSideEnum.SHORT
-
-  const amount = Math.abs(size)
-  const basePrice = entryPrice
-  const openPrice = entryPrice
-
-  const total = Math.abs(cost)
-
-  const pl = realizedPnl
-  const plPercentage = (realizedPnl / 100)
-  const liquidationPrice = estimatedLiquidationPrice || -1
-  const leverage = Math.round((1 / initialMarginRequirement))
 
 
   const position: IAlunaPositionSchema = {
