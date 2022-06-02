@@ -158,7 +158,7 @@ describe(__filename, () => {
 
         expectedStatus = AlunaPositionStatusEnum.CLOSED
         expectedClosedAt = new Date()
-        expectedClosePrice = entryPrice
+        expectedClosePrice = -1
 
         expectedTotal = -1
         expectedAmount = -1

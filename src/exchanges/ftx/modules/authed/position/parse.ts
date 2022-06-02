@@ -88,7 +88,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
     status = AlunaPositionStatusEnum.CLOSED
     closedAt = new Date()
-    closePrice = entryPrice
+    closePrice = -1
 
     total = -1
     amount = -1
