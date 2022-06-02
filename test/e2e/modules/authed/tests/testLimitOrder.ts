@@ -245,8 +245,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
         order,
         requestWeight,
       } = await exchangeAuthed.order.cancel({
-        symbolPair: orderSymbolPair!,
         id: limitOrderId!,
+        symbolPair: orderSymbolPair!,
+        type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(order).to.exist
