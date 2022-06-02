@@ -123,52 +123,72 @@ describe(__filename, () => {
       } = rawPosition
 
 
-      const expectedOpenedAt = new Date()
-
       let expectedClosedAt: Date | undefined
       let expectedClosePrice: number | undefined
       let expectedStatus: AlunaPositionStatusEnum
 
-      if (size === 0) {
+      let expectedBasePrice: number
+      let expectedOpenPrice: number
+      let expectedAmount: number
+      let expectedTotal: number
+      let expectedPl: number
+      let expectedPlPercentage: number
+      let expectedLiquidationPrice: number
+      let expectedLeverage: number
 
-        expectedClosedAt = new Date()
-        expectedClosePrice = entryPrice
-        expectedStatus = AlunaPositionStatusEnum.CLOSED
+      const expectedOpenedAt = new Date()
+      const isOpen = size !== 0
 
-      } else {
+      if (isOpen) {
 
         expectedStatus = AlunaPositionStatusEnum.OPEN
 
+        expectedTotal = Math.abs(cost)
+        expectedAmount = Math.abs(size)
+
+        expectedBasePrice = entryPrice
+        expectedOpenPrice = (cost - realizedPnl) / size
+
+        expectedPl = realizedPnl
+        expectedPlPercentage = (((expectedBasePrice - expectedOpenPrice) / expectedOpenPrice) * 100)
+        expectedLiquidationPrice = estimatedLiquidationPrice || -1
+        expectedLeverage = Math.round((1 / initialMarginRequirement))
+
+      } else {
+
+        expectedStatus = AlunaPositionStatusEnum.CLOSED
+        expectedClosedAt = new Date()
+        expectedClosePrice = entryPrice
+
+        expectedTotal = -1
+        expectedAmount = -1
+
+        expectedBasePrice = -1
+        expectedOpenPrice = -1
+
+        expectedPl = -1
+        expectedPlPercentage = -1
+        expectedLiquidationPrice = -1
+        expectedLeverage = -1
+
       }
 
-
-      const computedSide = side === 'buy'
+      const expectedComputedSide = side === FtxOrderSideEnum.BUY
         ? AlunaPositionSideEnum.LONG
         : AlunaPositionSideEnum.SHORT
-
-      const expectedAmount = Math.abs(size)
-      const expectedBasePrice = entryPrice
-      const expectedOpenPrice = entryPrice
-
-      const total = Math.abs(cost)
-
-      const expectedPl = realizedPnl
-      const expectedPlPercentage = (realizedPnl / 100)
-      const expectedLiquidationPrice = estimatedLiquidationPrice || -1
-      const expectedLeverage = Math.round((1 / initialMarginRequirement))
 
       expect(position.symbolPair).to.be.eq(future)
       expect(position.baseSymbolId).to.be.eq(expectedBaseSymbolId)
       expect(position.quoteSymbolId).to.be.eq(expectedQuoteSymbolId)
       expect(position.account).to.be.eq(AlunaAccountEnum.DERIVATIVES)
       expect(position.amount).to.be.eq(expectedAmount)
-      expect(position.total).to.be.eq(total)
+      expect(position.total).to.be.eq(expectedTotal)
       expect(position.openPrice).to.be.eq(expectedOpenPrice)
       expect(position.basePrice).to.be.eq(expectedBasePrice)
       expect(position.pl).to.be.eq(expectedPl)
       expect(position.plPercentage).to.be.eq(expectedPlPercentage)
       expect(position.status).to.be.eq(expectedStatus)
-      expect(position.side).to.be.eq(computedSide)
+      expect(position.side).to.be.eq(expectedComputedSide)
       expect(position.liquidationPrice).to.be.eq(expectedLiquidationPrice)
       expect(position.openedAt).to.deep.eq(expectedOpenedAt)
       expect(position.closedAt).to.deep.eq(expectedClosedAt)
