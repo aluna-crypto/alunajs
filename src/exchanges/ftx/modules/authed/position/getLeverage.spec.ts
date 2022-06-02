@@ -43,7 +43,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getFtxEndpoints(exchange.settings).position.getLeverage,
+      url: getFtxEndpoints(exchange.settings).balance.account,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

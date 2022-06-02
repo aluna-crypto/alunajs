@@ -8,6 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
+import { IFtxAccountSchema } from '../../../schemas/IFtxKeySchema'
 
 
 
@@ -28,9 +29,9 @@ export const getLeverage = (exchange: IAlunaExchangeAuthed) => async (
 
   log('getting  FTX leverage')
 
-  const { leverage } = await http.authedRequest<{ leverage: number}>({
+  const { leverage } = await http.authedRequest<IFtxAccountSchema>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getFtxEndpoints(settings).position.getLeverage,
+    url: getFtxEndpoints(settings).balance.account,
     credentials,
   })
 
