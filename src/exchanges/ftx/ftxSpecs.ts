@@ -119,6 +119,7 @@ export const getFtxEndpoints = (
     },
     balance: {
       list: `${baseUrl}/wallet/balances`,
+      account: `${baseUrl}/account`,
     },
     order: {
       get: (id: string) => `${baseUrl}/orders/${id}`,
@@ -134,7 +135,6 @@ export const getFtxEndpoints = (
     },
     position: {
       list: `${baseUrl}/positions`,
-      getLeverage: `${baseUrl}/account`,
       setLeverage: `${baseUrl}/account/leverage`,
     },
   }
