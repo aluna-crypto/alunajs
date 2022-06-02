@@ -1,7 +1,6 @@
 import { debug } from 'debug'
 
 import { AlunaError } from '../../lib/core/AlunaError'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaAccountsErrorCodes } from '../../lib/errors/AlunaAccountsErrorCodes'
 import { AlunaOrderErrorCodes } from '../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -52,6 +51,8 @@ export const ensureOrderIsSupported = (
 
     }
 
+    const { name } = exchangeSpecs
+
     const {
       supported,
       implemented,
@@ -60,8 +61,7 @@ export const ensureOrderIsSupported = (
 
     if (!supported || !implemented) {
 
-      message = `Account type '${account}' not supported/implemented `
-        .concat(`for ${exchangeSpecs.name}`)
+      message = `Account type '${account}' not implemented for ${name}`
 
       throw new AlunaError({
         message,
@@ -72,23 +72,13 @@ export const ensureOrderIsSupported = (
 
     const orderType = orderTypes.find((o) => o.type === type)
 
-    if (!orderType || !orderType.implemented || !orderType.supported) {
+    if (!orderType || !orderType.implemented) {
 
-      message = `Order type '${type}' not supported/implemented for `
-        .concat(`${exchangeSpecs.name}`)
+      message = `Order type '${type}' not implemented for ${name}`
 
       throw new AlunaError({
         message,
         code: AlunaOrderErrorCodes.TYPE_NOT_SUPPORTED,
-      })
-
-    }
-
-    if (orderType.mode === AlunaFeaturesModeEnum.READ) {
-
-      throw new AlunaError({
-        message: `Order type '${type}' is in read mode`,
-        code: AlunaOrderErrorCodes.TYPE_IS_READ_ONLY,
       })
 
     }
@@ -100,4 +90,5 @@ export const ensureOrderIsSupported = (
     throw error
 
   }
+
 }
