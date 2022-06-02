@@ -15,12 +15,12 @@ export interface IFtxPositionSchema {
   netSize: number
   openSize: number
   realizedPnl: number
+  unrealizedPnl: number
   recentAverageOpenPrice?: number
   recentBreakEvenPrice?: number
   recentPnl?: number
   shortOrderSize: number
   side: FtxOrderSideEnum
   size: number
-  unrealizedPnl: 0
   collateralUsed: number
 }
