@@ -3,6 +3,7 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -31,15 +32,30 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    type,
     symbolPair,
     http = new FtxHttp(settings),
   } = params
 
+  if (!type) {
+
+    throw new AlunaError({
+      code: AlunaOrderErrorCodes.MISSING_PARAMS,
+      message: 'Order type is required to cancel Ftx order',
+      httpStatusCode: 400,
+    })
+
+  }
+
   try {
+
+    const url = type === AlunaOrderTypesEnum.LIMIT
+      ? getFtxEndpoints(settings).order.cancel(id)
+      : getFtxEndpoints(settings).order.cancelTriggerOrder(id)
 
     await http.authedRequest<IFtxOrderSchema>({
       verb: AlunaHttpVerbEnum.DELETE,
-      url: getFtxEndpoints(settings).order.get(id),
+      url,
       credentials,
     })
 
