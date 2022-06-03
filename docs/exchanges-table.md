@@ -21,4 +21,4 @@ Full list of currently supported exchanges.
 |Gate|✅ v4|❌|❌|
 |Poloniex|✅ v1|—|—|
 |Valr|✅ v1|—|—|
-|Ftx|✅ v1|❌|❌|
+|Ftx|✅ v1|❌|✅ v1|
