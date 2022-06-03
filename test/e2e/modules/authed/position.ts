@@ -154,4 +154,88 @@ export function position(params: IAuthedParams) {
 
   })
 
+  const hasLeverage = exchangeAuthed.position!.getLeverage
+
+  if (hasLeverage) {
+
+    const {
+      leverageToSet,
+      defaultLeverage,
+      symbolPair,
+    } = exchangeConfigs
+
+    expect(leverageToSet).to.exist
+    expect(defaultLeverage).to.exist
+
+    it('leverage:get', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.getLeverage!({
+        id: liveData.positionId,
+        symbolPair,
+      })
+
+      expect(leverage).to.exist
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:set', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.setLeverage!({
+        leverage: leverageToSet!,
+        symbolPair,
+        id: liveData.positionId,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(leverageToSet)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:get:setted', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.getLeverage!({
+        id: liveData.positionId,
+        symbolPair,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(leverageToSet)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:set:revert', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.setLeverage!({
+        leverage: defaultLeverage!,
+        symbolPair,
+        id: liveData.positionId,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(defaultLeverage)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+  }
+
 }
