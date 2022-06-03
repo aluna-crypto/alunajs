@@ -21,6 +21,8 @@ export interface IE2EExchange {
   orderEditAmount: number
   orderInsufficientAmount: number
   orderAccount?: AlunaAccountEnum
+  defaultLeverage?: number
+  leverageToSet?: number
   supportsGetCanceledOrders?: boolean
 }
 
@@ -99,6 +101,8 @@ export function getConfig() {
         passphrase: env.BITMEX_API_PASSPHRASE,
         symbolPair: 'XBTUSD',
         delayBetweenTests: 200,
+        defaultLeverage: 1,
+        leverageToSet: 2,
         orderRate: 1000,
         orderStopRate: 150000,
         orderLimitRate: 1000,
@@ -174,11 +178,13 @@ export function getConfig() {
         passphrase: env.FTX_API_PASSPHRASE,
         symbolPair: 'BTC-PERP',
         delayBetweenTests: 500,
+        // defaultLeverage: 1,
+        leverageToSet: 2,
         orderRate: 10000,
         orderLimitRate: 10000,
         orderStopRate: 150000,
-        orderAmount: 0.001,
-        orderEditAmount: 0.002,
+        orderAmount: 0.0001,
+        orderEditAmount: 0.0002,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.DERIVATIVES,
       },
