@@ -114,6 +114,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       id: orderResponse.id.toString(),
       symbolPair: params.symbolPair,
       http,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
     const { requestWeight } = http

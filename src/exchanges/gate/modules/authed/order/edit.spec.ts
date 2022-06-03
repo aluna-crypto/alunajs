@@ -79,6 +79,7 @@ describe(__filename, () => {
       http,
       id,
       symbolPair: params.symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
     expect(place.callCount).to.be.eq(1)

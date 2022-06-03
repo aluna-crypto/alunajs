@@ -78,6 +78,7 @@ describe(__filename, () => {
     expect(cancel.firstCall.args[0]).to.deep.eq({
       http,
       id,
+      type: AlunaOrderTypesEnum.LIMIT,
       symbolPair: params.symbolPair,
     })
 

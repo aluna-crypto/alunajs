@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BinanceAuthed } from '../../../BinanceAuthed'
 import { BinanceHttp } from '../../../BinanceHttp'
@@ -30,6 +31,7 @@ describe(__filename, () => {
 
     const id = orderId.toString()
     const symbolPair = symbol
+    const type = AlunaOrderTypesEnum.LIMIT
 
     const query = new URLSearchParams()
 
@@ -54,6 +56,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair,
+      type,
     })
 
 

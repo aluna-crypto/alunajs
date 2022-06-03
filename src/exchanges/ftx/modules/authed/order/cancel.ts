@@ -37,16 +37,6 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     http = new FtxHttp(settings),
   } = params
 
-  if (!type) {
-
-    throw new AlunaError({
-      code: AlunaOrderErrorCodes.MISSING_PARAMS,
-      message: 'Order type is required to cancel Ftx order',
-      httpStatusCode: 400,
-    })
-
-  }
-
   try {
 
     const url = type === AlunaOrderTypesEnum.LIMIT
@@ -63,6 +53,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       id,
       symbolPair,
       http,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
     const { requestWeight } = http

@@ -5,6 +5,7 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -51,6 +52,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.cancel({
       id,
       symbolPair: marketSymbol,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -97,6 +99,7 @@ describe(__filename, () => {
       () => exchange.order.cancel({
         id,
         symbolPair: 'symbolPair',
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 

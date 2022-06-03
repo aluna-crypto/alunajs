@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -48,6 +49,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -95,6 +97,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -158,6 +161,7 @@ describe(__filename, () => {
       () => exchange.order.getRaw({
         id,
         symbolPair: '',
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 
@@ -229,6 +233,7 @@ describe(__filename, () => {
       () => exchange.order.getRaw({
         id,
         symbolPair: '',
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 

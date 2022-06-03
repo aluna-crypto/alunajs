@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -97,6 +98,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   const { rawOrder } = await exchange.order.getRaw({
     id,
     symbolPair,
+    type: AlunaOrderTypesEnum.LIMIT,
   })
 
   const { valrOrder } = rawOrder as IValrOrderGetResponseSchema

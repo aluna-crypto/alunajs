@@ -78,6 +78,7 @@ describe(__filename, () => {
     expect(get.callCount).to.be.eq(1)
     expect(get.firstCall.args[0]).to.deep.eq({
       id: id.toString(),
+      type: AlunaOrderTypesEnum.LIMIT,
       symbolPair: '',
       http,
     })
@@ -136,48 +137,9 @@ describe(__filename, () => {
     expect(get.firstCall.args[0]).to.deep.eq({
       id: id.toString(),
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
       http,
     })
-
-  })
-
-  it('should throw an error if order type param is not informed', async () => {
-
-    // preparing data
-    const id = 'id'
-
-
-    // mocking
-    const { get } = mockGet({ module: getMod })
-
-
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: FtxHttp.prototype })
-
-
-    // executing
-    const exchange = new FtxAuthed({ credentials })
-
-    const {
-      error,
-    } = await executeAndCatch(() => exchange.order.cancel({
-      id,
-      symbolPair: 'symbolPair',
-    }))
-
-
-    // validating
-    expect(error!.code).to.deep.eq(AlunaOrderErrorCodes.MISSING_PARAMS)
-    expect(error!.message).to.deep.eq('Order type is required to cancel Ftx order')
-    expect(error!.httpStatusCode).to.deep.eq(400)
-
-    expect(authedRequest.callCount).to.be.eq(0)
-
-    expect(publicRequest.callCount).to.be.eq(0)
-
-    expect(get.callCount).to.be.eq(0)
 
   })
 

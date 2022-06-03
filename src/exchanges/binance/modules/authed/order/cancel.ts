@@ -31,6 +31,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
 
   const {
     id,
+    type,
     symbolPair,
     http = new BinanceHttp(settings),
   } = params
@@ -54,6 +55,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       id: rawOrder.orderId.toString(),
       symbolPair,
       http,
+      type,
     })
 
     const { requestWeight } = http

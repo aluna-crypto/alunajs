@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
@@ -45,6 +46,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id: id.toString(),
       symbolPair: market,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -87,6 +89,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id: id.toString(),
       symbolPair: market,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 

@@ -34,7 +34,10 @@ describe(__filename, () => {
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const {
-      id, marketSymbol, quantity, limit,
+      id,
+      marketSymbol,
+      quantity,
+      limit,
     } = mockedRawOrder
 
 
@@ -78,6 +81,7 @@ describe(__filename, () => {
     expect(cancel.firstCall.args[0]).to.deep.eq({
       http,
       id,
+      type: AlunaOrderTypesEnum.LIMIT,
       symbolPair: params.symbolPair,
     })
 

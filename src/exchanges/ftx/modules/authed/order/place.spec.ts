@@ -143,6 +143,7 @@ describe(__filename, () => {
         id: rawOrders[0].id.toString(),
         symbolPair,
         http: new FtxHttp(settings),
+        type: AlunaOrderTypesEnum.LIMIT,
       }])
 
       getOrderSpy.resetHistory()
