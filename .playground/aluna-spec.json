@@ -1,7 +1,7 @@
 {
     "_type": "export",
     "__export_format": 4,
-    "__export_date": "2022-05-19T15:38:33.998Z",
+    "__export_date": "2022-06-03T10:11:02.331Z",
     "__export_source": "insomnia.desktop.app:v2022.2.1",
     "resources": [
         {
@@ -453,7 +453,7 @@
         {
             "_id": "req_b3c64285e4b84d6da77a0046f8224ab3",
             "parentId": "fld_f3ad5c457d5b4433a90c91d2d9963d18",
-            "modified": 1652632762679,
+            "modified": 1654250978980,
             "created": 1651251269522,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "fetchDetails",
@@ -509,7 +509,7 @@
         {
             "_id": "req_e147340c7ecd4eb785265d1b060ff2a6",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632757871,
+            "modified": 1654250981015,
             "created": 1652142980199,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getTradableBalance",
@@ -553,7 +553,7 @@
         {
             "_id": "req_f17e55c1a50f477aa3747ee7a7b497ca",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632759741,
+            "modified": 1654250981531,
             "created": 1651516666747,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -585,7 +585,7 @@
         {
             "_id": "req_bdd09e4f5a9b4e3a87ecb690dfa739c9",
             "parentId": "fld_404131e490e9469898d0a610690c9775",
-            "modified": 1652632760923,
+            "modified": 1654250981889,
             "created": 1651505463599,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -617,7 +617,7 @@
         {
             "_id": "req_db9088aa9fcf45b18e85ddd994aa99c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632764897,
+            "modified": 1654250984461,
             "created": 1651505373653,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -661,7 +661,7 @@
         {
             "_id": "req_219792123c134e5dbf76ebdafc0edf2e",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652787270298,
+            "modified": 1654250983782,
             "created": 1651519029538,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -693,7 +693,7 @@
         {
             "_id": "req_61340a5851b040e09612c173691f44ba",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632766287,
+            "modified": 1654250984924,
             "created": 1651516690271,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -725,7 +725,7 @@
         {
             "_id": "req_4944714ffe964c12a008929b3214f0c1",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652632767380,
+            "modified": 1654250985513,
             "created": 1651519053540,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -757,7 +757,7 @@
         {
             "_id": "req_0fe5c5ec55604eb48a47233c69fe1ee4",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974669549,
+            "modified": 1654250994123,
             "created": 1651595326974,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:limit",
@@ -765,7 +765,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.EXCHANGE }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
+                "text": "{\n\t\"method\": \"order.place\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"account\": \"{{ _.ACCOUNTS.SPOT }}\",\n\t\"type\": \"{{ _.ORDER_TYPES.LIMIT }}\",\n\t\"side\": \"{{ _.ORDER_SIDES.BUY }}\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\",\n\t\"rate\": \"{{ _.ORDER_RATE }}\",\n\t\"amount\": \"{{ _.ORDER_AMOUNT }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -789,7 +789,7 @@
         {
             "_id": "req_8cc2810f054d4681914645b0e9324e2b",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974668889,
+            "modified": 1654250995672,
             "created": 1651597897328,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "place:market",
@@ -853,7 +853,7 @@
         {
             "_id": "req_ed3f0bccc94147bd83ed5695c747b517",
             "parentId": "fld_1eb1fdf26dfd46298cacc08fd05b469e",
-            "modified": 1652974671517,
+            "modified": 1654250996195,
             "created": 1651595579937,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "cancel",
@@ -885,7 +885,7 @@
         {
             "_id": "req_e4a51247e67544b792bd07ca2844e9d6",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652632786058,
+            "modified": 1654251004397,
             "created": 1651928091972,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -961,7 +961,7 @@
         {
             "_id": "req_6e801707cf614c5faba6781ff1cc71cf",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652632788093,
+            "modified": 1654251004025,
             "created": 1651928091980,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getRaw",
@@ -993,7 +993,7 @@
         {
             "_id": "req_4c7d5579e1b8495ab536e467bce146cd",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652632788505,
+            "modified": 1654251003675,
             "created": 1651928091991,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "get",
@@ -1025,7 +1025,7 @@
         {
             "_id": "req_bd0959425e7644dea3b1b2b3d65ea27d",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652632793336,
+            "modified": 1654251003321,
             "created": 1651928091994,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "close",
@@ -1057,7 +1057,7 @@
         {
             "_id": "req_1aceb5256fa34c14b2bb8c2191d0340c",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652787653706,
+            "modified": 1654251002358,
             "created": 1652787328202,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "getLeverage",
@@ -1089,7 +1089,7 @@
         {
             "_id": "req_7b87a38e7bc641629387e9ede6d3ef9e",
             "parentId": "fld_62d54578963348579dbdb82bd6a5292c",
-            "modified": 1652787663654,
+            "modified": 1654251002872,
             "created": 1652787288178,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "setLeverage",
@@ -1413,17 +1413,17 @@
         {
             "_id": "env_e524d6c1fb6247348832a850cae3e36d",
             "parentId": "env_0294ce45850974a6280b61215be346094da99682",
-            "modified": 1652964897280,
+            "modified": 1654250969030,
             "created": 1652833243571,
             "name": "Ftx",
             "data": {
                 "EXCHANGE_ID": "ftx",
                 "KEY": "{% dotenv _.ALUNAJS_RC, 'FTX_API_KEY' %}",
                 "SECRET": "{% dotenv _.ALUNAJS_RC, 'FTX_API_SECRET' %}",
-                "ORDER_SYMBOL_PAIR": "BTC/USD",
-                "ORDER_RATE": 1000,
-                "ORDER_AMOUNT": 0.001,
-                "ORDER_EDITED_AMOUNT": 0.0011
+                "ORDER_SYMBOL_PAIR": "BTC-PERP",
+                "ORDER_RATE": 10000,
+                "ORDER_AMOUNT": 0.0001,
+                "ORDER_EDITED_AMOUNT": 0.0002
             },
             "dataPropertyOrder": {
                 "&": [
