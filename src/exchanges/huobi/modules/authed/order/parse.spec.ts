@@ -278,7 +278,6 @@ describe(__filename, () => {
 
     const {
       symbol,
-      price,
       type,
       'created-at': createdAt,
       amount,
