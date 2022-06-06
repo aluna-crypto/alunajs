@@ -199,7 +199,6 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.STOP_MARKET
 
     const translatedOrderSide = translateOrderSideToHuobi({ from: side })
-    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
 
     const body = {
       symbol: '',
