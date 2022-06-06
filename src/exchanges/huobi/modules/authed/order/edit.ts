@@ -36,6 +36,8 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     account,
     symbolPair,
+    stopRate,
+    limitRate,
     http = new HuobiHttp(exchange.settings),
   } = params
 
@@ -53,6 +55,8 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     account,
     symbolPair,
     http,
+    stopRate,
+    limitRate,
   })
 
   const { requestWeight } = http

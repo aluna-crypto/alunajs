@@ -16,6 +16,7 @@ export const translateOrderTypeToAluna = buildAdapter<
   mappings: {
     [HuobiOrderTypeEnum.LIMIT]: AlunaOrderTypesEnum.LIMIT,
     [HuobiOrderTypeEnum.STOP_LIMIT]: AlunaOrderTypesEnum.STOP_LIMIT,
+    [HuobiOrderTypeEnum.STOP_MARKET]: AlunaOrderTypesEnum.STOP_MARKET,
     [HuobiOrderTypeEnum.MARKET]: AlunaOrderTypesEnum.MARKET,
     [HuobiOrderTypeEnum.LIMIT_MAKER]: AlunaOrderTypesEnum.LIMIT,
     [HuobiOrderTypeEnum.IOC]: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
@@ -34,6 +35,7 @@ export const translateOrderTypeToHuobi = buildAdapter<
     [AlunaOrderTypesEnum.LIMIT]: HuobiOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: HuobiOrderTypeEnum.MARKET,
     [AlunaOrderTypesEnum.STOP_LIMIT]: HuobiOrderTypeEnum.STOP_LIMIT,
+    [AlunaOrderTypesEnum.STOP_MARKET]: HuobiOrderTypeEnum.STOP_MARKET,
     [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: HuobiOrderTypeEnum.IOC,
     [AlunaOrderTypesEnum.FILL_OF_KILL]: HuobiOrderTypeEnum.LIMIT_FOK,
   },

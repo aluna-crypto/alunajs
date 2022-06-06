@@ -59,6 +59,8 @@ describe(__filename, () => {
       side: AlunaOrderSideEnum.BUY,
       type: AlunaOrderTypesEnum.LIMIT,
       rate: 0,
+      stopRate: 0,
+      limitRate: 0,
     }
 
     const {
@@ -90,6 +92,8 @@ describe(__filename, () => {
       amount: params.amount,
       account: params.account,
       symbolPair: params.symbolPair,
+      stopRate: params.stopRate,
+      limitRate: params.limitRate,
     })
 
   })

@@ -1,6 +1,7 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
   IAlunaOrderParseReturns,
@@ -12,7 +13,7 @@ import { translateOrderStatusToAluna } from '../../../enums/adapters/huobiOrderS
 import { translateOrderTypeToAluna } from '../../../enums/adapters/huobiOrderTypeAdapter'
 import { HuobiOrderSideEnum } from '../../../enums/HuobiOrderSideEnum'
 import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
-import { IHuobiOrderResponseSchema } from '../../../schemas/IHuobiOrderSchema'
+import { IHuobiOrderPriceFieldsSchema, IHuobiOrderResponseSchema } from '../../../schemas/IHuobiOrderSchema'
 
 
 
@@ -99,6 +100,32 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const rate = Number(price)
   const total = orderAmount * rate
 
+  const orderPrices: IHuobiOrderPriceFieldsSchema = {
+    total,
+  }
+
+  switch (translatedOrderType) {
+
+    case AlunaOrderTypesEnum.STOP_LIMIT:
+      orderPrices.limitRate = rate
+      orderPrices.stopRate = Number(stopPrice)
+      break
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      orderPrices.stopRate = Number(stopPrice)
+      orderPrices.total = orderAmount
+      break
+
+    case AlunaOrderTypesEnum.MARKET:
+      orderPrices.total = orderAmount
+      break
+
+    default:
+      orderPrices.rate = rate
+      break
+  }
+
+
   const order: IAlunaOrderSchema = {
     id: id.toString(),
     symbolPair: symbol,
@@ -106,13 +133,11 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     exchangeId,
     baseSymbolId,
     quoteSymbolId,
-    total,
     placedAt,
     canceledAt,
     filledAt,
-    rate,
-    stopRate: Number(stopPrice),
     amount: orderAmount,
+    ...orderPrices,
     side: translatedOrderSide,
     status: orderStatus,
     type: translatedOrderType,

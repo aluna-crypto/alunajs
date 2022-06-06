@@ -29,3 +29,10 @@ export interface IHuobiOrderResponseSchema {
   rawOrder: IHuobiOrderSchema
   rawSymbol: IHuobiSymbolSchema
 }
+
+export interface IHuobiOrderPriceFieldsSchema {
+  limitRate?: number
+  rate?: number
+  stopRate?: number
+  total: number
+}

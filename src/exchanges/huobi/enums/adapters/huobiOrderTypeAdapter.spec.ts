@@ -31,6 +31,10 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
     expect(translateOrderTypeToAluna({
+      from: HuobiOrderTypeEnum.STOP_MARKET,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
+
+    expect(translateOrderTypeToAluna({
       from: HuobiOrderTypeEnum.IOC,
     })).to.be.eq(AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL)
 
@@ -81,6 +85,10 @@ describe(__filename, () => {
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.STOP_LIMIT,
     })).to.be.eq(HuobiOrderTypeEnum.STOP_LIMIT)
+
+    expect(translateOrderTypeToHuobi({
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+    })).to.be.eq(HuobiOrderTypeEnum.STOP_MARKET)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
