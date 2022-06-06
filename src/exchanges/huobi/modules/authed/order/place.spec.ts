@@ -23,6 +23,7 @@ import { mockGetHuobiAccountId } from '../../../test/mocks/mockGetHuobiAccountId
 import * as getMod from './get'
 import * as getHuobiAccountIdMod from '../helpers/getHuobiAccountId'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
+import { HuobiConditionalOrderTypeEnum } from '../../../enums/HuobiConditionalOrderTypeEnum'
 
 
 
@@ -121,19 +122,15 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.STOP_LIMIT
 
     const translatedOrderSide = translateOrderSideToHuobi({ from: side })
-    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
-
-
 
     const body = {
       symbol: '',
-      type: `${translatedOrderSide}-${translatedOrderType}`,
-      'account-id': accountId,
-      amount: '0.01',
-      source: 'spot-api',
-      price: '1',
-      'stop-price': '1',
-      operator: 'lte',
+      accountId: 123456,
+      orderPrice: '1',
+      orderSide: translatedOrderSide,
+      orderSize: '0.01',
+      orderType: HuobiConditionalOrderTypeEnum.LIMIT,
+      stopPrice: '1',
     }
 
     // mocking
@@ -184,7 +181,84 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       body,
       credentials,
-      url: getHuobiEndpoints(exchange.settings).order.place,
+      url: getHuobiEndpoints(exchange.settings).order.placeStop,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+  })
+
+  it('should place a stop Huobi stop market order just fine', async () => {
+    // preparing data
+    const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_MARKET
+
+    const translatedOrderSide = translateOrderSideToHuobi({ from: side })
+    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
+
+    const body = {
+      symbol: '',
+      accountId: 123456,
+      orderSide: translatedOrderSide,
+      orderValue: '0.01',
+      orderType: HuobiConditionalOrderTypeEnum.MARKET,
+      stopPrice: '1',
+    }
+
+    // mocking
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    const { get } = mockGet({ module: getMod })
+
+    get.returns({ order: mockedParsedOrder })
+
+    authedRequest.returns(Promise.resolve(mockedRawOrder))
+
+    mockValidateParams()
+
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: 0,
+      stopRate: 1,
+      limitRate: 1,
+    }
+
+    const { order } = await exchange.order.place(params)
+
+
+    // validating
+    expect(order).to.deep.eq(mockedParsedOrder)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      body,
+      credentials,
+      url: getHuobiEndpoints(exchange.settings).order.placeStop,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

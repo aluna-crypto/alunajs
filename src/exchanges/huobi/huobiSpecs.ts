@@ -149,6 +149,7 @@ export const getHuobiEndpoints = (
       get: (id: string) => `${baseUrl}/v1/order/orders/${id}`,
       list: `${baseUrl}/v1/order/openOrders`,
       place: `${baseUrl}/v1/order/orders/place`,
+      placeStop: `${baseUrl}/v2/algo-orders`,
       cancel: (id: string) => `${baseUrl}/v1/order/orders/${id}/submitcancel`,
     },
     helpers: {

@@ -12,6 +12,7 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToHuobi } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderTypeToHuobi } from '../../../enums/adapters/huobiOrderTypeAdapter'
+import { HuobiConditionalOrderTypeEnum } from '../../../enums/HuobiConditionalOrderTypeEnum'
 import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
@@ -70,29 +71,57 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     settings,
   })
 
+  let url = getHuobiEndpoints(settings).order.place
+
   const body = {
     symbol: symbolPair,
-    type: `${translatedOrderSide}-${translatedOrderType}`,
-    'account-id': accountId,
-    amount: amount.toString(),
-    source: 'spot-api',
   }
 
-  if (translatedOrderType === HuobiOrderTypeEnum.LIMIT) {
+  switch (translatedOrderType) {
 
-    Object.assign(body, {
-      price: rate!.toString(),
-    })
+    case HuobiOrderTypeEnum.LIMIT:
+      Object.assign(body, {
+        type: `${translatedOrderSide}-${translatedOrderType}`,
+        'account-id': accountId,
+        amount: amount.toString(),
+        source: 'spot-api',
+        price: rate!.toString(),
+      })
+      break
 
-  }
+    case HuobiOrderTypeEnum.STOP_LIMIT:
+      Object.assign(body, {
+        accountId,
+        orderPrice: limitRate!.toString(),
+        orderSide: translatedOrderSide,
+        orderSize: amount.toString(),
+        orderType: HuobiConditionalOrderTypeEnum.LIMIT,
+        stopPrice: stopRate!.toString(),
+      })
+      url = getHuobiEndpoints(settings).order.placeStop
+      break
 
-  if (translatedOrderType === HuobiOrderTypeEnum.STOP_LIMIT) {
+    case HuobiOrderTypeEnum.STOP_MARKET:
+      Object.assign(body, {
+        accountId,
+        orderSide: translatedOrderSide,
+        orderValue: amount.toString(),
+        orderType: HuobiConditionalOrderTypeEnum.MARKET,
+        stopPrice: stopRate!.toString(),
+      })
+      url = getHuobiEndpoints(settings).order.placeStop
+      break
 
-    Object.assign(body, {
-      'stop-price': stopRate!.toString(),
-      price: limitRate!.toString(),
-      operator: 'lte',
-    })
+    default:
+
+      Object.assign(body, {
+        type: `${translatedOrderSide}-${translatedOrderType}`,
+        'account-id': accountId,
+        amount: amount.toString(),
+        source: 'spot-api',
+      })
+      break
+
 
   }
 
@@ -103,7 +132,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     placedOrderId = await http.authedRequest<string>({
-      url: getHuobiEndpoints(settings).order.place,
+      url,
       body,
       credentials,
     })
