@@ -8,7 +8,9 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const okxInvalidKeyPatterns: Array<RegExp> = [
-  /api-invalid/mi,
+  /Request header “OK_ACCESS_PASSPHRASE“ incorrect./mi,
+  /Invalid OK-ACCESS-KEY/mi,
+  /Invalid Sign/mi,
 ]
 
 
@@ -54,7 +56,7 @@ export const handleOkxRequestError = (
 
     const { response } = error as AxiosError
 
-    message = response?.data?.sMsg || message
+    message = response?.data?.msg || message
 
     httpStatusCode = response?.status || httpStatusCode
 
