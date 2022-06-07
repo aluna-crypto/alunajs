@@ -138,6 +138,28 @@ describe(__filename, () => {
       metadata: okxError,
     })
 
+
+    const okxErrors = [
+      {
+        sCode: '51000',
+        sMsg: requestMessage,
+      },
+      {
+        sCode: '666',
+      },
+    ] as handleOkxMod.IOkxErrorSchema[]
+
+    alunaError = handleOkxRequestError({ error: okxErrors })
+
+    const expectedErrMsgs = `${requestMessage}. `
+
+    expect(alunaError).to.deep.eq({
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      message: expectedErrMsgs,
+      httpStatusCode: 500,
+      metadata: okxErrors,
+    })
+
     const unknown = {} as any
 
     alunaError = handleOkxRequestError({ error: unknown })
