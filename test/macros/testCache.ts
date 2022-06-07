@@ -9,7 +9,7 @@ import { mockAxiosRequest } from '../mocks/axios/request'
 
 export interface ITestCacheParams {
   HttpClass: any // class constructor
-  useObjectAsResponse?: boolean
+  customRequestResponse?: any
 }
 
 
@@ -18,7 +18,7 @@ export const testCache = async (params: ITestCacheParams) => {
 
   const {
     HttpClass,
-    useObjectAsResponse = false,
+    customRequestResponse,
   } = params
 
   const requestParams: IAlunaHttpPublicParams = {
@@ -27,9 +27,9 @@ export const testCache = async (params: ITestCacheParams) => {
     verb: AlunaHttpVerbEnum.GET,
   }
 
-  const response = useObjectAsResponse
-    ? { data: 'mocked response' }
-    : 'mocked response'
+  const response = customRequestResponse
+    ? { data: customRequestResponse }
+    : { data: 'mocked response' }
 
 
 
