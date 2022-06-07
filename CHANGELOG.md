@@ -1,3 +1,11 @@
+# 1.2.0 (June 7, 2022)
+
+ - Add support for derivatives trading on Ftx
+ - Improved e2e tests for `key` module
+ - Fix invalid-key error for Gate
+ - Ajustments in `IAlunaOrderGetParams` interface
+   - Add prop `type`
+
 # 1.1.1 (June 1, 2022)
 
  - Add new value `default` for `AlunaWalletEnum` 
