@@ -13,6 +13,7 @@ export const bitmexInvalidKeyPatterns: Array<RegExp> = [
   /Signature not valid/mi,
   /This key is disabled/mi,
   /Your account has been disabled/mi,
+  /Missing API key/mi,
 ]
 
 
