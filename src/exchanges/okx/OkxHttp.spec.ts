@@ -1,13 +1,19 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
-import { omit, random } from 'lodash'
+import {
+  omit,
+  random,
+} from 'lodash'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import crypto from 'crypto'
+import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
+import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import {
   IAlunaProxySchema,
@@ -18,18 +24,21 @@ import { mockAlunaCache } from '../../utils/cache/AlunaCache.mock'
 import { executeAndCatch } from '../../utils/executeAndCatch'
 import * as handleOkxRequestErrorMod from './errors/handleOkxRequestError'
 import * as OkxHttpMod from './OkxHttp'
-import { AlunaError } from '../../lib/core/AlunaError'
-import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
-import { testCache } from '../../../test/macros/testCache'
 
 
 
 describe(__filename, () => {
 
-  const { OkxHttp } = OkxHttpMod
+  const {
+    OkxHttp,
+    validateOkxResponse,
+  } = OkxHttpMod
 
   const url = 'https://okx.com/api/path'
-  const response = 'response'
+  const response = {
+    data: 'response',
+    code: '0',
+  }
   const body = {
     data: 'some-data',
   }
@@ -62,6 +71,7 @@ describe(__filename, () => {
   const mockDeps = (
     params: {
       mockGenerateAuthHeader?: boolean
+      mockValidateOkxResponse?: boolean
       cacheParams?: {
         get?: any
         has?: boolean
@@ -76,6 +86,7 @@ describe(__filename, () => {
 
     const {
       mockGenerateAuthHeader = true,
+      mockValidateOkxResponse = true,
       cacheParams = {
         get: {},
         has: false,
@@ -89,6 +100,11 @@ describe(__filename, () => {
       signedHeader,
     )
 
+    const validateOkxResponse = ImportMock.mockFunction(
+      OkxHttpMod,
+      'validateOkxResponse',
+    )
+
     const handleOkxRequestError = ImportMock.mockFunction(
       handleOkxRequestErrorMod,
       'handleOkxRequestError',
@@ -97,6 +113,12 @@ describe(__filename, () => {
     if (!mockGenerateAuthHeader) {
 
       generateAuthHeader.restore()
+
+    }
+
+    if (!mockValidateOkxResponse) {
+
+      validateOkxResponse.restore()
 
     }
 
@@ -110,6 +132,7 @@ describe(__filename, () => {
       request,
       hashCacheKey,
       generateAuthHeader,
+      validateOkxResponse,
       assembleRequestConfig,
       handleOkxRequestError,
     }
@@ -128,12 +151,14 @@ describe(__filename, () => {
       request,
       hashCacheKey,
       generateAuthHeader,
+      validateOkxResponse,
       assembleRequestConfig,
     } = mockDeps()
 
     const okxHttp = new OkxHttp({})
+    request.returns(Promise.resolve({ data: response }))
 
-    request.returns(Promise.resolve({ data: { data: response } }))
+    validateOkxResponse.returns(response)
 
 
     // executing
@@ -171,6 +196,11 @@ describe(__filename, () => {
       proxySettings: undefined,
     })
 
+    expect(validateOkxResponse.callCount).to.be.eq(1)
+    expect(validateOkxResponse.firstCall.args[0]).to.deep.eq({
+      okxResponseData: response,
+    })
+
     expect(generateAuthHeader.callCount).to.be.eq(0)
 
   })
@@ -188,9 +218,12 @@ describe(__filename, () => {
       hashCacheKey,
       generateAuthHeader,
       assembleRequestConfig,
+      validateOkxResponse,
     } = mockDeps()
 
-    request.returns(Promise.resolve({ data: { data: response } }))
+    request.returns(Promise.resolve({ data: response }))
+
+    validateOkxResponse.returns(response)
 
 
     // executing
@@ -218,74 +251,10 @@ describe(__filename, () => {
 
     expect(assembleRequestConfig.callCount).to.be.eq(1)
 
-    expect(generateAuthHeader.callCount).to.be.eq(1)
-    expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
-      verb: AlunaHttpVerbEnum.POST,
-      credentials,
-      body,
-      url,
+    expect(validateOkxResponse.callCount).to.be.eq(1)
+    expect(validateOkxResponse.firstCall.args[0]).to.deep.eq({
+      okxResponseData: response,
     })
-
-    expect(hashCacheKey.callCount).to.be.eq(0)
-
-    expect(cache.has.callCount).to.be.eq(0)
-    expect(cache.get.callCount).to.be.eq(0)
-    expect(cache.set.callCount).to.be.eq(0)
-
-  })
-
-  it('should execute authed request just fine', async () => {
-
-    // preparing data
-    const okxHttp = new OkxHttp({})
-
-
-    // mocking
-    const {
-      cache,
-      request,
-      hashCacheKey,
-      generateAuthHeader,
-      assembleRequestConfig,
-    } = mockDeps()
-
-    request.returns(Promise.resolve({
-      data: {
-        data: [
-          {
-            data: response,
-          },
-        ],
-      },
-    }))
-
-
-    // executing
-    const responseData = await okxHttp.authedRequest({
-      verb: AlunaHttpVerbEnum.POST,
-      url,
-      body,
-      credentials,
-    })
-
-
-    // validating
-    expect(responseData).to.deep.eq([{
-      data: response,
-    }])
-
-    expect(okxHttp.requestWeight.public).to.be.eq(0)
-    expect(okxHttp.requestWeight.authed).to.be.eq(1)
-
-    expect(request.callCount).to.be.eq(1)
-    expect(request.firstCall.args[0]).to.deep.eq({
-      url,
-      method: AlunaHttpVerbEnum.POST,
-      data: body,
-      headers: signedHeader,
-    })
-
-    expect(assembleRequestConfig.callCount).to.be.eq(1)
 
     expect(generateAuthHeader.callCount).to.be.eq(1)
     expect(generateAuthHeader.firstCall.args[0]).to.deep.eq({
@@ -317,9 +286,14 @@ describe(__filename, () => {
 
 
     // mocking
-    const { request } = mockDeps()
+    const {
+      request,
+      validateOkxResponse,
+    } = mockDeps()
 
-    request.returns(Promise.resolve({ data: { data: response } }))
+    request.returns(Promise.resolve({ data: response }))
+
+    validateOkxResponse.returns(response)
 
 
     // executing
@@ -335,6 +309,11 @@ describe(__filename, () => {
     expect(okxHttp.requestWeight.authed).to.be.eq(authRequestCount)
 
     expect(request.callCount).to.be.eq(1)
+
+    expect(validateOkxResponse.callCount).to.be.eq(1)
+    expect(validateOkxResponse.firstCall.args[0]).to.deep.eq({
+      okxResponseData: response,
+    })
 
   })
 
@@ -352,9 +331,12 @@ describe(__filename, () => {
 
 
     // mocking
-    const { request } = mockDeps()
+    const {
+      request,
+      validateOkxResponse,
+    } = mockDeps()
 
-    request.returns(Promise.resolve({ data: { data: response } }))
+    request.returns(Promise.resolve({ data: response }))
 
 
     // executing
@@ -372,6 +354,11 @@ describe(__filename, () => {
 
     expect(request.callCount).to.be.eq(1)
 
+    expect(validateOkxResponse.callCount).to.be.eq(1)
+    expect(validateOkxResponse.firstCall.args[0]).to.deep.eq({
+      okxResponseData: response,
+    })
+
   })
 
   it('should properly handle request error on public requests', async () => {
@@ -385,6 +372,7 @@ describe(__filename, () => {
     // mocking
     const {
       request,
+      validateOkxResponse,
       handleOkxRequestError,
     } = mockDeps()
 
@@ -405,6 +393,8 @@ describe(__filename, () => {
 
     expect(handleOkxRequestError.callCount).to.be.eq(1)
 
+    expect(validateOkxResponse.callCount).to.be.eq(0)
+
   })
 
   it('should properly handle request error on authed requests', async () => {
@@ -418,6 +408,7 @@ describe(__filename, () => {
     // mocking
     const {
       request,
+      validateOkxResponse,
       handleOkxRequestError,
     } = mockDeps()
 
@@ -437,109 +428,9 @@ describe(__filename, () => {
 
     expect(request.callCount).to.be.eq(1)
 
-    expect(handleOkxRequestError.callCount).to.be.eq(1)
-
-  })
-
-  it('should properly handle request error on authed requests', async () => {
-
-    // preparing data
-    const okxHttp = new OkxHttp({})
-
-    const errorResponse = {
-      sCode: '5000',
-      sMsg: 'dummy-msg',
-    }
-
-    const throwedError = {
-      data: {
-        data: errorResponse,
-      },
-    }
-
-    // mocking
-    const {
-      request,
-      handleOkxRequestError,
-    } = mockDeps()
-
-    request.returns(Promise.resolve(throwedError))
-
-    handleOkxRequestError.returns(throwedError)
-
-    // executing
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => okxHttp.authedRequest({
-      url,
-      body,
-      credentials,
-    }))
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    expect(error).to.be.ok
-
-    expect(request.callCount).to.be.eq(1)
+    expect(validateOkxResponse.callCount).to.be.eq(0)
 
     expect(handleOkxRequestError.callCount).to.be.eq(1)
-    expect(handleOkxRequestError.firstCall.args[0]).to.deep.eq({
-      error: errorResponse,
-    })
-
-  })
-
-  it('should properly handle request error on authed requests', async () => {
-
-    // preparing data
-    const okxHttp = new OkxHttp({})
-
-    const errorResponse = {
-      sCode: '5000',
-      sMsg: 'dummy-msg',
-    }
-
-    const throwedError = {
-      data: {
-        data: [errorResponse],
-      },
-    }
-
-    // mocking
-    const {
-      request,
-      handleOkxRequestError,
-    } = mockDeps()
-
-    request.returns(Promise.resolve(throwedError))
-
-    handleOkxRequestError.returns(throwedError)
-
-    // executing
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => okxHttp.authedRequest({
-      url,
-      body,
-      credentials,
-    }))
-
-
-    // validating
-    expect(result).not.to.be.ok
-
-    expect(error).to.be.ok
-
-    expect(request.callCount).to.be.eq(1)
-
-    expect(handleOkxRequestError.callCount).to.be.eq(1)
-    expect(handleOkxRequestError.firstCall.args[0]).to.deep.eq({
-      error: errorResponse,
-    })
 
   })
 
@@ -759,10 +650,69 @@ describe(__filename, () => {
 
   })
 
+  it("should expect 'validateOkxResponse' validates Okx response", async () => {
+
+    // preparing data
+    const okxResponse = { orders: [] }
+
+    const okxResponseData: OkxHttpMod.IOkxHttpResponse<{ orders: any[] }> = {
+      data: okxResponse,
+      code: '0',
+      msg: '',
+    }
+
+
+    // executing
+    const data = validateOkxResponse({
+      okxResponseData,
+    })
+
+
+    // validating
+    expect(data).to.deep.eq(okxResponse)
+
+  })
+
+  it("should expect 'validateOkxResponse' throws if Okx code differs from 1", async () => {
+
+    // preparing data
+    const errorMsg = 'Unknown error'
+
+    const okxErrorResponse = {
+      sCode: '666',
+      msg: errorMsg,
+    }
+
+    const okxResponseData: OkxHttpMod.IOkxHttpResponse<any> = {
+      data: okxErrorResponse,
+      code: '8',
+      msg: '',
+    }
+
+
+    // executing
+    const {
+      error,
+      result,
+    } = await executeAndCatch(() => validateOkxResponse({
+      okxResponseData,
+    }))
+
+
+    // validating
+    expect(result).not.to.be.ok
+
+    expect(error).to.deep.eq(okxErrorResponse)
+
+  })
+
 
   /**
    * Executes macro test.
    * */
-  testCache({ HttpClass: OkxHttp, useObjectAsResponse: true })
+  testCache({
+    HttpClass: OkxHttp,
+    customRequestResponse: response,
+  })
 
 })
