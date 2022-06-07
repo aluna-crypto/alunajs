@@ -55,7 +55,7 @@ describe(__filename, () => {
       .returns(Promise.reject(new AlunaError({
         code: AlunaGenericErrorCodes.UNKNOWN,
         message: '',
-        metadata: { sCode: '50014' },
+        metadata: [{ sCode: '50014' }],
       })))
 
     const { parseDetails } = mockParseDetails({
@@ -136,7 +136,7 @@ describe(__filename, () => {
       .returns(Promise.reject(new AlunaError({
         code: AlunaGenericErrorCodes.UNKNOWN,
         message: '',
-        metadata: { sCode: '50114' },
+        metadata: [{ sCode: '50114' }],
       })))
 
 
@@ -199,7 +199,7 @@ describe(__filename, () => {
     const alunaError = new AlunaError({
       code: AlunaGenericErrorCodes.UNKNOWN,
       message: '',
-      metadata: { sCode: '1' },
+      metadata: [{ sCode: '1' }],
     })
 
     const {
