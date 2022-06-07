@@ -23,6 +23,16 @@ import {
 
 export const OKX_HTTP_CACHE_KEY_PREFIX = 'OkxHttp.publicRequest'
 
+
+
+export interface IOkxHttpResponse<T> {
+  code: string
+  msg: string
+  data: T | IOkxErrorSchema | IOkxErrorSchema[]
+}
+
+
+
 export class OkxHttp implements IAlunaHttp {
 
   public settings: IAlunaSettingsSchema
@@ -83,17 +93,17 @@ export class OkxHttp implements IAlunaHttp {
 
     try {
 
-      const { data } = await axios
+      const { data: okxResponseData } = await axios
         .create()
         .request<IOkxHttpResponse<T>>(requestConfig)
 
-      const { data: response } = data
+      const data = validateOkxResponse<T>({ okxResponseData })
 
       if (!disableCache) {
-        AlunaCache.cache.set<T>(cacheKey, response, cacheTtlInSeconds)
+        AlunaCache.cache.set<T>(cacheKey, data, cacheTtlInSeconds)
       }
 
-      return response
+      return data
 
     } catch (error) {
 
@@ -140,32 +150,13 @@ export class OkxHttp implements IAlunaHttp {
 
     try {
 
-      type TOkxResponse = T | IOkxErrorSchema | IOkxErrorSchema[]
-
-      const { data } = await axios
+      const { data: okxResponseData } = await axios
         .create()
-        .request<IOkxHttpResponse<TOkxResponse>>(requestConfig)
+        .request<IOkxHttpResponse<T>>(requestConfig)
 
-      const { data: response } = data
+      const data = validateOkxResponse<T>({ okxResponseData })
 
-      if (typeof response === 'object') {
-
-        if ('sCode' in response) {
-
-          throw response
-
-        }
-
-        if ('sCode' in response[0]) {
-
-          throw response[0]
-
-        }
-
-      }
-
-
-      return response as T
+      return data
 
     } catch (error) {
 
@@ -192,12 +183,6 @@ export interface IOkxSignedHeaders {
   'OK-ACCESS-TIMESTAMP': string
   'OK-ACCESS-PASSPHRASE': string
   'Content-Type': string
-}
-
-interface IOkxHttpResponse<T> {
-  code: string
-  msg: string
-  data: T
 }
 
 
@@ -260,5 +245,32 @@ export const generateAuthHeader = (
     'OK-ACCESS-TIMESTAMP': timestamp,
     'Content-Type': 'application/json',
   }
+
+}
+
+
+
+export const validateOkxResponse = <T>(
+  params: {
+    okxResponseData: IOkxHttpResponse<T>
+  },
+): T => {
+
+  const {
+    okxResponseData: {
+      code,
+      data,
+    },
+  } = params
+
+  const didOkxRequestFailed = code !== '0'
+
+  if (didOkxRequestFailed) {
+
+    throw data
+
+  }
+
+  return data as T
 
 }
