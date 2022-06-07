@@ -1,36 +1,40 @@
 import { expect } from 'chai'
-import { cloneDeep } from 'lodash'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParseDetails } from '../../../../../../test/mocks/exchange/modules/key/mockParseDetails'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaKeySchema } from '../../../../../lib/schemas/IAlunaKeySchema'
+import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { OkxAuthed } from '../../../OkxAuthed'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { OKX_KEY_ACCOUNT_PERMISSIONS, OKX_KEY_PERMISSIONS } from '../../../test/fixtures/okxKey'
+import { OKX_KEY_ACCOUNT_PERMISSIONS } from '../../../test/fixtures/okxKey'
 import * as parseDetailsMod from './parseDetails'
-import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 
 
 
 describe(__filename, () => {
 
-  it('should fetch Okx key details just fine', async () => {
+  const credentials: IAlunaCredentialsSchema = {
+    key: 'key',
+    secret: 'secret',
+  }
+
+  it('should fetch OKX key details just fine (KEY W/ TRADE PERMISSION)', async () => {
 
     // preparing data
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
     const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
       accountId,
-      permissions: OKX_KEY_PERMISSIONS,
+      permissions: {
+        read: true,
+        trade: true,
+        withdraw: false,
+      },
       meta: {},
     }
 
@@ -48,7 +52,11 @@ describe(__filename, () => {
 
     authedRequest
       .onSecondCall()
-      .returns(Promise.resolve([{ sCode: '51116' }]))
+      .returns(Promise.reject(new AlunaError({
+        code: AlunaGenericErrorCodes.UNKNOWN,
+        message: '',
+        metadata: { sCode: '50014' },
+      })))
 
     const { parseDetails } = mockParseDetails({
       module: parseDetailsMod,
@@ -77,47 +85,43 @@ describe(__filename, () => {
       url: getOkxEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
-
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      url: getOkxEndpoints(exchange.settings).order.place,
+      credentials,
+      body: {},
+    })
 
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: OKX_KEY_PERMISSIONS,
+      rawKey: {
+        read: true,
+        trade: true,
+        withdraw: false,
+        accountId: OKX_KEY_ACCOUNT_PERMISSIONS.uid,
+      },
     })
 
   })
 
-  it('should fetch Okx key details just fine', async () => {
+  it('should fetch OKX key details just fine (KEY W/O TRADE PERMISSION)', async () => {
 
     // preparing data
-    const credentials: IAlunaCredentialsSchema = {
-      key: 'key',
-      secret: 'secret',
-    }
-
-    const permissions = cloneDeep(OKX_KEY_PERMISSIONS)
-
-    permissions.read = false
-    permissions.trade = false
-    permissions.accountId = undefined
+    const accountId = 'accountId'
 
     const parsedKey: IAlunaKeySchema = {
-      accountId: undefined,
-      permissions,
+      accountId,
+      permissions: {
+        read: true,
+        trade: false,
+        withdraw: false,
+      },
       meta: {},
     }
 
     // mocking
     const http = new OkxHttp({})
 
-    const alunaError = new AlunaError({
-      message: 'dummy-error',
-      code: '',
-      metadata: {
-        code: '50030',
-      },
-    })
-
     const {
       publicRequest,
       authedRequest,
@@ -125,11 +129,16 @@ describe(__filename, () => {
 
     authedRequest
       .onFirstCall()
-      .returns(Promise.reject(alunaError))
+      .returns(Promise.resolve([OKX_KEY_ACCOUNT_PERMISSIONS]))
 
     authedRequest
       .onSecondCall()
-      .returns(Promise.resolve([{ code: '51116' }]))
+      .returns(Promise.reject(new AlunaError({
+        code: AlunaGenericErrorCodes.UNKNOWN,
+        message: '',
+        metadata: { sCode: '50114' },
+      })))
+
 
     const { parseDetails } = mockParseDetails({
       module: parseDetailsMod,
@@ -158,17 +167,27 @@ describe(__filename, () => {
       url: getOkxEndpoints(exchange.settings).key.fetchDetails,
       credentials,
     })
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      url: getOkxEndpoints(exchange.settings).order.place,
+      credentials,
+      body: {},
+    })
 
 
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(parseDetails.firstCall.args[0]).to.deep.eq({
-      rawKey: permissions,
+      rawKey: {
+        read: true,
+        trade: false,
+        withdraw: false,
+        accountId: OKX_KEY_ACCOUNT_PERMISSIONS.uid,
+      },
     })
 
   })
 
-  it('should throw an error fetching okx key details', async () => {
+  it('should throw an error if OKX request fails somehow', async () => {
 
     // preparing data
     const credentials: IAlunaCredentialsSchema = {
@@ -177,11 +196,10 @@ describe(__filename, () => {
     }
 
     // mocking
-
     const alunaError = new AlunaError({
-      message: 'dummy-error',
-      code: '',
-      metadata: null,
+      code: AlunaGenericErrorCodes.UNKNOWN,
+      message: '',
+      metadata: { sCode: '1' },
     })
 
     const {
@@ -191,7 +209,12 @@ describe(__filename, () => {
 
     authedRequest
       .onFirstCall()
+      .returns(Promise.resolve([OKX_KEY_ACCOUNT_PERMISSIONS]))
+
+    authedRequest
+      .onSecondCall()
       .returns(Promise.reject(alunaError))
+
 
     // executing
     const exchange = new OkxAuthed({ settings: {}, credentials })
@@ -207,11 +230,16 @@ describe(__filename, () => {
 
     expect(error).to.deep.eq(alunaError)
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       url: getOkxEndpoints(exchange.settings).key.fetchDetails,
       credentials,
+    })
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      url: getOkxEndpoints(exchange.settings).order.place,
+      credentials,
+      body: {},
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
