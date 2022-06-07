@@ -1,9 +1,15 @@
 import { expect } from 'chai'
+import {
+  each,
+  entries,
+} from 'lodash'
 import sleep from 'sleep-promise'
 
+import { AlunaError } from '../../../../src/lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionSideEnum } from '../../../../src/lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../src/lib/enums/AlunaPositionStatusEnum'
+import { AlunaGenericErrorCodes } from '../../../../src/lib/errors/AlunaGenericErrorCodes'
 import { IAuthedParams } from '../IAuthedParams'
 import { placeMarketOrder } from './helpers/order/placeMarketOrder'
 
@@ -21,6 +27,7 @@ export function position(params: IAuthedParams) {
     orderAccount,
   } = exchangeConfigs
 
+  const { id } = exchangeAuthed
 
   before(async () => {
 
@@ -164,8 +171,23 @@ export function position(params: IAuthedParams) {
       symbolPair,
     } = exchangeConfigs
 
-    expect(leverageToSet).to.exist
-    expect(defaultLeverage).to.exist
+    const leverageProps = {
+      defaultLeverage,
+      leverageToSet,
+    }
+
+    each(entries(leverageProps), ([key, value]) => {
+
+      if (!value) {
+
+        throw new AlunaError({
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
+          message: `e2e config prop '${key}' is required for exchange ${id}`,
+        })
+
+      }
+
+    })
 
     it('leverage:get', async () => {
 
