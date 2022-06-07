@@ -89,6 +89,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: stopLimitOrderId!,
+        type: AlunaOrderTypesEnum.STOP_LIMIT,
       })
 
       expect(order.id).to.exist
@@ -157,6 +158,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: stopLimitOrderId!,
+        type: AlunaOrderTypesEnum.STOP_LIMIT,
       })
 
       expect(order).to.exist
@@ -218,6 +220,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
+          type: AlunaOrderTypesEnum.STOP_LIMIT,
         })
 
         expect(order).to.exist
