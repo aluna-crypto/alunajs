@@ -1,5 +1,9 @@
 import { AxiosError } from 'axios'
-import { some } from 'lodash'
+import {
+  each,
+  isArray,
+  some,
+} from 'lodash'
 
 import { AlunaError } from '../../../lib/core/AlunaError'
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -37,7 +41,7 @@ export interface IOkxErrorSchema {
 }
 
 export interface IHandleOkxRequestErrorsParams {
-  error: AxiosError | Error | IOkxErrorSchema
+  error: AxiosError | Error | IOkxErrorSchema | IOkxErrorSchema[]
 }
 
 export const handleOkxRequestError = (
@@ -61,6 +65,18 @@ export const handleOkxRequestError = (
     httpStatusCode = response?.status || httpStatusCode
 
     metadata = response?.data || metadata
+
+  } else if (isArray(error)) {
+
+    message = ''
+
+    each(error, (err) => {
+
+      message = err.sMsg
+        ? message.concat(`${err.sMsg}. `)
+        : message
+
+    })
 
   } else if ((error as IOkxErrorSchema).sMsg) {
 
