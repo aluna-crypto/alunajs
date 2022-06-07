@@ -1,7 +1,7 @@
 import axios from 'axios'
 import crypto from 'crypto'
-import { AlunaError } from '../../lib/core/AlunaError'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpAuthedParams,
@@ -14,7 +14,10 @@ import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSche
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
 import { AlunaCache } from '../../utils/cache/AlunaCache'
-import { handleOkxRequestError, IOkxErrorSchema } from './errors/handleOkxRequestError'
+import {
+  handleOkxRequestError,
+  IOkxErrorSchema,
+} from './errors/handleOkxRequestError'
 
 
 
