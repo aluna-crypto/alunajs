@@ -1,7 +1,7 @@
 {
   "name": "alunajs",
-  "version": "1.1.0",
-  "description": "Standardizing CryptoTrading APIs across multiple exchanges",
+  "version": "1.1.1",
+  "description": "Standardizing Crypto Trading APIs across multiple exchanges",
   "files": [
     "dist"
   ],
