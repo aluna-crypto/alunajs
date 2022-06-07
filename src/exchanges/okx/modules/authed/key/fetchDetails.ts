@@ -8,7 +8,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaKeyModule'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxKeyAccountSchema, IOkxKeySchema } from '../../../schemas/IOkxKeySchema'
+import {
+  IOkxKeyAccountSchema,
+  IOkxKeySchema,
+} from '../../../schemas/IOkxKeySchema'
 
 
 
@@ -29,9 +32,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new OkxHttp(settings) } = params
 
-  const INVALID_PERMISSION_CODE = '50030'
-  const INVALID_PARAM_CODE = '51116'
-
   const rawKey: IOkxKeySchema = {
     read: false,
     trade: false,
@@ -39,51 +39,47 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
     accountId: undefined,
   }
 
+
+  const [
+    accountConfig,
+  ] = await http.authedRequest<IOkxKeyAccountSchema[]>({
+    verb: AlunaHttpVerbEnum.GET,
+    url: getOkxEndpoints(settings).key.fetchDetails,
+    credentials,
+  })
+
+  rawKey.read = true
+  rawKey.accountId = accountConfig.uid
+
   try {
 
-    const [
-      accountConfig,
-    ] = await http.authedRequest<IOkxKeyAccountSchema[]>({
-      verb: AlunaHttpVerbEnum.GET,
-      url: getOkxEndpoints(settings).key.fetchDetails,
+    // Since OKX does not have a request to get API keys permissions, we
+    // execute a request to place an order with invalid body params to force
+    // the exchange validates if the API key has permission to trade
+    await http.authedRequest({
+      url: getOkxEndpoints(settings).order.place,
       credentials,
+      body: {},
     })
-
-    rawKey.read = true
-    rawKey.accountId = accountConfig.uid
 
   } catch (err) {
 
-    if (err.metadata?.code === INVALID_PERMISSION_CODE) {
+    const { metadata } = err
 
-      rawKey.read = false
+    const INVALID_AUTHORIZATION = '50114'
+    const EMPTY_REQUIRED_PARAMETER = '50014'
 
-    } else {
+    // If the error is related to required parameters, it means OKX already
+    // ensured the given user API key has permission to trade
+    if (metadata.sCode === EMPTY_REQUIRED_PARAMETER) {
+
+      rawKey.trade = true
+
+    } else if (metadata.sCode !== INVALID_AUTHORIZATION) {
 
       throw err
 
     }
-
-  }
-
-  const requestBody = {
-    instId: 'BTC-USDT',
-    tdMode: 'cash',
-    side: 'buy',
-    ordType: 'limit',
-    sz: '1',
-    px: '123123123123123',
-  }
-
-  const [order] = await http.authedRequest<{ sCode: string }[]>({
-    url: getOkxEndpoints(settings).order.place,
-    credentials,
-    body: requestBody,
-  })
-
-  if (order.sCode === INVALID_PARAM_CODE) {
-
-    rawKey.trade = true
 
   }
 
