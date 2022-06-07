@@ -178,7 +178,7 @@ export function getConfig() {
         passphrase: env.FTX_API_PASSPHRASE,
         symbolPair: 'BTC-PERP',
         delayBetweenTests: 500,
-        // defaultLeverage: 1,
+        defaultLeverage: 1,
         leverageToSet: 2,
         orderRate: 10000,
         orderLimitRate: 10000,
