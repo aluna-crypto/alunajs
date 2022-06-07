@@ -64,18 +64,20 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   } catch (err) {
 
-    const { metadata } = err
+    const {
+      metadata: [okxError],
+    } = err
 
     const INVALID_AUTHORIZATION = '50114'
     const EMPTY_REQUIRED_PARAMETER = '50014'
 
     // If the error is related to required parameters, it means OKX already
     // ensured the given user API key has permission to trade
-    if (metadata.sCode === EMPTY_REQUIRED_PARAMETER) {
+    if (okxError.sCode === EMPTY_REQUIRED_PARAMETER) {
 
       rawKey.trade = true
 
-    } else if (metadata.sCode !== INVALID_AUTHORIZATION) {
+    } else if (okxError.sCode !== INVALID_AUTHORIZATION) {
 
       throw err
 
