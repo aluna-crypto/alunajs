@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
-import { ImportMock } from 'ts-mock-imports'
+import { each } from 'lodash'
 
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
 import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
@@ -10,66 +10,47 @@ import * as handleOkxMod from './handleOkxRequestError'
 
 describe(__filename, () => {
 
-  const {
-    isOkxKeyInvalid,
-    handleOkxRequestError,
-  } = handleOkxMod
+  const { handleOkxRequestError } = handleOkxMod
 
   const requestMessage = 'Error while executing request.'
 
-  const mockDeps = (
-    params: {
-      isInvalid: boolean
-    } = {
-      isInvalid: false,
-    },
-  ) => {
-
-    const {
-      isInvalid,
-    } = params
-
-    const isOkxKeyInvalidMock = ImportMock.mockFunction(
-      handleOkxMod,
-      'isOkxKeyInvalid',
-      isInvalid,
-    )
-
-    return {
-      isOkxKeyInvalidMock,
-    }
-
-  }
-
   it('should return Okx key invalid error when applicable', async () => {
 
-    const { isOkxKeyInvalidMock } = mockDeps({ isInvalid: true })
+    // preparing data
+    const matchingString = [
+      'Request header “OK_ACCESS_PASSPHRASE“ incorrect.',
+      'Invalid OK-ACCESS-KEY',
+      'Invalid Sign',
+    ]
 
-    const dummyError = 'Key is invalid'
+    each(matchingString, (string) => {
 
-    const axiosError1 = {
-      isAxiosError: true,
-      response: {
-        status: 400,
-        data: {
-          sMsg: dummyError,
+      const msg = 'Lorem Ipsum is simply '.concat(string)
+
+      const axiosError = {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: {
+            msg,
+          },
         },
-      },
-    } as AxiosError
+      } as AxiosError
 
-    const alunaError = handleOkxRequestError({ error: axiosError1 })
 
-    expect(isOkxKeyInvalidMock.callCount).to.be.eq(1)
+      // executing
+      const alunaError = handleOkxRequestError({ error: axiosError })
 
-    expect(alunaError).to.deep.eq({
-      code: AlunaKeyErrorCodes.INVALID,
-      message: dummyError,
-      httpStatusCode: axiosError1.response?.status,
-      metadata: axiosError1.response?.data,
+
+      // validating
+      expect(alunaError).to.deep.eq({
+        code: AlunaKeyErrorCodes.INVALID,
+        message: msg,
+        httpStatusCode: axiosError.response!.status,
+        metadata: axiosError.response!.data,
+      })
+
     })
-
-    expect(isOkxKeyInvalidMock.callCount).to.be.eq(1)
-    expect(isOkxKeyInvalidMock.args[0][0]).to.be.eq(dummyError)
 
   })
 
@@ -82,7 +63,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          sMsg: dummyError,
+          msg: dummyError,
         },
       },
     } as AxiosError
@@ -169,15 +150,5 @@ describe(__filename, () => {
     })
 
   })
-
-  it(
-    'should ensure Okx invalid api patterns work as expected',
-    async () => {
-
-      const message = 'api-invalid'
-      expect(isOkxKeyInvalid(message)).to.be.ok
-
-    },
-  )
 
 })
