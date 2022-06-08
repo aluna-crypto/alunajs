@@ -30,6 +30,8 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
+    type,
+    clientOrderId,
     http = new HuobiHttp(settings),
   } = params
 
@@ -43,6 +45,8 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     const { order } = await exchange.order.get({
       id,
       symbolPair,
+      type,
+      clientOrderId,
       http,
     })
 
