@@ -169,7 +169,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (/not enough.+balance/i.test(err.message)) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-      httpStatusCode = 400
+      httpStatusCode = 200
 
     }
 

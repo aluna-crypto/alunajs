@@ -98,6 +98,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     let {
       code,
       message,
+      httpStatusCode,
     } = err
 
     const { metadata } = err
@@ -108,12 +109,15 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
       message = 'Account has insufficient balance for requested action.'
 
+      httpStatusCode = 200
+
     }
 
     throw new AlunaError({
-      ...err,
       code,
       message,
+      metadata,
+      httpStatusCode,
     })
 
   }

@@ -134,7 +134,7 @@ describe(__filename, () => {
 
     expect(error?.message).to.be.eq(alunaError.message)
     expect(error?.code).to.be.eq(alunaError.code)
-    expect(error?.httpStatusCode).to.be.eq(alunaError.httpStatusCode)
+    expect(error?.httpStatusCode).to.be.eq(200)
     expect(error?.metadata).to.be.eq(rawKey)
 
     expect(authedRequest.callCount).to.be.eq(1)

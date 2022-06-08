@@ -65,7 +65,7 @@ export const setLeverage = (exchange: IAlunaExchangeAuthed) => async (
       message = `Cannot set leverage for ${symbolPair} because of `
         .concat('insufficient balance')
 
-      httpStatusCode = 400
+      httpStatusCode = 200
 
     }
 

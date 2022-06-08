@@ -86,7 +86,7 @@ describe(__filename, () => {
       const alunaError = new AlunaError({
         code: AlunaPositionErrorCodes.NOT_FOUND,
         message: 'Position not found',
-        httpStatusCode: 400,
+        httpStatusCode: 500,
       })
 
 

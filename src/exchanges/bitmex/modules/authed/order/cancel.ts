@@ -89,6 +89,9 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     const {
       metadata,
       message,
+    } = err
+
+    let {
       httpStatusCode,
     } = err
 
@@ -98,6 +101,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     if (/Invalid orderID/.test(message)) {
 
       code = AlunaOrderErrorCodes.NOT_FOUND
+      httpStatusCode = 200
 
     }
 

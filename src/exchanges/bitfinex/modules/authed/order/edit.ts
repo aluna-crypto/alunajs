@@ -142,7 +142,8 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   } catch (err) {
 
-    const { httpStatusCode, metadata } = err
+    const { metadata } = err
+    let { httpStatusCode } = err
 
     let {
       code,
@@ -157,6 +158,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     } else if (/not enough.+balance/i.test(err.message)) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 200
 
     }
 

@@ -129,6 +129,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     let {
       code,
       message,
+      httpStatusCode,
     } = err
 
     const NOT_ENOUGH_BALANCE_MESSAGE = 'Not enough balances'
@@ -136,8 +137,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (message === NOT_ENOUGH_BALANCE_MESSAGE) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
       message = 'Account has insufficient balance for requested action.'
+      httpStatusCode = 200
 
     }
 
@@ -145,6 +146,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }

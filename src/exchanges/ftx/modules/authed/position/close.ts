@@ -36,7 +36,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
     throw new AlunaError({
       code: AlunaPositionErrorCodes.ALREADY_CLOSED,
       message: 'Position is already closed',
-      httpStatusCode: 400,
+      httpStatusCode: 200,
       metadata: position,
     })
 

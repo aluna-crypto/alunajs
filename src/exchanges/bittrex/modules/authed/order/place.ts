@@ -105,10 +105,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     } = err
 
     const { metadata } = err
+    let { httpStatusCode } = err
 
     if (metadata.code === 'INSUFFICIENT_FUNDS') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      httpStatusCode = 200
 
       message = 'Account has insufficient balance for requested action.'
 
@@ -123,6 +126,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
       code = AlunaOrderErrorCodes.PLACE_FAILED
 
+      httpStatusCode = 200
+
       message = 'The trade was smaller than the min trade size quantity for '
         .concat('the market')
 
@@ -132,6 +137,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }
