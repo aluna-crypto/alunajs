@@ -69,6 +69,7 @@ export const handleSampleRequestError = (
   if (isSampleKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

@@ -70,6 +70,7 @@ export const handlePoloniexRequestError = (
   if (isPoloniexKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

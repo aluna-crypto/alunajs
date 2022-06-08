@@ -64,7 +64,7 @@ describe(__filename, () => {
     expect(alunaError).to.deep.eq({
       code: AlunaKeyErrorCodes.INVALID,
       message: dummyError,
-      httpStatusCode: axiosError1.response?.status,
+      httpStatusCode: 200,
       metadata: axiosError1.response?.data,
     })
 

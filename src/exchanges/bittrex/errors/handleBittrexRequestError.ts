@@ -67,6 +67,7 @@ export const handleBittrexRequestError = (
   if (isBittrexKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

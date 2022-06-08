@@ -74,6 +74,7 @@ export const handleBitfinexRequestError = (
   if (isBitfinexKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

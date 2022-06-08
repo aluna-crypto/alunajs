@@ -67,6 +67,7 @@ export const handleGateRequestError = (
   if (isGateKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 
