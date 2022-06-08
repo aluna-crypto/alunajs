@@ -1,3 +1,7 @@
+# 1.2.1 (June 8, 2022)
+
+ - Use HTTP status code 200 for known errors
+
 # 1.2.0 (June 7, 2022)
 
  - Add support for derivatives trading on Ftx
