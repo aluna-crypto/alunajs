@@ -1,6 +1,7 @@
 import debug from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaPositionListParams,
   IAlunaPositionListRawReturns,
@@ -33,6 +34,7 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
   const rawPositions = await http.authedRequest<IOkxPositionSchema[]>({
     credentials,
     url: getOkxEndpoints(settings).position.list,
+    verb: AlunaHttpVerbEnum.GET,
   })
 
   const { requestWeight } = http

@@ -2,6 +2,7 @@ import debug from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPositionErrorCodes'
 import {
@@ -47,7 +48,8 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const [rawPosition] = await http.authedRequest<IOkxPositionSchema[]>({
     credentials,
-    url: getOkxEndpoints(settings).position.get(symbolPair),
+    url: getOkxEndpoints(settings).position.get(id!),
+    verb: AlunaHttpVerbEnum.GET,
   })
 
   if (!rawPosition) {
