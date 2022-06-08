@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockListRaw } from '../../../../../../test/mocks/exchange/modules/mockListRaw'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
 import { HuobiHttp } from '../../../HuobiHttp'
@@ -53,6 +54,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
