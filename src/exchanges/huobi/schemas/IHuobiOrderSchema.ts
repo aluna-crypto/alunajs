@@ -1,3 +1,5 @@
+import { HuobiConditionalOrderTypeEnum } from '../enums/HuobiConditionalOrderTypeEnum'
+import { HuobiOrderSideEnum } from '../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../enums/HuobiOrderStatusEnum'
 import { IHuobiSymbolSchema } from './IHuobiSymbolSchema'
 
@@ -20,13 +22,29 @@ export interface IHuobiOrderSchema {
   'stop-price'?: string
 }
 
+export interface IHuobiOrderTriggerSchema {
+  lastActTime: number
+  orderOrigTime: number
+  symbol: string
+  source: string
+  clientOrderId: string
+  orderSide: HuobiOrderSideEnum
+  orderType: HuobiConditionalOrderTypeEnum
+  orderPrice: string
+  orderSize: string
+  accountId: number
+  timeInForce: string
+  stopPrice: number
+  orderStatus: string
+}
+
 export interface IHuobiOrdersResponseSchema {
-  rawOrders: IHuobiOrderSchema[]
+  rawOrders: (IHuobiOrderSchema | IHuobiOrderTriggerSchema)[]
   rawSymbols: IHuobiSymbolSchema[]
 }
 
 export interface IHuobiOrderResponseSchema {
-  rawOrder: IHuobiOrderSchema
+  rawOrder: IHuobiOrderSchema | IHuobiOrderTriggerSchema
   rawSymbol: IHuobiSymbolSchema
 }
 

@@ -3,6 +3,7 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import {
   IAlunaOrderPlaceParams,
   IAlunaOrderPlaceReturns,
@@ -43,7 +44,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -54,6 +55,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     type,
     stopRate,
     limitRate,
+    clientOrderId,
     http = new HuobiHttp(settings),
   } = params
 
@@ -69,6 +71,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     credentials,
     http,
     settings,
+  })
+
+  const paramError = new AlunaError({
+    httpStatusCode: 400,
+    message: 'param \'clientOrderId\' is required for conditional orders',
+    code: AlunaGenericErrorCodes.PARAM_ERROR,
+    metadata: params,
   })
 
   let url = getHuobiEndpoints(settings).order.place
@@ -90,6 +99,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       break
 
     case HuobiOrderTypeEnum.STOP_LIMIT:
+
+      if (!clientOrderId) {
+
+        throw paramError
+
+      }
+
       Object.assign(body, {
         accountId,
         orderPrice: limitRate!.toString(),
@@ -97,17 +113,26 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
         orderSize: amount.toString(),
         orderType: HuobiConditionalOrderTypeEnum.LIMIT,
         stopPrice: stopRate!.toString(),
+        clientOrderId,
       })
       url = getHuobiEndpoints(settings).order.placeStop
       break
 
     case HuobiOrderTypeEnum.STOP_MARKET:
+
+      if (!clientOrderId) {
+
+        throw paramError
+
+      }
+
       Object.assign(body, {
         accountId,
         orderSide: translatedOrderSide,
         orderValue: amount.toString(),
         orderType: HuobiConditionalOrderTypeEnum.MARKET,
         stopPrice: stopRate!.toString(),
+        clientOrderId,
       })
       url = getHuobiEndpoints(settings).order.placeStop
       break
@@ -131,11 +156,17 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   try {
 
-    placedOrderId = await http.authedRequest<string>({
+    type TConditionalOrderPlaceResponse = { clientOrderId: string }
+
+    const placedOrder = await http.authedRequest<TConditionalOrderPlaceResponse | string>({
       url,
       body,
       credentials,
     })
+
+    const isNormalOrder = typeof placedOrder === 'string'
+
+    placedOrderId = isNormalOrder ? placedOrder : placedOrder.clientOrderId
 
   } catch (err) {
 
@@ -165,6 +196,9 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   const { order } = await exchange.order.get({
     id: placedOrderId,
     symbolPair,
+    type,
+    http,
+    clientOrderId: placedOrderId,
   })
 
   const { requestWeight } = http
