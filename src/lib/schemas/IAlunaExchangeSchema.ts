@@ -24,7 +24,7 @@ export interface IAlunaExchangeSchema {
 
 export interface IAlunaExchangeAccountSpecsSchema {
   type: AlunaAccountEnum
-  supported: true // supported by the exchange
+  supported: boolean // supported by the exchange
   implemented?: boolean // implemented by aluna
   wallet: AlunaWalletEnum
   orderTypes: IAlunaExchangeOrderSpecsSchema[] // TODO: check prop requirement
