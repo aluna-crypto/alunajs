@@ -1,7 +1,6 @@
 import axios from 'axios'
 import crypto from 'crypto'
 
-import { AlunaError } from '../../lib/core/AlunaError'
 import {
   IAlunaHttp,
   IAlunaHttpAuthedParams,
@@ -9,7 +8,6 @@ import {
   IAlunaHttpRequestCount,
 } from '../../lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
-import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
 import { assembleRequestConfig } from '../../utils/axios/assembleRequestConfig'
@@ -204,16 +202,6 @@ export const generateAuthHeader = (
     passphrase,
   } = credentials
 
-  if (!passphrase) {
-
-    throw new AlunaError({
-      code: AlunaKeyErrorCodes.INVALID,
-      message: '\'passphrase\' is required for private requests',
-      httpStatusCode: 401,
-    })
-
-  }
-
   const methodUrl = new URL(url)
 
   const { pathname, search } = methodUrl
@@ -240,7 +228,7 @@ export const generateAuthHeader = (
 
   return {
     'OK-ACCESS-KEY': key,
-    'OK-ACCESS-PASSPHRASE': passphrase,
+    'OK-ACCESS-PASSPHRASE': passphrase!,
     'OK-ACCESS-SIGN': signedRequest,
     'OK-ACCESS-TIMESTAMP': timestamp,
     'Content-Type': 'application/json',

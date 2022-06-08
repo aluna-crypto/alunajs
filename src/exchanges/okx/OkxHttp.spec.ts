@@ -1,19 +1,14 @@
 import { expect } from 'chai'
 import crypto from 'crypto'
 import { Agent } from 'https'
-import {
-  omit,
-  random,
-} from 'lodash'
+import { random } from 'lodash'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
-import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaProtocolsEnum } from '../../lib/enums/AlunaProxyAgentEnum'
-import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import {
   IAlunaProxySchema,
@@ -617,36 +612,6 @@ describe(__filename, () => {
     expect(signedHash['OK-ACCESS-SIGN']).to.deep.eq(digestSpy.returnValues[0])
 
     Sinon.restore()
-
-  })
-
-  it('should throw an error generating signed auth header w/o passphrase', async () => {
-
-    // preparing data
-    const verb = 'verb' as AlunaHttpVerbEnum
-
-    const expectedErrorMessage = '\'passphrase\' is required for private requests'
-    const expectedErrorCode = AlunaKeyErrorCodes.INVALID
-    const expectedErrorStatus = 401
-
-    // executing
-    const {
-      error,
-      result,
-    } = await executeAndCatch(() => OkxHttpMod.generateAuthHeader({
-      credentials: omit(credentials, 'passphrase'),
-      verb,
-      url,
-    }))
-
-    // validating
-
-    expect(result).not.to.be.ok
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error?.message).to.be.eq(expectedErrorMessage)
-    expect(error?.code).to.be.eq(expectedErrorCode)
-    expect(error?.httpStatusCode).to.be.eq(expectedErrorStatus)
 
   })
 

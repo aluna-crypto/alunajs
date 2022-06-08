@@ -1,4 +1,6 @@
+import { AlunaError } from '../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../lib/core/IAlunaExchange'
+import { AlunaKeyErrorCodes } from '../../lib/errors/AlunaKeyErrorCodes'
 import { IAlunaBalanceModule } from '../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/authed/IAlunaOrderModule'
@@ -33,6 +35,16 @@ export class OkxAuthed extends Okx implements IAlunaExchangeAuthed {
       settings,
       credentials,
     } = params
+
+    if (!credentials.passphrase) {
+
+      throw new AlunaError({
+        code: AlunaKeyErrorCodes.MISSING_PASSPHRASE,
+        message: "'passphrase' is required for private requests on Okx",
+        httpStatusCode: 200,
+      })
+
+    }
 
     super({ settings })
 
