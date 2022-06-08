@@ -38,12 +38,15 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     stopRate,
     limitRate,
+    clientOrderId,
     http = new HuobiHttp(exchange.settings),
   } = params
 
   await exchange.order.cancel({
     id,
     symbolPair,
+    type,
+    clientOrderId,
     http,
   })
 
