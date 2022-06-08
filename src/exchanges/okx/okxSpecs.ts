@@ -75,8 +75,8 @@ export const okxBaseSpecs: IAlunaExchangeSchema = {
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
-      implemented: false,
-      orderTypes: [],
+      implemented: true,
+      orderTypes: okxExchangeOrderTypes,
       wallet: AlunaWalletEnum.TRADING,
     },
   ],
@@ -143,7 +143,7 @@ export const getOkxEndpoints = (
       cancelStop: `${baseUrl}/trade/cancel-algos`,
     },
     position: {
-      get: (symbolPair: string) => `${baseUrl}/account/positions&instId=${symbolPair}`,
+      get: (id: string) => `${baseUrl}/account/positions?posId=${id}`,
       list: `${baseUrl}/account/positions`,
       close: `${baseUrl}/trade/cancel-order`,
       setLeverage: `${baseUrl}/account/set-leverage`,
