@@ -1,12 +1,12 @@
 import debug from 'debug'
-import { filter, map } from 'lodash'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaMarketParseManyParams,
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
-import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
+import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
 
 
@@ -21,22 +21,34 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const { rawMarkets } = params
 
-  const filteredSpotMarkets = filter(
-    rawMarkets,
-    {
-      type: FtxMarketTypeEnum.SPOT,
-    },
-  )
+  type TAcc = IFtxMarketSchema
+  type TSrc = IAlunaMarketSchema[]
 
-  const markets = map(filteredSpotMarkets, (rawMarket) => {
+  const markets = reduce<TAcc, TSrc>(rawMarkets, (acc, rawMarket) => {
 
-    const { market } = exchange.market.parse({
-      rawMarket,
-    })
+    const {
+      name,
+      underlying,
+    } = rawMarket
 
-    return market
+    const [baseCurrency] = name.split('-')
 
-  })
+    const isPredict = underlying && (underlying !== baseCurrency)
+
+    // skipping predict markets
+    if (!isPredict) {
+
+      const { market } = exchange.market.parse({
+        rawMarket,
+      })
+
+      acc.push(market)
+
+    }
+
+    return acc
+
+  }, [])
 
   log(`parsed ${markets.length} markets for Ftx`)
 

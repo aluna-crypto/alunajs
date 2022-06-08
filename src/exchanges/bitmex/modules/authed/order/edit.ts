@@ -13,11 +13,13 @@ import { editOrderParamsSchema } from '../../../../../utils/validation/schemas/e
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
+import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
+import { BitmexOrderTypeEnum } from '../../../enums/BitmexOrderTypeEnum'
 import {
   IBitmexOrder,
   IBitmexOrderSchema,
 } from '../../../schemas/IBitmexOrderSchema'
-import { assembleRequestBody } from './helpers/assembleRequestBody'
+import { translateAmountToOrderQty } from './helpers/translateAmountToOrderQty'
 
 
 
@@ -44,13 +46,19 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   log('editing order for Bitmex')
 
   const {
     symbolPair,
+    id,
+    amount,
+    type,
+    rate,
+    limitRate,
+    stopRate,
     http = new BitmexHttp(exchange.settings),
   } = params
 
@@ -59,12 +67,42 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     http,
   })
 
-  const { body } = assembleRequestBody({
-    action: 'edit',
-    instrument: market.instrument!,
-    orderParams: params,
-    settings,
+  const ordType = translateOrderTypeToBitmex({
+    from: type,
   })
+
+  const { orderQty } = translateAmountToOrderQty({
+    amount,
+    instrument: market.instrument!,
+  })
+
+
+  let price: number | undefined
+  let stopPx: number | undefined
+
+  switch (ordType) {
+
+    case BitmexOrderTypeEnum.STOP_MARKET:
+      stopPx = stopRate
+      break
+
+    case BitmexOrderTypeEnum.STOP_LIMIT:
+      stopPx = stopRate
+      price = limitRate
+      break
+
+    // Limit order
+    default:
+      price = rate
+
+  }
+
+  const body = {
+    orderQty,
+    orderID: id,
+    ...(price ? { price } : {}),
+    ...(stopPx ? { stopPx } : {}),
+  }
 
   try {
 

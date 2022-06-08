@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -20,22 +20,11 @@ export const poloniexExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
-    implemented: true,
-    mode: AlunaFeaturesModeEnum.READ,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
+    implemented: false,
   },
 ]
 
@@ -60,24 +49,14 @@ export const poloniexBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: poloniexExchangeOrderTypes,
-    },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.SPOT,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
-    },
-    {
-      type: AlunaAccountEnum.LENDING,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.DERIVATIVES,
     },
   ],
   settings: {},

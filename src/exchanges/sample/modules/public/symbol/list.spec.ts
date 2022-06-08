@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: SampleAuthed,
     exchangeId: 'sample',
     methodModuleName: 'symbol',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawSymbols: SAMPLE_RAW_SYMBOLS },
     parsedList: { symbols: PARSED_SYMBOLS },

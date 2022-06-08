@@ -81,6 +81,7 @@ export interface IAlunaOrderListReturns extends IAlunaOrderParseManyReturns, IAl
 export interface IAlunaOrderGetParams extends IAlunaModuleParams {
   id: string
   symbolPair: string
+  type: AlunaOrderTypesEnum
 }
 
 export interface IAlunaOrderGetRawReturns <T = any> extends IAlunaModuleReturns {
@@ -104,6 +105,7 @@ export interface IAlunaOrderPlaceParams extends IAlunaModuleParams {
   limitRate?: number
   stopRate?: number
   amount: number
+  reduceOnly?: boolean
 }
 
 export interface IAlunaOrderPlaceReturns extends IAlunaOrderGetReturns {}

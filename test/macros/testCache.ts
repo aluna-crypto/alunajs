@@ -4,11 +4,12 @@ import { IAlunaHttpPublicParams } from '../../src/lib/core/IAlunaHttp'
 import { AlunaHttpVerbEnum } from '../../src/lib/enums/AlunaHtttpVerbEnum'
 import { mockAlunaCache } from '../../src/utils/cache/AlunaCache.mock'
 import { mockAxiosRequest } from '../mocks/axios/request'
+import { TExchangeHttpConstructor } from './testPlaceOrder'
 
 
 
 export interface ITestCacheParams {
-  HttpClass: any // class constructor
+  HttpClass: TExchangeHttpConstructor
   useObjectAsResponse?: boolean
 }
 

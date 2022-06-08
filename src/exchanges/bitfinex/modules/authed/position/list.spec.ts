@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: BitfinexAuthed,
     exchangeId: 'bitfinex',
     methodModuleName: 'position',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawPositions: BITFINEX_RAW_POSITIONS },
     parsedList: { positions: PARSED_POSITIONS },

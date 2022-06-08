@@ -4,8 +4,8 @@ import { FtxMarketTypeEnum } from '../enums/FtxMarketTypeEnum'
 
 export interface IFtxMarketSchema {
   name: string
-  baseCurrency: string
-  quoteCurrency: string
+  baseCurrency: string | null
+  quoteCurrency: string | null
   quoteVolume24h: number
   change1h: number
   change24h: number
@@ -13,8 +13,9 @@ export interface IFtxMarketSchema {
   highLeverageFeeExempt: boolean
   minProvideSize: number
   type: FtxMarketTypeEnum
-  underlying: string
+  underlying: string | null
   enabled: boolean
+  isEtfMarket: boolean
   ask: number
   bid: number
   last: number

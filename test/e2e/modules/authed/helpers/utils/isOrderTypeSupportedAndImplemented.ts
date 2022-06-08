@@ -2,7 +2,6 @@ import { find } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../../src/lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../../src/lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../../../../../src/lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../../../../../src/lib/enums/AlunaOrderTypesEnum'
 
 
@@ -41,11 +40,9 @@ export const isOrderTypeSupportedAndImplemented = (params: {
 
       if (foundTypes) {
 
-        const { implemented, supported, mode } = foundTypes
+        const { implemented } = foundTypes
 
-        const writeMode = mode === AlunaFeaturesModeEnum.WRITE
-
-        if (implemented && supported && writeMode) {
+        if (implemented) {
 
           return true
 

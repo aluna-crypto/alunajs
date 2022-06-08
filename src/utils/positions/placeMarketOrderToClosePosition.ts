@@ -47,6 +47,7 @@ export const placeMarketOrderToClosePosition = async (
     side: invertedOrderSide,
     amount,
     symbolPair,
+    reduceOnly: true,
     type: AlunaOrderTypesEnum.MARKET,
   })
 

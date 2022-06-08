@@ -21,6 +21,8 @@ export interface IE2EExchange {
   orderEditAmount: number
   orderInsufficientAmount: number
   orderAccount?: AlunaAccountEnum
+  defaultLeverage?: number
+  leverageToSet?: number
   supportsGetCanceledOrders?: boolean
 }
 
@@ -99,6 +101,8 @@ export function getConfig() {
         passphrase: env.BITMEX_API_PASSPHRASE,
         symbolPair: 'XBTUSD',
         delayBetweenTests: 200,
+        defaultLeverage: 1,
+        leverageToSet: 2,
         orderRate: 1000,
         orderStopRate: 150000,
         orderLimitRate: 1000,
@@ -172,13 +176,17 @@ export function getConfig() {
         key: env.FTX_API_KEY,
         secret: env.FTX_API_SECRET,
         passphrase: env.FTX_API_PASSPHRASE,
-        symbolPair: 'BTC/USD',
+        symbolPair: 'BTC-PERP',
         delayBetweenTests: 500,
-        orderRate: 1000,
-        orderAmount: 0.001,
-        orderEditAmount: 0.0011,
+        defaultLeverage: 1,
+        leverageToSet: 2,
+        orderRate: 10000,
+        orderLimitRate: 10000,
+        orderStopRate: 150000,
+        orderAmount: 0.0001,
+        orderEditAmount: 0.0002,
         orderInsufficientAmount: 2000,
-        orderAccount: AlunaAccountEnum.SPOT,
+        orderAccount: AlunaAccountEnum.DERIVATIVES,
       },
       huobi: {
         key: env.HUOBI_API_KEY,

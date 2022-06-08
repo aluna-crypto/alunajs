@@ -87,6 +87,7 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: stopMarketOrderId!,
+        type: AlunaOrderTypesEnum.STOP_MARKET,
       })
 
       expect(order.id).to.exist
@@ -155,6 +156,7 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: stopMarketOrderId!,
+        type: AlunaOrderTypesEnum.STOP_MARKET,
       })
 
       expect(order).to.exist
@@ -185,8 +187,9 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
         order,
         requestWeight,
       } = await exchangeAuthed.order.cancel({
-        symbolPair: orderSymbolPair!,
         id: stopMarketOrderId!,
+        symbolPair: orderSymbolPair!,
+        type: AlunaOrderTypesEnum.STOP_MARKET,
       })
 
       expect(order).to.exist
@@ -215,6 +218,7 @@ export const testStopMarketOrder = (params: IAuthedParams) => {
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: stopMarketOrderId!,
+          type: AlunaOrderTypesEnum.STOP_MARKET,
         })
 
         expect(order).to.exist

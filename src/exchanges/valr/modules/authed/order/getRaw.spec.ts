@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -50,6 +51,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -99,6 +101,7 @@ describe(__filename, () => {
     const { error } = await executeAndCatch(() => exchange.order.getRaw({
       id,
       symbolPair: currencyPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     }))
 
 

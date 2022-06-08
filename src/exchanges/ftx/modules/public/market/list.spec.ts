@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: FtxAuthed,
     exchangeId: 'ftx',
     methodModuleName: 'market',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawMarkets: FTX_RAW_MARKETS },
     parsedList: { markets: PARSED_MARKETS },

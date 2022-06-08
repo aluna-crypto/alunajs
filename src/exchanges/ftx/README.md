@@ -28,5 +28,5 @@ ftx.symbol.list()
 
 | Functionality        | Supported |
 | -------------------- | :-------: |
-| `offersOrderEditing` |    ❌     |
+| `offersOrderEditing` |    ✅     |
 | `offersPositionId`   |    ❌     |

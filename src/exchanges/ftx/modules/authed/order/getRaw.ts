@@ -1,14 +1,17 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import {
   IAlunaOrderGetParams,
   IAlunaOrderGetRawReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { FtxHttp } from '../../../FtxHttp'
-import { getFtxEndpoints } from '../../../ftxSpecs'
-import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
+import {
+  IFtxOrderSchema,
+  IFtxTriggerOrderSchema,
+} from '../../../schemas/IFtxOrderSchema'
+import { getFtxOrdinaryOrder } from './helpers/getFtxOrdinaryOrder'
+import { getFtxTriggerOrder } from './helpers/getFtxTriggerOrder'
 
 
 
@@ -18,25 +21,36 @@ const log = debug('alunajs:ftx/order/getRaw')
 
 export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   params: IAlunaOrderGetParams,
-): Promise<IAlunaOrderGetRawReturns<IFtxOrderSchema>> => {
+): Promise<IAlunaOrderGetRawReturns<IFtxOrderSchema | IFtxTriggerOrderSchema>> => {
 
   log('getting raw order', params)
 
-  const {
-    settings,
-    credentials,
-  } = exchange
+  const { settings } = exchange
 
   const {
     id,
+    symbolPair,
     http = new FtxHttp(settings),
   } = params
 
-  const rawOrder = await http.authedRequest<IFtxOrderSchema>({
-    credentials,
-    verb: AlunaHttpVerbEnum.GET,
-    url: getFtxEndpoints(settings).order.get(id),
+  let rawOrder: IFtxOrderSchema | IFtxTriggerOrderSchema | undefined
+
+  rawOrder = await getFtxOrdinaryOrder({
+    exchange,
+    http,
+    id,
   })
+
+  if (!rawOrder) {
+
+    rawOrder = await getFtxTriggerOrder({
+      symbolPair,
+      exchange,
+      http,
+      id,
+    })
+
+  }
 
   const { requestWeight } = http
 

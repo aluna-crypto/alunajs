@@ -127,6 +127,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.getRaw({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
+        type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(rawOrder).to.exist
@@ -148,6 +149,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
+        type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(order.id).to.be.eq(limitOrderId)
@@ -215,6 +217,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: limitOrderId!,
+        type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(order).to.exist
@@ -245,8 +248,9 @@ export const testLimitOrder = (params: IAuthedParams) => {
         order,
         requestWeight,
       } = await exchangeAuthed.order.cancel({
-        symbolPair: orderSymbolPair!,
         id: limitOrderId!,
+        symbolPair: orderSymbolPair!,
+        type: AlunaOrderTypesEnum.LIMIT,
       })
 
       expect(order).to.exist
@@ -275,6 +279,7 @@ export const testLimitOrder = (params: IAuthedParams) => {
         } = await exchangeAuthed.order.get({
           symbolPair: orderSymbolPair!,
           id: limitOrderId!,
+          type: AlunaOrderTypesEnum.LIMIT,
         })
 
         expect(order).to.exist

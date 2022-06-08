@@ -26,6 +26,7 @@ describe(__filename, () => {
       'Signature not valid',
       'This key is disabled',
       'Your account has been disabled',
+      'Missing API key',
     ]
 
     each(matchingString, (string) => {

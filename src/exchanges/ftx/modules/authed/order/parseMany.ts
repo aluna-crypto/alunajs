@@ -1,11 +1,16 @@
 import { debug } from 'debug'
+import { reduce } from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
+import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
+import {
+  IFtxOrderSchema,
+  IFtxTriggerOrderSchema,
+} from '../../../schemas/IFtxOrderSchema'
 
 
 
@@ -14,21 +19,35 @@ const log = debug('alunajs:ftx/order/parseMany')
 
 
 export const parseMany = (exchange: IAlunaExchangeAuthed) => (
-  params: IAlunaOrderParseManyParams<IFtxOrderSchema[]>,
+  params: IAlunaOrderParseManyParams<Array<IFtxTriggerOrderSchema | IFtxOrderSchema>>,
 ): IAlunaOrderParseManyReturns => {
 
   const { rawOrders } = params
 
-  const parsedOrders = rawOrders.map((rawOrder) => {
+  const orders = reduce(rawOrders, (acc, rawOrder) => {
+
+    const {
+      type,
+      orderType,
+    } = rawOrder as IFtxTriggerOrderSchema
+
+    // Skipping unsupported trigger order types
+    if (orderType && !/stop/.test(type)) {
+
+      return acc
+
+    }
 
     const { order } = exchange.order.parse({ rawOrder })
 
-    return order
+    acc.push(order)
 
-  })
+    return acc
 
-  log(`parsed ${parsedOrders.length} orders`)
+  }, [] as IAlunaOrderSchema[])
 
-  return { orders: parsedOrders }
+  log(`parsed ${orders.length} orders`)
+
+  return { orders }
 
 }

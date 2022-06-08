@@ -1,7 +1,6 @@
 import debug from 'debug'
 import {
   each,
-  filter,
   values,
 } from 'lodash'
 
@@ -11,8 +10,8 @@ import {
   IAlunaSymbolParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaSymbolModule'
 import { IAlunaSymbolSchema } from '../../../../../lib/schemas/IAlunaSymbolSchema'
-import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
+import { splitFtxSymbolPair } from '../market/helpers/splitFtxSymbolPair'
 
 
 
@@ -28,42 +27,33 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
 
   const parsedSymbolsDict: Record<string, IAlunaSymbolSchema> = {}
 
-  const filteredSpotSymbols = filter(
-    rawSymbols,
-    {
-      type: FtxMarketTypeEnum.SPOT,
-    },
-  )
+  each(rawSymbols, (rawSymbol) => {
 
-  each(filteredSpotSymbols, (symbolPair) => {
+    const { name } = rawSymbol
 
     const {
-      baseCurrency,
-      quoteCurrency,
-    } = symbolPair
+      baseSymbolId,
+      quoteSymbolId,
+    } = splitFtxSymbolPair({ market: name })
 
-    if (!parsedSymbolsDict[baseCurrency]) {
+    if (!parsedSymbolsDict[baseSymbolId]) {
 
-      const {
-        symbol: parsedBaseSymbol,
-      } = exchange.symbol.parse({ rawSymbol: symbolPair })
+      const { symbol } = exchange.symbol.parse({ rawSymbol })
 
-      parsedSymbolsDict[baseCurrency] = parsedBaseSymbol
+      parsedSymbolsDict[baseSymbolId] = symbol
 
     }
 
-    if (!parsedSymbolsDict[quoteCurrency]) {
+    if (!parsedSymbolsDict[quoteSymbolId]) {
 
-      const {
-        symbol: parsedQuoteSymbol,
-      } = exchange.symbol.parse({
+      const { symbol } = exchange.symbol.parse({
         rawSymbol: {
-          ...symbolPair,
-          baseCurrency: quoteCurrency,
+          ...rawSymbol,
+          baseCurrency: quoteSymbolId,
         },
       })
 
-      parsedSymbolsDict[quoteCurrency] = parsedQuoteSymbol
+      parsedSymbolsDict[quoteSymbolId] = symbol
 
     }
 

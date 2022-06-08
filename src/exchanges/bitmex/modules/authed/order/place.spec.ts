@@ -1,7 +1,11 @@
 import { expect } from 'chai'
+import Sinon from 'sinon'
 
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
-import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
+import {
+  IMethodToMock,
+  testPlaceOrder,
+} from '../../../../../../test/macros/testPlaceOrder'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
@@ -20,9 +24,12 @@ import { mockValidateParams } from '../../../../../utils/validation/validatePara
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
 import { getBitmexEndpoints } from '../../../bitmexSpecs'
+import { translateOrderSideToBitmex } from '../../../enums/adapters/bitmexOrderSideAdapter'
+import { translateOrderTypeToBitmex } from '../../../enums/adapters/bitmexOrderTypeAdapter'
+import { BitmexOrderTypeEnum } from '../../../enums/BitmexOrderTypeEnum'
 import { BITMEX_RAW_ORDERS } from '../../../test/fixtures/bitmexOrders'
-import * as getMod from '../../public/market/get'
-import { mockAssembleRequestBody } from './helpers/assembleRequestBody.mock'
+import * as getMarketMod from '../../public/market/get'
+import * as translateAmountToOrderQtyMod from './helpers/translateAmountToOrderQty'
 import * as parseMod from './parse'
 
 
@@ -34,95 +41,127 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should place a Bitmex order just fine', async () => {
+  const mockedOrderQty = 10
+  const mockedMarket = PARSED_MARKETS[0]
+  const mockedSettings = { orderAnnotation: 'sentByAlunajs' }
+  const getMarketSpy = Sinon.spy(
+    async () => Promise.resolve({ market: mockedMarket }),
+  )
 
-    // preparing data
-    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+  const methodsToMock: IMethodToMock[] = [
+    {
+      methodName: 'get',
+      methodModule: getMarketMod,
+      methodResponse: getMarketSpy,
+    },
+    {
+      methodName: 'translateAmountToOrderQty',
+      methodModule: translateAmountToOrderQtyMod,
+      methodResponse: { orderQty: mockedOrderQty },
+    },
+  ]
 
-    const parsedOrder = PARSED_ORDERS[0]
-    const market = PARSED_MARKETS[0]
+  testPlaceOrder({
+    ExchangeAuthed: BitmexAuthed,
+    HttpClass: BitmexHttp,
+    parseModule: parseMod,
+    rawOrders: [BITMEX_RAW_ORDERS[0]],
+    credentials,
+    methodsToMock,
+    settings: mockedSettings,
+    validationCallback: (params) => {
 
-    const body = {
-      symbol: bitmexOrder.symbol,
-      side: bitmexOrder.side,
-      ordType: bitmexOrder.ordType,
-      orderQty: bitmexOrder.orderQty,
-      price: bitmexOrder.price,
-    }
+      const {
+        exchange,
+        placeParams,
+        authedRequestStub,
+        mockedMethodsDictionary,
+      } = params
 
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: BitmexHttp.prototype })
-    authedRequest.returns(Promise.resolve(bitmexOrder))
+      const { settings } = exchange
 
-    const { get } = mockGet({ module: getMod })
-    get.returns(Promise.resolve({ market }))
+      const {
+        type,
+        side,
+        rate,
+        amount,
+        stopRate,
+        limitRate,
+        symbolPair,
+      } = placeParams
 
-    const { parse } = mockParse({ module: parseMod })
-    parse.returns({ order: parsedOrder })
-
-    const { validateParamsMock } = mockValidateParams()
-    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
-
-    const { assembleRequestBody } = mockAssembleRequestBody()
-    assembleRequestBody.returns({ body })
-
-
-    // executing
-    const exchange = new BitmexAuthed({ credentials })
-
-    const params: IAlunaOrderPlaceParams = {
-      symbolPair: bitmexOrder.symbol,
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side: AlunaOrderSideEnum.BUY,
-      type: AlunaOrderTypesEnum.LIMIT,
-      rate: 0,
-    }
-
-    const { order } = await exchange.order.place(params)
+      const {
+        get,
+        translateAmountToOrderQty,
+      } = mockedMethodsDictionary!
 
 
-    // validating
-    expect(order).to.deep.eq(parsedOrder)
+      const ordType = translateOrderTypeToBitmex({
+        from: type,
+      })
 
-    expect(authedRequest.callCount).to.be.eq(1)
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
-      credentials,
-      url: getBitmexEndpoints(exchange.settings).order.place,
-    })
+      const translatedSide = translateOrderSideToBitmex({
+        from: side,
+      })
 
-    expect(publicRequest.callCount).to.be.eq(0)
 
-    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+      let price: number | undefined
+      let stopPx: number | undefined
 
-    expect(assembleRequestBody.callCount).to.be.eq(1)
-    expect(assembleRequestBody.firstCall.args[0]).to.deep.eq({
-      action: 'place',
-      instrument: market.instrument!,
-      orderParams: params,
-      settings: exchange.settings,
-    })
+      switch (ordType) {
 
-    expect(get.callCount).to.be.eq(1)
-    expect(get.firstCall.args[0]).to.deep.eq({
-      symbolPair: bitmexOrder.symbol,
-      http: new BitmexHttp({}),
-    })
+        case BitmexOrderTypeEnum.LIMIT:
+          price = rate
+          break
 
-    expect(parse.callCount).to.be.eq(1)
-    expect(parse.firstCall.args[0]).to.deep.eq({
-      rawOrder: {
-        bitmexOrder,
-        market,
-      },
-    })
+        case BitmexOrderTypeEnum.STOP_MARKET:
+          stopPx = stopRate
+          break
 
-    expect(validateParamsMock.callCount).to.be.eq(1)
+        case BitmexOrderTypeEnum.STOP_LIMIT:
+          stopPx = stopRate
+          price = limitRate
+          break
 
+        // For market orders no prop is needed
+        default:
+
+      }
+
+      const { orderAnnotation } = settings
+
+      const body = {
+        orderQty: mockedOrderQty,
+        symbol: symbolPair,
+        side: translatedSide,
+        ordType,
+        ...(price ? { price } : {}),
+        ...(stopPx ? { stopPx } : {}),
+        ...(orderAnnotation ? { text: orderAnnotation } : {}),
+      }
+
+      expect(authedRequestStub.firstCall.args[0]).to.deep.eq({
+        url: getBitmexEndpoints(settings).order.place,
+        body,
+        credentials,
+      })
+
+      expect(get.callCount).to.be.eq(1)
+      expect(getMarketSpy.callCount).to.be.eq(1)
+      expect(getMarketSpy.firstCall.args).to.deep.eq([{
+        symbolPair,
+        http: new BitmexHttp(settings),
+      }])
+
+      expect(translateAmountToOrderQty.callCount).to.be.eq(1)
+      expect(translateAmountToOrderQty.firstCall.args[0]).to.deep.eq({
+        amount,
+        instrument: mockedMarket.instrument!,
+      })
+
+      getMarketSpy.resetHistory()
+
+    },
   })
 
   it(
@@ -132,14 +171,6 @@ describe(__filename, () => {
       // preparing data
       const bitmexOrder = BITMEX_RAW_ORDERS[0]
       const market = PARSED_MARKETS[0]
-
-      const body = {
-        symbol: bitmexOrder.symbol,
-        side: bitmexOrder.side,
-        ordType: bitmexOrder.ordType,
-        orderQty: bitmexOrder.orderQty,
-        price: bitmexOrder.price,
-      }
 
       const message = 'Account has insufficient Available Balance'
 
@@ -155,19 +186,15 @@ describe(__filename, () => {
         publicRequest,
         authedRequest,
       } = mockHttp({ classPrototype: BitmexHttp.prototype })
-
       authedRequest.returns(Promise.reject(alunaError))
 
-      const { get } = mockGet({ module: getMod })
+      const { get } = mockGet({ module: getMarketMod })
       get.returns(Promise.resolve({ market }))
 
       const { parse } = mockParse({ module: parseMod })
 
       const { validateParamsMock } = mockValidateParams()
       const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
-
-      const { assembleRequestBody } = mockAssembleRequestBody()
-      assembleRequestBody.returns({ body })
 
 
       // executing
@@ -212,14 +239,6 @@ describe(__filename, () => {
     const bitmexOrder = BITMEX_RAW_ORDERS[0]
     const market = PARSED_MARKETS[0]
 
-    const body = {
-      symbol: bitmexOrder.symbol,
-      side: bitmexOrder.side,
-      ordType: bitmexOrder.ordType,
-      orderQty: bitmexOrder.orderQty,
-      price: bitmexOrder.price,
-    }
-
     const message = 'unknown error'
 
     const alunaError = new AlunaError({
@@ -237,16 +256,13 @@ describe(__filename, () => {
 
     authedRequest.returns(Promise.reject(alunaError))
 
-    const { get } = mockGet({ module: getMod })
+    const { get } = mockGet({ module: getMarketMod })
     get.returns(Promise.resolve({ market }))
 
     const { parse } = mockParse({ module: parseMod })
 
     const { validateParamsMock } = mockValidateParams()
     const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
-
-    const { assembleRequestBody } = mockAssembleRequestBody()
-    assembleRequestBody.returns({ body })
 
 
     // executing

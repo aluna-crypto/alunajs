@@ -1,5 +1,8 @@
 import { expect } from 'chai'
-import { values } from 'lodash'
+import {
+  filter,
+  values,
+} from 'lodash'
 
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
@@ -249,8 +252,14 @@ describe(__filename, () => {
 
     expect(executeRes.result).not.to.be.ok
 
+    const orderTypesWithoutMarket = filter(values(AlunaOrderTypesEnum), (type) => {
+
+      return type !== AlunaOrderTypesEnum.MARKET
+
+    })
+
     const msg = '"type" must be one of '
-      .concat(`[${values(AlunaOrderTypesEnum).join(', ')}]`)
+      .concat(`[${orderTypesWithoutMarket.join(', ')}]`)
 
     expect(executeRes.error?.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
     expect(executeRes.error?.message).to.be.eq(msg)

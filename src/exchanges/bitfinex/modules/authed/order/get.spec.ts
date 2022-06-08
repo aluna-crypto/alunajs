@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
@@ -31,6 +32,7 @@ describe(__filename, () => {
     const params: IAlunaOrderGetParams = {
       id: id.toString(),
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     }
 
 

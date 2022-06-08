@@ -1,8 +1,8 @@
 import { cloneDeep } from 'lodash'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import {
   IAlunaExchangeOrderSpecsSchema,
   IAlunaExchangeSchema,
@@ -20,21 +20,21 @@ export const ftxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
+  },
+  {
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
+    supported: true,
+    implemented: true,
+  },
+  {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
   },
 ]
 
@@ -59,24 +59,21 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: ftxExchangeOrderTypes,
-    },
-    {
-      type: AlunaAccountEnum.MARGIN,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
-      supported: false,
-      implemented: false,
-      orderTypes: [],
+      supported: true,
+      implemented: true,
+      orderTypes: ftxExchangeOrderTypes,
+      wallet: AlunaWalletEnum.DEFAULT,
     },
     {
       type: AlunaAccountEnum.LENDING,
-      supported: false,
+      supported: true,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DEFAULT,
     },
   ],
   settings: {},
@@ -122,13 +119,23 @@ export const getFtxEndpoints = (
     },
     balance: {
       list: `${baseUrl}/wallet/balances`,
+      account: `${baseUrl}/account`,
     },
     order: {
       get: (id: string) => `${baseUrl}/orders/${id}`,
       list: `${baseUrl}/orders`,
+      listTriggerOrders: `${baseUrl}/conditional_orders`,
+      listTriggerOrdersHistory: `${baseUrl}/conditional_orders/history`,
       place: `${baseUrl}/orders`,
+      placeTriggerOrder: `${baseUrl}/conditional_orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
+      cancelTriggerOrder: (id: string) => `${baseUrl}/conditional_orders/${id}`,
       edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
+      editTrigger: (id: string) => `${baseUrl}/conditional_orders/${id}/modify`,
+    },
+    position: {
+      list: `${baseUrl}/positions`,
+      setLeverage: `${baseUrl}/account/leverage`,
     },
   }
 }

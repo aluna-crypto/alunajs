@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
 import { FtxOrderTypeEnum } from '../FtxOrderTypeEnum'
+import { FtxTriggerOrderTypeEnum } from '../FtxTriggerOrderTypeEnum'
 import {
   translateOrderTypeToAluna,
   translateOrderTypeToFtx,
@@ -14,39 +15,48 @@ describe(__filename, () => {
 
   const notSupported = 'not-supported'
 
-
-
   it('should properly translate Ftx order types to Aluna order types', () => {
 
+    // common order types
     expect(translateOrderTypeToAluna({
-      from: FtxOrderTypeEnum.LIMIT,
+      type: FtxOrderTypeEnum.LIMIT,
     })).to.be.eq(AlunaOrderTypesEnum.LIMIT)
 
     expect(translateOrderTypeToAluna({
-      from: FtxOrderTypeEnum.MARKET,
+      type: FtxOrderTypeEnum.MARKET,
     })).to.be.eq(AlunaOrderTypesEnum.MARKET)
 
-    let result
-    let error
 
-    try {
+    // trigger order types
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.STOP,
+      orderType: FtxOrderTypeEnum.LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
-      result = translateOrderTypeToAluna({
-        from: notSupported as FtxOrderTypeEnum,
-      })
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.STOP,
+      orderType: FtxOrderTypeEnum.MARKET,
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
 
-    } catch (err) {
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.TAKE_PROFIT,
+      orderType: FtxOrderTypeEnum.LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_LIMIT)
 
-      error = err
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.TAKE_PROFIT,
+      orderType: FtxOrderTypeEnum.MARKET,
+    })).to.be.eq(AlunaOrderTypesEnum.TAKE_PROFIT_MARKET)
 
-    }
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.TRAILING_STOP,
+      orderType: FtxOrderTypeEnum.LIMIT,
+    })).to.be.eq(AlunaOrderTypesEnum.TRAILING_STOP)
 
-    expect(result).not.to.be.ok
-
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message)
-      .to.be.eq(`Order type not supported: ${notSupported}`)
-
+    expect(translateOrderTypeToAluna({
+      type: FtxTriggerOrderTypeEnum.TRAILING_STOP,
+      orderType: FtxOrderTypeEnum.MARKET,
+    })).to.be.eq(AlunaOrderTypesEnum.TRAILING_STOP)
 
   })
 
@@ -61,6 +71,14 @@ describe(__filename, () => {
     expect(translateOrderTypeToFtx({
       from: AlunaOrderTypesEnum.MARKET,
     })).to.be.eq(FtxOrderTypeEnum.MARKET)
+
+    expect(translateOrderTypeToFtx({
+      from: AlunaOrderTypesEnum.STOP_LIMIT,
+    })).to.be.eq(FtxTriggerOrderTypeEnum.STOP)
+
+    expect(translateOrderTypeToFtx({
+      from: AlunaOrderTypesEnum.STOP_MARKET,
+    })).to.be.eq(FtxTriggerOrderTypeEnum.STOP)
 
     let result
     let error

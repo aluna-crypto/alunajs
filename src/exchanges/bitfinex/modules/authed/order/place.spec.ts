@@ -1,9 +1,7 @@
 import { expect } from 'chai'
-import {
-  cloneDeep,
-  each,
-} from 'lodash'
+import { cloneDeep } from 'lodash'
 
+import { testPlaceOrder } from '../../../../../../test/macros/testPlaceOrder'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -19,10 +17,12 @@ import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOr
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
+import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
+import { translateOrderTypeToBitfinex } from '../../../enums/adapters/bitfinexOrderTypeAdapter'
+import { BitfinexOrderTypeEnum } from '../../../enums/BitfinexOrderTypeEnum'
 import { BITFINEX_PLACE_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
-import { testBitfinexOrderPlace } from './test/testBitfinexOrderPlace'
 
 
 
@@ -44,50 +44,96 @@ describe(__filename, () => {
     limitRate: 15,
   }
 
-  const bitfinexAccounts = bitfinexBaseSpecs.accounts
+  const placedMarketOrder = cloneDeep(BITFINEX_PLACE_ORDER_RESPONSE)
+  placedMarketOrder[4][0][8] = BitfinexOrderTypeEnum.MARKET
 
-  each(bitfinexAccounts, (account) => {
+  const placedLimitOrder = cloneDeep(BITFINEX_PLACE_ORDER_RESPONSE)
+  placedMarketOrder[4][0][8] = BitfinexOrderTypeEnum.LIMIT
 
-    const {
-      implemented,
-      orderTypes,
-      type: accountType,
-    } = account
-
-    if (implemented) {
-
-      each(orderTypes, (orderType) => {
-
-        const {
-          type,
-          implemented: isTypeImplemented,
-        } = orderType
-
-        if (isTypeImplemented) {
-
-          // Buy Order
-          const orderParams: IAlunaOrderPlaceParams = {
-            ...commonOrderParams,
-            account: accountType,
-            type,
-            amount: 10,
-          }
-
-          testBitfinexOrderPlace(orderParams)
+  const rawOrders = [
+    placedMarketOrder,
+    placedLimitOrder,
+  ]
 
 
-          // Sell Order
-          testBitfinexOrderPlace({
-            ...orderParams,
-            amount: -10,
-          })
+  testPlaceOrder({
+    ExchangeAuthed: BitfinexAuthed,
+    HttpClass: BitfinexHttp,
+    parseModule: parseMod,
+    rawOrders,
+    credentials,
+    validationCallback: (params) => {
 
-        }
+      const {
+        authedRequestStub: stub,
+        exchange,
+        placeParams,
+      } = params
 
+      const {
+        type,
+        side,
+        amount,
+        rate,
+        limitRate,
+        stopRate,
+        account,
+        symbolPair,
+      } = placeParams
+
+      const translatedOrderType = translateOrderTypeToBitfinex({
+        from: type,
+        account,
       })
 
-    }
+      const translatedAmount = translateOrderSideToBitfinex({
+        amount: Number(amount),
+        side,
+      })
 
+      let price: undefined | string
+      let priceAuxLimit: undefined | string
+
+      switch (type) {
+
+        case AlunaOrderTypesEnum.LIMIT:
+          price = rate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_MARKET:
+          price = stopRate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_LIMIT:
+          price = stopRate!.toString()
+          priceAuxLimit = limitRate!.toString()
+          break
+
+        default:
+
+      }
+
+      const { affiliateCode } = exchange.settings
+
+      const body: Record<string, any> = {
+        ...(price ? { price } : {}),
+        ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
+        amount: translatedAmount,
+        symbol: symbolPair,
+        type: translatedOrderType,
+      }
+
+      if (affiliateCode) {
+        body.aff_code = affiliateCode
+      }
+
+      expect(stub.firstCall.args[0]).to.deep.eq({
+        url: getBitfinexEndpoints({}).order.place,
+        body,
+        credentials,
+      })
+
+    },
   })
 
   it('should throw error if order place request fails', async () => {

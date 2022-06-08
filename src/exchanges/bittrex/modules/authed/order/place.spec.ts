@@ -109,7 +109,7 @@ describe(__filename, () => {
     expect(ensureOrderIsSupported.callCount).to.be.eq(1)
     expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
       exchangeSpecs: exchange.specs,
-      orderPlaceParams: params,
+      orderParams: params,
     })
 
   })

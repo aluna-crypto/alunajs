@@ -1,5 +1,8 @@
 import Joi from 'joi'
-import { values } from 'lodash'
+import {
+  filter,
+  values,
+} from 'lodash'
 
 import { AlunaAccountEnum } from '../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../lib/enums/AlunaOrderSideEnum'
@@ -20,7 +23,7 @@ export const editOrderParamsSchema = Joi.object({
     .required(),
   type: Joi
     .string()
-    .valid(...values(AlunaOrderTypesEnum))
+    .valid(...filter(values(AlunaOrderTypesEnum), (t) => t !== AlunaOrderTypesEnum.MARKET))
     .required(),
   side: Joi
     .string()

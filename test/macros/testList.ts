@@ -1,24 +1,26 @@
 import { expect } from 'chai'
+import { IModule } from 'ts-mock-imports/lib/types'
 
 import { IAlunaCredentialsSchema } from '../../src/lib/schemas/IAlunaCredentialsSchema'
 import { mockListRaw } from '../mocks/exchange/modules/mockListRaw'
 import { mockParseMany } from '../mocks/exchange/modules/mockParseMany'
+import { TExchangeAuthedConstructor } from './testPlaceOrder'
 
 
 
 export const testList = (params: {
-  AuthedClass: any
+  AuthedClass: TExchangeAuthedConstructor
   exchangeId: string
   rawList: any
   parsedList: any
-  listModule: any
-  parseManyModule: any
+  listRawModule: IModule
+  parseManyModule: IModule
   methodModuleName: string
 }) => {
 
   const {
     AuthedClass,
-    listModule,
+    listRawModule,
     parseManyModule,
     methodModuleName,
     exchangeId,
@@ -35,11 +37,8 @@ export const testList = (params: {
 
   it(`should list ${exchangeId} ${listType} raw list just fine`, async () => {
 
-    // preparing data
-
-
     // mocking
-    const { listRaw } = mockListRaw({ module: listModule })
+    const { listRaw } = mockListRaw({ module: listRawModule })
     const { parseMany } = mockParseMany({ module: parseManyModule })
 
     listRaw.returns(Promise.resolve(rawList))

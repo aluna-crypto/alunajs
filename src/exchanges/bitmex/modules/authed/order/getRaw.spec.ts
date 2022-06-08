@@ -4,6 +4,7 @@ import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { BitmexAuthed } from '../../../BitmexAuthed'
 import { BitmexHttp } from '../../../BitmexHttp'
@@ -49,6 +50,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id: orderID,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 

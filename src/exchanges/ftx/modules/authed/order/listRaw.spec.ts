@@ -6,7 +6,10 @@ import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCreden
 import { FtxAuthed } from '../../../FtxAuthed'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
-import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
+import {
+  FTX_RAW_ORDERS,
+  FTX_TRIGGER_RAW_ORDERS,
+} from '../../../test/fixtures/ftxOrders'
 
 
 
@@ -20,7 +23,8 @@ describe(__filename, () => {
   it('should list Ftx raw orders just fine', async () => {
 
     // preparing data
-    const mockedRawOrders = FTX_RAW_ORDERS
+    const mockedOrdinaryOrders = FTX_RAW_ORDERS
+    const mockedTriggerOrders = FTX_TRIGGER_RAW_ORDERS
 
     // mocking
     const {
@@ -28,7 +32,8 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: FtxHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrders))
+    authedRequest.onFirstCall().returns(Promise.resolve(mockedOrdinaryOrders))
+    authedRequest.onSecondCall().returns(Promise.resolve(mockedTriggerOrders))
 
     // executing
     const exchange = new FtxAuthed({ credentials })
@@ -37,14 +42,23 @@ describe(__filename, () => {
 
 
     // validating
-    expect(rawOrders).to.deep.eq(mockedRawOrders)
+    expect(rawOrders).to.deep.eq([
+      ...mockedOrdinaryOrders,
+      ...mockedTriggerOrders,
+    ])
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getFtxEndpoints(exchange.settings).order.list,
+    })
+
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      credentials,
+      url: getFtxEndpoints(exchange.settings).order.listTriggerOrders,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

@@ -45,7 +45,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: exchange.specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {

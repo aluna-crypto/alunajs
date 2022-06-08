@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: BittrexAuthed,
     exchangeId: 'bittrex',
     methodModuleName: 'symbol',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawSymbols: BITTREX_RAW_SYMBOLS },
     parsedList: { symbols: PARSED_SYMBOLS },
