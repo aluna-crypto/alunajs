@@ -132,7 +132,7 @@ describe(__filename, () => {
 
     expect(returnedError!.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
     expect(returnedError!.message).to.be.eq(error)
-    expect(returnedError!.httpStatusCode).to.be.eq(400)
+    expect(returnedError!.httpStatusCode).to.be.eq(200)
     expect(returnedError!.metadata).to.be.eq(error)
 
     expect(authedRequest.callCount).to.be.eq(1)

@@ -142,18 +142,21 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   } catch (err) {
 
     const { message } = err
+    let { httpStatusCode } = err
 
     let code = AlunaOrderErrorCodes.PLACE_FAILED
 
     if (/insufficient Available Balance/i.test(message)) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 200
 
     }
 
     throw new AlunaError({
       ...err,
       code,
+      httpStatusCode,
     })
 
   }

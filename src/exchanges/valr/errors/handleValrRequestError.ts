@@ -69,6 +69,7 @@ export const handleValrRequestError = (
   if (isValrKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

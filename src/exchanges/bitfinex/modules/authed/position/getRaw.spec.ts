@@ -91,7 +91,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.DOESNT_HAVE_ID)
     expect(error!.message).to.be.eq(msg)
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(authedRequest.callCount).to.be.eq(0)
 
@@ -130,7 +130,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.NOT_FOUND)
     expect(error!.message).to.be.eq('Position not found')
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(authedRequest.callCount).to.be.eq(1)
 

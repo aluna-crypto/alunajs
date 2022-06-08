@@ -172,7 +172,7 @@ describe(__filename, () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error?.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
     expect(error?.message).to.be.eq('Order not found')
-    expect(error?.httpStatusCode).to.be.eq(404)
+    expect(error?.httpStatusCode).to.be.eq(200)
 
     expect(fetchOrderStatusMock.callCount).to.be.eq(1)
 
@@ -244,7 +244,7 @@ describe(__filename, () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error?.code).to.be.eq(AlunaOrderErrorCodes.ORDER_CANCELLED)
     expect(error?.message).to.be.eq('This order is already cancelled')
-    expect(error?.httpStatusCode).to.be.eq(422)
+    expect(error?.httpStatusCode).to.be.eq(200)
 
     expect(fetchOrderStatusMock.callCount).to.be.eq(1)
 

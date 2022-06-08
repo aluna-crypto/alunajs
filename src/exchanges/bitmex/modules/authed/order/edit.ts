@@ -131,17 +131,19 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
 
     const { message } = err
 
-    let { code } = err
+    let { code, httpStatusCode } = err
 
     if (/insufficient Available Balance/i.test(message)) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 200
 
     }
 
     throw new AlunaError({
       ...err,
       code,
+      httpStatusCode,
     })
 
   }

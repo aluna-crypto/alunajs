@@ -192,7 +192,7 @@ describe(__filename, () => {
     const throwedError = new AlunaError({
       code: AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE,
       message,
-      httpStatusCode: 400,
+      httpStatusCode: 500,
     })
 
 
@@ -227,7 +227,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error!.message).to.be.eq(message)
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
     expect(ensureOrderIsSupported.callCount).to.be.eq(1)

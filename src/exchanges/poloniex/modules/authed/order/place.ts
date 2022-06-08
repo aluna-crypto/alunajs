@@ -80,6 +80,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { error } = orderResponse
 
+    let httpStatusCode = 500
+
     if (error) {
 
       let code = AlunaOrderErrorCodes.PLACE_FAILED
@@ -87,12 +89,14 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       if (/Not enough/.test(error)) {
 
         code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+        httpStatusCode = 200
 
       }
 
       throw new AlunaError({
         code,
         message: error,
+        httpStatusCode,
         metadata: orderResponse,
       })
 

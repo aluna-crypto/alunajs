@@ -10,10 +10,10 @@ import { AlunaPositionErrorCodes } from '../../../../../lib/errors/AlunaPosition
 import { IAlunaPositionCloseParams } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { mockPlaceMarketOrderToClosePosition } from '../../../../../utils/positions/placeMarketOrderToClosePosition.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
 import * as getMod from './get'
-import { mockPlaceMarketOrderToClosePosition } from '../../../../../utils/positions/placeMarketOrderToClosePosition.mock'
 
 
 
@@ -126,7 +126,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.DOESNT_HAVE_ID)
     expect(error!.message).to.be.eq(msg)
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(get.callCount).to.be.eq(0)
 
@@ -173,7 +173,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.ALREADY_CLOSED)
     expect(error!.message).to.be.eq('Position is already closed')
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(get.callCount).to.be.eq(1)
     expect(get.firstCall.args[0]).to.deep.eq({

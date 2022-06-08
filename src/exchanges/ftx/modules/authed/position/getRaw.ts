@@ -41,7 +41,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     const error = new AlunaError({
       code: AlunaGenericErrorCodes.PARAM_ERROR,
       message: 'Position symbol is required to get Ftx positions',
-      httpStatusCode: 400,
+      httpStatusCode: 200,
     })
 
     log(error)
@@ -62,7 +62,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     throw new AlunaError({
       code: AlunaPositionErrorCodes.NOT_FOUND,
       message: 'Position not found',
-      httpStatusCode: 400,
+      httpStatusCode: 200,
     })
   }
 

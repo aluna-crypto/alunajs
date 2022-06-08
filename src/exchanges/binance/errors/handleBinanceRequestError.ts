@@ -67,6 +67,7 @@ export const handleBinanceRequestError = (
   if (isBinanceKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

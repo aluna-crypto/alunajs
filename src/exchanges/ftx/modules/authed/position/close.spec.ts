@@ -116,7 +116,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaPositionErrorCodes.ALREADY_CLOSED)
     expect(error!.message).to.be.eq('Position is already closed')
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(get.callCount).to.be.eq(1)
     expect(get.firstCall.args[0]).to.deep.eq({

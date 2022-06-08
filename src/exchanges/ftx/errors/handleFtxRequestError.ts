@@ -70,6 +70,7 @@ export const handleFtxRequestError = (
   if (isFtxKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

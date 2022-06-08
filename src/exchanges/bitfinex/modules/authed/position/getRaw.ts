@@ -49,7 +49,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     throw new AlunaError({
       code: AlunaPositionErrorCodes.NOT_FOUND,
       message: 'Position not found',
-      httpStatusCode: 400,
+      httpStatusCode: 200,
       metadata: response,
     })
 

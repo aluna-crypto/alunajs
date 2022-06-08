@@ -206,6 +206,7 @@ describe(__filename, () => {
       // validating
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
+      expect(error?.httpStatusCode).to.be.eq(200)
       expect(error?.message).to.be.eq(message)
 
       expect(authedRequest.callCount).to.be.eq(1)

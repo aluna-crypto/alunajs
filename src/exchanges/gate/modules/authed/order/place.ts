@@ -83,7 +83,10 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { message } = err
 
-    let { code } = err
+    let {
+      code,
+      httpStatusCode,
+    } = err
 
     const { metadata } = err
 
@@ -95,6 +98,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (isInsufficientBalanceError) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 200
 
     }
 
@@ -102,6 +106,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }

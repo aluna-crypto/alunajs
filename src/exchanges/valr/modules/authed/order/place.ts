@@ -108,16 +108,19 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   if (orderStatusType === ValrOrderStatusEnum.FAILED) {
 
     let code = AlunaOrderErrorCodes.PLACE_FAILED
+    let httpStatusCode = 500
 
     if (failedReason === 'Insufficient Balance') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+      httpStatusCode = 200
 
     }
 
     throw new AlunaError({
       message: failedReason,
       code,
+      httpStatusCode,
       metadata: valrOrder,
     })
 

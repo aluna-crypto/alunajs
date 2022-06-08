@@ -123,7 +123,7 @@ describe(__filename, () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error?.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
     expect(error?.message).to.be.eq('dummy-error')
-    expect(error?.httpStatusCode).to.be.eq(404)
+    expect(error?.httpStatusCode).to.be.eq(200)
 
   })
 

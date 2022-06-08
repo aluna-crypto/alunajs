@@ -63,14 +63,13 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
   } catch (err) {
 
     const {
-      httpStatusCode,
       metadata,
     } = err
 
     const error = new AlunaError({
       code: AlunaKeyErrorCodes.INVALID,
       message: 'Invalid API key/secret pair.',
-      httpStatusCode,
+      httpStatusCode: 200,
       metadata,
     })
 
