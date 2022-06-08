@@ -35,4 +35,4 @@ okx.symbol.list()
 | Functionality | Supported |
 | -- | :-: |
 | `offersOrderEditing` | ✅ |
-| `offersPositionId` | ❌ |
+| `offersPositionId` | ✅ |
