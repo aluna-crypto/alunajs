@@ -2,8 +2,8 @@ import { cloneDeep } from 'lodash'
 import { AlunaError } from '../../lib/core/AlunaError'
 
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
-import { AlunaFeaturesModeEnum } from '../../lib/enums/AlunaFeaturesModeEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
 import { AlunaExchangeErrorCodes } from '../../lib/errors/AlunaExchangeErrorCodes'
 import {
   IAlunaExchangeOrderSpecsSchema,
@@ -21,32 +21,16 @@ export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     type: AlunaOrderTypesEnum.LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.MARKET,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-    },
   },
   {
     type: AlunaOrderTypesEnum.STOP_LIMIT,
     supported: true,
     implemented: true,
-    mode: AlunaFeaturesModeEnum.WRITE,
-    options: {
-      rate: 1,
-      amount: 1,
-      limitRate: 1,
-    },
   },
 ]
 
@@ -71,24 +55,28 @@ export const huobiBaseSpecs: IAlunaExchangeSchema = {
       supported: true,
       implemented: true,
       orderTypes: huobiExchangeOrderTypes,
+      wallet: AlunaWalletEnum.SPOT,
     },
     {
       type: AlunaAccountEnum.MARGIN,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.MARGIN,
     },
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.DERIVATIVES,
     },
     {
       type: AlunaAccountEnum.LENDING,
       supported: false,
       implemented: false,
       orderTypes: [],
+      wallet: AlunaWalletEnum.TRADING,
     },
   ],
   settings: {},
@@ -147,7 +135,9 @@ export const getHuobiEndpoints = (
     },
     order: {
       get: (id: string) => `${baseUrl}/v1/order/orders/${id}`,
+      getStop: `${baseUrl}/v2/algo-orders/specific`,
       list: `${baseUrl}/v1/order/openOrders`,
+      listStop: `${baseUrl}/v2/algo-orders/opening`,
       place: `${baseUrl}/v1/order/orders/place`,
       placeStop: `${baseUrl}/v2/algo-orders`,
       cancel: (id: string) => `${baseUrl}/v1/order/orders/${id}/submitcancel`,
