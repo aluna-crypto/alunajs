@@ -238,4 +238,81 @@ describe(__filename, () => {
 
   })
 
+  it('should throw error if order amount is invalid', async () => {
+
+    // preparing data
+    const affiliateCode = 'affiliateCode'
+
+    const message1 = 'Invalid order: maximum size for BTCUSD is 2000'
+    const message2 = 'amount: invalid'
+
+    const throwedError = new AlunaError({
+      code: AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE,
+      message: message1,
+      httpStatusCode: 500,
+    })
+
+
+    // mocking
+    const {
+      authedRequest,
+      publicRequest,
+    } = mockHttp({ classPrototype: BitfinexHttp.prototype })
+
+    authedRequest.returns(Promise.reject(throwedError))
+
+    const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+    const { parse } = mockParse({ module: parseMod })
+
+
+    // executing
+    const exchange = new BitfinexAuthed({
+      credentials,
+      settings: { affiliateCode },
+    })
+
+    let res = await executeAndCatch(() => exchange.order.place(commonOrderParams))
+
+
+    // validating
+    expect(res.result).not.to.be.ok
+
+    expect(res.error!.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
+    expect(res.error!.message).to.be.eq(message1)
+    expect(res.error!.httpStatusCode).to.be.eq(200)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+    expect(parse.callCount).to.be.eq(0)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+
+    // preparing data
+    throwedError.message = message2
+
+
+    // executing
+    res = await executeAndCatch(() => exchange.order.place(commonOrderParams))
+
+
+    // validating
+    expect(res.result).not.to.be.ok
+
+    expect(res.error!.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
+    expect(res.error!.message).to.be.eq(message2)
+    expect(res.error!.httpStatusCode).to.be.eq(200)
+
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(2)
+
+    expect(parse.callCount).to.be.eq(0)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
 })
