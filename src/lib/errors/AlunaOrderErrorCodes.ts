@@ -7,4 +7,6 @@ export const AlunaOrderErrorCodes = {
   ORDER_CANCELLED: 'order-is-cancelled',
   MISSING_PARAMS: 'missing-params',
   NOT_FOUND: 'order-not-found',
+  INVALID_AMOUNT: 'invalid-amount',
+  INVALID_PRICE: 'invalid-price',
 }
