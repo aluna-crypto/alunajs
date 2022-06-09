@@ -142,14 +142,26 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   } catch (err) {
 
     const { message } = err
-    let { httpStatusCode } = err
 
     let code = AlunaOrderErrorCodes.PLACE_FAILED
+    let httpStatusCode = 200
 
-    if (/insufficient Available Balance/i.test(message)) {
+    switch (true) {
 
-      code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-      httpStatusCode = 200
+      case /Invalid (leavesQty for lotSize|orderQty)/.test(message):
+        code = AlunaOrderErrorCodes.INVALID_AMOUNT
+        break
+
+      case /insufficient Available Balance/i.test(message):
+        code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+        break
+
+      case /Invalid price/i.test(message):
+        code = AlunaOrderErrorCodes.INVALID_PRICE
+        break
+
+      default:
+        httpStatusCode = err.httpStatusCode
 
     }
 
