@@ -233,6 +233,162 @@ describe(__filename, () => {
     },
   )
 
+  it('should throw error if order price is invalid', async () => {
+
+    // preparing data
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+    const market = PARSED_MARKETS[0]
+
+    const message = 'Invalid price'
+
+    const alunaError = new AlunaError({
+      message,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      httpStatusCode: 400,
+    })
+
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: BitmexHttp.prototype })
+    authedRequest.returns(Promise.reject(alunaError))
+
+    const { get } = mockGet({ module: getMarketMod })
+    get.returns(Promise.resolve({ market }))
+
+    const { parse } = mockParse({ module: parseMod })
+
+    const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new BitmexAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: bitmexOrder.symbol,
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side: AlunaOrderSideEnum.BUY,
+      type: AlunaOrderTypesEnum.LIMIT,
+      rate: 0,
+    }
+
+    const {
+      error,
+    } = await executeAndCatch(() => exchange.order.place(params))
+
+
+    // validating
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_PRICE)
+    expect(error?.message).to.be.eq(message)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+    expect(get.callCount).to.be.eq(1)
+
+    expect(parse.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw error if order amount is invalid', async () => {
+
+    // preparing data
+    const bitmexOrder = BITMEX_RAW_ORDERS[0]
+    const market = PARSED_MARKETS[0]
+
+    const message1 = 'Invalid leavesQty for lotSize'
+    const message2 = 'Invalid orderQty'
+
+    const alunaError = new AlunaError({
+      message: message1,
+      code: AlunaHttpErrorCodes.REQUEST_ERROR,
+      httpStatusCode: 400,
+    })
+
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: BitmexHttp.prototype })
+    authedRequest.returns(Promise.reject(alunaError))
+
+    const { get } = mockGet({ module: getMarketMod })
+    get.returns(Promise.resolve({ market }))
+
+    const { parse } = mockParse({ module: parseMod })
+
+    const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new BitmexAuthed({ credentials })
+
+    const params: IAlunaOrderPlaceParams = {
+      symbolPair: bitmexOrder.symbol,
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side: AlunaOrderSideEnum.BUY,
+      type: AlunaOrderTypesEnum.LIMIT,
+      rate: 0,
+    }
+
+    let res = await executeAndCatch(() => exchange.order.place(params))
+
+
+    // validating
+    expect(res.error instanceof AlunaError).to.be.ok
+    expect(res.error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
+    expect(res.error?.message).to.be.eq(message1)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
+    expect(get.callCount).to.be.eq(1)
+
+    expect(parse.callCount).to.be.eq(0)
+
+
+    // preparing data
+    alunaError.message = message2
+
+
+    // executing
+    res = await executeAndCatch(() => exchange.order.place(params))
+
+
+    // validating
+    expect(res.error instanceof AlunaError).to.be.ok
+    expect(res.error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
+    expect(res.error?.message).to.be.eq(message2)
+
+    expect(authedRequest.callCount).to.be.eq(2)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(2)
+
+    expect(get.callCount).to.be.eq(2)
+
+    expect(parse.callCount).to.be.eq(0)
+
+  })
+
   it('should throw error if place order fails somehow', async () => {
 
     // preparing data
