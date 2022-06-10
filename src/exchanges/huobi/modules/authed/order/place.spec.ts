@@ -24,6 +24,7 @@ import * as getMod from './get'
 import * as getHuobiAccountIdMod from '../helpers/getHuobiAccountId'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { HuobiConditionalOrderTypeEnum } from '../../../enums/HuobiConditionalOrderTypeEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 
 
 
@@ -45,13 +46,16 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.LIMIT
 
     const translatedOrderSide = translateOrderSideToHuobi({ from: side })
-    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
+    const translatedOrderType = translateOrderTypeToHuobi({
+      from: type,
+      side: translatedOrderSide,
+    })
 
 
 
     const body = {
       symbol: '',
-      type: `${translatedOrderSide}-${translatedOrderType}`,
+      type: translatedOrderType,
       'account-id': accountId,
       amount: '0.01',
       source: 'spot-api',
@@ -74,7 +78,7 @@ describe(__filename, () => {
 
     get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve(mockedRawOrder.id.toString()))
 
     mockValidateParams()
 
@@ -115,7 +119,7 @@ describe(__filename, () => {
 
   it('should place a stop Huobi stop limit order just fine', async () => {
     // preparing data
-    const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
@@ -131,6 +135,7 @@ describe(__filename, () => {
       orderSize: '0.01',
       orderType: HuobiConditionalOrderTypeEnum.LIMIT,
       stopPrice: '1',
+      clientOrderId: '12346',
     }
 
     // mocking
@@ -149,7 +154,9 @@ describe(__filename, () => {
 
     get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve({
+      clientOrderId: '12346',
+    }))
 
     mockValidateParams()
 
@@ -168,10 +175,10 @@ describe(__filename, () => {
       rate: 0,
       stopRate: 1,
       limitRate: 1,
+      clientOrderId: '12346',
     }
 
     const { order } = await exchange.order.place(params)
-
 
     // validating
     expect(order).to.deep.eq(mockedParsedOrder)
@@ -207,6 +214,7 @@ describe(__filename, () => {
       orderValue: '0.01',
       orderType: HuobiConditionalOrderTypeEnum.MARKET,
       stopPrice: '1',
+      clientOrderId: '12346',
     }
 
     // mocking
@@ -244,6 +252,7 @@ describe(__filename, () => {
       rate: 0,
       stopRate: 1,
       limitRate: 1,
+      clientOrderId: '12346',
     }
 
     const { order } = await exchange.order.place(params)
@@ -277,11 +286,14 @@ describe(__filename, () => {
     const type = AlunaOrderTypesEnum.MARKET
 
     const translatedOrderSide = translateOrderSideToHuobi({ from: side })
-    const translatedOrderType = translateOrderTypeToHuobi({ from: type })
+    const translatedOrderType = translateOrderTypeToHuobi({
+      from: type,
+      side: translatedOrderSide,
+    })
 
     const body = {
       symbol: '',
-      type: `${translatedOrderSide}-${translatedOrderType}`,
+      type: translatedOrderType,
       'account-id': accountId,
       amount: '0.01',
       source: 'spot-api',
@@ -461,6 +473,110 @@ describe(__filename, () => {
     expect(error?.message).to.be.eq(expectedMessage)
 
     expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw an error for missing clientOrderId on stop limit orders', async () => {
+
+    // preparing data
+    // const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_LIMIT
+
+    const expectedMessage = "param 'clientOrderId' is required "
+      .concat('for conditional orders')
+    const expectedCode = AlunaGenericErrorCodes.PARAM_ERROR
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
+    mockValidateParams()
+
+    mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { error } = await executeAndCatch(() => exchange.order.place({
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: Number(0),
+    }))
+
+    // validating
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error?.code).to.be.eq(expectedCode)
+    expect(error?.message).to.be.eq(expectedMessage)
+
+    expect(authedRequest.callCount).to.be.eq(0)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw an error for missing clientOrderId on stop market orders', async () => {
+
+    // preparing data
+    // const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+
+    const side = AlunaOrderSideEnum.BUY
+    const type = AlunaOrderTypesEnum.STOP_MARKET
+
+    const expectedMessage = "param 'clientOrderId' is required "
+      .concat('for conditional orders')
+    const expectedCode = AlunaGenericErrorCodes.PARAM_ERROR
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    const { wrapper: getHuobiAccountId } = mockGetHuobiAccountId({
+      module: getHuobiAccountIdMod,
+    })
+
+    getHuobiAccountId.onFirstCall().returns(Promise.resolve({ accountId }))
+
+    mockValidateParams()
+
+    mockEnsureOrderIsSupported()
+
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { error } = await executeAndCatch(() => exchange.order.place({
+      symbolPair: '',
+      account: AlunaAccountEnum.SPOT,
+      amount: 0.01,
+      side,
+      type,
+      rate: Number(0),
+    }))
+
+    // validating
+    expect(error instanceof AlunaError).to.be.ok
+    expect(error?.code).to.be.eq(expectedCode)
+    expect(error?.message).to.be.eq(expectedMessage)
+
+    expect(authedRequest.callCount).to.be.eq(0)
 
     expect(publicRequest.callCount).to.be.eq(0)
 

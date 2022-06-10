@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import {
@@ -14,7 +15,6 @@ import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToHuobi } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderTypeToHuobi } from '../../../enums/adapters/huobiOrderTypeAdapter'
 import { HuobiConditionalOrderTypeEnum } from '../../../enums/HuobiConditionalOrderTypeEnum'
-import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
 import { getHuobiAccountId } from '../helpers/getHuobiAccountId'
@@ -59,11 +59,12 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     http = new HuobiHttp(settings),
   } = params
 
+  const translatedOrderSide = translateOrderSideToHuobi({ from: side })
+
   const translatedOrderType = translateOrderTypeToHuobi({
     from: type,
+    side: translatedOrderSide,
   })
-
-  const translatedOrderSide = translateOrderSideToHuobi({ from: side })
 
   const {
     accountId,
@@ -74,8 +75,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   })
 
   const paramError = new AlunaError({
-    httpStatusCode: 400,
-    message: 'param \'clientOrderId\' is required for conditional orders',
+    httpStatusCode: 200,
+    message: "param 'clientOrderId' is required for conditional orders",
     code: AlunaGenericErrorCodes.PARAM_ERROR,
     metadata: params,
   })
@@ -86,11 +87,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbol: symbolPair,
   }
 
-  switch (translatedOrderType) {
+  switch (type) {
 
-    case HuobiOrderTypeEnum.LIMIT:
+    case AlunaOrderTypesEnum.LIMIT:
       Object.assign(body, {
-        type: `${translatedOrderSide}-${translatedOrderType}`,
+        type: translatedOrderType,
         'account-id': accountId,
         amount: amount.toString(),
         source: 'spot-api',
@@ -98,7 +99,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       })
       break
 
-    case HuobiOrderTypeEnum.STOP_LIMIT:
+    case AlunaOrderTypesEnum.STOP_LIMIT:
 
       if (!clientOrderId) {
 
@@ -118,7 +119,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       url = getHuobiEndpoints(settings).order.placeStop
       break
 
-    case HuobiOrderTypeEnum.STOP_MARKET:
+    case AlunaOrderTypesEnum.STOP_MARKET:
 
       if (!clientOrderId) {
 
@@ -140,7 +141,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     default:
 
       Object.assign(body, {
-        type: `${translatedOrderSide}-${translatedOrderType}`,
+        type: translatedOrderType,
         'account-id': accountId,
         amount: amount.toString(),
         source: 'spot-api',
@@ -173,11 +174,14 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     let {
       code,
       message,
+      httpStatusCode,
     } = err
 
     const { metadata } = err
 
     if (metadata['err-code'] === 'account-frozen-balance-insufficient-error') {
+
+      httpStatusCode = 200
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
@@ -189,6 +193,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }
@@ -198,7 +203,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     type,
     http,
-    clientOrderId: placedOrderId,
+    clientOrderId,
   })
 
   const { requestWeight } = http
