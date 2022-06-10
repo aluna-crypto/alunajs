@@ -1,3 +1,12 @@
+# 1.2.2 (June 10, 2022)
+
+ - Add new `AlunaOrderErrorCodes`
+ - Handle invalid order amount error on Bitfinex/Bitmex
+ - Handle invalid order price error on Bitmex
+ - Ajustments in `IAlunaMarketSchema`
+   - Add `minTradeAmount`
+   - Add `maxTradeAmount`
+
 # 1.2.1 (June 8, 2022)
 
  - Use HTTP status code 200 for known errors
