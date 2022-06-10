@@ -46,8 +46,8 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
   if (needToHaveClientOrderId && !clientOrderId) {
 
     throw new AlunaError({
-      httpStatusCode: 400,
-      message: 'param \'clientOrderId\' is required for conditional orders',
+      httpStatusCode: 200,
+      message: "param 'clientOrderId' is required for conditional orders",
       code: AlunaGenericErrorCodes.PARAM_ERROR,
       metadata: params,
     })
