@@ -1,11 +1,19 @@
+import { AlunaError } from '../../../../lib/core/AlunaError'
 import { buildAdapter } from '../../../../lib/enums/adapters/buildAdapter'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaAdaptersErrorCodes } from '../../../../lib/errors/AlunaAdaptersErrorCodes'
+import { HuobiOrderSideEnum } from '../HuobiOrderSideEnum'
 import { HuobiOrderTypeEnum } from '../HuobiOrderTypeEnum'
 
 
 
 const errorMessagePrefix = 'Order type'
 
+
+export interface ITranslateHuobiOrderTypeParams {
+  from: AlunaOrderTypesEnum
+  side: HuobiOrderSideEnum
+}
 
 
 export const translateOrderTypeToAluna = buildAdapter<
@@ -25,18 +33,31 @@ export const translateOrderTypeToAluna = buildAdapter<
 })
 
 
+export const translateOrderTypeToHuobi = ({
+  from,
+  side,
+}: ITranslateHuobiOrderTypeParams): string => {
 
-export const translateOrderTypeToHuobi = buildAdapter<
-  AlunaOrderTypesEnum,
-  HuobiOrderTypeEnum
->({
-  errorMessagePrefix,
-  mappings: {
+  const mappings = {
     [AlunaOrderTypesEnum.LIMIT]: HuobiOrderTypeEnum.LIMIT,
     [AlunaOrderTypesEnum.MARKET]: HuobiOrderTypeEnum.MARKET,
     [AlunaOrderTypesEnum.STOP_LIMIT]: HuobiOrderTypeEnum.STOP_LIMIT,
     [AlunaOrderTypesEnum.STOP_MARKET]: HuobiOrderTypeEnum.STOP_MARKET,
     [AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL]: HuobiOrderTypeEnum.IOC,
     [AlunaOrderTypesEnum.FILL_OF_KILL]: HuobiOrderTypeEnum.LIMIT_FOK,
-  },
-})
+  }
+
+  const translated: HuobiOrderTypeEnum = mappings[from]
+
+  if (!translated) {
+
+    throw new AlunaError({
+      message: `${errorMessagePrefix} not supported: ${from}`,
+      code: AlunaAdaptersErrorCodes.NOT_SUPPORTED,
+    })
+
+  }
+
+  return `${side}-${translated}`
+
+}

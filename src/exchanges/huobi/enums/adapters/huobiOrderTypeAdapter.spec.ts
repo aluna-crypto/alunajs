@@ -2,6 +2,7 @@ import { expect } from 'chai'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderTypesEnum } from '../../../../lib/enums/AlunaOrderTypesEnum'
+import { HuobiOrderSideEnum } from '../HuobiOrderSideEnum'
 import { HuobiOrderTypeEnum } from '../HuobiOrderTypeEnum'
 import {
   translateOrderTypeToAluna,
@@ -76,27 +77,33 @@ describe(__filename, () => {
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.LIMIT,
-    })).to.be.eq(HuobiOrderTypeEnum.LIMIT)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.LIMIT}`)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.MARKET,
-    })).to.be.eq(HuobiOrderTypeEnum.MARKET)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.MARKET}`)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.STOP_LIMIT,
-    })).to.be.eq(HuobiOrderTypeEnum.STOP_LIMIT)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.STOP_LIMIT}`)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.STOP_MARKET,
-    })).to.be.eq(HuobiOrderTypeEnum.STOP_MARKET)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.STOP_MARKET}`)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.IMMEDIATE_OR_CANCEL,
-    })).to.be.eq(HuobiOrderTypeEnum.IOC)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.IOC}`)
 
     expect(translateOrderTypeToHuobi({
       from: AlunaOrderTypesEnum.FILL_OF_KILL,
-    })).to.be.eq(HuobiOrderTypeEnum.LIMIT_FOK)
+      side: HuobiOrderSideEnum.BUY,
+    })).to.be.eq(`${HuobiOrderSideEnum.BUY}-${HuobiOrderTypeEnum.LIMIT_FOK}`)
 
     let result
     let error
@@ -105,6 +112,7 @@ describe(__filename, () => {
 
       translateOrderTypeToHuobi({
         from: notSupported as AlunaOrderTypesEnum,
+        side: HuobiOrderSideEnum.BUY,
       })
 
     } catch (err) {
