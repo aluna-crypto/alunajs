@@ -1,6 +1,7 @@
 import {
   IBitfinexMarketsSchema,
   IBitfinexTicker,
+  TBitfinexPairInfo,
 } from '../../schemas/IBitfinexMarketSchema'
 
 
@@ -71,8 +72,47 @@ export const BITFINEX_MARGIN_ENABLED_CURRENCIES: string[][] = [
 
 
 
+export const BITFINEX_PAIRS_INFO: TBitfinexPairInfo[] = [
+  [
+    'BTCUSD',
+    [
+      null,
+      null,
+      null,
+      '0.00006',
+      '2000.0',
+      null,
+      null,
+      null,
+      0.1,
+      0.05,
+      null,
+      null,
+    ],
+  ],
+  [
+    'BTCUST',
+    [
+      null,
+      null,
+      null,
+      '0.00006',
+      '2000.0',
+      null,
+      null,
+      null,
+      0.2,
+      0.1,
+      null,
+      null,
+    ],
+  ],
+]
+
+
 export const BITFINEX_RAW_MARKETS: IBitfinexMarketsSchema = {
   enabledMarginCurrencies: BITFINEX_MARGIN_ENABLED_CURRENCIES,
   tickers: BITFINEX_RAW_TICKERS,
+  pairsInfo: BITFINEX_PAIRS_INFO,
 }
 
