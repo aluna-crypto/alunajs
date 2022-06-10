@@ -9,6 +9,7 @@ import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchem
 import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
 import { IBitmexMarketSchema } from '../../../schemas/IBitmexMarketSchema'
+import { computeMinMaxTradeAmount } from './helpers/computeMinMaxTradeAmount'
 import { parseBitmexInstrument } from './helpers/parseBitmexInstrument'
 
 
@@ -49,6 +50,11 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     rawMarket,
   })
 
+  const {
+    minTradeAmount,
+    maxTradeAmount,
+  } = computeMinMaxTradeAmount({ rawMarket })
+
   const change = (1 - (lastPrice / prevClosePrice))
   const quoteVolume = volume24h
   const baseVolume = new BigNumber(volume24h)
@@ -75,6 +81,8 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     baseSymbolId,
     quoteSymbolId,
     ticker,
+    minTradeAmount,
+    maxTradeAmount,
     spotEnabled: false,
     marginEnabled: false,
     derivativesEnabled: true,

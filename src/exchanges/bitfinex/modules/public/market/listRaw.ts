@@ -10,6 +10,7 @@ import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
 import {
   IBitfinexMarketsSchema,
   IBitfinexTicker,
+  TBitfinexPairInfo,
 } from '../../../schemas/IBitfinexMarketSchema'
 
 
@@ -34,13 +35,17 @@ export const listRaw = (exchange: IAlunaExchangePublic) => async (
     url: urls.market.tickers,
   })
 
-  const enabledMarginCurrencies = await http.publicRequest<string[][]>({
-    url: urls.market.enabledMarginCurrencies,
+  const [
+    enabledMarginCurrencies,
+    pairsInfo,
+  ] = await http.publicRequest<[string[][], Array<TBitfinexPairInfo>]>({
+    url: urls.market.marginAndPairsInfo,
   })
 
   const rawMarkets: IBitfinexMarketsSchema = {
     tickers,
     enabledMarginCurrencies,
+    pairsInfo,
   }
 
   const { requestWeight } = http

@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { each } from 'lodash'
 
 import { BITMEX_RAW_MARKETS } from '../../../../test/fixtures/bitmexMarket'
-import { computeMinTradeAmount } from './computeMinTradeAmount'
+import { computeMinMaxTradeAmount } from './computeMinMaxTradeAmount'
 
 
 
@@ -15,18 +15,24 @@ describe(__filename, () => {
 
       const {
         lotSize,
+        maxOrderQty,
         underlyingToPositionMultiplier: multiplier,
       } = rawMarket
 
-      const expectedMinTradeAmount = Number(lotSize) / (multiplier || 1)
+      const expectedMinTradeAmount = lotSize / (multiplier || 1)
+      const expectedMaxTradeAmount = maxOrderQty / (multiplier || 1)
 
-      const minTradeAmount = computeMinTradeAmount({
+      const {
+        minTradeAmount,
+        maxTradeAmount,
+      } = computeMinMaxTradeAmount({
         rawMarket,
       })
 
 
       // validating
       expect(minTradeAmount).to.be.eq(expectedMinTradeAmount)
+      expect(maxTradeAmount).to.be.eq(expectedMaxTradeAmount)
 
     })
 

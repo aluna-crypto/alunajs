@@ -1,12 +1,14 @@
 export interface IBitfinexMarketsSchema {
   tickers: IBitfinexTicker[]
   enabledMarginCurrencies: string[][]
+  pairsInfo: TBitfinexPairInfo[]
 }
 
 
 export interface IBitfinexMarketSchema {
   ticker: IBitfinexTicker
   enabledMarginCurrency: string | undefined
+  pairInfo: TBitfinexPairInfo
 }
 
 
@@ -27,4 +29,24 @@ type TBitfinexTicker = [
   VOLUME: number,
   HIGH: number,
   LOW: number,
+]
+
+
+
+export type TBitfinexPairInfo = [
+  MARKET: string,
+  MARKET_INFO: [
+    PLACEHOLDER: null,
+    PLACEHOLDER: null,
+    PLACEHOLDER: null,
+    MIN_TRADE_AMOUNT: string,
+    MAX_TRADE_AMOUNT: string,
+    PLACEHOLDER: null,
+    PLACEHOLDER: null,
+    PLACEHOLDER: null,
+    INITIAL_MARGIN: number,
+    MIN_MARGIN: number,
+    PLACEHOLDER: null,
+    PLACEHOLDER: null,
+  ]
 ]
