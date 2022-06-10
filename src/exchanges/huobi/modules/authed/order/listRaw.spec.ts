@@ -32,7 +32,8 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: HuobiHttp.prototype })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrders))
+    authedRequest.onFirstCall().returns(Promise.resolve(mockedRawOrders))
+    authedRequest.onSecondCall().returns(Promise.resolve([]))
 
     const { listRaw: listRawSymbols } = mockListRaw({
       module: listRawMod,
@@ -53,12 +54,18 @@ describe(__filename, () => {
       rawSymbols: mockedRawSymbols,
     })
 
-    expect(authedRequest.callCount).to.be.eq(1)
+    expect(authedRequest.callCount).to.be.eq(2)
 
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getHuobiEndpoints(exchange.settings).order.list,
+    })
+
+    expect(authedRequest.secondCall.args[0]).to.deep.eq({
+      verb: AlunaHttpVerbEnum.GET,
+      credentials,
+      url: getHuobiEndpoints(exchange.settings).order.listStop,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)

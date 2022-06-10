@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: HuobiAuthed,
     exchangeId: 'huobi',
     methodModuleName: 'symbol',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawSymbols: HUOBI_RAW_SYMBOLS },
     parsedList: { symbols: PARSED_SYMBOLS },

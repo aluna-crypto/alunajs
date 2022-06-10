@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: HuobiAuthed,
     exchangeId: 'huobi',
     methodModuleName: 'market',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawMarkets: HUOBI_RAW_MARKETS },
     parsedList: { markets: PARSED_MARKETS },
