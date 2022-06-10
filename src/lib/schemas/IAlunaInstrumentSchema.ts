@@ -24,7 +24,6 @@ export interface IAlunaInstrumentSchema {
   totalSymbolId: string
   amountSymbolId: string
   contractValue: number
-  minTradeAmount: number
   usdPricePerUnit?: number // Available only when `isTradedByUnitsOfContract`
   contractCurrency: string
   orderValueMultiplier?: number
