@@ -10,7 +10,6 @@ import { BitmexInstrumentStateEnum } from '../../../../enums/BitmexInstrumentSta
 import { BITMEX_RAW_MARKETS } from '../../../../test/fixtures/bitmexMarket'
 import * as computeContractCurrencyMod from './computeContractCurrency'
 import * as computeContractValueMod from './computeContractValue'
-import * as computeMinTradeAmountMod from './computeMinTradeAmount'
 import * as computeOrderValueMultiplierMod from './computeOrderValueMultiplier'
 import { parseBitmexInstrument } from './parseBitmexInstrument'
 import * as resolveSymbolsIdsMod from './resolveSymbolsIds'
@@ -35,7 +34,6 @@ describe(__filename, () => {
 
     const mockedContractValue = 10
     const mockedContractCurrency = 'TORREs'
-    const mockedMinTradeAmount = 1000
     const mockedOrderValueMultiplier = 0.9
     const mockedAmountSymbolId = 'ETH'
     const mockedRateSymbolId = 'XBT'
@@ -53,12 +51,6 @@ describe(__filename, () => {
       computeContractCurrencyMod,
       'computeContractCurrency',
       mockedContractCurrency,
-    )
-
-    const computeMinTradeAmountMock = ImportMock.mockFunction(
-      computeMinTradeAmountMod,
-      'computeMinTradeAmount',
-      mockedMinTradeAmount,
     )
 
     const computeOrderValueMultiplierMock = ImportMock.mockFunction(
@@ -131,7 +123,6 @@ describe(__filename, () => {
       expect(instrument.amountSymbolId).to.be.eq(mockedAmountSymbolId)
       expect(instrument.rateSymbolId).to.be.eq(mockedRateSymbolId)
       expect(instrument.totalSymbolId).to.be.eq(mockedTotalSymbolId)
-      expect(instrument.minTradeAmount).to.be.eq(mockedMinTradeAmount)
       expect(instrument.contractValue).to.be.eq(mockedContractValue)
       expect(instrument.contractCurrency).to.be.eq(mockedContractCurrency)
       expect(instrument.orderValueMultiplier)
@@ -143,7 +134,6 @@ describe(__filename, () => {
 
     expect(computeContractValueMock.callCount).to.be.eq(length)
     expect(computeContractCurrencyMock.callCount).to.be.eq(length)
-    expect(computeMinTradeAmountMock.callCount).to.be.eq(length)
     expect(computeOrderValueMultiplierMock.callCount).to.be.eq(length)
     expect(resolveSymbolsIdsMock.callCount).to.be.eq(length)
 
