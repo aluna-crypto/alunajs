@@ -22,6 +22,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   const {
     ticker: rawTicker,
     enabledMarginCurrency,
+    pairInfo,
   } = rawMarket
 
   const [
@@ -37,7 +38,6 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     high,
     low,
   ] = rawTicker
-
 
   let {
     baseSymbolId,
@@ -76,6 +76,8 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     baseSymbolId,
     quoteSymbolId,
     ticker,
+    minTradeAmount: Number(pairInfo[1][3]),
+    maxTradeAmount: Number(pairInfo[1][4]),
     spotEnabled: true,
     marginEnabled,
     derivativesEnabled: false,
