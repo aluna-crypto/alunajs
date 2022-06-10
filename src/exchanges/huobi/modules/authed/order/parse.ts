@@ -175,8 +175,9 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const status = AlunaOrderStatusEnum.OPEN
 
   const orderAmount = Number(orderSize)
-  const rate = Number(orderPrice)
-  const total = orderAmount * rate
+  const limitRate = Number(orderPrice)
+  const total = orderAmount * limitRate
+
   const type = translateConditionalOrderTypeToAluna({
     from: orderType,
   })
@@ -184,6 +185,25 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   const translatedOrderSide = translateOrderSideToAluna({
     from: orderSide,
   })
+
+  const orderPrices: IHuobiOrderPriceFieldsSchema = {
+    total,
+  }
+
+  switch (type) {
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      orderPrices.stopRate = Number(stopPrice)
+      orderPrices.total = orderAmount
+      break
+
+    default:
+      orderPrices.limitRate = limitRate
+      orderPrices.stopRate = Number(stopPrice)
+      break
+  }
+
+
 
   const placedAt = new Date(orderOrigTime)
 
@@ -196,9 +216,7 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     baseSymbolId,
     quoteSymbolId,
     placedAt,
-    total,
-    rate,
-    stopRate: Number(stopPrice),
+    ...orderPrices,
     amount: orderAmount,
     side: translatedOrderSide,
     status,

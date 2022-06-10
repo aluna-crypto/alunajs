@@ -1,15 +1,17 @@
 import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
+import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
+import { translateConditionalOrderTypeToAluna } from '../../../enums/adapters/huobiConditionalOrderTypeAdapter'
 import { translateOrderSideToAluna } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/huobiOrderStatusAdapter'
 import { translateOrderTypeToAluna } from '../../../enums/adapters/huobiOrderTypeAdapter'
 import { HuobiOrderSideEnum } from '../../../enums/HuobiOrderSideEnum'
 import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
 import { HuobiAuthed } from '../../../HuobiAuthed'
-import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
+import { HUOBI_RAW_CONDITIONAL_ORDERS, HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
 import { HUOBI_RAW_SYMBOLS } from '../../../test/fixtures/huobiSymbols'
 
 
@@ -340,5 +342,156 @@ describe(__filename, () => {
     expect(order.canceledAt).not.to.be.ok
 
   })
+
+  it('should parse a Huobi raw stop limit order just fine', async () => {
+
+    // preparing data
+    const rawOrder = HUOBI_RAW_CONDITIONAL_ORDERS[0]
+    const rawSymbol = HUOBI_RAW_SYMBOLS[0]
+
+    const rawOrderRequest = {
+      rawOrder,
+      rawSymbol,
+    }
+
+    const {
+      symbol,
+      orderPrice,
+      orderType,
+      clientOrderId,
+      orderOrigTime,
+      orderSide,
+      orderSize,
+      stopPrice,
+    } = rawOrder
+
+    const {
+      bc: baseSymbolId,
+      qc: quoteSymbolId,
+    } = rawSymbol
+
+    const status = AlunaOrderStatusEnum.OPEN
+    const translatedOrderSide = translateOrderSideToAluna({
+      from: orderSide,
+    })
+    const translatedOrderType = translateConditionalOrderTypeToAluna({
+      from: orderType,
+    })
+    const orderAmount = Number(orderSize)
+    const rate = Number(orderPrice)
+    const total = orderAmount * rate
+
+    // mocking
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId
+      .onFirstCall()
+      .returns(baseSymbolId)
+
+    translateSymbolId
+      .onSecondCall()
+      .returns(quoteSymbolId)
+
+    // executing
+    const { order } = exchange.order.parse({
+      rawOrder: rawOrderRequest,
+    })
+
+    // validating
+    expect(order).to.exist
+
+    expect(order.id).to.be.eq(clientOrderId)
+    expect(order.symbolPair).to.be.eq(symbol)
+    expect(order.baseSymbolId).to.be.eq(baseSymbolId)
+    expect(order.quoteSymbolId).to.be.eq(quoteSymbolId)
+    expect(order.total).to.be.eq(total)
+    expect(order.stopRate).to.be.eq(Number(stopPrice))
+    expect(order.limitRate).to.be.eq(rate)
+    expect(order.amount).to.be.eq(orderAmount)
+    expect(order.type).to.be.eq(translatedOrderType)
+    expect(order.side).to.be.eq(translatedOrderSide)
+    expect(order.status).to.be.eq(status)
+    expect(order.placedAt.getTime()).to.be.eq(new Date(orderOrigTime).getTime())
+    expect(order.canceledAt).not.to.be.ok
+    expect(order.filledAt).not.to.be.ok
+
+  })
+
+  it('should parse a Huobi raw stop market order just fine', async () => {
+
+    // preparing data
+    const rawOrder = HUOBI_RAW_CONDITIONAL_ORDERS[1]
+    const rawSymbol = HUOBI_RAW_SYMBOLS[0]
+
+    const rawOrderRequest = {
+      rawOrder,
+      rawSymbol,
+    }
+
+    const {
+      symbol,
+      orderType,
+      clientOrderId,
+      orderOrigTime,
+      orderSide,
+      orderSize,
+      stopPrice,
+    } = rawOrder
+
+    const {
+      bc: baseSymbolId,
+      qc: quoteSymbolId,
+    } = rawSymbol
+
+    const status = AlunaOrderStatusEnum.OPEN
+    const translatedOrderSide = translateOrderSideToAluna({
+      from: orderSide,
+    })
+    const translatedOrderType = translateConditionalOrderTypeToAluna({
+      from: orderType,
+    })
+    const orderAmount = Number(orderSize)
+    const total = orderAmount
+
+    // mocking
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { translateSymbolId } = mockTranslateSymbolId()
+
+    translateSymbolId
+      .onFirstCall()
+      .returns(baseSymbolId)
+
+    translateSymbolId
+      .onSecondCall()
+      .returns(quoteSymbolId)
+
+    // executing
+    const { order } = exchange.order.parse({
+      rawOrder: rawOrderRequest,
+    })
+
+    // validating
+    expect(order).to.exist
+
+    expect(order.id).to.be.eq(clientOrderId)
+    expect(order.symbolPair).to.be.eq(symbol)
+    expect(order.baseSymbolId).to.be.eq(baseSymbolId)
+    expect(order.quoteSymbolId).to.be.eq(quoteSymbolId)
+    expect(order.total).to.be.eq(total)
+    expect(order.stopRate).to.be.eq(Number(stopPrice))
+    expect(order.limitRate).not.to.be.ok
+    expect(order.amount).to.be.eq(orderAmount)
+    expect(order.type).to.be.eq(translatedOrderType)
+    expect(order.side).to.be.eq(translatedOrderSide)
+    expect(order.status).to.be.eq(status)
+    expect(order.placedAt.getTime()).to.be.eq(new Date(orderOrigTime).getTime())
+    expect(order.canceledAt).not.to.be.ok
+    expect(order.filledAt).not.to.be.ok
+
+  })
+
 
 })
