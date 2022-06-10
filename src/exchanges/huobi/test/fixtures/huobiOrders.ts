@@ -1,5 +1,7 @@
+import { HuobiConditionalOrderTypeEnum } from '../../enums/HuobiConditionalOrderTypeEnum'
+import { HuobiOrderSideEnum } from '../../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../../enums/HuobiOrderStatusEnum'
-import { IHuobiOrderSchema } from '../../schemas/IHuobiOrderSchema'
+import { IHuobiOrderSchema, IHuobiOrderTriggerSchema } from '../../schemas/IHuobiOrderSchema'
 
 
 
@@ -35,4 +37,38 @@ export const HUOBI_RAW_ORDERS: IHuobiOrderSchema[] = [
     type: 'buy-market',
     'client-order-is': '1234',
   },
+]
+
+export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
+  {
+    orderOrigTime: 1654648192646,
+    lastActTime: 1654648192669,
+    symbol: 'btcusdt',
+    source: 'api',
+    timeInForce: 'gtc',
+    stopPrice: '25000',
+    accountId: 49160295,
+    clientOrderId: 'carrodemalandro',
+    orderSide: HuobiOrderSideEnum.BUY,
+    orderType: HuobiConditionalOrderTypeEnum.LIMIT,
+    orderPrice: '27000',
+    orderSize: '1',
+    orderStatus: 'created',
+  },
+  {
+    orderOrigTime: 1654648192646,
+    lastActTime: 1654648192669,
+    symbol: 'btcusdt',
+    source: 'api',
+    timeInForce: 'gtc',
+    stopPrice: '25000',
+    accountId: 49160295,
+    clientOrderId: 'comedianaotemcarona',
+    orderSide: HuobiOrderSideEnum.BUY,
+    orderType: HuobiConditionalOrderTypeEnum.MARKET,
+    orderPrice: '31598',
+    orderSize: '1',
+    orderStatus: 'created',
+  },
+
 ]

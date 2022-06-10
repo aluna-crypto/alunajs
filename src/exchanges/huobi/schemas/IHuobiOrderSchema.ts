@@ -34,7 +34,7 @@ export interface IHuobiOrderTriggerSchema {
   orderSize: string
   accountId: number
   timeInForce: string
-  stopPrice: number
+  stopPrice: string
   orderStatus: string
 }
 
