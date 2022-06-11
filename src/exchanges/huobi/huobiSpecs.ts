@@ -32,6 +32,11 @@ export const huobiExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     supported: true,
     implemented: true,
   },
+  {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+  },
 ]
 
 
