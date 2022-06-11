@@ -96,6 +96,7 @@ describe(__filename, () => {
       symbolPair: params.symbolPair,
       stopRate: params.stopRate,
       limitRate: params.limitRate,
+      clientOrderId: undefined,
     })
 
   })

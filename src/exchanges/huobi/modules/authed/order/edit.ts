@@ -39,6 +39,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     stopRate,
     limitRate,
     clientOrderId,
+    newClientOrderId,
     http = new HuobiHttp(exchange.settings),
   } = params
 
@@ -60,6 +61,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     http,
     stopRate,
     limitRate,
+    clientOrderId: newClientOrderId,
   })
 
   const { requestWeight } = http
