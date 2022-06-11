@@ -46,6 +46,12 @@ export const editOrderParamsSchema = Joi.object({
       then: Joi.required(),
       otherwise: Joi.forbidden(),
     }),
+  clientOrderId: Joi
+    .string()
+    .optional(),
+  newClientOrderId: Joi
+    .string()
+    .optional(),
   limitRate: Joi
     .number()
     .when('type', {
