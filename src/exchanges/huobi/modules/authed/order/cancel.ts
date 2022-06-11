@@ -2,6 +2,8 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -35,11 +37,36 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     http = new HuobiHttp(settings),
   } = params
 
+  let url = getHuobiEndpoints(settings).order.cancel(id)
+  let body
+
+  if (type === AlunaOrderTypesEnum.STOP_LIMIT || type === AlunaOrderTypesEnum.STOP_MARKET) {
+
+    if (!clientOrderId) {
+
+      throw new AlunaError({
+        httpStatusCode: 200,
+        message: "param 'clientOrderId' is required for conditional orders",
+        code: AlunaGenericErrorCodes.PARAM_ERROR,
+        metadata: params,
+      })
+
+    }
+
+    url = getHuobiEndpoints(settings).order.cancelStop
+
+    body = {
+      clientOrderIds: [clientOrderId],
+    }
+
+  }
+
   try {
 
     await http.authedRequest<string>({
-      url: getHuobiEndpoints(settings).order.cancel(id),
+      url,
       credentials,
+      body,
     })
 
     const { order } = await exchange.order.get({

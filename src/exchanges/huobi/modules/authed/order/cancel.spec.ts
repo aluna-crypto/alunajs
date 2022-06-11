@@ -5,6 +5,7 @@ import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
+import { AlunaGenericErrorCodes } from '../../../../../lib/errors/AlunaGenericErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -64,6 +65,58 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       url: getHuobiEndpoints(exchange.settings).order.cancel(id),
+      body: undefined,
+    })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it('should cancel a Huobi stop limit order just fine', async () => {
+
+    // preparing data
+    const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+    const mockedParsedOrder = PARSED_ORDERS[0]
+
+    const { id: rawId } = mockedRawOrder
+
+    const id = rawId.toString()
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    const { get } = mockGet({ module: getMod })
+
+    get.returns({ order: mockedParsedOrder })
+
+    authedRequest.returns(Promise.resolve(rawId))
+
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { order } = await exchange.order.cancel({
+      id,
+      symbolPair: '',
+      clientOrderId: id,
+      type: AlunaOrderTypesEnum.STOP_LIMIT,
+    })
+
+
+    // validating
+    expect(order).to.deep.eq(mockedParsedOrder)
+
+    expect(authedRequest.callCount).to.be.eq(1)
+
+    expect(authedRequest.firstCall.args[0]).to.deep.eq({
+      credentials,
+      url: getHuobiEndpoints(exchange.settings).order.cancelStop,
+      body: {
+        clientOrderIds: [id],
+      },
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -111,7 +164,50 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       credentials,
       url: getHuobiEndpoints(exchange.settings).order.cancel(id),
+      body: undefined,
     })
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+  })
+
+  it('should throw an error when clientOrderId is not provided on stop orders', async () => {
+
+    // preparing data
+    const mockedRawOrder = HUOBI_RAW_ORDERS[0]
+
+    const { id: rawId } = mockedRawOrder
+
+    const id = rawId.toString()
+
+    const params = {
+      id,
+      symbolPair: '',
+      type: AlunaOrderTypesEnum.STOP_MARKET,
+    }
+
+    // mocking
+    const {
+      publicRequest,
+      authedRequest,
+    } = mockHttp({ classPrototype: HuobiHttp.prototype })
+
+    authedRequest.returns(Promise.resolve(rawId))
+
+    // executing
+    const exchange = new HuobiAuthed({ credentials })
+
+    const { error } = await executeAndCatch(() => exchange.order.cancel(params))
+
+    // validating
+    expect(error).to.deep.eq(new AlunaError({
+      httpStatusCode: 200,
+      message: "param 'clientOrderId' is required for conditional orders",
+      code: AlunaGenericErrorCodes.PARAM_ERROR,
+      metadata: params,
+    }))
+
+    expect(authedRequest.callCount).to.be.eq(0)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
