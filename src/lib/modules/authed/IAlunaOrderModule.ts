@@ -120,6 +120,7 @@ export interface IAlunaOrderPlaceReturns extends IAlunaOrderGetReturns {}
 
 export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
   id: string
+  newClientOrderId?: string
 }
 
 export interface IAlunaOrderEditReturns extends IAlunaOrderGetReturns {}
