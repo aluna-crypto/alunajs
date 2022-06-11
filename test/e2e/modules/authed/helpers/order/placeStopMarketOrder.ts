@@ -27,6 +27,7 @@ export const placeStopMarketOrder = async (
     side: AlunaOrderSideEnum.BUY,
     stopRate: orderStopRate,
     type: AlunaOrderTypesEnum.STOP_MARKET,
+    clientOrderId: `e2e_order_${Math.floor(Math.random() * 10000)}`,
   })
 
 }
