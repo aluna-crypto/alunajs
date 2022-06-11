@@ -1,7 +1,6 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
-import { AlunaOrderTriggerStatusEnum } from '../../../../../lib/enums/AlunaOrderTriggerStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
@@ -9,6 +8,7 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { translateConditionalOrderStatusToAluna } from '../../../enums/adapters/huobiConditionalOrderStatusAdapter'
 import { translateConditionalOrderTypeToAluna } from '../../../enums/adapters/huobiConditionalOrderTypeAdapter'
 import { translateOrderSideToAluna } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/huobiOrderStatusAdapter'
@@ -169,10 +169,13 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     orderType,
     stopPrice,
     symbol,
+    orderStatus,
   } = rawOrder as IHuobiOrderTriggerSchema
 
   // trigger orders are always open
-  const status = AlunaOrderStatusEnum.OPEN
+  const status = translateConditionalOrderStatusToAluna({
+    from: orderStatus,
+  })
 
   const orderAmount = Number(orderSize)
   const limitRate = Number(orderPrice)
@@ -203,7 +206,20 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
       break
   }
 
+  let filledAt
+  let canceledAt
 
+  if (status === AlunaOrderStatusEnum.FILLED) {
+
+    filledAt = new Date()
+
+  }
+
+  if (status === AlunaOrderStatusEnum.CANCELED) {
+
+    canceledAt = new Date()
+
+  }
 
   const placedAt = new Date(orderOrigTime)
 
@@ -220,8 +236,9 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     amount: orderAmount,
     side: translatedOrderSide,
     status,
-    triggerStatus: AlunaOrderTriggerStatusEnum.UNTRIGGERED,
     type,
+    ...(filledAt && { filledAt }),
+    ...(canceledAt && { canceledAt }),
     meta: rawOrder,
   }
 

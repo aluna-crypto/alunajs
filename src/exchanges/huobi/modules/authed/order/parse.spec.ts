@@ -1,9 +1,9 @@
 import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
-import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
+import { translateConditionalOrderStatusToAluna } from '../../../enums/adapters/huobiConditionalOrderStatusAdapter'
 import { translateConditionalOrderTypeToAluna } from '../../../enums/adapters/huobiConditionalOrderTypeAdapter'
 import { translateOrderSideToAluna } from '../../../enums/adapters/huobiOrderSideAdapter'
 import { translateOrderStatusToAluna } from '../../../enums/adapters/huobiOrderStatusAdapter'
@@ -363,6 +363,7 @@ describe(__filename, () => {
       orderSide,
       orderSize,
       stopPrice,
+      orderStatus,
     } = rawOrder
 
     const {
@@ -370,7 +371,9 @@ describe(__filename, () => {
       qc: quoteSymbolId,
     } = rawSymbol
 
-    const status = AlunaOrderStatusEnum.OPEN
+    const status = translateConditionalOrderStatusToAluna({
+      from: orderStatus,
+    })
     const translatedOrderSide = translateOrderSideToAluna({
       from: orderSide,
     })
@@ -414,7 +417,7 @@ describe(__filename, () => {
     expect(order.side).to.be.eq(translatedOrderSide)
     expect(order.status).to.be.eq(status)
     expect(order.placedAt.getTime()).to.be.eq(new Date(orderOrigTime).getTime())
-    expect(order.canceledAt).not.to.be.ok
+    expect(order.canceledAt).to.be.ok
     expect(order.filledAt).not.to.be.ok
 
   })
@@ -438,6 +441,7 @@ describe(__filename, () => {
       orderSide,
       orderSize,
       stopPrice,
+      orderStatus,
     } = rawOrder
 
     const {
@@ -445,7 +449,9 @@ describe(__filename, () => {
       qc: quoteSymbolId,
     } = rawSymbol
 
-    const status = AlunaOrderStatusEnum.OPEN
+    const status = translateConditionalOrderStatusToAluna({
+      from: orderStatus,
+    })
     const translatedOrderSide = translateOrderSideToAluna({
       from: orderSide,
     })
@@ -489,7 +495,7 @@ describe(__filename, () => {
     expect(order.status).to.be.eq(status)
     expect(order.placedAt.getTime()).to.be.eq(new Date(orderOrigTime).getTime())
     expect(order.canceledAt).not.to.be.ok
-    expect(order.filledAt).not.to.be.ok
+    expect(order.filledAt).to.be.ok
 
   })
 
