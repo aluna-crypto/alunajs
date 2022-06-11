@@ -1,3 +1,4 @@
+import { HuobiConditionalOrderStatusEnum } from '../../enums/HuobiConditionalOrderStatusEnum'
 import { HuobiConditionalOrderTypeEnum } from '../../enums/HuobiConditionalOrderTypeEnum'
 import { HuobiOrderSideEnum } from '../../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../../enums/HuobiOrderStatusEnum'
@@ -53,7 +54,7 @@ export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
     orderType: HuobiConditionalOrderTypeEnum.LIMIT,
     orderPrice: '27000',
     orderSize: '1',
-    orderStatus: 'created',
+    orderStatus: HuobiConditionalOrderStatusEnum.CANCELED,
   },
   {
     orderOrigTime: 1654648192646,
@@ -68,7 +69,7 @@ export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
     orderType: HuobiConditionalOrderTypeEnum.MARKET,
     orderPrice: '31598',
     orderSize: '1',
-    orderStatus: 'created',
+    orderStatus: HuobiConditionalOrderStatusEnum.TRIGGERED,
   },
 
 ]

@@ -1,3 +1,4 @@
+import { HuobiConditionalOrderStatusEnum } from '../enums/HuobiConditionalOrderStatusEnum'
 import { HuobiConditionalOrderTypeEnum } from '../enums/HuobiConditionalOrderTypeEnum'
 import { HuobiOrderSideEnum } from '../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../enums/HuobiOrderStatusEnum'
@@ -35,7 +36,7 @@ export interface IHuobiOrderTriggerSchema {
   accountId: number
   timeInForce: string
   stopPrice: string
-  orderStatus: string
+  orderStatus: HuobiConditionalOrderStatusEnum
 }
 
 export interface IHuobiOrdersResponseSchema {
