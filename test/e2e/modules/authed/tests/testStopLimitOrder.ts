@@ -69,6 +69,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       expect(requestWeight.authed).to.be.greaterThan(0)
 
       liveData.stopLimitOrderId = order.id!
+      liveData.clientOrderId = order.clientOrderId
       liveData.orderSymbolPair = order.symbolPair
 
       // Wait to ensure server has processed the operation
@@ -81,6 +82,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       const {
         stopLimitOrderId,
         orderSymbolPair,
+        clientOrderId,
       } = liveData
 
       const {
@@ -90,6 +92,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         symbolPair: orderSymbolPair!,
         id: stopLimitOrderId!,
         type: AlunaOrderTypesEnum.STOP_LIMIT,
+        clientOrderId,
       })
 
       expect(order.id).to.exist
@@ -105,7 +108,11 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       const {
         stopLimitOrderId,
         orderSymbolPair,
+        clientOrderId,
       } = liveData
+
+      // Client order id have to be unique
+      const newClientOrderId = `e2e_order_${Math.floor(Math.random() * 10000)}`
 
       const {
         order,
@@ -119,6 +126,8 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         stopRate: orderStopRate,
         side: AlunaOrderSideEnum.BUY,
         type: AlunaOrderTypesEnum.STOP_LIMIT,
+        clientOrderId,
+        newClientOrderId,
       })
 
       expect(order).to.exist
@@ -139,6 +148,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       liveData.stopLimitOrderId = order.id!
       liveData.orderSymbolPair = order.symbolPair
       liveData.orderEditedAmount = order.amount
+      liveData.clientOrderId = newClientOrderId
 
       // Wait to ensure server has processed the operation
       await sleep(1000)
@@ -150,6 +160,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       const {
         stopLimitOrderId,
         orderSymbolPair,
+        clientOrderId,
       } = liveData
 
       const {
@@ -159,6 +170,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         symbolPair: orderSymbolPair!,
         id: stopLimitOrderId!,
         type: AlunaOrderTypesEnum.STOP_LIMIT,
+        clientOrderId,
       })
 
       expect(order).to.exist
@@ -183,6 +195,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
       const {
         stopLimitOrderId,
         orderSymbolPair,
+        clientOrderId,
       } = liveData
 
       const {
@@ -192,6 +205,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         symbolPair: orderSymbolPair!,
         id: stopLimitOrderId!,
         type: AlunaOrderTypesEnum.STOP_LIMIT,
+        clientOrderId,
       })
 
       expect(order).to.exist
@@ -212,6 +226,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
         const {
           stopLimitOrderId,
           orderSymbolPair,
+          clientOrderId,
         } = liveData
 
         const {
@@ -221,6 +236,7 @@ export const testStopLimitOrder = (params: IAuthedParams) => {
           symbolPair: orderSymbolPair!,
           id: stopLimitOrderId!,
           type: AlunaOrderTypesEnum.STOP_LIMIT,
+          clientOrderId,
         })
 
         expect(order).to.exist
