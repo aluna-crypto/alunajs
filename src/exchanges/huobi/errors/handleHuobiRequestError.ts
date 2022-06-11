@@ -9,7 +9,7 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 export const huobiInvalidKeyPatterns: Array<RegExp> = [
   // TODO: Review exchange invalid api key error patterns
-  /api-invalid/mi,
+  new RegExp('unauthorized'),
 ]
 
 

@@ -45,7 +45,7 @@ describe(__filename, () => {
 
     const { isHuobiKeyInvalidMock } = mockDeps({ isInvalid: true })
 
-    const dummyError = 'Key is invalid'
+    const dummyError = 'unauthorized'
 
     const axiosError1 = {
       isAxiosError: true,
@@ -173,7 +173,7 @@ describe(__filename, () => {
     'should ensure Huobi invalid api patterns work as expected',
     async () => {
 
-      const message = 'api-invalid'
+      const message = 'unauthorized'
       expect(isHuobiKeyInvalid(message)).to.be.ok
 
     },
