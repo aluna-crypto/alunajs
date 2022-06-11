@@ -60,6 +60,7 @@ describe(__filename, () => {
       amount: '0.01',
       source: 'spot-api',
       price: '0',
+      'client-order-id': undefined,
     }
 
     // mocking
@@ -297,6 +298,7 @@ describe(__filename, () => {
       'account-id': accountId,
       amount: '0.01',
       source: 'spot-api',
+      'client-order-id': undefined,
     }
 
     // mocking

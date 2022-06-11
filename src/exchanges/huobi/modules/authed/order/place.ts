@@ -96,6 +96,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
         amount: amount.toString(),
         source: 'spot-api',
         price: rate!.toString(),
+        'client-order-id': clientOrderId,
       })
       break
 
@@ -145,6 +146,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
         'account-id': accountId,
         amount: amount.toString(),
         source: 'spot-api',
+        'client-order-id': clientOrderId,
       })
       break
 
