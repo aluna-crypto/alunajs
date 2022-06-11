@@ -147,7 +147,7 @@ export class HuobiHttp implements IAlunaHttp {
         .create()
         .request<IHuobiHttpResponse<T>>(requestConfig)
 
-      if (request.status === 'error') {
+      if (request.status === 'error' || request.message === 'unauthorized') {
 
         throw request
 
@@ -187,6 +187,7 @@ export interface IHuobiHttpResponse<T> {
   status: string
   'err-code'?: string
   'err-msg'?: string
+  'message'?: string
 }
 
 
