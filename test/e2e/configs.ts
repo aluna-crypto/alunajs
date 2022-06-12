@@ -172,7 +172,7 @@ export function getConfig() {
         key: env.OKX_API_KEY,
         secret: env.OKX_API_SECRET,
         passphrase: env.OKX_API_PASSPHRASE,
-        symbolPair: 'BTCUSDC',
+        symbolPair: 'BTC-USDT',
         delayBetweenTests: 500,
         orderRate: 1000,
         orderAmount: 0.001,

@@ -85,7 +85,7 @@ export const OKX_RAW_BALANCES: IOkxBalanceSchema[] = [
     ccy: 'LTC',
     crossLiab: '0',
     disEq: '0',
-    eq: '1',
+    eq: '0',
     eqUsd: '0',
     frozenBal: '0',
     interest: '0',

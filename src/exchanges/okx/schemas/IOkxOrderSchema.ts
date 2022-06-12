@@ -41,3 +41,11 @@ export interface IOkxOrderSchema {
   uTime: string
   cTime: string
 }
+
+export interface IOkxOrderPlaceResponseSchema {
+  clOrdId: string
+  ordId: string
+  sCode: string
+  sMsg: string
+  tag: string
+}
