@@ -18,7 +18,7 @@ import { translateOrderTypeToOkx } from '../../../enums/adapters/okxOrderTypeAda
 import { OkxOrderTypeEnum } from '../../../enums/OkxOrderTypeEnum'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { IOkxOrderSchema } from '../../../schemas/IOkxOrderSchema'
+import { IOkxOrderPlaceResponseSchema } from '../../../schemas/IOkxOrderSchema'
 
 
 
@@ -108,7 +108,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   log('placing new order for Okx')
 
-  let placedOrder: IOkxOrderSchema
+  let placedOrderId: string
 
   try {
 
@@ -118,13 +118,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ? orderEndpoints.placeStop
       : orderEndpoints.place
 
-    const orderResponse = await http.authedRequest<IOkxOrderSchema>({
+    const [orderResponse] = await http.authedRequest<IOkxOrderPlaceResponseSchema[]>({
       url,
       body,
       credentials,
     })
 
-    placedOrder = orderResponse
+    placedOrderId = orderResponse.ordId
 
   } catch (err) {
 
@@ -155,7 +155,11 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  const { order } = exchange.order.parse({ rawOrder: placedOrder })
+  const { order } = await exchange.order.get({
+    id: placedOrderId,
+    symbolPair,
+    http,
+  })
 
   const { requestWeight } = http
 
