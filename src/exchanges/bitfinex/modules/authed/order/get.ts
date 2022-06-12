@@ -23,12 +23,14 @@ export const get = (exchange: IAlunaExchangeAuthed) => async (
     id,
     symbolPair,
     http = new BitfinexHttp(exchange.settings),
+    type,
   } = params
 
   const { rawOrder } = await exchange.order.getRaw({
     id,
     symbolPair,
     http,
+    type,
   })
 
   const { order } = exchange.order.parse({ rawOrder })

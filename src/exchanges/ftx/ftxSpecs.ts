@@ -26,6 +26,16 @@ export const ftxExchangeOrderTypes: IAlunaExchangeOrderSpecsSchema[] = [
     supported: true,
     implemented: true,
   },
+  {
+    type: AlunaOrderTypesEnum.STOP_LIMIT,
+    supported: true,
+    implemented: true,
+  },
+  {
+    type: AlunaOrderTypesEnum.STOP_MARKET,
+    supported: true,
+    implemented: true,
+  },
 ]
 
 
@@ -54,8 +64,8 @@ export const ftxBaseSpecs: IAlunaExchangeSchema = {
     {
       type: AlunaAccountEnum.DERIVATIVES,
       supported: true,
-      implemented: false,
-      orderTypes: [],
+      implemented: true,
+      orderTypes: ftxExchangeOrderTypes,
       wallet: AlunaWalletEnum.DEFAULT,
     },
     {
@@ -109,13 +119,23 @@ export const getFtxEndpoints = (
     },
     balance: {
       list: `${baseUrl}/wallet/balances`,
+      account: `${baseUrl}/account`,
     },
     order: {
       get: (id: string) => `${baseUrl}/orders/${id}`,
       list: `${baseUrl}/orders`,
+      listTriggerOrders: `${baseUrl}/conditional_orders`,
+      listTriggerOrdersHistory: `${baseUrl}/conditional_orders/history`,
       place: `${baseUrl}/orders`,
+      placeTriggerOrder: `${baseUrl}/conditional_orders`,
       cancel: (id: string) => `${baseUrl}/orders/${id}`,
+      cancelTriggerOrder: (id: string) => `${baseUrl}/conditional_orders/${id}`,
       edit: (id: string) => `${baseUrl}/orders/${id}/modify`,
+      editTrigger: (id: string) => `${baseUrl}/conditional_orders/${id}/modify`,
+    },
+    position: {
+      list: `${baseUrl}/positions`,
+      setLeverage: `${baseUrl}/account/leverage`,
     },
   }
 }

@@ -3,6 +3,7 @@ import { debug } from 'debug'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
   IAlunaOrderCancelParams,
@@ -41,6 +42,7 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
     id,
     symbolPair,
     http,
+    type: AlunaOrderTypesEnum.LIMIT,
   })
 
   try {

@@ -8,8 +8,8 @@ import { AlunaKeyErrorCodes } from '../../../lib/errors/AlunaKeyErrorCodes'
 
 
 export const gateInvalidKeyPatterns: Array<RegExp> = [
-  // TODO: Review exchange invalid api key error patterns
-  new RegExp(/api-invalid/mi),
+  /Invalid key provided/mi,
+  /Signature mismatch/mi,
 ]
 
 
@@ -52,8 +52,7 @@ export const handleGateRequestError = (
 
     const { response } = error as AxiosError
 
-    // TODO: Review property `exchangeErroMsg` on request response
-    message = response?.data?.exchangeErroMsg || message
+    message = response?.data?.message || message
 
     httpStatusCode = response?.status || httpStatusCode
 
@@ -65,10 +64,10 @@ export const handleGateRequestError = (
 
   }
 
-
   if (isGateKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   }
 

@@ -71,7 +71,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
       throw new AlunaError({
         code: AlunaOrderErrorCodes.ORDER_CANCELLED,
         message: 'This order is already cancelled',
-        httpStatusCode: 422,
+        httpStatusCode: 200,
         metadata: err.metadata,
       })
 
@@ -86,7 +86,7 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     throw new AlunaError({
       code: AlunaOrderErrorCodes.NOT_FOUND,
       message: 'Order not found',
-      httpStatusCode: 404,
+      httpStatusCode: 200,
     })
 
   }

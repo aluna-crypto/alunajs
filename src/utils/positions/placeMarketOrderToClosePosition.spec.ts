@@ -4,13 +4,13 @@ import { cloneDeep } from 'lodash'
 import { PARSED_ORDERS } from '../../../test/fixtures/parsedOrders'
 import { PARSED_POSITIONS } from '../../../test/fixtures/parsedPositions'
 import { mockOrderPlace } from '../../../test/mocks/exchange/modules/order/mockOrderPlace'
+import { BitfinexAuthed } from '../../exchanges/bitfinex/BitfinexAuthed'
+import { BitfinexHttp } from '../../exchanges/bitfinex/BitfinexHttp'
+import * as placeMod from '../../exchanges/bitfinex/modules/authed/order/place'
 import { AlunaOrderSideEnum } from '../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaPositionSideEnum } from '../../lib/enums/AlunaPositionSideEnum'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
-import { BitfinexAuthed } from '../../exchanges/bitfinex/BitfinexAuthed'
-import { BitfinexHttp } from '../../exchanges/bitfinex/BitfinexHttp'
-import * as placeMod from '../../exchanges/bitfinex/modules/authed/order/place'
 import { placeMarketOrderToClosePosition } from './placeMarketOrderToClosePosition'
 
 
@@ -22,7 +22,7 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should place market order to close Bitfinex position just fine (LONG)', async () => {
+  it('should place market order to close position just fine (LONG)', async () => {
 
     // preparing values
     const order = PARSED_ORDERS[0]
@@ -53,6 +53,7 @@ describe(__filename, () => {
     expect(place.firstCall.args[0]).to.deep.eq({
       http,
       account: position.account,
+      reduceOnly: true,
       side: AlunaOrderSideEnum.SELL,
       amount: position.amount,
       symbolPair: position.symbolPair,
@@ -61,7 +62,7 @@ describe(__filename, () => {
 
   })
 
-  it('should place market order to close Bitfinex position just fine (SHORT)', async () => {
+  it('should place market order to close position just fine (SHORT)', async () => {
 
     // preparing values
     const order = PARSED_ORDERS[0]
@@ -93,6 +94,7 @@ describe(__filename, () => {
     expect(place.firstCall.args[0]).to.deep.eq({
       http,
       account: position.account,
+      reduceOnly: true,
       side: AlunaOrderSideEnum.BUY,
       amount: position.amount,
       symbolPair: position.symbolPair,

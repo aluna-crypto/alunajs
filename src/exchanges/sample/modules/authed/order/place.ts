@@ -42,7 +42,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -87,23 +87,25 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     let {
       code,
       message,
+      httpStatusCode,
     } = err
 
-    const { metadata } = err
+    const {
+      metadata,
+    } = err
 
-    // TODO: Review error handlings
     if (metadata.code === 'INSUFFICIENT_FUNDS') {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
       message = 'Account has insufficient balance for requested action.'
+      httpStatusCode = 200
 
     } else if (metadata.code === 'MIN_TRADE_REQUIREMENT_NOT_MET') {
 
       code = AlunaOrderErrorCodes.PLACE_FAILED
-
       message = 'The trade was smaller than the min trade size quantity for '
         .concat('the market')
+      httpStatusCode = 200
 
     }
 
@@ -111,6 +113,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }

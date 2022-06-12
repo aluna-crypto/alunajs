@@ -7,6 +7,7 @@ import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
 import { IBitfinexMarketSchema } from '../../../schemas/IBitfinexMarketSchema'
 import {
   BITFINEX_MARGIN_ENABLED_CURRENCIES,
+  BITFINEX_PAIRS_INFO,
   BITFINEX_RAW_TICKERS,
 } from '../../../test/fixtures/bitfinexMarket'
 import { mockSplitSymbolPair } from './helpers/splitSymbolPair.mock'
@@ -15,59 +16,57 @@ import { mockSplitSymbolPair } from './helpers/splitSymbolPair.mock'
 
 describe(__filename, () => {
 
-  it(
-    "should parse a Bitfinex raw market just fine (symbol w/ ':')",
-    async () => {
+  it("should parse a Bitfinex raw market just fine (symbol w/ ':')", async () => {
 
-      // preparing data
-      const translatedSymbolId1 = 'BTC'
-      const translatedSymbolId2 = 'ETH'
+    // preparing data
+    const translatedSymbolId1 = 'BTC'
+    const translatedSymbolId2 = 'ETH'
 
-      const ticker = cloneDeep(BITFINEX_RAW_TICKERS[0])
-      ticker[0] = 'tLUNA:BTC'
+    const ticker = cloneDeep(BITFINEX_RAW_TICKERS[0])
+    ticker[0] = 'tLUNA:BTC'
 
-      const enabledMarginCurrency = BITFINEX_MARGIN_ENABLED_CURRENCIES[0][0]
+    const enabledMarginCurrency = BITFINEX_MARGIN_ENABLED_CURRENCIES[0][0]
+    const pairInfo = BITFINEX_PAIRS_INFO[0]
 
-      const rawMarket: IBitfinexMarketSchema = {
-        enabledMarginCurrency,
-        ticker,
-      }
+    const rawMarket: IBitfinexMarketSchema = {
+      ticker,
+      enabledMarginCurrency,
+      pairInfo,
+    }
 
-      runTest({
-        rawMarket,
-        translatedSymbolId1,
-        translatedSymbolId2,
-      })
+    runTest({
+      rawMarket,
+      translatedSymbolId1,
+      translatedSymbolId2,
+    })
 
-    },
-  )
+  })
 
-  it(
-    "should parse a Bitfinex raw market just fine (symbol w/o ':')",
-    async () => {
+  it("should parse a Bitfinex raw market just fine (symbol w/o ':')", async () => {
 
-      // preparing data
-      const translatedSymbolId1 = 'BTC'
-      const translatedSymbolId2 = 'ETH'
+    // preparing data
+    const translatedSymbolId1 = 'BTC'
+    const translatedSymbolId2 = 'ETH'
 
-      const ticker = cloneDeep(BITFINEX_RAW_TICKERS[0])
-      ticker[0] = 'tBTCUSD'
+    const ticker = cloneDeep(BITFINEX_RAW_TICKERS[0])
+    ticker[0] = 'tBTCUSD'
 
-      const enabledMarginCurrency = BITFINEX_MARGIN_ENABLED_CURRENCIES[0][0]
+    const enabledMarginCurrency = BITFINEX_MARGIN_ENABLED_CURRENCIES[0][0]
+    const pairInfo = BITFINEX_PAIRS_INFO[0]
 
-      const rawMarket: IBitfinexMarketSchema = {
-        enabledMarginCurrency,
-        ticker,
-      }
+    const rawMarket: IBitfinexMarketSchema = {
+      enabledMarginCurrency,
+      pairInfo,
+      ticker,
+    }
 
-      runTest({
-        rawMarket,
-        translatedSymbolId1,
-        translatedSymbolId2,
-      })
+    runTest({
+      rawMarket,
+      translatedSymbolId1,
+      translatedSymbolId2,
+    })
 
-    },
-  )
+  })
 
 
 
@@ -107,6 +106,7 @@ describe(__filename, () => {
     // validating
     const {
       ticker,
+      pairInfo,
       enabledMarginCurrency,
     } = rawMarket
 
@@ -129,6 +129,9 @@ describe(__filename, () => {
     expect(market.ticker.high).to.be.eq(ticker[9])
     expect(market.ticker.low).to.be.eq(ticker[10])
     expect(market.ticker.date).to.be.ok
+
+    expect(market.minTradeAmount).to.be.eq(Number(pairInfo[1][3]))
+    expect(market.maxTradeAmount).to.be.eq(Number(pairInfo[1][4]))
 
     expect(market.meta).to.deep.eq(ticker)
 

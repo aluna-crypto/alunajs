@@ -1,6 +1,7 @@
 import { debug } from 'debug'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderEditParams,
   IAlunaOrderEditReturns,
@@ -42,6 +43,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
   await exchange.order.cancel({
     id,
     symbolPair,
+    type: AlunaOrderTypesEnum.LIMIT,
     http,
   })
 

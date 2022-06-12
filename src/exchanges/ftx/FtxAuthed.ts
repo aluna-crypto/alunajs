@@ -2,12 +2,14 @@ import { IAlunaExchangeAuthed } from '../../lib/core/IAlunaExchange'
 import { IAlunaBalanceModule } from '../../lib/modules/authed/IAlunaBalanceModule'
 import { IAlunaKeyModule } from '../../lib/modules/authed/IAlunaKeyModule'
 import { IAlunaOrderWriteModule } from '../../lib/modules/authed/IAlunaOrderModule'
+import { IAlunaPositionModule } from '../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaCredentialsSchema } from '../../lib/schemas/IAlunaCredentialsSchema'
 import { IAlunaSettingsSchema } from '../../lib/schemas/IAlunaSettingsSchema'
+import { Ftx } from './Ftx'
 import { balance } from './modules/authed/balance'
 import { key } from './modules/authed/key'
 import { order } from './modules/authed/order'
-import { Ftx } from './Ftx'
+import { position } from './modules/authed/position'
 
 
 
@@ -18,6 +20,7 @@ export class FtxAuthed extends Ftx implements IAlunaExchangeAuthed {
   public key: IAlunaKeyModule
   public order: IAlunaOrderWriteModule
   public balance: IAlunaBalanceModule
+  public position: IAlunaPositionModule
 
 
 
@@ -38,6 +41,7 @@ export class FtxAuthed extends Ftx implements IAlunaExchangeAuthed {
     this.key = key(this)
     this.balance = balance(this)
     this.order = order(this)
+    this.position = position(this)
 
     return this
 

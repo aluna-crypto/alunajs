@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -53,6 +54,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.cancel({
       id: id.toString(),
       symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -113,6 +115,7 @@ describe(__filename, () => {
     } = await executeAndCatch(() => exchange.order.cancel({
       id: id.toString(),
       symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     }))
 
 

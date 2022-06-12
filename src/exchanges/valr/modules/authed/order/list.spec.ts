@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: ValrAuthed,
     exchangeId: 'valr',
     methodModuleName: 'order',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawOrders: VALR_RAW_LIST_RESPONSE_ORDERS },
     parsedList: { orders: PARSED_ORDERS },

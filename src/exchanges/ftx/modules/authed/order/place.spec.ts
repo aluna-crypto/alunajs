@@ -1,6 +1,11 @@
 import { expect } from 'chai'
+import Sinon from 'sinon'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
+import {
+  IMethodToMock,
+  testPlaceOrder,
+} from '../../../../../../test/macros/testPlaceOrder'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -9,11 +14,9 @@ import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
-import { IAlunaOrderPlaceParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
 import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
-import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/placeOrderParamsSchema'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { translateOrderSideToFtx } from '../../../enums/adapters/ftxOrderSideAdapter'
 import { translateOrderTypeToFtx } from '../../../enums/adapters/ftxOrderTypeAdapter'
@@ -22,6 +25,7 @@ import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { FTX_RAW_ORDERS } from '../../../test/fixtures/ftxOrders'
 import * as getMod from './get'
+import * as parseMod from './parse'
 
 
 
@@ -32,155 +36,119 @@ describe(__filename, () => {
     secret: 'secret',
   }
 
-  it('should place a Ftx limit order just fine', async () => {
+  const order = PARSED_ORDERS[0]
+  const rawOrders = [FTX_RAW_ORDERS[0]]
 
-    // preparing data
-    const mockedRawOrder = FTX_RAW_ORDERS[0]
-    const mockedPlacedOrder = PARSED_ORDERS[0]
-
-    const side = AlunaOrderSideEnum.BUY
-    const type = AlunaOrderTypesEnum.LIMIT
-
-    const translatedOrderSide = translateOrderSideToFtx({ from: side })
-    const translatedOrderType = translateOrderTypeToFtx({ from: type })
-
-    const body = {
-      market: '',
-      price: 0,
-      side: translatedOrderSide,
-      size: 0.01,
-      type: translatedOrderType,
-    }
-
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: FtxHttp.prototype })
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
-
-    const { get } = mockGet({ module: getMod })
-    get.returns({ order: mockedPlacedOrder })
-
-    const { validateParamsMock } = mockValidateParams()
-
-    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+  const getOrderSpy = Sinon.spy(
+    async () => Promise.resolve({ order }),
+  )
 
 
-    // executing
-    const exchange = new FtxAuthed({ credentials })
+  const methodsToMock: IMethodToMock[] = [
+    {
+      methodModule: getMod,
+      methodName: 'get',
+      methodResponse: getOrderSpy,
+    },
+  ]
 
-    const params: IAlunaOrderPlaceParams = {
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    }
+  testPlaceOrder({
+    ExchangeAuthed: FtxAuthed,
+    HttpClass: FtxHttp,
+    parseModule: parseMod,
+    rawOrders,
+    credentials,
+    methodsToMock,
+    validationCallback: (params) => {
 
-    const { order } = await exchange.order.place(params)
+      const {
+        exchange,
+        authedRequestStub,
+        placeParams,
+        mockedMethodsDictionary,
+      } = params
 
+      const { settings } = exchange
 
-    // validating
-    expect(order).to.deep.eq(mockedPlacedOrder)
-
-    expect(authedRequest.callCount).to.be.eq(1)
-
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
-      credentials,
-      url: getFtxEndpoints(exchange.settings).order.place,
-    })
-
-    expect(publicRequest.callCount).to.be.eq(0)
-
-    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
-
-    expect(validateParamsMock.callCount).to.be.eq(1)
-    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
-      params,
-      schema: placeOrderParamsSchema,
-    })
-
-  })
-
-  it('should place a Ftx market order just fine', async () => {
-
-    // preparing data
-
-    const mockedRawOrder = FTX_RAW_ORDERS[0]
-    const mockPlacedOrder = PARSED_ORDERS[0]
-
-    const side = AlunaOrderSideEnum.BUY
-    const type = AlunaOrderTypesEnum.MARKET
-
-    const translatedOrderSide = translateOrderSideToFtx({ from: side })
-    const translatedOrderType = translateOrderTypeToFtx({ from: type })
-
-    const body = {
-      market: '',
-      price: null,
-      side: translatedOrderSide,
-      size: 0.01,
-      type: translatedOrderType,
-    }
-
-    const params = {
-      symbolPair: '',
-      account: AlunaAccountEnum.SPOT,
-      amount: 0.01,
-      side,
-      type,
-      rate: 0,
-    }
-
-    // mocking
-    const {
-      publicRequest,
-      authedRequest,
-    } = mockHttp({ classPrototype: FtxHttp.prototype })
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
-
-    const { get } = mockGet({ module: getMod })
-    get.returns({ order: mockPlacedOrder })
-
-    const { validateParamsMock } = mockValidateParams()
-
-    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
+      const {
+        type,
+        amount,
+        rate,
+        limitRate,
+        stopRate,
+        symbolPair,
+        side,
+        reduceOnly,
+      } = placeParams
 
 
-    // executing
-    const exchange = new FtxAuthed({ credentials })
+      const {
+        get,
+      } = mockedMethodsDictionary!
 
-    const { order } = await exchange.order.place(params)
+      const translatedOrderSide = translateOrderSideToFtx({
+        from: side,
+      })
 
+      const translatedOrderType = translateOrderTypeToFtx({
+        from: type,
+      })
 
-    // validating
-    expect(order).to.deep.eq(mockPlacedOrder)
+      const body: Record<string, any> = {
+        side: translatedOrderSide,
+        market: symbolPair,
+        size: amount,
+        type: translatedOrderType,
+        ...(reduceOnly ? { reduceOnly } : {}),
+      }
 
-    expect(authedRequest.callCount).to.be.eq(1)
+      let url: string
 
-    expect(authedRequest.firstCall.args[0]).to.deep.eq({
-      body,
-      credentials,
-      url: getFtxEndpoints(exchange.settings).order.place,
-    })
+      switch (type) {
 
-    expect(publicRequest.callCount).to.be.eq(0)
+        case AlunaOrderTypesEnum.LIMIT:
+          url = getFtxEndpoints(settings).order.place
+          body.price = rate
+          break
 
-    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
-    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
-      exchangeSpecs: exchange.specs,
-      orderPlaceParams: params,
-    })
+        case AlunaOrderTypesEnum.STOP_MARKET:
+          url = getFtxEndpoints(settings).order.placeTriggerOrder
+          body.triggerPrice = stopRate
+          break
 
-    expect(validateParamsMock.callCount).to.be.eq(1)
-    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
-      params,
-      schema: placeOrderParamsSchema,
-    })
+        case AlunaOrderTypesEnum.STOP_LIMIT:
+          url = getFtxEndpoints(settings).order.placeTriggerOrder
+          body.triggerPrice = stopRate
+          body.orderPrice = limitRate
+          break
 
+        // Market orders
+        default:
+          url = getFtxEndpoints(settings).order.place
+          body.price = null
+
+      }
+
+      expect(authedRequestStub.callCount).to.be.eq(1)
+      expect(authedRequestStub.firstCall.args[0]).to.deep.eq({
+        url,
+        credentials,
+        body,
+      })
+
+      expect(get.callCount).to.be.eq(1)
+
+      expect(getOrderSpy.callCount).to.be.eq(1)
+      expect(getOrderSpy.firstCall.args).to.deep.eq([{
+        id: rawOrders[0].id.toString(),
+        symbolPair,
+        http: new FtxHttp(settings),
+        type: AlunaOrderTypesEnum.LIMIT,
+      }])
+
+      getOrderSpy.resetHistory()
+
+    },
   })
 
   it(
@@ -188,8 +156,6 @@ describe(__filename, () => {
     async () => {
 
       // preparing data
-      // const mockedRawOrder = FTX_RAW_ORDERS[0]
-
       const side = AlunaOrderSideEnum.BUY
       const type = AlunaOrderTypesEnum.MARKET
 
@@ -237,7 +203,6 @@ describe(__filename, () => {
 
 
       // validating
-
       expect(error instanceof AlunaError).to.be.ok
       expect(error?.code).to.be.eq(expectedCode)
       expect(error?.message).to.be.eq(expectedMessage)
@@ -247,16 +212,8 @@ describe(__filename, () => {
       expect(publicRequest.callCount).to.be.eq(0)
 
       expect(ensureOrderIsSupported.callCount).to.be.eq(1)
-      expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
-        exchangeSpecs: exchange.specs,
-        orderPlaceParams: params,
-      })
 
       expect(validateParamsMock.callCount).to.be.eq(1)
-      expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
-        params,
-        schema: placeOrderParamsSchema,
-      })
 
       expect(get.callCount).to.be.eq(0)
 
@@ -321,16 +278,8 @@ describe(__filename, () => {
     expect(publicRequest.callCount).to.be.eq(0)
 
     expect(ensureOrderIsSupported.callCount).to.be.eq(1)
-    expect(ensureOrderIsSupported.firstCall.args[0]).to.deep.eq({
-      exchangeSpecs: exchange.specs,
-      orderPlaceParams: params,
-    })
 
     expect(validateParamsMock.callCount).to.be.eq(1)
-    expect(validateParamsMock.firstCall.args[0]).to.deep.eq({
-      params,
-      schema: placeOrderParamsSchema,
-    })
 
     expect(get.callCount).to.be.eq(0)
 

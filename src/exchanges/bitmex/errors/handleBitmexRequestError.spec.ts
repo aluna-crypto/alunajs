@@ -26,6 +26,7 @@ describe(__filename, () => {
       'Signature not valid',
       'This key is disabled',
       'Your account has been disabled',
+      'Missing API key',
     ]
 
     each(matchingString, (string) => {
@@ -53,7 +54,7 @@ describe(__filename, () => {
       expect(alunaError).to.deep.eq({
         code: AlunaKeyErrorCodes.INVALID,
         message,
-        httpStatusCode: axiosError.response!.status,
+        httpStatusCode: 200,
         metadata: axiosError.response!.data,
       })
 
@@ -94,7 +95,7 @@ describe(__filename, () => {
       expect(alunaError).to.deep.eq({
         code: AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN,
         message,
-        httpStatusCode: axiosError.response!.status,
+        httpStatusCode: 200,
         metadata: axiosError.response!.data,
       })
 

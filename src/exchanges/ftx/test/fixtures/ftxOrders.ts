@@ -1,7 +1,11 @@
 import { FtxOrderSideEnum } from '../../enums/FtxOrderSideEnum'
 import { FtxOrderStatusEnum } from '../../enums/FtxOrderStatusEnum'
 import { FtxOrderTypeEnum } from '../../enums/FtxOrderTypeEnum'
-import { IFtxOrderSchema } from '../../schemas/IFtxOrderSchema'
+import { FtxTriggerOrderTypeEnum } from '../../enums/FtxTriggerOrderTypeEnum'
+import {
+  IFtxOrderSchema,
+  IFtxTriggerOrderSchema,
+} from '../../schemas/IFtxOrderSchema'
 
 
 
@@ -21,8 +25,8 @@ export const FTX_RAW_ORDERS: IFtxOrderSchema[] = [
     avgFillPrice: 0,
     postOnly: false,
     ioc: false,
-    createdAt: '2022-03-04T11:21:04.900507+00:00',
     future: 'BNB/USD',
+    createdAt: '2022-03-04T11:21:04.900507+00:00',
   },
   {
     id: 126122300599,
@@ -41,5 +45,68 @@ export const FTX_RAW_ORDERS: IFtxOrderSchema[] = [
     ioc: true,
     createdAt: '2022-03-04T12:46:02.053004+00:00',
     future: 'BNB/USD',
+  },
+]
+
+
+
+export const FTX_TRIGGER_RAW_ORDERS: IFtxTriggerOrderSchema[] = [
+  {
+    id: 207384033,
+    market: 'BTC/USD',
+    future: null,
+    side: FtxOrderSideEnum.BUY,
+    type: FtxTriggerOrderTypeEnum.STOP,
+    orderPrice: null,
+    triggerPrice: 50000,
+    size: 0.0001,
+    status: FtxOrderStatusEnum.OPEN,
+    createdAt: '2022-05-27T14:17:49.455530+00:00',
+    triggeredAt: null,
+    orderId: null,
+    error: null,
+    reduceOnly: false,
+    trailValue: null,
+    trailStart: null,
+    cancelledAt: null,
+    cancelReason: null,
+    clientId: null,
+    ioc: null,
+    postOnly: null,
+    price: null,
+    remainingSize: null,
+    retryUntilFilled: true,
+    orderType: FtxOrderTypeEnum.MARKET,
+    filledSize: 0,
+    avgFillPrice: null,
+  },
+  {
+    id: 207384278,
+    market: 'BTC/USD',
+    future: null,
+    side: FtxOrderSideEnum.SELL,
+    type: FtxTriggerOrderTypeEnum.STOP,
+    orderPrice: 35000,
+    triggerPrice: 25000,
+    size: 0.0001,
+    status: FtxOrderStatusEnum.OPEN,
+    createdAt: '2022-05-27T14:18:29.334611+00:00',
+    triggeredAt: null,
+    orderId: null,
+    error: null,
+    reduceOnly: false,
+    trailValue: null,
+    trailStart: null,
+    cancelledAt: null,
+    cancelReason: null,
+    retryUntilFilled: false,
+    orderType: FtxOrderTypeEnum.LIMIT,
+    clientId: null,
+    ioc: null,
+    postOnly: null,
+    price: null,
+    remainingSize: null,
+    filledSize: 0,
+    avgFillPrice: null,
   },
 ]

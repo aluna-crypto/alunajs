@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -47,6 +48,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id: id.toString(),
       symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -97,6 +99,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id: id.toString(),
       symbolPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -145,6 +148,7 @@ describe(__filename, () => {
     const params: IAlunaOrderGetParams = {
       id: '',
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     }
 
     const {

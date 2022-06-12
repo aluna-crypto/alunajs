@@ -144,7 +144,7 @@ describe(__filename, () => {
 
     expect(err?.message).to.be.eq('Invalid API key/secret pair.')
     expect(err?.code).to.be.eq(AlunaKeyErrorCodes.INVALID)
-    expect(err?.httpStatusCode).to.be.eq(403)
+    expect(err?.httpStatusCode).to.be.eq(200)
     expect(err?.metadata).to.deep.eq(dummyMetadata)
 
     expect(authedRequest.callCount).to.be.eq(1)

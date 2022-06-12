@@ -57,6 +57,7 @@ export const testMarketOrder = (params: IAuthedParams) => {
       } = await exchangeAuthed.order.get({
         symbolPair: orderSymbolPair!,
         id: marketOrderId!,
+        type: AlunaOrderTypesEnum.MARKET,
       })
 
       expect(order).to.exist

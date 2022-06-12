@@ -38,7 +38,7 @@ export const fetchOrderStatus = async (
     throw new AlunaError({
       code: AlunaOrderErrorCodes.NOT_FOUND,
       message: result.error as string,
-      httpStatusCode: 404,
+      httpStatusCode: 200,
       metadata: result.error,
     })
 

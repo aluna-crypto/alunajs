@@ -1,9 +1,15 @@
 import { expect } from 'chai'
+import {
+  each,
+  entries,
+} from 'lodash'
 import sleep from 'sleep-promise'
 
+import { AlunaError } from '../../../../src/lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../src/lib/enums/AlunaOrderSideEnum'
 import { AlunaPositionSideEnum } from '../../../../src/lib/enums/AlunaPositionSideEnum'
 import { AlunaPositionStatusEnum } from '../../../../src/lib/enums/AlunaPositionStatusEnum'
+import { AlunaGenericErrorCodes } from '../../../../src/lib/errors/AlunaGenericErrorCodes'
 import { IAuthedParams } from '../IAuthedParams'
 import { placeMarketOrder } from './helpers/order/placeMarketOrder'
 
@@ -21,6 +27,7 @@ export function position(params: IAuthedParams) {
     orderAccount,
   } = exchangeConfigs
 
+  const { id } = exchangeAuthed
 
   before(async () => {
 
@@ -153,5 +160,104 @@ export function position(params: IAuthedParams) {
     expect(requestWeight.authed).to.be.greaterThan(0)
 
   })
+
+  const hasLeverage = exchangeAuthed.position!.getLeverage
+
+  if (hasLeverage) {
+
+    const {
+      leverageToSet,
+      defaultLeverage,
+      symbolPair,
+    } = exchangeConfigs
+
+    const leverageProps = {
+      defaultLeverage,
+      leverageToSet,
+    }
+
+    each(entries(leverageProps), ([key, value]) => {
+
+      if (!value) {
+
+        throw new AlunaError({
+          code: AlunaGenericErrorCodes.PARAM_ERROR,
+          message: `e2e config prop '${key}' is required for exchange ${id}`,
+        })
+
+      }
+
+    })
+
+    it('leverage:get', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.getLeverage!({
+        id: liveData.positionId,
+        symbolPair,
+      })
+
+      expect(leverage).to.exist
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:set', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.setLeverage!({
+        leverage: leverageToSet!,
+        symbolPair,
+        id: liveData.positionId,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(leverageToSet)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:get:setted', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.getLeverage!({
+        id: liveData.positionId,
+        symbolPair,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(leverageToSet)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+    it('leverage:set:revert', async () => {
+
+      const {
+        leverage,
+        requestWeight,
+      } = await exchangeAuthed.position!.setLeverage!({
+        leverage: defaultLeverage!,
+        symbolPair,
+        id: liveData.positionId,
+      })
+
+      expect(leverage).to.exist
+      expect(leverage).to.be.eq(defaultLeverage)
+
+      expect(requestWeight.authed).to.be.greaterThan(0)
+
+    })
+
+  }
 
 }

@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: FtxAuthed,
     exchangeId: 'ftx',
     methodModuleName: 'balance',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawBalances: FTX_RAW_BALANCES },
     parsedList: { balances: PARSED_BALANCES },

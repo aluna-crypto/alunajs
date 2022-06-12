@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios'
 import { expect } from 'chai'
+import { each } from 'lodash'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaHttpErrorCodes } from '../../../lib/errors/AlunaHttpErrorCodes'
@@ -52,7 +53,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          message: dummyError,
         },
       },
     } as AxiosError
@@ -64,7 +65,7 @@ describe(__filename, () => {
     expect(alunaError).to.deep.eq({
       code: AlunaKeyErrorCodes.INVALID,
       message: dummyError,
-      httpStatusCode: axiosError1.response?.status,
+      httpStatusCode: 200,
       metadata: axiosError1.response?.data,
     })
 
@@ -82,7 +83,7 @@ describe(__filename, () => {
       response: {
         status: 400,
         data: {
-          exchangeErroMsg: dummyError,
+          message: dummyError,
         },
       },
     } as AxiosError
@@ -156,14 +157,19 @@ describe(__filename, () => {
 
   })
 
-  it(
-    'should ensure Gate invalid api patterns work as expected',
-    async () => {
+  it('should ensure Gate invalid api patterns work as expected', async () => {
 
-      const message = 'api-invalid'
+    const messages = [
+      'Invalid key provided',
+      'Signature mismatch',
+    ]
+
+    each(messages, (message) => {
+
       expect(isGateKeyInvalid(message)).to.be.ok
 
-    },
-  )
+    })
+
+  })
 
 })

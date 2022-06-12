@@ -7,6 +7,7 @@ import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGe
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -58,6 +59,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.cancel({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -114,6 +116,7 @@ describe(__filename, () => {
     } = await executeAndCatch(() => exchange.order.cancel({
       id,
       symbolPair: 'symbolPair',
+      type: AlunaOrderTypesEnum.LIMIT,
     }))
 
 

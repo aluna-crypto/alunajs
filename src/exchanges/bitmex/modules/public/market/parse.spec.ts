@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { expect } from 'chai'
 import { each } from 'lodash'
+import { ImportMock } from 'ts-mock-imports'
 
 import { IAlunaInstrumentSchema } from '../../../../../lib/schemas/IAlunaInstrumentSchema'
 import { IAlunaSettingsSchema } from '../../../../../lib/schemas/IAlunaSettingsSchema'
@@ -8,6 +9,7 @@ import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchem
 import { mockTranslateSymbolId } from '../../../../../utils/mappings/translateSymbolId.mock'
 import { Bitmex } from '../../../Bitmex'
 import { BITMEX_RAW_MARKETS } from '../../../test/fixtures/bitmexMarket'
+import * as computeMinMaxTradeAmountMod from './helpers/computeMinMaxTradeAmount'
 import { mockParseBitmexInstrument } from './helpers/parseBitmexInstrument.mock'
 
 
@@ -21,6 +23,9 @@ describe(__filename, () => {
 
     const translatedSymbolId = 'BTC'
 
+    const minTradeAmount = 1
+    const maxTradeAmount = 100
+
 
     // mocking
     const { translateSymbolId } = mockTranslateSymbolId()
@@ -29,6 +34,14 @@ describe(__filename, () => {
     const { parseBitmexInstrument } = mockParseBitmexInstrument()
     parseBitmexInstrument.returns({ instrument })
 
+    const computeMinMaxTradeAmount = ImportMock.mockFunction(
+      computeMinMaxTradeAmountMod,
+      'computeMinMaxTradeAmount',
+      {
+        minTradeAmount,
+        maxTradeAmount,
+      },
+    )
 
     each(BITMEX_RAW_MARKETS, (rawMarket, index) => {
 
@@ -92,6 +105,9 @@ describe(__filename, () => {
       expect(market.ticker.baseVolume).to.be.eq(ticker.baseVolume)
       expect(market.ticker.quoteVolume).to.be.eq(ticker.quoteVolume)
 
+      expect(market.minTradeAmount).to.be.eq(minTradeAmount)
+      expect(market.maxTradeAmount).to.be.eq(maxTradeAmount)
+
       expect(market.maxLeverage).to.be.eq(maxLeverage)
       expect(market.leverageEnabled).to.be.ok
 
@@ -123,6 +139,8 @@ describe(__filename, () => {
     const { length } = BITMEX_RAW_MARKETS
 
     expect(parseBitmexInstrument.callCount).to.be.eq(length)
+
+    expect(computeMinMaxTradeAmount.callCount).to.be.eq(length)
 
   })
 

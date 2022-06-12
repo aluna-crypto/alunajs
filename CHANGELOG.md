@@ -1,3 +1,24 @@
+# 1.2.2 (June 10, 2022)
+
+ - Add new `AlunaOrderErrorCodes`
+ - Handle invalid order amount error on Bitfinex/Bitmex
+ - Handle invalid order price error on Bitmex
+ - Ajustments in `IAlunaMarketSchema`
+   - Add `minTradeAmount`
+   - Add `maxTradeAmount`
+
+# 1.2.1 (June 8, 2022)
+
+ - Use HTTP status code 200 for known errors
+
+# 1.2.0 (June 7, 2022)
+
+ - Add support for derivatives trading on Ftx
+ - Improved e2e tests for `key` module
+ - Fix invalid-key error for Gate
+ - Ajustments in `IAlunaOrderGetParams` interface
+   - Add prop `type`
+
 # 1.1.1 (June 1, 2022)
 
  - Add new value `default` for `AlunaWalletEnum` 

@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
@@ -48,6 +49,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -95,6 +97,7 @@ describe(__filename, () => {
     const { rawOrder } = await exchange.order.getRaw({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -158,6 +161,7 @@ describe(__filename, () => {
       () => exchange.order.getRaw({
         id,
         symbolPair: '',
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 
@@ -168,7 +172,7 @@ describe(__filename, () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error?.code).to.be.eq(AlunaOrderErrorCodes.NOT_FOUND)
     expect(error?.message).to.be.eq('Order not found')
-    expect(error?.httpStatusCode).to.be.eq(404)
+    expect(error?.httpStatusCode).to.be.eq(200)
 
     expect(fetchOrderStatusMock.callCount).to.be.eq(1)
 
@@ -229,6 +233,7 @@ describe(__filename, () => {
       () => exchange.order.getRaw({
         id,
         symbolPair: '',
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 
@@ -239,7 +244,7 @@ describe(__filename, () => {
     expect(error instanceof AlunaError).to.be.ok
     expect(error?.code).to.be.eq(AlunaOrderErrorCodes.ORDER_CANCELLED)
     expect(error?.message).to.be.eq('This order is already cancelled')
-    expect(error?.httpStatusCode).to.be.eq(422)
+    expect(error?.httpStatusCode).to.be.eq(200)
 
     expect(fetchOrderStatusMock.callCount).to.be.eq(1)
 

@@ -3,6 +3,7 @@ import { expect } from 'chai'
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockGetRaw } from '../../../../../../test/mocks/exchange/modules/mockGetRaw'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { IAlunaOrderGetParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { VALR_RAW_LIST_RESPONSE_ORDERS } from '../../../test/fixtures/valrOrders'
@@ -30,6 +31,7 @@ describe(__filename, () => {
     const params: IAlunaOrderGetParams = {
       id: orderId,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     }
 
 
@@ -46,10 +48,7 @@ describe(__filename, () => {
     // executing
     const exchange = new ValrAuthed({ credentials })
 
-    const { order } = await exchange.order.get({
-      id: orderId,
-      symbolPair: '',
-    })
+    const { order } = await exchange.order.get(params)
 
 
     // validating

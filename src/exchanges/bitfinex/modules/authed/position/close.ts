@@ -9,8 +9,8 @@ import {
   IAlunaPositionCloseReturns,
 } from '../../../../../lib/modules/authed/IAlunaPositionModule'
 import { IAlunaPositionSchema } from '../../../../../lib/schemas/IAlunaPositionSchema'
-import { BitfinexHttp } from '../../../BitfinexHttp'
 import { placeMarketOrderToClosePosition } from '../../../../../utils/positions/placeMarketOrderToClosePosition'
+import { BitfinexHttp } from '../../../BitfinexHttp'
 import { throwPositionIdRequiredFor } from './helpers/throwPositionIdRequiredFor'
 
 
@@ -41,7 +41,7 @@ export const close = (exchange: IAlunaExchangeAuthed) => async (
     throw new AlunaError({
       code: AlunaPositionErrorCodes.ALREADY_CLOSED,
       message: 'Position is already closed',
-      httpStatusCode: 400,
+      httpStatusCode: 200,
       metadata: position,
     })
 

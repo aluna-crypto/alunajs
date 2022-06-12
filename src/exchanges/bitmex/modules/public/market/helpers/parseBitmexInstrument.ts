@@ -4,7 +4,6 @@ import { BitmexInstrumentStateEnum } from '../../../../enums/BitmexInstrumentSta
 import { IBitmexMarketSchema } from '../../../../schemas/IBitmexMarketSchema'
 import { computeContractCurrency } from './computeContractCurrency'
 import { computeContractValue } from './computeContractValue'
-import { computeMinTradeAmount } from './computeMinTradeAmount'
 import { computeOrderValueMultiplier } from './computeOrderValueMultiplier'
 import { computeUsdPricePerUnit } from './computeUsdPricePerUnit'
 import { resolveSymbolsIds } from './resolveSymbolsIds'
@@ -53,9 +52,6 @@ export const parseBitmexInstrument = (params: {
     rawMarket,
   })
 
-  const minTradeAmount = computeMinTradeAmount({
-    rawMarket,
-  })
 
   let usdPricePerUnit: number | undefined
 
@@ -105,7 +101,6 @@ export const parseBitmexInstrument = (params: {
     rateSymbolId,
     totalSymbolId,
     amountSymbolId,
-    minTradeAmount,
     contractValue,
     contractCurrency,
     orderValueMultiplier,

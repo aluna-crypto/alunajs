@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: SampleAuthed,
     exchangeId: 'sample',
     methodModuleName: 'position',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawPositions: SAMPLE_RAW_POSITIONS },
     parsedList: { positions: PARSED_POSITIONS },

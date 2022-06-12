@@ -13,6 +13,7 @@ export const bitmexInvalidKeyPatterns: Array<RegExp> = [
   /Signature not valid/mi,
   /This key is disabled/mi,
   /Your account has been disabled/mi,
+  /Missing API key/mi,
 ]
 
 
@@ -83,10 +84,12 @@ export const handleBitmexRequestError = (
   if (isBitmexKeyInvalid(message)) {
 
     code = AlunaKeyErrorCodes.INVALID
+    httpStatusCode = 200
 
   } else if (isBitmexDown(message)) {
 
     code = AlunaExchangeErrorCodes.EXCHANGE_IS_DOWN
+    httpStatusCode = 200
 
   }
 

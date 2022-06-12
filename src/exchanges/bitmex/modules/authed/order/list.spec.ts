@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: BitmexAuthed,
     exchangeId: 'bitmex',
     methodModuleName: 'order',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawOrders: BITMEX_RAW_ORDERS },
     parsedList: { orders: PARSED_ORDERS },

@@ -107,7 +107,7 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error!.message).to.be.eq(msg)
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(authedRequest.callCount).to.be.eq(1)
     expect(authedRequest.firstCall.args[0]).to.deep.eq({

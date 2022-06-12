@@ -4,8 +4,11 @@ import {
   IAlunaMarketParseReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
+import { IAlunaTickerSchema } from '../../../../../lib/schemas/IAlunaTickerSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
+import { FtxMarketTypeEnum } from '../../../enums/FtxMarketTypeEnum'
 import { IFtxMarketSchema } from '../../../schemas/IFtxMarketSchema'
+import { splitFtxSymbolPair } from './helpers/splitFtxSymbolPair'
 
 
 
@@ -17,38 +20,43 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const {
     ask,
-    baseCurrency,
     bid,
     change24h,
     last,
     name,
     price,
-    quoteCurrency,
     quoteVolume24h,
     volumeUsd24h,
+    type,
   } = rawMarket
 
-  const isUsdBaseCurrency = baseCurrency === 'USD'
+  let {
+    baseSymbolId,
+    quoteSymbolId,
+  } = splitFtxSymbolPair({ market: name })
 
-  const baseVolume = isUsdBaseCurrency ? volumeUsd24h : 0
+  const {
+    settings: { symbolMappings },
+    specs: { id: exchangeId },
+  } = exchange
 
-  const { settings, specs } = exchange
-
-  const { id: exchangeId } = specs
-
-  const { symbolMappings } = settings
-
-  const baseSymbolId = translateSymbolId({
-    exchangeSymbolId: baseCurrency,
+  baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseSymbolId,
     symbolMappings,
   })
 
-  const quoteSymbolId = translateSymbolId({
-    exchangeSymbolId: quoteCurrency,
+  quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteSymbolId,
     symbolMappings,
   })
 
-  const ticker = {
+  const isUsdBaseCurrency = baseSymbolId === 'USD'
+
+  const baseVolume = isUsdBaseCurrency
+    ? volumeUsd24h
+    : 0
+
+  const ticker: IAlunaTickerSchema = {
     high: price,
     low: price,
     bid,
@@ -60,16 +68,18 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     quoteVolume: quoteVolume24h,
   }
 
+  const isFuture = type === FtxMarketTypeEnum.FUTURE
+
   const market: IAlunaMarketSchema = {
     exchangeId,
     symbolPair: name,
     baseSymbolId,
     quoteSymbolId,
     ticker,
-    spotEnabled: true,
+    spotEnabled: !isFuture,
     marginEnabled: false,
-    derivativesEnabled: false,
-    leverageEnabled: false,
+    derivativesEnabled: isFuture,
+    leverageEnabled: isFuture,
     meta: rawMarket,
   }
 

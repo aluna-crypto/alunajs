@@ -132,7 +132,7 @@ export const getBitfinexEndpoints = (settings: IAlunaSettingsSchema) => {
     },
     market: {
       tickers: `${basePublicUrl}/tickers?symbols=ALL`,
-      enabledMarginCurrencies: `${basePublicUrl}/conf/pub:list:pair:margin`,
+      marginAndPairsInfo: `${basePublicUrl}/conf/pub:list:pair:margin,pub:info:pair`,
     },
     key: {
       fetchDetails: `${baseAuthedUrl}/auth/r/permissions`,

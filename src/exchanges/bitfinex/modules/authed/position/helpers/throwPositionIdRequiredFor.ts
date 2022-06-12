@@ -7,6 +7,6 @@ export const throwPositionIdRequiredFor = (action: string) => {
   throw new AlunaError({
     code: AlunaPositionErrorCodes.DOESNT_HAVE_ID,
     message: `Position id is required to ${action}`,
-    httpStatusCode: 400,
+    httpStatusCode: 200,
   })
 }

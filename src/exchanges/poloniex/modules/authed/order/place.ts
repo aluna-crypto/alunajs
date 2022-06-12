@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -42,7 +43,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -79,6 +80,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { error } = orderResponse
 
+    let httpStatusCode = 500
+
     if (error) {
 
       let code = AlunaOrderErrorCodes.PLACE_FAILED
@@ -86,12 +89,14 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       if (/Not enough/.test(error)) {
 
         code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+        httpStatusCode = 200
 
       }
 
       throw new AlunaError({
         code,
         message: error,
+        httpStatusCode,
         metadata: orderResponse,
       })
 
@@ -105,6 +110,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     const { order } = await exchange.order.get({
       id: orderNumber,
       symbolPair: currencyPair,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
     const { requestWeight } = http

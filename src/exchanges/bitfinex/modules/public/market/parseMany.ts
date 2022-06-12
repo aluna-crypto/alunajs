@@ -31,9 +31,11 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
   const {
     tickers,
     enabledMarginCurrencies: [enabledMarginCurrencies],
+    pairsInfo,
   } = rawMarkets
 
   const enabledMarginDict = keyBy(enabledMarginCurrencies)
+  const pairsInfoDict = keyBy(pairsInfo, ([pair]) => pair)
 
   type TSrc = IBitfinexTicker
   type TAcc = IAlunaMarketSchema[]
@@ -55,6 +57,7 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
     const rawMarket: IBitfinexMarketSchema = {
       ticker,
       enabledMarginCurrency: enabledMarginDict[transformedCurrency],
+      pairInfo: pairsInfoDict[transformedCurrency],
     }
 
     const { market } = exchange.market.parse({

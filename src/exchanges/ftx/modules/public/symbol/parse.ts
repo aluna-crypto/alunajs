@@ -16,9 +16,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const { rawSymbol } = params
 
-  const {
-    baseCurrency,
-  } = rawSymbol
+  const baseCurrency = rawSymbol.baseCurrency!
 
   const id = translateSymbolId({
     exchangeSymbolId: baseCurrency,
@@ -27,13 +25,13 @@ export const parse = (exchange: IAlunaExchangePublic) => (
 
   const alias = (id !== baseCurrency ? baseCurrency : undefined)
 
-  const parsedSymbol: IAlunaSymbolSchema = {
+  const symbol: IAlunaSymbolSchema = {
     id,
     alias,
     exchangeId: ftxBaseSpecs.id,
     meta: rawSymbol,
   }
 
-  return { symbol: parsedSymbol }
+  return { symbol }
 
 }

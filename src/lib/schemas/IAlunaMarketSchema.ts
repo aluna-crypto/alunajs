@@ -14,6 +14,9 @@ export interface IAlunaMarketSchema {
 
   ticker: IAlunaTickerSchema
 
+  minTradeAmount?: number
+  maxTradeAmount?: number
+
   spotEnabled: boolean
   marginEnabled: boolean
   derivativesEnabled: boolean

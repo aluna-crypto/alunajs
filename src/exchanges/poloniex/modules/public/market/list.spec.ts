@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: PoloniexAuthed,
     exchangeId: 'poloniex',
     methodModuleName: 'market',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawMarkets: POLONIEX_RAW_MARKETS },
     parsedList: { markets: PARSED_MARKETS },

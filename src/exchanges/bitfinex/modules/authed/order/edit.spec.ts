@@ -1,9 +1,7 @@
 import { expect } from 'chai'
-import {
-  cloneDeep,
-  each,
-} from 'lodash'
+import { cloneDeep } from 'lodash'
 
+import { testEditOrder } from '../../../../../../test/macros/testEditOrder'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
@@ -16,13 +14,14 @@ import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorC
 import { IAlunaOrderEditParams } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { executeAndCatch } from '../../../../../utils/executeAndCatch'
+import { mockEnsureOrderIsSupported } from '../../../../../utils/orders/ensureOrderIsSupported.mock'
 import { mockValidateParams } from '../../../../../utils/validation/validateParams.mock'
 import { BitfinexAuthed } from '../../../BitfinexAuthed'
 import { BitfinexHttp } from '../../../BitfinexHttp'
-import { bitfinexBaseSpecs } from '../../../bitfinexSpecs'
+import { getBitfinexEndpoints } from '../../../bitfinexSpecs'
+import { translateOrderSideToBitfinex } from '../../../enums/adapters/bitfinexOrderSideAdapter'
 import { BITFINEX_CANCEL_ORDER_RESPONSE } from '../../../test/fixtures/bitfinexOrders'
 import * as parseMod from './parse'
-import { testBitfinexOrderEdit } from './test/testBitfinexOrderEdit'
 
 
 
@@ -45,51 +44,72 @@ describe(__filename, () => {
     limitRate: 15,
   }
 
-  const bitfinexAccounts = bitfinexBaseSpecs.accounts
+  testEditOrder({
+    ExchangeAuthed: BitfinexAuthed,
+    HttpClass: BitfinexHttp,
+    parseImportPath: parseMod,
+    rawOrders: [BITFINEX_CANCEL_ORDER_RESPONSE],
+    credentials,
+    validationCallback: (params) => {
 
-  each(bitfinexAccounts, (account) => {
+      const {
+        editParams,
+        authedRequestStub: stub,
+      } = params
 
-    const {
-      implemented,
-      orderTypes,
-      type: accountType,
-    } = account
+      const {
+        type,
+        side,
+        amount,
+        rate,
+        limitRate,
+        stopRate,
+        id,
+      } = editParams
 
-    if (implemented) {
-
-      each(orderTypes, (orderType) => {
-
-        const {
-          type,
-          implemented,
-        } = orderType
-
-        if (implemented && type !== AlunaOrderTypesEnum.MARKET) {
-
-          // Buy Order
-          const orderParams: IAlunaOrderEditParams = {
-            ...commonOrderParams,
-            account: accountType,
-            type,
-            amount: 10,
-          }
-
-          testBitfinexOrderEdit(orderParams)
-
-
-          // Sell Order
-          testBitfinexOrderEdit({
-            ...orderParams,
-            amount: -10,
-          })
-
-        }
-
+      const translatedAmount = translateOrderSideToBitfinex({
+        amount: Number(amount),
+        side,
       })
 
-    }
+      let price: undefined | string
+      let priceAuxLimit: undefined | string
 
+      switch (type) {
+
+        case AlunaOrderTypesEnum.LIMIT:
+          price = rate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_MARKET:
+          price = stopRate!.toString()
+          break
+
+        case AlunaOrderTypesEnum.STOP_LIMIT:
+          price = stopRate!.toString()
+          priceAuxLimit = limitRate!.toString()
+          break
+
+        default:
+
+      }
+
+      const body: Record<string, any> = {
+        ...(price ? { price } : {}),
+        ...(priceAuxLimit ? { price_aux_limit: priceAuxLimit } : {}),
+        amount: translatedAmount,
+        id: Number(id),
+      }
+
+      expect(stub.firstCall.args[0]).to.deep.eq({
+        url: getBitfinexEndpoints({}).order.edit,
+        body,
+        credentials,
+      })
+
+    },
   })
+
 
   it('should throw error if order edit request fails', async () => {
 
@@ -103,10 +123,10 @@ describe(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.resolve(mockedRequestResponse))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -129,7 +149,11 @@ describe(__filename, () => {
     expect(error!.metadata).to.be.eq(mockedRequestResponse)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
+
     expect(parse.callCount).to.be.eq(0)
+
+    expect(authedRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
@@ -145,7 +169,7 @@ describe(__filename, () => {
     const throwedError = new AlunaError({
       code: AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE,
       message,
-      httpStatusCode: 400,
+      httpStatusCode: 500,
     })
 
 
@@ -154,10 +178,10 @@ describe(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.reject(throwedError))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -179,11 +203,14 @@ describe(__filename, () => {
 
     expect(error!.code).to.be.eq(AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE)
     expect(error!.message).to.be.eq(message)
-    expect(error!.httpStatusCode).to.be.eq(400)
+    expect(error!.httpStatusCode).to.be.eq(200)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
     expect(parse.callCount).to.be.eq(0)
+
+    expect(authedRequest.callCount).to.be.eq(1)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
@@ -206,10 +233,10 @@ describe(__filename, () => {
       authedRequest,
       publicRequest,
     } = mockHttp({ classPrototype: BitfinexHttp.prototype })
-
     authedRequest.returns(Promise.reject(throwedError))
 
     const { validateParamsMock } = mockValidateParams()
+    const { ensureOrderIsSupported } = mockEnsureOrderIsSupported()
 
     const { parse } = mockParse({ module: parseMod })
 
@@ -233,12 +260,13 @@ describe(__filename, () => {
     expect(error!.httpStatusCode).to.be.eq(400)
 
     expect(validateParamsMock.callCount).to.be.eq(1)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(1)
 
     expect(parse.callCount).to.be.eq(0)
 
+    expect(authedRequest.callCount).to.be.eq(1)
     expect(publicRequest.callCount).to.be.eq(0)
 
   })
-
 
 })

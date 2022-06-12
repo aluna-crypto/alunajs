@@ -22,4 +22,4 @@ Full list of currently supported exchanges.
 |Poloniex|✅ v1|—|—|
 |Valr|✅ v1|—|—|
 |Okx|✅ v5|❌|❌|
-|Ftx|✅ v1|❌|❌|
+|Ftx|✅ v1|❌|✅ v1|

@@ -2,6 +2,7 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaBalanceErrorCodes } from '../../../../../lib/errors/AlunaBalanceErrorCodes'
 import {
   IAlunaOrderPlaceParams,
@@ -12,7 +13,6 @@ import { placeOrderParamsSchema } from '../../../../../utils/validation/schemas/
 import { validateParams } from '../../../../../utils/validation/validateParams'
 import { translateOrderSideToFtx } from '../../../enums/adapters/ftxOrderSideAdapter'
 import { translateOrderTypeToFtx } from '../../../enums/adapters/ftxOrderTypeAdapter'
-import { FtxOrderTypeEnum } from '../../../enums/FtxOrderTypeEnum'
 import { FtxHttp } from '../../../FtxHttp'
 import { getFtxEndpoints } from '../../../ftxSpecs'
 import { IFtxOrderSchema } from '../../../schemas/IFtxOrderSchema'
@@ -42,7 +42,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -51,6 +51,9 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     symbolPair,
     side,
     type,
+    limitRate,
+    stopRate,
+    reduceOnly,
     http = new FtxHttp(settings),
   } = params
 
@@ -62,19 +65,38 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     from: type,
   })
 
-  const body = {
+  let url: string
+
+  const body: Record<string, any> = {
     side: translatedOrderSide,
     market: symbolPair,
     size: amount,
     type: translatedOrderType,
-    price: null,
+    ...(reduceOnly ? { reduceOnly } : {}),
   }
 
-  if (translatedOrderType === FtxOrderTypeEnum.LIMIT) {
+  switch (type) {
 
-    Object.assign(body, {
-      price: rate,
-    })
+    case AlunaOrderTypesEnum.LIMIT:
+      url = getFtxEndpoints(settings).order.place
+      body.price = rate
+      break
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      url = getFtxEndpoints(settings).order.placeTriggerOrder
+      body.triggerPrice = stopRate
+      break
+
+    case AlunaOrderTypesEnum.STOP_LIMIT:
+      url = getFtxEndpoints(settings).order.placeTriggerOrder
+      body.triggerPrice = stopRate
+      body.orderPrice = limitRate
+      break
+
+    // Market orders
+    default:
+      url = getFtxEndpoints(settings).order.place
+      body.price = null
 
   }
 
@@ -83,7 +105,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   try {
 
     const orderResponse = await http.authedRequest<IFtxOrderSchema>({
-      url: getFtxEndpoints(settings).order.place,
+      url,
       body,
       credentials,
     })
@@ -92,6 +114,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       id: orderResponse.id.toString(),
       symbolPair: params.symbolPair,
       http,
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
     const { requestWeight } = http
@@ -106,6 +129,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     let {
       code,
       message,
+      httpStatusCode,
     } = err
 
     const NOT_ENOUGH_BALANCE_MESSAGE = 'Not enough balances'
@@ -113,8 +137,8 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     if (message === NOT_ENOUGH_BALANCE_MESSAGE) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
-
       message = 'Account has insufficient balance for requested action.'
+      httpStatusCode = 200
 
     }
 
@@ -122,6 +146,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       ...err,
       code,
       message,
+      httpStatusCode,
     })
 
   }
