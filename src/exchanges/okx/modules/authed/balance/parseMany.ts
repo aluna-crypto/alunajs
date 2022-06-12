@@ -29,11 +29,10 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
     (accumulator, rawBalance) => {
 
       const {
-        availBal,
-        frozenBal,
+        eq,
       } = rawBalance
 
-      const total = Number(availBal) + Number(frozenBal)
+      const total = Number(eq)
 
       if (total > 0) {
 
