@@ -31,18 +31,18 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     sz,
     uTime,
     ordType,
-    ccy,
-    tgtCcy,
     slTriggerPx,
   } = rawOrder
 
-  const baseSymbolId = translateSymbolId({
-    exchangeSymbolId: ccy,
+  let [baseSymbolId, quoteSymbolId] = instId.split('-')
+
+  baseSymbolId = translateSymbolId({
+    exchangeSymbolId: baseSymbolId,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
-  const quoteSymbolId = translateSymbolId({
-    exchangeSymbolId: tgtCcy,
+  quoteSymbolId = translateSymbolId({
+    exchangeSymbolId: quoteSymbolId,
     symbolMappings: exchange.settings.symbolMappings,
   })
 
