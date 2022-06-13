@@ -39,7 +39,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
     accountId: undefined,
   }
 
-
   const [
     accountConfig,
   ] = await http.authedRequest<IOkxKeyAccountSchema[]>({
@@ -50,6 +49,7 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
 
   rawKey.read = true
   rawKey.accountId = accountConfig.uid
+
 
   try {
 
@@ -63,7 +63,6 @@ export const fetchDetails = (exchange: IAlunaExchangeAuthed) => async (
     })
 
   } catch (err) {
-
     const {
       metadata: [okxError],
     } = err

@@ -57,6 +57,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.cancel({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.LIMIT,
     })
 
 
@@ -85,10 +86,12 @@ describe(__filename, () => {
 
     const { ordId: id } = mockedRawOrder
 
-    const body = {
-      algoId: id,
-      instId: '',
-    }
+    const body = [
+      {
+        algoId: id,
+        instId: '',
+      },
+    ]
 
 
     // mocking
@@ -110,6 +113,7 @@ describe(__filename, () => {
     const { order } = await exchange.order.cancel({
       id,
       symbolPair: '',
+      type: AlunaOrderTypesEnum.STOP_LIMIT,
     })
 
 
@@ -168,6 +172,7 @@ describe(__filename, () => {
       () => exchange.order.cancel({
         id,
         symbolPair,
+        type: AlunaOrderTypesEnum.LIMIT,
       }),
     )
 
@@ -175,12 +180,7 @@ describe(__filename, () => {
     // validating
     expect(responseError).to.deep.eq(error)
 
-    expect(get.callCount).to.be.eq(1)
-
-    expect(get.firstCall.args[0]).to.deep.eq({
-      id,
-      symbolPair,
-    })
+    expect(get.callCount).to.be.eq(0)
 
     expect(authedRequest.callCount).to.be.eq(1)
 

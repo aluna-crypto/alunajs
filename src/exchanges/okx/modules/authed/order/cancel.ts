@@ -2,7 +2,6 @@ import { debug } from 'debug'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaOrderErrorCodes } from '../../../../../lib/errors/AlunaOrderErrorCodes'
 import {
@@ -32,43 +31,41 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
   const {
     id,
     symbolPair,
+    type,
     http = new OkxHttp(settings),
   } = params
 
-  const { order } = await exchange.order.get({
-    id,
-    symbolPair,
-  })
+  const isConditionalOrder = type === AlunaOrderTypesEnum.STOP_LIMIT || type === AlunaOrderTypesEnum.STOP_MARKET
 
-  const { type } = order
+  const orderEndpoints = getOkxEndpoints(settings).order
 
-  const isStopLimitOrder = type === AlunaOrderTypesEnum.STOP_LIMIT
+  let url
 
-  const body = {
-    instId: symbolPair,
-  }
+  let body
 
-  if (isStopLimitOrder) {
+  if (isConditionalOrder) {
 
-    Object.assign(body, {
-      algoId: id,
-    })
+    body = [
+      {
+        instId: symbolPair,
+        algoId: id,
+      },
+    ]
+
+    url = orderEndpoints.cancelStop
 
   } else {
 
-    Object.assign(body, {
+    body = {
+      instId: symbolPair,
       ordId: id,
-    })
+    }
+
+    url = orderEndpoints.cancel
 
   }
 
   try {
-    const orderEndpoints = getOkxEndpoints(settings).order
-
-    const url = isStopLimitOrder
-      ? orderEndpoints.cancelStop
-      : orderEndpoints.cancel
-
 
     await http.authedRequest<void>({
       url,
@@ -76,8 +73,11 @@ export const cancel = (exchange: IAlunaExchangeAuthed) => async (
       body,
     })
 
-    // assign canceled if the cancel request works fine
-    order.status = AlunaOrderStatusEnum.CANCELED
+    const { order } = await exchange.order.get({
+      id,
+      symbolPair,
+      type,
+    })
 
     const { requestWeight } = http
 
