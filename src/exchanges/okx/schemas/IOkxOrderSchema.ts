@@ -7,6 +7,7 @@ import { OkxOrderTypeEnum } from '../enums/OkxOrderTypeEnum'
 export interface IOkxOrderSchema {
   instType: string
   instId: string
+  algoId: string
   ccy: string
   ordId: string
   clOrdId: string
@@ -45,6 +46,7 @@ export interface IOkxOrderSchema {
 export interface IOkxOrderPlaceResponseSchema {
   clOrdId: string
   ordId: string
+  algoId: string
   sCode: string
   sMsg: string
   tag: string
