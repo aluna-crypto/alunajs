@@ -36,6 +36,8 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     amount,
     account,
     symbolPair,
+    limitRate,
+    stopRate,
     http = new OkxHttp(exchange.settings),
   } = params
 
@@ -43,6 +45,7 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     id,
     symbolPair,
     http,
+    type,
   })
 
   const { order: newOrder } = await exchange.order.place({
@@ -53,6 +56,8 @@ export const edit = (exchange: IAlunaExchangeAuthed) => async (
     account,
     symbolPair,
     http,
+    limitRate,
+    stopRate,
   })
 
   const { requestWeight } = http

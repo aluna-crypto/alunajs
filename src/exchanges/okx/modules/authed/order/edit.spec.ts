@@ -76,6 +76,7 @@ describe(__filename, () => {
     expect(cancel.firstCall.args[0]).to.deep.eq({
       http,
       id,
+      type: params.type,
       symbolPair: params.symbolPair,
     })
 
@@ -89,6 +90,8 @@ describe(__filename, () => {
       amount: params.amount,
       account: params.account,
       symbolPair: params.symbolPair,
+      stopRate: undefined,
+      limitRate: undefined,
     })
 
   })
