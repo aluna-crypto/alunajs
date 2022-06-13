@@ -1,8 +1,9 @@
 import { expect } from 'chai'
+import { cloneDeep } from 'lodash'
 
 import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockHttp } from '../../../../../../test/mocks/exchange/Http'
-import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
+import { mockGet } from '../../../../../../test/mocks/exchange/modules/mockGet'
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderSideEnum } from '../../../../../lib/enums/AlunaOrderSideEnum'
@@ -19,8 +20,8 @@ import { translateOrderTypeToOkx } from '../../../enums/adapters/okxOrderTypeAda
 import { OkxAuthed } from '../../../OkxAuthed'
 import { OkxHttp } from '../../../OkxHttp'
 import { getOkxEndpoints } from '../../../okxSpecs'
-import { OKX_RAW_ORDERS } from '../../../test/fixtures/okxOrders'
-import * as parseMod from './parse'
+import { OKX_RAW_CONDITIONAL_ORDERS, OKX_RAW_ORDERS } from '../../../test/fixtures/okxOrders'
+import * as getMod from './get'
 
 
 
@@ -58,11 +59,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
     mockValidateParams()
 
@@ -128,11 +129,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
     mockValidateParams()
 
@@ -174,7 +175,10 @@ describe(__filename, () => {
   it('should place a Okx conditional stop limit order just fine', async () => {
 
     // preparing data
-    const mockedRawOrder = OKX_RAW_ORDERS[0]
+    const mockedRawOrder = cloneDeep(OKX_RAW_CONDITIONAL_ORDERS[0])
+
+    mockedRawOrder.ordId = undefined as any
+
     const mockedParsedOrder = PARSED_ORDERS[0]
 
     const side = AlunaOrderSideEnum.BUY
@@ -199,11 +203,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
     mockValidateParams()
 
@@ -272,11 +276,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
     mockValidateParams()
 
@@ -344,11 +348,11 @@ describe(__filename, () => {
       authedRequest,
     } = mockHttp({ classPrototype: OkxHttp.prototype })
 
-    const { parse } = mockParse({ module: parseMod })
+    const { get } = mockGet({ module: getMod })
 
-    parse.returns({ order: mockedParsedOrder })
+    get.returns({ order: mockedParsedOrder })
 
-    authedRequest.returns(Promise.resolve(mockedRawOrder))
+    authedRequest.returns(Promise.resolve([mockedRawOrder]))
 
     mockValidateParams()
 
@@ -404,6 +408,70 @@ describe(__filename, () => {
         metadata: {
           sCode: '51008',
         },
+      })
+
+      // mocking
+      const {
+        publicRequest,
+        authedRequest,
+      } = mockHttp({ classPrototype: OkxHttp.prototype })
+
+      authedRequest.returns(Promise.reject(alunaError))
+
+      mockValidateParams()
+
+      mockEnsureOrderIsSupported()
+
+
+      // executing
+      const exchange = new OkxAuthed({ credentials })
+
+      const { error } = await executeAndCatch(() => exchange.order.place({
+        symbolPair: '',
+        account: AlunaAccountEnum.SPOT,
+        amount: 0.01,
+        side,
+        type,
+        rate: 0,
+      }))
+
+
+      // validating
+
+      expect(error instanceof AlunaError).to.be.ok
+      expect(error?.code).to.be.eq(expectedCode)
+      expect(error?.message).to.be.eq(expectedMessage)
+
+      expect(authedRequest.callCount).to.be.eq(1)
+
+      expect(publicRequest.callCount).to.be.eq(0)
+
+    },
+  )
+
+  it(
+    'should throw error for insufficient funds when placing new okx order',
+    async () => {
+
+      // preparing data
+      // const mockedRawOrder = OKX_RAW_ORDERS[0]
+
+      const side = AlunaOrderSideEnum.BUY
+      const type = AlunaOrderTypesEnum.MARKET
+
+      const expectedMessage = 'Account has insufficient balance '
+        .concat('for requested action.')
+      const expectedCode = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
+
+      const alunaError = new AlunaError({
+        message: 'dummy-error',
+        code: AlunaOrderErrorCodes.PLACE_FAILED,
+        httpStatusCode: 401,
+        metadata: [
+          {
+            sCode: '51008',
+          },
+        ],
       })
 
       // mocking

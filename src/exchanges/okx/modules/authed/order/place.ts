@@ -1,4 +1,5 @@
 import { debug } from 'debug'
+import { isArray } from 'lodash'
 
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
@@ -45,7 +46,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
   ensureOrderIsSupported({
     exchangeSpecs: specs,
-    orderPlaceParams: params,
+    orderParams: params,
   })
 
   const {
@@ -124,7 +125,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       credentials,
     })
 
-    placedOrderId = orderResponse.ordId
+    placedOrderId = orderResponse.ordId || orderResponse.algoId
 
   } catch (err) {
 
@@ -135,7 +136,14 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     const { metadata } = err
 
-    if (metadata.sCode === '51008') {
+    const INSUFFICIENT_BALANCE_CODE = '51008'
+
+    const isInsufficientBalanceError = isArray(metadata)
+      ? metadata[0].sCode === INSUFFICIENT_BALANCE_CODE
+      : metadata.sCode === INSUFFICIENT_BALANCE_CODE
+
+
+    if (isInsufficientBalanceError) {
 
       code = AlunaBalanceErrorCodes.INSUFFICIENT_BALANCE
 
@@ -158,6 +166,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   const { order } = await exchange.order.get({
     id: placedOrderId,
     symbolPair,
+    type,
     http,
   })
 
