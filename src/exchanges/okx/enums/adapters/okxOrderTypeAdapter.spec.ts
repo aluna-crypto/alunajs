@@ -30,6 +30,11 @@ describe(__filename, () => {
       from: OkxOrderTypeEnum.CONDITIONAL,
     })).to.be.eq(AlunaOrderTypesEnum.STOP_LIMIT)
 
+    expect(translateOrderTypeToAluna({
+      from: OkxOrderTypeEnum.CONDITIONAL,
+      slOrdPx: '-1',
+    })).to.be.eq(AlunaOrderTypesEnum.STOP_MARKET)
+
     let result
     let error
 
