@@ -17,6 +17,11 @@ export const okxInvalidKeyPatterns: Array<RegExp> = [
   /Invalid Sign/mi,
 ]
 
+export const okxInvalidKeyCodes: Array<string> = [
+  '50103',
+  '50113',
+]
+
 
 
 export const okxDownErrorPatterns: Array<RegExp | string> = [
@@ -24,19 +29,37 @@ export const okxDownErrorPatterns: Array<RegExp | string> = [
 ]
 
 
-export const isOkxKeyInvalid = (errorMessage: string) => {
+export const isOkxKeyInvalid = (errorMessage: string, code?: string) => {
 
-  return some(okxInvalidKeyPatterns, (pattern) => {
+  const isInvalidRegex = some(okxInvalidKeyPatterns, (pattern) => {
 
     return pattern.test(errorMessage)
 
   })
+
+  if (isInvalidRegex) {
+
+    return true
+
+  }
+
+  if (code) {
+
+    return some(okxInvalidKeyCodes, (sCode) => {
+
+      return sCode === code
+
+    })
+
+  }
 
 }
 
 
 export interface IOkxErrorSchema {
   sCode: string
+  code: string
+  msg: string
   sMsg: string
 }
 
@@ -78,11 +101,11 @@ export const handleOkxRequestError = (
 
     })
 
-  } else if ((error as IOkxErrorSchema).sMsg) {
+  } else if ((error as IOkxErrorSchema).msg) {
 
-    const { sMsg } = error as IOkxErrorSchema
+    const { msg, sMsg } = error as IOkxErrorSchema
 
-    message = sMsg
+    message = sMsg || msg
 
   } else {
 
@@ -93,7 +116,12 @@ export const handleOkxRequestError = (
   }
 
 
-  if (isOkxKeyInvalid(message)) {
+  if (isOkxKeyInvalid(
+    message,
+    (error as IOkxErrorSchema).code
+      || metadata.code
+      || (error as IOkxErrorSchema).sCode,
+  )) {
 
     code = AlunaKeyErrorCodes.INVALID
 
