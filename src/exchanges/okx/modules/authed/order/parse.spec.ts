@@ -99,7 +99,6 @@ describe(__filename, () => {
     const {
       side,
       instId,
-      px,
       state,
       sz,
       ordType,
@@ -170,7 +169,6 @@ describe(__filename, () => {
     const {
       side,
       instId,
-      px,
       state,
       sz,
       ordType,
@@ -244,7 +242,6 @@ describe(__filename, () => {
       cTime,
       instId,
       ordId,
-      px,
       state,
       sz,
       ordType,
