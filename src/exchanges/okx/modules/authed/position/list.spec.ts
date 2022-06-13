@@ -13,7 +13,7 @@ describe(__filename, () => {
     AuthedClass: OkxAuthed,
     exchangeId: 'okx',
     methodModuleName: 'position',
-    listModule: listRawMod,
+    listRawModule: listRawMod,
     parseManyModule: parseManyMod,
     rawList: { rawPositions: OKX_RAW_POSITIONS },
     parsedList: { positions: PARSED_POSITIONS },
