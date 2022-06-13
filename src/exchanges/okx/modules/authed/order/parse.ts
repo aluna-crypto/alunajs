@@ -1,6 +1,7 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
+import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
   IAlunaOrderParseReturns,
@@ -31,7 +32,9 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     sz,
     uTime,
     ordType,
+    slOrdPx,
     slTriggerPx,
+    algoId,
   } = rawOrder
 
   let [baseSymbolId, quoteSymbolId] = instId.split('-')
@@ -48,13 +51,54 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 
   const updatedAt = uTime ? new Date(Number(uTime)) : new Date()
   const amount = Number(sz)
-  const rate = Number(px)
-  const total = amount * rate
-  const stopRate = Number(slTriggerPx)
-
   const orderStatus = translateOrderStatusToAluna({ from: state })
   const orderSide = translateOrderSideToAluna({ from: side })
-  const orderType = translateOrderTypeToAluna({ from: ordType })
+  const orderType = translateOrderTypeToAluna({ from: ordType, slOrdPx })
+
+  const priceFields = {
+    total: amount,
+  }
+
+  let id = ordId
+
+  switch (orderType) {
+
+    case AlunaOrderTypesEnum.STOP_LIMIT:
+      Object.assign(priceFields, {
+        stopRate: Number(slOrdPx),
+        limitRate: Number(slTriggerPx),
+        total: Number(slTriggerPx) * amount,
+      })
+
+      id = algoId
+      break
+
+    case AlunaOrderTypesEnum.STOP_MARKET:
+      Object.assign(priceFields, {
+        stopRate: Number(slTriggerPx),
+        total: Number(slTriggerPx) * amount,
+      })
+
+      id = algoId
+      break
+
+    case AlunaOrderTypesEnum.MARKET:
+      Object.assign(priceFields, {
+        total: amount,
+      })
+
+      id = algoId
+      break
+
+    default:
+      Object.assign(priceFields, {
+        rate: Number(px),
+        total: Number(px) * amount,
+      })
+      break
+
+  }
+
 
   let createdAt: Date
   let filledAt: Date | undefined
@@ -83,18 +127,16 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
   }
 
   const order: IAlunaOrderSchema = {
-    id: ordId,
+    id,
     symbolPair: instId,
     exchangeId: exchange.specs.id,
     baseSymbolId,
     quoteSymbolId,
-    total,
     amount,
     placedAt: new Date(createdAt),
     canceledAt,
     filledAt,
-    rate,
-    stopRate,
+    ...priceFields,
     account: AlunaAccountEnum.SPOT,
     type: orderType,
     status: orderStatus,
