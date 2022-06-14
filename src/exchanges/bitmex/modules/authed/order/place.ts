@@ -148,7 +148,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
 
     switch (true) {
 
-      case /invalid.+(leavesQty|orderQty|minimum size)/.test(message):
+      case /invalid.+(leavesQty|orderQty|minimum size)/i.test(message):
         code = AlunaOrderErrorCodes.INVALID_AMOUNT
         break
 
