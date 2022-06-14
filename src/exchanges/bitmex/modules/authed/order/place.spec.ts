@@ -403,14 +403,14 @@ describe(__filename, () => {
     expect(res.error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
     expect(res.error?.message).to.be.eq(message3)
 
-    expect(authedRequest.callCount).to.be.eq(2)
+    expect(authedRequest.callCount).to.be.eq(3)
 
     expect(publicRequest.callCount).to.be.eq(0)
 
-    expect(validateParamsMock.callCount).to.be.eq(2)
-    expect(ensureOrderIsSupported.callCount).to.be.eq(2)
+    expect(validateParamsMock.callCount).to.be.eq(3)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(3)
 
-    expect(get.callCount).to.be.eq(2)
+    expect(get.callCount).to.be.eq(3)
 
     expect(parse.callCount).to.be.eq(0)
 
