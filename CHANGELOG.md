@@ -21,7 +21,7 @@
 
 # 1.1.1 (June 1, 2022)
 
- - Add new value `default` for `AlunaWalletEnum` 
+ - Add new value `default` for `AlunaWalletEnum`
  - Ajustments in `IAlunaExchangeAccountSpecsSchema` interface
    - Add prop `wallet`
  - Ajustments in `IAlunaExchangeOrderOptionsSchema` interface
