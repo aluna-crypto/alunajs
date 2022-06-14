@@ -38,11 +38,11 @@ describe(__filename, () => {
 
     expect(translateOrderStatusToAluna({
       from: 'INSUFFICIENT BALANCE (G1) was: PARTIALLY FILLED @ 0.079206(0.0008',
-    })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     expect(translateOrderStatusToAluna({
       from: 'CANCELED was: PARTIALLY FILLED @ 0.079206(0.0008',
-    })).to.be.eq(AlunaOrderStatusEnum.PARTIALLY_FILLED)
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     expect(translateOrderStatusToAluna({
       from: 'CANCELED',
