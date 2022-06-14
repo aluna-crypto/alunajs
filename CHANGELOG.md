@@ -1,3 +1,9 @@
+# 1.2.3 (June 14, 2022)
+
+ - Add new `AlunaOrderErrorCodes`
+ - Handling new case for for invalid order amount on Bitmex
+ - Adjusting corner-case for canceled orders on Bitfinex
+
 # 1.2.2 (June 10, 2022)
 
  - Add new `AlunaOrderErrorCodes`
