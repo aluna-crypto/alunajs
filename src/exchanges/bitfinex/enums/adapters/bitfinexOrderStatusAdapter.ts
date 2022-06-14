@@ -22,9 +22,11 @@ export const translateOrderStatusToAluna = (params: {
     case /^executed/i.test(from):
       return AlunaOrderStatusEnum.FILLED
 
-    case /^partially/i.test(from):
     case /^insufficient.+partially/i.test(from):
     case /^canceled.+partially/i.test(from): // not sure about this one
+      return AlunaOrderStatusEnum.CANCELED
+
+    case /^partially/i.test(from):
       return AlunaOrderStatusEnum.PARTIALLY_FILLED
 
     case /canceled/i.test(from):
@@ -60,4 +62,3 @@ export const translateOrderStatusToBitfinex = buildAdapter<
     [AlunaOrderStatusEnum.CANCELED]: BitfinexOrderStatusEnum.CANCELED,
   },
 })
-
