@@ -307,7 +307,7 @@ describe(__filename, () => {
 
     const message1 = 'Invalid leavesQty for lotSize'
     const message2 = 'Invalid orderQty'
-    const message3 = 'Invalid order: minimum sie for ADAUSD is 4'
+    const message3 = 'Invalid order: minimum size for ADAUSD is 4'
 
     const alunaError = new AlunaError({
       message: message1,
