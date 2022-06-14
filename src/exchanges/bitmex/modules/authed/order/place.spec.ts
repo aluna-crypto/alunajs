@@ -307,6 +307,7 @@ describe(__filename, () => {
 
     const message1 = 'Invalid leavesQty for lotSize'
     const message2 = 'Invalid orderQty'
+    const message3 = 'Invalid order: minimum sie for ADAUSD is 4'
 
     const alunaError = new AlunaError({
       message: message1,
@@ -375,6 +376,32 @@ describe(__filename, () => {
     expect(res.error instanceof AlunaError).to.be.ok
     expect(res.error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
     expect(res.error?.message).to.be.eq(message2)
+
+    expect(authedRequest.callCount).to.be.eq(2)
+
+    expect(publicRequest.callCount).to.be.eq(0)
+
+    expect(validateParamsMock.callCount).to.be.eq(2)
+    expect(ensureOrderIsSupported.callCount).to.be.eq(2)
+
+    expect(get.callCount).to.be.eq(2)
+
+    expect(parse.callCount).to.be.eq(0)
+
+
+
+    // preparing data
+    alunaError.message = message3
+
+
+    // executing
+    res = await executeAndCatch(() => exchange.order.place(params))
+
+
+    // validating
+    expect(res.error instanceof AlunaError).to.be.ok
+    expect(res.error?.code).to.be.eq(AlunaOrderErrorCodes.INVALID_AMOUNT)
+    expect(res.error?.message).to.be.eq(message3)
 
     expect(authedRequest.callCount).to.be.eq(2)
 
