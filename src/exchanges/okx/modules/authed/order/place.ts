@@ -96,13 +96,13 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
     } else {
 
       Object.assign(body, {
-        slOrdPx: limitRate!.toString(),
+        slOrdPx: stopRate!.toString(),
       })
 
     }
 
     Object.assign(body, {
-      slTriggerPx: stopRate!.toString(),
+      slTriggerPx: limitRate!.toString(),
     })
 
   }

@@ -193,8 +193,8 @@ describe(__filename, () => {
       ordType: translatedOrderType,
       sz: '0.01',
       tdMode: 'cash',
-      slOrdPx: '2',
-      slTriggerPx: '1',
+      slOrdPx: '1',
+      slTriggerPx: '2',
     }
 
     // mocking
@@ -267,7 +267,7 @@ describe(__filename, () => {
       sz: '0.01',
       tdMode: 'cash',
       slOrdPx: '-1',
-      slTriggerPx: '1',
+      slTriggerPx: '2',
     }
 
     // mocking
