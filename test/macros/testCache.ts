@@ -9,8 +9,8 @@ import { TExchangeHttpConstructor } from './testPlaceOrder'
 
 
 export interface ITestCacheParams {
-  HttpClass: TExchangeHttpConstructor
-  useObjectAsResponse?: boolean
+  HttpClass: TExchangeHttpConstructor // class constructor
+  customRequestResponse?: any
 }
 
 
@@ -19,7 +19,7 @@ export const testCache = async (params: ITestCacheParams) => {
 
   const {
     HttpClass,
-    useObjectAsResponse = false,
+    customRequestResponse,
   } = params
 
   const requestParams: IAlunaHttpPublicParams = {
@@ -28,9 +28,9 @@ export const testCache = async (params: ITestCacheParams) => {
     verb: AlunaHttpVerbEnum.GET,
   }
 
-  const response = useObjectAsResponse
-    ? { data: 'mocked response' }
-    : 'mocked response'
+  const response = customRequestResponse
+    ? { data: customRequestResponse }
+    : { data: 'mocked response' }
 
 
 

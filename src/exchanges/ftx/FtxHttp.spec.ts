@@ -551,7 +551,7 @@ describe(__filename, () => {
    * */
   testCache({
     HttpClass: FtxHttp,
-    useObjectAsResponse: true,
+    customRequestResponse: { result: response },
   })
 
 })

@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import { cloneDeep } from 'lodash'
+import { ImportMock } from 'ts-mock-imports'
 
 import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
@@ -181,14 +182,19 @@ describe(__filename, () => {
       symbol,
       type,
       status,
-      updateTime,
     } = rawOrder
-
-    const updatedAt = new Date(updateTime!)
 
     const exchange = new BinanceAuthed({ credentials })
 
+    const timestamp = new Date()
+
     // mocking
+
+    ImportMock.mockFunction(
+      global,
+      'Date',
+      timestamp,
+    )
 
     const { translateSymbolId } = mockTranslateSymbolId()
 
@@ -214,16 +220,8 @@ describe(__filename, () => {
     expect(order.status).to.be.eq(orderStatus)
     expect(order.side).to.be.eq(orderSide)
     expect(order.type).to.be.eq(orderType)
-    expect(order.filledAt?.getTime()).to.be.eq(updatedAt.getTime())
-    expect(order.placedAt
-      .getTime()
-      .toString()
-      .substring(0, 11)).to.be.eq(
-      new Date()
-        .getTime()
-        .toString()
-        .substring(0, 11),
-    )
+    expect(order.filledAt?.getTime()).to.be.eq(timestamp.getTime())
+    expect(order.placedAt.getTime()).to.be.eq(timestamp.getTime())
 
   })
 
