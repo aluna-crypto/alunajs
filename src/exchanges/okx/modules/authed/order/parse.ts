@@ -86,8 +86,6 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
       Object.assign(priceFields, {
         total: amount,
       })
-
-      id = algoId
       break
 
     default:
