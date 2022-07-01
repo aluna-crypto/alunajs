@@ -18,6 +18,7 @@ export const placeStopLimitOrder = async (
       orderAmount,
       orderStopRate,
       orderLimitRate,
+      orderClientOrderId,
     },
   } = params
 
@@ -29,6 +30,7 @@ export const placeStopLimitOrder = async (
     limitRate: orderLimitRate,
     stopRate: orderStopRate,
     type: AlunaOrderTypesEnum.STOP_LIMIT,
+    clientOrderId: orderClientOrderId,
   })
 
 }

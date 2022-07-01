@@ -82,6 +82,7 @@ export interface IAlunaOrderGetParams extends IAlunaModuleParams {
   id: string
   symbolPair: string
   type: AlunaOrderTypesEnum
+  clientOrderId?: string
 }
 
 export interface IAlunaOrderGetRawReturns <T = any> extends IAlunaModuleReturns {
@@ -106,6 +107,7 @@ export interface IAlunaOrderPlaceParams extends IAlunaModuleParams {
   stopRate?: number
   amount: number
   reduceOnly?: boolean
+  clientOrderId?: string
 }
 
 export interface IAlunaOrderPlaceReturns extends IAlunaOrderGetReturns {}
@@ -118,6 +120,7 @@ export interface IAlunaOrderPlaceReturns extends IAlunaOrderGetReturns {}
 
 export interface IAlunaOrderEditParams extends IAlunaOrderPlaceParams {
   id: string
+  newClientOrderId?: string
 }
 
 export interface IAlunaOrderEditReturns extends IAlunaOrderGetReturns {}

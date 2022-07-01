@@ -149,7 +149,7 @@
         {
             "_id": "req_f44dbbbcceb3496da709be542a08706b",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652316606203,
+            "modified": 1653484087008,
             "created": 1651252489507,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -217,7 +217,7 @@
         {
             "_id": "req_c284cfcbcce94ecf865cfb5da8ea9e9f",
             "parentId": "fld_51ff43abd0e041e7a35891223e170a16",
-            "modified": 1652315175668,
+            "modified": 1653484107438,
             "created": 1651252547687,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "list",
@@ -313,7 +313,7 @@
         {
             "_id": "req_069acff72d9d4c0bb863897b2ffa4549",
             "parentId": "fld_0c48cd3014cd494980167bb149f9e7b0",
-            "modified": 1652315191065,
+            "modified": 1653484108846,
             "created": 1651252596523,
             "url": "{{ _.PLAYGROUND_URL }}/exchanges",
             "name": "listRaw",
@@ -701,7 +701,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.getRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"ed85fca7-c383-4865-9021-64723149aae3\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
+                "text": "{\n\t\"method\": \"order.getRaw\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"528128727322392\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -733,7 +733,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.get\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"ed85fca7-c383-4865-9021-64723149aae3\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
+                "text": "{\n\t\"method\": \"order.get\",\n\t\"exchangeId\" : \"{{ _.EXCHANGE_ID }}\",\n\t\"key\" : \"{{ _.KEY }}\",\n\t\"secret\" : \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"549900318712576\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}"
             },
             "parameters": [],
             "headers": [
@@ -861,7 +861,7 @@
             "method": "GET",
             "body": {
                 "mimeType": "application/json",
-                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"507161317238\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
+                "text": "{\n\t\"method\": \"order.cancel\",\n\t\"exchangeId\": \"{{ _.EXCHANGE_ID }}\",\n\t\"key\": \"{{ _.KEY }}\",\n\t\"secret\": \"{{ _.SECRET }}\",\n\t\"passphrase\": \"{{ _.PASSPHRASE }}\",\n\t\"id\": \"549900318712576\",\n\t\"symbolPair\": \"{{ _.ORDER_SYMBOL_PAIR }}\"\n}\n"
             },
             "parameters": [],
             "headers": [
@@ -1439,6 +1439,37 @@
             "color": "#00ffd5",
             "isPrivate": false,
             "metaSortKey": 1652833243571,
+            "_type": "environment"
+        },
+        {
+            "_id": "env_b71a4b1016d14736b1a952420585f358",
+            "parentId": "env_0294ce45850974a6280b61215be346094da99682",
+            "modified": 1653483911317,
+            "created": 1653483817092,
+            "name": "Huobi",
+            "data": {
+                "EXCHANGE_ID": "huobi",
+                "KEY": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_KEY' %}",
+                "SECRET": "{% dotenv _.ALUNAJS_RC, 'HUOBI_API_SECRET' %}",
+                "ORDER_SYMBOL_PAIR": "btcusdt",
+                "ORDER_RATE": 1,
+                "ORDER_AMOUNT": 1,
+                "ORDER_EDITED_AMOUNT": 1.1
+            },
+            "dataPropertyOrder": {
+                "&": [
+                    "EXCHANGE_ID",
+                    "KEY",
+                    "SECRET",
+                    "ORDER_SYMBOL_PAIR",
+                    "ORDER_RATE",
+                    "ORDER_AMOUNT",
+                    "ORDER_EDITED_AMOUNT"
+                ]
+            },
+            "color": "#9a8ff0",
+            "isPrivate": false,
+            "metaSortKey": 1653483817092,
             "_type": "environment"
         }
     ]

@@ -21,6 +21,7 @@ export interface IE2EExchange {
   orderEditAmount: number
   orderInsufficientAmount: number
   orderAccount?: AlunaAccountEnum
+  orderClientOrderId?: string
   defaultLeverage?: number
   leverageToSet?: number
   supportsGetCanceledOrders?: boolean
@@ -29,6 +30,7 @@ export interface IE2EExchange {
 export interface IE2ELiveData {
   positionId?: string
   limitOrderId?: string
+  clientOrderId?: string
   marketOrderId?: string
   stopLimitOrderId?: string
   stopMarketOrderId?: string
@@ -75,6 +77,7 @@ export function getConfig() {
       positionId: undefined,
       limitOrderId: undefined,
       marketOrderId: undefined,
+      clientOrderId: undefined,
       stopLimitOrderId: undefined,
       stopMarketOrderId: undefined,
       orderSymbolPair: undefined,
@@ -187,6 +190,21 @@ export function getConfig() {
         orderEditAmount: 0.0002,
         orderInsufficientAmount: 2000,
         orderAccount: AlunaAccountEnum.DERIVATIVES,
+      },
+      huobi: {
+        key: env.HUOBI_API_KEY,
+        secret: env.HUOBI_API_SECRET,
+        passphrase: env.HUOBI_API_PASSPHRASE,
+        symbolPair: 'btcusdt',
+        delayBetweenTests: 500,
+        orderRate: 1,
+        orderAmount: 1,
+        orderEditAmount: 1.1,
+        orderInsufficientAmount: 1000,
+        orderStopRate: 0.95,
+        orderLimitRate: 1,
+        orderAccount: AlunaAccountEnum.SPOT,
+        orderClientOrderId: `e2e_order_${Math.floor(Math.random() * 10000)}`,
       },
     },
   }
