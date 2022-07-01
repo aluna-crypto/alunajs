@@ -1,8 +1,16 @@
 import { expect } from 'chai'
+import {
+  each,
+  filter,
+  values,
+} from 'lodash'
 
 import { AlunaError } from '../../../../lib/core/AlunaError'
 import { AlunaOrderSideEnum } from '../../../../lib/enums/AlunaOrderSideEnum'
+import { AlunaGenericErrorCodes } from '../../../../lib/errors/AlunaGenericErrorCodes'
+import { executeAndCatch } from '../../../../utils/executeAndCatch'
 import { HuobiOrderSideEnum } from '../HuobiOrderSideEnum'
+import { HuobiOrderTypeEnum } from '../HuobiOrderTypeEnum'
 import {
   translateOrderSideToAluna,
   translateOrderSideToHuobi,
@@ -14,38 +22,45 @@ describe(__filename, () => {
 
   const notSupported = 'not-supported'
 
-
-
-  it('should properly translate Huobi order sides to Aluna order sides', () => {
+  it('should properly translate Huobi order sides to Aluna order sides', async () => {
 
     expect(translateOrderSideToAluna({
-      from: HuobiOrderSideEnum.BUY,
+      orderSide: HuobiOrderSideEnum.BUY,
     })).to.be.eq(AlunaOrderSideEnum.BUY)
 
     expect(translateOrderSideToAluna({
-      from: HuobiOrderSideEnum.SELL,
+      orderSide: HuobiOrderSideEnum.SELL,
     })).to.be.eq(AlunaOrderSideEnum.SELL)
 
-    let result
-    let error
+    const nonConditionalOrdersTypes = filter(values(HuobiOrderTypeEnum), (value) => {
+      return (value !== HuobiOrderTypeEnum.STOP_LIMIT)
+        && (value !== HuobiOrderTypeEnum.STOP_MARKET)
+    })
 
-    try {
+    each(nonConditionalOrdersTypes, (type) => {
 
-      result = translateOrderSideToAluna({
-        from: notSupported as HuobiOrderSideEnum,
+      const [side] = type.split(/-/)
+
+      const translated = translateOrderSideToAluna({
+        type,
       })
 
-    } catch (err) {
+      const alunaSide = side === 'buy'
+        ? AlunaOrderSideEnum.BUY
+        : AlunaOrderSideEnum.SELL
 
-      error = err
+      expect(translated).to.be.eq(alunaSide)
 
-    }
+    })
 
-    expect(result).not.to.be.ok
+    const res = await executeAndCatch(() => translateOrderSideToAluna({}))
 
-    expect(error instanceof AlunaError).to.be.ok
-    expect(error.message)
-      .to.be.eq(`Order side not supported: ${notSupported}`)
+    expect(res.result).not.to.be.ok
+
+    const msg = 'At least one of the params are required for translating Huobi order side'
+
+    expect(res.error!.code).to.be.eq(AlunaGenericErrorCodes.PARAM_ERROR)
+    expect(res.error!.message).to.be.eq(msg)
 
   })
 
