@@ -9,6 +9,7 @@ import {
 export const commonPlaceParams: Partial<IAlunaOrderPlaceParams> = {
   amount: 100,
   symbolPair: 'BTC/USD',
+  clientOrderId: '99666',
 }
 
 export const commonEditParams: Partial<IAlunaOrderEditParams> = {

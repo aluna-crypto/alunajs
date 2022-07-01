@@ -1,10 +1,15 @@
 import { find } from 'lodash'
+
 import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaAccountsErrorCodes } from '../../../../../lib/errors/AlunaAccountsErrorCodes'
 import { HuobiAccountTypeEnum } from '../../../enums/HuobiAccountTypeEnum'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiGetAccountIdHelperParams, IHuobiGetAccountIdHelperReturns, IHuobiUserAccountSchema } from '../../../schemas/IHuobiHelperSchema'
+import {
+  IHuobiGetAccountIdHelperParams,
+  IHuobiGetAccountIdHelperReturns,
+  IHuobiUserAccountSchema,
+} from '../../../schemas/IHuobiHelperSchema'
 
 
 
