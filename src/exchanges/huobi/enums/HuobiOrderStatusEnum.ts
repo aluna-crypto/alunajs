@@ -3,5 +3,7 @@ export enum HuobiOrderStatusEnum {
   SUBMITTED = 'submitted',
   PARTIAL_FILLED = 'partial-filled',
   FILLED = 'filled',
-  CANCELED = 'canceled'
+  CANCELED = 'canceled',
+  TRIGGERED = 'triggered',
+  REJECTED = 'rejected',
 }
