@@ -1,26 +1,17 @@
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
-import { AlunaAccountEnum } from '../../../../../lib/enums/AlunaAccountEnum'
-import { AlunaOrderStatusEnum } from '../../../../../lib/enums/AlunaOrderStatusEnum'
-import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
 import {
   IAlunaOrderParseParams,
   IAlunaOrderParseReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { IAlunaOrderSchema } from '../../../../../lib/schemas/IAlunaOrderSchema'
 import { translateSymbolId } from '../../../../../utils/mappings/translateSymbolId'
-import { translateConditionalOrderStatusToAluna } from '../../../enums/adapters/huobiConditionalOrderStatusAdapter'
-import { translateConditionalOrderTypeToAluna } from '../../../enums/adapters/huobiConditionalOrderTypeAdapter'
-import { translateOrderSideToAluna } from '../../../enums/adapters/huobiOrderSideAdapter'
-import { translateOrderStatusToAluna } from '../../../enums/adapters/huobiOrderStatusAdapter'
-import { translateOrderTypeToAluna } from '../../../enums/adapters/huobiOrderTypeAdapter'
-import { HuobiOrderSideEnum } from '../../../enums/HuobiOrderSideEnum'
-import { HuobiOrderTypeEnum } from '../../../enums/HuobiOrderTypeEnum'
 import {
-  IHuobiOrderPriceFieldsSchema,
+  IHuobiConditionalOrderSchema,
   IHuobiOrderResponseSchema,
   IHuobiOrderSchema,
-  IHuobiOrderTriggerSchema,
 } from '../../../schemas/IHuobiOrderSchema'
+import { parseHuobiConditionalOrder } from './helpers/parseHuobiConditionalOrder'
+import { parseHuobiOrder } from './helpers/parseHuobiOrder'
 
 
 
@@ -29,12 +20,12 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
 ): IAlunaOrderParseReturns => {
 
 
-  const { rawOrder: rawOrderResponse } = params
+  const { rawOrder } = params
 
   const {
-    rawOrder,
+    huobiOrder,
     rawSymbol,
-  } = rawOrderResponse
+  } = rawOrder
 
   const {
     settings,
@@ -58,188 +49,28 @@ export const parse = (exchange: IAlunaExchangeAuthed) => (
     symbolMappings,
   })
 
+  const isConditionalOrder = !(<IHuobiOrderSchema> huobiOrder).id
 
-  const isIHuobiOrderSchema = !!(<IHuobiOrderSchema> rawOrder).id
+  let order: IAlunaOrderSchema
 
-  if (isIHuobiOrderSchema) {
+  if (isConditionalOrder) {
 
-    const {
-      symbol,
-      price,
-      type,
-      'created-at': createdAt,
-      amount,
-      state,
-      'stop-price': stopPrice,
-      id,
-    } = rawOrder as IHuobiOrderSchema
-
-    const orderStatus = translateOrderStatusToAluna({
-      from: state,
-    })
-
-    const placedAt = new Date(createdAt)
-    let filledAt: Date | undefined
-    let canceledAt: Date | undefined
-
-    if (orderStatus === AlunaOrderStatusEnum.CANCELED) {
-
-      canceledAt = new Date()
-
-    }
-
-    if (orderStatus === AlunaOrderStatusEnum.FILLED) {
-
-      filledAt = new Date()
-
-    }
-
-    const orderSide = type.split('-')[0] as HuobiOrderSideEnum
-    const orderType = type.split('-')[1] as HuobiOrderTypeEnum
-    const orderTypeSecondArgument = type.split('-')[2] as HuobiOrderTypeEnum
-
-    const formattedRawOrderType = orderTypeSecondArgument ? `${orderType}-${orderTypeSecondArgument}` as HuobiOrderTypeEnum : orderType
-
-    const translatedOrderSide = translateOrderSideToAluna({
-      from: orderSide,
-    })
-
-    const translatedOrderType = translateOrderTypeToAluna({
-      from: formattedRawOrderType,
-    })
-
-    const orderAmount = Number(amount)
-    const rate = Number(price)
-    const total = orderAmount * rate
-
-    const orderPrices: IHuobiOrderPriceFieldsSchema = {
-      total,
-    }
-
-    switch (translatedOrderType) {
-
-      case AlunaOrderTypesEnum.STOP_LIMIT:
-        orderPrices.limitRate = rate
-        orderPrices.stopRate = Number(stopPrice)
-        break
-
-      case AlunaOrderTypesEnum.STOP_MARKET:
-        orderPrices.stopRate = Number(stopPrice)
-        orderPrices.total = orderAmount
-        break
-
-      case AlunaOrderTypesEnum.MARKET:
-        orderPrices.total = orderAmount
-        break
-
-      default:
-        orderPrices.rate = rate
-        break
-    }
-
-
-    const order: IAlunaOrderSchema = {
-      id: id.toString(),
-      symbolPair: symbol,
-      account: AlunaAccountEnum.SPOT,
-      exchangeId,
+    ({ order } = parseHuobiConditionalOrder({
       baseSymbolId,
       quoteSymbolId,
-      placedAt,
-      canceledAt,
-      filledAt,
-      amount: orderAmount,
-      ...orderPrices,
-      side: translatedOrderSide,
-      status: orderStatus,
-      type: translatedOrderType,
-      meta: rawOrder,
-    }
+      exchangeId,
+      huobiConditionalOrder: huobiOrder as IHuobiConditionalOrderSchema,
+    }))
 
-    return { order }
+  } else {
 
-  }
+    ({ order } = parseHuobiOrder({
+      baseSymbolId,
+      quoteSymbolId,
+      exchangeId,
+      huobiOrder: huobiOrder as IHuobiOrderSchema,
+    }))
 
-  const {
-    clientOrderId,
-    orderOrigTime,
-    orderPrice,
-    orderSide,
-    orderSize,
-    orderType,
-    stopPrice,
-    symbol,
-    orderStatus,
-  } = rawOrder as IHuobiOrderTriggerSchema
-
-  // trigger orders are always open
-  const status = translateConditionalOrderStatusToAluna({
-    from: orderStatus,
-  })
-
-  const orderAmount = Number(orderSize)
-  const limitRate = Number(orderPrice)
-  const total = orderAmount * limitRate
-
-  const type = translateConditionalOrderTypeToAluna({
-    from: orderType,
-  })
-
-  const translatedOrderSide = translateOrderSideToAluna({
-    from: orderSide,
-  })
-
-  const orderPrices: IHuobiOrderPriceFieldsSchema = {
-    total,
-  }
-
-  switch (type) {
-
-    case AlunaOrderTypesEnum.STOP_MARKET:
-      orderPrices.stopRate = Number(stopPrice)
-      orderPrices.total = orderAmount
-      break
-
-    default:
-      orderPrices.limitRate = limitRate
-      orderPrices.stopRate = Number(stopPrice)
-      break
-  }
-
-  let filledAt
-  let canceledAt
-
-  if (status === AlunaOrderStatusEnum.FILLED) {
-
-    filledAt = new Date()
-
-  }
-
-  if (status === AlunaOrderStatusEnum.CANCELED) {
-
-    canceledAt = new Date()
-
-  }
-
-  const placedAt = new Date(orderOrigTime)
-
-  const order: IAlunaOrderSchema = {
-    id: clientOrderId,
-    clientOrderId,
-    symbolPair: symbol,
-    account: AlunaAccountEnum.SPOT,
-    exchangeId,
-    baseSymbolId,
-    quoteSymbolId,
-    placedAt,
-    ...orderPrices,
-    amount: orderAmount,
-    side: translatedOrderSide,
-    status,
-    type,
-    ...(filledAt && { filledAt }),
-    ...(canceledAt && { canceledAt }),
-    meta: rawOrder,
   }
 
   return { order }
