@@ -17,7 +17,9 @@ AlunaOrderStatusEnum
     [HuobiOrderStatusEnum.PARTIAL_FILLED]:
           AlunaOrderStatusEnum.PARTIALLY_FILLED,
     [HuobiOrderStatusEnum.FILLED]: AlunaOrderStatusEnum.FILLED,
+    [HuobiOrderStatusEnum.TRIGGERED]: AlunaOrderStatusEnum.FILLED,
     [HuobiOrderStatusEnum.CANCELED]: AlunaOrderStatusEnum.CANCELED,
+    [HuobiOrderStatusEnum.REJECTED]: AlunaOrderStatusEnum.CANCELED,
   },
 })
 

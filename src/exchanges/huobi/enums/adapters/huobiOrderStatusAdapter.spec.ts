@@ -34,7 +34,15 @@ describe(__filename, () => {
     })).to.be.eq(AlunaOrderStatusEnum.FILLED)
 
     expect(translateOrderStatusToAluna({
+      from: HuobiOrderStatusEnum.TRIGGERED,
+    })).to.be.eq(AlunaOrderStatusEnum.FILLED)
+
+    expect(translateOrderStatusToAluna({
       from: HuobiOrderStatusEnum.CANCELED,
+    })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
+
+    expect(translateOrderStatusToAluna({
+      from: HuobiOrderStatusEnum.REJECTED,
     })).to.be.eq(AlunaOrderStatusEnum.CANCELED)
 
     let result
