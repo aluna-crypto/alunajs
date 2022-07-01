@@ -1,7 +1,6 @@
-import { HuobiConditionalOrderStatusEnum } from '../enums/HuobiConditionalOrderStatusEnum'
-import { HuobiConditionalOrderTypeEnum } from '../enums/HuobiConditionalOrderTypeEnum'
 import { HuobiOrderSideEnum } from '../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../enums/HuobiOrderStatusEnum'
+import { HuobiOrderTypeEnum } from '../enums/HuobiOrderTypeEnum'
 import { IHuobiSymbolSchema } from './IHuobiSymbolSchema'
 
 
@@ -19,33 +18,34 @@ export interface IHuobiOrderSchema {
   'filled-fees': string
   id: number
   state: HuobiOrderStatusEnum
-  type: string
+  type: HuobiOrderTypeEnum
   'stop-price'?: string
 }
 
-export interface IHuobiOrderTriggerSchema {
+export interface IHuobiConditionalOrderSchema {
   lastActTime: number
   orderOrigTime: number
   symbol: string
   source: string
   clientOrderId: string
   orderSide: HuobiOrderSideEnum
-  orderType: HuobiConditionalOrderTypeEnum
+  orderType: HuobiOrderTypeEnum
   orderPrice: string
   orderSize: string
   accountId: number
   timeInForce: string
+  orderValue?: string
   stopPrice: string
-  orderStatus: HuobiConditionalOrderStatusEnum
+  orderStatus: HuobiOrderStatusEnum
 }
 
 export interface IHuobiOrdersResponseSchema {
-  rawOrders: (IHuobiOrderSchema | IHuobiOrderTriggerSchema)[]
+  huobiOrders: (IHuobiOrderSchema | IHuobiConditionalOrderSchema)[]
   rawSymbols: IHuobiSymbolSchema[]
 }
 
 export interface IHuobiOrderResponseSchema {
-  rawOrder: IHuobiOrderSchema | IHuobiOrderTriggerSchema
+  huobiOrder: IHuobiOrderSchema | IHuobiConditionalOrderSchema
   rawSymbol: IHuobiSymbolSchema
 }
 
