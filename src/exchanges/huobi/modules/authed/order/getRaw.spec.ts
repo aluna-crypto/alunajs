@@ -63,7 +63,7 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrder).to.deep.eq({
-      rawOrder: mockedRawOrder,
+      huobiOrder: mockedRawOrder,
       rawSymbol: mockedRawSymbols[0],
     })
 
@@ -73,7 +73,6 @@ describe(__filename, () => {
       verb: AlunaHttpVerbEnum.GET,
       credentials,
       url: getHuobiEndpoints(exchange.settings).order.get(id),
-      query: undefined,
     })
 
     expect(publicRequest.callCount).to.be.eq(0)
@@ -120,7 +119,7 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrder).to.deep.eq({
-      rawOrder: mockedRawOrder,
+      huobiOrder: mockedRawOrder,
       rawSymbol: mockedRawSymbols[0],
     })
 
@@ -129,7 +128,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getHuobiEndpoints(exchange.settings).order.getStop,
+      url: getHuobiEndpoints(exchange.settings).order.getConditional,
       query: 'clientOrderId=12345',
     })
 
@@ -177,7 +176,7 @@ describe(__filename, () => {
 
     // validating
     expect(rawOrder).to.deep.eq({
-      rawOrder: mockedRawOrder,
+      huobiOrder: mockedRawOrder,
       rawSymbol: mockedRawSymbols[0],
     })
 
@@ -186,7 +185,7 @@ describe(__filename, () => {
     expect(authedRequest.firstCall.args[0]).to.deep.eq({
       verb: AlunaHttpVerbEnum.GET,
       credentials,
-      url: getHuobiEndpoints(exchange.settings).order.getStop,
+      url: getHuobiEndpoints(exchange.settings).order.getConditional,
       query: 'clientOrderId=12345',
     })
 

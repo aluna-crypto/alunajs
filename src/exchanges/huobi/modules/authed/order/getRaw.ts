@@ -1,7 +1,7 @@
 import { debug } from 'debug'
 import { find } from 'lodash'
-import { AlunaError } from '../../../../../lib/core/AlunaError'
 
+import { AlunaError } from '../../../../../lib/core/AlunaError'
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import { AlunaHttpVerbEnum } from '../../../../../lib/enums/AlunaHtttpVerbEnum'
 import { AlunaOrderTypesEnum } from '../../../../../lib/enums/AlunaOrderTypesEnum'
@@ -12,7 +12,10 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiOrderResponseSchema, IHuobiOrderSchema } from '../../../schemas/IHuobiOrderSchema'
+import {
+  IHuobiOrderResponseSchema,
+  IHuobiOrderSchema,
+} from '../../../schemas/IHuobiOrderSchema'
 
 
 
@@ -38,12 +41,10 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
     http = new HuobiHttp(settings),
   } = params
 
-  let url = getHuobiEndpoints(settings).order.get(id)
-  let query
+  const isConditionalorder = (type === AlunaOrderTypesEnum.STOP_LIMIT)
+    || (type === AlunaOrderTypesEnum.STOP_MARKET)
 
-  const needToHaveClientOrderId = type === AlunaOrderTypesEnum.STOP_LIMIT || type === AlunaOrderTypesEnum.STOP_MARKET
-
-  if (needToHaveClientOrderId && !clientOrderId) {
+  if (isConditionalorder && !clientOrderId) {
 
     throw new AlunaError({
       httpStatusCode: 200,
@@ -54,43 +55,44 @@ export const getRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   }
 
-  if (needToHaveClientOrderId && clientOrderId) {
+  let query
+  let url = getHuobiEndpoints(settings).order.get(id)
 
-    url = getHuobiEndpoints(settings).order.getStop
+  if (isConditionalorder) {
 
+    url = getHuobiEndpoints(settings).order.getConditional
     query = `clientOrderId=${clientOrderId}`
+
+  } else {
+
+    url = getHuobiEndpoints(settings).order.get(id)
 
   }
 
-  const rawOrder = await http.authedRequest<IHuobiOrderSchema>({
+  const huobiOrder = await http.authedRequest<IHuobiOrderSchema>({
     credentials,
     verb: AlunaHttpVerbEnum.GET,
     url,
-    query,
+    ...(query ? { query } : {}),
   })
 
-  const { symbol } = rawOrder
+  const { symbol } = huobiOrder
 
   const { rawSymbols } = await exchange.symbol.listRaw({
     http,
   })
 
-  const rawSymbol = find(
-    rawSymbols,
-    {
-      symbol,
-    },
-  )
+  const rawSymbol = find(rawSymbols, { symbol })
 
   const { requestWeight } = http
 
-  const rawOrderResponse: IHuobiOrderResponseSchema = {
-    rawOrder,
+  const rawOrder: IHuobiOrderResponseSchema = {
+    huobiOrder,
     rawSymbol,
   }
 
   return {
-    rawOrder: rawOrderResponse,
+    rawOrder,
     requestWeight,
   }
 

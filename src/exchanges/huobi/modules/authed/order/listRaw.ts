@@ -8,7 +8,11 @@ import {
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
 import { HuobiHttp } from '../../../HuobiHttp'
 import { getHuobiEndpoints } from '../../../huobiSpecs'
-import { IHuobiOrderSchema, IHuobiOrdersResponseSchema, IHuobiOrderTriggerSchema } from '../../../schemas/IHuobiOrderSchema'
+import {
+  IHuobiConditionalOrderSchema,
+  IHuobiOrderSchema,
+  IHuobiOrdersResponseSchema,
+} from '../../../schemas/IHuobiOrderSchema'
 
 
 
@@ -29,15 +33,15 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { http = new HuobiHttp(settings) } = params
 
-  const rawOrders = await http.authedRequest<IHuobiOrderSchema[]>({
+  const huobiOrders = await http.authedRequest<IHuobiOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
     url: getHuobiEndpoints(settings).order.list,
     credentials,
   })
 
-  const rawTriggerOrders = await http.authedRequest<IHuobiOrderTriggerSchema[]>({
+  const huobiConditionalOrders = await http.authedRequest<IHuobiConditionalOrderSchema[]>({
     verb: AlunaHttpVerbEnum.GET,
-    url: getHuobiEndpoints(settings).order.listStop,
+    url: getHuobiEndpoints(settings).order.listConditional,
     credentials,
   })
 
@@ -47,13 +51,13 @@ export const listRaw = (exchange: IAlunaExchangeAuthed) => async (
 
   const { requestWeight } = http
 
-  const rawOrdersResponse: IHuobiOrdersResponseSchema = {
-    rawOrders: [...rawOrders, ...rawTriggerOrders],
+  const rawOrders: IHuobiOrdersResponseSchema = {
+    huobiOrders: [...huobiOrders, ...huobiConditionalOrders],
     rawSymbols,
   }
 
   return {
-    rawOrders: rawOrdersResponse,
+    rawOrders,
     requestWeight,
   }
 

@@ -1,12 +1,18 @@
 import { debug } from 'debug'
-import { forEach, map } from 'lodash'
+import {
+  forEach,
+  map,
+} from 'lodash'
 
 import { IAlunaExchangeAuthed } from '../../../../../lib/core/IAlunaExchange'
 import {
   IAlunaOrderParseManyParams,
   IAlunaOrderParseManyReturns,
 } from '../../../../../lib/modules/authed/IAlunaOrderModule'
-import { IHuobiOrderResponseSchema, IHuobiOrdersResponseSchema } from '../../../schemas/IHuobiOrderSchema'
+import {
+  IHuobiOrderResponseSchema,
+  IHuobiOrdersResponseSchema,
+} from '../../../schemas/IHuobiOrderSchema'
 import { IHuobiSymbolSchema } from '../../../schemas/IHuobiSymbolSchema'
 
 
@@ -19,12 +25,12 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
   params: IAlunaOrderParseManyParams<IHuobiOrdersResponseSchema>,
 ): IAlunaOrderParseManyReturns => {
 
-  const { rawOrders: rawOrdersRequest } = params
+  const { rawOrders } = params
 
   const {
-    rawOrders,
+    huobiOrders,
     rawSymbols,
-  } = rawOrdersRequest
+  } = rawOrders
 
   const pairSymbolsDictionary: { [key:string]: IHuobiSymbolSchema } = {}
 
@@ -36,19 +42,19 @@ export const parseMany = (exchange: IAlunaExchangeAuthed) => (
 
   })
 
-  const parsedOrders = map(rawOrders, (rawOrder) => {
+  const parsedOrders = map(huobiOrders, (huobiOrder) => {
 
-    const { symbol } = rawOrder
+    const { symbol } = huobiOrder
 
     const rawSymbol = pairSymbolsDictionary[symbol]
 
-    const rawOrderRequest: IHuobiOrderResponseSchema = {
-      rawOrder,
+    const rawOrder: IHuobiOrderResponseSchema = {
+      huobiOrder,
       rawSymbol,
     }
 
     const { order } = exchange.order.parse({
-      rawOrder: rawOrderRequest,
+      rawOrder,
     })
 
     return order

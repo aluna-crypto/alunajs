@@ -5,6 +5,7 @@ import { PARSED_ORDERS } from '../../../../../../test/fixtures/parsedOrders'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { IAlunaCredentialsSchema } from '../../../../../lib/schemas/IAlunaCredentialsSchema'
 import { HuobiAuthed } from '../../../HuobiAuthed'
+import { IHuobiOrdersResponseSchema } from '../../../schemas/IHuobiOrderSchema'
 import { HUOBI_RAW_ORDERS } from '../../../test/fixtures/huobiOrders'
 import { HUOBI_RAW_SYMBOLS } from '../../../test/fixtures/huobiSymbols'
 import * as parseMod from './parse'
@@ -22,11 +23,11 @@ describe(__filename, () => {
 
     // preparing data
     const parsedOrders = PARSED_ORDERS
-    const rawOrders = HUOBI_RAW_ORDERS
+    const huobiOrders = HUOBI_RAW_ORDERS
     const rawSymbols = HUOBI_RAW_SYMBOLS
 
-    const rawOrdersRequest = {
-      rawOrders,
+    const rawOrders: IHuobiOrdersResponseSchema = {
+      huobiOrders,
       rawSymbols,
     }
 
@@ -41,13 +42,13 @@ describe(__filename, () => {
     const exchange = new HuobiAuthed({ credentials })
 
     const { orders } = exchange.order.parseMany({
-      rawOrders: rawOrdersRequest,
+      rawOrders,
     })
 
     // validating
     expect(orders).to.deep.eq(parsedOrders)
 
-    expect(parse.callCount).to.be.eq(rawOrders.length)
+    expect(parse.callCount).to.be.eq(huobiOrders.length)
 
   })
 
