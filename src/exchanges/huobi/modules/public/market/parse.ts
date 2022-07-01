@@ -13,12 +13,12 @@ export const parse = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseParams<IHuobiMarketSchema>,
 ): IAlunaMarketParseReturns => {
 
-  const { rawMarket: rawMarketInfo } = params
+  const { rawMarket } = params
 
   const {
-    rawMarket,
+    huobiMarket,
     rawSymbol,
-  } = rawMarketInfo
+  } = rawMarket
 
   const {
     symbol,
@@ -30,7 +30,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     open,
     amount: baseVolume,
     vol: quoteVolume,
-  } = rawMarket
+  } = huobiMarket
 
   const {
     bc: baseCurrency,
@@ -75,7 +75,7 @@ export const parse = (exchange: IAlunaExchangePublic) => (
     marginEnabled: false,
     derivativesEnabled: false,
     leverageEnabled: false,
-    meta: rawMarket,
+    meta: huobiMarket,
   }
 
   return { market }

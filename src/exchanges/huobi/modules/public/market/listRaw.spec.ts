@@ -41,7 +41,7 @@ describe(__filename, () => {
 
     // validating
     expect(rawMarkets).to.deep.eq({
-      rawMarkets: HUOBI_RAW_MARKETS,
+      huobiMarkets: HUOBI_RAW_MARKETS,
       rawSymbols: HUOBI_RAW_SYMBOLS,
     })
 
