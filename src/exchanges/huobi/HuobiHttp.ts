@@ -1,6 +1,6 @@
 import axios from 'axios'
-
 import crypto from 'crypto'
+
 import {
   IAlunaHttp,
   IAlunaHttpAuthedParams,
@@ -143,17 +143,17 @@ export class HuobiHttp implements IAlunaHttp {
 
     try {
 
-      const { data: request } = await axios
+      const { data: axiosData } = await axios
         .create()
         .request<IHuobiHttpResponse<T>>(requestConfig)
 
-      if (request.status === 'error' || request.message === 'unauthorized') {
+      if (axiosData.status === 'error' || (axiosData.message && axiosData.message !== 'success')) {
 
-        throw request
+        throw axiosData
 
       }
 
-      const { data } = request
+      const { data } = axiosData
 
       return data
 

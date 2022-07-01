@@ -1,10 +1,10 @@
 import { expect } from 'chai'
+import crypto from 'crypto'
 import { Agent } from 'https'
 import { random } from 'lodash'
 import Sinon from 'sinon'
 import { ImportMock } from 'ts-mock-imports'
 
-import crypto from 'crypto'
 import { testCache } from '../../../test/macros/testCache'
 import { mockAxiosRequest } from '../../../test/mocks/axios/request'
 import { AlunaHttpVerbEnum } from '../../lib/enums/AlunaHtttpVerbEnum'
@@ -22,7 +22,7 @@ import * as HuobiHttpMod from './HuobiHttp'
 
 
 
-describe(__filename, () => {
+describe.only(__filename, () => {
 
   const { HuobiHttp } = HuobiHttpMod
 
@@ -371,7 +371,7 @@ describe(__filename, () => {
 
   })
 
-  it('should properly handle request error on authed requests', async () => {
+  it('should properly handle request returning status error property', async () => {
 
     // preparing data
     const huobiHttp = new HuobiHttp({})
@@ -388,6 +388,47 @@ describe(__filename, () => {
     } = mockDeps()
 
     request.returns(Promise.resolve({ data: throwedError }))
+
+
+    // executing
+    const autheRes = await executeAndCatch(() => huobiHttp.authedRequest({
+      url,
+      body,
+      credentials,
+    }))
+
+
+    // validating
+    expect(autheRes.result).not.to.be.ok
+
+    expect(request.callCount).to.be.eq(1)
+
+    expect(handleHuobiRequestError.callCount).to.be.eq(1)
+
+    expect(handleHuobiRequestError.calledWith({
+      error: throwedError,
+    })).to.be.ok
+
+  })
+
+  it('should properly handle request returning message not success', async () => {
+
+    // preparing data
+    const huobiHttp = new HuobiHttp({})
+
+    const throwedError = {
+      message: 'error',
+    }
+
+
+    // mocking
+    const {
+      request,
+      handleHuobiRequestError,
+    } = mockDeps()
+
+    request.returns(Promise.resolve({ data: throwedError }))
+
 
     // executing
     const autheRes = await executeAndCatch(() => huobiHttp.authedRequest({
