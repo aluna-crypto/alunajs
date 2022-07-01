@@ -1,5 +1,9 @@
 import debug from 'debug'
-import { forEach, reduce } from 'lodash'
+import {
+  forEach,
+  keyBy,
+  reduce,
+} from 'lodash'
 
 import { IAlunaExchangePublic } from '../../../../../lib/core/IAlunaExchange'
 import {
@@ -7,8 +11,11 @@ import {
   IAlunaMarketParseManyReturns,
 } from '../../../../../lib/modules/public/IAlunaMarketModule'
 import { IAlunaMarketSchema } from '../../../../../lib/schemas/IAlunaMarketSchema'
-import { IHuobiMarketSchema, IHuobiMarketsSchema, IHuobiMarketTickerSchema } from '../../../schemas/IHuobiMarketSchema'
-import { IHuobiSymbolSchema } from '../../../schemas/IHuobiSymbolSchema'
+import {
+  IHuobiMarketSchema,
+  IHuobiMarketsSchema,
+  IHuobiMarketTickerSchema,
+} from '../../../schemas/IHuobiMarketSchema'
 
 
 
@@ -20,16 +27,14 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
   params: IAlunaMarketParseManyParams<IHuobiMarketsSchema>,
 ): IAlunaMarketParseManyReturns => {
 
-  const {
-    rawMarkets: rawMarketsInfo,
-  } = params
+  const { rawMarkets } = params
 
   const {
-    rawMarkets,
     rawSymbols,
-  } = rawMarketsInfo
+    huobiMarkets,
+  } = rawMarkets
 
-  const pairSymbolsDictionary: { [key:string]: IHuobiSymbolSchema } = {}
+  const pairSymbolsDictionary = keyBy(rawSymbols, 'symbol')
 
   forEach(rawSymbols, (pair) => {
 
@@ -42,34 +47,30 @@ export const parseMany = (exchange: IAlunaExchangePublic) => (
   type TSrc = IHuobiMarketTickerSchema
   type TAcc = IAlunaMarketSchema[]
 
-  const markets = reduce<TSrc, TAcc>(
-    rawMarkets,
-    (accumulator, rawMarket) => {
+  const markets = reduce<TSrc, TAcc>(huobiMarkets, (acc, huobiMarket) => {
 
-      const { symbol } = rawMarket
+    const { symbol } = huobiMarket
 
-      const rawSymbol = pairSymbolsDictionary[symbol]
+    const rawSymbol = pairSymbolsDictionary[symbol]
 
-      if (rawSymbol) {
+    if (rawSymbol) {
 
-        const rawMarketRequest: IHuobiMarketSchema = {
-          rawMarket,
-          rawSymbol,
-        }
-
-        const { market } = exchange.market.parse({
-          rawMarket: rawMarketRequest,
-        })
-
-        accumulator.push(market)
-
+      const rawMarketRequest: IHuobiMarketSchema = {
+        huobiMarket,
+        rawSymbol,
       }
 
+      const { market } = exchange.market.parse({
+        rawMarket: rawMarketRequest,
+      })
 
-      return accumulator
+      acc.push(market)
 
-    }, [],
-  )
+    }
+
+    return acc
+
+  }, [])
 
   log(`parsed ${markets.length} markets for Huobi`)
 

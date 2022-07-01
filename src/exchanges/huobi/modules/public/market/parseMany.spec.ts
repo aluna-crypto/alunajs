@@ -1,9 +1,13 @@
 import { expect } from 'chai'
-import { cloneDeep, each } from 'lodash'
+import {
+  cloneDeep,
+  each,
+} from 'lodash'
 
 import { PARSED_MARKETS } from '../../../../../../test/fixtures/parsedMarkets'
 import { mockParse } from '../../../../../../test/mocks/exchange/modules/mockParse'
 import { Huobi } from '../../../Huobi'
+import { IHuobiMarketsSchema } from '../../../schemas/IHuobiMarketSchema'
 import { HUOBI_RAW_MARKETS } from '../../../test/fixtures/huobiMarket'
 import { HUOBI_RAW_SYMBOLS } from '../../../test/fixtures/huobiSymbols'
 import * as parseMod from './parse'
@@ -19,11 +23,11 @@ describe(__filename, () => {
 
     rawMarket.symbol = 'non-existent'
 
-    const rawMarketTickers = [...HUOBI_RAW_MARKETS, rawMarket]
+    const huobiMarkets = [...HUOBI_RAW_MARKETS, rawMarket]
     const rawSymbols = HUOBI_RAW_SYMBOLS
 
-    const rawMarkets = {
-      rawMarkets: rawMarketTickers,
+    const rawMarkets: IHuobiMarketsSchema = {
+      huobiMarkets,
       rawSymbols,
     }
 
