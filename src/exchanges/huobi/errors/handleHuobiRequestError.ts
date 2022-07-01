@@ -56,7 +56,7 @@ export const handleHuobiRequestError = (
 
     const { response } = error as AxiosError
 
-    message = response?.data?.['err-msg'] || message
+    message = response?.data?.['err-msg'] || response?.data?.message || message
 
     httpStatusCode = response?.status || httpStatusCode
 
