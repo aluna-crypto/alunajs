@@ -1,12 +1,13 @@
-import { HuobiConditionalOrderStatusEnum } from '../../enums/HuobiConditionalOrderStatusEnum'
-import { HuobiConditionalOrderTypeEnum } from '../../enums/HuobiConditionalOrderTypeEnum'
 import { HuobiOrderSideEnum } from '../../enums/HuobiOrderSideEnum'
 import { HuobiOrderStatusEnum } from '../../enums/HuobiOrderStatusEnum'
-import { IHuobiOrderSchema, IHuobiOrderTriggerSchema } from '../../schemas/IHuobiOrderSchema'
+import { HuobiOrderTypeEnum } from '../../enums/HuobiOrderTypeEnum'
+import {
+  IHuobiConditionalOrderSchema,
+  IHuobiOrderSchema,
+} from '../../schemas/IHuobiOrderSchema'
 
 
 
-// TODO: Review fixtures
 export const HUOBI_RAW_ORDERS: IHuobiOrderSchema[] = [
   {
     symbol: 'ethusdt',
@@ -20,7 +21,7 @@ export const HUOBI_RAW_ORDERS: IHuobiOrderSchema[] = [
     'filled-fees': '0.0',
     id: 357630527817871,
     state: HuobiOrderStatusEnum.CANCELED,
-    type: 'sell-limit',
+    type: HuobiOrderTypeEnum.SELL_LIMIT,
     'client-order-is': '1234',
   },
   {
@@ -35,12 +36,12 @@ export const HUOBI_RAW_ORDERS: IHuobiOrderSchema[] = [
     'filled-fees': '0.0',
     id: 357630527817871,
     state: HuobiOrderStatusEnum.FILLED,
-    type: 'buy-market',
+    type: HuobiOrderTypeEnum.BUY_MARKET,
     'client-order-is': '1234',
   },
 ]
 
-export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
+export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiConditionalOrderSchema[] = [
   {
     orderOrigTime: 1654648192646,
     lastActTime: 1654648192669,
@@ -51,10 +52,10 @@ export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
     accountId: 49160295,
     clientOrderId: 'carrodemalandro',
     orderSide: HuobiOrderSideEnum.BUY,
-    orderType: HuobiConditionalOrderTypeEnum.LIMIT,
+    orderType: HuobiOrderTypeEnum.STOP_LIMIT,
     orderPrice: '27000',
     orderSize: '1',
-    orderStatus: HuobiConditionalOrderStatusEnum.CANCELED,
+    orderStatus: HuobiOrderStatusEnum.CANCELED,
   },
   {
     orderOrigTime: 1654648192646,
@@ -66,10 +67,10 @@ export const HUOBI_RAW_CONDITIONAL_ORDERS: IHuobiOrderTriggerSchema[] = [
     accountId: 49160295,
     clientOrderId: 'comedianaotemcarona',
     orderSide: HuobiOrderSideEnum.BUY,
-    orderType: HuobiConditionalOrderTypeEnum.MARKET,
+    orderType: HuobiOrderTypeEnum.STOP_MARKET,
     orderPrice: '31598',
     orderSize: '1',
-    orderStatus: HuobiConditionalOrderStatusEnum.TRIGGERED,
+    orderStatus: HuobiOrderStatusEnum.FILLED,
   },
 
 ]
