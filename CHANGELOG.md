@@ -1,3 +1,7 @@
+# 1.3.0 (July 1, 2022)
+
+ - Added Huobi exchange, supporting spot trading
+
 # 1.2.3 (June 14, 2022)
 
  - Add new `AlunaOrderErrorCodes`
