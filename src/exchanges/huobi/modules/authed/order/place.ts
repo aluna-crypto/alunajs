@@ -108,9 +108,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
   * operation.
   */
   const isMarketOrder = /market/.test(translatedOrderType)
-  const prices = {
-    price: '',
-  }
+  let marketPrice = ''
 
   if (isMarketOrder && (translatedOrderSide === 'buy')) {
 
@@ -119,7 +117,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
       symbolPair,
     })
 
-    prices.price = market.ticker.last.toString()
+    marketPrice = market.ticker.last.toString()
 
     orderAmount = new BigNumber(amount)
       .times(market.ticker.last)
@@ -206,7 +204,7 @@ export const place = (exchange: IAlunaExchangeAuthed) => async (
         rawSymbol,
         huobiOrder: {
           ...huobiOrder,
-          ...(isMarketOrder ? prices : {}),
+          ...(isMarketOrder ? { price: marketPrice } : {}),
         },
       },
     })
