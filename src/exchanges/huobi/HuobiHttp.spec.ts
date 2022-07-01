@@ -22,7 +22,7 @@ import * as HuobiHttpMod from './HuobiHttp'
 
 
 
-describe.only(__filename, () => {
+describe(__filename, () => {
 
   const { HuobiHttp } = HuobiHttpMod
 

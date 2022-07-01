@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
-import { AlunaError } from '../../lib/core/AlunaError'
 
+import { AlunaError } from '../../lib/core/AlunaError'
 import { AlunaAccountEnum } from '../../lib/enums/AlunaAccountEnum'
 import { AlunaOrderTypesEnum } from '../../lib/enums/AlunaOrderTypesEnum'
 import { AlunaWalletEnum } from '../../lib/enums/AlunaWalletEnum'
@@ -140,11 +140,11 @@ export const getHuobiEndpoints = (
     },
     order: {
       get: (id: string) => `${baseUrl}/v1/order/orders/${id}`,
-      getStop: `${baseUrl}/v2/algo-orders/specific`,
+      getConditional: `${baseUrl}/v2/algo-orders/specific`,
       list: `${baseUrl}/v1/order/openOrders`,
-      listStop: `${baseUrl}/v2/algo-orders/opening`,
+      listConditional: `${baseUrl}/v2/algo-orders/opening`,
       place: `${baseUrl}/v1/order/orders/place`,
-      placeStop: `${baseUrl}/v2/algo-orders`,
+      placeConditional: `${baseUrl}/v2/algo-orders`,
       cancel: (id: string) => `${baseUrl}/v1/order/orders/${id}/submitcancel`,
       cancelStop: `${baseUrl}/v2/algo-orders/cancellation`,
     },
