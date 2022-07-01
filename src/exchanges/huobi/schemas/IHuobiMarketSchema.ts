@@ -18,11 +18,11 @@ export interface IHuobiMarketTickerSchema {
 }
 
 export interface IHuobiMarketsSchema {
-  rawMarkets: IHuobiMarketTickerSchema[]
+  huobiMarkets: IHuobiMarketTickerSchema[]
   rawSymbols: IHuobiSymbolSchema[]
 }
 
 export interface IHuobiMarketSchema {
-  rawMarket: IHuobiMarketTickerSchema
+  huobiMarket: IHuobiMarketTickerSchema
   rawSymbol: IHuobiSymbolSchema
 }
